@@ -1,0 +1,98 @@
+            Macintosh-specific help file for NetHack 3.1
+
+The following are options, features, or concerns specific to the
+Macintosh port of NetHack 3.1.  Bug reports, suggestions, comments,
+and so on, should be addressed to:
+
+To: nethack-bugs@linc.cis.upenn.edu
+Subject: Mac NetHack 3.1
+
+Please include your machine-type, system software version and other
+relevant information (i.e. system extensions, monitor, accelerators
+and so on).
+
+
+=== Configuration of a playground
+    NetHack 3.1 is packaged in a Dungeon Folder which includes:
+    NetHack - the application file itself.
+    NetHack Defaults - text file for default option settings.
+    miscellaneous text files - Record and logfile.  logfile
+        will be created if it doesn't exist.
+    various special level files (with a ".lev" suffix).
+    various help and other utility NetHack documents.
+
+    During play another file type appears:
+    player level files (labelled "iName.n", i is a constant number,
+        Name is the player name and n is the dungeon level).
+
+    Two other types of files will appear in the Dungeon Folder
+        as a result of playing NetHack:
+    bones files (of previously deceased players).
+    saved games (labelled "save/iName", i is a number, same as above,
+        and Name is the player name).
+
+    The following files or file types may be thrown away:
+    logfile - if it becomes too large.  A new one will be generated.
+    player level files _not_ belonging to a game in progress.
+        Alternatively, these files may be processed by a utility
+        application, Recover (not included in this distribution).
+    Old bones files and saved games.
+
+=== Resuming a saved game
+    Double-click (or open) the desired saved game file or open NetHack
+        and answer the "Who are you?" dialog with the player name of
+        the saved game in the Dungeon Folder.
+
+=== Windows
+    Dungeon Map, Message and Status are the essential windows used
+        for play.  As needed, Info windows are generated and may be
+        dismissed (clicking the close box or hitting the space bar
+        when that window is frontmost) at any time.  Special inventory
+        and list windows also appear in the front from time to time
+        and are dismissed by hitting the space bar (or Return or
+        Enter keys).  Hitting the ESCape key will dismiss a window
+        without scrolling to the end.
+
+    The Extended command "Window Cleanup" may be used to restore the
+        the startup sizes and locations of the essential windows.  The
+        window positions are saved in a file labelled "NetHack Windows"
+        in the appropriate preferences folder.
+
+=== Default options
+    The following options are specific to the Macintosh port:
+    MACgraphics  - use enhanced dungeon map symbols [TRUE]
+    large_font   - use 12 point font instead of 9 point font [FALSE]
+    popup_dialog - use real dialogs for question prompts [FALSE]
+
+    large_font is currently a pre-game option and has no effect
+        after the Dungeon Map, Message and Status windows are created.
+
+    Default options may be set by editing the NetHack Defaults text
+        file (possibly using TeachText or your favorite editor).
+        Unix(tm)-style notation is used, as in:
+    OPTIONS=name:Arnold,time,!tombstone
+
+    See option help (?f or ?g) for more details.
+
+=== Movement by mouse
+    The shape (direction) of the cursor over the Dungeon Map window,
+    typically, indicates the direction that you desire to move in when
+    the mouse is clicked.  Modifier keys affect mouse-movement in the
+    same way that they affect keyboard movement.  Clicking on yourself
+    means rest one turn and Shift-clicking on yourself means "open door"
+    in the subsequently indicated direction.
+
+=== Sounds
+    Real sounds (resources) have been added for various instruments.
+    The option "silent" [FALSE] controls whether or not a sound will
+    be heard when an instrument is applied.
+
+=== Debugging-Mode
+    Open NetHack and answer "wizard" to the "Who are you?" dialog.
+    The debug-mode (wizard-mode) commands are then listed in the
+    help menu, ?k.
+
+    WARNING: This mode is only intended for developers and others
+    interested in characterizing bugs.  Using this mode for other
+    purposes will have confusing results and may significantly
+    decrease your enjoyment of the game!
