@@ -2093,7 +2093,7 @@ const char *fmt, *str;
 	    if (fmt && str)
 	    	pline(fmt, str, "scales");
 	    return TRUE;
-	}
+	} 
 	return FALSE;
 }
 

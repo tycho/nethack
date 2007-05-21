@@ -502,10 +502,10 @@ struct monst *mon;
 
 #ifdef STEED
     if (mon == u.usteed) {
-	if (u.ugallop && flags.mv) {
-	    /* average movement is 1.50 times normal */
-	    mmove = ((rn2(2) ? 4 : 5) * mmove) / 3;
-	}
+		if (u.ugallop && flags.mv) {
+			/* average movement is 1.50 times normal */
+			mmove = ((rn2(2) ? 4 : 5) * mmove) / 3;
+		}
     }
 #endif
 
