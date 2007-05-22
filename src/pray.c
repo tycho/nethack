@@ -1133,7 +1133,6 @@ int
 dosacrifice()
 {
     register struct obj *otmp;
-	 struct obj* wtmp;
     int value = 0;
     int pm;
     aligntyp altaralign = a_align(u.ux,u.uy);
