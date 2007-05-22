@@ -25,6 +25,7 @@ static const char *artifact_names[] = {
 #define     FIRE(a,b)	{0,AD_FIRE,a,b}
 #define     ELEC(a,b)	{0,AD_ELEC,a,b}		/* electrical shock */
 #define     STUN(a,b)	{0,AD_STUN,a,b}		/* magical attack */
+#define		DRST(a,b)	{0,AD_DRST,a,b}		/* poison attack */
 
 STATIC_OVL NEARDATA struct artifact artilist[] = {
 #endif	/* MAKEDEFS_C */
@@ -44,6 +45,13 @@ A("Excalibur",			LONG_SWORD,
 	(SPFX_NOGEN|SPFX_RESTR|SPFX_SEEK|SPFX_DEFN|SPFX_INTEL|SPFX_SEARCH),0,0,
 	PHYS(5,10),	DRLI(0,0),	NO_CARY,	0, A_LAWFUL, PM_KNIGHT, NON_PM, 4000L ),
 /* 
+ * The Knight needed a chaotic longsword to obtain, since Excalibur
+ * will be restricted from him... 
+*/
+A("Dirge",			LONG_SWORD,
+	(SPFX_ATTK|SPFX_NOGEN|SPFX_RESTR|SPFX_DEFN|SPFX_INTEL),0,0,
+	DRST(5,0),	DRLI(0,0),	NO_CARY,	0, A_CHAOTIC, NON_PM, NON_PM, 3000L ),
+/*
  *	Stormbringer only has a 2 because it can drain a level,
  *	providing 8 more.
  */
@@ -182,8 +190,9 @@ A("The Staff of Aesculapius",	QUARTERSTAFF,
 	HEALING,	A_NEUTRAL, PM_HEALER, NON_PM, 5000L ),
 
 A("The Magic Mirror of Merlin", MIRROR,
-	(SPFX_NOGEN|SPFX_RESTR|SPFX_INTEL|SPFX_SPEAK), SPFX_ESP, 0,
-	NO_ATTK,	NO_DFNS,	CARY(AD_MAGM),
+	(SPFX_NOGEN|SPFX_RESTR|SPFX_INTEL|SPFX_SPEAK|SPFX_REFLECT), 
+	(SPFX_REFLECT|SPFX_ESP|SPFX_HSPDAM), 0,
+	NO_ATTK,	NO_DFNS,	NO_CARY,
 	0,		A_LAWFUL, PM_KNIGHT, NON_PM, 1500L ),
 
 A("The Eyes of the Overworld",	LENSES,
@@ -250,6 +259,7 @@ A(0, 0, 0, 0, 0, NO_ATTK, NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 0L )
 #undef	FIRE
 #undef	ELEC
 #undef	STUN
+#undef	DRST
 #endif
 
 /*artilist.h*/

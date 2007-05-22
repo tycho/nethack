@@ -131,15 +131,27 @@ onscary(x, y, mtmp)
 int x, y;
 struct monst *mtmp;
 {
+	int resist_percentage;
+
 	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
 	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
 	    is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
-	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
+	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR] ||
+		 mtmp->mnum == quest_info(MS_NEMESIS))
 		return(FALSE);
+
+	/* the smallest monsters always respect Elbereth;
+	 * more powerful things less so */
+	if (mtmp->m_lev < 10) {
+		resist_percentage = (mtmp->m_lev * 1.5) - 3;
+	} else {
+		resist_percentage = (mtmp->m_lev * 2.0);
+	}
+	boolean mresists = rn2(100) < resist_percentage;
 
 	return (boolean)(sobj_at(SCR_SCARE_MONSTER, x, y)
 #ifdef ELBERETH
-			 || sengr_at("Elbereth", x, y)
+			 || (sengr_at("Elbereth", x, y) && !mresists)
 #endif
 			 || (mtmp->data->mlet == S_VAMPIRE
 			     && IS_ALTAR(levl[x][y].typ)));
