@@ -1992,14 +1992,13 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 	    case AD_FIRE:
 		if (!mtmp->mcan && canseemon(mtmp) &&
 			couldsee(mtmp->mx, mtmp->my) &&
-			mtmp->mcansee && !mtmp->mspec_used && rn2(5)) {
-		    int dmg = d(2,6);
+			mtmp->mcansee && !rn2(2)) {
+		    int dmg = d(mattk->damn,mattk->damd);
 
 		    pline("%s attacks you with a fiery gaze!", Monnam(mtmp));
 		    stop_occupation();
 		    if (Fire_resistance) {
-			pline_The("fire doesn't feel hot!");
-			dmg = 0;
+				dmg /= 2;
 		    }
 		    burn_away_slime();
 		    if ((int) mtmp->m_lev > rn2(20))
@@ -2011,26 +2010,41 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    if (dmg) mdamageu(mtmp, dmg);
 		}
 		break;
-#ifdef PM_BEHOLDER /* work in progress */
-	    case AD_SLEE:
-		if(!mtmp->mcan && canseemon(mtmp) &&
-		   couldsee(mtmp->mx, mtmp->my) && mtmp->mcansee &&
-		   multi >= 0 && !rn2(5) && !Sleep_resistance) {
+		 case AD_COLD:
+		if (!mtmp->mcan && canseemon(mtmp) &&
+			couldsee(mtmp->mx, mtmp->my) &&
+			mtmp->mcansee && !rn2(2)) {
+		    int dmg = d(mattk->damn,mattk->damd);
 
-		    fall_asleep(-rnd(10), TRUE);
+		    pline("%s attacks you with a chilling gaze!", Monnam(mtmp));
+		    stop_occupation();
+		    if (Cold_resistance) {
+				dmg /= 2;
+		    }
+		    if ((int) mtmp->m_lev > rn2(20))
+			destroy_item(POTION_CLASS, AD_COLD);
+		    if (dmg) mdamageu(mtmp, dmg);
+		}
+		break;
+	    case AD_SLEE:
+		if (!mtmp->mcan && canseemon(mtmp) &&
+		   couldsee(mtmp->mx, mtmp->my) && mtmp->mcansee &&
+		   multi >= 0 && rn2(5) && !Sleep_resistance) {
+
+		    fall_asleep(-d(mattk->damn,mattk->damd), TRUE);
 		    pline("%s gaze makes you very sleepy...",
 			  s_suffix(Monnam(mtmp)));
 		}
 		break;
 	    case AD_SLOW:
-		if(!mtmp->mcan && canseemon(mtmp) && mtmp->mcansee &&
+		if (!mtmp->mcan && canseemon(mtmp) && mtmp->mcansee &&
 		   (HFast & (INTRINSIC|TIMEOUT)) &&
-		   !defends(AD_SLOW, uwep) && !rn2(4))
+		   !defends(AD_SLOW, uwep)) {
 
 		    u_slow_down();
 		    stop_occupation();
+		}
 		break;
-#endif
 	    default: impossible("Gaze attack %d?", mattk->adtyp);
 		break;
 	}
