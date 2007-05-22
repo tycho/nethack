@@ -156,6 +156,10 @@ A("Sunsword",			LONG_SWORD,
 	(SPFX_RESTR|SPFX_DFLAG2), 0, M2_UNDEAD,
 	PHYS(5,0),	DFNS(AD_BLND),	NO_CARY,	0, A_LAWFUL, NON_PM, NON_PM, 1500L ),
 
+A("Keolewa",CLUB,
+	SPFX_RESTR, 0, 0,
+	PHYS(5,6), NO_DFNS, NO_CARY, 0, A_NEUTRAL, PM_CAVEMAN, NON_PM, 600L ),
+
 /*
  *	The artifacts for the quest dungeon, all self-willed.
  */

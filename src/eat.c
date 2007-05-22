@@ -453,6 +453,16 @@ boolean allowmsg;
 		change_luck(-rn1(4,2));		/* -5..-2 */
 		return TRUE;
 	}
+	
+	/* Cavemen get a bonus for cannibalism */
+	if (Role_if(PM_CAVEMAN) && your_race(&mons[pm])) {
+		if (allowmsg) {
+			You("consume the corpse in accordance with ancient ritual.");
+			u.ualign.record += 5;
+			return FALSE;
+		}
+	}
+
 	return FALSE;
 }
 

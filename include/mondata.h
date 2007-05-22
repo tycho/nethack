@@ -189,6 +189,6 @@
 				 (ptr) != &mons[PM_BLACK_PUDDING]))
 
 #define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
-				     is_domestic(ptr))
+				(is_domestic(ptr) || (Role_if(PM_CAVEMAN) && (ptr) == &mons[PM_MASTODON])))
 
 #endif /* MONDATA_H */
