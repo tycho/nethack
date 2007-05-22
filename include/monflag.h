@@ -151,7 +151,8 @@
 #define M3_WANTSARTI	0x0010		/* wants the quest artifact */
 #define M3_WANTSALL	0x001f		/* wants any major artifact */
 #define M3_WAITFORU	0x0040		/* waits to see you or get attacked */
-#define M3_CLOSE	0x0080		/* lets you close unless attacked */
+#define M3_CLOSE	   0x0080		/* lets you close unless attacked */
+#define M3_SKITTISH  0x0400	   /* tends to stay a few squares away from you */
 
 #define M3_COVETOUS	0x001f		/* wants something */
 #define M3_WAITMASK	0x00c0		/* waiting... */
