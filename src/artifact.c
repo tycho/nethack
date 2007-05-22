@@ -63,9 +63,13 @@ hack_artifacts()
 	    if (art->role == Role_switch && art->alignment != A_NONE)
 		art->alignment = alignmnt;
 
-	/* Excalibur can be used by any lawful character, not just knights */
-	if (!Role_if(PM_KNIGHT))
+	/* Excalibur can be used by any lawful character, not just knights
+		So can Dirge, for that matter */
+	if (!Role_if(PM_KNIGHT)) {
 	    artilist[ART_EXCALIBUR].role = NON_PM;
+		 artilist[ART_DIRGE].role = NON_PM;
+	 }
+
 
 	/* Fix up the quest artifact */
 	if (urole.questarti) {
@@ -472,9 +476,18 @@ long wp_mask;
 	    else u.xray_range = -1;
 	    vision_full_recalc = 1;
 	}
-	if ((spfx & SPFX_REFLECT) && (wp_mask & W_WEP)) {
+	if (spfx & SPFX_REFLECT) {
+		/* Knights only have to carry the mirror; everyone else must wield it */
+		if (Role_if(PM_KNIGHT)) {
+			if (on) {
+				EReflecting |= wp_mask;
+			} else {
+				EReflecting &= ~wp_mask;
+			}
+		} else if (wp_mask & W_WEP) {
 	    if (on) EReflecting |= wp_mask;
 	    else EReflecting &= ~wp_mask;
+	}
 	}
 
 	if(wp_mask == W_ART && !on && oart->inv_prop) {
@@ -1004,6 +1017,14 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				"!  A hail of magic missiles strikes",
 			  hittee, !spec_dbon_applies ? '.' : '!');
 	    return realizes_damage;
+	}
+	/* the fifth basic attack: poison */
+	if (attacks(AD_DRST, otmp)) {
+		if (realizes_damage) {
+			pline_The("venomous blade %s %s%c",spec_dbon_applies ? "strikes" : "nicks",
+				hittee, spec_dbon_applies ? '!' : '.');
+			return realizes_damage;
+		}
 	}
 
 	if (attacks(AD_STUN, otmp) && dieroll <= MB_MAX_DIEROLL) {

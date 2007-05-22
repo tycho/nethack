@@ -71,13 +71,17 @@ rank_of(lev, monnum, female)
 	register struct Role *role;
 	register int i;
 
-
 	/* Find the role */
 	for (role = (struct Role *) roles; role->name.m; role++)
 	    if (monnum == role->malenum || monnum == role->femalenum)
 	    	break;
 	if (!role->name.m)
 	    role = &urole;
+
+	/* Gratuitous hack */
+	if (u.ualign.type == A_CHAOTIC && Role_if(PM_KNIGHT)) {
+		role = &urole;
+	}
 
 	/* Find the rank */
 	for (i = xlev_to_rank((int)lev); i >= 0; i--) {

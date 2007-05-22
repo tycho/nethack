@@ -231,7 +231,7 @@ choke(food)	/* To a full belly all food is bad. (It.) */
 		if (!food || food->otyp != AMULET_OF_STRANGULATION)
 			return;
 	} else if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL) {
-			adjalign(-1);		/* gluttony is unchivalrous */
+			adjalign(-10);		/* gluttony is unchivalrous */
 			You_feel("like a glutton!");
 	}
 

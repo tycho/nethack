@@ -219,10 +219,9 @@ struct monst *mtmp;
 {
 	if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL &&
 	    (!mtmp->mcanmove || mtmp->msleeping ||
-	     (mtmp->mflee && !mtmp->mavenge)) &&
-	    u.ualign.record > -10) {
+	     (mtmp->mflee && !mtmp->mavenge))) {
 	    You("caitiff!");
-	    adjalign(-1);
+	    adjalign(-10);
 	}
 }
 
@@ -525,6 +524,7 @@ int thrown;
 	boolean unarmed = !uwep && !uarm && !uarms;
 #ifdef STEED
 	int jousting = 0;
+	int joustdmg;
 #endif
 	int wtype;
 	struct obj *monwep;
@@ -907,7 +907,7 @@ int thrown;
 	    use_skill(wtype, 1);
 	}
 
-	if (ispoisoned) {
+	if (ispoisoned || obj->oartifact == ART_DIRGE) {
 	    int nopoison = (10 - (obj->owt/10));            
 	    if(nopoison < 2) nopoison = 2;
 	    if Role_if(PM_SAMURAI) {
@@ -915,9 +915,9 @@ int thrown;
 		adjalign(-sgn(u.ualign.type));
 	    } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > -10)) {
 		You_feel("like an evil coward for using a poisoned weapon.");
-		adjalign(-1);
+		adjalign(Role_if(PM_KNIGHT) ? -10 : -1);
 	    }
-	    if (obj && !rn2(nopoison)) {
+	    if (obj && !rn2(nopoison) && obj->oartifact != ART_DIRGE) {
 		obj->opoisoned = FALSE;
 		Your("%s %s no longer poisoned.", xname(obj),
 		     otense(obj, "are"));
@@ -947,7 +947,18 @@ int thrown;
 
 #ifdef STEED
 	if (jousting) {
-	    tmp += d(2, (obj == uwep) ? 10 : 2);	/* [was in dmgval()] */
+		/*
+		 * jousting damage is a bit too strong in the early game
+		 * ...another change necessitated by making the Knight 100%
+		 * to ride his starting pony.
+		 *
+		 * While it's appropriate to consider that a fully-armored Knight
+		 * on a horse would be able to completely mop up the Mines,
+		 * game balance says there should be at least SOME effort
+		 * involved in getting to the luckstone.... 
+		 */
+		 joustdmg = 5 + u.ulevel/3;	 /* 2d5 -> 2d15 */
+	    tmp += d(2, (obj == uwep) ? joustdmg : 2);	/* [was in dmgval()] */
 	    You("joust %s%s",
 			 mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
 	    if (jousting < 0) {
