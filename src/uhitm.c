@@ -907,7 +907,7 @@ int thrown;
 	    use_skill(wtype, 1);
 	}
 
-	if (ispoisoned || obj->oartifact == ART_DIRGE) {
+	if (ispoisoned || (obj && obj->oartifact == ART_DIRGE)) {
 	    int nopoison = (10 - (obj->owt/10));            
 	    if(nopoison < 2) nopoison = 2;
 	    if Role_if(PM_SAMURAI) {
