@@ -132,6 +132,7 @@ int x, y;
 struct monst *mtmp;
 {
 	int resist_percentage;
+	boolean mresists;
 
 	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
 	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
@@ -143,11 +144,11 @@ struct monst *mtmp;
 	/* the smallest monsters always respect Elbereth;
 	 * more powerful things less so */
 	if (mtmp->m_lev < 10) {
-		resist_percentage = (mtmp->m_lev * 1.5) - 3;
+		resist_percentage = (int)(mtmp->m_lev * 1.5) - 3;
 	} else {
-		resist_percentage = (mtmp->m_lev * 2.0);
+		resist_percentage = (int)(mtmp->m_lev * 2.0);
 	}
-	boolean mresists = rn2(100) < resist_percentage;
+	mresists = rn2(100) < resist_percentage;
 
 	return (boolean)(sobj_at(SCR_SCARE_MONSTER, x, y)
 #ifdef ELBERETH
