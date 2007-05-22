@@ -488,7 +488,7 @@ toofar:
 	   mtmp->mconf || mtmp->mstun || (mtmp->minvis && !rn2(3)) ||
 	   (mdat->mlet == S_LEPRECHAUN && !ygold && (lepgold || rn2(2))) ||
 #endif
-	   (is_wanderer(mdat) && !rn2(4)) || (Conflict && !mtmp->iswiz) ||
+	   (is_wanderer(mdat) && !rn2(4)) || (Conflict && !mtmp->iswiz) || is_skittish(mdat) ||
 	   (!mtmp->mcansee && !rn2(4)) || mtmp->mpeaceful) {
 		/* Possibly cast an undirected spell if not attacking you */
 		/* note that most of the time castmu() will pick a directed
@@ -686,6 +686,14 @@ register int after;
 	    if(mmoved == -2) return(2);
 	    if(mmoved >= 0) goto postmov;
 	    mmoved = 0;
+	}
+
+	/* does this monster like to play keep-away? */
+	if (is_skittish(ptr)) {
+		if ((dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) < 7)) {
+			monflee(mtmp,2,FALSE,FALSE);
+			mmoved = 1;
+		}
 	}
 
 #ifdef MAIL
