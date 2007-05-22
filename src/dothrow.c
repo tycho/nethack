@@ -127,6 +127,11 @@ int shotlimit;
 	    case PM_SAMURAI:
 		if (obj->otyp == YA && uwep && uwep->otyp == YUMI) multishot++;
 		break;
+		 case PM_CAVEMAN:
+		if (uslinging()) {		/* give an extra rock to cavies */
+			multishot++;
+		}
+		break;
 	    default:
 		break;	/* No bonus */
 	    }
