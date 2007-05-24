@@ -24,6 +24,7 @@ moveloop()
     int abort_lev;
 #endif
     int moveamt = 0, wtcap = 0, change = 0;
+	 int regen_frequency;
     boolean didmove = FALSE, monscanmove = FALSE;
 
     flags.moonphase = phase_of_the_moon();
@@ -206,14 +207,21 @@ moveloop()
 			}
 		    }
 
-		    if ((u.uen < u.uenmax) &&
-			((wtcap < MOD_ENCUMBER &&
-			  (!(moves%((MAXULEV + 8 - u.ulevel) *
-				    (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
-			 || Energy_regeneration)) {
-			u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1,1);
-			if (u.uen > u.uenmax)  u.uen = u.uenmax;
-			flags.botl = 1;
+			 /* wizards regen slightly faster than others; energy regeneration is
+			  * faster than both; wizards + energy regeneration (Eye) is fastest of all */
+		    if (u.uen < u.uenmax && wtcap < MOD_ENCUMBER) {
+				if (Energy_regeneration) {
+					regen_frequency = (MAXULEV - (Role_if(PM_WIZARD) ? 5 : 0) - u.ulevel) * (Role_if(PM_WIZARD) ? 2 : 3) / 6;
+				} else {
+					regen_frequency = (MAXULEV + 8 - u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6;
+				}
+				if (!(moves % regen_frequency)) {
+					u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1,1);
+					if (u.uen > u.uenmax) {
+						u.uen = u.uenmax;
+					}
+					flags.botl = 1;
+				}
 		    }
 
 		    if(!u.uinvulnerable) {
