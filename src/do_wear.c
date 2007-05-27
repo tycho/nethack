@@ -1608,8 +1608,12 @@ find_ac()
 
 	/* Wearing racial armor is worth +x to the armor's AC; orcs get a slightly
 	 * larger bonus to compensate the crummy equipment, lack of equipment,
-	 * and the crummy orc itself :) */
-	racial_bonus = Race_if(PM_ORC) ? 2 : Race_if(PM_ELF) ? 1 : Race_if(PM_DWARF) ? 1 : 0;
+	 * and the crummy orc itself :) 
+	 * ...gnomes get the same bonus and get some custom crappy armor added
+	 * solely for their use
+	 */
+	racial_bonus = (Race_if(PM_ORC) || Race_if(PM_GNOME)) ? 2 : 
+							(Race_if(PM_ELF) || Race_if(PM_DWARF)) ? 1 : 0;
 
 	if(uarm) {
 		uac -= ARM_BONUS(uarm);
