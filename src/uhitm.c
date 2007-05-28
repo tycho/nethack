@@ -230,7 +230,7 @@ find_roll_to_hit(mtmp)
 register struct monst *mtmp;
 {
 	schar tmp;
-	int tmp2;
+	int tmp2,wepskill;
 
 	tmp = 1 + Luck + abon() + find_mac(mtmp) + u.uhitinc +
 		maybe_polyd(youmonst.data->mlevel, u.ulevel);
@@ -282,6 +282,20 @@ register struct monst *mtmp;
 	if (uwep && !Upolyd) {
 		tmp += hitval(uwep, mtmp);
 		tmp += weapon_hit_bonus(uwep);
+	}
+	/* Let's make UNSKILLED matter, shall we?  If you're UNSKILLED,
+	 * you never get more than an 75% chance to hit anything.
+	 * (we'll let the fisticuffs guys slide on this, they've got
+	 * a hard enough row to hoe anyway)
+	 */
+	if (uwep && !u.uswallow) {
+		wepskill = P_SKILL(u.twoweap ? P_TWO_WEAPON_COMBAT : weapon_type(uwep));
+		if ((wepskill == P_UNSKILLED || wepskill == P_ISRESTRICTED) && tmp > 15) {
+			tmp = 15;
+			if (!rn2(3)) {
+				You("aren't sure you're doing this the right way...");
+			}
+		}
 	}
 	return tmp;
 }

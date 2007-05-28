@@ -1105,36 +1105,53 @@ int
 weapon_hit_bonus(weapon)
 struct obj *weapon;
 {
-    int type, wep_type, skill, bonus = 0;
-    static const char bad_skill[] = "weapon_hit_bonus: bad skill %d";
+	int type, wep_type, skill, bonus, maxweight = 0;
+	static const char bad_skill[] = "weapon_hit_bonus: bad skill %d";
 
-    wep_type = weapon_type(weapon);
-    /* use two weapon skill only if attacking with one of the wielded weapons */
-    type = (u.twoweap && (weapon == uwep || weapon == uswapwep)) ?
-	    P_TWO_WEAPON_COMBAT : wep_type;
-    if (type == P_NONE) {
-	bonus = 0;
-    } else if (type <= P_LAST_WEAPON) {
-	switch (P_SKILL(type)) {
-	    default: impossible(bad_skill, P_SKILL(type)); /* fall through */
-	    case P_ISRESTRICTED:
-	    case P_UNSKILLED:   bonus = -4; break;
-	    case P_BASIC:       bonus =  0; break;
-	    case P_SKILLED:     bonus =  2; break;
-	    case P_EXPERT:      bonus =  3; break;
-	}
-    } else if (type == P_TWO_WEAPON_COMBAT) {
-	skill = P_SKILL(P_TWO_WEAPON_COMBAT);
-	if (P_SKILL(wep_type) < skill) skill = P_SKILL(wep_type);
-	switch (skill) {
-	    default: impossible(bad_skill, skill); /* fall through */
-	    case P_ISRESTRICTED:
-	    case P_UNSKILLED:   bonus = -9; break;
-	    case P_BASIC:	bonus = -7; break;
-	    case P_SKILLED:	bonus = -5; break;
-	    case P_EXPERT:	bonus = -3; break;
-	}
-    } else if (type == P_BARE_HANDED_COMBAT) {
+	wep_type = weapon_type(weapon);
+	/* use two weapon skill only if attacking with one of the wielded weapons */
+	type = (u.twoweap && (weapon == uwep || weapon == uswapwep)) ?
+		P_TWO_WEAPON_COMBAT : wep_type;
+	if (type == P_NONE) {
+		bonus = 0;
+	} else if (type <= P_LAST_WEAPON) {
+		switch (P_SKILL(type)) {
+		default: impossible(bad_skill, P_SKILL(type)); /* fall through */
+		case P_ISRESTRICTED:
+		case P_UNSKILLED:   bonus = -4; break;
+		case P_BASIC:       bonus =  0; break;
+		case P_SKILLED:     bonus =  2; break;
+		case P_EXPERT:      bonus =  3; break;
+		}
+	} else if (type == P_TWO_WEAPON_COMBAT) {
+		skill = P_SKILL(P_TWO_WEAPON_COMBAT);
+		if (P_SKILL(wep_type) < skill) skill = P_SKILL(wep_type);
+		switch (skill) {
+			default: impossible(bad_skill, skill); /* fall through */
+			case P_ISRESTRICTED:
+			case P_UNSKILLED:   bonus = -9; break;
+			case P_BASIC:	bonus = -7; break;
+			case P_SKILLED:	bonus = -5; break;
+			case P_EXPERT:	bonus = -3; break;
+		}
+		/* Heavy things are hard to use in your offhand unless you're
+		 * very good at what you're doing.
+		 *
+		 * TODO: re-fix this bonus when you fix the rest of the hit bonuses
+		 */
+		switch (P_SKILL(P_TWO_WEAPON_COMBAT)) {
+			default: impossible(bad_skill, P_SKILL(P_TWO_WEAPON_COMBAT));
+			case P_ISRESTRICTED:
+			case P_UNSKILLED:	 maxweight = 9; break;	 /* only cheap knives */
+			case P_BASIC:		 maxweight = 20; break;	 /* daggers */
+			case P_SKILLED:	 maxweight = 30; break;	 /* shortswords and spears */
+			case P_EXPERT:		 maxweight = 40; break;	 /* sabers and long swords */
+		}
+		if (uswapwep->owt > maxweight) {
+			pline("Your %s seem%s very unwieldy.",xname(uswapwep),uswapwep->quan == 1 ? "s" : "");
+			bonus = -30;
+		}
+	} else if (type == P_BARE_HANDED_COMBAT) {
 	/*
 	 *	       b.h.  m.a.
 	 *	unskl:	+1   n/a
@@ -1144,10 +1161,10 @@ struct obj *weapon;
 	 *	mastr:	+3    +6
 	 *	grand:	+3    +7
 	 */
-	bonus = P_SKILL(type);
-	bonus = max(bonus,P_UNSKILLED) - 1;	/* unskilled => 0 */
-	bonus = ((bonus + 2) * (martial_bonus() ? 2 : 1)) / 2;
-    }
+		bonus = P_SKILL(type);
+		bonus = max(bonus,P_UNSKILLED) - 1;	/* unskilled => 0 */
+		bonus = ((bonus + 2) * (martial_bonus() ? 2 : 1)) / 2;
+	}
 
 #ifdef STEED
 	/* KMH -- It's harder to hit while you are riding */
