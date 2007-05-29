@@ -248,6 +248,10 @@ static struct inv_sub { short race_pm, item_otyp, subs_otyp; } inv_subs[] = {
  /* { PM_DWARF, PICK_AXE,		DWARVISH_MATTOCK      }, */
     { PM_GNOME, BOW,			CROSSBOW	      },
     { PM_GNOME, ARROW,			CROSSBOW_BOLT	      },
+	 { PM_GNOME, HELMET,	GNOMISH_HELM },
+	 { PM_GNOME, LOW_BOOTS, GNOMISH_BOOTS },
+	 { PM_GNOME, HIGH_BOOTS, GNOMISH_BOOTS },
+	 { PM_GNOME, LEATHER_ARMOR, GNOMISH_SUIT },
     { NON_PM,	STRANGE_OBJECT,		STRANGE_OBJECT	      }
 };
 
@@ -782,6 +786,11 @@ u_init()
 	    break;
 
 	case PM_GNOME:
+		 /* Gnomes don't see how silly they really look */
+		 knows_object(GNOMISH_HELM);
+		 knows_object(GNOMISH_BOOTS);
+		 knows_object(GNOMISH_SUIT);
+		 knows_object(AKLYS);			  /* they're all carrying one! */
 	    break;
 
 	case PM_ORC:

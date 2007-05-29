@@ -395,6 +395,11 @@ register struct monst *mtmp;
 			(void)mongets(mtmp, (rn2(7) ? SPEAR : rn2(3) ?
 					     TRIDENT : STILETTO));
 		break;
+		 case S_GNOME:
+			if (rn2(10)) { (void)mongets(mtmp, GNOMISH_HELM); }
+			if (!rn2(3)) { (void)mongets(mtmp, GNOMISH_BOOTS); }
+			if (!rn2(4)) { (void)mongets(mtmp, GNOMISH_SUIT); }
+		break;
 	    case S_DEMON:
 		switch (mm) {
 		    case PM_BALROG:
