@@ -327,6 +327,7 @@ typedef unsigned char	uchar;
 #define TOURIST		/* Tourist players with cameras and Hawaiian shirts */
 /* difficulty */
 #define ELBERETH	/* Engraving the E-word repels monsters */
+#define SORTLOOT
 #define HPMON
 /* I/O */
 #define REDO		/* support for redoing last command - DGK */
