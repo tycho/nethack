@@ -59,6 +59,14 @@ A("Stormbringer",		RUNESWORD,
 	(SPFX_RESTR|SPFX_ATTK|SPFX_DEFN|SPFX_INTEL|SPFX_DRLI), 0, 0,
 	DRLI(5,2),	DRLI(0,0),	NO_CARY,	0, A_CHAOTIC, NON_PM, NON_PM, 8000L ),
 /*
+ * Lifestealer gets the same restrictions as Stormy, but it's designed
+ * to be generated in Vlad's hands anyway, so this isn't such a big deal.
+ * It's two-handed so players (hopefully) won't really want to use it...
+ */
+A("Lifestealer",		TWO_HANDED_SWORD,
+	(SPFX_RESTR|SPFX_ATTK|SPFX_DEFN|SPFX_INTEL|SPFX_DRLI), 0, 0,
+	DRLI(5,2),	DRLI(0,0),	NO_CARY,	0, A_CHAOTIC, NON_PM, NON_PM, 8000L ),
+/*
  *	Mjollnir will return to the hand of the wielder when thrown
  *	if the wielder is a Valkyrie wearing Gauntlets of Power.
  */

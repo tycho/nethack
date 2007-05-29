@@ -1035,6 +1035,7 @@ register int	mmflags;
 			mtmp = christen_monst(mtmp, rndghostname());
 	} else if (mndx == PM_VLAD_THE_IMPALER) {
 		mitem = CANDELABRUM_OF_INVOCATION;
+		(void)mongets(mtmp,TWO_HANDED_SWORD); /* give him Lifestealer so he has teeth, ha ha */
 	} else if (mndx == PM_CROESUS) {
 		mitem = TWO_HANDED_SWORD;
 	} else if (ptr->msound == MS_NEMESIS) {
@@ -1503,6 +1504,10 @@ register int otyp;
 
 	if (!otyp) return 0;
 	otmp = mksobj(otyp, TRUE, FALSE);
+	/* special case for Vlad's new sword */
+	if (mtmp->mnum == PM_VLAD_THE_IMPALER && otyp == TWO_HANDED_SWORD) {
+		otmp = mk_artifact(otmp,(aligntyp)A_NONE);
+	}
 	if (otmp) {
 	    if (mtmp->data->mlet == S_DEMON) {
 		/* demons never get blessed objects */
