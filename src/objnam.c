@@ -14,7 +14,6 @@ STATIC_DCL char *FDECL(strprepend,(char *,const char *));
 static boolean FDECL(wishymatch, (const char *,const char *,BOOLEAN_P));
 #endif
 static char *NDECL(nextobuf);
-static void FDECL(add_erosion_words, (struct obj *, char *));
 #ifdef SORTLOOT
 char * FDECL(xname2, (struct obj *, boolean));
 #endif
@@ -532,7 +531,7 @@ register struct obj *obj;
 			 (obj->known || obj->otyp == AMULET_OF_YENDOR));
 }
 
-static void
+void
 add_erosion_words(obj,prefix)
 struct obj *obj;
 char *prefix;

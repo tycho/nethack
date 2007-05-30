@@ -2893,6 +2893,8 @@ doapply()
 {
 	struct obj *obj;
 	register int res = 1;
+	int breakchance;
+	char eroded[256];
 	char class_list[MAXOCLASSES+2];
 
 	if(check_capacity((char *)0)) return (0);
@@ -3135,6 +3137,21 @@ doapply()
 	}
 	if (res && obj && obj->oartifact) arti_speak(obj);
 	nomul(0);
+	
+	/* Tools that aren't in perfect condition might break... 
+	 * ...but only tools, not the weapons */
+	if (!obj->oerodeproof && obj->otyp != BULLWHIP && !is_pole(obj) && !is_pick(obj)) {
+		breakchance = obj->blessed ? 100 : obj->cursed ? 5 : 10;
+		if (rn2(breakchance) < greatest_erosion(obj)) {
+			Strcpy(eroded,"");
+			add_erosion_words(obj,(char*)eroded);
+			Strcat(eroded,xname(obj));
+			pline("Your %s breaks!",eroded);
+			useup(obj);
+			return res;
+		}
+	}
+
 	return res;
 }
 
