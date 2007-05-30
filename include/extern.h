@@ -1360,6 +1360,7 @@ E char *FDECL(doname, (struct obj *));
 E boolean FDECL(not_fully_identified, (struct obj *));
 E char *FDECL(corpse_xname, (struct obj *,BOOLEAN_P));
 E char *FDECL(cxname, (struct obj *));
+E void FDECL(add_erosion_words, (struct obj *, char *));
 #ifdef SORTLOOT
 E char *FDECL(cxname2, (struct obj *));
 #endif
