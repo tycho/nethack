@@ -187,6 +187,7 @@ Boots_off()
 	case HIGH_BOOTS:
 	case JUMPING_BOOTS:
 	case KICKING_BOOTS:
+	case GNOMISH_BOOTS:
 		break;
 	default: impossible(unknown_type, c_boots, otyp);
     }
@@ -366,6 +367,7 @@ Helmet_off()
 	case DENTED_POT:
 	case ELVEN_LEATHER_HELM:
 	case DWARVISH_IRON_HELM:
+	case GNOMISH_HELM:
 	case ORCISH_HELM:
 	    break;
 	case DUNCE_CAP:
