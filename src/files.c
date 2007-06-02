@@ -534,6 +534,9 @@ clearlocks()
 	/* can't access maxledgerno() before dungeons are created -dlc */
 	for (x = (n_dgns ? maxledgerno() : 0); x >= 0; x--)
 		delete_levelfile(x);	/* not all levels need be present */
+#  ifdef WHEREIS_FILE
+	delete_whereis();
+#  endif
 #endif
 }
 
@@ -598,6 +601,48 @@ int fd;
 }
 #endif
 	
+#ifdef WHEREIS_FILE
+void
+touch_whereis()
+{
+	/* Write out our current level and branch to name.whereis
+	 *
+	 *	Could eventually bolt on all kinds of info, but this way
+	 *	at least something which wants to can scan for the games.
+	 *
+	 * For now this only works on Win32 and UNIX.  I'm too lazy
+	 * to sort out all the proper other-OS stuff.
+	 */
+
+	FILE* fp;
+	char whereis_file[255];
+	char whereis_work[255];
+
+#ifdef WIN32
+	Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
+#else
+	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
+#endif
+	Sprintf(whereis_work,"level %d\nbranch %d\n",u.uz.dlevel,u.uz.dnum);
+	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
+	fwrite(whereis_work,strlen(whereis_work),1,fp);
+	fclose(fp);
+
+}
+
+void
+delete_whereis()
+{
+	char whereis_file[255];
+#if defined (WIN32)
+	Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
+#else
+	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
+#endif
+	unlink(whereis_file);
+}
+#endif /* WHEREIS_FILE */
+
 /* ----------  END LEVEL FILE HANDLING ----------- */
 
 
