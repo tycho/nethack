@@ -964,6 +964,9 @@ boolean at_stairs, falling, portal;
 	boolean new = FALSE;	/* made a new level? */
 	struct monst *mtmp;
 	char whynot[BUFSZ];
+	FILE* fp;
+	char whereis_file[255];
+	char whereis_work[255];
 
 	if (dunlev(newlevel) > dunlevs_in_dungeon(newlevel))
 		newlevel->dlevel = dunlevs_in_dungeon(newlevel);
@@ -1356,6 +1359,11 @@ boolean at_stairs, falling, portal;
 	/* assume this will always return TRUE when changing level */
 	(void) in_out_region(u.ux, u.uy);
 	(void) pickup(1);
+
+#ifdef WHEREIS_FILE
+	touch_whereis();
+#endif
+
 }
 
 STATIC_OVL void

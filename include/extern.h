@@ -660,6 +660,10 @@ E boolean NDECL(recover_savefile);
 #ifdef HOLD_LOCKFILE_OPEN
 E void NDECL(really_close);
 #endif
+#ifdef WHEREIS_FILE
+E void NDECL(touch_whereis);
+E void NDECL(delete_whereis);
+#endif
 
 /* ### fountain.c ### */
 
