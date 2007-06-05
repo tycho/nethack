@@ -121,7 +121,6 @@ dosave0()
 	xchar ltmp;
 	d_level uz_save;
 	char whynot[BUFSZ];
-	char whereis_file[255];
 
 	if (!SAVEF[0])
 		return 0;
