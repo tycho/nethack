@@ -946,8 +946,9 @@ register struct trobj *trop;
 				/* Monks don't use weapons */
 				|| (otyp == SCR_ENCHANT_WEAPON &&
 				    Role_if(PM_MONK))
-				/* wizard patch -- they already have one */
-				|| (otyp == SPE_FORCE_BOLT &&
+				/* wizard patch -- they already have one
+				   and the polymorph wand lets wizards go nuts with spellbooks too easily */
+				|| ((otyp == SPE_FORCE_BOLT || otyp == WAN_POLYMORPH) &&
 				    Role_if(PM_WIZARD))
 				/* powerful spells are either useless to
 				   low level players or unbalancing; also

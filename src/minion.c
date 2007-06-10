@@ -15,6 +15,12 @@ struct monst *mon;
 	aligntyp atyp;
 	struct monst *mtmp;
 
+	/* Wielded Demonbane prevents demons from gating in others. */
+	if (uwep->oartifact == ART_DEMONBANE && is_demon(mon->data)) {
+		pline("%s looks puzzled for a moment.",Monnam(mon));
+		return;
+	}
+
 	if (mon) {
 	    ptr = mon->data;
 	    atyp = (ptr->maligntyp==A_NONE) ? A_NONE : sgn(ptr->maligntyp);
