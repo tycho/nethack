@@ -457,9 +457,10 @@ display_warning(mon)
     register struct monst *mon;
 {
     int x = mon->mx, y = mon->my;
-    int wl = (int) (mon->m_lev / 4);
+    int wl = (int)((mon->m_lev - u.ulevel) / 3) + 2;
     int glyph;
 
+	 if (wl < 1) wl = 1;	/* won't show up right */
     if (mon_warning(mon)) {
         if (wl > WARNCOUNT - 1) wl = WARNCOUNT - 1;
 	/* 3.4.1: this really ought to be rn2(WARNCOUNT), but value "0"
