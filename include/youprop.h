@@ -79,6 +79,12 @@
 #define EStone_resistance	u.uprops[STONE_RES].extrinsic
 #define Stone_resistance	(EStone_resistance || resists_ston(&youmonst))
 
+#define EWere_resistance  u.uprops[WERE_RES].extrinsic
+#define Were_resistance	  (EWere_resistance)
+
+#define EBlind_resistance  u.uprops[BLIND_RES].extrinsic
+#define Blind_resistance	(EBlind_resistance)
+
 
 /*** Troubles ***/
 /* Pseudo-property */
