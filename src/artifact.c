@@ -16,6 +16,9 @@ STATIC_DCL struct artifact artilist[];
  *	  the contents, just the total size.
  */
 
+/*#define DEBUG*/
+/* Uncomment for some complaint messages */
+
 extern boolean notonhead;	/* for long worms */
 
 #define get_artifact(o) \
@@ -375,10 +378,14 @@ register struct obj *otmp;
 				mask = (weap->defn & SPDF_CONFUSE);
 				break;
 			case AD_DISE:
+			case AD_DRIN:
 				mask = 0;	/* none yet */
 				break;
 			default:
+#ifdef DEBUG
+				/* Don't whine about this unless we really want to */
 				pline("strange attack type in defends(): %d",adtyp);
+#endif
 				return FALSE;
 		}
 		return (mask > 0);  /* straight cast will fail */
