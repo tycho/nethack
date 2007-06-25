@@ -714,11 +714,12 @@ xchar x, y;	/* clone's preferred location or 0 (near mon) */
 #ifndef GOLDOBJ
 	m2->mgold = 0L;
 #endif
-	/* Max HP the same, but current HP halved for both.  The caller
-	 * might want to override this by halving the max HP also.
-	 * When current HP is odd, the original keeps the extra point.
+	/* Max HP remaining the same allows infinite pudding farming
+	 * so let's go ahead and chop both in half as well, so eventually
+	 * there'll be a finite end to things...
 	 */
-	m2->mhpmax = mon->mhpmax;
+	m2->mhpmax = mon->mhpmax / 2;
+	mon->mhpmax -= m2->mhpmax;
 	m2->mhp = mon->mhp / 2;
 	mon->mhp -= m2->mhp;
 
