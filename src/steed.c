@@ -355,8 +355,10 @@ exercise_steed()
 	if (!u.usteed)
 		return;
 
-	/* It takes many turns of riding to exercise skill */
-	if (u.urideturns++ >= 100) {
+	/* It takes many turns of riding to exercise skill...
+	 * but for god's sake, 2,000 turns on the horse just to get to Basic?
+	 * Let's clean that up a bit. */
+	if (u.urideturns++ >= 50) {
 	    u.urideturns = 0;
 	    use_skill(P_RIDING, 1);
 	}

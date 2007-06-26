@@ -3140,7 +3140,8 @@ doapply()
 	
 	/* Tools that aren't in perfect condition might break... 
 	 * ...but only tools, not the weapons */
-	if (!obj->oerodeproof && obj->otyp != BULLWHIP && !is_pole(obj) && !is_pick(obj)) {
+	if (obj && !obj->oerodeproof && obj->otyp != BULLWHIP && 
+			!is_pole(obj) && !is_pick(obj)) {
 		breakchance = obj->blessed ? 100 : obj->cursed ? 5 : 10;
 		if (rn2(breakchance) < greatest_erosion(obj)) {
 			Strcpy(eroded,"");
