@@ -64,7 +64,7 @@ STATIC_DCL int FDECL(isqrt, (int));
  *	Bar fugue/berserker (SPE_HASTE_SELF)
  *	Cav born to dig (SPE_DIG)
  *	Hea to heal (SPE_CURE_SICKNESS)
- *	Kni to turn back evil (SPE_TURN_UNDEAD)
+ *	Kni to lay on hands (SPE_EXTRA_HEALING)
  *	Mon to preserve their abilities (SPE_RESTORE_ABILITY)
  *	Pri to bless (SPE_REMOVE_CURSE)
  *	Ran to hide (SPE_INVISIBILITY)
