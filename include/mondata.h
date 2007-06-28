@@ -190,7 +190,6 @@
 
 #define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
 				(is_domestic(ptr) || (Role_if(PM_CAVEMAN) && (ptr) == &mons[PM_MASTODON]) || \
-				 ((obj)->otyp == BANANA && \
-				  ((ptr) == &mons[PM_MONKEY] || (ptr) == &mons[PM_APE] || (ptr) == &mons[PM_CARNIVOROUS_APE]))))
+				 ((obj)->otyp == BANANA && ((ptr) == &mons[PM_MONKEY] || (ptr) == &mons[PM_APE]))))
 
 #endif /* MONDATA_H */
