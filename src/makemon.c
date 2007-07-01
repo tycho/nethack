@@ -208,10 +208,12 @@ register struct monst *mtmp;
 				  w2 = BOW;
 				  m_initthrow(mtmp,ARROW,30);
 
-				  /* wands of death should be very rare: 1 in 100 or so */
+				  /* wands of death should be very rare: 1 in 400 or so
+					* since we're making 8 wands per castle at this point,
+					* we need to be sure it's _super_ rare that one shows up */
 				  do {
 					  randwand = rn2(7);
-				  } while (randwand > 5 && rn2(14));
+				  } while (randwand > 5 && rn2(50));
 
 				  switch (randwand) {
 					  case 1:
