@@ -239,7 +239,7 @@ int curse_bless;
 	     *	7 : 100     100
 	     */
 	    n = (int)obj->recharged;
-	    if (n > 0 && (obj->otyp == WAN_WISHING ||
+	    if (n > 0 && (obj->otyp == WAN_WISHING || obj->otyp == WAN_DEATH ||
 		    (n * n * n > rn2(7*7*7)))) {	/* recharge_limit */
 		wand_explode(obj);
 		return;
