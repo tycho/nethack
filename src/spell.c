@@ -956,6 +956,14 @@ boolean atme;
 		if (!jump(max(role_skill,1)))
 			pline(nothing_happens);
 		break;
+	case SPE_DETECT_FOOT:
+		pline("Your nose tingles, and you smell feet!");
+		if (nolimbs(youmonst.data) || slithy(youmonst.data)) {
+			pline("You aren't sure where the feet might be, though.");
+		} else {
+			pline("You see here a %s on the end of your %s.",body_part(FOOT),body_part(LEG));
+		}
+		break;
 	default:
 		impossible("Unknown spell %d attempted.", spell);
 		obfree(pseudo, (struct obj *)0);
