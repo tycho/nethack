@@ -2004,7 +2004,7 @@ struct obj *tstone;
 	    streak_color = "silvery";
 	    break;
 				case IRON:
-					if (tstone->otyp != TOUCHSTONE) {
+					if (tstone->otyp == FLINT) {
 						make_sparks = TRUE;
 					}
 	default:
@@ -2023,10 +2023,10 @@ struct obj *tstone;
     Sprintf(stonebuf, "stone%s", plur(tstone->quan));
     if (do_scratch) {
 	 	if (!make_sparks) {
-	pline("You make %s%sscratch marks on the %s.",
+			pline("You make %s%sscratch marks on the %s.",
 	      streak_color ? streak_color : (const char *)"",
 	      streak_color ? " " : "", stonebuf);
-		} else {
+		} else if (tstone->otyp == FLINT) {
 			/* Iron and flint make sparks. Non-intelligent creatures
 			 * fear fire.  So anything next to Our Hero(tm) that isn't
 			 * intelligent should have a chance of becoming afraid. */
