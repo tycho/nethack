@@ -672,3 +672,53 @@ MONSTER:'V',random,random
 MONSTER:'V',random,random
 MONSTER:'V',random,random
 STAIR:(63,15),up
+
+
+#	The "fill" level for Gehennom
+#
+#	This level is used to fill out any levels not occupied by
+#	specific levels as defined above.
+#
+MAZE: "hellfill" , ' '
+FLAGS: noteleport
+INIT_MAP: '.',' ',true,true,unlit,true
+NOMAP
+#
+#  always put stairs relatively far apart
+#
+STAIR:levregion(01,01,10,19),(70,01,76,19), up
+STAIR:levregion(70,01,76,19),(01,01,10,19), down
+#
+OBJECT: random, random, random
+OBJECT: random, random, random
+OBJECT: random, random, random
+OBJECT: random, random, random
+OBJECT: random, random, random
+OBJECT: random, random, random
+OBJECT: random, random, random
+OBJECT: random, random, random
+#
+MONSTER:'V',random,random,hostile
+MONSTER:'V',random,random,hostile
+MONSTER:'D',random,random,hostile
+MONSTER:'M',random,random,hostile
+MONSTER:'&',random,random,hostile
+MONSTER:'&',random,random,hostile
+MONSTER:'H',random,random,hostile
+MONSTER:random,random,random,hostile
+MONSTER:random,random,random,hostile
+MONSTER:random,random,random,hostile
+#
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+TRAP: random, random
+
