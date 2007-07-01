@@ -167,6 +167,7 @@ register struct monst *mtmp;
 	register struct permonst *ptr = mtmp->data;
 	register int mm = monsndx(ptr);
 	struct obj *otmp;
+	int randwand;
 
 #ifdef REINCARNATION
 	if (Is_rogue_level(&u.uz)) return;
@@ -200,6 +201,44 @@ register struct monst *mtmp;
 			  break;
 			case PM_SERGEANT:
 			  w1 = rn2(2) ? FLAIL : MACE;
+			  /* The sergeants in the towers get bows and wands so
+				* they can shoot at you while you're piddling with the
+				* drawbridge.  This should suck a lot if you're low level. */
+			  if (Is_stronghold(&u.uz)) {
+				  w2 = BOW;
+				  m_initthrow(mtmp,ARROW,30);
+
+				  /* wands of death should be very rare: 1 in 100 or so */
+				  do {
+					  randwand = rn2(7);
+				  } while (randwand > 5 && rn2(14));
+
+				  switch (randwand) {
+					  case 1:
+						  randwand = WAN_MAGIC_MISSILE;
+						  break;
+					  case 2:
+						  randwand = WAN_SLEEP;
+						  break;
+					  case 3:
+						  randwand = WAN_FIRE;
+						  break;
+					  case 4:
+						  randwand = WAN_COLD;
+						  break;
+					  case 5:
+						  randwand = WAN_LIGHTNING;
+						  break;
+					  case 6:
+						  randwand = WAN_DEATH;
+						  break;
+					  case 0:
+					  default:
+						  randwand = WAN_STRIKING;
+						  break;
+				  }
+				  (void)mongets(mtmp, randwand);
+			  }
 			  break;
 			case PM_LIEUTENANT:
 			  w1 = rn2(2) ? BROADSWORD : LONG_SWORD;
@@ -207,7 +246,7 @@ register struct monst *mtmp;
 			case PM_CAPTAIN:
 			case PM_WATCH_CAPTAIN:
 			  w1 = rn2(2) ? LONG_SWORD : SILVER_SABER;
-			  mongets(mtmp, SKELETON_KEY);
+			  (void)mongets(mtmp, SKELETON_KEY);
 			  break;
 			default:
 			  if (!rn2(4)) w1 = DAGGER;
