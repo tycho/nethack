@@ -465,6 +465,8 @@ struct levelflags {
 
 	Bitfield(is_cavernous_lev,1);
 	Bitfield(arboreal, 1);		/* Trees replace rock */
+	/* and where it is written "ad aquarium"... */
+	Bitfield(vault_is_aquarium,1);
 };
 
 typedef struct

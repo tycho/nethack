@@ -487,8 +487,11 @@ int trap_type;
 		    if (ttmp) {
 			if (trap_type != ROCKTRAP) ttmp->once = 1;
 			if (trap_engravings[trap_type]) {
-			    make_engr_at(xx, yy-dy,
-				     trap_engravings[trap_type], 0L, DUST);
+				if (level.flags.vault_is_aquarium) {
+					make_engr_at(xx, yy-dy,"ad aquarium",0L, DUST);
+				} else {
+			    make_engr_at(xx, yy-dy, trap_engravings[trap_type], 0L, DUST);
+				}
 			    wipe_engr_at(xx, yy-dy, 5); /* age it a little */
 			}
 		    }

@@ -1478,10 +1478,22 @@ boolean prefilled;
 
 	    switch (croom->rtype) {
 		case VAULT:
-		    for (x=croom->lx;x<=croom->hx;x++)
-			for (y=croom->ly;y<=croom->hy;y++)
-			    (void) mkgold((long)rn1(abs(depth(&u.uz))*100, 51), x, y);
-		    break;
+			for (x=croom->lx;x<=croom->hx;x++)
+				for (y=croom->ly;y<=croom->hy;y++)
+					(void) mkgold((long)rn1(abs(depth(&u.uz))*100, 51), x, y);
+			if (rn2(3)) {
+				/* it's an aquarium!  :) */
+				level.flags.vault_is_aquarium = TRUE;
+				create_feature(0,0,croom,POOL);
+				create_feature(1,1,croom,POOL);
+				if (!rn2(3)) {
+					(void)makemon(&mons[PM_GIANT_EEL],croom->lx,croom->ly,NO_MM_FLAGS);
+				}
+				if (!rn2(3)) {
+					(void)makemon(&mons[PM_GIANT_EEL],croom->hx,croom->hy,NO_MM_FLAGS);
+				}
+			}
+			break;
 		case COURT:
 		case ZOO:
 		case BEEHIVE:
