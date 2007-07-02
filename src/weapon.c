@@ -1,3 +1,4 @@
+
 /*	SCCS Id: @(#)weapon.c	3.4	2002/11/07	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -1138,12 +1139,14 @@ struct obj *weapon;
 		/* Heavy things are hard to use in your offhand unless you're
 		 * very good at what you're doing.
 		 *
-		 * TODO: re-fix this bonus when you fix the rest of the hit bonuses
+		 * No real need to restrict unskilled here since knives and such
+		 * are very hard to find and people who are restricted can't
+		 * #twoweapon even at unskilled...
 		 */
 		switch (P_SKILL(P_TWO_WEAPON_COMBAT)) {
 			default: impossible(bad_skill, P_SKILL(P_TWO_WEAPON_COMBAT));
 			case P_ISRESTRICTED:
-			case P_UNSKILLED:	 maxweight = 9; break;	 /* only cheap knives */
+			case P_UNSKILLED:
 			case P_BASIC:		 maxweight = 20; break;	 /* daggers */
 			case P_SKILLED:	 maxweight = 30; break;	 /* shortswords and spears */
 			case P_EXPERT:		 maxweight = 40; break;	 /* sabers and long swords */
