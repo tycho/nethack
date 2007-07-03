@@ -79,7 +79,7 @@ A("Cleaver",			BATTLE_AXE,
 
 A("Grimtooth",			ORCISH_DAGGER,
 	SPFX_RESTR, 0, 0,
-	PHYS(5,6),	SPDF_NONE,	NO_CARY,	0, A_CHAOTIC, NON_PM, PM_ORC, 300L ),
+	PHYS(5,6),	SPDF_NONE,	NO_CARY,	0, A_CHAOTIC, NON_PM, PM_ORC, 600L ),
 /*
  *	Orcrist and Sting have same alignment as elves.
  *	The combination of SPFX_WARN and M2_something on an artifact
@@ -112,7 +112,7 @@ A("Fire Brand",			LONG_SWORD,
 
 A("Dragonbane",			SPEAR,
 	(SPFX_WARN|SPFX_RESTR|SPFX_DCLAS), 0, S_DRAGON,
-	PHYS(5,4),	SPDF_ELEMENTAL,	NO_CARY,	0, A_NONE, NON_PM, NON_PM, 500L ),
+	PHYS(5,4),	SPDF_ELEMENTAL,	NO_CARY,	0, A_NONE, NON_PM, NON_PM, 1500L ),
 
 A("Demonbane",			SILVER_MACE,
 	(SPFX_WARN|SPFX_RESTR|SPFX_DCLAS), 0, S_DEMON,
@@ -128,15 +128,15 @@ A("Grayswandir",		SILVER_SABER,
 
 A("Giantslayer",		SLING,
 	(SPFX_WARN|SPFX_RESTR|SPFX_DCLAS|SPFX_STR), 0, S_GIANT,
-	PHYS(5,8),	SPDF_NONE,	NO_CARY,	0, A_NEUTRAL, NON_PM, NON_PM, 200L ),
+	PHYS(5,8),	SPDF_NONE,	NO_CARY,	0, A_NEUTRAL, NON_PM, NON_PM, 1200L ),
 
 A("Ogresmasher",		WAR_HAMMER,
 	(SPFX_WARN|SPFX_RESTR|SPFX_DCLAS|SPFX_CON), 0, S_OGRE,
-	PHYS(5,4),	SPDF_NONE,	NO_CARY,	0, A_NONE, NON_PM, NON_PM, 200L ),
+	PHYS(5,4),	SPDF_NONE,	NO_CARY,	0, A_NONE, NON_PM, NON_PM, 1200L ),
 
 A("Trollsbane",			MORNING_STAR,
 	(SPFX_WARN|SPFX_RESTR|SPFX_DCLAS|SPFX_REGEN), 0, S_TROLL,
-	PHYS(5,4),	SPDF_NONE,	NO_CARY,	0, A_NONE, NON_PM, NON_PM, 200L ),
+	PHYS(5,4),	SPDF_NONE,	NO_CARY,	0, A_NONE, NON_PM, NON_PM, 1200L ),
 /*
  *	Two problems:  1) doesn't let trolls regenerate heads,
  *	2) doesn't give unusual message for 2-headed monsters (but
@@ -163,7 +163,7 @@ A("Sunsword",			SILVER_LONG_SWORD,
 
 A("Keolewa",CLUB,
 	SPFX_RESTR, 0, 0,
-	PHYS(5,6), SPDF_NONE, NO_CARY, 0, A_NEUTRAL, PM_CAVEMAN, NON_PM, 600L ),
+	PHYS(5,6), SPDF_NONE, NO_CARY, 0, A_NEUTRAL, PM_CAVEMAN, NON_PM, 1000L ),
 
 /*
  *	The artifacts for the quest dungeon, all self-willed.
