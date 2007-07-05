@@ -478,6 +478,10 @@ domonability()
 STATIC_PTR int
 enter_explore_mode()
 {
+	/* Solely changed due to public-serverness. */
+	pline("Explore mode has been deactivated.  Sorry.");
+	return 0;
+
 	if(!discover && !wizard) {
 		pline("Beware!  From explore mode there will be no return to normal game.");
 		if (yn("Do you want to enter explore mode?") == 'y') {
