@@ -137,10 +137,12 @@ void
 u_slow_down()
 {
 	HFast = 0L;
-	if (!Fast)
+	if (!Fast && !Slow)
 	    You("slow down.");
-	else	/* speed boots */
+	else if (!Slow)	/* speed boots */
 	    Your("quickness feels less natural.");
+	else
+		Your("sluggishness feels more natural.");
 	exercise(A_DEX, FALSE);
 }
 
