@@ -623,7 +623,7 @@ touch_whereis()
 #else
 	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
 #endif
-	Sprintf(whereis_work,"level %d\nbranch %d\n",u.uz.dlevel,u.uz.dnum);
+	Sprintf(whereis_work,"level %d\nbranch %d\n",depth(&u.uz),u.uz.dnum);
 	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
 	fwrite(whereis_work,strlen(whereis_work),1,fp);
 	fclose(fp);

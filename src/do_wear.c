@@ -111,11 +111,17 @@ Boots_on()
 	case SPEED_BOOTS:
 		/* Speed boots are still better than intrinsic speed, */
 		/* though not better than potion speed */
+		/* Can also safely assume we're not wearing molasses boots */
 		if (!oldprop && !(HFast & TIMEOUT)) {
 			makeknown(uarmf->otyp);
 			You_feel("yourself speed up%s.",
 				(oldprop || HFast) ? " a bit more" : "");
 		}
+		break;
+	case BOOTS_OF_MOLASSES:
+		/* Only one way to be slow right now. */
+		makeknown(uarmf->otyp);
+		You_feel("yourself slow down.");
 		break;
 	case ELVEN_BOOTS:
 		if (!oldprop && !HStealth && !BStealth) {
@@ -157,6 +163,10 @@ Boots_off()
 			You_feel("yourself slow down%s.",
 				Fast ? " a bit" : "");
 		}
+		break;
+	case BOOTS_OF_MOLASSES:
+		makeknown(otyp);
+		You_feel("yourself speed up.");
 		break;
 	case WATER_WALKING_BOOTS:
 		if (is_pool(u.ux,u.uy) && !Levitation && !Flying &&
