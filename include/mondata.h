@@ -18,6 +18,8 @@
 #define resists_poison(mon)	(((mon)->mintrinsics & MR_POISON) != 0)
 #define resists_acid(mon)	(((mon)->mintrinsics & MR_ACID) != 0)
 #define resists_ston(mon)	(((mon)->mintrinsics & MR_STONE) != 0)
+#define resists_sick(mon)  ((mon)->data->mlet == S_FUNGUS || \
+										(mon)->data == &mons[PM_GHOUL])
 
 #define is_lminion(mon)		(is_minion((mon)->data) && \
 				 (mon)->data->maligntyp >= A_COALIGNED && \

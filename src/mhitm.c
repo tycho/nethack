@@ -1386,6 +1386,15 @@ int mdead;
 		if(canseemon(magr))
 		    pline("%s is suddenly very hot!", Monnam(magr));
 		break;
+		 case AD_DISE:
+			if (canseemon(magr)) {
+				pline("%s is covered with tiny spores!", Monnam(magr));
+			}
+			if (resists_sick(magr)) {
+				pline("%s doesn't seem to notice the spores.", Monnam(magr));
+				tmp = 0;
+			} 
+		break;
 	    case AD_ELEC:
 		if (resists_elec(magr)) {
 		    if (canseemon(magr)) {
