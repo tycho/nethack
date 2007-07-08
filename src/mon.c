@@ -479,7 +479,7 @@ register struct monst *mtmp;
 	/* but eels have a difficult time outside */
 	if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz)) {
 	    if(mtmp->mhp > 1) mtmp->mhp--;
-	    monflee(mtmp, 2, FALSE, FALSE);
+	    monflee(mtmp, 2, FALSE, mtmp->mflee ? FALSE : TRUE);
 	}
     }
     return (0);
