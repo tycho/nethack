@@ -268,7 +268,7 @@
 #endif
 #define tgetch getchar
 
-#define SHELL		/* do not delete the '!' command */
+/* #define SHELL		do not delete the '!' command */
 
 #include "system.h"
 
