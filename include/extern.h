@@ -1997,6 +1997,9 @@ E void NDECL(timer_sanity_check);
 /* ### topten.c ### */
 
 E void FDECL(topten, (int));
+#ifdef LOGFILE
+E void FDECL(write_log_entry, (int));
+#endif
 E void FDECL(prscore, (int,char **));
 E struct obj *FDECL(tt_oname, (struct obj *));
 

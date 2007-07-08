@@ -240,6 +240,75 @@ struct toptenentry *tt;
 	dealloc_ttentry(tt);
 }
 
+
+#ifdef LOGFILE
+void
+write_log_entry(how)
+int how;
+{
+	int uid = getuid();
+	register struct toptenentry *t0, *tprev;
+	FILE *lfile;
+
+	t0 = newttentry();
+	t0->ver_major = VERSION_MAJOR;
+	t0->ver_minor = VERSION_MINOR;
+	t0->patchlevel = PATCHLEVEL;
+	t0->points = u.urexp;
+	t0->deathdnum = u.uz.dnum;
+	t0->deathlev = observable_depth(&u.uz);
+	t0->maxlvl = deepest_lev_reached(TRUE);
+	t0->hp = u.uhp;
+	t0->maxhp = u.uhpmax;
+	t0->deaths = u.umortality;
+	t0->uid = uid;
+	(void) strncpy(t0->plrole, urole.filecode, ROLESZ);
+	t0->plrole[ROLESZ] = '\0';
+	(void) strncpy(t0->plrace, urace.filecode, ROLESZ);
+	t0->plrace[ROLESZ] = '\0';
+	(void) strncpy(t0->plgend, genders[flags.female].filecode, ROLESZ);
+	t0->plgend[ROLESZ] = '\0';
+	(void) strncpy(t0->plalign, aligns[1-u.ualign.type].filecode, ROLESZ);
+	t0->plalign[ROLESZ] = '\0';
+	(void) strncpy(t0->name, plname, NAMSZ);
+	t0->name[NAMSZ] = '\0';
+	t0->death[0] = '\0';
+	switch (killer_format) {
+		default: impossible("bad killer format?");
+		case KILLED_BY_AN:
+			Strcat(t0->death, killed_by_prefix[how]);
+			(void) strncat(t0->death, an(killer),
+						DTHSZ-strlen(t0->death));
+			break;
+		case KILLED_BY:
+			Strcat(t0->death, killed_by_prefix[how]);
+			(void) strncat(t0->death, killer,
+						DTHSZ-strlen(t0->death));
+			break;
+		case NO_KILLER_PREFIX:
+			(void) strncat(t0->death, killer, DTHSZ);
+			break;
+	}
+	t0->birthdate = yyyymmdd(u.ubirthday);
+	t0->deathdate = yyyymmdd((time_t)0L);
+	t0->tt_next = 0;
+#ifdef UPDATE_RECORD_IN_PLACE
+	t0->fpos = -1L;
+#endif
+
+	if (lock_file(LOGFILE, SCOREPREFIX, 10)) {
+	    if(!(lfile = fopen_datafile(LOGFILE, "a", SCOREPREFIX))) {
+			 /* should do something here */
+	    } else {
+		writeentry(lfile, t0);
+		(void) fclose(lfile);
+	    }
+	    unlock_file(LOGFILE);
+	}
+
+}
+#endif
+
 void
 topten(how)
 int how;
@@ -337,18 +406,6 @@ int how;
 #ifdef UPDATE_RECORD_IN_PLACE
 	t0->fpos = -1L;
 #endif
-
-#ifdef LOGFILE		/* used for debugging (who dies of what, where) */
-	if (lock_file(LOGFILE, SCOREPREFIX, 10)) {
-	    if(!(lfile = fopen_datafile(LOGFILE, "a", SCOREPREFIX))) {
-		HUP raw_print("Cannot open log file!");
-	    } else {
-		writeentry(lfile, t0);
-		(void) fclose(lfile);
-	    }
-	    unlock_file(LOGFILE);
-	}
-#endif /* LOGFILE */
 
 	if (wizard || discover) {
 	    if (how != PANICKED) HUP {
