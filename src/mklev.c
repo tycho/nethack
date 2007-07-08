@@ -650,7 +650,11 @@ makelevel()
 	    } else if(In_hell(&u.uz) ||
 		  (rn2(5) && u.uz.dnum == medusa_level.dnum
 			  && depth(&u.uz) > depth(&medusa_level))) {
-		    makemaz("hellfill");
+			 if (!Invocation_lev(&u.uz)) {
+				makemaz("hellfill");
+			 } else {
+				 makemaz("");
+			 }
 		    return;
 	    }
 	}
