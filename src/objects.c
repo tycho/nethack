@@ -483,7 +483,7 @@ BOOTS("low boots", "walking shoes",
 BOOTS("iron shoes", "hard shoes",
 		0, 0,  0,	   7, 2, 50, 16,  8, 0, IRON, HI_METAL),
 BOOTS("gnomish boots", "little black boots",
-		0, 0,  0,	   7, 2, 10, 16,  9, 0, LEATHER, CLR_BLACK),
+		0, 0,  0,	   7, 2, 10, 16,  10, 0, LEATHER, CLR_BLACK),
 BOOTS("high boots", "jackboots",
 		0, 0,  0,	  13, 2, 20, 12,  8, 0, LEATHER, HI_LEATHER),
 /* With shuffled appearances... */
