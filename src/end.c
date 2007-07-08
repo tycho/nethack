@@ -692,6 +692,10 @@ die:
 
 	if (have_windows) display_nhwindow(WIN_MESSAGE, FALSE);
 
+#ifdef LOGFILE
+	write_log_entry(how);
+#endif
+
 	if (strcmp(flags.end_disclose, "none") && how != PANICKED)
 		disclose(how, taken);
 	/* finish_paybill should be called after disclosure but before bones */
