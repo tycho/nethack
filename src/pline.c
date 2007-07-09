@@ -399,7 +399,6 @@ ustatusline()
 	if (u.utrap)		Strcat(info, ", trapped");
 	if (Fast)		Strcat(info, Very_fast ?
 						", very fast" : ", fast");
-	if (Slow)		Strcat(info, ", slow");
 	if (u.uundetected)	Strcat(info, ", concealed");
 	if (Invis)		Strcat(info, ", invisible");
 	if (u.ustuck) {
