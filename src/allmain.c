@@ -104,17 +104,20 @@ moveloop()
 		    } else
 #endif
 		    {
-			moveamt = youmonst.data->mmove;
+				moveamt = youmonst.data->mmove;
 
-			if (Very_fast) {	/* speed boots or potion */
-			    /* average movement is 1.67 times normal */
-			    moveamt += NORMAL_SPEED / 2;
-			    if (rn2(3) == 0) moveamt += NORMAL_SPEED / 2;
-			} else if (Fast) {
-			    /* average movement is 1.33 times normal */
-			    if (rn2(3) != 0) moveamt += NORMAL_SPEED / 2;
-			}
-		    }
+				if (Very_fast) {	/* speed boots or potion */
+					/* average movement is 1.67 times normal */
+					moveamt += NORMAL_SPEED / 2;
+					if (rn2(3) == 0) moveamt += NORMAL_SPEED / 2;
+				} else if (Fast) {
+					/* average movement is 1.33 times normal */
+					if (rn2(3) != 0) moveamt += NORMAL_SPEED / 2;
+				} else if (Slow) {
+					/* average movement noticeably slower */
+					if (rn2(3) != 0) moveamt -= NORMAL_SPEED / 2;
+				}
+			 }
 
 		    switch (wtcap) {
 			case UNENCUMBERED: break;
