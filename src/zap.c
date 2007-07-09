@@ -2012,9 +2012,9 @@ boolean ordinary;
 
 		case WAN_SPEED_MONSTER:
 		    if (!(HFast & INTRINSIC)) {
-			if (!Fast)
+			if (!Fast && !Slow)
 			    You("speed up.");
-			else
+			else if (!Slow)
 			    Your("quickness feels more natural.");
 			makeknown(WAN_SPEED_MONSTER);
 			exercise(A_DEX, TRUE);

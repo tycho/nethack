@@ -735,10 +735,10 @@ peffects(otmp)
 			break;
 		} /* and fall through */
 	case SPE_HASTE_SELF:
-		if(!Very_fast) /* wwf@doe.carleton.ca */
+		if(!Very_fast && !Slow) /* wwf@doe.carleton.ca */
 			You("are suddenly moving %sfaster.",
 				Fast ? "" : "much ");
-		else {
+		else if (!Slow) {
 			Your("%s get new energy.",
 				makeplural(body_part(LEG)));
 			unkn++;
@@ -1270,7 +1270,7 @@ register struct obj *obj;
 		} else You("yawn.");
 		break;
 	case POT_SPEED:
-		if (!Fast) Your("knees seem more flexible now.");
+		if (!Fast && !Slow) Your("knees seem more flexible now.");
 		incr_itimeout(&HFast, rnd(5));
 		exercise(A_DEX, TRUE);
 		break;
