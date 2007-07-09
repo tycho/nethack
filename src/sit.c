@@ -426,9 +426,7 @@ attrcurse()			/* remove a random INTRINSIC ability */
 		}
 	case 8 : if (HFast & INTRINSIC) {
 			HFast &= ~INTRINSIC;
-			if (!Slow) {
-				You_feel("slower.");
-			}
+			You_feel("slower.");
 			break;
 		}
 	case 9 : if (HStealth & INTRINSIC) {

@@ -413,15 +413,14 @@ register struct monst *mtmp;
 		break;
 
 	    case S_CENTAUR:
-		if (rn2(2)) {
-		    if(ptr == &mons[PM_FOREST_CENTAUR]) {
-			(void)mongets(mtmp, BOW);
-			m_initthrow(mtmp, ARROW, 12);
-		    } else {
-			(void)mongets(mtmp, CROSSBOW);
-			m_initthrow(mtmp, CROSSBOW_BOLT, 12);
-		    }
-		}
+			/* the skittish centaurs all need to have missile weapons at least */
+			if(ptr == &mons[PM_FOREST_CENTAUR] || ptr == &mons[PM_PLAINS_CENTAUR]) {
+				(void)mongets(mtmp, BOW);
+				m_initthrow(mtmp, ARROW, 24);
+			} else if (rn2(2)) {
+				(void)mongets(mtmp, CROSSBOW);
+				m_initthrow(mtmp, CROSSBOW_BOLT, 12);
+			}
 		break;
 	    case S_WRAITH:
 		(void)mongets(mtmp, KNIFE);

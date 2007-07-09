@@ -893,14 +893,10 @@ register int pm;
 		Your("velocity suddenly seems very uncertain!");
 		if (HFast & INTRINSIC) {
 			HFast &= ~INTRINSIC;
-			if (!Slow) {
-				You("seem slower.");
-			}
+			You("seem slower.");
 		} else {
 			HFast |= FROMOUTSIDE;
-			if (!Slow) {
-				You("seem faster.");
-			}
+			You("seem faster.");
 		}
 		break;
 	    case PM_LIZARD:
