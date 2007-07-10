@@ -623,23 +623,38 @@ touch_whereis()
 #else
 	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
 #endif
-	Sprintf(whereis_work,"level %d\nbranch %d\n",depth(&u.uz),u.uz.dnum);
+	Sprintf(whereis_work,"%d,%d,%d,%d,%d,0,0\n",
+			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves);
 	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
-	fwrite(whereis_work,strlen(whereis_work),1,fp);
-	fclose(fp);
+	if (fp) {
+		fwrite(whereis_work,strlen(whereis_work),1,fp);
+		fclose(fp);
+	}
 
 }
 
+
+/* Changed over to write out where the player last was when they
+ * left the game; including possibly 'dead' :) */
 void
 delete_whereis()
 {
+	FILE* fp;
 	char whereis_file[255];
+	char whereis_work[255];
 #if defined (WIN32)
 	Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
 #else
 	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
 #endif
-	unlink(whereis_file);
+	Sprintf(whereis_work,"%d,%d,%d,%d,%d,%d,1\n",
+			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves, 
+			u.uevent.ascended ? 2 : killer ? 1 : 0);
+	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
+	if (fp) {
+		fwrite(whereis_work,strlen(whereis_work),1,fp);
+		fclose(fp);
+	}
 }
 #endif /* WHEREIS_FILE */
 
