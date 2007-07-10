@@ -59,6 +59,7 @@ moveloop()
 
     u.uz0.dlevel = u.uz.dlevel;
     youmonst.movement = NORMAL_SPEED;	/* give the hero some movement points */
+	 touch_whereis();
 
     for(;;) {
 	get_nh_event();
