@@ -333,7 +333,8 @@ int spellnum;
 	pline("Oh no, %s's using the touch of death!", mhe(mtmp));
 	if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
 	    You("seem no deader than before.");
-	} else if (!Antimagic) {
+	} else if (!Antimagic || !rn2(3)) {
+		/* Magic resistance no longer provides a perfect defense... */
 	    if (Hallucination) {
 			You("have an out of body experience.");
 	    } else {
