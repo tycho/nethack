@@ -333,16 +333,17 @@ int spellnum;
 	pline("Oh no, %s's using the touch of death!", mhe(mtmp));
 	if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
 	    You("seem no deader than before.");
-	} else if (!Antimagic && rn2(mtmp->m_lev) > 12) {
+	} else if (!Antimagic) {
 	    if (Hallucination) {
-		You("have an out of body experience.");
+			You("have an out of body experience.");
 	    } else {
-		killer_format = KILLED_BY_AN;
-		killer = "touch of death";
-		done(DIED);
+			You("feel drained...");
+			dmg = d(8,6);
+			u.uhpmax -= dmg/2;
+			losehp(dmg,"touch of death",KILLED_BY_AN);
 	    }
 	} else {
-	    if (Antimagic) shieldeff(u.ux, u.uy);
+	    shieldeff(u.ux, u.uy);
 	    pline("Lucky for you, it didn't work!");
 	}
 	dmg = 0;
