@@ -333,19 +333,20 @@ int spellnum;
 	pline("Oh no, %s's using the touch of death!", mhe(mtmp));
 	if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
 	    You("seem no deader than before.");
-	} else if (!Antimagic || !rn2(3)) {
-		/* Magic resistance no longer provides a perfect defense... */
+	} else {
 	    if (Hallucination) {
 			You("have an out of body experience.");
 	    } else {
-			You("feel drained...");
 			dmg = d(8,6);
+			/* Magic resistance or half spell damage will cut this in half... */
+			if (Antimagic || Half_spell_damage) {
+				shieldeff(u.ux, u.uy);
+				dmg /= 2;
+			}
+			You("feel drained...");
 			u.uhpmax -= dmg/2;
 			losehp(dmg,"touch of death",KILLED_BY_AN);
 	    }
-	} else {
-	    shieldeff(u.ux, u.uy);
-	    pline("Lucky for you, it didn't work!");
 	}
 	dmg = 0;
 	break;
