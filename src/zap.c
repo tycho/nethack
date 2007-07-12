@@ -3091,10 +3091,12 @@ xchar sx, sy;
 		dam = d(nd, 6);
 	    }
 	    burn_away_slime();
-	    if (burnarmor(&youmonst)) {	/* "body hit" */
-		if (!rn2(3)) destroy_item(POTION_CLASS, AD_FIRE);
-		if (!rn2(3)) destroy_item(SCROLL_CLASS, AD_FIRE);
-		if (!rn2(5)) destroy_item(SPBOOK_CLASS, AD_FIRE);
+		 if (!Reflecting) {
+			if (burnarmor(&youmonst)) {	/* "body hit" */
+				if (!rn2(3)) destroy_item(POTION_CLASS, AD_FIRE);
+				if (!rn2(3)) destroy_item(SCROLL_CLASS, AD_FIRE);
+				if (!rn2(5)) destroy_item(SPBOOK_CLASS, AD_FIRE);
+			 }
 	    }
 	    break;
 	case ZT_COLD:
@@ -3105,46 +3107,61 @@ xchar sx, sy;
 	    } else {
 		dam = d(nd, 6);
 	    }
-	    if (!rn2(3)) destroy_item(POTION_CLASS, AD_COLD);
+		 if (!Reflecting) {
+			if (!rn2(3)) destroy_item(POTION_CLASS, AD_COLD);
+		 }
 	    break;
 	case ZT_SLEEP:
 	    if (Sleep_resistance) {
-		shieldeff(u.ux, u.uy);
-		You("don't feel sleepy.");
-	    } else {
-		fall_asleep(-d(nd,25), TRUE); /* sleep ray */
+			shieldeff(u.ux, u.uy);
+			You("don't feel sleepy.");
+		 } else if (Reflecting) {
+			fall_asleep(-d(1,6), TRUE); /* sleep ray */
+		 } else {
+			fall_asleep(-d(nd,25), TRUE);
 	    }
 	    break;
 	case ZT_DEATH:
 	    if (abs(type) == ZT_BREATH(ZT_DEATH)) {
-		if (Disint_resistance) {
-		    You("are not disintegrated.");
-		    break;
-		} else if (uarms) {
-		    /* destroy shield; other possessions are safe */
-		    (void) destroy_arm(uarms);
-		    break;
-		} else if (uarm) {
-		    /* destroy suit; if present, cloak goes too */
-		    if (uarmc) (void) destroy_arm(uarmc);
-		    (void) destroy_arm(uarm);
-		    break;
-		}
-		/* no shield or suit, you're dead; wipe out cloak
-		   and/or shirt in case of life-saving or bones */
-		if (uarmc) (void) destroy_arm(uarmc);
+			if (Disint_resistance) {
+				You("are not disintegrated.");
+				break;
+			} else if (Reflecting) {
+				You("aren't disintegrated, but that hurts!");
+				dam = d(nd,6);
+				break;
+			} else if (uarms) {
+				/* destroy shield; other possessions are safe */
+				(void) destroy_arm(uarms);
+				break;
+			} else if (uarm) {
+				/* destroy suit; if present, cloak goes too */
+				if (uarmc) (void) destroy_arm(uarmc);
+				(void) destroy_arm(uarm);
+				break;
+			}
+			/* no shield or suit, you're dead; wipe out cloak
+				and/or shirt in case of life-saving or bones */
+			if (!Reflecting) {
+				if (uarmc) (void) destroy_arm(uarmc);
 #ifdef TOURIST
-		if (uarmu) (void) destroy_arm(uarmu);
+				if (uarmu) (void) destroy_arm(uarmu);
 #endif
+			}
 	    } else if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
-		shieldeff(sx, sy);
-		You("seem unaffected.");
-		break;
+			shieldeff(sx, sy);
+			You("seem unaffected.");
+			break;
 	    } else if (Antimagic) {
-		shieldeff(sx, sy);
-		You("aren't affected.");
-		break;
-	    }
+			shieldeff(sx, sy);
+			You("aren't affected.");
+			break;
+	    } else if (Reflecting) {
+			 You("feel a little bit drained!");
+			 dam = d(2,6);
+			 u.uhpmax -= dam;	 /* it'll cost you... */
+			 break;
+		 }
 	    killer_format = KILLED_BY_AN;
 	    killer = fltxt;
 	    /* when killed by disintegration breath, don't leave corpse */
@@ -3160,24 +3177,31 @@ xchar sx, sy;
 		dam = d(nd, 6);
 		exercise(A_CON, FALSE);
 	    }
-	    if (!rn2(3)) destroy_item(WAND_CLASS, AD_ELEC);
-	    if (!rn2(3)) destroy_item(RING_CLASS, AD_ELEC);
+		 if (!Reflecting) {
+			if (!rn2(3)) destroy_item(WAND_CLASS, AD_ELEC);
+			if (!rn2(3)) destroy_item(RING_CLASS, AD_ELEC);
+		 }
 	    break;
 	case ZT_POISON_GAS:
-	    poisoned("blast", A_DEX, "poisoned blast", 15);
+		 if (!Reflecting) {
+			poisoned("blast", A_DEX, "poisoned blast", 15);
+		 }
 	    break;
 	case ZT_ACID:
 	    if (Acid_resistance) {
-		dam = 0;
+			dam = 0;
+			pline_The("acid doesn't seem to hurt!");
 	    } else {
-		pline_The("acid burns!");
-		dam = d(nd,6);
-		exercise(A_STR, FALSE);
+			pline_The("acid burns!");
+			dam = d(nd,6);
+			exercise(A_STR, FALSE);
 	    }
-	    /* using two weapons at once makes both of them more vulnerable */
-	    if (!rn2(u.twoweap ? 3 : 6)) erode_obj(uwep, TRUE, TRUE);
-	    if (u.twoweap && !rn2(3)) erode_obj(uswapwep, TRUE, TRUE);
-	    if (!rn2(6)) erode_armor(&youmonst, TRUE);
+		 if (!Reflecting) {
+			/* using two weapons at once makes both of them more vulnerable */
+			if (!rn2(u.twoweap ? 3 : 6)) erode_obj(uwep, TRUE, TRUE);
+			if (u.twoweap && !rn2(3)) erode_obj(uswapwep, TRUE, TRUE);
+			if (!rn2(6)) erode_armor(&youmonst, TRUE);
+		 }
 	    break;
 	}
 
@@ -3444,19 +3468,19 @@ register int dx,dy;
 	    } else
 #endif
 	    if (zap_hit((int) u.uac, 0)) {
-		range -= 2;
-		pline("%s hits you!", The(fltxt));
-		if (Reflecting) {
-		    if (!Blind) {
-		    	(void) ureflects("But %s reflects from your %s!", "it");
-		    } else
-			pline("For some reason you are not affected.");
-		    dx = -dx;
-		    dy = -dy;
-		    shieldeff(sx, sy);
-		} else {
-		    zhitu(type, nd, fltxt, sx, sy);
-		}
+			range -= 2;
+			pline("%s hits you!", The(fltxt));
+			if (Reflecting) {
+				if (!Blind) {
+					(void) ureflects("Some of %s reflects from your %s!", "it");
+				} else
+				pline("You only seem to have been partially affected.");
+				dx = -dx;
+				dy = -dy;
+				shieldeff(sx, sy);
+				nd /= 2;
+			} 
+			zhitu(type, nd, fltxt, sx, sy);
 	    } else {
 		pline("%s whizzes by you!", The(fltxt));
 	    }
