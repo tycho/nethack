@@ -63,7 +63,7 @@ A("Stormbringer",		RUNESWORD,
  * It's two-handed so players (hopefully) won't really want to use it...
  */
 A("Lifestealer",		TWO_HANDED_SWORD,
-	(SPFX_RESTR|SPFX_ATTK|SPFX_DEFN|SPFX_INTEL|SPFX_DRLI), 0, 0,
+	(SPFX_NOGEN|SPFX_RESTR|SPFX_ATTK|SPFX_DEFN|SPFX_INTEL|SPFX_DRLI), 0, 0,
 	DRLI(5,2),	SPDF_DRAIN,	NO_CARY,	0, A_CHAOTIC, NON_PM, NON_PM, 8000L ),
 /*
  *	Mjollnir will return to the hand of the wielder when thrown
