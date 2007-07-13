@@ -3074,13 +3074,16 @@ xchar sx, sy;
 
 	switch (abs(type) % 10) {
 	case ZT_MAGIC_MISSILE:
+		 dam = d(nd,6);
 	    if (Antimagic) {
-		shieldeff(sx, sy);
-		pline_The("missiles bounce off!");
-	    } else {
-		dam = d(nd,6);
-		exercise(A_STR, FALSE);
-	    }
+			shieldeff(sx, sy);
+			pline("Some of the missiles bounce off!");
+			dam /= 2;
+	    } 
+		 if (Half_spell_damage) {	 /* yes, this stacks */
+			 dam /= 2;
+		 }
+		 exercise(A_STR, FALSE);
 	    break;
 	case ZT_FIRE:
 	    if (Fire_resistance) {
