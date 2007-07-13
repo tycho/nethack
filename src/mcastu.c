@@ -286,11 +286,12 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 		break;
 	    case AD_MAGM:
 		You("are hit by a shower of missiles!");
+		dmg = d((int)mtmp->m_lev/2 + 1,6);
 		if(Antimagic) {
 			shieldeff(u.ux, u.uy);
-			pline_The("missiles bounce off!");
-			dmg = 0;
-		} else dmg = d((int)mtmp->m_lev/2 + 1,6);
+			pline("Some of the missiles bounce off!");
+			dmg /= 2;
+		}
 		break;
 	    case AD_SPEL:	/* wizard spell */
 	    case AD_CLRC:       /* clerical spell */
