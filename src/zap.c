@@ -28,6 +28,8 @@ STATIC_DCL boolean FDECL(zap_updown, (struct obj *));
 STATIC_DCL int FDECL(zhitm, (struct monst *,int,int,struct obj **));
 STATIC_DCL void FDECL(zhitu, (int,int,const char *,XCHAR_P,XCHAR_P));
 STATIC_DCL void FDECL(revive_egg, (struct obj *));
+STATIC_DCL void FDECL(monstseesu,(int));
+
 #ifdef STEED
 STATIC_DCL boolean FDECL(zap_steed, (struct obj *));
 #endif
@@ -55,6 +57,9 @@ STATIC_DCL int FDECL(spell_hit_bonus, (int));
 #define ZT_BREATH(x)		(20+(x))
 
 #define is_hero_spell(type)	((type) >= 10 && (type) < 20)
+
+#define SAW_U_REFLECT	1
+#define SAW_U_MR			2
 
 #ifndef OVLB
 STATIC_VAR const char are_blinded_by_the_flash[];
@@ -1886,6 +1891,7 @@ boolean ordinary;
 		    if(Antimagic) {
 			shieldeff(u.ux, u.uy);
 			pline("Boing!");
+			monstseesu(SAW_U_MR);
 		    } else {
 			if (ordinary) {
 			    You("bash yourself!");
@@ -1959,6 +1965,7 @@ boolean ordinary;
 		    if(Antimagic) {
 			shieldeff(u.ux, u.uy);
 			pline_The("missiles bounce!");
+			monstseesu(SAW_U_MR);
 		    } else {
 			damage = d(4,6);
 			pline("Idiot!  You've shot yourself!");
@@ -3076,6 +3083,7 @@ xchar sx, sy;
 	case ZT_MAGIC_MISSILE:
 		 dam = d(nd,6);
 	    if (Antimagic) {
+			 monstseesu(SAW_U_MR);
 			shieldeff(sx, sy);
 			pline("Some of the missiles bounce off!");
 			dam /= 2;
@@ -3156,6 +3164,7 @@ xchar sx, sy;
 			You("seem unaffected.");
 			break;
 	    } else if (Antimagic) {
+			 monstseesu(SAW_U_MR);
 			shieldeff(sx, sy);
 			You("aren't affected.");
 			break;
@@ -3482,6 +3491,7 @@ register int dx,dy;
 				dy = -dy;
 				shieldeff(sx, sy);
 				nd /= 2;
+				monstseesu(SAW_U_REFLECT);
 			} 
 			zhitu(type, nd, fltxt, sx, sy);
 	    } else {
@@ -4166,6 +4176,27 @@ retry:
 				       (const char *)0);
 	    u.ublesscnt += rn1(100,50);  /* the gods take notice */
 	}
+}
+
+
+void
+monstseesu(udid)
+int udid;
+{
+
+	struct monst* mtmp;
+
+	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		if (!DEADMONSTER(mtmp) && m_canseeu(mtmp)) {
+			if (udid == SAW_U_REFLECT) {
+				mtmp->seen_reflection = TRUE;
+			}
+			if (udid == SAW_U_MR) {
+				mtmp->seen_mr = TRUE;
+			}
+		}
+	}
+
 }
 
 #endif /*OVL2*/

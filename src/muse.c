@@ -967,7 +967,10 @@ struct monst *mtmp;
 {
 	register struct obj *obj;
 	boolean ranged_stuff = lined_up(mtmp);
-	boolean reflection_skip = (Reflecting && rn2(2));
+	/* both of these will allow the monster to still shoot at you, regardless
+	 * of your reflection/MR, if you're too far away for it to normally hit */
+	boolean reflection_skip = mtmp->seen_reflection && monnear(mtmp,mtmp->mux,mtmp->muy);
+	boolean mr_skip = mtmp->seen_mr && monnear(mtmp,mtmp->mux,mtmp->muy);
 	struct obj *helmet = which_armor(mtmp, W_ARMH);
 
 	m.offensive = (struct obj *)0;
@@ -1030,9 +1033,11 @@ struct monst *mtmp;
 		    }
 		}
 		nomore(MUSE_WAN_STRIKING);
-		if(obj->otyp == WAN_STRIKING && obj->spe > 0) {
-			m.offensive = obj;
-			m.has_offense = MUSE_WAN_STRIKING;
+		if (!mr_skip) {
+			if(obj->otyp == WAN_STRIKING && obj->spe > 0) {
+				m.offensive = obj;
+				m.has_offense = MUSE_WAN_STRIKING;
+			}
 		}
 		nomore(MUSE_POT_PARALYSIS);
 		if(obj->otyp == POT_PARALYSIS && multi >= 0) {

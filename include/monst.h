@@ -63,6 +63,8 @@ struct monst {
 	unsigned short mintrinsics;	/* low 8 correspond to mresists */
 	int mspec_used;		/* monster's special ability attack timeout */
 
+	Bitfield(seen_reflection,1);  /* Has seen you reflect a beam */
+	Bitfield(seen_mr,1);	  /* Has seen that you have magic resistance */
 	Bitfield(female,1);	/* is female */
 	Bitfield(minvis,1);	/* currently invisible */
 	Bitfield(invis_blkd,1); /* invisibility blocked */
