@@ -595,15 +595,17 @@ untwoweapon()
 
 /* Maybe rust object, or corrode it if acid damage is called for */
 void
-erode_obj(target, acid_dmg, fade_scrolls)
+erode_obj(target, acid_dmg, fade_scrolls, magic_dmg)
 struct obj *target;		/* object (e.g. weapon or armor) to erode */
 boolean acid_dmg;
 boolean fade_scrolls;
+boolean magic_dmg;
 {
 	int erosion;
 	struct monst *victim;
 	boolean vismon;
 	boolean visobj;
+	boolean corrosion;
 
 	if (!target)
 	    return;
@@ -612,9 +614,10 @@ boolean fade_scrolls;
 	vismon = victim && (victim != &youmonst) && canseemon(victim);
 	visobj = !victim && cansee(bhitpos.x, bhitpos.y); /* assume thrown */
 
-	erosion = acid_dmg ? target->oeroded2 : target->oeroded;
+	erosion = (acid_dmg || magic_dmg) ? target->oeroded2 : target->oeroded;
+	corrosion = (acid_dmg || magic_dmg);
 
-	if (target->greased) {
+	if (target->greased && !magic_dmg) {
 	    grease_protect(target,(char *)0,victim);
 	} else if (target->oclass == SCROLL_CLASS) {
 	    if(fade_scrolls && target->otyp != SCR_BLANK_PAPER
@@ -635,8 +638,9 @@ boolean fade_scrolls;
 		target->otyp = SCR_BLANK_PAPER;
 		target->spe = 0;
 	    }
-	} else if (target->oerodeproof ||
-		(acid_dmg ? !is_corrodeable(target) : !is_rustprone(target))) {
+	/* if this is 'destroy armor', non-corrodeable won't affect it */
+	} else if (!magic_dmg && (target->oerodeproof ||
+		(acid_dmg ? !is_corrodeable(target) : !is_rustprone(target)))) {
 	    if (flags.verbose || !(target->oerodeproof && target->rknown)) {
 		if (victim == &youmonst)
 		    Your("%s not affected.", aobjnam(target, "are"));
@@ -648,20 +652,20 @@ boolean fade_scrolls;
 	    if (target->oerodeproof) target->rknown = TRUE;
 	} else if (erosion < MAX_ERODE) {
 	    if (victim == &youmonst)
-		Your("%s%s!", aobjnam(target, acid_dmg ? "corrode" : "rust"),
+		Your("%s%s!", aobjnam(target, corrosion ? "corrode" : "rust"),
 		    erosion+1 == MAX_ERODE ? " completely" :
 		    erosion ? " further" : "");
 	    else if (vismon)
 		pline("%s's %s%s!", Monnam(victim),
-		    aobjnam(target, acid_dmg ? "corrode" : "rust"),
+		    aobjnam(target, corrosion ? "corrode" : "rust"),
 		    erosion+1 == MAX_ERODE ? " completely" :
 		    erosion ? " further" : "");
 	    else if (visobj)
 		pline_The("%s%s!",
-		    aobjnam(target, acid_dmg ? "corrode" : "rust"),
+		    aobjnam(target, corrosion ? "corrode" : "rust"),
 		    erosion+1 == MAX_ERODE ? " completely" :
 		    erosion ? " further" : "");
-	    if (acid_dmg)
+	    if (corrosion)
 		target->oeroded2++;
 	    else
 		target->oeroded++;
@@ -670,15 +674,15 @@ boolean fade_scrolls;
 		if (victim == &youmonst)
 		    Your("%s completely %s.",
 			aobjnam(target, Blind ? "feel" : "look"),
-			acid_dmg ? "corroded" : "rusty");
+			corrosion ? "corroded" : "rusty");
 		else if (vismon)
 		    pline("%s's %s completely %s.", Monnam(victim),
 			aobjnam(target, "look"),
-			acid_dmg ? "corroded" : "rusty");
+			corrosion ? "corroded" : "rusty");
 		else if (visobj)
 		    pline_The("%s completely %s.",
 			aobjnam(target, "look"),
-			acid_dmg ? "corroded" : "rusty");
+			corrosion ? "corroded" : "rusty");
 	    }
 	}
 }
