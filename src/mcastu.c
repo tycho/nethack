@@ -93,12 +93,12 @@ int spellval;
     case 15:
 	return MGC_SUMMON_MONS;
     case 14:
-    case 13:
 	return MGC_AGGRAVATION;
+    case 13:
     case 12:
     case 11:
-    case 10:
 	return MGC_CURSE_ITEMS;
+    case 10:
     case 9:
     case 8:
 	return MGC_DESTRY_ARMR;
@@ -324,6 +324,9 @@ struct monst *mtmp;
 int dmg;
 int spellnum;
 {
+	struct obj* oatmp;
+	int erodelvl;
+
     if (dmg == 0 && !is_undirected_spell(AD_SPEL, spellnum)) {
 	impossible("cast directed wizard spell (%d) with dmg=0?", spellnum);
 	return;
@@ -394,11 +397,28 @@ int spellnum;
 	dmg = 0;
 	break;
     case MGC_DESTRY_ARMR:
+	/* Magic resistance will reduce the amount by which your stuff is fiddled,
+	 * but it won't actually stop things from being damaged */
+	erodelvl = rnd(3);
 	if (Antimagic) {
-	    shieldeff(u.ux, u.uy);
-	    pline("A field of force surrounds you!");
-	} else if (!destroy_arm(some_armor(&youmonst))) {
-	    Your("skin itches.");
+		shieldeff(u.ux, u.uy);
+		erodelvl = 1;
+	}
+	oatmp = some_armor(&youmonst);
+	if (oatmp) {
+		if (oatmp->oerodeproof) {
+			pline("Your %s glows brown for a moment.",xname(oatmp));
+			oatmp->oerodeproof = 0;
+		}
+		if (oatmp->oeroded2 == MAX_ERODE) {
+			destroy_arm(oatmp);
+		} else {
+			while (erodelvl-- > 0) {
+				erode_obj(oatmp, TRUE, FALSE, FALSE);
+			}
+		}
+	} else {
+		Your("skin itches.");
 	}
 	dmg = 0;
 	break;
