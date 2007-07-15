@@ -293,7 +293,11 @@ register struct monst *mtmp;
 		if ((wepskill == P_UNSKILLED || wepskill == P_ISRESTRICTED) && tmp > 15) {
 			tmp = 15;
 			if (!rn2(3)) {
-				You("aren't sure you're doing this the right way...");
+				if (uwep->oclass != WEAPON_CLASS) {
+					You("are having a tough time swinging the %s.",aobjnam(uwep, (char*)0));
+				} else {
+					You("aren't sure you're doing this the right way...");
+				}
 			}
 		}
 	}
