@@ -1042,7 +1042,15 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	}
 	if (Unchanging) you_can("not change from your current form");
 	if (Fast) you_are(Very_fast ? "very fast" : "fast");
-	if (Slow) you_are("slow");
+	if (Slow) {
+		Strcpy(buf,"slow");
+#ifdef WIZARD
+		if (wizard)
+			if (ESlow) Sprintf(eos(buf)," (from an item)");
+			else Sprintf(eos(buf)," (%d turns)",HSlow);
+#endif
+		you_are(buf);
+	}
 	if (Reflecting) you_have("reflection");
 	if (Free_action) you_have("free action");
 	if (Fixed_abil) you_have("fixed abilities");

@@ -265,6 +265,9 @@ nh_timeout()
 				You_feel("yourself slowing down%s.",
 							Fast ? " a bit" : "");
 			break;
+		case SLOW:
+			You_feel("less sluggish.");
+			break;
 		case CONFUSION:
 			HConfusion = 1; /* So make_confused works properly */
 			make_confused(0L, TRUE);

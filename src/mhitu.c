@@ -132,17 +132,17 @@ struct attack *mattk;
 	}
 }
 
-/* called when your intrinsic speed is taken away */
+/* called when you get artificially slowed for some reason */
 void
 u_slow_down()
 {
-	HFast = 0L;
 	if (!Fast && !Slow)
 	    You("slow down.");
-	else if (!Slow)	/* speed boots */
-	    Your("quickness feels less natural.");
+	else if (!Slow)			 /* speed of some sort */
+	    You("feel a strange lethargy overcome you.");
 	else
-		Your("sluggishness feels more natural.");
+		Your("lethargy seems to be settling in for the long haul.");
+	incr_itimeout(&HSlow,rnd(11)+4);
 	exercise(A_DEX, FALSE);
 }
 
@@ -2040,9 +2040,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		break;
 	    case AD_SLOW:
 		if (!mtmp->mcan && canseemon(mtmp) && mtmp->mcansee &&
-		   (HFast & (INTRINSIC|TIMEOUT)) &&
-		   !defends(AD_SLOW, uwep)) {
-
+				!Slow && !defends(AD_SLOW, uwep)) {
 		    u_slow_down();
 		    stop_occupation();
 		}
