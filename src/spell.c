@@ -250,6 +250,12 @@ struct obj *book2;
 	    /* successful invocation */
 	    mkinvokearea();
 	    u.uevent.invoked = 1;
+		 /* trigger the candles to start burning */
+		 for (otmp = invent; otmp; otmp = otmp->nobj) {
+			 if (otmp->otyp == CANDELABRUM_OF_INVOCATION) {
+				 begin_burn(otmp,TRUE);
+			 }
+		 }
 	    /* in case you haven't killed the Wizard yet, behave as if
 	       you just did */
 	    u.uevent.udemigod = 1;	/* wizdead() */
