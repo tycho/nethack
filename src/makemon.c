@@ -303,13 +303,20 @@ register struct monst *mtmp;
 		{
 		    int spe2;
 
-		    /* create minion stuff; can't use mongets */
-		    otmp = mksobj(LONG_SWORD, FALSE, FALSE);
-
-		    /* maybe make it special */
-		    if (!rn2(20) || is_lord(ptr))
-			otmp = oname(otmp, artiname(
-				rn2(2) ? ART_DEMONBANE : ART_SUNSWORD));
+		    /* create minion stuff; can't use mongets.
+			  * some angelic minions will get demonbane or sunsword;
+			  * decide that ahead of time so we know what to make */
+		    if (!rn2(20) || is_lord(ptr)) {
+				spe2 = rn2(2);
+				if (spe2) {
+					otmp = mksobj(SILVER_MACE, FALSE, FALSE);	/* TODO: unhardcode this crap */
+				} else {
+					otmp = mksobj(SILVER_LONG_SWORD, FALSE, FALSE);
+				}
+				otmp = oname(otmp, artiname(spe2 ? ART_DEMONBANE : ART_SUNSWORD));
+			 } else {
+				otmp = mksobj(LONG_SWORD, FALSE, FALSE);
+			 }
 		    bless(otmp);
 		    otmp->oerodeproof = TRUE;
 		    spe2 = rn2(4);
