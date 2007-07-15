@@ -1083,6 +1083,10 @@ begin_burn(obj, already_lit)
 		break;
 
 	    case CANDELABRUM_OF_INVOCATION:
+			if (!u.uevent.invoked) {
+				do_timer = FALSE;
+				obj->lamplit = 1;
+			}
 	    case TALLOW_CANDLE:
 	    case WAX_CANDLE:
 		/* magic times are 75, 15, and 0 */
