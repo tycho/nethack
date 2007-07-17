@@ -339,6 +339,8 @@ register struct monst *mon;
 {
 	register struct obj *obj;
 	int base = mon->data->ac;
+	float bonus;
+	int div;
 	long mwflags = mon->misc_worn_check;
 
 	for (obj = mon->minvent; obj; obj = obj->nobj) {
@@ -346,6 +348,14 @@ register struct monst *mon;
 		base -= ARM_BONUS(obj);
 		/* since ARM_BONUS is positive, subtracting it increases AC */
 	}
+
+	/* Tweak the monster's AC a bit according to its level */
+	div = mon->m_lev > 20 ? 6 : 4;
+	bonus = ((mon->m_lev/2)^2)/div;
+	if (bonus > 16) { bonus = 16; }
+	if (bonus < 0) { bonus = 0; }
+	base -= bonus;
+
 	return base;
 }
 
