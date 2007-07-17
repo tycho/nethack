@@ -232,8 +232,8 @@ register struct monst *mtmp;
 	schar tmp;
 	int tmp2,wepskill;
 
-	tmp = 1 + Luck + abon() + find_mac(mtmp) + u.uhitinc +
-		maybe_polyd(youmonst.data->mlevel, u.ulevel);
+	tmp = 1 + (Luck/3) + abon() + find_mac(mtmp) + u.uhitinc +
+		maybe_polyd(youmonst.data->mlevel, (u.ulevel > 20 ? 20 : u.ulevel));
 
 	check_caitiff(mtmp);
 
