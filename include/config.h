@@ -153,6 +153,8 @@
 #define LOGFILE "logfile"	/* larger file for debugging purposes */
 #define NEWS "news"		/* the file containing the latest hack news */
 #define PANICLOG "paniclog"	/* log of panic and impossible events */
+#define DUMP_LOG				 /* turn on dumping */
+#define DUMP_FN "dumps/%n.lastlog"	 /* dump goes here */
 
 /*
  *	If COMPRESS is defined, it should contain the full path name of your
