@@ -881,6 +881,7 @@ register int	x, y;
 register int	mmflags;
 {
 	register struct monst *mtmp;
+	struct obj* otmp;
 	int mndx, mcham, ct, mitem, xlth;
 	boolean anymon = (!ptr);
 	boolean byyou = (x == u.ux && y == u.uy);
@@ -1084,7 +1085,13 @@ register int	mmflags;
 			mtmp = christen_monst(mtmp, rndghostname());
 	} else if (mndx == PM_VLAD_THE_IMPALER) {
 		mitem = CANDELABRUM_OF_INVOCATION;
-		(void)mongets(mtmp,TWO_HANDED_SWORD); /* give him Lifestealer so he has teeth, ha ha */
+		/* give him Lifestealer so he has teeth, ha ha */
+		otmp = mksobj(TWO_HANDED_SWORD,FALSE,FALSE);
+		otmp = oname(otmp, artiname(ART_LIFESTEALER));
+		curse(otmp);	 /* this shouldn't be much fun for players at all */
+		otmp->oerodeproof = TRUE;
+		otmp->spe = rn2(3);
+		(void) mpickobj(mtmp, otmp);
 	} else if (mndx == PM_CROESUS) {
 		mitem = TWO_HANDED_SWORD;
 	} else if (ptr->msound == MS_NEMESIS) {
