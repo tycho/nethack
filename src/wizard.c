@@ -32,7 +32,7 @@ static NEARDATA const int nasties[] = {
 	PM_COUATL, PM_CAPTAIN, PM_WINGED_GARGOYLE, PM_MASTER_MIND_FLAYER,
 	PM_FIRE_ELEMENTAL, PM_JABBERWOCK, PM_ARCH_LICH, PM_OGRE_KING,
 	PM_OLOG_HAI, PM_IRON_GOLEM, PM_OCHRE_JELLY, PM_GREEN_SLIME,
-	PM_DISENCHANTER
+	PM_DISENCHANTER, PM_MAGICAL_EYE
 	};
 
 static NEARDATA const unsigned wizapp[] = {
@@ -522,8 +522,11 @@ resurrect()
 void
 intervene()
 {
-	int which = Is_astralevel(&u.uz) ? rnd(4) : rn2(6);
-	/* cases 0 and 5 don't apply on the Astral level */
+	/* cases 0, 5, and 6 don't apply on the Astral level
+	 * also, make Rodney more likely to show up in person for lawfuls/neutrals
+	 * ...since we just fixed the force to be nicer */
+	int which = Is_astralevel(&u.uz) ? rnd(4) : rn2(u.ualign.type >= 0 ? 7 : 6);
+
 	switch (which) {
 	    case 0:
 	    case 1:	You_feel("vaguely nervous.");
@@ -535,9 +538,12 @@ intervene()
 			break;
 	    case 3:	aggravate();
 			break;
-	    case 4:	(void)nasty((struct monst *)0);
+	    case 4:	
+			(void)nasty((struct monst *)0);
 			break;
-	    case 5:	resurrect();
+	    case 5:	
+		 case 6:
+			resurrect();
 			break;
 	}
 }
