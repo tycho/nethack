@@ -259,9 +259,10 @@ register struct monst *mtmp;
 		    if (!w2 && w1 != DAGGER && !rn2(4)) w2 = KNIFE;
 		    if (w2) (void)mongets(mtmp, w2);
 		} else if (is_elf(ptr)) {
-		    if (rn2(2))
-			(void) mongets(mtmp,
-				   rn2(2) ? ELVEN_MITHRIL_COAT : ELVEN_CLOAK);
+			/* only higher-ranking elves get the good armor */
+		    if (rn2(2)) (void)mongets(mtmp,
+					(rn2(2) && (mm == PM_GREY_ELF || mm == PM_ELF_LORD || mm == PM_ELVENKING)) ? 
+					ELVEN_MITHRIL_COAT : ELVEN_CLOAK);
 		    if (rn2(2)) (void)mongets(mtmp, ELVEN_LEATHER_HELM);
 		    else if (!rn2(4)) (void)mongets(mtmp, ELVEN_BOOTS);
 		    if (rn2(2)) (void)mongets(mtmp, ELVEN_DAGGER);
@@ -346,7 +347,11 @@ register struct monst *mtmp;
 			    (void)mongets(mtmp, SLING);
 			    break;
 		      }
-		    if (!rn2(10)) (void)mongets(mtmp, ELVEN_MITHRIL_COAT);
+		    if (!rn2(10)) {
+				 (void)mongets(mtmp, ELVEN_MITHRIL_COAT);
+				 (void)mongets(mtmp, ELVEN_DAGGER);
+				 (void)mongets(mtmp, RIN_INVISIBILITY);
+			 }
 		    if (!rn2(10)) (void)mongets(mtmp, DWARVISH_CLOAK);
 		} else if (is_dwarf(ptr)) {
 		    if (rn2(7)) (void)mongets(mtmp, DWARVISH_CLOAK);
@@ -360,7 +365,8 @@ register struct monst *mtmp;
 				(void)mongets(mtmp, DWARVISH_ROUNDSHIELD);
 			}
 			(void)mongets(mtmp, DWARVISH_IRON_HELM);
-			if (!rn2(3))
+			/* only higher ranking dwarves get the good stuff */
+			if (!rn2(3) && mm != PM_DWARF)
 			    (void)mongets(mtmp, DWARVISH_MITHRIL_COAT);
 		    } else {
 			(void)mongets(mtmp, !rn2(3) ? PICK_AXE : DAGGER);
@@ -446,7 +452,7 @@ register struct monst *mtmp;
 		 case S_GNOME:
 			if (rn2(5)) { (void)mongets(mtmp, GNOMISH_HELM); }
 			if (!rn2(3)) { (void)mongets(mtmp, GNOMISH_BOOTS); }
-			if (!rn2(4)) { (void)mongets(mtmp, GNOMISH_SUIT); }
+			if (!rn2(5)) { (void)mongets(mtmp, GNOMISH_SUIT); }
 		break;
 	    case S_DEMON:
 		switch (mm) {
