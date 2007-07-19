@@ -974,6 +974,7 @@ E int FDECL(buzzmu, (struct monst *,struct attack *));
 /* ### mhitm.c ### */
 
 E int FDECL(fightm, (struct monst *));
+E boolean FDECL(resist_conflict, (struct monst *));
 E int FDECL(mattackm, (struct monst *,struct monst *));
 E int FDECL(noattacks, (struct permonst *));
 E int FDECL(sleep_monst, (struct monst *,int,int));
