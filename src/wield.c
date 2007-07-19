@@ -606,6 +606,7 @@ boolean magic_dmg;
 	boolean vismon;
 	boolean visobj;
 	boolean corrosion;
+	boolean rotting;
 
 	if (!target)
 	    return;
@@ -652,17 +653,20 @@ boolean magic_dmg;
 	    if (target->oerodeproof) target->rknown = TRUE;
 	} else if (erosion < MAX_ERODE) {
 	    if (victim == &youmonst)
-		Your("%s%s!", aobjnam(target, corrosion ? "corrode" : "rust"),
+		Your("%s%s!", aobjnam(target, !is_damageable(target) ? "deteriorate" : 
+			 corrosion ? "corrode" : rotting ? "rot" : "rust"),
 		    erosion+1 == MAX_ERODE ? " completely" :
 		    erosion ? " further" : "");
 	    else if (vismon)
 		pline("%s's %s%s!", Monnam(victim),
-		    aobjnam(target, corrosion ? "corrode" : "rust"),
+		    aobjnam(target, !is_damageable(target) ? "deteriorate" : 
+			 corrosion ? "corrode" : rotting ? "rot" : "rust"),
 		    erosion+1 == MAX_ERODE ? " completely" :
 		    erosion ? " further" : "");
 	    else if (visobj)
 		pline_The("%s%s!",
-		    aobjnam(target, corrosion ? "corrode" : "rust"),
+		    aobjnam(target, !is_damageable(target) ? "deteriorate" : 
+			 corrosion ? "corrode" : rotting ? "rot" : "rust"),
 		    erosion+1 == MAX_ERODE ? " completely" :
 		    erosion ? " further" : "");
 	    if (corrosion)
@@ -674,15 +678,18 @@ boolean magic_dmg;
 		if (victim == &youmonst)
 		    Your("%s completely %s.",
 			aobjnam(target, Blind ? "feel" : "look"),
-			corrosion ? "corroded" : "rusty");
+			!is_damageable(target) ? "deteriorated" : corrosion ? "corroded" : 
+			rotting ? "rotten" : "rusty");
 		else if (vismon)
 		    pline("%s's %s completely %s.", Monnam(victim),
 			aobjnam(target, "look"),
-			corrosion ? "corroded" : "rusty");
+			!is_damageable(target) ? "deteriorated" : corrosion ? "corroded" : 
+			rotting ? "rotten" : "rusty");
 		else if (visobj)
 		    pline_The("%s completely %s.",
 			aobjnam(target, "look"),
-			corrosion ? "corroded" : "rusty");
+			!is_damageable(target) ? "deteriorated" : corrosion ? "corroded" : 
+			rotting ? "rotten" : "rusty");
 	    }
 	}
 }

@@ -414,7 +414,7 @@ int spellnum;
 			destroy_arm(oatmp);
 		} else {
 			while (erodelvl-- > 0) {
-				erode_obj(oatmp, TRUE, FALSE, FALSE);
+				erode_obj(oatmp, TRUE, FALSE, TRUE);
 			}
 		}
 	} else {

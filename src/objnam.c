@@ -538,9 +538,6 @@ char *prefix;
 {
 	boolean iscrys = (obj->otyp == CRYSKNIFE);
 
-
-	if (!is_damageable(obj) && !iscrys) return;
-
 	/* The only cases where any of these bits do double duty are for
 	 * rotted food and diluted potions, which are all not is_damageable().
 	 */
@@ -556,8 +553,9 @@ char *prefix;
 			case 2:	Strcat(prefix, "very "); break;
 			case 3:	Strcat(prefix, "thoroughly "); break;
 		}			
-		Strcat(prefix, is_corrodeable(obj) ? "corroded " :
-			"rotted ");
+		/* This catches things like dragonscale mail. */
+		Strcat(prefix, !is_damageable(obj) ? "deteriorated " : 
+				is_corrodeable(obj) ? "corroded " : "rotted ");
 	}
 	if (obj->rknown && obj->oerodeproof)
 		Strcat(prefix,
