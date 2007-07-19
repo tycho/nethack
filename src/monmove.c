@@ -426,7 +426,7 @@ register struct monst *mtmp;
 		}
 		pline("A wave of psychic energy pours over you!");
 		if (mtmp->mpeaceful &&
-		    (!Conflict || resist(mtmp, RING_CLASS, 0, 0)))
+		    (!Conflict || resist_conflict(mtmp)))
 			pline("It feels quite soothing.");
 		else {
 			register boolean m_sen = sensemon(mtmp);
@@ -560,8 +560,7 @@ toofar:
 
 /*	Now, attack the player if possible - one attack set per monst	*/
 
-	if (!mtmp->mpeaceful ||
-	    (Conflict && !resist(mtmp, RING_CLASS, 0, 0))) {
+	if (!mtmp->mpeaceful || (Conflict && !resist_conflict(mtmp))) {
 	    if(inrange && !noattacks(mdat) && u.uhp > 0 && !scared && tmp != 3)
 		if(mattacku(mtmp)) return(1); /* monster died (e.g. exploded) */
 
@@ -908,7 +907,7 @@ not_special:
 	nix = omx;
 	niy = omy;
 	flag = 0L;
-	if (mtmp->mpeaceful && (!Conflict || resist(mtmp, RING_CLASS, 0, 0)))
+	if (mtmp->mpeaceful && (!Conflict || resist_conflict(mtmp)))
 	    flag |= (ALLOW_SANCT | ALLOW_SSM);
 	else flag |= ALLOW_U;
 	if (is_minion(ptr) || is_rider(ptr)) flag |= ALLOW_SANCT;
