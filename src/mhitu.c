@@ -914,7 +914,7 @@ hitmu(mtmp, mattk)
  *	armor's special magic protection.  Otherwise just use !mtmp->mcan.
  */
 	armpro = magic_negation(&youmonst);
-	uncancelled = !mtmp->mcan && ((rn2(3) >= armpro) || !rn2(50));
+	uncancelled = !mtmp->mcan && ((rn2(3) >= armpro) || !rn2(45));
 
 	permdmg = 0;
 /*	Now, adjust damages via resistances or specific attacks */
