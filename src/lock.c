@@ -485,7 +485,8 @@ doforce()		/* try to force a chest with your weapon */
 		else
 		    You("start bashing it with your %s.", xname(uwep));
 		xlock.box = otmp;
-		xlock.chance = objects[uwep->otyp].oc_wldam * 2;
+		xlock.chance = objects[uwep->otyp].oc_wldam * 2 +
+			(picktyp ? ((ACURR(A_DEX) > 14) ? ACURR(A_DEX) - 14 : 0) : dbon());
 		xlock.picktyp = picktyp;
 		xlock.usedtime = 0;
 		break;
