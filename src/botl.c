@@ -362,6 +362,7 @@ bot2()
 		if (u.usick_type & SICK_NONVOMITABLE)
 			   Sprintf(nb = eos(nb), " Ill");
 	}
+	if (Slow) Sprintf(nb = eos(nb)," Slow");
 	if(Blind)	   Sprintf(nb = eos(nb), " Blind");
 	if(Stunned)	   Sprintf(nb = eos(nb), " Stun");
 	if(Hallucination)  Sprintf(nb = eos(nb), " Hallu");
