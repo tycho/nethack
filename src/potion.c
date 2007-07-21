@@ -725,6 +725,14 @@ peffects(otmp)
 		}
 		break;
 	case POT_SPEED:
+		/* only the potion will fix intrinsic 'slow' */
+		if (Slow) {
+			HSlow = 0;
+			if (!ESlow) {
+				You("no longer feel sluggish.");
+			}
+		}
+
 		if(Wounded_legs && !otmp->cursed
 #ifdef STEED
 		   && !u.usteed	/* heal_legs() would heal steeds legs */
