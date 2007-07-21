@@ -138,7 +138,7 @@ struct monst *mtmp;
 	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
 	    is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
 	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR] ||
-		 mtmp->mnum == quest_info(MS_NEMESIS))
+		 mtmp->mnum == quest_info(MS_NEMESIS) || mtmp->mnum == PM_VLAD_THE_IMPALER)
 		return(FALSE);
 
 	/* the smallest monsters always respect Elbereth;
