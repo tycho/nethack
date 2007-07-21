@@ -230,7 +230,7 @@ find_roll_to_hit(mtmp)
 register struct monst *mtmp;
 {
 	schar tmp;
-	int tmp2,wepskill;
+	int tmp2,wepskill,twowepskill,useskill;
 
 	tmp = 1 + (Luck/3) + abon() + find_mac(mtmp) + u.uhitinc +
 		maybe_polyd(youmonst.data->mlevel, (u.ulevel > 20 ? 20 : u.ulevel));
@@ -294,11 +294,15 @@ register struct monst *mtmp;
 	 * a hard enough row to hoe anyway)
 	 */
 	if (uwep && !u.uswallow) {
-		wepskill = P_SKILL(u.twoweap ? P_TWO_WEAPON_COMBAT : weapon_type(uwep));
-		if ((wepskill == P_UNSKILLED || wepskill == P_ISRESTRICTED) && tmp > 15) {
+		wepskill = P_SKILL(weapon_type(uwep));
+		twowepskill = P_SKILL(P_TWO_WEAPON_COMBAT);
+		/* use the lesser skill of two-weapon or your primary */
+		useskill = (u.twoweap && twowepskill < wepskill) ? twowepskill : wepskill;
+		if ((useskill == P_UNSKILLED || useskill == P_ISRESTRICTED) && tmp > 15) {
 			tmp = 15;
 			if (!rn2(3)) {
-				if (uwep->oclass != WEAPON_CLASS) {
+				/* there's no 'right way' to swing a cockatrice corpse... */
+				if (uwep->oclass != WEAPON_CLASS && !is_weptool(uwep)) {
 					You("are having a tough time swinging the %s.",aobjnam(uwep, (char*)0));
 				} else {
 					You("aren't sure you're doing this the right way...");
