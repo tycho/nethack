@@ -1151,7 +1151,8 @@ end_burn(obj, timer_attached)
 	    return;
 	}
 
-	if (obj->otyp == MAGIC_LAMP || artifact_light(obj))
+	if (obj->otyp == MAGIC_LAMP || artifact_light(obj) ||
+			(obj->otyp == CANDELABRUM_OF_INVOCATION && !u.uevent.invoked))
 	    timer_attached = FALSE;
 
 	if (!timer_attached) {

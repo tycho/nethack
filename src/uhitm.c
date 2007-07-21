@@ -272,6 +272,11 @@ register struct monst *mtmp;
 	    }
 	}
 
+	/* gloves' bonus contributes if unarmed */
+	if (!uwep && uarmg) {
+		tmp += uarmg->spe;
+	}
+
 /*	with a lot of luggage, your agility diminishes */
 	if ((tmp2 = near_capacity()) != 0) tmp -= (tmp2*2) - 1;
 	if (u.utrap) tmp -= 3;
@@ -561,10 +566,14 @@ int thrown;
 		tmp = rnd(4);	/* bonus for martial arts */
 	    else
 		tmp = rnd(2);
-	    valid_weapon_attack = (tmp > 1);
+		 valid_weapon_attack = TRUE;	/* remove dorky 1 = d1 and no bonuses */
 	    /* blessed gloves give bonuses when fighting 'bare-handed' */
 	    if (uarmg && uarmg->blessed && (is_undead(mdat) || is_demon(mdat)))
 		tmp += rnd(4);
+		 /* fighting with fists will get the gloves' bonus... */
+		 if (uarmg) {
+			 tmp += uarmg->spe;
+		 }
 	    /* So do silver rings.  Note: rings are worn under gloves, so you
 	     * don't get both bonuses.
 	     */

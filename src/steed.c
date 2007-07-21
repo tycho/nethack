@@ -634,8 +634,8 @@ int x, y;
     if (mon == u.usteed ||
 	    /* special case is for convoluted vault guard handling */
 	    (DEADMONSTER(mon) && !(mon->isgd && x == 0 && y == 0))) {
-	impossible("placing %s onto map?",
-		   (mon == u.usteed) ? "steed" : "defunct monster");
+	/*impossible("placing %s onto map?",
+		   (mon == u.usteed) ? "steed" : "defunct monster");*/
 	return;
     }
     mon->mx = x, mon->my = y;
