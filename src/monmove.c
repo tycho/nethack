@@ -378,7 +378,8 @@ register struct monst *mtmp;
 
 	/* Monsters that want to acquire things */
 	/* may teleport, so do it before inrange is set */
-	if(is_covetous(mdat)) (void) tactics(mtmp);
+	/* ...don't let peaceful covetous monsters stay underfoot */
+	if(is_covetous(mdat) && !mtmp->mpeaceful) (void) tactics(mtmp);
 
 	/* check distance and scariness of attacks */
 	distfleeck(mtmp,&inrange,&nearby,&scared);
@@ -674,7 +675,7 @@ register int after;
 	}
 
 	/* and the acquisitive monsters get special treatment */
-	if(is_covetous(ptr)) {
+	if(is_covetous(ptr) && !mtmp->mpeaceful) {
 	    xchar tx = STRAT_GOALX(mtmp->mstrategy),
 		  ty = STRAT_GOALY(mtmp->mstrategy);
 	    struct monst *intruder = m_at(tx, ty);
