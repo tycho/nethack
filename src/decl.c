@@ -143,6 +143,7 @@ NEARDATA struct monst youmonst = DUMMY;
 NEARDATA struct flag flags = DUMMY;
 NEARDATA struct instance_flags iflags = DUMMY;
 NEARDATA struct you u = DUMMY;
+NEARDATA struct monst* polemonst = (struct monst*)0;	/* last monster we tried to polearm */
 
 NEARDATA struct obj *invent = (struct obj *)0,
 	*uwep = (struct obj *)0, *uarm = (struct obj *)0,

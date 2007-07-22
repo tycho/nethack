@@ -2497,8 +2497,14 @@ use_pole (obj)
 
 	/* Prompt for a location */
 	pline(where_to_hit);
-	cc.x = u.ux;
-	cc.y = u.uy;
+	if (polemonst && !DEADMONSTER(polemonst)) {
+		cc.x = polemonst->mx;
+		cc.y = polemonst->my;
+	} else {
+		polemonst = 0;	 /* reset this since it's either already 0 or should be */
+		cc.x = u.ux;
+		cc.y = u.uy;
+	}
 	if (getpos(&cc, TRUE, "the spot to hit") < 0)
 	    return 0;	/* user pressed ESC */
 
@@ -2527,6 +2533,7 @@ use_pole (obj)
 	if ((mtmp = m_at(cc.x, cc.y)) != (struct monst *)0) {
 	    int oldhp = mtmp->mhp;
 
+		 polemonst = mtmp;
 	    bhitpos = cc;
 	    check_caitiff(mtmp);
 	    (void) thitmonst(mtmp, uwep);
@@ -2536,6 +2543,7 @@ use_pole (obj)
 	     */
 	    if (mtmp->mhp < oldhp)
 		u.uconduct.weaphit++;
+		 if (DEADMONSTER(mtmp)) polemonst = 0;	 /* clean up pre-emptively */
 	} else
 	    /* Now you know that nothing is there... */
 	    pline(nothing_happens);

@@ -1360,6 +1360,9 @@ boolean at_stairs, falling, portal;
 	(void) in_out_region(u.ux, u.uy);
 	(void) pickup(1);
 
+	/* Don't autotarget a monster on a level you've just left */
+	polemonst = 0;
+
 #ifdef WHEREIS_FILE
 	touch_whereis();
 #endif
