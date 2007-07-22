@@ -3204,6 +3204,11 @@ register struct monst *shkp;
 	omx = shkp->mx;
 	omy = shkp->my;
 
+	/* Random advertising to passersby */
+	if (!ANGRY(shkp) && inhishop(shkp) && !*u.ushops && !rn2(5)) {
+		shk_holler(shkp);
+	}
+
 	if (inhishop(shkp))
 	    remove_damage(shkp, FALSE);
 
@@ -3797,6 +3802,28 @@ struct monst *shkp;
 		pline(Izchak_speaks[rn2(SIZE(Izchak_speaks))],shkname(shkp));
 	else
 		pline("%s talks about the problem of shoplifters.",shkname(shkp));
+}
+
+const char* wares_crying[] = {
+	"Gitchore luvverly orinjes!",
+	"Fresh fish! So fresh it'll grab yer naughty bits!",
+	"Sharpest weapons on the level! On sale, today only!",
+	"Credit available for valued customers!",
+	"Bugger off, you filthy little %s. Don't come begging around here!",
+	"Hey, %s! Best candles in Minetown! You'll need 'em later, count on it!",
+	"Sausage inna bun!  Hot sausage!",
+	"Well, you seem like a fine, discerning young %s; come over here a sec.",
+	"Any %s would love these!  Finest quality!"
+};
+
+void
+shk_holler(shkp)
+struct monst* shkp;
+{
+	/* Don't yell from too far away... */
+	if (distu(shkp->mx,shkp->my)<=16) {
+		verbalize(wares_crying[rn2(SIZE(wares_crying))],urace.noun);
+	}
 }
 
 #ifdef KOPS
