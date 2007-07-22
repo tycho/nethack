@@ -890,8 +890,9 @@ boolean atme;
 		if (!(objects[pseudo->otyp].oc_dir == NODIR)) {
 			if (atme) u.dx = u.dy = u.dz = 0;
 			else if (!getdir((char *)0)) {
-			    /* getdir cancelled, re-use previous direction */
+			    /* getdir cancelled, use random direction */
 			    pline_The("magical energy is released!");
+				 confdir();
 			}
 			if(!u.dx && !u.dy && !u.dz) {
 			    if ((damage = zapyourself(pseudo, TRUE)) != 0) {
