@@ -2512,30 +2512,38 @@ getdir(s)
 const char *s;
 {
 	char dirsym;
+	boolean validselection = FALSE;
 
+	while (!validselection) {
 #ifdef REDO
-	if(in_doagain || *readchar_queue)
-	    dirsym = readchar();
-	else
+		if(in_doagain || *readchar_queue)
+			dirsym = readchar();
+		else
 #endif
-	    dirsym = yn_function ((s && *s != '^') ? s : "In what direction?",
-					(char *)0, '\0');
+			dirsym = yn_function ((s && *s != '^') ? s : "In what direction?",
+						(char *)0, '\0');
 #ifdef REDO
-	savech(dirsym);
+		savech(dirsym);
 #endif
-	if(dirsym == '.' || dirsym == 's')
-		u.dx = u.dy = u.dz = 0;
-	else if(!movecmd(dirsym) && !u.dz) {
-		boolean did_help = FALSE;
-		if(!index(quitchars, dirsym)) {
-		    if (iflags.cmdassist) {
-			did_help = help_dir((s && *s == '^') ? dirsym : 0,
-					    "Invalid direction key!");
-		    }
-		    if (!did_help) pline("What a strange direction!");
+		if (dirsym == '.' || dirsym == 's') {
+			u.dx = u.dy = u.dz = 0;
+			validselection = TRUE;
+		} else if(!movecmd(dirsym) && !u.dz) {
+			boolean did_help = FALSE;
+			if(!index(quitchars, dirsym)) {
+				if (iflags.cmdassist) {
+				did_help = help_dir((s && *s == '^') ? dirsym : 0,
+							"Invalid direction key!");
+				}
+				if (!did_help) pline("What a strange direction!");
+			} else {
+				return 0;	/* selected a valid quitchar */
+			}
+		} else {
+			validselection = TRUE;
 		}
-		return 0;
-	}
+	}	/* while */
+
 	if(!u.dz && (Stunned || (Confusion && !rn2(5)))) confdir();
 	return 1;
 }
