@@ -3812,7 +3812,7 @@ const char* wares_crying[] = {
 	"Bugger off, you filthy little %s. Don't come begging around here!",
 	"Hey, %s! Best candles in Minetown! You'll need 'em later, count on it!",
 	"Sausage inna bun!  Hot sausage!",
-	"Well, you seem like a fine, discerning young %s; come over here a sec.",
+	"Well, you seem like a fine, discerning young %s; come look at this.",
 	"Any %s would love these!  Finest quality!"
 };
 
