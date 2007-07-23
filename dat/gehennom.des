@@ -683,27 +683,30 @@ MAZE: "hellfill" , ' '
 FLAGS: noteleport
 INIT_MAP: '.',' ',true,true,unlit,true
 NOMAP
+TELEPORT_REGION:(11,00,59,20),(00,00,01,01)
 #
 #  always put stairs relatively far apart
 #
-STAIR:levregion(01,01,10,19),(70,01,76,19), up
-STAIR:levregion(70,01,76,19),(01,01,10,19), down
+STAIR:(00,00,10,05),levregion(11,00,59,20),up
+STAIR:(60,15,71,20),levregion(11,00,59,20),down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+RANDOM_OBJECTS:'(','/','=','+',')','[','?','*','%'
+OBJECT: object[0], random, random
+OBJECT: object[0], random, random
+OBJECT: object[1], random, random
+OBJECT: object[2], random, random
+OBJECT: object[3], random, random
+OBJECT: object[4], random, random
 OBJECT: random, random, random
 OBJECT: random, random, random
 #
-MONSTER:'V',random,random,hostile
-MONSTER:'V',random,random,hostile
-MONSTER:'D',random,random,hostile
-MONSTER:'M',random,random,hostile
-MONSTER:'&',random,random,hostile
-MONSTER:'&',random,random,hostile
+RANDOM_MONSTERS:'V','D',' ','&','Z'
+MONSTER:monster[0],random,random,hostile
+MONSTER:monster[0],random,random,hostile
+MONSTER:monster[1],random,random,hostile
+MONSTER:monster[1],random,random,hostile
+MONSTER:monster[2],random,random,hostile
+MONSTER:monster[3],random,random,hostile
 MONSTER:'H',random,random,hostile
 MONSTER:random,random,random,hostile
 MONSTER:random,random,random,hostile
@@ -721,4 +724,5 @@ TRAP: random, random
 TRAP: random, random
 TRAP: random, random
 TRAP: random, random
+#
 
