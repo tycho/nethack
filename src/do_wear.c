@@ -119,9 +119,11 @@ Boots_on()
 		}
 		break;
 	case BOOTS_OF_MOLASSES:
-		/* Only one way to be slow right now. */
-		makeknown(uarmf->otyp);
-		You_feel("yourself slow down.");
+		if (!oldprop && !HSlow) {
+			makeknown(uarmf->otyp);
+			You_feel("yourself slow down.");
+			flags.botl = 1;
+		}
 		break;
 	case ELVEN_BOOTS:
 		if (!oldprop && !HStealth && !BStealth) {
@@ -165,8 +167,11 @@ Boots_off()
 		}
 		break;
 	case BOOTS_OF_MOLASSES:
-		makeknown(otyp);
-		You_feel("yourself speed up.");
+		if (!oldprop && !HSlow) {
+			makeknown(otyp);
+			You_feel("yourself speed up.");
+			flags.botl = 1;
+		}
 		break;
 	case WATER_WALKING_BOOTS:
 		if (is_pool(u.ux,u.uy) && !Levitation && !Flying &&
