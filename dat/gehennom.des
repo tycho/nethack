@@ -679,16 +679,16 @@ STAIR:(63,15),up
 #	This level is used to fill out any levels not occupied by
 #	specific levels as defined above.
 #
-MAZE: "hellfill" , ' '
+MAZE: "hellfill",' '
 FLAGS: noteleport
 INIT_MAP: '.',' ',true,true,unlit,true
+TELEPORT_REGION:levregion(11,01,59,19),levregion(01,01,02,02)
 NOMAP
-TELEPORT_REGION:(11,00,59,20),(00,00,01,01)
 #
 #  always put stairs relatively far apart
 #
-STAIR:(00,00,10,05),levregion(11,00,59,20),up
-STAIR:(60,15,71,20),levregion(11,00,59,20),down
+STAIR:levregion(01,01,10,20),levregion(40,10,44,12),up
+STAIR:levregion(60,01,70,20),levregion(45,10,49,12),down
 #
 RANDOM_OBJECTS:'(','/','=','+',')','[','?','*','%'
 OBJECT: object[0], random, random
@@ -725,4 +725,3 @@ TRAP: random, random
 TRAP: random, random
 TRAP: random, random
 #
-
