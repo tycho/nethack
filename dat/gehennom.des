@@ -687,8 +687,8 @@ NOMAP
 #
 #  always put stairs relatively far apart
 #
-STAIR:levregion(01,01,10,20),levregion(40,10,44,12),up
-STAIR:levregion(60,01,70,20),levregion(45,10,49,12),down
+STAIR:levregion(01,01,20,20),levregion(40,10,44,12),up
+STAIR:levregion(50,01,70,20),levregion(45,10,49,12),down
 #
 RANDOM_OBJECTS:'(','/','=','+',')','[','?','*','%'
 OBJECT: object[0], random, random
@@ -707,10 +707,19 @@ MONSTER:monster[1],random,random,hostile
 MONSTER:monster[1],random,random,hostile
 MONSTER:monster[2],random,random,hostile
 MONSTER:monster[3],random,random,hostile
+MONSTER:random,random,random,hostile
 MONSTER:'H',random,random,hostile
+# chance of evil critters
+IF [50%] THEN
+MONSTER:'L',random,random,hostile
+ELSE
 MONSTER:random,random,random,hostile
+ENDIF
+IF [50%] THEN
+MONSTER:'J',random,random,hostile
+ELSE
 MONSTER:random,random,random,hostile
-MONSTER:random,random,random,hostile
+ENDIF
 #
 TRAP: random, random
 TRAP: random, random
