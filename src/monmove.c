@@ -701,14 +701,6 @@ register int after;
 	    mmoved = 0;
 	}
 
-	/* does this monster like to play keep-away? */
-	if (is_skittish(ptr)) {
-		if ((dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) < 7)) {
-			monflee(mtmp,2,FALSE,FALSE);
-			mmoved = 1;
-		}
-	}
-
 #ifdef MAIL
 	if(ptr == &mons[PM_MAIL_DAEMON]) {
 	    if(flags.soundok && canseemon(mtmp))
@@ -735,6 +727,10 @@ not_special:
 	gx = mtmp->mux;
 	gy = mtmp->muy;
 	appr = mtmp->mflee ? -1 : 1;
+	/* does this monster like to play keep-away? */
+	if (is_skittish(ptr) && (dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) < 10)) {
+		appr = -1;
+	}
 	if (mtmp->mconf || (u.uswallow && mtmp == u.ustuck))
 		appr = 0;
 	else {
