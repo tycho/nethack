@@ -679,7 +679,7 @@ STAIR:(63,15),up
 #	This level is used to fill out any levels not occupied by
 #	specific levels as defined above.
 #
-MAZE: "hellfill",' '
+MAZE: "hellfill",'L'
 FLAGS: noteleport
 INIT_MAP: '.',' ',true,true,unlit,true
 TELEPORT_REGION:levregion(11,01,59,19),levregion(01,01,02,02)
