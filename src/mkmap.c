@@ -18,6 +18,7 @@ STATIC_DCL void NDECL(wallify_map);
 STATIC_DCL void FDECL(join_map,(SCHAR_P,SCHAR_P));
 STATIC_DCL void FDECL(finish_map,(SCHAR_P,SCHAR_P,XCHAR_P,XCHAR_P));
 STATIC_DCL void FDECL(remove_room,(unsigned));
+STATIC_DCL void FDECL(backfill,(SCHAR_P,SCHAR_P));
 void FDECL(mkmap, (lev_init *));
 
 char *new_locations;
@@ -34,6 +35,24 @@ init_map(bg_typ)
 	    for(j=0; j<ROWNO; j++)
 		levl[i][j].typ = bg_typ;
 }
+
+
+STATIC_OVL void
+backfill(bg_typ,filler)
+schar bg_typ,filler;
+{
+	int x,y;
+
+	for(x=1;x<COLNO;x++) {
+		for(y=0;y<ROWNO;y++) {
+			if (levl[x][y].typ == bg_typ) {
+				levl[x][y].typ = filler;
+			}
+		}
+	}
+
+}
+
 
 STATIC_OVL void
 init_fill(bg_typ, fg_typ)
@@ -468,10 +487,16 @@ mkmap(init_lev)
 	    join_map(bg_typ, fg_typ);
 
 	finish_map(fg_typ, bg_typ, (boolean)lit, (boolean)walled);
-	/* a walled, joined level is cavernous, not mazelike -dlc */
+	/* a walled, joined level is cavernous, not mazelike -dlc
+	 *
+	 * also, caverns have a defined "inside" and "outside"; the outside
+	 * doesn't _have_ to be stone, say, for hell.  so if the player
+	 * defined a maze filler originally, go ahead and backfill the 
+	 * background in with that filler - DSR */
 	if (walled && join) {
 	    level.flags.is_maze_lev = FALSE;
 	    level.flags.is_cavernous_lev = TRUE;
+		 backfill(bg_typ,init_lev->filling);
 	}
 	free(new_locations);
 }
