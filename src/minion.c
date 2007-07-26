@@ -16,7 +16,7 @@ struct monst *mon;
 	struct monst *mtmp;
 
 	/* Wielded Demonbane prevents demons from gating in others. */
-	if (uwep->oartifact == ART_DEMONBANE && is_demon(mon->data)) {
+	if (uwep && uwep->oartifact == ART_DEMONBANE && is_demon(mon->data)) {
 		pline("%s looks puzzled for a moment.",Monnam(mon));
 		return;
 	}
