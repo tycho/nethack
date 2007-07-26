@@ -2000,6 +2000,9 @@ struct monst *mon,	/* monster being split */
 	    if (mtmp2) {
 		mtmp2->mhpmax = u.mhmax / 2;
 		u.mhmax -= mtmp2->mhpmax;
+		/* crash proofing just in case we split some low hp critters */
+		if (mtmp2->mhpmax < 1) mtmp2->mhpmax = 1;
+		if (u.mhmax < 1) u.mhmax = 1;
 		flags.botl = 1;
 		You("multiply%s!", reason);
 	    }
@@ -2008,6 +2011,9 @@ struct monst *mon,	/* monster being split */
 	    if (mtmp2) {
 		mtmp2->mhpmax = mon->mhpmax / 2;
 		mon->mhpmax -= mtmp2->mhpmax;
+		/* crash proofing just in case we split some low hp critters */
+		if (mtmp2->mhpmax < 1) mtmp2->mhpmax = 1;
+		if (mon->mhpmax < 1) mon->mhpmax = 1;
 		if (canspotmon(mon))
 		    pline("%s multiplies%s!", Monnam(mon), reason);
 	    }
