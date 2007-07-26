@@ -773,6 +773,10 @@ xchar x, y;	/* clone's preferred location or 0 (near mon) */
 	 */
 	m2->mhpmax = mon->mhpmax / 2;
 	mon->mhpmax -= m2->mhpmax;
+	/* don't fall off the bottom end, esp. since our HP may be split
+	 * again after we return from this */
+	if (m2->mhpmax < 2) m2->mhpmax = 2;
+	if (mon->mhpmax < 2) mon->mhpmax = 2;
 	m2->mhp = mon->mhp / 2;
 	mon->mhp -= m2->mhp;
 

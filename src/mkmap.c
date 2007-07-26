@@ -47,6 +47,9 @@ schar bg_typ,filler;
 		for(y=0;y<ROWNO;y++) {
 			if (levl[x][y].typ == bg_typ) {
 				levl[x][y].typ = filler;
+				if (filler == LAVAPOOL) {	 /* lava's always lit */
+					levl[x][y].lit = 1;
+				}
 			}
 		}
 	}
