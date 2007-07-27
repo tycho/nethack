@@ -1067,17 +1067,19 @@ unrestrict_weapon_skill(skill)
 int skill;
 {
 
-	/* Cavemen are good at what they know how to use,
-	 * but not much on advanced fencing or combat tactics.
-	 * So never unrestrict an edged weapon for them. */
-	if (Role_if(PM_CAVEMAN) && (skill >= P_DAGGER && skill <= P_SABER)) {
-			return;
-	}
+	/* Cavemen are good at what they know how to use, but not much on advanced fencing or combat tactics.
+	 * So never unrestrict an edged weapon for them.
+	 *
+	 * Same for priests and monks, though slightly different: priests shouldn't have edged weapons, and
+	 * monks and wizards really shouldn't be _using_ weapons, so don't give them _any_. */
+
+	if (Role_if(PM_MONK) || Role_if(PM_WIZARD)) { return; }
+	if ((Role_if(PM_CAVEMAN) || Role_if(PM_PRIEST)) && skill >= P_DAGGER && skill <= P_SABER) { return; }
 
     if (skill < P_NUM_SKILLS && P_RESTRICTED(skill)) {
-	P_SKILL(skill) = P_UNSKILLED;
-	P_MAX_SKILL(skill) = P_BASIC;
-	P_ADVANCE(skill) = 0;
+		P_SKILL(skill) = P_UNSKILLED;
+		P_MAX_SKILL(skill) = P_BASIC;
+		P_ADVANCE(skill) = 0;
     }
 }
 
@@ -1197,10 +1199,10 @@ struct obj *weapon;
 		switch (skill) {
 			default: impossible(bad_skill, skill); /* fall through */
 			case P_ISRESTRICTED:
-			case P_UNSKILLED:   bonus = -9; break;
-			case P_BASIC:	bonus = -7; break;
-			case P_SKILLED:	bonus = -5; break;
-			case P_EXPERT:	bonus = -3; break;
+			case P_UNSKILLED:   bonus = -6; break;	  /* tweaked to allow for new AC boosts */
+			case P_BASIC:	bonus = -4; break;
+			case P_SKILLED:	bonus = -2; break;
+			case P_EXPERT:	bonus = 0; break;
 		}
 		/* Heavy things are hard to use in your offhand unless you're
 		 * very good at what you're doing.
