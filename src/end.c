@@ -127,7 +127,9 @@ dump_init ()
       } else {
 			fclose(dump_fp);
 			dump_fp = fopen(new_dump_fn, "w");
+#ifdef UNIX
 			chmod(new_dump_fn,dumpmode);
+#endif
 		}
       free(new_dump_fn);
       
@@ -140,7 +142,9 @@ dump_init ()
       } else {
 			fclose(dump_fp);
 			dump_fp = fopen(dump_fn, "w");
+#ifdef UNIX
 			chmod(dump_fn,dumpmode);
+#endif
 		}
     }
   }
