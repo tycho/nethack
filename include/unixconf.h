@@ -111,7 +111,7 @@
  * Hack will use its internal pager if DEF_PAGER is not defined.
  * (This might be preferable for security reasons.)*/
 
-#define DEF_PAGER	"/usr/bin/less"
+/*#define DEF_PAGER	"/usr/bin/less"*/
 
 /*
  * Define PORT_HELP to be the name of the port-specfic help file.
