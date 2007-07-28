@@ -38,7 +38,7 @@ static long final_fpos;
 #define ENTRYMAX	2000	/* must be >= 10 */
 
 #if !defined(MICRO) && !defined(MAC) && !defined(WIN32)
-#define PERS_IS_UID		/* delete for PERSMAX per name; now per uid */
+/*#define PERS_IS_UID		 delete for PERSMAX per name; now per uid */
 #endif
 struct toptenentry {
 	struct toptenentry *tt_next;
