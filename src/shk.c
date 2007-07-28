@@ -3205,7 +3205,7 @@ register struct monst *shkp;
 	omy = shkp->my;
 
 	/* Random advertising to passersby */
-	if (!ANGRY(shkp) && inhishop(shkp) && !*u.ushops && !rn2(5)) {
+	if (!ANGRY(shkp) && inhishop(shkp) && !*u.ushops && !rn2(10)) {
 		shk_holler(shkp);
 	}
 
@@ -3821,7 +3821,7 @@ shk_holler(shkp)
 struct monst* shkp;
 {
 	/* Don't yell from too far away... */
-	if (distu(shkp->mx,shkp->my)<=16) {
+	if (distu(shkp->mx,shkp->my)<=9) {
 		verbalize(wares_crying[rn2(SIZE(wares_crying))],urace.noun);
 	}
 }
