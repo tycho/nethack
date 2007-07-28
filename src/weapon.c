@@ -1190,8 +1190,8 @@ struct obj *weapon;
 		case P_ISRESTRICTED:
 		case P_UNSKILLED:   bonus = -4; break;
 		case P_BASIC:       bonus =  0; break;
-		case P_SKILLED:     bonus =  2; break;
-		case P_EXPERT:      bonus =  3; break;
+		case P_SKILLED:     bonus =  3; break;
+		case P_EXPERT:      bonus =  6; break;
 		}
 	} else if (type == P_TWO_WEAPON_COMBAT) {
 		skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1230,12 +1230,13 @@ struct obj *weapon;
 	 *	basic:	+1    +3
 	 *	skild:	+2    +4
 	 *	exprt:	+2    +5
-	 *	mastr:	+3    +6
-	 *	grand:	+3    +7
+	 *	mastr:	+3    +7
+	 *	grand:	+3    +9
 	 */
 		bonus = P_SKILL(type);
 		bonus = max(bonus,P_UNSKILLED) - 1;	/* unskilled => 0 */
 		bonus = ((bonus + 2) * (martial_bonus() ? 2 : 1)) / 2;
+		if (bonus > 5) { bonus += ((bonus - 5) * 2); }	/* extra boost for master/GM */
 	}
 
 #ifdef STEED
