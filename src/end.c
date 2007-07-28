@@ -103,7 +103,9 @@ FILE *dump_fp = (FILE *)0;  /* file pointer for dumps */
 void
 dump_init ()
 {
+#ifdef UNIX
 	mode_t dumpmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+#endif
   if (dump_fn[0]) {
     char *p = (char *) strstr(dump_fn, "%n");
     if (p) {
