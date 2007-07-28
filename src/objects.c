@@ -264,12 +264,12 @@ WEAPON("bullwhip", (char *)0,
 	1, 0, 0,  2, 20,  4,  2,  1, 0, 0,   P_WHIP, LEATHER, CLR_BROWN),
 
 /* bows */
-BOW("bow", (char *)0,		1, 24, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
-BOW("elven bow", "runed bow",	0, 12, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
-BOW("orcish bow", "crude bow",	0, 12, 30, 60, 0, WOOD, P_BOW, CLR_BLACK),
-BOW("yumi", "long bow",		0,  0, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
-BOW("sling", (char *)0,		1, 40,  3, 20, 0, LEATHER, P_SLING, HI_LEATHER),
-BOW("crossbow", (char *)0,	1, 45, 50, 40, 0, WOOD, P_CROSSBOW, HI_WOOD),
+BOW("bow", (char *)0,			  1, 32, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
+BOW("elven bow", "runed bow",	  0, 20, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
+BOW("orcish bow", "crude bow",  0, 20, 30, 60, 0, WOOD, P_BOW, CLR_BLACK),
+BOW("yumi", "long bow",			  0,  0, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
+BOW("sling", (char *)0,			  1, 16,  3, 20, 0, LEATHER, P_SLING, HI_LEATHER),
+BOW("crossbow", (char *)0,		  1, 45, 50, 40, 0, WOOD, P_CROSSBOW, HI_WOOD),
 
 #undef P
 #undef S
