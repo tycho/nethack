@@ -895,7 +895,7 @@ register struct obj *obj;
 		pline("%s's %s burn%s", The(xname(obj)), s,
 			(Blind ? "." : " brightly!"));
 	}
-	if (!invocation_pos(u.ux, u.uy)) {
+	if (!invocation_pos(u.ux, u.uy) && u.uevent.invoked) {
 		pline_The("%s %s being rapidly consumed!", s, vtense(s, "are"));
 		obj->age /= 2;
 	} else {
