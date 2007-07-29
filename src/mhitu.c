@@ -2635,8 +2635,11 @@ cloneu()
 	mon = christen_monst(mon, plname);
 	initedog(mon);
 	mon->m_lev = youmonst.data->mlevel;
-	mon->mhpmax = u.mhmax;
+	mon->mhpmax = u.mhmax / 2;
 	mon->mhp = u.mh / 2;
+	/* just in case */
+	if (mon->mhpmax < 1) mon->mhpmax = 1;
+	if (mon->mhp < 1) mon->mhp = 1;
 	u.mh -= mon->mhp;
 	flags.botl = 1;
 	return(mon);
