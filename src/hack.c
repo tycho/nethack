@@ -2155,6 +2155,83 @@ boolean k_format;
 }
 
 int
+gainmaxhp(desired)
+int desired;
+{
+	int softcap,hardcap,i;
+	float scaled,overpct;
+	boolean pastcap;
+	int conbonus;
+
+	/* handle everything cleanly; the current-hp checks are in case we get called
+	 * to actually lose max HP, which might be desirable in some places */
+	if (Upolyd) {
+		/* Don't need to worry about capping anything with regard to this,
+		 * since it'll generally be temporary anyway.  Someone who slaps on
+		 * the amulet of unchanging and then busts out the HP abuse, well,
+		 * very clever, congratulations ;) */
+		u.mhmax += desired;
+		if (u.mh > u.mhmax) { u.mh = u.mhmax; }
+		return u.mhmax;
+	} else if (desired < 0) {
+		/* no need to do silly stuff if we're losing maxhp */
+		u.uhpmax += desired;
+		if (u.uhp > u.uhpmax) { u.uhp = u.uhpmax; }
+		return u.uhpmax;
+	}
+
+	/* Magical methods of increasing HP should certainly allow one to step
+	 * outside of the normal range gained by levels... but perhaps not 
+	 * _ridiculously_ so, to the point of 500+ HP or better on any character.
+	 *
+	 * So implement some slide based on your role/race; you can boost it
+	 * beyond a certain point that's appropriate for your level, but the
+	 * effectiveness of those gains will slowly decrease until you hit
+	 * an effective hard cap at 150% of possible natural maxHP at L30.  */
+	
+	/* first determine the maximum natural amounts this character could have */
+	conbonus = ACURR(A_CON) - 15;
+	if (conbonus < 0 || conbonus > 4) conbonus = 0;
+	hardcap = softcap = urole.hpadv.infix + urole.hpadv.inrnd + 
+								urace.hpadv.infix + urace.hpadv.inrnd;
+
+	for (i=1;i<=30;i++) {
+		if (i <= u.ulevel) {
+			softcap += (i < urole.xlev) ? 
+				(urole.hpadv.lofix + urole.hpadv.lornd + urace.hpadv.lofix + urace.hpadv.lornd) :
+				(urole.hpadv.hifix + urole.hpadv.hirnd + urace.hpadv.hifix + urace.hpadv.hirnd);
+			softcap += conbonus;
+		}
+		hardcap += (i < urole.xlev) ?
+			(urole.hpadv.lofix + urole.hpadv.lornd + urace.hpadv.lofix + urace.hpadv.lornd) :
+			(urole.hpadv.hifix + urole.hpadv.hirnd + urace.hpadv.hifix + urace.hpadv.hirnd);
+		hardcap += conbonus;
+	}
+
+	/* paranoia */
+	if (softcap <= 0) { impossible("HP cap suspiciously low?"); return u.uhpmax; }
+
+	/* Reduce gains related to how far you are over the top.
+	 * If you're still below the maximum hard cap, you can be up to 200%
+	 * better than you should be at your level; otherwise, don't go more
+	 * than 150% past where you should be. */
+	pastcap = u.uhpmax >= hardcap;
+	overpct = (float)u.uhpmax / (float)softcap - 1;
+	if (overpct >= 0 && overpct < (pastcap ? 0.5 : 1.0)) { 
+		scaled = (float)desired * (1 - overpct * (pastcap ? 2 : 1));	
+		u.uhpmax += scaled;
+		if (scaled - (int)scaled >= .5) { u.uhpmax++; } /* round up */
+	} else if (overpct < 0) {
+		/* if you haven't even hit the soft cap, you get the full bonus */
+		u.uhpmax += desired; 
+	} 
+
+	if (u.uhp > u.uhpmax) { u.uhp = u.uhpmax; }
+	return u.uhpmax;
+
+}
+
+int
 weight_cap()
 {
 	register long carrcap;

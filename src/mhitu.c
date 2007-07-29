@@ -1389,8 +1389,7 @@ dopois:
 		    if (Upolyd) {
 			u.mh += rnd(7);
 			if (!rn2(7)) {
-			    /* no upper limit necessary; effect is temporary */
-			    u.mhmax++;
+				gainmaxhp(1);
 			    if (!rn2(13)) goaway = TRUE;
 			}
 			if (u.mh > u.mhmax) u.mh = u.mhmax;
@@ -1399,7 +1398,7 @@ dopois:
 			if (!rn2(7)) {
 			    /* hard upper limit via nurse care: 25 * ulevel */
 			    if (u.uhpmax < 5 * u.ulevel + d(2 * u.ulevel, 10))
-				u.uhpmax++;
+					 gainmaxhp(1);
 			    if (!rn2(13)) goaway = TRUE;
 			}
 			if (u.uhp > u.uhpmax) u.uhp = u.uhpmax;
@@ -1585,6 +1584,8 @@ dopois:
 		 *	otherwise	 0..50%
 		 * Never reduces hpmax below 1 hit point per level.
 		 */
+
+		/* this doesn't need to go through gainmaxhp - 7/29/07 DSR */
 		permdmg = rn2(dmg / 2 + 1);
 		if (Upolyd || u.uhpmax > 25 * u.ulevel) permdmg = dmg;
 		else if (u.uhpmax > 10 * u.ulevel) permdmg += dmg / 2;

@@ -348,7 +348,7 @@ int spellnum;
 				dmg /= 2;
 			}
 			You("feel drained...");
-			u.uhpmax -= dmg/2;
+			gainmaxhp(dmg/-2);
 			losehp(dmg,"touch of death",KILLED_BY_AN);
 	    }
 	}

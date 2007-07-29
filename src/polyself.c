@@ -166,8 +166,7 @@ newman()
 	 * 9 - rn2(19): random change of -9 to +9 hit points
 	 */
 #ifndef LINT
-	u.uhpmax = ((u.uhpmax - 10) * (long)u.ulevel / oldlvl + 10) +
-		(9 - rn2(19));
+	u.uhpmax = ((u.uhpmax - 10) * (long)u.ulevel / oldlvl + 10) + (9 - rn2(19));
 #endif
 
 #ifdef LINT

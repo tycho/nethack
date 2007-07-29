@@ -716,6 +716,7 @@ E int NDECL(monster_nearby);
 E void FDECL(nomul, (int));
 E void FDECL(unmul, (const char *));
 E void FDECL(losehp, (int,const char *,BOOLEAN_P));
+E int FDECL(gainmaxhp, (int));
 E int NDECL(weight_cap);
 E int NDECL(inv_weight);
 E int NDECL(near_capacity);
