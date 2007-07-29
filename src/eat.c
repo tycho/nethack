@@ -1707,7 +1707,7 @@ register struct obj *otmp;
 		if (Upolyd) {
 		    u.mh += otmp->cursed ? -rnd(20) : rnd(20);
 		    if (u.mh > u.mhmax) {
-			if (!rn2(17)) u.mhmax++;
+			if (!rn2(17)) gainmaxhp(1);
 			u.mh = u.mhmax;
 		    } else if (u.mh <= 0) {
 			rehumanize();
@@ -1715,8 +1715,8 @@ register struct obj *otmp;
 		} else {
 		    u.uhp += otmp->cursed ? -rnd(20) : rnd(20);
 		    if (u.uhp > u.uhpmax) {
-			if(!rn2(17)) u.uhpmax++;
-			u.uhp = u.uhpmax;
+				if(!rn2(17)) gainmaxhp(1);
+				u.uhp = u.uhpmax;
 		    } else if (u.uhp <= 0) {
 			killer_format = KILLED_BY_AN;
 			killer = "rotten lump of royal jelly";

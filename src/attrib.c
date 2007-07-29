@@ -187,12 +187,11 @@ losestr(num)	/* may kill you; cause may be poison or monster like 'a' */
 	    ++ustr;
 	    --num;
 	    if (Upolyd) {
-		u.mh -= 6;
-		u.mhmax -= 6;
+			u.mh -= 6;
 	    } else {
-		u.uhp -= 6;
-		u.uhpmax -= 6;
+			u.uhp -= 6;
 	    }
+		 gainmaxhp(-6);
 	}
 	(void) adjattrib(A_STR, -num, TRUE);
 }

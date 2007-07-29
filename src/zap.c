@@ -3175,7 +3175,7 @@ xchar sx, sy;
 	    } else if (Reflecting) {
 			 You("feel a little bit drained!");
 			 dam = d(2,6);
-			 u.uhpmax -= dam;	 /* it'll cost you... */
+			 gainmaxhp(-dam);	 /* it'll cost you... */
 			 break;
 		 }
 	    killer_format = KILLED_BY_AN;

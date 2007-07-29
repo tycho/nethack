@@ -2080,12 +2080,12 @@ int  typ, fatal;
 	i = rn2(fatal + 20*thrown_weapon);
 	i = 0;
 	if(i == 0 && typ != A_CHA) {
-		/* used to be instantly fatal; now just gongs your maxhp for (3d6)/2
+		/* used to be instantly fatal; now just gongs your maxhp for (4d6)/2
 		 * ...which is probably pretty close to fatal anyway for low-levels */
 		pline_The("poison was extremely toxic!");
 		i = d(4,6);
-		u.uhpmax -= i / 2;
 		losehp(i,pname,kprefix);
+		gainmaxhp(i/-2);
 	} else if(i <= 5) {
 		/* Check that a stat change was made */
 		if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3,3), 1))
