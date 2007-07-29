@@ -2083,7 +2083,7 @@ int  typ, fatal;
 		/* used to be instantly fatal; now just gongs your maxhp for (3d6)/2
 		 * ...which is probably pretty close to fatal anyway for low-levels */
 		pline_The("poison was extremely toxic!");
-		i = d(3,6);
+		i = d(4,6);
 		u.uhpmax -= i / 2;
 		losehp(i,pname,kprefix);
 	} else if(i <= 5) {
