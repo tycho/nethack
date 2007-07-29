@@ -33,7 +33,7 @@ static long final_fpos;
 #define NAMSZ	10
 #define DTHSZ	100
 #define ROLESZ   3
-#define PERSMAX	 5		/* entries per name/uid per char. allowed */
+#define PERSMAX	 50		/* entries per name/uid per char. allowed */
 #define POINTSMIN	1	/* must be > 0 */
 #define ENTRYMAX	2000	/* must be >= 10 */
 
