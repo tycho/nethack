@@ -379,6 +379,7 @@ cutworm(worm, x, y, weap)
 
     remove_monster(x, y);		/* clone_mon puts new head here */
     new_worm = clone_mon(worm, x, y);
+	 if (!new_worm) { return; }  /* clone might not return a monster */
     new_worm->wormno = new_wnum;	/* affix new worm number */
 
     /* Devalue the monster level of both halves of the worm. */
