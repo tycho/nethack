@@ -2191,7 +2191,8 @@ int desired;
 	
 	/* first determine the maximum natural amounts this character could have */
 	conbonus = ACURR(A_CON) - 15;
-	if (conbonus < 0 || conbonus > 4) conbonus = 0;
+	if (conbonus < 0) conbonus = 0; 
+	if (conbonus > 4) conbonus = 4;
 	hardcap = softcap = urole.hpadv.infix + urole.hpadv.inrnd + 
 								urace.hpadv.infix + urace.hpadv.inrnd;
 
