@@ -724,17 +724,30 @@ int
 dbon()		/* damage bonus for strength */
 {
 	int str = ACURR(A_STR);
+	int dbon = 0;
 
 	if (Upolyd) return(0);
 
-	if (str < 6) return(-1);
-	else if (str < 16) return(0);
-	else if (str < 18) return(1);
-	else if (str == 18) return(2);		/* up to 18 */
-	else if (str <= STR18(75)) return(3);		/* up to 18/75 */
-	else if (str <= STR18(90)) return(4);		/* up to 18/90 */
-	else if (str < STR18(100)) return(5);		/* up to 18/99 */
-	else return(6);
+	if (str < 6) dbon = -1;
+	else if (str < 16) dbon = 0;
+	else if (str < 18) dbon = 1;
+	else if (str == 18) dbon = 2;		/* up to 18 */
+	else if (str <= STR18(75)) dbon = 3;		/* up to 18/75 */
+	else if (str <= STR18(90)) dbon = 4;		/* up to 18/90 */
+	else if (str < STR18(100)) dbon = 5;		/* up to 18/99 */
+	else if (str == STR18(100)) dbon = 6;	   /* 18/00 only */
+	else dbon = 7;									   /* gauntlets of power */
+
+	/* HASAAAAAN CHOP!
+	 *
+	 * If you're wielding a two-handed weapon, let's just, hmm,
+	 * double this bonus.  Yes, even when negative; those are HEAVY.
+	 *
+	 * This should sharply increase the appeal of two-handers compared to #twoweapon. */
+
+	if (uwep && bimanual(uwep)) { dbon *= 2; }
+	return dbon;
+
 }
 
 
@@ -1202,10 +1215,10 @@ struct obj *weapon;
 		switch (skill) {
 			default: impossible(bad_skill, skill); /* fall through */
 			case P_ISRESTRICTED:
-			case P_UNSKILLED:   bonus = -6; break;	  /* tweaked to allow for new AC boosts */
-			case P_BASIC:	bonus = -4; break;
-			case P_SKILLED:	bonus = -2; break;
-			case P_EXPERT:	bonus = 0; break;
+			case P_UNSKILLED:   bonus = -9; break;	  /* tweaked back to support 2-handers */
+			case P_BASIC:	bonus = -7; break;
+			case P_SKILLED:	bonus = -5; break;
+			case P_EXPERT:	bonus = -3; break;
 		}
 		/* Heavy things are hard to use in your offhand unless you're
 		 * very good at what you're doing.
