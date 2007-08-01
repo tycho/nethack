@@ -1917,6 +1917,43 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 	else if (obj->oartifact) tmp *= 4L;
 	/* anger surcharge should match rile_shk's */
 	if (shkp && ESHK(shkp)->surcharge) tmp += (tmp + 2L) / 3L;
+
+	/* possible additional surcharges based on shk race, if one was passed in */
+	if (shkp) {
+		switch (shkp->mnum) {
+			default:
+			case PM_HUMAN:
+				/* nasty, brutish, and short */
+				if (Race_if(PM_ORC) && Race_if(PM_GNOME)) { tmp += tmp / 3L; }	  
+				break;
+			case PM_GREEN_ELF:
+				if (Race_if(PM_ORC)) { tmp *= 2L; }
+				if (Race_if(PM_DWARF)) { tmp += tmp / 3L; }	/* "lawn ornament." */
+				break;
+			case PM_DWARF:
+				if (Race_if(PM_ORC)) { tmp *= 2L; }
+				if (Race_if(PM_ELF)) { tmp += tmp / 3L; }  /* "pointy-eared tree hugger." */
+				break;
+			case PM_ORC:
+				if (Race_if(PM_ELF)) { tmp *= 3L; }
+				if (Race_if(PM_DWARF)) { tmp += (tmp * 2L) / 3L; }
+				if (Race_if(PM_HUMAN)) { tmp += tmp / 3L; }
+				if (Race_if(PM_ORC)) { tmp /= (tmp * 3L) / 2L; }	  
+				/* big discount on top of professional courtesy */
+				break;
+			case PM_GNOME:
+				/* Gnomes are crafty.  They don't really have racial animosities, but
+				* it's going to be a lot harder to get a good deal out of a gnome unless
+				* you're remarkably shrewd yourself. */
+				if (ACURR(A_INT) < 15) { tmp += tmp / 2L; }
+				else if (ACURR(A_INT) < 18) { tmp += tmp / 3L; }
+				break;
+		}
+	}
+
+	/* professional courtesy if nonhuman */
+	if (shkp && shkp->mnum != PM_HUMAN && match_shkrace(shkp)) { tmp -= tmp / 2L; }
+
 	return tmp;
 }
 #endif /*OVL3*/
@@ -2048,6 +2085,39 @@ register struct monst *shkp;
 		} else if (tmp > 1L && !rn2(4))
 			tmp -= tmp / 4L;
 	}
+
+	/* possible additional adjustments based on shk race.. */
+	switch (shkp->mnum) {
+		default:
+		case PM_HUMAN:
+			if (Race_if(PM_ORC) && Race_if(PM_GNOME)) { tmp -= tmp / 3L; }	  /* nasty, brutish, and short */
+			break;
+		case PM_GREEN_ELF:
+			if (Race_if(PM_ORC)) { tmp /= 2L; }
+			if (Race_if(PM_DWARF)) { tmp -= tmp / 3L; }	/* "lawn ornament." */
+			break;
+		case PM_DWARF:
+			if (Race_if(PM_ORC)) { tmp /= 2L; }
+			if (Race_if(PM_ELF)) { tmp -= tmp / 3L; }  /* "pointy-eared tree hugger." */
+			break;
+		case PM_ORC:
+			if (Race_if(PM_ELF)) { tmp /= 3L; }
+			if (Race_if(PM_DWARF)) { tmp -= (tmp * 2L) / 3L; }
+			if (Race_if(PM_HUMAN)) { tmp -= tmp / 3L; }
+			if (Race_if(PM_ORC)) { tmp -= tmp / 3L; }	 /* on top of prof. courtesy */
+			break;
+		case PM_GNOME:
+			/* Gnomes are crafty.  They don't really have racial animosities, but
+			 * it's going to be a lot harder to get a good deal out of a gnome unless
+			 * you're remarkably shrewd yourself. */
+			if (ACURR(A_INT) < 15) { tmp -= tmp / 2L; }
+			else if (ACURR(A_INT) < 18) { tmp -= tmp / 3L; }
+			break;
+	}
+
+	/* professional courtesy if nonhuman, but not _that_ much */
+	if (shkp->mnum != PM_HUMAN && match_shkrace(shkp)) { tmp += tmp / 3L; }
+
 	return tmp;
 }
 
@@ -3661,7 +3731,7 @@ register struct obj *first_obj;
     for (otmp = first_obj; otmp; otmp = otmp->nexthere) {
 	if (otmp->oclass == COIN_CLASS) continue;
 	cost = (otmp->no_charge || otmp == uball || otmp == uchain) ? 0L :
-		get_cost(otmp, (struct monst *)0);
+		get_cost(otmp, shkp ? shkp : (struct monst*)0);
 	if (Has_contents(otmp))
 	    cost += contained_cost(otmp, shkp, 0L, FALSE, FALSE);
 	if (!cost) {
@@ -3680,7 +3750,7 @@ register struct obj *first_obj;
 	    pline("%s!", buf);	/* buf still contains the string */
 	} else {
 	    /* print cost in slightly different format, so can't reuse buf */
-	    cost = get_cost(first_obj, (struct monst *)0);
+	    cost = get_cost(first_obj, shkp ? shkp : (struct monst *)0);
 	    if (Has_contents(first_obj))
 		cost += contained_cost(first_obj, shkp, 0L, FALSE, FALSE);
 	    pline("%s, price %ld %s%s%s", doname(first_obj),
@@ -3807,7 +3877,7 @@ struct monst *shkp;
 const char* wares_crying[] = {
 	"Gitchore luvverly orinjes!",
 	"Fresh fish! So fresh it'll grab yer naughty bits!",
-	"Sharpest weapons on the level! On sale, today only!",
+	"Sharpest weapons around! On sale, today only!",
 	"Credit available for valued customers!",
 	"Bugger off, you filthy little %s. Don't come begging around here!",
 	"Hey, %s! Best candles in Minetown! You'll need 'em later, count on it!",
