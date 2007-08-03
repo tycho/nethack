@@ -988,6 +988,7 @@ hitmu(mtmp, mattk)
 			    break;
 		    } else if (Fire_resistance) {
 			pline_The("fire doesn't feel hot!");
+			monstseesu(M_SEEN_FIRE);
 			dmg = 0;
 		    }
 		    if((int) mtmp->m_lev > rn2(20))
@@ -1005,6 +1006,7 @@ hitmu(mtmp, mattk)
 		    pline("You're covered in frost!");
 		    if (Cold_resistance) {
 			pline_The("frost doesn't seem cold!");
+			monstseesu(M_SEEN_COLD);
 			dmg = 0;
 		    }
 		    if((int) mtmp->m_lev > rn2(20))
@@ -1017,6 +1019,7 @@ hitmu(mtmp, mattk)
 		    You("get zapped!");
 		    if (Shock_resistance) {
 			pline_The("zap doesn't shock you!");
+			monstseesu(M_SEEN_ELEC);
 			dmg = 0;
 		    }
 		    if((int) mtmp->m_lev > rn2(20))
@@ -1028,7 +1031,10 @@ hitmu(mtmp, mattk)
 	    case AD_SLEE:
 		hitmsg(mtmp, mattk);
 		if (uncancelled && multi >= 0 && !rn2(5)) {
-		    if (Sleep_resistance) break;
+		    if (Sleep_resistance) {
+				monstseesu(M_SEEN_SLEEP);
+				 break;
+			 }
 		    fall_asleep(-rnd(10), TRUE);
 		    if (Blind) You("are put to sleep!");
 		    else You("are put to sleep by %s!", mon_nam(mtmp));
@@ -1453,6 +1459,7 @@ dopois:
 		if (!mtmp->mcan && !rn2(3))
 		    if (Acid_resistance) {
 			pline("You're covered in acid, but it seems harmless.");
+			monstseesu(M_SEEN_ACID);
 			dmg = 0;
 		    } else {
 			pline("You're covered in acid!	It burns!");
@@ -1733,6 +1740,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 		case AD_ACID:
 		    if (Acid_resistance) {
 			You("are covered with a seemingly harmless goo.");
+			monstseesu(M_SEEN_ACID);
 			tmp = 0;
 		    } else {
 		      if (Hallucination) pline("Ouch!  You've been slimed!");
@@ -1758,6 +1766,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 			if (Shock_resistance) {
 				shieldeff(u.ux, u.uy);
 				You("seem unhurt.");
+				monstseesu(M_SEEN_ELEC);
 				ugolemeffects(AD_ELEC,tmp);
 				tmp = 0;
 			}
@@ -1768,6 +1777,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 			if (Cold_resistance) {
 				shieldeff(u.ux, u.uy);
 				You_feel("mildly chilly.");
+				monstseesu(M_SEEN_COLD);
 				ugolemeffects(AD_COLD,tmp);
 				tmp = 0;
 			} else You("are freezing to death!");
@@ -1778,6 +1788,7 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 			if (Fire_resistance) {
 				shieldeff(u.ux, u.uy);
 				You_feel("mildly hot.");
+				monstseesu(M_SEEN_FIRE);
 				ugolemeffects(AD_FIRE,tmp);
 				tmp = 0;
 			} else You("are burning to a crisp!");
@@ -1851,6 +1862,8 @@ common:
 		    if (mattk->adtyp == AD_FIRE) burn_away_slime();
 		    if (Half_physical_damage) tmp = (tmp+1) / 2;
 		    mdamageu(mtmp, tmp);
+		} else {
+			monstseesu(1 << (mattk->adtyp-1));	 /* we seeee you */
 		}
 		break;
 
@@ -2001,6 +2014,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    pline("%s attacks you with a fiery gaze!", Monnam(mtmp));
 		    stop_occupation();
 		    if (Fire_resistance) {
+				 monstseesu(M_SEEN_FIRE);
 				dmg /= 2;
 		    }
 		    burn_away_slime();
@@ -2022,6 +2036,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    pline("%s attacks you with a chilling gaze!", Monnam(mtmp));
 		    stop_occupation();
 		    if (Cold_resistance) {
+				 monstseesu(M_SEEN_COLD);
 				dmg /= 2;
 		    }
 		    if ((int) mtmp->m_lev > rn2(20))
@@ -2037,6 +2052,9 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    fall_asleep(-d(mattk->damn,mattk->damd), TRUE);
 		    pline("%s gaze makes you very sleepy...",
 			  s_suffix(Monnam(mtmp)));
+		}
+		if (Sleep_resistance) {
+			monstseesu(M_SEEN_SLEEP);
 		}
 		break;
 	    case AD_SLOW:

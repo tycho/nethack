@@ -75,9 +75,10 @@ const char *name;	/* if null, then format `obj' */
 			pline_The("silver sears your flesh!");
 			exercise(A_CON, FALSE);
 		}
-		if (is_acid && Acid_resistance)
+		if (is_acid && Acid_resistance) {
 			pline("It doesn't seem to hurt you.");
-		else {
+			monstseesu(M_SEEN_ACID);
+		} else {
 			if (is_acid) pline("It burns!");
 			if (Half_physical_damage) dam = (dam+1) / 2;
 			losehp(dam, knm, kprefix);
@@ -663,37 +664,44 @@ breamu(mtmp, mattk)			/* monster breathes at you (ranged) */
 {
 	/* if new breath types are added, change AD_ACID to max type */
 	int typ = (mattk->adtyp == AD_RBRE) ? rnd(AD_ACID) : mattk->adtyp ;
+	boolean player_resists = FALSE;
 
 	if(lined_up(mtmp)) {
-
-	    if(mtmp->mcan) {
-		if(flags.soundok) {
-		    if(canseemon(mtmp))
-			pline("%s coughs.", Monnam(mtmp));
-		    else
-			You_hear("a cough.");
+		if(mtmp->mcan) {
+			if(flags.soundok) {
+				if(canseemon(mtmp))
+					pline("%s coughs.", Monnam(mtmp));
+				else
+					You_hear("a cough.");
+			}
+			return(0);
 		}
-		return(0);
-	    }
-	    if(!mtmp->mspec_used && rn2(3)) {
 
-		if((typ >= AD_MAGM) && (typ <= AD_ACID)) {
+		/* if we've seen the actual resistance, don't bother, or
+		 * if we're close by and they reflect, just jump the player */
+		player_resists = m_seenres(mtmp,1 << (typ-1));
+		if (player_resists || 
+				(m_seenres(mtmp,M_SEEN_REFL) && monnear(mtmp,mtmp->mux,mtmp->muy))) { 
+			return 1; 
+		}
 
-		    if(canseemon(mtmp))
-			pline("%s breathes %s!", Monnam(mtmp),
-			      breathwep[typ-1]);
-		    buzz((int) (-20 - (typ-1)), (int)mattk->damn,
-			 mtmp->mx, mtmp->my, sgn(tbx), sgn(tby));
-		    nomul(0);
-		    /* breath runs out sometimes. Also, give monster some
-		     * cunning; don't breath if the player fell asleep.
-		     */
-		    if(!rn2(3))
-			mtmp->mspec_used = 10+rn2(20);
-		    if(typ == AD_SLEE && !Sleep_resistance)
-			mtmp->mspec_used += rnd(20);
-		} else impossible("Breath weapon %d used", typ-1);
-	    }
+		if(!mtmp->mspec_used && rn2(3)) {
+			if((typ >= AD_MAGM) && (typ <= AD_ACID)) {
+				if(canseemon(mtmp))
+					pline("%s breathes %s!", Monnam(mtmp),
+				breathwep[typ-1]);
+				buzz((int) (-20 - (typ-1)), (int)mattk->damn,
+				mtmp->mx, mtmp->my, sgn(tbx), sgn(tby));
+				nomul(0);
+				/* breath runs out sometimes. Also, give monster some
+				* cunning; don't breath if the player fell asleep.
+				*/
+				if(!rn2(3))
+					mtmp->mspec_used = 10+rn2(20);
+				if(typ == AD_SLEE && !Sleep_resistance)
+					mtmp->mspec_used += rnd(20);
+			} else impossible("Breath weapon %d used", typ-1);
+		}
 	}
 	return(1);
 }

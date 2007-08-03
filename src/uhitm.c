@@ -2204,6 +2204,8 @@ uchar aatyp;
 
 		if (!Acid_resistance)
 			mdamageu(mon, tmp);
+		else
+			monstseesu(M_SEEN_ACID);
 		if(!rn2(30)) erode_armor(&youmonst, TRUE);
 	    }
 	    if (mhit) {
@@ -2328,6 +2330,7 @@ uchar aatyp;
 		if(monnear(mon, u.ux, u.uy)) {
 		    if(Cold_resistance) {
 			shieldeff(u.ux, u.uy);
+			monstseesu(M_SEEN_COLD);
 			You_feel("a mild chill.");
 			ugolemeffects(AD_COLD, tmp);
 			break;
@@ -2350,6 +2353,7 @@ uchar aatyp;
 		if(monnear(mon, u.ux, u.uy)) {
 		    if(Fire_resistance) {
 			shieldeff(u.ux, u.uy);
+			monstseesu(M_SEEN_FIRE);
 			You_feel("mildly warm.");
 			ugolemeffects(AD_FIRE, tmp);
 			break;
@@ -2361,6 +2365,7 @@ uchar aatyp;
 	      case AD_ELEC:
 		if(Shock_resistance) {
 		    shieldeff(u.ux, u.uy);
+			 monstseesu(M_SEEN_ELEC);
 		    You_feel("a mild tingle.");
 		    ugolemeffects(AD_ELEC, tmp);
 		    break;

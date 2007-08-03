@@ -522,8 +522,10 @@ drinksink()
 		case 1: You("take a sip of very warm water.");
 			break;
 		case 2: You("take a sip of scalding hot water.");
-			if (Fire_resistance)
+			if (Fire_resistance) {
 				pline("It seems quite tasty.");
+				monstseesu(M_SEEN_FIRE);
+			}
 			else losehp(rnd(6), "sipping boiling water", KILLED_BY);
 			break;
 		case 3: if (mvitals[PM_SEWER_RAT].mvflags & G_GONE)

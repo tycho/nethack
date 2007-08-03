@@ -28,7 +28,6 @@ STATIC_DCL boolean FDECL(zap_updown, (struct obj *));
 STATIC_DCL int FDECL(zhitm, (struct monst *,int,int,struct obj **));
 STATIC_DCL void FDECL(zhitu, (int,int,const char *,XCHAR_P,XCHAR_P));
 STATIC_DCL void FDECL(revive_egg, (struct obj *));
-STATIC_DCL void FDECL(monstseesu,(int));
 
 #ifdef STEED
 STATIC_DCL boolean FDECL(zap_steed, (struct obj *));
@@ -57,9 +56,6 @@ STATIC_DCL int FDECL(spell_hit_bonus, (int,BOOLEAN_P));
 #define ZT_BREATH(x)		(20+(x))
 
 #define is_hero_spell(type)	((type) >= 10 && (type) < 20)
-
-#define SAW_U_REFLECT	1
-#define SAW_U_MR			2
 
 #ifndef OVLB
 STATIC_VAR const char are_blinded_by_the_flash[];
@@ -1891,7 +1887,7 @@ boolean ordinary;
 		    if(Antimagic) {
 			shieldeff(u.ux, u.uy);
 			pline("Boing!");
-			monstseesu(SAW_U_MR);
+			monstseesu(M_SEEN_MAGR);
 		    } else {
 			if (ordinary) {
 			    You("bash yourself!");
@@ -1911,6 +1907,7 @@ boolean ordinary;
 		    } else {
 			shieldeff(u.ux, u.uy);
 			You("zap yourself, but seem unharmed.");
+			monstseesu(M_SEEN_ELEC);
 			ugolemeffects(AD_ELEC, d(12,6));
 		    }
 		    destroy_item(WAND_CLASS, AD_ELEC);
@@ -1932,6 +1929,7 @@ boolean ordinary;
 		    if (Fire_resistance) {
 			shieldeff(u.ux, u.uy);
 			You_feel("rather warm.");
+			monstseesu(M_SEEN_FIRE);
 			ugolemeffects(AD_FIRE, d(12,6));
 		    } else {
 			pline("You've set yourself afire!");
@@ -1951,6 +1949,7 @@ boolean ordinary;
 		    if (Cold_resistance) {
 			shieldeff(u.ux, u.uy);
 			You_feel("a little chill.");
+			monstseesu(M_SEEN_COLD);
 			ugolemeffects(AD_COLD, d(12,6));
 		    } else {
 			You("imitate a popsicle!");
@@ -1965,7 +1964,7 @@ boolean ordinary;
 		    if(Antimagic) {
 			shieldeff(u.ux, u.uy);
 			pline_The("missiles bounce!");
-			monstseesu(SAW_U_MR);
+			monstseesu(M_SEEN_MAGR);
 		    } else {
 			damage = d(4,6);
 			pline("Idiot!  You've shot yourself!");
@@ -2035,6 +2034,7 @@ boolean ordinary;
 		    if(Sleep_resistance) {
 			shieldeff(u.ux, u.uy);
 			You("don't feel sleepy!");
+			monstseesu(M_SEEN_SLEEP);
 		    } else {
 			pline_The("sleep ray hits you!");
 			fall_asleep(-rnd(50), TRUE);
@@ -3087,7 +3087,7 @@ xchar sx, sy;
 	case ZT_MAGIC_MISSILE:
 		 dam = d(nd,6);
 	    if (Antimagic) {
-			 monstseesu(SAW_U_MR);
+			 monstseesu(M_SEEN_MAGR);
 			shieldeff(sx, sy);
 			pline("Some of the missiles bounce off!");
 			dam /= 2;
@@ -3101,6 +3101,7 @@ xchar sx, sy;
 	    if (Fire_resistance) {
 		shieldeff(sx, sy);
 		You("don't feel hot!");
+		monstseesu(M_SEEN_FIRE);
 		ugolemeffects(AD_FIRE, d(nd, 6));
 	    } else {
 		dam = d(nd, 6);
@@ -3118,6 +3119,7 @@ xchar sx, sy;
 	    if (Cold_resistance) {
 		shieldeff(sx, sy);
 		You("don't feel cold.");
+		monstseesu(M_SEEN_COLD);
 		ugolemeffects(AD_COLD, d(nd, 6));
 	    } else {
 		dam = d(nd, 6);
@@ -3130,6 +3132,7 @@ xchar sx, sy;
 	    if (Sleep_resistance) {
 			shieldeff(u.ux, u.uy);
 			You("don't feel sleepy.");
+			monstseesu(M_SEEN_SLEEP);
 		 } else if (Reflecting) {
 			fall_asleep(-d(1,6), TRUE); /* sleep ray */
 		 } else {
@@ -3140,6 +3143,7 @@ xchar sx, sy;
 	    if (abs(type) == ZT_BREATH(ZT_DEATH)) {
 			if (Disint_resistance) {
 				You("are not disintegrated.");
+				monstseesu(M_SEEN_DISINT);
 				break;
 			} else if (Reflecting) {
 				You("aren't disintegrated, but that hurts!");
@@ -3168,7 +3172,7 @@ xchar sx, sy;
 			You("seem unaffected.");
 			break;
 	    } else if (Antimagic) {
-			 monstseesu(SAW_U_MR);
+			 monstseesu(M_SEEN_MAGR);
 			shieldeff(sx, sy);
 			You("aren't affected.");
 			break;
@@ -3188,6 +3192,7 @@ xchar sx, sy;
 	    if (Shock_resistance) {
 		shieldeff(sx, sy);
 		You("aren't affected.");
+		monstseesu(M_SEEN_ELEC);
 		ugolemeffects(AD_ELEC, d(nd, 6));
 	    } else {
 		dam = d(nd, 6);
@@ -3207,6 +3212,7 @@ xchar sx, sy;
 	    if (Acid_resistance) {
 			dam = 0;
 			pline_The("acid doesn't seem to hurt!");
+			monstseesu(M_SEEN_ACID);
 	    } else {
 			pline_The("acid burns!");
 			dam = d(nd,6);
@@ -3497,7 +3503,7 @@ register int dx,dy;
 				dy = -dy;
 				shieldeff(sx, sy);
 				nd /= 2;
-				monstseesu(SAW_U_REFLECT);
+				monstseesu(M_SEEN_REFL);
 			} 
 			zhitu(type, nd, fltxt, sx, sy);
 	    } else {
@@ -4185,24 +4191,16 @@ retry:
 }
 
 
+/*	uses the M_SEEN definitions in monst.h */
 void
 monstseesu(udid)
-int udid;
+unsigned long udid;
 {
-
 	struct monst* mtmp;
 
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-		if (!DEADMONSTER(mtmp) && m_canseeu(mtmp)) {
-			if (udid == SAW_U_REFLECT) {
-				mtmp->seen_reflection = TRUE;
-			}
-			if (udid == SAW_U_MR) {
-				mtmp->seen_mr = TRUE;
-			}
-		}
+		if (!DEADMONSTER(mtmp) && m_canseeu(mtmp)) m_setseen(mtmp,udid);
 	}
-
 }
 
 #endif /*OVL2*/
