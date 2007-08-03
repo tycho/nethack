@@ -63,8 +63,25 @@ struct monst {
 	unsigned short mintrinsics;	/* low 8 correspond to mresists */
 	int mspec_used;		/* monster's special ability attack timeout */
 
-	Bitfield(seen_reflection,1);  /* Has seen you reflect a beam */
-	Bitfield(seen_mr,1);	  /* Has seen that you have magic resistance */
+/* These should stay in the same order as monattk.h so
+ * the mask translations will work properly */
+
+#define M_SEEN_NOTHING	0x0000
+#define M_SEEN_MAGR		0x0001
+#define M_SEEN_FIRE		0x0002
+#define M_SEEN_COLD		0x0004
+#define M_SEEN_SLEEP		0x0008
+#define M_SEEN_DISINT	0x0010
+#define M_SEEN_ELEC		0x0020
+#define M_SEEN_POISON	0x0040
+#define M_SEEN_ACID	 	0x0080
+#define M_SEEN_REFL		0x0100
+
+#define m_seenres(mon,mask)	((mon)->seen_resistance & (mask))
+#define m_setseen(mon,mask)	((mon)->seen_resistance |= (mask))
+
+	unsigned long seen_resistance;			 /* Has seen you resist an element or magical effect */
+
 	Bitfield(female,1);	/* is female */
 	Bitfield(minvis,1);	/* currently invisible */
 	Bitfield(invis_blkd,1); /* invisibility blocked */

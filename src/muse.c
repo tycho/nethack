@@ -967,10 +967,11 @@ struct monst *mtmp;
 {
 	register struct obj *obj;
 	boolean ranged_stuff = lined_up(mtmp);
-	/* both of these will allow the monster to still shoot at you, regardless
-	 * of your reflection/MR, if you're too far away for it to normally hit */
-	boolean reflection_skip = mtmp->seen_reflection && monnear(mtmp,mtmp->mux,mtmp->muy);
-	boolean mr_skip = mtmp->seen_mr && monnear(mtmp,mtmp->mux,mtmp->muy);
+	/* In general if the monster has seen that you're not taking much damage (reflection or MR),
+	 * then it's going to prefer just running up and hitting you if it can.  But we need to take
+	 * the range into account, since half damage is better than no damage... */
+	boolean reflection_skip = m_seenres(mtmp,M_SEEN_REFL) && monnear(mtmp,mtmp->mux,mtmp->muy);
+	boolean mr_skip = m_seenres(mtmp,M_SEEN_MAGR) && monnear(mtmp,mtmp->mux,mtmp->muy);
 	struct obj *helmet = which_armor(mtmp, W_ARMH);
 
 	m.offensive = (struct obj *)0;
@@ -992,52 +993,50 @@ struct monst *mtmp;
 	for(obj=mtmp->minvent; obj; obj=obj->nobj) {
 		/* nomore(MUSE_WAN_DEATH); */
 		if (!reflection_skip) {
-		    if(obj->otyp == WAN_DEATH && obj->spe > 0) {
+		    if(obj->otyp == WAN_DEATH && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_MAGR)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_WAN_DEATH;
 		    }
 		    nomore(MUSE_WAN_SLEEP);
-		    if(obj->otyp == WAN_SLEEP && obj->spe > 0 && multi >= 0) {
+		    if(obj->otyp == WAN_SLEEP && obj->spe > 0 && multi >= 0 && !m_seenres(mtmp,M_SEEN_SLEEP)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_WAN_SLEEP;
 		    }
 		    nomore(MUSE_WAN_FIRE);
-		    if(obj->otyp == WAN_FIRE && obj->spe > 0) {
+		    if(obj->otyp == WAN_FIRE && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_FIRE)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_WAN_FIRE;
 		    }
 		    nomore(MUSE_FIRE_HORN);
-		    if(obj->otyp == FIRE_HORN && obj->spe > 0) {
+		    if(obj->otyp == FIRE_HORN && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_FIRE)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_FIRE_HORN;
 		    }
 		    nomore(MUSE_WAN_COLD);
-		    if(obj->otyp == WAN_COLD && obj->spe > 0) {
+		    if(obj->otyp == WAN_COLD && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_COLD)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_WAN_COLD;
 		    }
 		    nomore(MUSE_FROST_HORN);
-		    if(obj->otyp == FROST_HORN && obj->spe > 0) {
+		    if(obj->otyp == FROST_HORN && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_COLD)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_FROST_HORN;
 		    }
 		    nomore(MUSE_WAN_LIGHTNING);
-		    if(obj->otyp == WAN_LIGHTNING && obj->spe > 0) {
+		    if(obj->otyp == WAN_LIGHTNING && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_ELEC)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_WAN_LIGHTNING;
 		    }
 		    nomore(MUSE_WAN_MAGIC_MISSILE);
-		    if(obj->otyp == WAN_MAGIC_MISSILE && obj->spe > 0) {
+		    if(obj->otyp == WAN_MAGIC_MISSILE && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_MAGR)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_WAN_MAGIC_MISSILE;
 		    }
 		}
 		nomore(MUSE_WAN_STRIKING);
-		if (!mr_skip) {
-			if(obj->otyp == WAN_STRIKING && obj->spe > 0) {
-				m.offensive = obj;
-				m.has_offense = MUSE_WAN_STRIKING;
-			}
+		if(obj->otyp == WAN_STRIKING && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_MAGR)) {
+			m.offensive = obj;
+			m.has_offense = MUSE_WAN_STRIKING;
 		}
 		nomore(MUSE_POT_PARALYSIS);
 		if(obj->otyp == POT_PARALYSIS && multi >= 0) {
@@ -1055,12 +1054,12 @@ struct monst *mtmp;
 			m.has_offense = MUSE_POT_CONFUSION;
 		}
 		nomore(MUSE_POT_SLEEPING);
-		if(obj->otyp == POT_SLEEPING) {
+		if(obj->otyp == POT_SLEEPING && !m_seenres(mtmp,M_SEEN_SLEEP)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_POT_SLEEPING;
 		}
 		nomore(MUSE_POT_ACID);
-		if(obj->otyp == POT_ACID) {
+		if(obj->otyp == POT_ACID && !m_seenres(mtmp,M_SEEN_ACID)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_POT_ACID;
 		}
@@ -1118,6 +1117,7 @@ register struct obj *otmp;
 			if (zap_oseen) makeknown(WAN_STRIKING);
 			if (Antimagic) {
 			    shieldeff(u.ux, u.uy);
+				 monstseesu(M_SEEN_MAGR);
 			    pline("Boing!");
 			} else if (rnd(20) < 10 + u.uac) {
 			    pline_The("wand hits you!");
@@ -2078,31 +2078,37 @@ const char *fmt, *str;
 	    	pline(fmt, str, "shield");
 	    	makeknown(SHIELD_OF_REFLECTION);
 	    }
+		 monstseesu(M_SEEN_REFL);
 	    return TRUE;
 	} else if (EReflecting & W_WEP) {
 	    /* Due to wielded artifact weapon */
 	    if (fmt && str)
 	    	pline(fmt, str, "weapon");
+		 monstseesu(M_SEEN_REFL);
 	    return TRUE;
 	} else if (EReflecting & W_AMUL) {
 	    if (fmt && str) {
 	    	pline(fmt, str, "medallion");
 	    	makeknown(AMULET_OF_REFLECTION);
 	    }
+		 monstseesu(M_SEEN_REFL);
 	    return TRUE;
 	} else if (EReflecting & W_ARM) {
 	    if (fmt && str)
 	    	pline(fmt, str, "armor");
+		 monstseesu(M_SEEN_REFL);
 	    return TRUE;
 	} else if (EReflecting & W_ART) {
 		/* Due to the Magic Mirror, which shows as W_ART */
 		if (fmt && str) {
 			pline(fmt, str, "mirror");
 		}
+		monstseesu(M_SEEN_REFL);
 		return TRUE;
 	} else if (youmonst.data == &mons[PM_SILVER_DRAGON]) {
 	    if (fmt && str)
 	    	pline(fmt, str, "scales");
+		 monstseesu(M_SEEN_REFL);
 	    return TRUE;
 	} 
 	return FALSE;

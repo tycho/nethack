@@ -272,6 +272,7 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 		if(Fire_resistance) {
 			shieldeff(u.ux, u.uy);
 			pline("But you resist the effects.");
+			monstseesu(M_SEEN_FIRE);
 			dmg = 0;
 		}
 		burn_away_slime();
@@ -281,6 +282,7 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 		if(Cold_resistance) {
 			shieldeff(u.ux, u.uy);
 			pline("But you resist the effects.");
+			monstseesu(M_SEEN_COLD);
 			dmg = 0;
 		}
 		break;
@@ -290,6 +292,7 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 		if(Antimagic) {
 			shieldeff(u.ux, u.uy);
 			pline("Some of the missiles bounce off!");
+			monstseesu(M_SEEN_MAGR);
 			dmg /= 2;
 		}
 		break;
@@ -345,6 +348,7 @@ int spellnum;
 			/* Magic resistance or half spell damage will cut this in half... */
 			if (Antimagic || Half_spell_damage) {
 				shieldeff(u.ux, u.uy);
+				monstseesu(M_SEEN_MAGR);
 				dmg /= 2;
 			}
 			You("feel drained...");
@@ -402,6 +406,7 @@ int spellnum;
 	erodelvl = rnd(3);
 	if (Antimagic) {
 		shieldeff(u.ux, u.uy);
+		monstseesu(M_SEEN_MAGR);
 		erodelvl = 1;
 	}
 	oatmp = some_armor(&youmonst);
@@ -425,6 +430,7 @@ int spellnum;
     case MGC_WEAKEN_YOU:		/* drain strength */
 	if (Antimagic) {
 	    shieldeff(u.ux, u.uy);
+		 monstseesu(M_SEEN_MAGR);
 	    You_feel("momentarily weakened.");
 	} else {
 	    You("suddenly feel weaker!");
@@ -479,6 +485,7 @@ int spellnum;
 	   made the spell virtually harmless to players with magic res. */
 	if (Antimagic) {
 	    shieldeff(u.ux, u.uy);
+		 monstseesu(M_SEEN_MAGR);
 	    dmg = (dmg + 1) / 2;
 	}
 	if (dmg <= 5)
@@ -522,6 +529,7 @@ int spellnum;
 	pline("A pillar of fire strikes all around you!");
 	if (Fire_resistance) {
 	    shieldeff(u.ux, u.uy);
+		 monstseesu(M_SEEN_FIRE);
 	    dmg = 0;
 	} else
 	    dmg = d(8, 6);
@@ -535,21 +543,27 @@ int spellnum;
 	break;
     case CLC_LIGHTNING:
     {
-	boolean reflects;
-
-	pline("A bolt of lightning strikes down at you from above!");
-	reflects = ureflects("It bounces off your %s%s.", "");
-	if (reflects || Shock_resistance) {
-	    shieldeff(u.ux, u.uy);
-	    dmg = 0;
-	    if (reflects)
+		boolean reflects;
+		pline("A bolt of lightning strikes down at you from above!");
+		reflects = ureflects("Some of it bounces off your %s%s.", "");
+		if (reflects || Shock_resistance) {
+			shieldeff(u.ux, u.uy);
+			if (reflects) {
+				dmg = d(4,6);
+				monstseesu(M_SEEN_REFL);	 /* reflection protects items */
+				break;
+			}
+			if (Shock_resistance) {
+				dmg = 0;
+				monstseesu(M_SEEN_ELEC);
+			}
+		} else {
+			dmg = d(8, 6);
+		}
+		if (Half_spell_damage) dmg = (dmg + 1) / 2;
+		destroy_item(WAND_CLASS, AD_ELEC);
+		destroy_item(RING_CLASS, AD_ELEC);
 		break;
-	} else
-	    dmg = d(8, 6);
-	if (Half_spell_damage) dmg = (dmg + 1) / 2;
-	destroy_item(WAND_CLASS, AD_ELEC);
-	destroy_item(RING_CLASS, AD_ELEC);
-	break;
     }
     case CLC_CURSE_ITEMS:
 	You_feel("as if you need some help.");
@@ -637,6 +651,7 @@ int spellnum;
     case CLC_CONFUSE_YOU:
 	if (Antimagic) {
 	    shieldeff(u.ux, u.uy);
+		 monstseesu(M_SEEN_MAGR);
 	    You_feel("momentarily dizzy.");
 	} else {
 	    boolean oldprop = !!Confusion;
@@ -664,6 +679,7 @@ int spellnum;
     case CLC_OPEN_WOUNDS:
 	if (Antimagic) {
 	    shieldeff(u.ux, u.uy);
+		 monstseesu(M_SEEN_MAGR);
 	    dmg = (dmg + 1) / 2;
 	}
 	if (dmg <= 5)

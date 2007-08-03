@@ -334,6 +334,11 @@ int expltype;
 		    flags.botl = 1;
 		}
 
+		/* You resisted the damage, so alert critters */
+		if (uhurt == 1) {
+			monstseesu(1 << (adtyp-1));
+		}
+
 		if (u.uhp <= 0 || (Upolyd && u.mh <= 0)) {
 		    if (Upolyd) {
 			rehumanize();

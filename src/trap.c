@@ -782,6 +782,7 @@ unsigned trflags;
 	    case SLP_GAS_TRAP:
 		seetrap(trap);
 		if(Sleep_resistance || breathless(youmonst.data)) {
+			monstseesu(M_SEEN_SLEEP);
 		    You("are enveloped in a cloud of gas!");
 		    break;
 		}
@@ -2440,7 +2441,10 @@ struct obj *box;	/* null for floor trap */
 	if ((box && !carried(box)) ? is_pool(box->ox, box->oy) : Underwater) {
 	    pline("A cascade of steamy bubbles erupts from %s!",
 		    the(box ? xname(box) : surface(u.ux,u.uy)));
-	    if (Fire_resistance) You("are uninjured.");
+	    if (Fire_resistance) {
+			 You("are uninjured.");
+			 monstseesu(M_SEEN_FIRE);
+		 }
 	    else losehp(rnd(3), "boiling water", KILLED_BY);
 	    return;
 	}
@@ -2449,6 +2453,7 @@ struct obj *box;	/* null for floor trap */
 	      the(box ? xname(box) : surface(u.ux,u.uy)));
 	if (Fire_resistance) {
 	    shieldeff(u.ux, u.uy);
+		 monstseesu(M_SEEN_FIRE);
 	    num = rn2(2);
 	} else if (Upolyd) {
 	    num = d(2,4);
@@ -3727,6 +3732,7 @@ boolean disarm;
 			You("are jolted by a surge of electricity!");
 			if(Shock_resistance)  {
 			    shieldeff(u.ux, u.uy);
+				 monstseesu(M_SEEN_ELEC);
 			    You("don't seem to be affected.");
 			    dmg = 0;
 			} else
@@ -3991,6 +3997,7 @@ lava_effects()
 	u.utrap = rn1(4, 4) + (rn1(4, 12) << 8);
 	u.utraptype = TT_LAVA;
 	You("sink into the lava, but it only burns slightly!");
+	monstseesu(M_SEEN_FIRE);
 	if (u.uhp > 1)
 	    losehp(1, lava_killer, KILLED_BY);
     }

@@ -609,9 +609,13 @@ peffects(otmp)
 		}
 		break;
 	case POT_SLEEPING:
-		if(Sleep_resistance || Free_action)
+		if(Sleep_resistance || Free_action) {
+			/* Yes, this isn't technically accurate, but then, monsters don't
+			 * know that you just resisted a sleeping potion because of your ring,
+			 * now do they?  They just saw you drink it and nothing happened. */
+			monstseesu(M_SEEN_SLEEP);
 		    You("yawn.");
-		else {
+		} else {
 		    You("suddenly fall asleep!");
 		    fall_asleep(-rn1(10, 25 - 12*bcsign(otmp)), TRUE);
 		}
@@ -666,9 +670,10 @@ peffects(otmp)
 			pline(
 			  "(But in fact it was biologically contaminated %s.)",
 			      fruitname(TRUE));
-		    if (Role_if(PM_HEALER))
-			pline("Fortunately, you have been immunized.");
-		    else {
+		    if (Role_if(PM_HEALER)) {
+				 monstseesu(M_SEEN_POISON);
+				pline("Fortunately, you have been immunized.");
+			 } else {
 			int typ = rn2(A_MAX);
 
 			if (!Fixed_abil) {
@@ -887,10 +892,11 @@ peffects(otmp)
 		}
 		break;
 	case POT_ACID:
-		if (Acid_resistance)
+		if (Acid_resistance) {
 			/* Not necessarily a creature who _likes_ acid */
 			pline("This tastes %s.", Hallucination ? "tangy" : "sour");
-		else {
+			monstseesu(M_SEEN_ACID);
+		} else {
 			pline("This burns%s!", otmp->blessed ? " a little" :
 					otmp->cursed ? " a lot" : " like acid");
 			losehp(d(otmp->cursed ? 2 : 1, otmp->blessed ? 4 : 8),
@@ -1018,6 +1024,8 @@ boolean your_fault;
 				    obj->cursed ? " a lot" : "");
 		    losehp(d(obj->cursed ? 2 : 1, obj->blessed ? 4 : 8),
 				    "potion of acid", KILLED_BY_AN);
+		} else {
+			monstseesu(M_SEEN_ACID);
 		}
 		break;
 	}
@@ -1275,7 +1283,10 @@ register struct obj *obj;
 		    nomul(-rnd(5));
 		    nomovemsg = You_can_move_again;
 		    exercise(A_DEX, FALSE);
-		} else You("yawn.");
+		} else {
+			monstseesu(M_SEEN_SLEEP);
+			You("yawn.");
+		}
 		break;
 	case POT_SPEED:
 		if (!Fast && !Slow) Your("knees seem more flexible now.");
