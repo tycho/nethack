@@ -468,6 +468,7 @@ mattacku(mtmp)
 	if((Invis && !perceives(mdat)) || !mtmp->mcansee)
 		tmp -= 2;
 	if(mtmp->mtrapped) tmp -= 2;
+	if (is_accurate(mdat)) tmp += 5;	  /* eagle-eyed monsters get a bonus */
 	if(tmp <= 0) tmp = 1;
 
 	/* make eels visible the moment they hit/miss us */
@@ -542,7 +543,7 @@ mattacku(mtmp)
 	}
 
 	/* Unlike defensive stuff, don't let them use item _and_ attack. */
-	if(find_offensive(mtmp)) {
+	if (find_offensive(mtmp)) {
 		int foo = use_offensive(mtmp);
 
 		if (foo != 0) return(foo==1);

@@ -153,6 +153,7 @@
 #define M3_WAITFORU	0x0040		/* waits to see you or get attacked */
 #define M3_CLOSE	   0x0080		/* lets you close unless attacked */
 #define M3_SKITTISH  0x0400	   /* tends to stay a few squares away from you */
+#define M3_EAGLEEYE  0x0800		/* gets an accuracy bonus to hit */
 
 #define M3_COVETOUS	0x001f		/* wants something */
 #define M3_WAITMASK	0x00c0		/* waiting... */
