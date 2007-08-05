@@ -697,9 +697,15 @@ STATIC_OVL void
 cast_reflection()
 {
 	if (HReflecting) {
-		pline("The shimmering globe around you becomes slightly brighter.");
+		if (!Blind)
+			pline("The shimmering globe around you becomes slightly brighter.");
+		else
+			You_feel("slightly more smooth.");
 	} else {
-		pline("A shimmering globe appears around you!");
+		if (!Blind)
+			pline("A shimmering globe appears around you!");
+		else
+			You_feel("smooth.");
 	}
 	incr_itimeout(&HReflecting, rn1(10, HReflecting ? 20 : 100));
 }
