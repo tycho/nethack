@@ -219,6 +219,9 @@ moveloop()
 				} else {
 					regen_frequency = (MAXULEV + 8 - u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6;
 				}
+				/* regen_freq should never hit 0 or negative, but let's cover it here just in case
+				 * since we saw a crash earlier at this line -- this is the only thing it could be */
+				if (regen_frequency < 1) { regen_frequency = 1; }
 				if (!(moves % regen_frequency)) {
 					u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1,1);
 					if (u.uen > u.uenmax) {
