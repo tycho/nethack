@@ -293,7 +293,7 @@ STAIR:(55,05),up
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # The altar.  This is not a shrine.
-ALTAR:(16,11),noalign,altar
+ALTAR:(16,11),noncoaligned,altar
 # Objects
 OBJECT:'"',"amulet of power",(16,11),blessed,0,"The Eye of the Aethiopica"
 OBJECT:random,random,random
