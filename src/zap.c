@@ -3169,12 +3169,12 @@ xchar sx, sy;
 			}
 	    } else if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
 			shieldeff(sx, sy);
-			You("seem unaffected.");
+			You("shrug it off.");
 			break;
 	    } else if (Antimagic) {
 			 monstseesu(M_SEEN_MAGR);
 			shieldeff(sx, sy);
-			You("aren't affected.");
+			You("remain unhurt.");
 			break;
 	    } else if (Reflecting) {
 			 You("feel a little bit drained!");
@@ -3191,7 +3191,7 @@ xchar sx, sy;
 	case ZT_LIGHTNING:
 	    if (Shock_resistance) {
 		shieldeff(sx, sy);
-		You("aren't affected.");
+		You("aren't shocked.");
 		monstseesu(M_SEEN_ELEC);
 		ugolemeffects(AD_ELEC, d(nd, 6));
 	    } else {
