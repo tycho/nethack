@@ -231,19 +231,19 @@ MAP
                                                                             
                                                                             
                                                                             
-                   -------------                 -------------              
-                   |...........|                 |...........|              
-            -------|...........-------------------...........|              
+            --------------------                 -------------              
+            |......|...........|                 |...........|              
+            ---S---|...........-------------------...........|              
             |......S...........|..|..|..|..|..|..|...........|              
             |......|...........|..|..|..|..|..|..|...........|              
             |......|...........-F+-F+-F+-F+-F+-F+-...........|              
-            --S----|...........S.................+...........|              
+            --S----9...........S.................+...........|              
             |......|...........-F+-F+-F+-F+-F+-F+-...........|              
             |......|...........|..|..|..|..|..|..|...........|              
             |......|...........|..|..|..|..|..|..|...........|              
-            -------|...........-------------------...........|              
-                   |...........|                 |...........|              
-                   -------------                 -------------              
+            ----S--|...........-------------------...........|              
+            |......|...........|                 |...........|              
+            --------------------                 -------------              
                                                                             
                                                                             
                                                                             
@@ -267,6 +267,8 @@ REGION:(41,11,42,12),unlit,"ordinary"
 REGION:(44,11,45,12),unlit,"ordinary"
 REGION:(47,11,48,12),unlit,"ordinary"
 REGION:(50,04,60,14),lit,"ordinary"
+REGION:(13,04,18,04),lit,"ordinary"
+REGION:(13,14,18,14),lit,"ordinary"
 # Doors
 DOOR:locked,(19,06)
 DOOR:locked,(14,09)
@@ -284,12 +286,14 @@ DOOR:locked,(42,10)
 DOOR:locked,(45,10)
 DOOR:locked,(48,10)
 DOOR:locked,(49,09)
+DOOR:locked,(16,13)
+DOOR:locked,(15,05)
 # Stairs
 STAIR:(55,05),up
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # The altar.  This is not a shrine.
-ALTAR:(16,11),noncoaligned,altar
+ALTAR:(16,11),noalign,altar
 # Objects
 OBJECT:'"',"amulet of power",(16,11),blessed,0,"The Eye of the Aethiopica"
 OBJECT:random,random,random
@@ -306,6 +310,10 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
+OBJECT:'+',"knock",(13,14)
+OBJECT:'+',random,(18,14)
+OBJECT:'+',random,(13,04)
+OBJECT:'+',"wizard lock",(18,04)
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -313,6 +321,8 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 TRAP:random,random
+TRAP:random,(16,14)
+TRAP:random,(15,04)
 # Random monsters.
 MONSTER:'@',"Dark One",(16,11)
 MONSTER:'B',random,random,hostile
