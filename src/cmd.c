@@ -1051,7 +1051,15 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 #endif
 		you_are(buf);
 	}
-	if (Reflecting) you_have("reflection");
+	if (Reflecting) {
+		Strcpy(buf,"reflection");
+#ifdef WIZARD
+		if (wizard)
+			if (EReflecting) Sprintf(eos(buf)," (from an item)");
+			else Sprintf(eos(buf)," (%d turns)",HReflecting);
+#endif
+		you_have(buf);
+	}
 	if (Free_action) you_have("free action");
 	if (Fixed_abil) you_have("fixed abilities");
 	if (Lifesaved)

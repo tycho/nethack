@@ -30,6 +30,7 @@ STATIC_DCL boolean FDECL(dospellmenu, (const char *,int,int *));
 STATIC_DCL int FDECL(percent_success, (int));
 STATIC_DCL int NDECL(throwspell);
 STATIC_DCL void NDECL(cast_protection);
+STATIC_DCL void NDECL(cast_reflection);
 STATIC_DCL void FDECL(spell_backfire, (int));
 STATIC_DCL const char *FDECL(spelltypemnemonic, (int));
 STATIC_DCL int FDECL(isqrt, (int));
@@ -692,6 +693,17 @@ cast_protection()
 	}
 }
 
+STATIC_OVL void
+cast_reflection()
+{
+	if (HReflecting) {
+		pline("The shimmering globe around you becomes slightly brighter.");
+	} else {
+		pline("A shimmering globe appears around you!");
+	}
+	incr_itimeout(&HReflecting, rn1(10, HReflecting ? 20 : 100));
+}
+
 /* attempting to cast a forgotten spell will cause disorientation */
 STATIC_OVL void
 spell_backfire(spell)
@@ -971,6 +983,9 @@ boolean atme;
 			pline("You see here a %s on the end of your %s.",body_part(FOOT),body_part(LEG));
 		}
 		break;
+	case SPE_REFLECTION:
+		cast_reflection();
+		break;
 	default:
 		impossible("Unknown spell %d attempted.", spell);
 		obfree(pseudo, (struct obj *)0);
@@ -1189,6 +1204,7 @@ int spell;
 	int chance, splcaster, special, statused;
 	int difficulty;
 	int skill;
+	int penalty;
 	boolean paladin_bonus;
 
 	/* Calculate intrinsic ability (splcaster) */
@@ -1282,6 +1298,17 @@ int spell;
 	 * and no matter how able, learning is always required.
 	 */
 	chance = chance * (20-splcaster) / 15 - splcaster;
+
+	/* Oh, wait... and there's one more.  Wizards are casters,
+	 * not combat monkeys.  Bolting body armor onto a Wizard is
+	 * very similar to bolting body armor onto a Monk.  It just isn't
+	 * going to work that well.  So there's a minimum chance of failure...
+	 * which of course increases with the spell difficulty. */
+
+	if (Role_if(PM_WIZARD) && uarm) { 
+		penalty = 90 - spellev(spell) * 10;
+		if (chance > penalty) { chance = penalty; }
+	}
 
 	/* Clamp to percentile */
 	if (chance > 100) chance = 100;
