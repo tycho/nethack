@@ -269,7 +269,10 @@ nh_timeout()
 			You_feel("less sluggish.");
 			break;
 		case REFLECTING:
-			pline("The shimmering globe around you flickers and vanishes.");
+			if (!Blind)
+				pline("The shimmering globe around you flickers and vanishes.");
+			else
+				pline("You don't feel very smooth anymore.");
 			break;
 		case CONFUSION:
 			HConfusion = 1; /* So make_confused works properly */
