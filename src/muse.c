@@ -1299,7 +1299,7 @@ struct monst *mtmp;
 	 * but if we have the incapacitator wands use those anyway.  note that even though the player
 	 * may be sleep resistant the check for the monster knowing this is done in find_offensive,
 	 * so if we get here then the monster can correctly pick sleep wands */
-	if ((maxdmg > 36 || MON_WEP(mtmp)->oartifact) && 
+	if ((maxdmg > 36 || (MON_WEP(mtmp) && MON_WEP(mtmp)->oartifact)) && 
 			(monnear(mtmp,mtmp->mux,mtmp->muy) && 
 			 m.has_offense != MUSE_WAN_DEATH &&
 			 m.has_offense != MUSE_WAN_SLEEP)) {
@@ -2106,6 +2106,12 @@ const char *fmt, *str;
 	    }
 		 monstseesu(M_SEEN_REFL);
 	    return TRUE;
+	} else if (HReflecting) {
+		if (fmt && str) {
+			pline(fmt,str,"magical shield");
+		}
+		monstseesu(M_SEEN_REFL);
+		return TRUE;
 	} else if (EReflecting & W_WEP) {
 	    /* Due to wielded artifact weapon */
 	    if (fmt && str)

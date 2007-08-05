@@ -338,8 +338,9 @@
 #define ESlow		   u.uprops[SLOW].extrinsic
 #define Slow			(HSlow || ESlow)
 
+#define HReflecting		u.uprops[REFLECTING].intrinsic
 #define EReflecting		u.uprops[REFLECTING].extrinsic
-#define Reflecting		(EReflecting || \
+#define Reflecting		(EReflecting || HReflecting || \
 				 (youmonst.data == &mons[PM_SILVER_DRAGON]))
 
 #define Free_action		u.uprops[FREE_ACTION].extrinsic /* [Tom] */
