@@ -2,13 +2,13 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
-/* NetHack 3.4.3 */
-#define VERSION_MAJOR	3
-#define VERSION_MINOR	4
+/* SporkHack 0.3.0 */
+#define VERSION_MAJOR	0
+#define VERSION_MINOR	3
 /*
  * PATCHLEVEL is updated for each release.
  */
-#define PATCHLEVEL	3
+#define PATCHLEVEL	0
 /*
  * Incrementing EDITLEVEL can be used to force invalidation of old bones
  * and save files.
@@ -16,13 +16,13 @@
 #define EDITLEVEL	0
 
 #define COPYRIGHT_BANNER_A \
-"NetHack, Copyright 1985-2003"
+"SporkHack, copyright 2007 Derek S. Ray"
 
 #define COPYRIGHT_BANNER_B \
-"         By Stichting Mathematisch Centrum and M. Stephenson."
+"  ... a variant of NetHack, copyright 1985-2003 by Stichting Mathematisch Centrum and M. Stephenson."
 
 #define COPYRIGHT_BANNER_C \
-"         See license for details."
+"  See license for details."
 
 /*
  * If two or more successive releases have compatible data files, define
@@ -33,7 +33,7 @@
  * PP = patch level, ee = edit level, L = literal suffix "L",
  * with all four numbers specified as two hexadecimal digits.
  */
-#define VERSION_COMPATIBILITY 0x03040000L	/* 3.4.0-0 */
+#define VERSION_COMPATIBILITY 0x00030000L	/* 0.3.0-0 */
 
 
 /*****************************************************************************/
