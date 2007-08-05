@@ -910,6 +910,12 @@ hitmu(mtmp, mattk)
 	if(is_undead(mdat) && midnight())
 		dmg += d((int)mattk->damn, (int)mattk->damd); /* extra damage */
 
+	/* elementals on their home plane hit very hard */
+	if(is_home_elemental(mdat)) {
+		if (mtmp->mnum != PM_AIR_ELEMENTAL)
+			dmg += d((int)mattk->damn, (int)mattk->damd);  /* air elementals hit hard enough already */
+	}
+
 /*	Next a cancellation factor	*/
 /*	Use uncancelled when the cancellation factor takes into account certain
  *	armor's special magic protection.  Otherwise just use !mtmp->mcan.

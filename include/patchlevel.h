@@ -16,10 +16,10 @@
 #define EDITLEVEL	0
 
 #define COPYRIGHT_BANNER_A \
-"SporkHack, copyright 2007 Derek S. Ray"
+"SporkHack, copyright 2007 Derek S. Ray; a variant of NetHack 3.4.3, "
 
 #define COPYRIGHT_BANNER_B \
-"  ... a variant of NetHack, copyright 1985-2003 by Stichting Mathematisch Centrum and M. Stephenson."
+"  copyright 1985-2003 by Stichting Mathematisch Centrum and M. Stephenson."
 
 #define COPYRIGHT_BANNER_C \
 "  See license for details."
