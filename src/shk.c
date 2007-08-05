@@ -1954,6 +1954,9 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 	/* professional courtesy if nonhuman */
 	if (shkp && shkp->mnum != PM_HUMAN && match_shkrace(shkp)) { tmp -= tmp / 2L; }
 
+	/* and just make sure we haven't dealt ourselves out of money */
+	if (tmp < 1) { tmp = 3; }
+
 	return tmp;
 }
 #endif /*OVL3*/
