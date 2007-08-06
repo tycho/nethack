@@ -152,7 +152,8 @@ struct toptenentry *tt;
 		tt->points = 0;
 	else {
 		/* Check for backwards compatibility */
-		if (tt->ver_major < 3 ||
+		/* force using the latest method even though we're a weird version */
+		if (0 && tt->ver_major < 3 ||
 				(tt->ver_major == 3 && tt->ver_minor < 3)) {
 			int i;
 
@@ -202,7 +203,8 @@ struct toptenentry *tt;
 		tt->points, tt->deathdnum, tt->deathlev,
 		tt->maxlvl, tt->hp, tt->maxhp, tt->deaths,
 		tt->deathdate, tt->birthdate, tt->uid);
-	if (tt->ver_major < 3 ||
+	/* force using the latest method even though we're a weird version */
+	if (0 && tt->ver_major < 3 ||
 			(tt->ver_major == 3 && tt->ver_minor < 3))
 #ifdef NO_SCAN_BRACK
 		(void) fprintf(rfile,"%c%c %s %s\n",
