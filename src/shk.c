@@ -1938,7 +1938,7 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 				if (Race_if(PM_ELF)) { tmp *= 3L; }
 				if (Race_if(PM_DWARF)) { tmp += (tmp * 2L) / 3L; }
 				if (Race_if(PM_HUMAN)) { tmp += tmp / 3L; }
-				if (Race_if(PM_ORC)) { tmp /= (tmp * 3L) / 2L; }	  
+				if (Race_if(PM_ORC)) { tmp -= tmp / 3L; }	  
 				/* big discount on top of professional courtesy */
 				break;
 			case PM_GNOME:
@@ -2107,7 +2107,7 @@ register struct monst *shkp;
 			if (Race_if(PM_ELF)) { tmp /= 3L; }
 			if (Race_if(PM_DWARF)) { tmp -= (tmp * 2L) / 3L; }
 			if (Race_if(PM_HUMAN)) { tmp -= tmp / 3L; }
-			if (Race_if(PM_ORC)) { tmp -= tmp / 3L; }	 /* on top of prof. courtesy */
+			if (Race_if(PM_ORC)) { tmp += tmp / 3L; }	 /* on top of prof. courtesy */
 			break;
 		case PM_GNOME:
 			/* Gnomes are crafty.  They don't really have racial animosities, but
@@ -2120,6 +2120,8 @@ register struct monst *shkp;
 
 	/* professional courtesy if nonhuman, but not _that_ much */
 	if (shkp->mnum != PM_HUMAN && match_shkrace(shkp)) { tmp += tmp / 3L; }
+
+	if (tmp > get_cost(obj,shkp)) { tmp = get_cost(obj,shkp) * 4L / 5L; }
 
 	return tmp;
 }
