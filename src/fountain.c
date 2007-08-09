@@ -363,7 +363,7 @@ register struct obj *obj;
 	    && !obj->oartifact
 	    && !exist_artifact(LONG_SWORD, artiname(ART_EXCALIBUR))) {
 
-		if (u.ualign.type != A_LAWFUL) {
+		if (u.ualign.type != A_LAWFUL || !Role_if(PM_KNIGHT)) {
 			/* Ha!  Trying to cheat her. */
 			pline("A freezing mist rises from the water and envelopes the sword.");
 			pline_The("fountain disappears!");
