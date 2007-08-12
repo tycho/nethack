@@ -259,7 +259,6 @@ char *pname;		/* caller-supplied output buffer */
 		if (mon->data != &mons[PM_ALIGNED_PRIEST] &&
 				mon->data != &mons[PM_HIGH_PRIEST]) {
 			Strcat(pname, what);
-			Strcat(pname, " ");
 		}
 		if (mon->data != &mons[PM_ANGEL]) {
 			if (!mon->ispriest && EPRI(mon)->renegade)
@@ -267,14 +266,17 @@ char *pname;		/* caller-supplied output buffer */
 			if (mon->data == &mons[PM_HIGH_PRIEST])
 				Strcat(pname, "high ");
 			if (Hallucination)
-				Strcat(pname, "poohbah ");
+				Strcat(pname, "poohbah");
 			else if (mon->female)
-				Strcat(pname, "priestess ");
+				Strcat(pname, "priestess");
 			else
-				Strcat(pname, "priest ");
+				Strcat(pname, "priest");
 		}
-		Strcat(pname, "of ");
-		Strcat(pname, halu_gname((int)EPRI(mon)->shralign));
+		/* You can't tell what kind of priest it is 'til you see them with your eyeballs. */
+		if (canseemon(mon)) {
+			Strcat(pname, " of ");
+			Strcat(pname, halu_gname((int)EPRI(mon)->shralign));
+		}
 		return(pname);
 	}
 	/* use emin instead of epri */
