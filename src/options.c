@@ -910,7 +910,7 @@ const char *optn;
 	if (!initial) {
 		Sprintf(buf, "%lu.%lu.%lu", FEATURE_NOTICE_VER_MAJ,
 			FEATURE_NOTICE_VER_MIN, FEATURE_NOTICE_VER_PATCH);
-		pline("Feature change alerts disabled for NetHack %s features and prior.",
+		pline("Feature change alerts disabled for SporkHack %s features and prior.",
 			buf);
 	}
 	return 1;
@@ -3501,7 +3501,7 @@ free_autopickup_exceptions()
 /* data for option_help() */
 static const char *opt_intro[] = {
 	"",
-	"                 NetHack Options Help:",
+	"                 SporkHack Options Help:",
 	"",
 #define CONFIG_SLOT 3	/* fill in next value at run-time */
 	(char *)0,
