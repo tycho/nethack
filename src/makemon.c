@@ -1012,8 +1012,9 @@ register int	mmflags;
 			case MZ_LARGE: mhitdie = 10; break;
 			case MZ_HUGE: mhitdie = 12; break;
 			case MZ_GIGANTIC: mhitdie = 15; break;
-			default:
-			case MZ_MEDIUM:	  /* no modification for these */
+			case MZ_MEDIUM: 
+			default:	
+				mhitdie = 8;
 				break;
 		}
 	    mtmp->mhpmax = mtmp->mhp = d((int)mtmp->m_lev, mhitdie);
