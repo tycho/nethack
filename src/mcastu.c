@@ -415,7 +415,7 @@ int spellnum;
 			pline("Your %s glows brown for a moment.",xname(oatmp));
 			oatmp->oerodeproof = 0;
 		}
-		if (oatmp->oeroded2 == MAX_ERODE) {
+		if (greatest_erosion(oatmp) == MAX_ERODE) {
 			destroy_arm(oatmp);
 		} else {
 			while (erodelvl-- > 0) {
