@@ -101,7 +101,8 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define INVIS_BEAM	4
 
 #define MATCH_WARN_OF_MON(mon)	 (Warn_of_mon && flags.warntype && \
-		   		 (flags.warntype == (unsigned long)(mon)->data->mlet))
+		   		 ((flags.warntype == (unsigned long)(mon)->data->mlet) || \
+						(flags.warntype == S_WERE && (mon)->data->mflags2 & M2_WERE)))
 
 #include "trap.h"
 #include "flag.h"
