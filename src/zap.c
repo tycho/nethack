@@ -4191,16 +4191,26 @@ retry:
 }
 
 
-/*	uses the M_SEEN definitions in monst.h */
+/*	these both use the M_SEEN definitions in monst.h */
 void
-monstseesu(udid)
-unsigned long udid;
+monstseesu(mask)
+unsigned long mask;
 {
 	struct monst* mtmp;
-
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-		if (!DEADMONSTER(mtmp) && m_canseeu(mtmp)) m_setseen(mtmp,udid);
+		if (!DEADMONSTER(mtmp) && m_canseeu(mtmp)) m_setseen(mtmp,mask);
 	}
+}
+
+void
+monstseesulose(mask)
+unsigned long mask;
+{
+	struct monst* mtmp;
+	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+		if (!DEADMONSTER(mtmp) && m_canseeu(mtmp)) m_sawlose(mtmp,mask);
+	}
+
 }
 
 #endif /*OVL2*/

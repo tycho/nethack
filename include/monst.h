@@ -79,6 +79,7 @@ struct monst {
 
 #define m_seenres(mon,mask)	((mon)->seen_resistance & (mask))
 #define m_setseen(mon,mask)	((mon)->seen_resistance |= (mask))
+#define m_sawlose(mon,mask)	((mon)->seen_resistance &= (~mask))
 
 	unsigned long seen_resistance;			 /* Has seen you resist an element or magical effect */
 

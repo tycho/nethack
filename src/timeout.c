@@ -207,6 +207,11 @@ nh_timeout()
 	    }
 	}
 
+	/* Give a small warning that spell-based reflection is running out. */
+	if (HReflecting == 20 && !Blind) {
+		pline("The shimmering globe around you is becoming faint.");
+	}
+
 #ifdef STEED
 	if (u.ugallop) {
 	    if (--u.ugallop == 0L && u.usteed)
@@ -273,6 +278,8 @@ nh_timeout()
 				pline("The shimmering globe around you flickers and vanishes.");
 			else
 				pline("You don't feel very smooth anymore.");
+			/* Monsters will see this, too, and assume it's safe to shoot again */
+			monstseesulose(M_SEEN_REFL);
 			break;
 		case CONFUSION:
 			HConfusion = 1; /* So make_confused works properly */
