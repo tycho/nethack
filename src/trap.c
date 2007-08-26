@@ -2888,15 +2888,6 @@ drown()
 		vision_full_recalc = 1;
 		return(FALSE);
 	}
-	if ((Teleportation || can_teleport(youmonst.data)) &&
-		    !u.usleep && (Teleport_control || rn2(3) < Luck+2)) {
-		You("attempt a teleport spell.");	/* utcsri!carroll */
-		if (!level.flags.noteleport) {
-			(void) dotele();
-			if(!is_pool(u.ux,u.uy))
-				return(TRUE);
-		} else pline_The("attempted teleport spell fails.");
-	}
 #ifdef STEED
 	if (u.usteed) {
 		dismount_steed(DISMOUNT_GENERIC);
@@ -2945,6 +2936,16 @@ drown()
 		}
 		/* still too much weight */
 		pline("But in vain.");
+	}
+	/* moved after crawl attempt */
+	if ((Teleportation || can_teleport(youmonst.data)) &&
+		    !u.usleep && (Teleport_control || rn2(3) < Luck+2)) {
+		You("attempt a teleport spell.");	/* utcsri!carroll */
+		if (!level.flags.noteleport) {
+			(void) dotele();
+			if(!is_pool(u.ux,u.uy))
+				return(TRUE);
+		} else pline_The("attempted teleport spell fails.");
 	}
 	u.uinwater = 1;
 	You("drown.");
