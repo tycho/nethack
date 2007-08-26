@@ -1887,10 +1887,12 @@ xkilled(mtmp, dest)
 	}
 	if(redisp) newsym(x,y);
 cleanup:
-	/* punish bad behaviour */
-	if(is_human(mdat) && (!always_hostile(mdat) && mtmp->malign <= 0) &&
-	   (mndx < PM_ARCHEOLOGIST || mndx > PM_WIZARD) &&
-	   u.ualign.type != A_CHAOTIC) {
+	/* punish bad behaviour...
+	 * malign check should catch renegade priests on Astral so you don't
+	 * end up a murderer even though they're trying to eat your face
+	 */
+	if(((always_peaceful(mdat) && mtmp->malign <= 0) || mtmp->isshk) && 
+		u.ualign.type != A_CHAOTIC) {
 		HTelepat &= ~INTRINSIC;
 		change_luck(-2);
 		You("murderer!");
