@@ -550,19 +550,21 @@ int spellnum;
 			shieldeff(u.ux, u.uy);
 			if (reflects) {
 				dmg = d(4,6);
-				monstseesu(M_SEEN_REFL);	 /* reflection protects items */
-				break;
+				monstseesu(M_SEEN_REFL);
 			}
 			if (Shock_resistance) {
+				pline("You aren't shocked.");
 				dmg = 0;
 				monstseesu(M_SEEN_ELEC);
 			}
 		} else {
 			dmg = d(8, 6);
 		}
-		if (Half_spell_damage) dmg = (dmg + 1) / 2;
-		destroy_item(WAND_CLASS, AD_ELEC);
-		destroy_item(RING_CLASS, AD_ELEC);
+		if (dmg && Half_spell_damage)  { dmg = (dmg + 1) / 2; }
+		if (!reflects) {
+			destroy_item(WAND_CLASS, AD_ELEC);	 /* reflection protects items */
+			destroy_item(RING_CLASS, AD_ELEC);
+		}
 		break;
     }
     case CLC_CURSE_ITEMS:
