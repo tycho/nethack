@@ -1924,7 +1924,7 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 			default:
 			case PM_HUMAN:
 				/* nasty, brutish, and short */
-				if (Race_if(PM_ORC) && Race_if(PM_GNOME)) { tmp += tmp / 3L; }	  
+				if (Race_if(PM_ORC) || Race_if(PM_GNOME)) { tmp += tmp / 3L; }	  
 				break;
 			case PM_GREEN_ELF:
 				if (Race_if(PM_ORC)) { tmp *= 2L; }
@@ -2093,7 +2093,7 @@ register struct monst *shkp;
 	switch (shkp->mnum) {
 		default:
 		case PM_HUMAN:
-			if (Race_if(PM_ORC) && Race_if(PM_GNOME)) { tmp -= tmp / 3L; }	  /* nasty, brutish, and short */
+			if (Race_if(PM_ORC) || Race_if(PM_GNOME)) { tmp -= tmp / 3L; }	  /* nasty, brutish, and short */
 			break;
 		case PM_GREEN_ELF:
 			if (Race_if(PM_ORC)) { tmp /= 2L; }
@@ -2121,7 +2121,11 @@ register struct monst *shkp;
 	/* professional courtesy if nonhuman, but not _that_ much */
 	if (shkp->mnum != PM_HUMAN && match_shkrace(shkp)) { tmp += tmp / 3L; }
 
-	if (tmp > get_cost(obj,shkp)) { tmp = get_cost(obj,shkp) * 4L / 5L; }
+	/* Final quick check; if we're about to buy this for more than we'd sell
+	 * it for in the first place, let's arrange to, er, not do that.  */
+	if (tmp > get_cost(obj,shkp) * obj->quan) { 
+		tmp = (get_cost(obj,shkp) * 4L / 5L) * obj->quan; 
+	}
 
 	return tmp;
 }
