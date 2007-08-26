@@ -336,23 +336,26 @@ register struct monst *mtmp;
 
 	    case S_HUMANOID:
 		if (mm == PM_HOBBIT) {
-		    switch (rn2(3)) {
-			case 0:
-			    (void)mongets(mtmp, DAGGER);
-			    break;
-			case 1:
-			    (void)mongets(mtmp, ELVEN_DAGGER);
-			    break;
-			case 2:
-			    (void)mongets(mtmp, SLING);
-			    break;
-		      }
-		    if (!rn2(10)) {
-				 (void)mongets(mtmp, ELVEN_MITHRIL_COAT);
-				 (void)mongets(mtmp, ELVEN_DAGGER);
-				 (void)mongets(mtmp, RIN_INVISIBILITY);
-			 }
-		    if (!rn2(10)) (void)mongets(mtmp, DWARVISH_CLOAK);
+			if (!rn2(20)) {
+				(void)mongets(mtmp, ELVEN_MITHRIL_COAT);
+				(void)mongets(mtmp, ELVEN_DAGGER);
+				otmp = mksobj(RIN_INVISIBILITY,FALSE,FALSE);
+				otmp->cursed = TRUE;
+				(void) mpickobj(mtmp,otmp);
+			} else {
+				switch (rn2(3)) {
+					case 0:
+					(void)mongets(mtmp, DAGGER);
+					break;
+					case 1:
+					(void)mongets(mtmp, ELVEN_DAGGER);
+					break;
+					case 2:
+					(void)mongets(mtmp, SLING);
+					break;
+				}
+			}
+			if (!rn2(10)) (void)mongets(mtmp, DWARVISH_CLOAK);
 		} else if (is_dwarf(ptr)) {
 		    if (rn2(7)) (void)mongets(mtmp, DWARVISH_CLOAK);
 		    if (rn2(7)) (void)mongets(mtmp, IRON_SHOES);
