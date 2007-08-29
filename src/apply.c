@@ -201,7 +201,7 @@ int rx, ry, *resp;
 		if (Hallucination) {
 			pline("You listen to the egg and guess... %s?",rndmonnam());
 		} else {
-			if (stale_egg(otmp)) {
+			if (stale_egg(otmp) || otmp->corpsenm == NON_PM) {
 				pline("The egg doesn't make much noise at all.");
 			} else {
 				pline("You listen to the egg and guess... %s?",mons[otmp->corpsenm].mname);
