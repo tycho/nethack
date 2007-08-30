@@ -660,7 +660,6 @@ int how;
 	boolean bones_ok, have_windows = iflags.window_inited;
 	struct obj *corpse = (struct obj *)0;
 	long umoney;
-	int i;
 
 	if (how == TRICKED) {
 	    if (killer) {

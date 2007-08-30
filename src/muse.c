@@ -1275,7 +1275,7 @@ struct monst *mtmp;
 {
 	int i,maxdmg;
 	struct obj *otmp = m.offensive;
-	boolean oseen,mon_has_good_attk;
+	boolean oseen;
 	struct attack* mattk;
 
 	/* offensive potions are not drunk, they're thrown */
