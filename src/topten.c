@@ -249,7 +249,7 @@ write_log_entry(how)
 int how;
 {
 	int uid = getuid();
-	register struct toptenentry *t0, *tprev;
+	register struct toptenentry *t0;
 	FILE *lfile;
 
 	t0 = newttentry();
@@ -323,9 +323,6 @@ int how;
 	FILE *rfile;
 	register int flg = 0;
 	boolean t0_used;
-#ifdef LOGFILE
-	FILE *lfile;
-#endif /* LOGFILE */
 
 /* Under DICE 3.0, this crashes the system consistently, apparently due to
  * corruption of *rfile somewhere.  Until I figure this out, just cut out

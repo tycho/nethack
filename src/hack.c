@@ -2220,7 +2220,7 @@ int desired;
 	overpct = (float)u.uhpmax / (float)softcap - 1;
 	if (overpct >= 0 && overpct < (pastcap ? 0.5 : 1.0)) { 
 		scaled = (float)desired * (1 - overpct * (pastcap ? 2 : 1));	
-		u.uhpmax += scaled;
+		u.uhpmax += (int)scaled;
 		if (scaled - (int)scaled >= .5) { u.uhpmax++; } /* round up */
 	} else if (overpct < 0) {
 		/* if you haven't even hit the soft cap, you get the full bonus */
