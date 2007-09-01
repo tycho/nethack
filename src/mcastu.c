@@ -412,7 +412,9 @@ int spellnum;
 	oatmp = some_armor(&youmonst);
 	if (oatmp) {
 		if (oatmp->oerodeproof) {
-			pline("Your %s glows brown for a moment.",xname(oatmp));
+			if (!Blind) {
+				pline("Your %s glows brown for a moment.",xname(oatmp));
+			}
 			oatmp->oerodeproof = 0;
 		}
 		if (greatest_erosion(oatmp) == MAX_ERODE) {
