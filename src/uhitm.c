@@ -634,10 +634,13 @@ int thrown;
 		    valid_weapon_attack = (tmp > 1);
 		    if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
 			;	/* no special bonuses */
-		    } else if (mon->mflee && Role_if(PM_ROGUE) && !Upolyd) {
-			You("strike %s from behind!", mon_nam(mon));
-			tmp += rnd(u.ulevel);
-			hittxt = TRUE;
+		    } else if (mon->mflee && Role_if(PM_ROGUE) && 
+								!Upolyd && !thrown) {
+				 /* Rogues get the backstab bonus for fleeing monsters...
+				  * at least if they're in _melee_ :P */
+				You("strike %s from behind!", mon_nam(mon));
+				tmp += rnd(u.ulevel);
+				hittxt = TRUE;
 		    } else if (dieroll == 2 && obj == uwep &&
 			  obj->oclass == WEAPON_CLASS &&
 			  (bimanual(obj) ||
