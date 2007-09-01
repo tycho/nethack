@@ -133,7 +133,7 @@ struct monst *mon;
 {
 	int tmp = 0;
 	struct permonst *ptr = mon->data;
-	boolean Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
+	boolean Is_weapon = (otmp && (otmp->oclass == WEAPON_CLASS || is_weptool(otmp)));
 
 	/* not using a weapon; no special bonuses */
 	if (!otmp) return 0;
