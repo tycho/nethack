@@ -994,8 +994,8 @@ struct monst *mtmp;
 		/* nomore(MUSE_WAN_DEATH); */
 		if (!reflection_skip) {
 		    if(obj->otyp == WAN_DEATH && obj->spe > 0 && !m_seenres(mtmp,M_SEEN_MAGR) &&
-					 (!m_seenres(mtmp,M_SEEN_REFL) || nonliving(mtmp->data))) {
-					/* don't zap death if we know it'll bounce back unless we resist it */
+					/* don't zap death if we know it'll bounce back... unless we resist it */
+					 (!m_seenres(mtmp,M_SEEN_REFL) || nonliving(mtmp->data) || mtmp->data->msound == MS_LEADER)) {
 			m.offensive = obj;
 			m.has_offense = MUSE_WAN_DEATH;
 		    }

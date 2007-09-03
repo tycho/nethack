@@ -95,8 +95,11 @@ artitouch()
 boolean
 ok_to_quest()
 {
-	return((boolean)((Qstat(got_quest) || Qstat(got_thanks)))
-			&& (is_pure(FALSE) > 0));
+	if (((Qstat(got_quest) || Qstat(got_thanks)) && is_pure(FALSE) > 0) ||
+		quest_status.leader_is_dead) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 STATIC_OVL boolean
@@ -252,17 +255,13 @@ chat_with_leader()
 	    expulsion(FALSE);
 	  } else if(is_pure(TRUE) < 0) {
 	    com_pager(QT_BANISHED);
-	    expulsion(TRUE);
+		 expulsion(FALSE);
 	  } else if(is_pure(TRUE) == 0) {
+		  /* Don't end the game for too many tries anymore, that's silly */
 	    qt_pager(QT_BADALIGN);
-	    if(Qstat(not_ready) == MAX_QUEST_TRIES) {
-	      qt_pager(QT_LASTLEADER);
-	      expulsion(TRUE);
-	    } else {
-	      Qstat(not_ready)++;
-	      exercise(A_WIS, TRUE);
-	      expulsion(FALSE);
-	    }
+	 	Qstat(not_ready) = 1;
+		exercise(A_WIS, TRUE);
+		expulsion(FALSE);
 	  } else {	/* You are worthy! */
 	    qt_pager(QT_ASSIGNQUEST);
 	    exercise(A_WIS, TRUE);
@@ -277,6 +276,12 @@ leader_speaks(mtmp)
 {
 	/* maybe you attacked leader? */
 	if(!mtmp->mpeaceful) {
+		if (!Qstat(pissed_off)) {
+			/* again, don't end it permanently if the leader gets angry
+			* since you're going to have to kill him to go questing... :)
+			* ...but do only show this crap once. */
+			qt_pager(QT_LASTLEADER);
+		}
 		Qstat(pissed_off) = TRUE;
 		mtmp->mstrategy &= ~STRAT_WAITMASK;	/* end the inaction */
 	}
@@ -284,10 +289,7 @@ leader_speaks(mtmp)
 	   regular dungeon; if so, mustn't perform "backwards expulsion" */
 	if (!on_level(&u.uz, &qstart_level)) return;
 
-	if(Qstat(pissed_off)) {
-	  qt_pager(QT_LASTLEADER);
-	  expulsion(TRUE);
-	} else chat_with_leader();
+	if(!Qstat(pissed_off)) chat_with_leader();
 }
 
 STATIC_OVL void
