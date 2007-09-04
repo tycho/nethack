@@ -916,7 +916,9 @@ not_special:
 	if (can_tunnel) flag |= ALLOW_DIG;
 	if (is_human(ptr) || ptr == &mons[PM_MINOTAUR]) flag |= ALLOW_SSM;
 	if (is_undead(ptr) && ptr->mlet != S_GHOST) flag |= NOGARLIC;
-	if (throws_rocks(ptr) || ptr->msound == MS_LEADER) flag |= ALLOW_ROCK;	 /* so leaders can break rocks */
+	if (throws_rocks(ptr) || (ptr->msound == MS_LEADER && !mtmp->mpeaceful)) {
+		flag |= ALLOW_ROCK;	 /* so leaders can break rocks */
+	}
 	if (can_open) flag |= OPENDOOR;
 	if (can_unlock) flag |= UNLOCKDOOR;
 	if (doorbuster) flag |= BUSTDOOR;
