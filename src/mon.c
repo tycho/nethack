@@ -910,15 +910,27 @@ mpickstuff(mtmp, str)
 #ifdef INVISIBLE_OBJECTS
 		if (otmp->oinvis && !perceives(mtmp->data)) continue;
 #endif
-		if (cansee(mtmp->mx,mtmp->my) && flags.verbose)
-			pline("%s picks up %s.", Monnam(mtmp),
-			      (distu(mtmp->mx, mtmp->my) <= 5) ?
-				doname(otmp) : distant_name(otmp, doname));
-		obj_extract_self(otmp);
-		/* unblock point after extract, before pickup */
-		if (otmp->otyp == BOULDER)
-		    unblock_point(otmp->ox,otmp->oy);	/* vision */
-		(void) mpickobj(mtmp, otmp);	/* may merge and free otmp */
+		if (otmp->otyp == BOULDER && mtmp->data->msound == MS_LEADER) {
+			if (cansee(mtmp->mx,mtmp->my)) {
+				pline("A thunderclap rings out, and %s shatters!", (distu(mtmp->mx, mtmp->my) <= 5) ? doname(otmp) : distant_name(otmp, doname));
+				pline("%s strides through the dust cloud.", Monnam(mtmp));
+			} else {
+				pline("A thunderclap rings out!");
+			}
+		} else {
+			if (cansee(mtmp->mx,mtmp->my) && flags.verbose) { 
+				pline("%s picks up %s.", Monnam(mtmp), (distu(mtmp->mx, mtmp->my) <= 5) ? doname(otmp) : distant_name(otmp, doname));
+			}
+		}
+		if (otmp->otyp == BOULDER && mtmp->data->msound == MS_LEADER) {
+			remove_object(otmp);
+		} else {
+			obj_extract_self(otmp);
+			/* unblock point after extract, before pickup */
+			if (otmp->otyp == BOULDER)
+				unblock_point(otmp->ox,otmp->oy);	/* vision */
+			(void) mpickobj(mtmp, otmp);	/* may merge and free otmp */
+		}
 		m_dowear(mtmp, FALSE);
 		newsym(mtmp->mx, mtmp->my);
 		return TRUE;			/* pick only one object */
@@ -1003,8 +1015,9 @@ struct obj *otmp;
 	 * their alignment if the monster takes something they need
 	 */
 
-	/* special--boulder throwers carry unlimited amounts of boulders */
-	if (throws_rocks(mdat) && otyp == BOULDER)
+	/* special--boulder throwers carry unlimited amounts of boulders
+	 * and quest leaders can shatter boulders (will be handled in mpickstuff) */
+	if ((throws_rocks(mdat) || mdat->msound == MS_LEADER) && otyp == BOULDER)
 		return(TRUE);
 
 	/* nymphs deal in stolen merchandise, but not boulders or statues */

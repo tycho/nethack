@@ -612,7 +612,7 @@ register int after;
 	xchar gx,gy,nix,niy,chcnt;
 	int chi;	/* could be schar except for stupid Sun-2 compiler */
 	boolean likegold=0, likegems=0, likeobjs=0, likemagic=0, conceals=0;
-	boolean likerock=0, can_tunnel=0;
+	boolean likerock=0, can_tunnel=0, breakrock=0;
 	boolean can_open=0, can_unlock=0, doorbuster=0;
 	boolean uses_items=0, setlikes=0;
 	boolean avoid=FALSE;
@@ -796,7 +796,8 @@ not_special:
 			&& pctload < 75);
 		likeobjs = (likes_objs(ptr) && pctload < 75);
 		likemagic = (likes_magic(ptr) && pctload < 85);
-		likerock = (throws_rocks(ptr) && pctload < 50 && !In_sokoban(&u.uz));
+		likerock = ((throws_rocks(ptr) && pctload < 50 && !In_sokoban(&u.uz)));
+		breakrock = (!mtmp->mpeaceful && ptr->msound == MS_LEADER);
 		conceals = hides_under(ptr);
 		setlikes = TRUE;
 	    }
@@ -815,7 +816,7 @@ not_special:
 	/* guards shouldn't get too distracted */
 	if(!mtmp->mpeaceful && is_mercenary(ptr)) minr = 1;
 
-	if((likegold || likegems || likeobjs || likemagic || likerock || conceals)
+	if((likegold || likegems || likeobjs || likemagic || likerock || breakrock || conceals)
 	      && (!*in_rooms(omx, omy, SHOPBASE) || (!rn2(25) && !mtmp->isshk))) {
 	look_for_obj:
 	    oomx = min(COLNO-1, omx+minr);
@@ -848,7 +849,7 @@ not_special:
 			   && !is_rider(&mons[otmp->corpsenm])))) ||
 		       (likemagic && index(magical, otmp->oclass)) ||
 		       (uses_items && searches_for_item(mtmp, otmp)) ||
-		       (likerock && otmp->otyp == BOULDER) ||
+		       ((likerock) && otmp->otyp == BOULDER) ||
 		       (likegems && otmp->oclass == GEM_CLASS &&
 			objects[otmp->otyp].oc_material != MINERAL) ||
 		       (conceals && !cansee(otmp->ox,otmp->oy)) ||
@@ -882,7 +883,7 @@ not_special:
 	} else if(likegold) {
 	    /* don't try to pick up anything else, but use the same loop */
 	    uses_items = 0;
-	    likegems = likeobjs = likemagic = likerock = conceals = 0;
+	    likegems = likeobjs = likemagic = likerock = breakrock = conceals = 0;
 	    goto look_for_obj;
 	}
 
@@ -915,7 +916,7 @@ not_special:
 	if (can_tunnel) flag |= ALLOW_DIG;
 	if (is_human(ptr) || ptr == &mons[PM_MINOTAUR]) flag |= ALLOW_SSM;
 	if (is_undead(ptr) && ptr->mlet != S_GHOST) flag |= NOGARLIC;
-	if (throws_rocks(ptr)) flag |= ALLOW_ROCK;
+	if (throws_rocks(ptr) || ptr->msound == MS_LEADER) flag |= ALLOW_ROCK;	 /* so leaders can break rocks */
 	if (can_open) flag |= OPENDOOR;
 	if (can_unlock) flag |= UNLOCKDOOR;
 	if (doorbuster) flag |= BUSTDOOR;
@@ -1179,8 +1180,8 @@ postmov:
 				  && pctload < 75);
 		    likeobjs = (likes_objs(ptr) && pctload < 75);
 		    likemagic = (likes_magic(ptr) && pctload < 85);
-		    likerock = (throws_rocks(ptr) && pctload < 50 &&
-				!In_sokoban(&u.uz));
+		    likerock = ((throws_rocks(ptr) && pctload < 50 && !In_sokoban(&u.uz))); 
+			 breakrock = (!mtmp->mpeaceful && ptr->msound == MS_LEADER);
 		    conceals = hides_under(ptr);
 		}
 
@@ -1201,7 +1202,7 @@ postmov:
 
 		    if(likeobjs) picked |= mpickstuff(mtmp, practical);
 		    if(likemagic) picked |= mpickstuff(mtmp, magical);
-		    if(likerock) picked |= mpickstuff(mtmp, boulder_class);
+		    if(likerock || breakrock) picked |= mpickstuff(mtmp, boulder_class);
 		    if(likegems) picked |= mpickstuff(mtmp, gem_class);
 		    if(uses_items) picked |= mpickstuff(mtmp, (char *)0);
 		    if(picked) mmoved = 3;
