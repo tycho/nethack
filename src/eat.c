@@ -1600,6 +1600,7 @@ struct obj *otmp;
 		break;
 	    case RIN_SUSTAIN_ABILITY:
 	    case AMULET_OF_LIFE_SAVING:
+		 case AMULET_OF_POWER:
 	    case AMULET_OF_REFLECTION: /* nice try */
 	    /* can't eat Amulet of Yendor or fakes,
 	     * and no oc_prop even if you could -3.
