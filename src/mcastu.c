@@ -17,18 +17,20 @@
 #define MGC_SUMMON_MONS	 9
 #define MGC_CLONE_WIZ	10
 #define MGC_DEATH_TOUCH	11
+#define MGC_FLY			12
 
 /* monster cleric spells */
 #define CLC_OPEN_WOUNDS	 0
 #define CLC_CURE_SELF	 1
 #define CLC_CONFUSE_YOU	 2
-#define CLC_PARALYZE	 3
+#define CLC_PARALYZE		3
 #define CLC_BLIND_YOU	 4
-#define CLC_INSECTS	 5
+#define CLC_INSECTS		5
 #define CLC_CURSE_ITEMS	 6
 #define CLC_LIGHTNING	 7
 #define CLC_FIRE_PILLAR	 8
-#define CLC_GEYSER	 9
+#define CLC_GEYSER		9
+#define CLC_FLY			10
 
 STATIC_DCL void FDECL(cursetxt,(struct monst *,BOOLEAN_P));
 STATIC_DCL int FDECL(choose_magic_spell, (int));
@@ -37,6 +39,7 @@ STATIC_DCL void FDECL(cast_wizard_spell,(struct monst *, int,int));
 STATIC_DCL void FDECL(cast_cleric_spell,(struct monst *, int,int));
 STATIC_DCL boolean FDECL(is_undirected_spell,(unsigned int,int));
 STATIC_DCL boolean FDECL(spell_would_be_useless,(struct monst *,unsigned int,int));
+STATIC_DCL void FDECL(cast_fly,(struct monst *));
 
 #ifdef OVL0
 
@@ -106,6 +109,7 @@ int spellval;
     case 6:
 	return MGC_WEAKEN_YOU;
     case 5:
+	return MGC_FLY;
     case 4:
 	return MGC_DISAPPEAR;
     case 3:
@@ -144,6 +148,7 @@ int spellnum;
     case 4:
 	return CLC_PARALYZE;
     case 3:
+	return CLC_FLY;
     case 2:
 	return CLC_CONFUSE_YOU;
     case 1:
@@ -456,6 +461,9 @@ int spellnum;
 	} else
 	    impossible("no reason for monster to cast disappear spell?");
 	break;
+	 case MGC_FLY:		 /* take off! */
+		cast_fly(mtmp);
+		break;
     case MGC_STUN_YOU:
 	if (Antimagic || Free_action) {
 	    shieldeff(u.ux, u.uy);
@@ -682,6 +690,9 @@ int spellnum;
 	    dmg = 0;
 	}
 	break;
+	 case CLC_FLY:
+		cast_fly(mtmp);
+		break;
     case CLC_OPEN_WOUNDS:
 	if (Antimagic) {
 	    shieldeff(u.ux, u.uy);
@@ -720,6 +731,7 @@ int spellnum;
 	case MGC_DISAPPEAR:
 	case MGC_HASTE_SELF:
 	case MGC_CURE_SELF:
+	case MGC_FLY:
 	    return TRUE;
 	default:
 	    break;
@@ -728,12 +740,38 @@ int spellnum;
 	switch (spellnum) {
 	case CLC_INSECTS:
 	case CLC_CURE_SELF:
+	case CLC_FLY:
 	    return TRUE;
 	default:
 	    break;
 	}
     }
     return FALSE;
+}
+
+STATIC_DCL
+void
+cast_fly(mtmp)
+struct monst* mtmp;
+{
+	struct trap* tr;
+	char msg[200];
+
+	if (!mtmp->mflying) {
+		mtmp->mflying = TRUE;
+		if (mtmp->mtrapped) {
+			tr = t_at(mtmp->mx,mtmp->my);
+			if (tr && (tr->ttyp == PIT || tr->ttyp == SPIKED_PIT)) {
+				sprintf(msg,"%s rises up, out of the pit!",Monnam(mtmp));
+				mtmp->mtrapped = FALSE;
+			}
+		} else {
+			sprintf(msg,"%s rises into the air!",Monnam(mtmp));
+		}
+		if (canseemon(mtmp)) { pline(msg); }
+	} else {
+		impossible("No reason to cast 'fly' spell?");
+	}
 }
 
 /* Some spells are useless under some circumstances. */
@@ -779,6 +817,9 @@ int spellnum;
 	if ((!mtmp->iswiz || flags.no_of_wizards > 1)
 						&& spellnum == MGC_CLONE_WIZ)
 	    return TRUE;
+	/* don't lift off if we're already in the air */
+	if ((is_flyer(mtmp->data) || is_flying(mtmp)) && spellnum == MGC_FLY)
+		return TRUE;
     } else if (adtyp == AD_CLRC) {
 	/* summon insects/sticks to snakes won't be cast by peaceful monsters */
 	if (mtmp->mpeaceful && spellnum == CLC_INSECTS)
@@ -792,6 +833,9 @@ int spellnum;
 	/* blindness spell on blinded player */
 	if (Blinded && spellnum == CLC_BLIND_YOU)
 	    return TRUE;
+	/* don't lift off if we're already in the air */
+	if ((is_flyer(mtmp->data) || is_flying(mtmp)) && spellnum == CLC_FLY)
+		return TRUE;
     }
     return FALSE;
 }

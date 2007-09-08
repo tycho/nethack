@@ -680,6 +680,7 @@ const char *def;
 {
 	int capitalize = (*def == highc(*def));
 
+	/* TODO: no pointer to the monster here so we can't check is_flying */
 	return (
 		is_floater(ptr) ? levitate[capitalize] :
 		(is_flyer(ptr) && ptr->msize <= MZ_SMALL) ? flys[capitalize] :
@@ -700,6 +701,7 @@ const char *def;
 {
 	int capitalize = 2 + (*def == highc(*def));
 
+	/* TODO: no pointer to the monster here so we can't check is_flying */
 	return (
 		is_floater(ptr) ? levitate[capitalize] :
 		(is_flyer(ptr) && ptr->msize <= MZ_SMALL) ? flys[capitalize] :

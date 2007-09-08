@@ -143,7 +143,7 @@ dosounds()
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 	    if (DEADMONSTER(mtmp)) continue;
 	    if ((mtmp->data->mlet == S_ANT && is_flyer(mtmp->data)) &&
-		mon_in_room(mtmp, BEEHIVE)) {
+				mon_in_room(mtmp, BEEHIVE)) {
 		switch (rn2(2)+hallu) {
 		    case 0:
 			You_hear("a low buzzing.");

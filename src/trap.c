@@ -1776,7 +1776,7 @@ register struct monst *mtmp;
 			break;
 
 		case SQKY_BOARD:
-			if(is_flyer(mptr)) break;
+			if(is_flyer(mptr) || is_flying(mtmp)) break;
 			/* stepped on a squeaky board */
 			if (in_sight) {
 			    pline("A board beneath %s squeaks loudly.", mon_nam(mtmp));
@@ -1790,7 +1790,7 @@ register struct monst *mtmp;
 		case BEAR_TRAP:
 			if(mptr->msize > MZ_SMALL &&
 				!amorphous(mptr) && !is_flyer(mptr) &&
-				!is_whirly(mptr) && !unsolid(mptr)) {
+				!is_whirly(mptr) && !unsolid(mptr) && !is_flying(mtmp)) {
 			    mtmp->mtrapped = 1;
 			    if(in_sight) {
 				pline("%s is caught in %s bear trap!",
@@ -1941,7 +1941,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 		case PIT:
 		case SPIKED_PIT:
 			fallverb = "falls";
-			if (is_flyer(mptr) || is_floater(mptr) ||
+			if (is_flyer(mptr) || is_floater(mptr) || is_flying(mtmp) ||
 				(mtmp->wormno && count_wsegs(mtmp) > 5) ||
 				is_clinger(mptr)) {
 			    if (!inescapable) break;	/* avoids trap */
@@ -1970,7 +1970,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 				    defsyms[trap_to_defsym(tt)].explanation);
 			    break;	/* don't activate it after all */
 			}
-			if (is_flyer(mptr) || is_floater(mptr) ||
+			if (is_flyer(mptr) || is_floater(mptr) || is_flying(mtmp) ||
 				mptr == &mons[PM_WUMPUS] ||
 				(mtmp->wormno && count_wsegs(mtmp) > 5) ||
 				mptr->msize >= MZ_HUGE) {
@@ -2084,7 +2084,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 		case LANDMINE:
 			if(rn2(3))
 				break; /* monsters usually don't set it off */
-			if(is_flyer(mptr)) {
+			if(is_flyer(mptr) || is_flying(mtmp)) {
 				boolean already_seen = trap->tseen;
 				if (in_sight && !already_seen) {
 	pline("A trigger appears in a pile of soil below %s.", mon_nam(mtmp));
@@ -2130,7 +2130,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 		    break;
 
 		case ROLLING_BOULDER_TRAP:
-		    if (!is_flyer(mptr)) {
+		    if (!is_flyer(mptr) && !is_flying(mtmp)) {
 			int style = ROLL | (in_sight ? 0 : LAUNCH_UNSEEN);
 
 		        newsym(mtmp->mx,mtmp->my);
@@ -2275,7 +2275,7 @@ float_up()
 		You("start to float in the air!");
 #ifdef STEED
 	if (u.usteed && !is_floater(u.usteed->data) &&
-						!is_flyer(u.usteed->data)) {
+						!is_flyer(u.usteed->data) && !is_flying(u.usteed)) {
 	    if (Lev_at_will)
 	    	pline("%s magically floats up!", Monnam(u.usteed));
 	    else {

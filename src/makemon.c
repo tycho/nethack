@@ -70,6 +70,8 @@ wrong_elem_type(ptr)
     } else if (Is_firelevel(&u.uz)) {
 	if (!pm_resistance(ptr,MR_FIRE)) return TRUE;
     } else if (Is_airlevel(&u.uz)) {
+	/* fortunately elementals can't cast 'fly' so we don't have
+	 * to check for is_flying here; we don't have a monst pointer */
 	if(!(is_flyer(ptr) && ptr->mlet != S_TRAPPER) && !is_floater(ptr)
 	   && !amorphous(ptr) && !noncorporeal(ptr) && !is_whirly(ptr))
 	    return TRUE;
@@ -1036,6 +1038,7 @@ register int	mmflags;
 
 	place_monster(mtmp, x, y);
 	mtmp->mcansee = mtmp->mcanmove = TRUE;
+	mtmp->mflying = is_flyer(mtmp->data);	  /* fliers start out flying */
 	mtmp->seen_resistance = M_SEEN_NOTHING;
 	mtmp->mpeaceful = (mmflags & MM_ANGRY) ? FALSE : peace_minded(ptr);
 

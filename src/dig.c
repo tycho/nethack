@@ -557,10 +557,10 @@ int ttyp;
 		if (oldobjs != newobjs)	/* something unearthed */
 			(void) pickup(1);	/* detects pit */
 	    } else if(mtmp) {
-		if(is_flyer(mtmp->data) || is_floater(mtmp->data)) {
+		if(is_flyer(mtmp->data) || is_floater(mtmp->data) || is_flying(mtmp)) {
 		    if(canseemon(mtmp))
 			pline("%s %s over the pit.", Monnam(mtmp),
-						     (is_flyer(mtmp->data)) ?
+						     (is_flyer(mtmp->data) || is_flying(mtmp)) ?
 						     "flies" : "floats");
 		} else if(mtmp != madeby)
 		    (void) mintrap(mtmp);
@@ -617,7 +617,7 @@ int ttyp;
 		if (mtmp) {
 		     /*[don't we need special sokoban handling here?]*/
 		    if (is_flyer(mtmp->data) || is_floater(mtmp->data) ||
-		        mtmp->data == &mons[PM_WUMPUS] ||
+		        is_flying(mtmp) || mtmp->data == &mons[PM_WUMPUS] ||
 			(mtmp->wormno && count_wsegs(mtmp) > 5) ||
 			mtmp->data->msize >= MZ_HUGE) return;
 		    if (mtmp == u.ustuck)	/* probably a vortex */

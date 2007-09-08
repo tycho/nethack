@@ -322,6 +322,7 @@ register struct monst *mtmp;
 				  Strcat(info, ", blind");
 	if (mtmp->mstun)	  Strcat(info, ", stunned");
 	if (mtmp->msleeping)	  Strcat(info, ", asleep");
+	if (mtmp->mflying && !is_flyer(mtmp->data)) { Strcat(info,", flying"); }
 #if 0	/* unfortunately mfrozen covers temporary sleep and being busy
 	   (donning armor, for instance) as well as paralysis */
 	else if (mtmp->mfrozen)	  Strcat(info, ", paralyzed");
