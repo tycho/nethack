@@ -1608,8 +1608,15 @@ struct permonst _mons2[] = {
 	CLR_BROWN),
 /* 'I' is a visual marker for all invisible monsters and must be unused */
 /*
- * Jabberwock
+ * Jabberwocks (and Carroll-ish fictional monsters)
  */
+	 MON("snark", S_JABBERWOCK,
+	LVL(12, 18, 0, 30, 0), (G_GENO|1),
+	A(ATTK(AT_BITE, AD_PHYS, 2,6), ATTK(AT_BITE, AD_PHYS, 2,6),
+		NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+	SIZ(400, 200, 0, MS_SILENT, MZ_LARGE), 0, 0,
+	M1_ANIMAL|M1_FLY|M1_CARNIVORE,
+	M2_HOSTILE|M2_STRONG|M2_NOPOLY, M3_SKITTISH|M3_INFRAVISIBLE, CLR_WHITE),
     MON("jabberwock", S_JABBERWOCK,
 	LVL(15, 12, -2, 50, 0), (G_GENO|1),
 	A(ATTK(AT_BITE, AD_PHYS, 2,10), ATTK(AT_BITE, AD_PHYS, 2,10),
@@ -1618,6 +1625,15 @@ struct permonst _mons2[] = {
 	SIZ(1300, 600, 0, MS_BURBLE, MZ_LARGE), 0, 0,
 	M1_ANIMAL|M1_FLY|M1_CARNIVORE,
 	M2_HOSTILE|M2_STRONG|M2_NASTY|M2_COLLECT, M3_INFRAVISIBLE, CLR_ORANGE),
+	 /* boojum only come from snarks */
+	 MON("boojum", S_JABBERWOCK,
+	LVL(18, 15, 0, 90, 0), (G_NOGEN),
+	A(ATTK(AT_BITE, AD_PHYS, 3,10), ATTK(AT_CLAW, AD_PHYS, 3,10),
+	  ATTK(AT_CLAW, AD_PHYS, 3,10), ATTK(AT_CLAW, AD_TLPT, 0,0),
+		 NO_ATTK, NO_ATTK),
+	SIZ(400, 200, 0, MS_SILENT, MZ_LARGE), 0, 0,
+	M1_ANIMAL|M1_FLY|M1_CARNIVORE|M1_SEE_INVIS,
+	M2_HOSTILE|M2_NOPOLY|M2_STRONG, M3_INFRAVISIBLE, CLR_YELLOW),
 #if 0	/* DEFERRED */
     MON("vorpal jabberwock", S_JABBERWOCK,       
 	LVL(20, 12, -2, 50, 0), (G_GENO|1),

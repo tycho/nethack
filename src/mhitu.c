@@ -1352,10 +1352,19 @@ dopois:
 
 	    case AD_TLPT:
 		hitmsg(mtmp, mattk);
-		if (uncancelled) {
-		    if(flags.verbose)
-			Your("position suddenly seems very uncertain!");
-		    tele();
+		if (uncancelled || mtmp->mnum == PM_BOOJUM) {
+			/* "But oh, beamish nephew, beware of the day
+			 * if your Snark be a Boojum!  For then
+			 * You will softly and suddenly vanish away,
+			 * And never be met with again!" */
+			if (mtmp->mnum == PM_BOOJUM) {
+				You("suddenly vanish!");
+				HInvis |= FROMOUTSIDE;	  /* In multiple senses of 'vanish' :) */
+			} else {
+				if(flags.verbose)
+					Your("position suddenly seems very uncertain!");
+			}
+		   tele();
 		}
 		break;
 	    case AD_RUST:
