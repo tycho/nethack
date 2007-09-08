@@ -463,6 +463,25 @@ SHIELD("dwarvish roundshield", "large round shield",
 		0, 0, 0, 0,	     4, 0,100, 10,  8, 0, IRON, HI_METAL),
 SHIELD("shield of reflection", "polished silver shield",
 		0, 1, 0, REFLECTING, 3, 0, 50, 50,  8, 0, SILVER, HI_SILVER),
+/* The below are temporary placeholders for later; none will be
+ * randomly generated yet, but this lets me not break save compat
+ * once i figure out what kind of functionality these should have
+ *
+ * For now, source-divers can use these as wish targets, but keep
+ * in mind that they may change at any moment with an update...
+ * so your shield of free action may suddenly become a shield 
+ * of weight, etc. :)
+ */
+SHIELD("flame shield", "dark red shield",
+		0, 1, 0, FIRE_RES, 0, 0, 50, 300, 8, 0, IRON, CLR_RED),
+SHIELD("ice shield", "dark blue shield",
+		0, 1, 0, COLD_RES, 0, 0, 50, 300, 8, 0, IRON, CLR_BLUE),
+SHIELD("lightning shield", "dull yellow shield",
+		0, 1, 0, SHOCK_RES, 0, 0, 50, 300, 8, 0, IRON, CLR_YELLOW),
+SHIELD("venom shield", "dark green shield",
+		0, 1, 0, POISON_RES, 0, 0, 50, 300, 8, 0, IRON, CLR_GREEN),
+SHIELD("shield of mobility", "slippery shield",
+		0, 1, 0, FREE_ACTION, 0, 0, 50, 300, 9, 0, IRON, HI_METAL),
 
 /* gloves */
 /* these have their color but not material shuffled, so the IRON must stay
