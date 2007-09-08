@@ -623,8 +623,10 @@ touch_whereis()
 #else
 	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
 #endif
-	Sprintf(whereis_work,"%d,%d,%d,%d,%d,0,0\n",
-			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves);
+	Sprintf(whereis_work,"%d,%d,%d,%d,%d,0,0,%s,%s,%s,%d,%d\n",
+			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves,
+			urole.name.m,urace.adj,u.mfemale ? "F" : "M",u.ualign.type + 2,
+			u.uhave.amulet ? 1 : 0);
 	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
 	if (fp) {
 		fwrite(whereis_work,strlen(whereis_work),1,fp);
@@ -647,9 +649,11 @@ delete_whereis()
 #else
 	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
 #endif
-	Sprintf(whereis_work,"%d,%d,%d,%d,%d,%d,1\n",
+	Sprintf(whereis_work,"%d,%d,%d,%d,%d,%d,1,%s,%s,%s,%d,%d\n",
 			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves, 
-			u.uevent.ascended ? 2 : killer ? 1 : 0);
+			u.uevent.ascended ? 2 : killer ? 1 : 0,
+			urole.name.m,urace.adj,u.mfemale ? "F" : "M",u.ualign.type + 2,
+			u.uhave.amulet ? 1 : 0);
 	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
 	if (fp) {
 		fwrite(whereis_work,strlen(whereis_work),1,fp);
