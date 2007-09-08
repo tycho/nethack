@@ -363,11 +363,11 @@ int x, y;
 				(Wwalking || Amphibious || Swimming ||
 				Flying || Levitation)) ||
 			is_swimmer(etmp->edata) || is_flyer(etmp->edata) ||
-			is_floater(etmp->edata));
+			is_floater(etmp->edata) || is_flying(etmp->emon));
 	/* must force call to lava_effects in e_died if is_u */
 	if (is_lava(x, y))
 		return (boolean)((is_u(etmp) && (Levitation || Flying)) ||
-			    likes_lava(etmp->edata) || is_flyer(etmp->edata));
+			    likes_lava(etmp->edata) || is_flyer(etmp->edata) || is_flying(etmp->emon));
 	if (is_db_wall(x, y))
 		return((boolean)(is_u(etmp) ? Passes_walls :
 			passes_walls(etmp->edata)));
@@ -465,7 +465,7 @@ boolean chunks;
 	if (automiss(etmp))
 		return(TRUE);
 
-	if (is_flyer(etmp->edata) &&
+	if ((is_flyer(etmp->edata) || is_flying(etmp->emon)) &&
 	    (is_u(etmp)? !Sleeping :
 	     (etmp->emon->mcanmove && !etmp->emon->msleeping)))
 						 /* flying requires mobility */
@@ -708,7 +708,7 @@ struct entity *etmp;
 				You_hear("a splash.");
 		if (e_survives_at(etmp, etmp->ex, etmp->ey)) {
 			if (e_inview && !is_flyer(etmp->edata) &&
-			    !is_floater(etmp->edata))
+			    !is_floater(etmp->edata) && !is_flying(etmp->emon))
 				pline("%s from the bridge.",
 				      E_phrase(etmp, "fall"));
 			return;

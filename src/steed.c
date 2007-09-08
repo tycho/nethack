@@ -300,7 +300,7 @@ mount_steed(mtmp, force)
 	}
 
 	/* Is the player impaired? */
-	if (!force && !is_floater(ptr) && !is_flyer(ptr) &&
+	if (!force && !is_floater(ptr) && !is_flyer(ptr) && !is_flying(mtmp) &&
 			Levitation && !Lev_at_will) {
 	    You("cannot reach %s.", mon_nam(mtmp));
 	    return (FALSE);
@@ -334,7 +334,7 @@ mount_steed(mtmp, force)
 
 	/* Success */
 	if (!force) {
-	    if (Levitation && !is_floater(ptr) && !is_flyer(ptr))
+	    if (Levitation && !is_floater(ptr) && !is_flyer(ptr) && !is_flying(mtmp))
 	    	/* Must have Lev_at_will at this point */
 	    	pline("%s magically floats up!", Monnam(mtmp));
 	    You("mount %s.", mon_nam(mtmp));
@@ -552,7 +552,7 @@ dismount_steed(reason)
 		struct permonst *mdat = mtmp->data;
 
 		/* The steed may drop into water/lava */
-		if (!is_flyer(mdat) && !is_floater(mdat) && !is_clinger(mdat)) {
+		if (!is_flyer(mdat) && !is_floater(mdat) && !is_clinger(mdat) && !is_flying(mtmp)) {
 		    if (is_pool(u.ux, u.uy)) {
 			if (!Underwater)
 			    pline("%s falls into the %s!", Monnam(mtmp),

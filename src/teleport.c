@@ -63,14 +63,14 @@ unsigned gpflags;
 			return !!(HLevitation || Flying || Wwalking ||
 					Swimming || Amphibious);
 		else	return (is_flyer(mdat) || is_swimmer(mdat) ||
-							is_clinger(mdat));
+							is_clinger(mdat) || is_flying(mtmp));
 	    } else if (mdat->mlet == S_EEL && rn2(13) && !ignorewater) {
 		return FALSE;
 	    } else if (is_lava(x,y)) {
 		if (mtmp == &youmonst)
 		    return !!HLevitation;
 		else
-		    return (is_flyer(mdat) || likes_lava(mdat));
+		    return (is_flyer(mdat) || likes_lava(mdat) || is_flying(mtmp));
 	    }
 	    if (passes_walls(mdat) && may_passwall(x,y)) return TRUE;
 	}

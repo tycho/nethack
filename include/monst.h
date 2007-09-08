@@ -115,6 +115,7 @@ struct monst {
 
 	Bitfield(mcanmove,1);	/* paralysis, similar to mblinded */
 	Bitfield(mfrozen,7);
+	Bitfield(mflying,1);	  /* is monster levitating/flying artificially? */
 
 	Bitfield(msleeping,1);	/* asleep until woken */
 	Bitfield(mstun,1);	/* stunned (off balance) */

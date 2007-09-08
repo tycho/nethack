@@ -1495,7 +1495,7 @@ stillinwater:;
 	    if (is_pool(u.ux, u.uy) || is_lava(u.ux, u.uy)) {
 #ifdef STEED
 		if (u.usteed && !is_flyer(u.usteed->data) &&
-			!is_floater(u.usteed->data) &&
+			!is_floater(u.usteed->data) && !is_flying(u.usteed) &&
 			!is_clinger(u.usteed->data)) {
 		    dismount_steed(Underwater ?
 			    DISMOUNT_FELL : DISMOUNT_GENERIC);

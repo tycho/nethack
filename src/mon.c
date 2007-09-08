@@ -384,9 +384,9 @@ register struct monst *mtmp;
 {
     boolean inpool, inlava, infountain;
 
-    inpool = is_pool(mtmp->mx,mtmp->my) &&
+	 inpool = is_pool(mtmp->mx,mtmp->my) && !is_flying(mtmp) &&
 	     !is_flyer(mtmp->data) && !is_floater(mtmp->data);
-    inlava = is_lava(mtmp->mx,mtmp->my) &&
+    inlava = is_lava(mtmp->mx,mtmp->my) && !is_flying(mtmp) &&
 	     !is_flyer(mtmp->data) && !is_floater(mtmp->data);
     infountain = IS_FOUNTAIN(levl[mtmp->mx][mtmp->my].typ);
 
@@ -1052,9 +1052,10 @@ mfndpos(mon, poss, info, flag)
 
 	nodiag = (mdat == &mons[PM_GRID_BUG]);
 	wantpool = mdat->mlet == S_EEL;
-	poolok = is_flyer(mdat) || is_clinger(mdat) ||
-		 (is_swimmer(mdat) && !wantpool);
-	lavaok = is_flyer(mdat) || is_clinger(mdat) || likes_lava(mdat);
+	poolok = is_flyer(mdat) || is_clinger(mdat) || is_flying(mon) ||
+				(is_swimmer(mdat) && !wantpool);
+	lavaok = is_flyer(mdat) || is_clinger(mdat) || is_flying(mon) ||
+				likes_lava(mdat);
 	thrudoor = ((flag & (ALLOW_WALL|BUSTDOOR)) != 0L);
 	if (flag & ALLOW_DIG) {
 	    struct obj *mw_tmp;
@@ -1205,16 +1206,17 @@ impossible("A monster looked at a very strange trap of type %d.", ttmp->ttyp);
 				    && ttmp->ttyp != HOLE)
 				      || (!is_flyer(mdat)
 				    && !is_floater(mdat)
-				    && !is_clinger(mdat))
+				    && !is_clinger(mdat)
+					 && !is_flying(mon))
 				      || In_sokoban(&u.uz))
 				&& (ttmp->ttyp != SLP_GAS_TRAP ||
 				    !resists_sleep(mon))
 				&& (ttmp->ttyp != BEAR_TRAP ||
 				    (mdat->msize > MZ_SMALL &&
-				     !amorphous(mdat) && !is_flyer(mdat)))
+				     !amorphous(mdat) && !is_flyer(mdat) && !is_flying(mon)))
 				&& (ttmp->ttyp != FIRE_TRAP ||
 				    !resists_fire(mon))
-				&& (ttmp->ttyp != SQKY_BOARD || !is_flyer(mdat))
+				&& (ttmp->ttyp != SQKY_BOARD || !is_flyer(mdat) || !is_flying(mon))
 				&& (ttmp->ttyp != WEB || (!amorphous(mdat) &&
 				    !webmaker(mdat)))
 			) {
