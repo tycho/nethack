@@ -754,7 +754,7 @@ int x,y;
 
 	lev1 = &levl[x][y];
 	if (lev1->typ != DRAWBRIDGE_DOWN) return;
-	if (rn2(2)) {
+	if (rn2(4)) {
 		pline("The mechanism seems to have something stuck in it and won't close.");
 		return;
 	}
