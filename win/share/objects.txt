@@ -2769,7 +2769,7 @@ P = (108, 145, 182)
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
 }
-# tile 137.1 (shield of fire)
+# tile 137.1 (flame shield / dark red shield)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
@@ -2788,7 +2788,7 @@ P = (108, 145, 182)
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
 }
-# tile 137.2 (shield of ice)
+# tile 137.2 (ice shield / dark blue shield)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
@@ -2807,7 +2807,7 @@ P = (108, 145, 182)
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
 }
-# tile 137.3 (shield of lightning)
+# tile 137.3 (lightning shield / dull yellow shield)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
@@ -2826,7 +2826,7 @@ P = (108, 145, 182)
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
 }
-# tile 137.4 (shield of venom)
+# tile 137.4 (venom shield / dark green shield)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
@@ -2845,7 +2845,7 @@ P = (108, 145, 182)
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
 }
-# tile 137.5 (shield of mobility)
+# tile 137.5 (shield of mobility / slippery shield)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
