@@ -414,7 +414,8 @@ tele()
 	/* don't show trap if "Sorry..." */
 	if (!Blinded) make_blinded(0L,FALSE);
 
-	if ((u.uhave.amulet || On_W_tower_level(&u.uz)) && !rn2(3)) {
+	/* With Gehennom now teleportable again, the amulet must block it all. */
+	if (u.uhave.amulet || On_W_tower_level(&u.uz)) {
 	    You_feel("disoriented for a moment.");
 	    return;
 	}

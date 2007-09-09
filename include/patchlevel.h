@@ -4,7 +4,7 @@
 
 /* SporkHack 0.3.0 */
 #define VERSION_MAJOR	0
-#define VERSION_MINOR	3
+#define VERSION_MINOR	4
 /*
  * PATCHLEVEL is updated for each release.
  */
@@ -33,7 +33,7 @@
  * PP = patch level, ee = edit level, L = literal suffix "L",
  * with all four numbers specified as two hexadecimal digits.
  */
-#define VERSION_COMPATIBILITY 0x00030000L	/* 0.3.0-0 */
+#define VERSION_COMPATIBILITY 0x00040000L	/* 0.4.0-0 */
 
 
 /*****************************************************************************/
