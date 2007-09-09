@@ -244,7 +244,11 @@ chat_with_leader()
 	    qt_pager(QT_FIRSTLEADER);
 	    Qstat(met_leader) = TRUE;
 	    Qstat(not_ready) = 0;
-	  } else qt_pager(QT_NEXTLEADER);
+	  } else if (!Qstat(pissed_off)) {
+		  qt_pager(QT_NEXTLEADER);
+	  } else {
+		  verbalize("Your bones shall serve to warn others.");
+	  }
 	  /* the quest leader might have passed through the portal into
 	     the regular dungeon; none of the remaining make sense there */
 	  if (!on_level(&u.uz, &qstart_level)) return;
@@ -254,8 +258,12 @@ chat_with_leader()
 	    exercise(A_WIS, TRUE);
 	    expulsion(FALSE);
 	  } else if(is_pure(TRUE) < 0) {
-	    com_pager(QT_BANISHED);
-		 expulsion(FALSE);
+		  /* don't keep lecturing once the player's been kicked out once. */
+		  if (!Qstat(pissed_off)) {
+			com_pager(QT_BANISHED);
+			Qstat(pissed_off) = 1;
+			expulsion(FALSE);
+		  }
 	  } else if(is_pure(TRUE) == 0) {
 		  /* Don't end the game for too many tries anymore, that's silly */
 	    qt_pager(QT_BADALIGN);
@@ -282,7 +290,7 @@ leader_speaks(mtmp)
 			* ...but do only show this crap once. */
 			qt_pager(QT_LASTLEADER);
 		}
-		Qstat(pissed_off) = TRUE;
+		Qstat(pissed_off) = 1;
 		mtmp->mstrategy &= ~STRAT_WAITMASK;	/* end the inaction */
 	}
 	/* the quest leader might have passed through the portal into the
@@ -290,6 +298,13 @@ leader_speaks(mtmp)
 	if (!on_level(&u.uz, &qstart_level)) return;
 
 	if(!Qstat(pissed_off)) chat_with_leader();
+
+	/* leader might have become pissed during the chat */
+	if(Qstat(pissed_off)) {
+		mtmp->mstrategy &= ~STRAT_WAITMASK;
+		mtmp->mpeaceful = 0;
+	}
+
 }
 
 STATIC_OVL void
@@ -353,8 +368,13 @@ quest_chat(mtmp)
 	register struct monst *mtmp;
 {
     if (mtmp->m_id == Qstat(leader_m_id)) {
-	chat_with_leader();
-	return;
+		chat_with_leader();
+		/* leader might have become pissed during the chat */
+		if(Qstat(pissed_off)) {
+			mtmp->mstrategy &= ~STRAT_WAITMASK;
+			mtmp->mpeaceful = 0;
+		}
+		return;
     }
     switch(mtmp->data->msound) {
 	    case MS_NEMESIS:	chat_with_nemesis(); break;
@@ -369,8 +389,8 @@ quest_talk(mtmp)
 	register struct monst *mtmp;
 {
     if (mtmp->m_id == Qstat(leader_m_id)) {
-	leader_speaks(mtmp);
-	return;
+		leader_speaks(mtmp);
+		return;
     }
     switch(mtmp->data->msound) {
 	    case MS_NEMESIS:	nemesis_speaks(); break;
