@@ -1073,10 +1073,9 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 
 	    case ANTI_MAGIC:
 		seetrap(trap);
-		if(Antimagic) {
-		    shieldeff(u.ux, u.uy);
-		    You_feel("momentarily lethargic.");
-		} else drain_en(rnd(u.ulevel) + 1);
+		if (u.uen > 0) {
+			drain_en(rnd(u.uen) + 1);
+		}
 		break;
 
 	    case POLY_TRAP: {

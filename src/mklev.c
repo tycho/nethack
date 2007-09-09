@@ -1234,6 +1234,7 @@ coord *tm;
 		    case SPIKED_PIT:
 			if (lvl < 5) kind = NO_TRAP; break;
 		    case LANDMINE:
+			 case SPEAR_TRAP:
 			if (lvl < 6) kind = NO_TRAP; break;
 		    case WEB:
 			if (lvl < 7) kind = NO_TRAP; break;
