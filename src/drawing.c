@@ -271,6 +271,7 @@ const struct symdef defsyms[MAXPCHARS] = {
 /*60*/	{'^', "magic trap",	C(HI_ZAP)},	/* trap */
 	{'^', "anti-magic field", C(HI_ZAP)},	/* trap */
 	{'^', "polymorph trap",	C(CLR_BRIGHT_GREEN)},	/* trap */
+	{'^', "spear trap",	C(CLR_BROWN)},	/* trap */
 	{'|', "wall",		C(CLR_GRAY)},	/* vbeam */
 	{'-', "wall",		C(CLR_GRAY)},	/* hbeam */
 	{'\\',"wall",		C(CLR_GRAY)},	/* lslant */
@@ -378,6 +379,7 @@ static uchar ibm_graphics[MAXPCHARS] = {
 /*60*/	g_FILLER(S_magic_trap),
 	g_FILLER(S_anti_magic_trap),
 	g_FILLER(S_polymorph_trap),
+	g_FILLER(S_spear_trap),
 	0xb3,	/* S_vbeam:	meta-3, vertical rule */
 	0xc4,	/* S_hbeam:	meta-D, horizontal rule */
 	g_FILLER(S_lslant),
@@ -477,6 +479,7 @@ static uchar dec_graphics[MAXPCHARS] = {
 /*60*/	g_FILLER(S_magic_trap),
 	g_FILLER(S_anti_magic_trap),
 	g_FILLER(S_polymorph_trap),
+	g_FILLER(S_spear_trap),
 	0xf8,	/* S_vbeam:	meta-x, vertical rule */
 	0xf1,	/* S_hbeam:	meta-q, horizontal rule */
 	g_FILLER(S_lslant),
@@ -574,6 +577,7 @@ static uchar mac_graphics[MAXPCHARS] = {
 /*60*/	g_FILLER(S_magic_trap),
 	g_FILLER(S_anti_magic_trap),
 	g_FILLER(S_polymorph_trap),
+	g_FILLER(S_spear_trap),
 	g_FILLER(S_vbeam),
 	g_FILLER(S_hbeam),
 	g_FILLER(S_lslant),
@@ -865,6 +869,7 @@ boolean is_rlevel;
 	    showsyms[S_magic_trap] = 0x04;
 	    showsyms[S_anti_magic_trap] = 0x04;
 	    showsyms[S_polymorph_trap] = 0x04;
+	    showsyms[S_spear_trap] = 0x04;
 #endif
 	}
 #endif /* ASCIIGRAPH */
