@@ -2099,6 +2099,8 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			if (!rn2(21)) goto mfiretrap;
 			break;
 		case ANTI_MAGIC:
+			/* simulate energy drain by increasing cast time */
+			mtmp->mspec_used += 2;
 			break;
 
 		case LANDMINE:
