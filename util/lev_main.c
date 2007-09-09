@@ -130,6 +130,7 @@ static struct {
 	{ "magic",	MAGIC_TRAP },
 	{ "anti magic",	ANTI_MAGIC },
 	{ "polymorph",	POLY_TRAP },
+	{ "spear", SPEAR_TRAP },
 	{ 0, 0 }
 };
 
