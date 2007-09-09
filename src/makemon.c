@@ -1654,12 +1654,12 @@ int type;
 		case PM_ROPE_GOLEM: return 30;
 		case PM_LEATHER_GOLEM: return 40;
 		case PM_GOLD_GOLEM: return 40;
-		case PM_WOOD_GOLEM: return 50;
+		case PM_WOOD_GOLEM: return 60;
 		case PM_FLESH_GOLEM: return 40;
-		case PM_CLAY_GOLEM: return 50;
-		case PM_STONE_GOLEM: return 60;
-		case PM_GLASS_GOLEM: return 60;
-		case PM_IRON_GOLEM: return 80;
+		case PM_CLAY_GOLEM: return 60;
+		case PM_STONE_GOLEM: return 150;		/* it's a rock */
+		case PM_GLASS_GOLEM: return 80;
+		case PM_IRON_GOLEM: return 150;		/* it's solid iron */
 		default: return 0;
 	}
 }
