@@ -33,8 +33,8 @@
 #define CLC_FLY			10
 
 STATIC_DCL void FDECL(cursetxt,(struct monst *,BOOLEAN_P));
-STATIC_DCL int FDECL(choose_magic_spell, (int));
-STATIC_DCL int FDECL(choose_clerical_spell, (int));
+STATIC_DCL int FDECL(choose_magic_spell, (struct monst *, int));
+STATIC_DCL int FDECL(choose_clerical_spell, (struct monst *, int));
 STATIC_DCL void FDECL(cast_wizard_spell,(struct monst *, int,int));
 STATIC_DCL void FDECL(cast_cleric_spell,(struct monst *, int,int));
 STATIC_DCL boolean FDECL(is_undirected_spell,(unsigned int,int));
@@ -80,82 +80,104 @@ boolean undirected;
 /* convert a level based random selection into a specific mage spell;
    inappropriate choices will be screened out by spell_would_be_useless() */
 STATIC_OVL int
-choose_magic_spell(spellval)
+choose_magic_spell(mtmp,spellval)
+struct monst* mtmp;
 int spellval;
 {
-    switch (spellval) {
-    case 22:
-    case 21:
-    case 20:
-	return MGC_DEATH_TOUCH;
-    case 19:
-    case 18:
-	return MGC_CLONE_WIZ;
-    case 17:
-    case 16:
-    case 15:
-	return MGC_SUMMON_MONS;
-    case 14:
-	return MGC_AGGRAVATION;
-    case 13:
-    case 12:
-    case 11:
-	return MGC_CURSE_ITEMS;
-    case 10:
-    case 9:
-    case 8:
-	return MGC_DESTRY_ARMR;
-    case 7:
-    case 6:
-	return MGC_WEAKEN_YOU;
-    case 5:
-	return MGC_FLY;
-    case 4:
-	return MGC_DISAPPEAR;
-    case 3:
-	return MGC_STUN_YOU;
-    case 2:
-	return MGC_HASTE_SELF;
-    case 1:
-	return MGC_CURE_SELF;
-    case 0:
-    default:
-	return MGC_PSI_BOLT;
-    }
+	struct trap* tr;
+
+	/* If we're stuck in a pit, we know a way out */
+	tr = t_at(mtmp->mx,mtmp->my);
+	if (mtmp->mtrapped && tr && (tr->ttyp == PIT || tr->ttyp == SPIKED_PIT) 
+			&& mtmp->m_lev > 5) { spellval = 5; }
+
+	/* If we're hurt, seriously consider giving fixing ourselves priority */
+	if ((mtmp->mhp * 4) <= mtmp->mhpmax) { spellval = 1; }
+
+	switch (spellval) {
+		case 22:
+		case 21:
+		case 20:
+			return MGC_DEATH_TOUCH;
+		case 19:
+		case 18:
+			return MGC_CLONE_WIZ;
+		case 17:
+		case 16:
+		case 15:
+			return MGC_SUMMON_MONS;
+		case 14:
+			return MGC_AGGRAVATION;
+		case 13:
+		case 12:
+		case 11:
+			return MGC_CURSE_ITEMS;
+		case 10:
+		case 9:
+		case 8:
+			return MGC_DESTRY_ARMR;
+		case 7:
+		case 6:
+			return MGC_WEAKEN_YOU;
+		case 5:
+			return MGC_FLY;
+		case 4:
+			return MGC_DISAPPEAR;
+		case 3:
+			return MGC_STUN_YOU;
+		case 2:
+			return MGC_HASTE_SELF;
+		case 1:
+			return MGC_CURE_SELF;
+		case 0:
+		default:
+			return MGC_PSI_BOLT;
+	}
 }
 
 /* convert a level based random selection into a specific cleric spell */
 STATIC_OVL int
-choose_clerical_spell(spellnum)
+choose_clerical_spell(mtmp,spellnum)
+struct monst* mtmp;
 int spellnum;
 {
+	struct trap* tr;
+
+	/* If we're stuck in a pit, we know a way out */
+	tr = t_at(mtmp->mx,mtmp->my);
+	if (mtmp->mtrapped && tr && (tr->ttyp == PIT || tr->ttyp == SPIKED_PIT) 
+			&& mtmp->m_lev > 3) { spellnum = 3; }
+
+	/* If we're hurt, seriously consider giving fixing ourselves priority */
+	if ((mtmp->mhp * 4) <= mtmp->mhpmax) { spellnum = 1; }
+
     switch (spellnum) {
-    case 13:
-	return CLC_GEYSER;
-    case 12:
-	return CLC_FIRE_PILLAR;
-    case 11:
-	return CLC_LIGHTNING;
-    case 10:
-    case 9:
-	return CLC_CURSE_ITEMS;
-    case 8:
-	return CLC_INSECTS;
-    case 7:
-    case 6:
-	return CLC_BLIND_YOU;
-    case 5:
-    case 4:
-	return CLC_PARALYZE;
-    case 3:
-	return CLC_FLY;
-    case 2:
-	return CLC_CONFUSE_YOU;
-    case 1:
-	return CLC_CURE_SELF;
-    case 0:
-    default:
-	return CLC_OPEN_WOUNDS;
+		case 13:
+			return CLC_GEYSER;
+		case 12:
+			return CLC_FIRE_PILLAR;
+		case 11:
+			return CLC_LIGHTNING;
+		case 10:
+		case 9:
+			return CLC_CURSE_ITEMS;
+		case 8:
+			return CLC_INSECTS;
+		case 7:
+		case 6:
+			return CLC_BLIND_YOU;
+		case 5:
+		case 4:
+			return CLC_PARALYZE;
+		case 3:
+			return CLC_FLY;
+		case 2:
+			return CLC_CONFUSE_YOU;
+		case 1:
+			return CLC_CURE_SELF;
+		case 0:
+		default:
+			return CLC_OPEN_WOUNDS;
     }
 }
 
@@ -192,9 +214,9 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 	    do {
 		spellnum = rn2(ml);
 		if (mattk->adtyp == AD_SPEL)
-		    spellnum = choose_magic_spell(spellnum);
+		    spellnum = choose_magic_spell(mtmp,spellnum);
 		else
-		    spellnum = choose_clerical_spell(spellnum);
+		    spellnum = choose_clerical_spell(mtmp,spellnum);
 		/* not trying to attack?  don't allow directed spells */
 		if (!thinks_it_foundyou) {
 		    if (!is_undirected_spell(mattk->adtyp, spellnum) ||

@@ -787,6 +787,9 @@ POTION("sickness", "fizzy",             0, 0,          42,  50, CLR_CYAN),
 POTION("fruit juice", "dark",           0, 0,          42,  50, CLR_BLACK),
 POTION("acid", "white",                 0, 0,          10, 250, CLR_WHITE),
 POTION("oil", "murky",                  0, 0,          30, 250, CLR_BROWN),
+POTION((char*)0, "greasy",              0, 0,           0, 100, CLR_BLACK),
+POTION((char*)0, "slimy",               0, 0,           0, 100, CLR_BROWN),
+POTION((char*)0, "chartreuse",          0, 0,           0, 100, CLR_GREEN),
 POTION("water", "clear",                0, 0,          92, 100, CLR_CYAN),
 #undef POTION
 
@@ -874,10 +877,8 @@ SPELL("stone to flesh",	 "thick",       P_HEALING_SPELL, 15,  1, 3, 1, IMMEDIATE
 SPELL("detect foot",		 "chartreuse",	 P_DIVINATION_SPELL, 20, 2, 7, 1, NODIR, CLR_GREEN),
 SPELL("reflection",		 "decrepit",    P_MATTER_SPELL, 20, 7, 6, 1, IMMEDIATE, CLR_BROWN),
 SPELL("repair armor",	 "paperback",   P_MATTER_SPELL, 15, 6, 3, 1, IMMEDIATE, HI_PAPER),
-#if 0	/* DEFERRED */
-SPELL("flame sphere",    "canvas",      P_MATTER_SPELL, 20,  2, 1, 1, NODIR, CLR_BROWN),
-SPELL("freeze sphere",   "hardcover",   P_MATTER_SPELL, 20,  2, 1, 1, NODIR, CLR_BROWN),
-#endif
+SPELL((char*)0,		    "canvas",      P_MATTER_SPELL, 0,  2, 1, 1, NODIR, CLR_BROWN),
+SPELL((char*)0,			 "hardcover",   P_MATTER_SPELL, 0,  2, 1, 1, NODIR, CLR_BROWN),
 /* blank spellbook must come last because it retains its description */
 SPELL("blank paper",     "plain",       P_NONE, 18,  0, 0, 0, 0,         HI_PAPER),
 /* a special, one of a kind, spellbook */
