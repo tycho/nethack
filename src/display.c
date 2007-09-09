@@ -134,6 +134,9 @@ STATIC_DCL void FDECL(set_seenv, (struct rm *, int, int, int, int));
 STATIC_DCL void FDECL(t_warn, (struct rm *));
 STATIC_DCL int FDECL(wall_angle, (struct rm *));
 
+/* needed for warning, now */
+extern const int monstr[];
+
 #ifdef INVISIBLE_OBJECTS
 /*
  * vobj_at()
@@ -457,7 +460,7 @@ display_warning(mon)
     register struct monst *mon;
 {
     int x = mon->mx, y = mon->my;
-    int wl = (int)((mon->m_lev - u.ulevel) / 3) + 2;
+    int wl = (int)((monstr[mon->mnum] - u.ulevel) / 3) + 3;
     int glyph;
 
 	 if (wl < 1) wl = 1;	/* won't show up right */
