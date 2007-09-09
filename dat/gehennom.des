@@ -680,7 +680,6 @@ STAIR:(63,15),up
 #	specific levels as defined above.
 #
 MAZE: "hellfill",'L'
-FLAGS: noteleport
 INIT_MAP: '.',' ',true,true,unlit,true
 TELEPORT_REGION:levregion(11,01,59,19),levregion(01,01,02,02)
 NOMAP
@@ -739,7 +738,8 @@ MONSTER:'L',random,random,hostile
 ELSE
 MONSTER:random,random,random,hostile
 ENDIF
-IF [50%] THEN
+IF [66%] THEN
+# could be a snark now, so up the percentage a bit
 MONSTER:'J',random,random,hostile
 ELSE
 MONSTER:random,random,random,hostile
