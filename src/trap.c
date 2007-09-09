@@ -1181,6 +1181,21 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		domagicportal(trap);
 		break;
 
+		 case SPEAR_TRAP:
+		seetrap(trap);
+		pline("A spear stabs up from a hole in the ground at you!");
+		if (thick_skinned(youmonst.data)) {
+			pline("But it breaks off against your body.");
+			deltrap(trap);
+		} else if (Levitation) {
+			pline("The spear isn't long enough to reach you.");
+		} else if (unsolid(youmonst.data)) {
+			pline("It passes right through you!");
+		} else {
+			pline("Ouch! That hurts!");
+			losehp(rnd(10)+10,"sharpened bamboo stick",KILLED_BY_AN);
+		}
+		break;
 	    default:
 		seetrap(trap);
 		impossible("You hit a trap of type %u", trap->ttyp);
@@ -1233,6 +1248,12 @@ struct obj *otmp;
 				pline("%s suddenly falls asleep!",
 				      Monnam(mtmp));
 			    }
+			}
+			steedhit = TRUE;
+			break;
+		case SPEAR_TRAP:
+			if (thitm(0, mtmp, (struct obj*)0, rnd(10)+10, FALSE)) {
+				trapkilled = TRUE;
 			}
 			steedhit = TRUE;
 			break;
@@ -2149,6 +2170,32 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			}
 		    }
 		    break;
+
+		case SPEAR_TRAP:
+			if (in_sight) {
+				seetrap(trap);
+				pline("A spear stabs up from a hole in the ground!");
+			}
+			if (thick_skinned(mptr)) {
+				if (in_sight) {
+					pline("But it breaks off against %s.",mon_nam(mtmp));
+				}
+				deltrap(trap);
+			} else if (unsolid(mptr)) {
+				if (in_sight) {
+					pline("It passes right through %s!",mon_nam(mtmp));
+				}
+			} else if (is_flyer(mptr) || is_flying(mtmp)) {
+				if (in_sight) {
+					pline("The spear isn't long enough to reach %s.",mon_nam(mtmp));
+				}
+			} else {
+				if (thitm(0, mtmp, (struct obj *)0, rnd(10)+10, FALSE))
+					trapkilled = TRUE;
+				else
+					pline("%s is skewered!",Monnam(mtmp));
+			}
+			 break;
 
 		default:
 			impossible("Some monster encountered a strange trap of type %d.", tt);
