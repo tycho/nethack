@@ -1236,6 +1236,7 @@ coord *tm;
 		    case LANDMINE:
 			 case SPEAR_TRAP:
 			if (lvl < 6) kind = NO_TRAP; break;
+			 case ANTI_MAGIC:
 		    case WEB:
 			if (lvl < 7) kind = NO_TRAP; break;
 		    case STATUE_TRAP:
