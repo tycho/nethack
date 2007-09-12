@@ -176,7 +176,7 @@ const char * const monexplain[MAXMCLASSES] = {
     "angelic being",		"bat or bird",		"centaur",
     "dragon",			"elemental",		"fungus or mold",
     "gnome",			"giant humanoid",	0,
-    "jabberwock",		"Keystone Kop",		"lich",
+    "Carroll beast",		"Keystone Kop",		"lich",
     "mummy",			"naga",			"ogre",
     "pudding or ooze",		"quantum mechanic",	"rust monster or disenchanter",
     "snake",			"troll",		"umber hulk",
