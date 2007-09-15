@@ -3085,7 +3085,11 @@ int otyp;
 int cnt;
 struct trap *ttmp;
 {
-	struct obj *otmp = mksobj(otyp, TRUE, FALSE);
+	struct obj *otmp;
+	
+	/* "That must have been a claymore mine."  -- DSR */
+	if (otyp == LAND_MINE && rn2(2)) { otyp = TWO_HANDED_SWORD; }
+	otmp = mksobj(otyp, TRUE, FALSE);
 	otmp->quan=cnt;
 	otmp->owt = weight(otmp);
 	/* Only dart traps are capable of being poisonous */
