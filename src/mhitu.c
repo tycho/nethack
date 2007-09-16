@@ -905,15 +905,15 @@ hitmu(mtmp, mattk)
 	    }
 	}
 
-/*	First determine the base damage done */
+	/*	First determine the base damage done */
 	dmg = d((int)mattk->damn, (int)mattk->damd);
-	if(is_undead(mdat) && midnight())
-		dmg += d((int)mattk->damn, (int)mattk->damd); /* extra damage */
 
-	/* elementals on their home plane hit very hard */
-	if(is_home_elemental(mdat)) {
-		if (mtmp->mnum != PM_AIR_ELEMENTAL)
-			dmg += d((int)mattk->damn, (int)mattk->damd);  /* air elementals hit hard enough already */
+	/* undead do extra damage in the witching hour;
+	 * berserk monsters always do extra damage;
+	 * and elementals on their home plane hit really hard */
+	if((is_undead(mdat) && midnight()) || is_berserker(mdat) ||
+			(is_home_elemental(mdat) && mtmp->mnum != PM_AIR_ELEMENTAL)) {
+		dmg += d((int)mattk->damn, (int)mattk->damd);
 	}
 
 /*	Next a cancellation factor	*/

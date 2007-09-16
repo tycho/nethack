@@ -1261,6 +1261,16 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 	/* Various other combinations such as dog vs cat, cat vs rat, and
 	   elf vs orc have been suggested.  For the time being we don't
 	   support those. */
+
+	/* Big enough critters will swipe at your pets if they're in the way;
+	 * berserker-class monsters will swipe at _anything_,
+	 * and just about everything will step on the insects. */
+	if ((magr->data->msize > (mdef->data->msize + 1) && mdef->mtame) ||
+			(is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet) || 
+			(mdef->data->msize == MZ_TINY && magr->data->msize > MZ_TINY)) {
+		return ALLOW_M|ALLOW_TM;
+	}
+
 	return 0L;
 }
 
