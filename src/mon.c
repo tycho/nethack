@@ -1263,10 +1263,10 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 	   support those. */
 
 	/* Big enough critters will swipe at your pets if they're in the way;
-	 * berserker-class monsters will swipe at _anything_,
+	 * berserker-class monsters will swipe at _anything_ if they can see you,
 	 * and just about everything will step on the insects. */
 	if ((magr->data->msize > (mdef->data->msize + 1) && mdef->mtame) ||
-			(is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet) || 
+			(is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet && m_canseeu(magr)) || 
 			(mdef->data->msize == MZ_TINY && magr->data->msize > MZ_TINY)) {
 		return ALLOW_M|ALLOW_TM;
 	}
