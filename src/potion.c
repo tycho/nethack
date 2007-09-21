@@ -1546,6 +1546,7 @@ dodip()
 	register struct obj *potion, *obj;
 	struct obj *singlepotion;
 	const char *tmp;
+	const char* potion_descr;
 	uchar here;
 	char allowall[2];
 	short mixture;
@@ -1846,6 +1847,22 @@ dodip()
 	    return 1;
 	}
     more_dips:
+
+	/* If a greasy potion wasn't something else, grease the dipped */
+	potion_descr = OBJ_DESCR(objects[potion->otyp]);
+	if (!strcmp(potion_descr,"greasy")) {
+		/* Drop through to "...Interesting" if you're dipping already greasy stuff */
+		if (!obj->greased) {
+			Your("%s is covered with a thick layer of grease.",xname(obj));
+			obj->greased = 1;
+			if (potion->cursed && !nohands(youmonst.data)) {
+			    incr_itimeout(&Glib, rnd(10)+5);
+			    pline("Some of the grease gets all over your %s.",makeplural(body_part(HAND)));
+			}
+			useup(potion);
+			return 1;
+		}
+	}
 
 	/* Allow filling of MAGIC_LAMPs to prevent identification by player */
 	if ((obj->otyp == OIL_LAMP || obj->otyp == MAGIC_LAMP) &&
