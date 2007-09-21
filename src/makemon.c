@@ -1006,6 +1006,9 @@ register int	mmflags;
 	    mtmp->mhpmax = mtmp->mhp = 7 * mtmp->m_lev + d((int)mtmp->m_lev, 8);
 	} else if (!mtmp->m_lev) {
 	    mtmp->mhpmax = mtmp->mhp = rnd(4);	 /* level 0 monsters are pathetic */
+	} else if (ptr->msound == MS_LEADER) {
+		/* Quest Leaders need to be fairly burly */
+		mtmp->mhpmax = mtmp->mhp = 135 + rnd(30);
 	} else {
 		/* plain old ordinary monsters; modify hit die based on size;
 		 * big-ass critters like mastodons should have big-ass HP, and
