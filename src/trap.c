@@ -2195,8 +2195,9 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			} else {
 				if (thitm(0, mtmp, (struct obj *)0, rnd(10)+10, FALSE))
 					trapkilled = TRUE;
-				else
+				else if (in_sight) {
 					pline("%s is skewered!",Monnam(mtmp));
+				}
 			}
 			 break;
 
