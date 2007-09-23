@@ -133,6 +133,7 @@
 #define is_skittish(ptr)   ((ptr->mflags3 & M3_SKITTISH))
 #define is_accurate(ptr)   ((ptr->mflags3 & M3_EAGLEEYE))
 #define is_berserker(ptr)  ((ptr->mflags3 & M3_BERSERK))
+#define is_shopguard(ptr)  ((ptr->mflags3 & M3_SHOPGUARD))
 #define infravision(ptr)	((ptr->mflags3 & M3_INFRAVISION))
 #define infravisible(ptr)	((ptr->mflags3 & M3_INFRAVISIBLE))
 #define is_mplayer(ptr)		(((ptr) >= &mons[PM_ARCHEOLOGIST]) && \
