@@ -158,6 +158,7 @@
 #define M3_SKITTISH  0x0400	   /* tends to stay a few squares away from you */
 #define M3_EAGLEEYE  0x0800		/* gets an accuracy bonus to hit */
 #define M3_BERSERK   0x1000	   /* extremely indiscriminate in its attacks */
+#define M3_SHOPGUARD	0x2000	   /* Guardian for a shop */
 
 #define M3_COVETOUS	0x001f		/* wants something */
 #define M3_WAITMASK	0x00c0		/* waiting... */
