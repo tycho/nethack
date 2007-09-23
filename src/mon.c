@@ -1262,13 +1262,18 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 	   elf vs orc have been suggested.  For the time being we don't
 	   support those. */
 
-	/* Big enough critters will swipe at your pets if they're in the way;
-	 * berserker-class monsters will swipe at _anything_ if they can see you,
-	 * and just about everything will step on the insects. */
-	if ((magr->data->msize > (mdef->data->msize + 1) && !magr->mpeaceful && mdef->mtame) ||
-			(is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet && m_canseeu(magr)) || 
-			(mdef->data->msize == MZ_TINY && magr->data->msize > MZ_TINY)) {
-		return ALLOW_M|ALLOW_TM;
+	/* don't let pets kill each other, as amusing as it can be */
+	if (!magr->mtame || !mdef->mtame) {
+		/* big critters will step on your pets to get to you */
+		if ((magr->data->msize > (mdef->data->msize + 1) && !magr->mpeaceful && mdef->mtame) ||
+				/* if you're in sight... */
+				(m_canseeu(magr) && 
+				/* Berserk monsters will attack anything but their own to reach you... */
+				(is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet) || 
+				/* and just about everything will step on an insect in the way */
+				(mdef->data->msize == MZ_TINY && magr->data->msize > MZ_TINY))) {
+			return ALLOW_M|ALLOW_TM;
+		}
 	}
 
 	return 0L;
