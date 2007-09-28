@@ -1096,6 +1096,24 @@ register int	mmflags;
 				mtmp->mpeaceful = mtmp->mtame = FALSE;
 				mtmp->msleeping = 0;
 			}
+			/* Warren Robinett didn't leave this easter egg, but... */
+			if (!rn2(13)) {
+				switch (mtmp->mnum) {
+					case PM_YELLOW_DRAGON:
+						christen_monst(mtmp,"Yorgle"); 
+						break;
+					case PM_GREEN_DRAGON:
+						christen_monst(mtmp,"Grundle");
+						if (rn2(2)) (void)mongets(mtmp, SKELETON_KEY);	/* black key */
+						break;
+					case PM_RED_DRAGON:
+						christen_monst(mtmp,"Rhindle");
+						if (rn2(2)) (void)mongets(mtmp, SKELETON_KEY);	/* white key */
+						break;
+					default:
+						break;
+				}
+			}
 			break;
 	}
 	if ((ct = emits_light(mtmp->data)) > 0)
