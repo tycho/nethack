@@ -355,12 +355,15 @@ typedef unsigned char	uchar;
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # define MENU_COLOR
 # define MENU_COLOR_REGEX
-#ifndef MSDOS
+#ifdef OSX
 # define MENU_COLOR_REGEX_POSIX
 #endif
 /* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
  * GNU specific functions by default, POSIX functions with
  * MENU_COLOR_REGEX_POSIX).
+ *
+ * POSIX is required for OSX and possibly others.
+ *
  * otherwise use pmatch() to match menu color lines.
  * pmatch() provides basic globbing: '*' and '?' wildcards.
  */
