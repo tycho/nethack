@@ -2160,11 +2160,11 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 
 		case POLY_TRAP:
 		    if (resists_magm(mtmp)) {
-			shieldeff(mtmp->mx, mtmp->my);
+				shieldeff(mtmp->mx, mtmp->my);
 		    } else if (!resist(mtmp, WAND_CLASS, 0, NOTELL)) {
-			(void) newcham(mtmp, (struct permonst *)0,
-				       FALSE, FALSE);
-			if (in_sight) seetrap(trap);
+				(void) newcham(mtmp, (struct permonst *)0, FALSE, FALSE);
+				if (in_sight) seetrap(trap);
+				if (!rn2(10)) deltrap(trap);
 		    }
 		    break;
 

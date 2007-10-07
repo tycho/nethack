@@ -1841,6 +1841,7 @@ skipmsg:
 		newsym(trapx, trapy);
 
 		(void) newcham(mtmp, (struct permonst *)0, FALSE, FALSE);
+		if (!rn2(10)) { deltrap(t_at(trapx,trapy)); }
 		return 2;
 	case MUSE_BULLWHIP:
 		/* attempt to disarm hero */
