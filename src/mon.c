@@ -1015,6 +1015,18 @@ struct obj *otmp;
 	 * their alignment if the monster takes something they need
 	 */
 
+	/* Critters without hands can't pick up gold, rocks, or gems; ie,
+	 * things that are typically in a loose pile.
+	 * (Technically they could do it one item at a time, but that
+	 * requires a lot of elaborate fiddling and doesn't add to gameplay.)
+	 *
+	 * Dragons are excepted from this for obvious thematic reasons.
+	 */
+	if ((otmp->oclass == COIN_CLASS || otmp->oclass == GEM_CLASS) && 
+		nohands(mdat) && mdat->mlet != S_DRAGON) {
+		return FALSE;
+	}
+
 	/* special--boulder throwers carry unlimited amounts of boulders
 	 * and quest leaders can shatter boulders (will be handled in mpickstuff) */
 	if ((throws_rocks(mdat) || mdat->msound == MS_LEADER) && otyp == BOULDER)
