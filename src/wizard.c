@@ -451,8 +451,13 @@ nasty(mcast)
 		if (mcast &&
 		    !enexto(&bypos, mcast->mux, mcast->muy, &mons[makeindex]))
 		    continue;
-		if ((mtmp = makemon(&mons[makeindex],
-				    bypos.x, bypos.y, NO_MM_FLAGS)) != 0) {
+		/* If this is a demon prince, tend to make more demons */
+		if (mcast && is_dprince(mcast->data) && !rn2(2)) {
+			mtmp = makemon(mkclass(S_DEMON,0),bypos.x, bypos.y, NO_MM_FLAGS);
+		} else {
+			mtmp = makemon(&mons[makeindex], bypos.x, bypos.y, NO_MM_FLAGS);
+		}
+		if (mtmp != 0) {
 		    mtmp->msleeping = mtmp->mpeaceful = mtmp->mtame = 0;
 		    set_malign(mtmp);
 		} else /* GENOD? */
