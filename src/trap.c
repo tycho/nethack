@@ -2562,7 +2562,6 @@ domagictrap()
 
 	/* What happened to the poor sucker? */
 
-	fate = 11;
 	if (fate < 10) {
 	  /* Most of the time, it creates some monsters. */
 	  register int cnt = rnd(4);
