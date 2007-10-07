@@ -1058,13 +1058,28 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 
 	    case MAGIC_TRAP:	    /* A magic trap. */
 		seetrap(trap);
-		if (!rn2(30)) {
-		    deltrap(trap);
-		    newsym(u.ux,u.uy);	/* update position */
-		    You("are caught in a magical explosion!");
-		    losehp(rnd(10), "magical explosion", KILLED_BY_AN);
-		    Your("body absorbs some of the magical energy!");
-		    u.uen = (u.uenmax += 2);
+		/* Trap always goes away... but does it toast you? */
+		if (!rn2(15)) {
+			deltrap(trap);
+			newsym(u.ux,u.uy);
+			if (!rn2(2)) {
+				You("are caught in a magical explosion!");
+				losehp(rnd(10), "magical explosion", KILLED_BY_AN);
+				Your("body absorbs some of the magical energy!");
+				u.uen = (u.uenmax += 2);
+			} else {
+				if (!Blind) {
+					if (!Hallucination) {
+						pline("A cloud of brightly colored smoke billows up around you!");
+					} else {
+						pline("The floor lights came on!  Let's disco!");
+					}
+				} else {
+					pline("It smells sort of %s in here.", 
+							Hallucination ? "chartreuse" : "smoggy");
+				}
+				incr_itimeout(&HHallucination,rnd(50)+50);
+			}
 		} else domagictrap();
 #ifdef STEED
 		(void) steedintrap(trap, (struct obj *)0);
@@ -2547,6 +2562,7 @@ domagictrap()
 
 	/* What happened to the poor sucker? */
 
+	fate = 11;
 	if (fate < 10) {
 	  /* Most of the time, it creates some monsters. */
 	  register int cnt = rnd(4);
@@ -2585,6 +2601,7 @@ domagictrap()
 				You_feel("a little more %s now.",HInvis ? "obvious" : "hidden");
 			}
 			HInvis = HInvis ? 0 : HInvis | FROMOUTSIDE;
+			newsym(u.ux,u.uy);
 			break;
 	     case 12: /* a flash of fire */
 			dofiretrap((struct obj *)0);
