@@ -170,11 +170,13 @@ register struct monst *mtmp;
 	    if (!tele_restrict(mtmp)) (void) rloc(mtmp, FALSE);
 	    return(1);
 	}
-#ifndef GOLDOBJ
-	cash = u.ugold;
-#else
-	cash = money_cnt(invent);
-#endif
+
+	/* This isn't _that_ much better than the old way, but it removes
+	 * the trivial case of people being able to bribe demons with 
+	 * 10 gold pieces to bypass him.  You can still carry lots of gold,
+	 * of course, but at least now you have to lug it with you. */
+	cash = rnd(10000) + 5000;
+
 	demand = (cash * (rnd(80) + 20 * Athome)) /
 	    (100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
 
