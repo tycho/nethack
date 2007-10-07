@@ -400,10 +400,12 @@ register struct monst *mtmp;
 	 * inrange, etc. all depend on stuff set by set_apparxy().
 	 */
 
-	/* Monsters that want to acquire things */
-	/* may teleport, so do it before inrange is set */
-	/* ...don't let peaceful covetous monsters stay underfoot */
-	if(is_covetous(mdat) && !mtmp->mpeaceful) (void) tactics(mtmp);
+	/* Monsters that want to acquire things may teleport, so do it 
+	 * before inrange is set
+	 * ...don't let peaceful covetous monsters stay underfoot, but
+	 * also don't stop demon princes from teleporting to you to get bribed */
+	if(is_covetous(mdat) && (!mtmp->mpeaceful || is_dprince(mtmp->data))) 
+			(void) tactics(mtmp);
 
 	/* check distance and scariness of attacks */
 	distfleeck(mtmp,&inrange,&nearby,&scared);
