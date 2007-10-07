@@ -839,8 +839,10 @@ int spellnum;
 	if ((!mtmp->iswiz || flags.no_of_wizards > 1)
 						&& spellnum == MGC_CLONE_WIZ)
 	    return TRUE;
-	/* don't lift off if we're already in the air */
-	if ((is_flyer(mtmp->data) || is_flying(mtmp)) && spellnum == MGC_FLY)
+	/* don't lift off if we're already in the air or just-peaceful
+	 * ...but go ahead and let pets do it */
+	if ((is_flyer(mtmp->data) || is_flying(mtmp) || 
+				(mtmp->mpeaceful && !mtmp->mtame)) && spellnum == MGC_FLY)
 		return TRUE;
     } else if (adtyp == AD_CLRC) {
 	/* summon insects/sticks to snakes won't be cast by peaceful monsters */
@@ -855,8 +857,10 @@ int spellnum;
 	/* blindness spell on blinded player */
 	if (Blinded && spellnum == CLC_BLIND_YOU)
 	    return TRUE;
-	/* don't lift off if we're already in the air */
-	if ((is_flyer(mtmp->data) || is_flying(mtmp)) && spellnum == CLC_FLY)
+	/* don't lift off if we're already in the air or just-peaceful
+	 * ...but go ahead and let pets do it */
+	if ((is_flyer(mtmp->data) || is_flying(mtmp) || 
+				(mtmp->mpeaceful && !mtmp->mtame)) && spellnum == CLC_FLY)
 		return TRUE;
     }
     return FALSE;

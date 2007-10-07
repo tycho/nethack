@@ -259,6 +259,7 @@ char *pname;		/* caller-supplied output buffer */
 		if (mon->data != &mons[PM_ALIGNED_PRIEST] &&
 				mon->data != &mons[PM_HIGH_PRIEST]) {
 			Strcat(pname, what);
+			Strcat(pname, " ");
 		}
 		if (mon->data != &mons[PM_ANGEL]) {
 			if (!mon->ispriest && EPRI(mon)->renegade)
