@@ -924,11 +924,18 @@ int thrown;
 
 	if (get_dmg_bonus && tmp > 0) {
 		tmp += u.udaminc;
-		/* If you throw using a propellor, you don't get a strength
-		 * bonus but you do get an increase-damage bonus.
+		/* If you throw using a propellor, you don't get a full strength
+		 * bonus.  For that matter, if you throw anything _period_ 
+		 * you don't get a full strength bonus; it's silly to consider that 
+		 * you could throw anything hard enough to match the force with 
+		 * which you could strike holding it.
+		 *
+		 * Magic increase-damage is different; it's _magic_.
 		 */
-		if(!thrown || !obj || !uwep || !ammo_and_launcher(obj, uwep))
+		if(!thrown || !obj || !uwep) /* || !ammo_and_launcher(obj, uwep)) */
 		    tmp += dbon();
+		else if (thrown)
+			tmp += (dbon() > 1) ? 2 : dbon();
 	}
 
 	if (valid_weapon_attack) {
