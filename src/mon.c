@@ -1275,16 +1275,21 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 	   support those. */
 
 	/* don't let pets kill each other, as amusing as it can be */
-	if (!magr->mtame || !mdef->mtame) {
-		/* big critters will step on your pets to get to you */
-		if ((magr->data->msize > (mdef->data->msize + 1) && !magr->mpeaceful && mdef->mtame) ||
-				/* if you're in sight... */
-				(m_canseeu(magr) && 
-				/* Berserk monsters will attack anything but their own to reach you... */
-				(is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet) || 
-				/* and just about everything will step on an insect in the way */
-				(mdef->data->msize == MZ_TINY && magr->data->msize > MZ_TINY))) {
+	if (!magr->mtame) {
+		/* bigger critters and Riders will step on your pets to get to you */
+		if ((is_rider(magr->data) || magr->data->msize > mdef->data->msize + 1) && 
+					!magr->mpeaceful && mdef->mtame) {
 			return ALLOW_M|ALLOW_TM;
+		}
+		if (m_canseeu(magr)) {	/* if you're in sight... */
+			/* Berserk monsters will attack anything but their own to reach you... */
+			if (is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet) {
+				return ALLOW_M|ALLOW_TM;
+			} 
+			/* and just about everything will step on an insect in the way */
+			if (mdef->data->msize == MZ_TINY && magr->data->msize > MZ_TINY) {
+				return ALLOW_M|ALLOW_TM;
+			}
 		}
 	}
 
