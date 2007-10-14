@@ -119,7 +119,7 @@ extern const char *fname;
 %token	<i> ALIGNMENT LEFT_OR_RIGHT CENTER TOP_OR_BOT ALTAR_TYPE UP_OR_DOWN
 %token	<i> SUBROOM_ID NAME_ID FLAGS_ID FLAG_TYPE MON_ATTITUDE MON_ALERTNESS
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID THEN_ID ELSE_ID ENDIF_ID
-%token	<i> CONTAINED
+%token	<i> CONTAINED SPILL_ID
 %token	<i> ',' ':' '(' ')' '[' ']'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -261,6 +261,7 @@ levstatement 	: message
 		| room_def
 		| room_name
 		| sink_detail
+		| spill_detail
 		| stair_detail
 		| stair_region
 		| subroom_def
@@ -1203,6 +1204,27 @@ pool_detail : POOL_ID ':' coordinate
 
 		     add_opcode(&splev, SPO_POOL, tmppool);
 		  }
+		;
+
+spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER
+			{
+				spill* tmpspill = New(spill);
+
+				tmpspill->x = current_coord.x;
+				tmpspill->y = current_coord.y;
+				tmpspill->typ = what_map_char((char) $5);
+				if (tmpspill->typ == INVALID_TYPE) {
+					yyerror("Invalid map character in spill!");
+				}
+				tmpspill->direction = $7;
+				tmpspill->count = $9;
+				if (tmpspill->count < 1) {
+					yyerror("Invalid count in spill!");
+				}
+
+				add_opcode(&splev, SPO_SPILL, tmpspill);
+
+			}
 		;
 
 diggable_detail : NON_DIGGABLE_ID ':' region

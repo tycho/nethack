@@ -67,7 +67,8 @@
 #define SPO_JMP			30 /* opjmp    jump */
 #define SPO_JL			31 /* opjmp    jump if less than */
 #define SPO_JG			32 /* opjmp    jump if greater than */
-#define MAX_SP_OPCODES		33
+#define SPO_SPILL			  33	  /* spill a particular type of terrain into an area */
+#define MAX_SP_OPCODES		34
 
 
 /* special level coder CPU flags */
@@ -227,5 +228,10 @@ typedef struct {
 	lev_init init_lev;
 	_opcode	 *opcodes;
 } sp_lev;
+
+typedef struct {
+	xchar x, y, direction, count;
+	char typ;
+} spill;
 
 #endif /* SP_LEV_H */

@@ -744,6 +744,19 @@ MONSTER:'J',random,random,hostile
 ELSE
 MONSTER:random,random,random,hostile
 ENDIF
+# chance of lava spillage?
+IF [75%] THEN
+SPILL: random, 'L', north, 20
+ENDIF
+IF [75%] THEN
+SPILL: random, 'L', south, 20
+ENDIF
+IF [75%] THEN
+SPILL: random, 'L', east, 20
+ENDIF
+IF [75%] THEN
+SPILL: random, 'L', west, 20
+ENDIF
 #
 TRAP: random, random
 TRAP: random, random
