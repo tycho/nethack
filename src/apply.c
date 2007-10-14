@@ -15,7 +15,7 @@ static const char tools_too[] = { ALL_CLASSES, TOOL_CLASS, POTION_CLASS,
 STATIC_DCL int FDECL(use_camera, (struct obj *));
 #endif
 STATIC_DCL int FDECL(use_towel, (struct obj *));
-STATIC_DCL boolean FDECL(its_dead, (int,int,int *));
+STATIC_DCL boolean FDECL(its_dead, (int,int,int *,struct obj*));
 STATIC_DCL int FDECL(use_stethoscope, (struct obj *));
 STATIC_DCL void FDECL(use_whistle, (struct obj *));
 STATIC_DCL void FDECL(use_magic_whistle, (struct obj *));
@@ -26,6 +26,7 @@ STATIC_DCL void FDECL(use_candelabrum, (struct obj *));
 STATIC_DCL void FDECL(use_candle, (struct obj **));
 STATIC_DCL void FDECL(use_lamp, (struct obj *));
 STATIC_DCL void FDECL(light_cocktail, (struct obj *));
+STATIC_DCL void FDECL(light_poo, (struct obj *));
 STATIC_DCL void FDECL(use_tinning_kit, (struct obj *));
 STATIC_DCL void FDECL(use_figurine, (struct obj **));
 STATIC_DCL void FDECL(use_grease, (struct obj *));
@@ -160,8 +161,9 @@ use_towel(obj)
 
 /* maybe give a stethoscope message based on floor objects */
 STATIC_OVL boolean
-its_dead(rx, ry, resp)
+its_dead(rx, ry, resp, tobj)
 int rx, ry, *resp;
+struct obj* tobj;
 {
 	struct obj *otmp;
 	struct trap *ttmp;
@@ -207,6 +209,12 @@ int rx, ry, *resp;
 				pline("You listen to the egg and guess... %s?",mons[otmp->corpsenm].mname);
 			}
 		}
+		return TRUE;
+	}
+
+	/* using a stethoscope on a safe?  You safe-cracker, you. */
+	if (otmp = sobj_at(IRON_SAFE,rx,ry)) {
+		pick_lock(tobj,rx,ry);
 		return TRUE;
 	}
 
@@ -268,7 +276,7 @@ use_stethoscope(obj)
 		else if (u.dz < 0 || !can_reach_floor())
 		    You_cant("reach the %s.",
 			(u.dz > 0) ? surface(u.ux,u.uy) : ceiling(u.ux,u.uy));
-		else if (its_dead(u.ux, u.uy, &res))
+		else if (its_dead(u.ux, u.uy, &res, obj))
 		    ;	/* message already given */
 		else if (Is_stronghold(&u.uz))
 		    You_hear("the crackling of hellfire.");
@@ -321,7 +329,7 @@ use_stethoscope(obj)
 		return res;
 	}
 
-	if (!its_dead(rx, ry, &res))
+	if (!its_dead(rx, ry, &res, obj))
 	    You("hear nothing special.");	/* not You_hear()  */
 	return res;
 }
@@ -928,6 +936,36 @@ register struct obj *obj;
 	begin_burn(obj, FALSE);
 }
 
+
+STATIC_OVL void
+light_poo(obj)
+struct obj* obj;
+{
+	char buf[BUFSZ];
+
+	makeknown(obj->otyp);
+	if(Underwater) {
+		pline("Not even -that- will burn here.");
+		return;
+	}
+	if(obj->lamplit) {
+		You("snuff out %s and breathe a little more deeply.", yname(obj));
+		BStealth = 0;
+		end_burn(obj, TRUE);
+		return;
+	}
+	if (obj->age == 0) {
+		pline("This %s is (mostly) empty; what's left won't burn anymore.", xname(obj));
+		return;
+	}
+	check_unpaid(obj);
+	pline("%s %s burns with a dim flame and vile stench.", Shk_Your(buf, obj), xname(obj));
+	begin_burn(obj, FALSE);
+	BStealth = (int)obj;
+
+}
+
+
 STATIC_OVL void
 use_candle(optr)
 struct obj **optr;
@@ -1027,7 +1065,8 @@ struct obj *obj;
 
 	if (obj->lamplit) {
 	    if (obj->otyp == OIL_LAMP || obj->otyp == MAGIC_LAMP ||
-		    obj->otyp == BRASS_LANTERN || obj->otyp == POT_OIL) {
+		    obj->otyp == BRASS_LANTERN || obj->otyp == POT_OIL ||
+			 obj->otyp == BAG_OF_POO) {
 		(void) get_obj_location(obj, &x, &y, 0);
 		if (obj->where == OBJ_MINVENT ? cansee(x,y) : !Blind)
 		    pline("%s %s out!", Yname2(obj), otense(obj, "go"));
@@ -2969,10 +3008,14 @@ doapply()
 	case SACK:
 	case BAG_OF_HOLDING:
 	case OILSKIN_SACK:
+	case IRON_SAFE:
 		res = use_container(obj, 1);
 		break;
 	case BAG_OF_TRICKS:
 		bagotricks(obj);
+		break;
+	case BAG_OF_POO:
+		light_poo(obj);
 		break;
 	case CAN_OF_GREASE:
 		use_grease(obj);
@@ -2982,7 +3025,7 @@ doapply()
 	case CREDIT_CARD:
 #endif
 	case SKELETON_KEY:
-		(void) pick_lock(obj);
+		(void) pick_lock(obj,0,0);
 		break;
 	case PICK_AXE:
 	case DWARVISH_MATTOCK:

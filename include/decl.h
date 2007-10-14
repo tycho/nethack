@@ -246,7 +246,7 @@ E NEARDATA struct obj *invent,
 	*uarmu,				/* under-wear, so to speak */
 #endif
 	*uskin, *uamul, *uleft, *uright, *ublindf,
-	*uwep, *uswapwep, *uquiver;
+	*uwep, *uswapwep, *uquiver, *ulauncher;
 
 E NEARDATA struct obj *uchain;		/* defined only when punished */
 E NEARDATA struct obj *uball;

@@ -351,6 +351,7 @@ int curse_bless;
 		break;
 	    case OIL_LAMP:
 	    case BRASS_LANTERN:
+		 case BAG_OF_POO:
 		if (is_cursed) {
 		    stripspe(obj);
 		    if (obj->lamplit) {

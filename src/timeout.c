@@ -828,7 +828,11 @@ long timeout;
 
 	    case BRASS_LANTERN:
 	    case OIL_LAMP:
+		 case BAG_OF_POO:
 		switch((int)obj->age) {
+			case 300:
+			case 250:
+			case 200:
 		    case 150:
 		    case 100:
 		    case 50:
@@ -884,6 +888,12 @@ long timeout;
 			    }
 			}
 			end_burn(obj, FALSE);
+
+			/* has to happen afterwards */
+			if (obj->otyp == BAG_OF_POO) { 
+				useup(obj);
+				BStealth = 0; 
+			}
 			break;
 
 		    default:
@@ -895,7 +905,7 @@ long timeout;
 			break;
 		}
 
-		if (obj->age)
+		if (obj && obj->age)
 		    begin_burn(obj, TRUE);
 
 		break;
@@ -1033,7 +1043,7 @@ long timeout;
  * a timer.
  *
  * Burn rules:
- *	potions of oil, lamps & candles:
+ *	potions of oil, lamps, bags of poo & candles:
  *		age = # of turns of fuel left
  *		spe = <unused>
  *
@@ -1080,6 +1090,9 @@ begin_burn(obj, already_lit)
 		radius = 1;	/* very dim light */
 		break;
 
+		/* These last a bit longer due to more, er, fuel */
+		 case BAG_OF_POO:
+		radius = 2;
 	    case BRASS_LANTERN:
 	    case OIL_LAMP:
 		/* magic times are 150, 100, 50, 25, and 0 */

@@ -95,6 +95,7 @@ extern int NDECL(doextversion); /**/
 extern int NDECL(doswapweapon); /**/
 extern int NDECL(dowield); /**/
 extern int NDECL(dowieldquiver); /**/
+extern int NDECL(dowieldlauncher); /**/
 extern int NDECL(dozap); /**/
 extern int NDECL(doorganize); /**/
 #endif /* DUMB */
@@ -1886,6 +1887,7 @@ static const struct func_tab cmdlist[] = {
 	{'*', TRUE, doprinuse},	/* inventory of all equipment in use */
 	{GOLD_SYM, TRUE, doprgold},
 	{SPBOOK_SYM, TRUE, dovspell},			/* Mike Stephenson */
+	{'%', FALSE, dowieldlauncher},
 	{'#', TRUE, doextcmd},
 	{'_', TRUE, dotravel},
 	{0,0,0,0}

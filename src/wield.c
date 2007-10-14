@@ -219,6 +219,14 @@ register struct obj *obj;
 	update_inventory();
 }
 
+void
+setulauncher(obj)
+struct obj* obj;
+{
+	setworn(obj, W_LAUNCHER);
+	update_inventory();
+}
+
 
 /*** Commands to change particular slot(s) ***/
 
@@ -228,6 +236,8 @@ static NEARDATA const char ready_objs[] =
 	{ ALL_CLASSES, ALLOW_NONE, WEAPON_CLASS, 0 };
 static NEARDATA const char bullets[] =	/* (note: different from dothrow.c) */
 	{ ALL_CLASSES, ALLOW_NONE, GEM_CLASS, WEAPON_CLASS, 0 };
+static NEARDATA const char launchers[] =
+	{ ALL_CLASSES, ALLOW_NONE, WEAPON_CLASS, 0 };
 
 int
 dowield()
@@ -396,6 +406,51 @@ dowieldquiver()
 	/* Take no time since this is a convenience slot */
 	return (0);
 }
+
+int
+dowieldlauncher()
+{
+	struct obj *newlauncher;
+
+	/* Since the "spot" isn't in your hands, don't check cantwield(), */
+	/* will_weld(), touch_petrifies(), etc. */
+	multi = 0;
+
+	/* Prompt for a new object */
+	if (!(newlauncher = getobj(launchers, "fire missiles with"))) {
+		return 0;
+	}
+
+	/* did they explicitly pick nothing? */
+	if (newlauncher == &zeroobj) {
+		if (ulauncher) {
+			You("now have no ranged weapon chosen.");
+			setulauncher(newlauncher = (struct obj *) 0);
+		} else {
+			You("didn't have a ranged weapon ready to begin with.");
+			return 0;
+		}
+	/* It's OK for this to also be the primary or secondary weapon. */
+	} else if (newlauncher == ulauncher) {
+		pline("That's already your chosen ranged weapon.");
+		return 0;
+	} else if (!is_launcher(newlauncher)) {
+		pline("That won't fire anything very far.");
+		return 0;
+	} else {
+		long dummy;
+		dummy = newlauncher->owornmask;
+		newlauncher->owornmask |= W_LAUNCHER;
+		prinv((char *)0, newlauncher, 0L);
+		newlauncher->owornmask = dummy;
+	}
+
+	setulauncher(newlauncher);
+
+	/* Never use any time for this */
+	return 0;
+}
+
 
 /* used for #rub and for applying pick-axe, whip, grappling hook, or polearm */
 /* (moved from apply.c) */

@@ -145,8 +145,9 @@ struct obj *box;
 
 	switch (box->otyp) {
 	case ICE_BOX:		n = 20; break;
-	case CHEST:		n = 5; break;
-	case LARGE_BOX:		n = 3; break;
+	case IRON_SAFE:   n = 10; break;
+	case CHEST:		   n = 5; break;
+	case LARGE_BOX:	n = 3; break;
 	case SACK:
 	case OILSKIN_SACK:
 				/* initial inventory: sack starts out empty */
@@ -472,8 +473,10 @@ boolean artif;
 					blessorcurse(otmp, 5);
 					break;
 		case BRASS_LANTERN:
-		case OIL_LAMP:		otmp->spe = 1;
-					otmp->age = (long) rn1(500,1000);
+		case BAG_OF_POO:
+		case OIL_LAMP:		
+					otmp->spe = 1;
+					otmp->age = (long) rn1((otmp->otyp == BAG_OF_POO) ? 750 : 500,1000);
 					otmp->lamplit = 0;
 					blessorcurse(otmp, 5);
 					break;
@@ -481,8 +484,13 @@ boolean artif;
 					otmp->lamplit = 0;
 					blessorcurse(otmp, 2);
 					break;
+		case IRON_SAFE:
+					otmp->olocked = 1;
 		case CHEST:
-		case LARGE_BOX:		otmp->olocked = !!(rn2(5));
+		case LARGE_BOX:		
+					if (otmp->otyp != IRON_SAFE) {
+						otmp->olocked = !!(rn2(5));  /* clumsy tweak */
+					}
 					otmp->otrapped = !(rn2(10));
 		case ICE_BOX:
 		case SACK:

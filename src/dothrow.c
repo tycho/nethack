@@ -317,6 +317,13 @@ dofire()
 		}
 	}
 
+	/* If they've got something already picked, wield it;
+	 * wield_tool() will return error messages if they couldn't,
+	 * but go ahead and let them throw whatever even if it fails */
+	if (ulauncher && ulauncher != uwep) {
+		wield_tool(ulauncher,"fire");
+	}
+
 	/*
 	 * Since some characters shoot multiple missiles at one time,
 	 * allow user to specify a count prefix for 'f' or 't' to limit
