@@ -1243,10 +1243,13 @@ int zx,zy;
 		ry = zy + rn2(3)-1;
 		if (levl[rx][ry].typ == ROOM || levl[rx][ry].typ == CORR) {
 			if (rn2(50)) {
-				otmp = mksobj_at(ROCK,rx,ry,FALSE,FALSE);
-				stackobj(otmp);
+				otmp = mksobj(ROCK,FALSE,FALSE);
 			} else {
-				otmp = mksobj_at(BOULDER,rx,ry,FALSE,FALSE);
+				otmp = mksobj(BOULDER,FALSE,FALSE);
+			}
+			/* in case of weirdness */
+			if (!flooreffects(otmp,rx,ry,"fall")) {
+				place_object(otmp,rx,ry);
 				stackobj(otmp);
 			}
 			/* postpone player's possible death 'til all the rocks are down */
