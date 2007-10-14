@@ -112,7 +112,7 @@ static const char * const shktools[] = {
     "Htargcm", "Enrobwem", "Kachzi Rellim", "Regien", "Donmyar",
     "Yelpur", "Nosnehpets", "Stewe", "Renrut", "_Zlaw", "Nosalnef",
     "Rewuorb", "Rellenk", "Yad", "Cire Htims", "Y-crad", "Nenilukah",
-    "Corsh", "Aned",
+    "Corsh", "Aned", "Kere-Dyar",
 #ifdef OVERLAY
     "Erreip", "Nehpets", "Mron", "Snivek", "Lapu", "Kahztiy",
 #endif

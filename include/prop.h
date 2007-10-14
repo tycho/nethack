@@ -102,6 +102,7 @@ struct prop {
 #	define W_SWAPWEP    0x00000400L /* Secondary weapon */
 #	define W_ART	    0x00001000L /* Carrying artifact (not really worn) */
 #	define W_ARTI	    0x00002000L /* Invoked artifact  (not really worn) */
+#  define W_LAUNCHER  0x00004000L /* Selected ranged launcher */
 	/* Amulets, rings, tools, and other items */
 #	define W_AMUL	    0x00010000L /* Amulet */
 #	define W_RINGL	    0x00020000L /* Left ring */

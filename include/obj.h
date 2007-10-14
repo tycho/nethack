@@ -217,7 +217,8 @@ struct obj {
 #define Has_contents(o) (/* (Is_container(o) || (o)->otyp == STATUE) && */ \
 			 (o)->cobj != (struct obj *)0)
 #define Is_container(o) ((o)->otyp >= LARGE_BOX && (o)->otyp <= BAG_OF_TRICKS)
-#define Is_box(otmp)	(otmp->otyp == LARGE_BOX || otmp->otyp == CHEST)
+#define Is_box(otmp)	(otmp->otyp == LARGE_BOX || otmp->otyp == CHEST || \
+								otmp->otyp == IRON_SAFE)
 #define Is_mbag(otmp)	(otmp->otyp == BAG_OF_HOLDING || \
 			 otmp->otyp == BAG_OF_TRICKS)
 
@@ -271,14 +272,16 @@ struct obj {
 				|| (otmp)->otyp == CANDELABRUM_OF_INVOCATION\
 				|| (otmp)->otyp == TALLOW_CANDLE\
 				|| (otmp)->otyp == WAX_CANDLE\
-				|| (otmp)->otyp == POT_OIL)
+				|| (otmp)->otyp == POT_OIL\
+				|| (otmp)->otyp == BAG_OF_POO)
 /* object can be ignited */
 #define ignitable(otmp)	((otmp)->otyp == BRASS_LANTERN\
 				|| (otmp)->otyp == OIL_LAMP\
 				|| (otmp)->otyp == CANDELABRUM_OF_INVOCATION\
 				|| (otmp)->otyp == TALLOW_CANDLE\
 				|| (otmp)->otyp == WAX_CANDLE\
-				|| (otmp)->otyp == POT_OIL)
+				|| (otmp)->otyp == POT_OIL\
+				|| (otmp)->otyp == BAG_OF_POO)
 
 /* special stones */
 #define is_graystone(obj)	((obj)->otyp == LUCKSTONE || \

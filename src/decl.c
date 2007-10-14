@@ -149,6 +149,7 @@ NEARDATA struct obj *invent = (struct obj *)0,
 	*uwep = (struct obj *)0, *uarm = (struct obj *)0,
 	*uswapwep = (struct obj *)0,
 	*uquiver = (struct obj *)0, /* quiver */
+	*ulauncher = (struct obj *)0, /* def. ranged weapon */
 #ifdef TOURIST
 	*uarmu = (struct obj *)0, /* under-wear, so to speak */
 #endif
