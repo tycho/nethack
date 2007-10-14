@@ -385,7 +385,8 @@ monsndx(ptr)		/* return an index into the mons array */
 	i = (int)(ptr - &mons[0]);
 	if (i < LOW_PM || i >= NUMMONS) {
 		/* ought to switch this to use `fmt_ptr' */
-		 panic("monsndx could not index monster; pointer claims name is \"%s\"", ptr->mname);
+		panic("monsndx could not get index, missed by %d;\n"
+				 "pointer claims name is \"%s\"", (i-NUMMONS), ptr->mname);
 	    return NON_PM;		/* will not get here */
 	}
 
