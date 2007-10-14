@@ -180,7 +180,13 @@ register struct monst *mtmp;
 	demand = (cash * (rnd(80) + 20 * Athome)) /
 	    (100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
 
-	if (!demand) {		/* you have no gold */
+	if (
+#ifndef GOLDOBJ
+			u.ugold == 0
+#else
+			money_cnt(invent) == 0
+#endif
+			) {						  /* you have no gold */
 	    mtmp->mpeaceful = 0;
 	    set_malign(mtmp);
 	    return 0;
