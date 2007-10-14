@@ -768,6 +768,67 @@ struct mkroom	*croom;
     }
 }
 
+STATIC_OVL void
+spill_terrain(sp, croom)
+spill* sp;
+struct mkroom* croom;
+{
+	schar x,y,nx,ny,qx,qy;
+	int j,k,lastdir,guard;
+	boolean found = FALSE;
+
+	/* This code assumes that you're going to spill one particular
+	 * type of terrain from a wall into somewhere. */
+	for (j = 0;j < 500;j++) {
+		x = sp->x; 
+		y = sp->y;
+		get_location(&x, &y, DRY|WET, croom);
+		nx = x; ny = y;
+		switch (sp->direction) {
+			case W_NORTH: ny++; break;	  /* backwards to make sure we're against a wall */
+			case W_SOUTH: ny--; break;
+			case W_WEST: nx++; break;
+			case W_EAST: nx--; break;
+			default: return; break;
+		}
+		if (IS_WALL(levl[nx][ny].typ)) {	 /* mark it as broken through */
+			levl[nx][ny].typ = sp->typ;
+			found = TRUE; 
+			break; 
+		}
+	}
+
+	if (!found) { return; }
+
+	/* gloop! */
+	lastdir = -1; nx = x; ny = y;
+	for (j = sp->count;j > 0;j--) {
+		guard = 0;
+		levl[nx][ny].typ = sp->typ;
+		do {
+			guard++;
+			k = rn2(4);
+			qx = nx;qy = ny;
+			switch(k) {
+				case 3: qy--; break;
+				case 2: qy++; break;
+				case 1: qx--; break;
+				case 0: qx++; break;
+			}
+		} while ((k == lastdir || levl[qx][qy].typ == sp->typ) && guard < 200);	 
+		/* tend to not make rivers, but pools; and don't redo stuff of the same type! */
+
+		switch(k) {
+			case 3: ny--; break;
+			case 2: ny++; break;
+			case 1: nx--; break;
+			case 0: nx++; break;
+		}
+		lastdir = k;
+	}
+}
+
+
 /*
  * Create a monster in a room.
  */
@@ -1948,6 +2009,10 @@ sp_lev *lvl;
 	    opdat = alloc(sizeof(opjmp));
 	    Fread(opdat, 1, sizeof(opjmp), fd);
 	    break;
+	case SPO_SPILL:
+		 opdat = alloc(sizeof(spill));
+		 Fread(opdat, 1, sizeof(spill), fd);
+		 break;
 	case SPO_MAP:
 	    /*tmpmazepart = ((mazepart *) opdat = alloc(sizeof(mazepart)));*/
 	    opdat = alloc(sizeof(mazepart));
@@ -2021,6 +2086,7 @@ sp_lev *lvl;
 	case SPO_NON_PASSWALL:
 	case SPO_ROOM_DOOR:
 	case SPO_WALLIFY:
+	case SPO_SPILL:
 	    /* nothing extra to free here */
 	    break;
 	case SPO_SUBROOM:
@@ -2106,6 +2172,7 @@ sp_lev *lvl;
     sink *tmpsink;
     pool *tmppool;
     corridor *tmpcorridor;
+	 spill* tmpspill;
     room *tmproom, *tmpsubroom;
     room_door *tmproomdoor;
     struct mkroom *croom,
@@ -2304,6 +2371,10 @@ sp_lev *lvl;
 	    tmpcorridor = (corridor *) opdat;
 	    create_corridor(tmpcorridor);
 	    break;
+	case SPO_SPILL:
+		 tmpspill = (spill*) opdat;
+		 spill_terrain(tmpspill, croom);
+		 break;
 	case SPO_LEVREGION:
 	    tmplregion = (lev_region *) opdat;
 	    if(!tmplregion->in_islev) {

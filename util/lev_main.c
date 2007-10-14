@@ -877,6 +877,9 @@ sp_lev *maze;
 	    case SPO_CORRIDOR:
 	      Write(fd, tmpo.opdat, sizeof(corridor));
 	      break;
+		 case SPO_SPILL:
+			Write(fd, tmpo.opdat, sizeof(spill));
+			break;
 	    case SPO_LEVREGION:
 	      write_levregion(fd, tmpo.opdat);
 	      break;
