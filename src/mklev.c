@@ -1252,6 +1252,8 @@ coord *tm;
 		    case STATUE_TRAP:
 		    case POLY_TRAP:
 			if (lvl < 8) kind = NO_TRAP; break;
+			 case COLLAPSE_TRAP:
+			if (lvl < 16) kind = NO_TRAP; break;	/* these hurt, put 'em deep */
 		    case FIRE_TRAP:
 			if (!Inhell) kind = NO_TRAP; break;
 		    case TELEP_TRAP:
