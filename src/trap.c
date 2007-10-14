@@ -8,6 +8,7 @@ extern const char * const destroy_strings[];	/* from zap.c */
 
 STATIC_DCL void FDECL(dofiretrap, (struct obj *));
 STATIC_DCL void NDECL(domagictrap);
+STATIC_DCL void FDECL(rocks_fall, (int, int));
 STATIC_DCL boolean FDECL(emergency_disrobe,(boolean *));
 STATIC_DCL int FDECL(untrap_prob, (struct trap *ttmp));
 STATIC_DCL void FDECL(cnv_trap_obj, (int, int, struct trap *));
@@ -1212,11 +1213,78 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 			losehp(rnd(10)+10,"sharpened bamboo stick",KILLED_BY_AN);
 		}
 		break;
+
+		 case COLLAPSE_TRAP:
+			pline("Rocks fall all around you!");
+			deltrap(trap);
+			newsym(u.ux,u.uy);
+			rocks_fall(u.ux,u.uy);
+		 break;
+
 	    default:
 		seetrap(trap);
 		impossible("You hit a trap of type %u", trap->ttyp);
 	}
 }
+
+STATIC_OVL void
+rocks_fall(zx,zy)
+int zx,zy;
+{
+	int dmg = 0;
+	int mdmg,rocks,rx,ry;
+	boolean somehit = FALSE;
+	struct monst* mtmp;
+	struct obj* mhat;
+	struct obj* otmp;
+
+	for (rocks = rnd(100)+100;rocks > 0;rocks--) {
+		rx = zx + rn2(3)-1; 
+		ry = zy + rn2(3)-1;
+		if (levl[rx][ry].typ == ROOM || levl[rx][ry].typ == CORR) {
+			if (rn2(50)) {
+				otmp = mksobj_at(ROCK,rx,ry,FALSE,FALSE);
+				stackobj(otmp);
+			} else {
+				otmp = mksobj_at(BOULDER,rx,ry,FALSE,FALSE);
+				stackobj(otmp);
+			}
+			/* postpone player's possible death 'til all the rocks are down */
+			if (rx == u.ux && ry == u.uy) { 
+				somehit = TRUE; 
+				dmg += rn2(4) + (otmp->otyp == BOULDER ? d(2,6) : 0);
+			} else if (mtmp = m_at(rx,ry)) {
+				/* spare the player a barrage of messages for each time
+				 * a monster is hit by a rock; just show the killed message */
+				mhat = which_armor(mtmp, W_ARMH);
+				mdmg = rn2(4) + (otmp->otyp == BOULDER ? d(2,6) : 0);
+				if (thick_skinned(mtmp->data) || (mhat && is_metallic(mhat))) {
+					mdmg /= 2;
+				}
+				if (!unsolid(mtmp->data)) {
+					mtmp->mhp -= mdmg;
+					if (mtmp->mhp <= 0) { monkilled(mtmp,"shower of rocks",AD_PHYS); }
+				}
+			}
+			newsym(rx,ry);
+		}
+	}
+
+	if (somehit) {
+		pline("Some rocks land on your %s!",body_part(HEAD));
+		if (uarmh) {
+			if (is_metallic(uarmh)) {
+				pline("Your hard helmet protects you somewhat.");
+				dmg /= 2;
+			} else if (flags.verbose) {
+				Your("%s does not protect you.", xname(uarmh));
+			}
+		}
+	}
+	losehp(dmg,"shower of rocks",KILLED_BY_AN);
+
+}
+
 
 #ifdef STEED
 STATIC_OVL int
@@ -1303,6 +1371,8 @@ struct obj *otmp;
 		    }
 		    steedhit = TRUE;
 		    break;
+		case COLLAPSE_TRAP:	 /* TODO: make this affect steeds */
+			 break;
 		default:
 			return 0;
 	    }
@@ -2214,6 +2284,14 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 					pline("%s is skewered!",Monnam(mtmp));
 				}
 			}
+			 break;
+
+		case COLLAPSE_TRAP:
+			 if (in_sight) {
+				 pline("Rocks suddenly fall all around %s!",mon_nam(mtmp));
+				 deltrap(trap);
+				 rocks_fall(mtmp->mx,mtmp->my);
+			 }
 			 break;
 
 		default:
