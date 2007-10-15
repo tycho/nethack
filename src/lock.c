@@ -335,6 +335,10 @@ int rx,ry;
 		    if(c == 'q') return(0);
 		    if(c == 'n') continue;
 
+			 if (otmp->otyp == IRON_SAFE && picktyp != STETHOSCOPE) {
+				 You("aren't sure how to go about opening the safe that way.");
+				 return 0;
+			 }
 			 if (!otmp->olocked && otmp->otyp == IRON_SAFE) {
 				 You_cant("change the combination.");
 				 return 0;
