@@ -230,7 +230,7 @@ typedef struct {
 } sp_lev;
 
 typedef struct {
-	xchar x, y, direction, count;
+	xchar x, y, direction, count, lit;
 	char typ;
 } spill;
 
