@@ -793,6 +793,7 @@ struct mkroom* croom;
 		}
 		if (IS_WALL(levl[nx][ny].typ)) {	 /* mark it as broken through */
 			levl[nx][ny].typ = sp->typ;
+			levl[nx][ny].lit = sp->lit;
 			found = TRUE; 
 			break; 
 		}
@@ -805,6 +806,7 @@ struct mkroom* croom;
 	for (j = sp->count;j > 0;j--) {
 		guard = 0;
 		levl[nx][ny].typ = sp->typ;
+		levl[nx][ny].lit = sp->lit;
 		do {
 			guard++;
 			k = rn2(4);

@@ -1206,7 +1206,7 @@ pool_detail : POOL_ID ':' coordinate
 		  }
 		;
 
-spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER
+spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' light_state
 			{
 				spill* tmpspill = New(spill);
 
@@ -1221,6 +1221,7 @@ spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER
 				if (tmpspill->count < 1) {
 					yyerror("Invalid count in spill!");
 				}
+				tmpspill->lit = $11;
 
 				add_opcode(&splev, SPO_SPILL, tmpspill);
 
