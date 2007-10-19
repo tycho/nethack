@@ -2127,7 +2127,6 @@ int  typ, fatal;
 	    kprefix = KILLED_BY;
 	}
 	i = rn2(fatal + 20*thrown_weapon);
-	i = 0;
 	if(i == 0 && typ != A_CHA) {
 		/* used to be instantly fatal; now just gongs your maxhp for (4d6)/2
 		 * ...which is probably pretty close to fatal anyway for low-levels */
