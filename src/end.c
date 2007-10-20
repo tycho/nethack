@@ -691,22 +691,33 @@ int how;
 	if (Lifesaved && (how <= GENOCIDED)) {
 		pline("But wait...");
 		makeknown(AMULET_OF_LIFE_SAVING);
-		Your("medallion %s!",
-		      !Blind ? "begins to glow" : "feels warm");
-		if (how == CHOKING) You("vomit ...");
-		You_feel("much better!");
-		pline_The("medallion crumbles to dust!");
-		if (uamul) useup(uamul);
+		Your("medallion %s!", !Blind ? "begins to glow" : "feels warm");
+		/* Keep it blessed! */
+		if (uamul->cursed && !rn2(2)) {
+			pline("The chain on your medallion breaks, and you hear a faint giggling!");
+			Your("medallion suddenly falls off!");
+			pline("It doesn't look like you're going to make it after all...");
+			killer_format = KILLED_BY;
+			Strcpy(kilbuf, "a cursed amulet of life saving");
+			killer = kilbuf;
+			Lifesaved = 0L;
+			uamul = 0;
+		} else {
+			if (how == CHOKING) You("vomit ...");
+			You_feel("much better!");
+			pline_The("medallion crumbles to dust!");
+			if (uamul) useup(uamul);
 
-		(void) adjattrib(A_CON, -1, TRUE);
-		if(u.uhpmax <= 0) u.uhpmax = 10;	/* arbitrary */
-		savelife(how);
-		if (how == GENOCIDED)
-			pline("Unfortunately you are still genocided...");
-		else {
-			killer = 0;
-			killer_format = 0;
-			return;
+			(void) adjattrib(A_CON, -1, TRUE);
+			if(u.uhpmax <= 0) u.uhpmax = 10;	/* arbitrary */
+			savelife(how);
+			if (how == GENOCIDED)
+				pline("Unfortunately you are still genocided...");
+			else {
+				killer = 0;
+				killer_format = 0;
+				return;
+			}
 		}
 	}
 	if ((
