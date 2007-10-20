@@ -1655,7 +1655,8 @@ dodip()
 				potion : obj, 5, 95)) {
 		pline(nothing_happens);
 	    } else {
-	    	boolean was_wep = FALSE, was_swapwep = FALSE, was_quiver = FALSE;
+	    	boolean was_wep = FALSE, was_swapwep = FALSE, 
+					  was_quiver = FALSE, was_launcher = FALSE;
 		short save_otyp = obj->otyp;
 		/* KMH, conduct */
 		u.uconduct.polypiles++;
@@ -1663,12 +1664,14 @@ dodip()
 		if (obj == uwep) was_wep = TRUE;
 		else if (obj == uswapwep) was_swapwep = TRUE;
 		else if (obj == uquiver) was_quiver = TRUE;
+		else if (obj == ulauncher) was_launcher = TRUE;
 
 		obj = poly_obj(obj, STRANGE_OBJECT);
 
 		if (was_wep) setuwep(obj);
 		else if (was_swapwep) setuswapwep(obj);
 		else if (was_quiver) setuqwep(obj);
+		else if (was_launcher) setulauncher(obj);
 
 		if (obj->otyp != save_otyp) {
 			makeknown(POT_POLYMORPH);

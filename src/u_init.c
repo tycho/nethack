@@ -539,7 +539,7 @@ u_init()
 # endif
 	uarm = uarmc = uarmh = uarms = uarmg = uarmf = 0;
 	uwep = uball = uchain = uleft = uright = 0;
-	uswapwep = uquiver = 0;
+	uswapwep = uquiver = ulauncher = 0;
 	u.twoweap = 0;
 	u.ublessed = 0;				/* not worthy yet */
 	u.ugangr   = 0;				/* gods not angry */
@@ -1055,6 +1055,7 @@ register struct trobj *trop;
 			if (!uquiver) setuqwep(obj);
 		    } else if (!uwep) setuwep(obj);
 		    else if (!uswapwep) setuswapwep(obj);
+		    else if (!ulauncher && is_launcher(obj)) setulauncher(obj);
 		}
 		if (obj->oclass == SPBOOK_CLASS &&
 				obj->otyp != SPE_BLANK_PAPER)

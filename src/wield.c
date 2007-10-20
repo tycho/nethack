@@ -638,6 +638,15 @@ uqwepgone()
 }
 
 void
+ulwepgone()
+{
+	if (ulauncher) {
+		setworn((struct obj*)0, W_LAUNCHER);
+		update_inventory();
+	}
+}
+
+void
 untwoweapon()
 {
 	if (u.twoweap) {

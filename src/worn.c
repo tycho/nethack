@@ -66,7 +66,7 @@ long mask;
 		    if (u.twoweap && (oobj->owornmask & (W_WEP|W_SWAPWEP)))
 			u.twoweap = 0;
 		    oobj->owornmask &= ~wp->w_mask;
-		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
+		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER|W_LAUNCHER)) {
 			/* leave as "x = x <op> y", here and below, for broken
 			 * compilers */
 			p = objects[oobj->otyp].oc_oprop;
@@ -86,7 +86,7 @@ long mask;
 		     * Allow weapon-tools, too.
 		     * wp_mask should be same as mask at this point.
 		     */
-		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
+		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER|W_LAUNCHER)) {
 			if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
 					    mask != W_WEP) {
 			    p = objects[obj->otyp].oc_oprop;

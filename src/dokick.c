@@ -1342,6 +1342,7 @@ boolean shop_floor_obj;
 
 	if (otmp == uwep) setuwep((struct obj *)0);
 	if (otmp == uquiver) setuqwep((struct obj *)0);
+	if (otmp == ulauncher) setulauncher((struct obj *)0);
 	if (otmp == uswapwep) setuswapwep((struct obj *)0);
 
 	/* some things break rather than ship */

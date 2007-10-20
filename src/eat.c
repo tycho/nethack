@@ -1657,6 +1657,7 @@ eatspecial() /* called after eating non-food */
 
 	if (otmp == uwep && otmp->quan == 1L) uwepgone();
 	if (otmp == uquiver && otmp->quan == 1L) uqwepgone();
+	if (otmp == ulauncher && otmp->quan == 1L) ulwepgone();
 	if (otmp == uswapwep && otmp->quan == 1L) uswapwepgone();
 
 	if (otmp == uball) unpunish();

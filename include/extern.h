@@ -2310,6 +2310,7 @@ E int NDECL(dotwoweapon);
 E void NDECL(uwepgone);
 E void NDECL(uswapwepgone);
 E void NDECL(uqwepgone);
+E void NDECL(ulwepgone);
 E void NDECL(untwoweapon);
 E void FDECL(erode_obj, (struct obj *,BOOLEAN_P,BOOLEAN_P,BOOLEAN_P));
 E int FDECL(chwepon, (struct obj *,int));

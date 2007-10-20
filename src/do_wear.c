@@ -39,7 +39,7 @@ static NEARDATA const long takeoff_order[] = { WORN_BLINDF, W_WEP,
 #ifdef TOURIST
 	WORN_SHIRT,
 #endif
-	WORN_BOOTS, W_SWAPWEP, W_QUIVER, 0L };
+	WORN_BOOTS, W_SWAPWEP, W_QUIVER, W_LAUNCHER, 0L };
 
 STATIC_DCL void FDECL(on_msg, (struct obj *));
 STATIC_PTR int NDECL(Armor_on);
@@ -727,6 +727,7 @@ register struct obj *obj;
     if (obj == uwep) setuwep((struct obj *) 0);
     if (obj == uswapwep) setuswapwep((struct obj *) 0);
     if (obj == uquiver) setuqwep((struct obj *) 0);
+    if (obj == ulauncher) setulauncher((struct obj *) 0);
 
     /* only mask out W_RING when we don't have both
        left and right rings of the same type */
@@ -956,6 +957,8 @@ register struct obj *otmp;
 	    setuswapwep((struct obj *) 0);
 	if (otmp == uquiver)
 	    setuqwep((struct obj *) 0);
+	if (otmp == ulauncher)
+	    setulauncher((struct obj *) 0);
 	setworn(otmp, W_TOOL);
 	on_msg(otmp);
 
@@ -1478,6 +1481,8 @@ dowear()
 		setuswapwep((struct obj *) 0);
 	if (otmp == uquiver)
 		setuqwep((struct obj *) 0);
+	if (otmp == ulauncher)
+		setulauncher((struct obj *) 0);
 	setworn(otmp, mask);
 	delay = -objects[otmp->otyp].oc_delay;
 	if(delay){
@@ -1528,6 +1533,8 @@ doputon()
 		setuswapwep((struct obj *) 0);
 	if(otmp == uquiver)
 		setuqwep((struct obj *) 0);
+	if(otmp == ulauncher)
+		setulauncher((struct obj *) 0);
 	if(otmp->oclass == RING_CLASS || otmp->otyp == MEAT_RING) {
 		if(nolimbs(youmonst.data)) {
 			You("cannot make the ring stick to your body.");
@@ -1926,7 +1933,7 @@ register struct obj *otmp;
 	    }
 	}
 	/* basic curse check */
-	if (otmp == uquiver || (otmp == uswapwep && !u.twoweap)) {
+	if (otmp == uquiver || otmp == ulauncher || (otmp == uswapwep && !u.twoweap)) {
 	    ;	/* some items can be removed even when cursed */
 	} else {
 	    /* otherwise, this is fundamental */
@@ -1949,6 +1956,7 @@ register struct obj *otmp;
 	else if(otmp == uwep) takeoff_mask |= W_WEP;
 	else if(otmp == uswapwep) takeoff_mask |= W_SWAPWEP;
 	else if(otmp == uquiver) takeoff_mask |= W_QUIVER;
+	else if(otmp == ulauncher) takeoff_mask |= W_LAUNCHER;
 
 	else impossible("select_off: %s???", doname(otmp));
 
@@ -1973,6 +1981,9 @@ do_takeoff()
 	} else if (taking_off == W_QUIVER) {
 	  setuqwep((struct obj *) 0);
 	  You("no longer have ammunition readied.");
+	} else if (taking_off == W_LAUNCHER) {
+		setulauncher((struct obj*) 0);
+		You("no longer have a default ranged weapon chosen.");
 	} else if (taking_off == WORN_ARMOR) {
 	  otmp = uarm;
 	  if(!cursed(otmp)) (void) Armor_off();
@@ -2050,6 +2061,8 @@ take_off()
 	  todelay = 1;
 	} else if (taking_off == W_QUIVER) {
 	  todelay = 1;
+	} else if (taking_off == W_LAUNCHER) {
+	  todelay = 0;
 	} else if (taking_off == WORN_ARMOR) {
 	  otmp = uarm;
 	  /* If a cloak is being worn, add the time to take it off and put
@@ -2117,7 +2130,7 @@ doddoremarm()
 	You("continue %s.", disrobing);
 	set_occupation(take_off, disrobing, 0);
 	return 0;
-    } else if (!uwep && !uswapwep && !uquiver && !uamul && !ublindf &&
+    } else if (!uwep && !uswapwep && !uquiver && !uamul && !ublindf && !ulauncher &&
 		!uleft && !uright && !wearing_armor()) {
 	You("are not wearing anything.");
 	return 0;
@@ -2133,7 +2146,7 @@ doddoremarm()
 	   possibly combined with weapons */
 	disrobing = "disrobing";
 	/* specific activity when handling weapons only */
-	if (!(takeoff_mask & ~(W_WEP|W_SWAPWEP|W_QUIVER)))
+	if (!(takeoff_mask & ~(W_WEP|W_SWAPWEP|W_QUIVER|W_LAUNCHER)))
 	    disrobing = "disarming";
 	(void) take_off();
     }
