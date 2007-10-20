@@ -4144,6 +4144,7 @@ lava_effects()
 		    else if(obj == uamul) Amulet_off();
 		    else if(obj == uwep) uwepgone();
 		    else if (obj == uquiver) uqwepgone();
+		    else if (obj == ulauncher) ulwepgone();
 		    else if (obj == uswapwep) uswapwepgone();
 		}
 		useupall(obj);

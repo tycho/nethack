@@ -1383,6 +1383,8 @@ poly_obj(obj, id)
 		    uswapwep = otmp;
 		if (otmp->owornmask & W_QUIVER)
 		    uquiver = otmp;
+		if (otmp->owornmask & W_LAUNCHER)
+		    ulauncher = otmp;
 		goto no_unwear;
 	    }
 	}

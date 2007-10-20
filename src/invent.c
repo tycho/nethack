@@ -1172,7 +1172,7 @@ register struct obj *otmp;
 #ifdef STEED
 			W_SADDLE |
 #endif
-			W_WEP | W_SWAPWEP | W_QUIVER))));
+			W_WEP | W_SWAPWEP | W_QUIVER | W_LAUNCHER))));
 }
 
 static NEARDATA const char removeables[] =
@@ -1198,7 +1198,7 @@ unsigned *resultflags;
 	int oletct, iletct, unpaid, oc_of_sym;
 #endif
 	char sym, *ip, olets[MAXOCLASSES+5], ilets[MAXOCLASSES+5];
-	char extra_removeables[3+1];	/* uwep,uswapwep,uquiver */
+	char extra_removeables[4+1];	/* uwep,uswapwep,uquiver,ulauncher */
 	char buf[BUFSZ], qbuf[QBUFSZ];
 
 	if (resultflags) *resultflags = 0;
@@ -1267,6 +1267,7 @@ unsigned *resultflags;
 	    if (uwep) (void)strkitten(extra_removeables, uwep->oclass);
 	    if (uswapwep) (void)strkitten(extra_removeables, uswapwep->oclass);
 	    if (uquiver) (void)strkitten(extra_removeables, uquiver->oclass);
+	    if (ulauncher) (void)strkitten(extra_removeables, ulauncher->oclass);
 	}
 
 	ip = buf;
@@ -1284,7 +1285,7 @@ unsigned *resultflags;
 		    You("are not wearing any armor.");
 		    return 0;
 		} else if (oc_of_sym == WEAPON_CLASS &&
-			!uwep && !uswapwep && !uquiver) {
+			!uwep && !uswapwep && !uquiver && !ulauncher) {
 		    You("are not wielding anything.");
 		    return 0;
 		} else if (oc_of_sym == RING_CLASS && !uright && !uleft) {

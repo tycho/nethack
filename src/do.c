@@ -473,6 +473,9 @@ register struct obj *obj;
 	if (obj == uswapwep) {
 		setuswapwep((struct obj *)0);
 	}
+	if (obj == ulauncher) {
+		setulauncher((struct obj*)0);
+	}
 
 	if (u.uswallow) {
 		/* barrier between you and the floor */
@@ -539,6 +542,7 @@ register struct obj *obj;
 {
 	if (obj == uwep) setuwep((struct obj *)0);
 	if (obj == uquiver) setuqwep((struct obj *)0);
+	if (obj == ulauncher) setulauncher((struct obj *)0);
 	if (obj == uswapwep) setuswapwep((struct obj *)0);
 
 	if (!u.uswallow && flooreffects(obj,u.ux,u.uy,"drop")) return;

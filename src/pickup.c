@@ -365,7 +365,7 @@ is_worn_by_type(otmp)
 register struct obj *otmp;
 {
 	return((boolean)(!!(otmp->owornmask &
-			(W_ARMOR | W_RING | W_AMUL | W_TOOL | W_WEP | W_SWAPWEP | W_QUIVER)))
+			(W_ARMOR | W_RING | W_AMUL | W_TOOL | W_WEP | W_SWAPWEP | W_QUIVER | W_LAUNCHER)))
 	        && (index(valid_menu_classes, otmp->oclass) != (char *)0));
 }
 
@@ -867,7 +867,7 @@ int how;			/* type of query */
 	if (ccount == 1 && !do_unpaid && num_buc_types <= 1 && !(qflags & BILLED_TYPES)) {
 	    for (curr = olist; curr; curr = FOLLOW(curr, qflags)) {
 		if ((qflags & WORN_TYPES) &&
-		    !(curr->owornmask & (W_ARMOR|W_RING|W_AMUL|W_TOOL|W_WEP|W_SWAPWEP|W_QUIVER)))
+		    !(curr->owornmask & (W_ARMOR|W_RING|W_AMUL|W_TOOL|W_WEP|W_SWAPWEP|W_QUIVER|W_LAUNCHER)))
 		    continue;
 		break;
 	    }
@@ -902,7 +902,7 @@ int how;			/* type of query */
 		if (curr->oclass == *pack) {
 		   if ((qflags & WORN_TYPES) &&
 		   		!(curr->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL |
-		    	W_WEP | W_SWAPWEP | W_QUIVER)))
+		    	W_WEP | W_SWAPWEP | W_QUIVER | W_LAUNCHER)))
 			 continue;
 		   if (!collected_type_name) {
 			any.a_void = 0;
@@ -1001,7 +1001,7 @@ int qflags;
 		if (curr->oclass == *pack) {
 		   if ((qflags & WORN_TYPES) &&
 		    	!(curr->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL |
-		    	W_WEP | W_SWAPWEP | W_QUIVER)))
+		    	W_WEP | W_SWAPWEP | W_QUIVER | W_LAUNCHER)))
 			 continue;
 		   if (!counted_category) {
 			ccount++;
@@ -1857,6 +1857,9 @@ register struct obj *obj;
 	} else if (obj == uquiver) {
 		setuqwep((struct obj *) 0);
 		if (uquiver) return 0;     /* unwielded, died, rewielded */
+	} else if (obj == ulauncher) {
+		setulauncher((struct obj *) 0);
+		if (ulauncher) return 0;     /* unwielded, died, rewielded */
 	}
 
 	if (obj->otyp == CORPSE) {

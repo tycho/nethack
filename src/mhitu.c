@@ -2248,6 +2248,7 @@ register struct monst *mon;
 		if (ring==uwep) setuwep((struct obj *)0);
 		if (ring==uswapwep) setuswapwep((struct obj *)0);
 		if (ring==uquiver) setuqwep((struct obj *)0);
+		if (ring==ulauncher) setulauncher((struct obj *)0);
 		freeinv(ring);
 		(void) mpickobj(mon,ring);
 	    } else {

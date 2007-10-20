@@ -1440,6 +1440,9 @@ long timeout;	/* unused */
 	    } else if (obj == uquiver) {
 		uqwepgone();
 		stop_occupation();
+	    } else if (obj == ulauncher) { /* not sure how this would be possible but */
+		ulwepgone();
+		stop_occupation();
 	    }
 	} else if (obj->where == OBJ_MINVENT && obj->owornmask) {
 	    if (obj == MON_WEP(obj->ocarry)) {
