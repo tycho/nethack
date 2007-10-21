@@ -339,7 +339,7 @@ int how;
 	if (program_state.panicking)
 		return;
 
-	if (flags.toptenwin) {
+	if (0 && flags.toptenwin) {
 	    toptenwin = create_nhwindow(NHW_TEXT);
 	}
 
