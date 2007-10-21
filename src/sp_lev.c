@@ -791,6 +791,7 @@ struct mkroom* croom;
 			case W_EAST: nx--; break;
 			default: return; break;
 		}
+		if (!isok(nx,ny)) { continue; }
 		if (IS_WALL(levl[nx][ny].typ)) {	 /* mark it as broken through */
 			levl[nx][ny].typ = sp->typ;
 			levl[nx][ny].lit = sp->lit;
@@ -809,14 +810,16 @@ struct mkroom* croom;
 		levl[nx][ny].lit = sp->lit;
 		do {
 			guard++;
-			k = rn2(4);
-			qx = nx;qy = ny;
-			switch(k) {
-				case 3: qy--; break;
-				case 2: qy++; break;
-				case 1: qx--; break;
-				case 0: qx++; break;
-			}
+			do {
+				k = rn2(4);
+				qx = nx;qy = ny;
+				switch(k) {
+					case 3: qy--; break;
+					case 2: qy++; break;
+					case 1: qx--; break;
+					case 0: qx++; break;
+				}
+			} while (!isok(qx,qy));
 		} while ((k == lastdir || levl[qx][qy].typ == sp->typ) && guard < 200);	 
 		/* tend to not make rivers, but pools; and don't redo stuff of the same type! */
 
