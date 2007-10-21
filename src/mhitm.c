@@ -1019,7 +1019,11 @@ mdamagem(magr, mdef, mattk)
 		}
 		break;
 	    case AD_DRLI:
-		if (!cancelled && !rn2(3) && !resists_drli(mdef)) {
+		 case AD_DETH:
+		/* Closest match; save us having to do a lot of silliness 
+		 * just to handle one critter on Astral */
+		if (mattk->adtyp == AD_DETH || 
+				(!cancelled && !rn2(3) && !resists_drli(mdef))) {
 			tmp = d(2,6);
 			if (vis)
 			    pline("%s suddenly seems weaker!", Monnam(mdef));
