@@ -339,8 +339,9 @@ int how;
 	if (program_state.panicking)
 		return;
 
-	if (0 && flags.toptenwin) {
-	    toptenwin = create_nhwindow(NHW_TEXT);
+	if (flags.toptenwin) {
+	    /* toptenwin = create_nhwindow(NHW_TEXT); */
+		flags.toptenwin = 0;
 	}
 
 #if defined(UNIX) || defined(VMS) || defined(__EMX__)
