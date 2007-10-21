@@ -40,6 +40,7 @@ struct obj *obj;
 const char *name;	/* if null, then format `obj' */
 {
 	const char *onm, *knm;
+	int realac;
 	boolean is_acid;
 	int kprefix = KILLED_BY_AN;
 	char onmbuf[BUFSZ], knmbuf[BUFSZ];
@@ -61,7 +62,8 @@ const char *name;	/* if null, then format `obj' */
 			    (obj && obj->quan > 1L) ? name : an(name);
 	is_acid = (obj && obj->otyp == ACID_VENOM);
 
-	if(u.uac + tlev <= rnd(20)) {
+	realac = AC_VALUE(u.uac);
+	if(realac + tlev <= rnd(20)) {
 		if(Blind || !flags.verbose) pline("It misses.");
 		else You("are almost hit by %s.", onm);
 		return(0);
@@ -368,16 +370,17 @@ m_throw(mon, x, y, dx, dy, range, obj)
 			    dam = dmgval(singleobj, &youmonst);
 			    hitv = 3 - distmin(u.ux,u.uy, mon->mx,mon->my);
 			    if (hitv < -4) hitv = -4;
-			    if (is_elf(mon->data) &&
-				objects[singleobj->otyp].oc_skill == P_BOW) {
-				hitv++;
-				if (MON_WEP(mon) &&
-				    MON_WEP(mon)->otyp == ELVEN_BOW)
-				    hitv++;
-				if(singleobj->otyp == ELVEN_ARROW) dam++;
+			    if (is_elf(mon->data) && objects[singleobj->otyp].oc_skill == P_BOW) {
+					hitv++;
+					if (MON_WEP(mon) &&
+						MON_WEP(mon)->otyp == ELVEN_BOW)
+						hitv++;
+					if(singleobj->otyp == ELVEN_ARROW) dam++;
 			    }
 			    if (bigmonst(youmonst.data)) hitv++;
 			    hitv += 8 + singleobj->spe;
+				 /* eagle-eyed monsters get a BIG bonus here */
+				 if (is_accurate(mon->data)) { hitv += mon->m_lev; }
 			    if (dam < 1) dam = 1;
 			    hitu = thitu(hitv, dam, singleobj, (char *)0);
 		    }
