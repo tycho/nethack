@@ -195,7 +195,9 @@ static struct Bool_Opt
 	{"timed_delay", (boolean *)0, FALSE, SET_IN_GAME},
 #endif
 	{"tombstone",&flags.tombstone, TRUE, SET_IN_GAME},
-	{"toptenwin",&flags.toptenwin, FALSE, SET_IN_GAME},
+#if 0
+	{"toptenwin",&flags.toptenwin, FALSE, SET_IN_GAME},  /* TODO: fix HUP bug */
+#endif
 	{"travel", &iflags.travelcmd, TRUE, SET_IN_GAME},
 #ifdef WIN32CON
 	{"use_inverse",   &iflags.wc_inverse, TRUE, SET_IN_GAME},		/*WC*/
