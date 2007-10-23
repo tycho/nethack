@@ -156,6 +156,13 @@ struct obj {
 			 otmp->oclass == TOOL_CLASS) && \
 			 objects[otmp->otyp].oc_skill >= -P_BOOMERANG && \
 			 objects[otmp->otyp].oc_skill <= -P_DART)
+#define is_thrown(otmp)	  ((otmp->oclass == WEAPON_CLASS) && \
+		  ((objects[otmp->otyp].oc_skill >= P_DART && \
+			 objects[otmp->otyp].oc_skill <= P_BOOMERANG) || \
+			 objects[otmp->otyp].oc_skill == P_DAGGER || \
+			 objects[otmp->otyp].oc_skill == P_KNIFE || \
+			(objects[otmp->otyp].oc_skill >= P_SPEAR && \
+			 objects[otmp->otyp].oc_skill <= P_TRIDENT)))
 #define is_weptool(o)	((o)->oclass == TOOL_CLASS && \
 			 objects[(o)->otyp].oc_skill != P_NONE)
 #define bimanual(otmp)	((otmp->oclass == WEAPON_CLASS || \
