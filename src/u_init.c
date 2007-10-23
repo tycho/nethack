@@ -120,7 +120,7 @@ static struct trobj Ranger[] = {
 };
 static struct trobj Rogue[] = {
 #define R_DAGGERS	1
-	{ SHORT_SWORD, 0, WEAPON_CLASS, 1, UNDEF_BLESS },
+	{ STILETTO, 1, WEAPON_CLASS, 1, UNDEF_BLESS },
 	{ DAGGER, 0, WEAPON_CLASS, 10, 0 },	/* quan is variable */
 	{ LEATHER_ARMOR, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ POT_SICKNESS, 0, POTION_CLASS, 1, 0 },
@@ -1051,11 +1051,15 @@ register struct trobj *trop;
 
 		if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
 			otyp == TIN_OPENER || otyp == FLINT || otyp == ROCK) {
-		    if (is_ammo(obj) || is_missile(obj)) {
-			if (!uquiver) setuqwep(obj);
-		    } else if (!uwep) setuwep(obj);
-		    else if (!uswapwep) setuswapwep(obj);
-		    else if (!ulauncher && is_launcher(obj)) setulauncher(obj);
+			/* In order: fill the quiver first if possible, then launcher;
+			 * then the rest will sort themselves out later. */
+			if (!uquiver && (is_ammo(obj) || is_missile(obj) || (is_thrown(obj) && obj->quan > 1))) setuqwep(obj);
+			else if (!ulauncher && is_launcher(obj)) setulauncher(obj);
+			/* don't put ammo in weapon slots */
+			else if (!is_ammo(obj) && !is_missile(obj)) {
+				if (!uwep) setuwep(obj);
+				else if (!uswapwep) setuswapwep(obj);
+			}
 		}
 		if (obj->oclass == SPBOOK_CLASS &&
 				obj->otyp != SPE_BLANK_PAPER)
