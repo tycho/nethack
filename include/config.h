@@ -372,6 +372,7 @@ typedef unsigned char	uchar;
 #define GOLDOBJ /* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
 #define WHEREIS_FILE /* Write out player's current location to player.whereis */
+#define WISH_TRACKER /* Write all wishes to a tracking file */
 
 /* End of Section 5 */
 
