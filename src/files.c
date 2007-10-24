@@ -601,6 +601,33 @@ int fd;
 }
 #endif
 	
+#ifdef WISH_TRACKER
+void
+trackwish(wishstring)
+char* wishstring;
+{
+	char bigbuf[512];
+	FILE* fp;
+	const char* wish_tracker_file =
+# ifdef UNIX
+		"wishtracker";
+# else
+#  if defined(MAC) || defined(__BEOS__)
+		"Wish Tracker";
+#  else
+		"wishes.txt";
+#  endif
+# endif
+
+	fp = fopen_datafile(wish_tracker_file,"a+",LEVELPREFIX);
+	if (fp) {
+		Sprintf(bigbuf,"Turn %d: %s wished for %s\n",moves,plname,wishstring);
+		fwrite(bigbuf,strlen(bigbuf),1,fp);
+		fclose(fp);
+	}
+}
+#endif
+
 #ifdef WHEREIS_FILE
 void
 touch_whereis()
@@ -1541,6 +1568,7 @@ const char *oldconfigfile =
 # endif
 #endif
 
+			
 
 #ifdef MSDOS
 /* conflict with speed-dial under windows
@@ -1556,6 +1584,7 @@ const char *backward_compat_configfile = "nethack.cnf";
 #ifndef MFLOPPY
 #define fopenp fopen
 #endif
+
 
 STATIC_OVL FILE *
 fopen_config_file(filename)

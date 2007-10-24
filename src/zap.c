@@ -4175,6 +4175,11 @@ retry:
 	u.uconduct.wishes++;
 
 	if (otmp != &zeroobj) {
+
+#ifdef WISH_TRACKER
+		/* write it out to our universal wishtracker file */
+		trackwish(buf);
+#endif
 	    /* The(aobjnam()) is safe since otmp is unidentified -dlc */
 	    (void) hold_another_object(otmp, u.uswallow ?
 				       "Oops!  %s out of your reach!" :
