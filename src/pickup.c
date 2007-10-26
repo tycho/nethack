@@ -1553,6 +1553,7 @@ doloot()	/* loot a container on the floor or loot saddle from mon. */
     boolean underfoot = TRUE;
     const char *dont_find_anything = "don't find anything";
     struct monst *mtmp;
+	 struct permonst* mdat;
     char qbuf[BUFSZ];
     int prev_inquiry = 0;
     boolean prev_loot = FALSE;
@@ -1600,6 +1601,14 @@ lootcont:
 		    makeknown(BAG_OF_TRICKS);
 		    timepassed = 1;
 		    continue;
+		}
+
+		if (cobj->otyp == BAG_OF_POO) {
+			You("carefully open the bag...");
+			pline("This bag is full of %s poo and gives off a horrific stench.",rndmonnam());
+			makeknown(BAG_OF_POO);
+			timepassed = 1;
+			continue;
 		}
 
 		You("carefully open %s...", the(xname(cobj)));

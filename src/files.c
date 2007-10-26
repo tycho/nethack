@@ -621,7 +621,10 @@ char* wishstring;
 
 	fp = fopen_datafile(wish_tracker_file,"a+",LEVELPREFIX);
 	if (fp) {
-		Sprintf(bigbuf,"Turn %d: %s wished for %s\n",moves,plname,wishstring);
+		Sprintf(bigbuf,"Turn %d: %s wished for %s (%d%s wish)\n",
+				moves,plname,wishstring,u.uconduct.wishes,
+				u.uconduct.wishes == 1 ? "st" : u.uconduct.wishes == 2 ? "nd" : 
+				u.uconduct.wishes == 3 ? "rd" : "th");
 		fwrite(bigbuf,strlen(bigbuf),1,fp);
 		fclose(fp);
 	}
