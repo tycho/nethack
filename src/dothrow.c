@@ -300,6 +300,16 @@ dofire()
 	    return 0;
 	}
 
+	/* If they've got something already picked, wield it;
+	 * wield_tool() will return error messages if they couldn't,
+	 * but go ahead and let them throw whatever even if it fails
+	 *
+	 * Must do this before autoquiver gets called since autoquiver
+	 * tries to be smart based on what you've got wielded */
+	if (ulauncher && ulauncher != uwep) {
+		wield_tool(ulauncher,"fire");
+	}
+
 	if(check_capacity((char *)0)) return(0);
 	if (!uquiver) {
 		if (!flags.autoquiver) {
@@ -315,13 +325,6 @@ dofire()
 			You("fill your quiver:");
 			prinv((char *)0, uquiver, 0L);
 		}
-	}
-
-	/* If they've got something already picked, wield it;
-	 * wield_tool() will return error messages if they couldn't,
-	 * but go ahead and let them throw whatever even if it fails */
-	if (ulauncher && ulauncher != uwep) {
-		wield_tool(ulauncher,"fire");
 	}
 
 	/*
