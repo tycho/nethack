@@ -325,7 +325,7 @@ register struct monst *mtmp;
 	return;
 }
 
-#if defined(WIN32)
+#if defined(WIN32) || defined(UNIX)
 #define NOTIFY_NETHACK_BUGS
 #endif
 
@@ -353,8 +353,8 @@ panic VA_DECL(const char *, str)
 #if defined(WIZARD) && !defined(MICRO)
 # if defined(NOTIFY_NETHACK_BUGS)
 	if (!wizard)
-	    raw_printf("Report the following error to \"%s\".",
-			"nethack-bugs@nethack.org");
+	    raw_printf("Report the following error to \"%s\""
+				 ", and it may be possible to rebuild.", "spork@sporkhack.com");
 	else if (program_state.something_worth_saving)
 	    raw_print("\nError save file being written.\n");
 # else
