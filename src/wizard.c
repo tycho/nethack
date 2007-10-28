@@ -423,6 +423,7 @@ nasty(mcast)
 	struct monst *mcast;
 {
     register struct monst	*mtmp;
+	 struct permonst* mdat;
     register int	i, j, tmp;
     int castalign = (mcast ? mcast->data->maligntyp : -1);
     coord bypos;
@@ -451,8 +452,14 @@ nasty(mcast)
 		if (mcast &&
 		    !enexto(&bypos, mcast->mux, mcast->muy, &mons[makeindex]))
 		    continue;
-		if ((mtmp = makemon(&mons[makeindex],
-				    bypos.x, bypos.y, NO_MM_FLAGS)) != 0) {
+		/* If this is a demon prince, tend to make more demons */
+		if (mcast && is_dprince(mcast->data) && !rn2(2)) {
+			mdat = mkclass(S_DEMON,0);
+			mtmp = makemon(mdat ? mdat : &mons[makeindex],bypos.x, bypos.y, NO_MM_FLAGS);
+		} else {
+			mtmp = makemon(&mons[makeindex], bypos.x, bypos.y, NO_MM_FLAGS);
+		}
+		if (mtmp != 0) {
 		    mtmp->msleeping = mtmp->mpeaceful = mtmp->mtame = 0;
 		    set_malign(mtmp);
 		} else /* GENOD? */
