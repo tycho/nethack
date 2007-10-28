@@ -716,8 +716,7 @@ register struct	monst	*mtmp;
 	/* ordinary soldiers rarely have access to magic (or gold :-) */
 	if (ptr == &mons[PM_SOLDIER] && rn2(13)) return;
 
-	if (1 || (int) mtmp->m_lev > rn2(50))
-		pline("making %s",mtmp->data->mname);
+	if ((int) mtmp->m_lev > rn2(50))
 		(void) mongets(mtmp, rnd_defensive_item(mtmp));
 	if ((int) mtmp->m_lev > rn2(100))
 		(void) mongets(mtmp, rnd_misc_item(mtmp));
