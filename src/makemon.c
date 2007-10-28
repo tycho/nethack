@@ -1104,11 +1104,12 @@ register int	mmflags;
 						break;
 					case PM_GREEN_DRAGON:
 						christen_monst(mtmp,"Grundle");
-						if (rn2(2)) (void)mongets(mtmp, SKELETON_KEY);	/* black key */
+						/* if (rn2(2)) (void)mongets(mtmp, SKELETON_KEY);	black key
+						 * causes crash? */
 						break;
 					case PM_RED_DRAGON:
 						christen_monst(mtmp,"Rhindle");
-						if (rn2(2)) (void)mongets(mtmp, SKELETON_KEY);	/* white key */
+						/* if (rn2(2)) (void)mongets(mtmp, SKELETON_KEY);	white key */
 						break;
 					default:
 						break;
