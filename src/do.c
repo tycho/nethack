@@ -1323,8 +1323,12 @@ boolean at_stairs, falling, portal;
 	    You("enter what seems to be an older, more primitive world.");
 #endif
 	/* Final confrontation */
-	if (In_endgame(&u.uz) && newdungeon && u.uhave.amulet)
+	if (In_endgame(&u.uz) && newdungeon && u.uhave.amulet) {
 		resurrect();
+		char buf[512];
+		Sprintf(buf,"%s just entered the Plane of Earth on T:%d!",plname,moves);
+		makeannounce(buf);
+	}
 	if (newdungeon && In_V_tower(&u.uz) && In_hell(&u.uz0))
 		pline_The("heat and smoke are gone.");
 

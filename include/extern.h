@@ -681,6 +681,7 @@ E void NDECL(delete_whereis);
 #endif
 #ifdef WISH_TRACKER
 E void FDECL(trackwish,(char *));
+E void FDECL(makeannounce,(char *));
 #endif
 
 /* ### fountain.c ### */
