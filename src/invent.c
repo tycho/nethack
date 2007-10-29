@@ -249,6 +249,7 @@ void
 addinv_core1(obj)
 struct obj *obj;
 {
+	char buf[512];
 	if (obj->oclass == COIN_CLASS) {
 #ifndef GOLDOBJ
 		u.ugold += obj->quan;
@@ -258,6 +259,12 @@ struct obj *obj;
 	} else if (obj->otyp == AMULET_OF_YENDOR) {
 		if (u.uhave.amulet) impossible("already have amulet?");
 		u.uhave.amulet = 1;
+		if (Is_sanctum(&u.uz)) {
+			Sprintf(buf,
+				"%s picked up the Amulet of Yendor in Moloch's Sanctum on T:%d", 
+				plname,moves);
+			makeannounce(buf);
+		}
 	} else if (obj->otyp == CANDELABRUM_OF_INVOCATION) {
 		if (u.uhave.menorah) impossible("already have candelabrum?");
 		u.uhave.menorah = 1;

@@ -602,13 +602,7 @@ int fd;
 #endif
 	
 #ifdef WISH_TRACKER
-void
-trackwish(wishstring)
-char* wishstring;
-{
-	char bigbuf[512];
-	FILE* fp;
-	const char* wish_tracker_file =
+const char* wish_tracker_file =
 # ifdef UNIX
 		"wishtracker";
 # else
@@ -619,6 +613,13 @@ char* wishstring;
 #  endif
 # endif
 
+void
+trackwish(wishstring)
+char* wishstring;
+{
+	char bigbuf[512];
+	FILE* fp;
+
 	fp = fopen_datafile(wish_tracker_file,"a+",LEVELPREFIX);
 	if (fp) {
 		Sprintf(bigbuf,"%s wished for %s (%d%s wish, T:%d)\n",
@@ -628,6 +629,19 @@ char* wishstring;
 		fwrite(bigbuf,strlen(bigbuf),1,fp);
 		fclose(fp);
 	}
+}
+
+/* Handles generic announcements.  Cheats and uses the wishtracker file. */
+void makeannounce(announcement)
+char* announcement;
+{
+	FILE* fp;
+	fp = fopen_datafile(wish_tracker_file,"a+",LEVELPREFIX);
+	if (fp) {
+		fwrite(announcement,strlen(announcement),1,fp);
+		fclose(fp);
+	}
+
 }
 #endif
 
