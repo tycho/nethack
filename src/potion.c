@@ -93,6 +93,8 @@ int
 how_resistant(which)
 int which;
 {
+	unsigned long val;
+
 	/* externals and level/race based intrinsics always provide 100%
 	 * as do monster resistances */
 	if (u.uprops[which].extrinsic || 
@@ -101,7 +103,16 @@ int which;
 		return 100; 
 	}
 
-	return (u.uprops[which].intrinsic & TIMEOUT);
+	/* None of this is necessary, but this is going in without a savebreak
+	 * so people might load save files that have values higher than 100 */
+	val = (u.uprops[which].intrinsic & TIMEOUT);
+	if (val > 100) {
+		val = 100;
+		u.uprops[which].intrinsic &= ~TIMEOUT;
+		u.uprops[which].intrinsic |= (val|HAVEPARTIAL);
+	}
+
+	return val;
 }
 
 /* Handles the damage-reduction shuffle necessary to convert 80% resistance
@@ -112,7 +123,6 @@ int amount, which;
 {
 	float tmp = 100 - how_resistant(which);
 	tmp /= 100;
-	pline("incoming: %d  outgoing: %d",amount,(int)((float)amount*tmp));
 	return (int)((float)amount * tmp);
 }
 
