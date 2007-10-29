@@ -874,12 +874,18 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 #endif
 
 	/*** Resistances to troubles ***/
-	if (Fire_resistance) you_are("fire resistant");
-	if (Cold_resistance) you_are("cold resistant");
-	if (Sleep_resistance) you_are("sleep resistant");
-	if (Disint_resistance) you_are("disintegration-resistant");
-	if (Shock_resistance) you_are("shock resistant");
-	if (Poison_resistance) you_are("poison resistant");
+	Sprintf(buf,"%d%% fire resistant",how_resistant(FIRE_RES));
+	if (Fire_resistance) you_are(buf);
+	Sprintf(buf,"%d%% cold resistant",how_resistant(COLD_RES));
+	if (Cold_resistance) you_are(buf);
+	Sprintf(buf,"%d%% sleep resistant",how_resistant(SLEEP_RES));
+	if (Sleep_resistance) you_are(buf);
+	Sprintf(buf,"%d%% disintegration-resistant",how_resistant(DISINT_RES));
+	if (Disint_resistance) you_are(buf);
+	Sprintf(buf,"%d%% shock resistant",how_resistant(SHOCK_RES));
+	if (Shock_resistance) you_are(buf);
+	Sprintf(buf,"%d%% poison resistant",how_resistant(POISON_RES));
+	if (Poison_resistance) you_are(buf);
 	if (Drain_resistance) you_are("level-drain resistant");
 	if (Sick_resistance) you_are("immune to sickness");
 	if (Antimagic) you_are("magic-protected");
@@ -1208,12 +1214,18 @@ int final;
 
 
 	/*** Resistances to troubles ***/
-	if (Fire_resistance) dump(youwere, "fire resistant");
-	if (Cold_resistance) dump(youwere, "cold resistant");
-	if (Sleep_resistance) dump(youwere, "sleep resistant");
-	if (Disint_resistance) dump(youwere, "disintegration-resistant");
-	if (Shock_resistance) dump(youwere, "shock resistant");
-	if (Poison_resistance) dump(youwere, "poison resistant");
+	Sprintf(buf,"%d%% fire resistant",how_resistant(FIRE_RES));
+	if (Fire_resistance) dump(youwere,buf);
+	Sprintf(buf,"%d%% cold resistant",how_resistant(COLD_RES));
+	if (Cold_resistance) dump(youwere,buf);
+	Sprintf(buf,"%d%% sleep resistant",how_resistant(SLEEP_RES));
+	if (Sleep_resistance) dump(youwere,buf);
+	Sprintf(buf,"%d%% disintegration-resistant",how_resistant(DISINT_RES));
+	if (Disint_resistance) dump(youwere,buf);
+	Sprintf(buf,"%d%% shock resistant",how_resistant(SHOCK_RES));
+	if (Shock_resistance) dump(youwere,buf);
+	Sprintf(buf,"%d%% poison resistant",how_resistant(POISON_RES));
+	if (Poison_resistance) dump(youwere,buf);
 	if (Drain_resistance) dump(youwere, "level-drain resistant");
 	if (Sick_resistance) dump(youwere, "immune to sickness");
 	if (Antimagic) dump(youwere, "magic-protected");

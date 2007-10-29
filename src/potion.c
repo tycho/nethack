@@ -53,6 +53,69 @@ int incr;
     set_itimeout(which, itimeout_incr(*which, incr));
 }
 
+/* increase a partial-resistance intrinsic by XX%
+ * ...will automatically cap at 100% */
+void
+incr_resistance(which, incr)
+long* which;
+int incr;
+{
+	long oldval = *which & TIMEOUT;
+	if (oldval + incr > 100) { 
+		oldval = 100; 
+	} else {
+		oldval += incr;
+	}
+	*which &= ~TIMEOUT;
+	*which |= (oldval | HAVEPARTIAL);
+
+}
+
+/* decrease a partial-resistance intrinsic by XX% */
+void
+decr_resistance(which, incr)
+long* which;
+int incr;
+{
+	long oldval = *which & TIMEOUT;
+	if (oldval - incr < 0) { 
+		oldval = 0; 
+	} else {
+		oldval -= incr;
+	}
+	*which &= ~TIMEOUT;
+	*which |= (oldval | ((oldval < 1) ? 0 : HAVEPARTIAL));
+
+}
+
+/* Return percent which a player is resistant -- 100% if from external/race/etc. */
+int
+how_resistant(which)
+int which;
+{
+	/* externals and level/race based intrinsics always provide 100%
+	 * as do monster resistances */
+	if (u.uprops[which].extrinsic || 
+			(u.uprops[which].intrinsic & (FROMEXPER|FROMRACE)) ||
+			(youmonst.mintrinsics & (1 << (which-1)))) {	  /* depends on FIRE_RES/MR_FIRE order matching! */
+		return 100; 
+	}
+
+	return (u.uprops[which].intrinsic & TIMEOUT);
+}
+
+/* Handles the damage-reduction shuffle necessary to convert 80% resistance
+ * into 20% damage (and keeps the floating-point silliness out of the main lines */
+int
+resist_reduce(amount,which)
+int amount, which;
+{
+	float tmp = 100 - how_resistant(which);
+	tmp /= 100;
+	pline("incoming: %d  outgoing: %d",amount,(int)((float)amount*tmp));
+	return (int)((float)amount * tmp);
+}
+
 void
 make_confused(xtime,talk)
 long xtime;
@@ -609,7 +672,7 @@ peffects(otmp)
 		}
 		break;
 	case POT_SLEEPING:
-		if(Sleep_resistance || Free_action) {
+		if(how_resistant(SLEEP_RES) == 100 || Free_action) {
 			/* Yes, this isn't technically accurate, but then, monsters don't
 			 * know that you just resisted a sleeping potion because of your ring,
 			 * now do they?  They just saw you drink it and nothing happened. */
@@ -617,7 +680,7 @@ peffects(otmp)
 		    You("yawn.");
 		} else {
 		    You("suddenly fall asleep!");
-		    fall_asleep(-rn1(10, 25 - 12*bcsign(otmp)), TRUE);
+		    fall_asleep(-resist_reduce(rn1(10, 25 - 12*bcsign(otmp)),SLEEP_RES), TRUE);
 		}
 		break;
 	case POT_MONSTER_DETECTION:
@@ -666,10 +729,8 @@ peffects(otmp)
 			losehp(1, "mildly contaminated potion", KILLED_BY_AN);
 		    }
 		} else {
-		    if(Poison_resistance)
-			pline(
-			  "(But in fact it was biologically contaminated %s.)",
-			      fruitname(TRUE));
+		    if(how_resistant(POISON_RES) == 100)
+				pline( "(But in fact it was biologically contaminated %s.)", fruitname(TRUE));
 		    if (Role_if(PM_HEALER)) {
 				 monstseesu(M_SEEN_POISON);
 				pline("Fortunately, you have been immunized.");
@@ -678,17 +739,14 @@ peffects(otmp)
 
 			if (!Fixed_abil) {
 			    poisontell(typ);
-			    (void) adjattrib(typ,
-			    		Poison_resistance ? -1 : -rn1(4,3),
+			    (void) adjattrib(typ, -(resist_reduce(rn1(4,3),POISON_RES)+1),
 			    		TRUE);
 			}
-			if(!Poison_resistance) {
+			if(how_resistant(POISON_RES) < 100) {
 			    if (otmp->fromsink)
-				losehp(rnd(10)+5*!!(otmp->cursed),
-				       "contaminated tap water", KILLED_BY);
+					losehp(resist_reduce(rnd(10)+5*!!(otmp->cursed),POISON_RES), "contaminated tap water", KILLED_BY);
 			    else
-				losehp(rnd(10)+5*!!(otmp->cursed),
-				       "contaminated potion", KILLED_BY_AN);
+					losehp(resist_reduce(rnd(10)+5*!!(otmp->cursed),POISON_RES), "contaminated potion", KILLED_BY_AN);
 			}
 			exercise(A_CON, FALSE);
 		    }
@@ -877,12 +935,11 @@ peffects(otmp)
 
 			if (otmp->lamplit) {
 			    if (likes_fire(youmonst.data)) {
-				pline("Ahh, a refreshing drink.");
-				good_for_you = TRUE;
+					pline("Ahh, a refreshing drink.");
+					good_for_you = TRUE;
 			    } else {
-				You("burn your %s.", body_part(FACE));
-				losehp(d(Fire_resistance ? 1 : 3, 4),
-				       "burning potion of oil", KILLED_BY_AN);
+					You("burn your %s.", body_part(FACE));
+					losehp(resist_reduce(d(2,4),FIRE_RES)+d(1,4), "burning potion of oil", KILLED_BY_AN);
 			    }
 			} else if(otmp->cursed)
 			    pline("This tastes like castor oil.");
@@ -1278,9 +1335,9 @@ register struct obj *obj;
 		break;
 	case POT_SLEEPING:
 		kn++;
-		if (!Free_action && !Sleep_resistance) {
+		if (!Free_action && how_resistant(SLEEP_RES) < 100) {
 		    You_feel("rather tired.");
-		    nomul(-rnd(5));
+		    nomul(-resist_reduce(rnd(5),SLEEP_RES));
 		    nomovemsg = You_can_move_again;
 		    exercise(A_DEX, FALSE);
 		} else {

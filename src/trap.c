@@ -782,13 +782,13 @@ unsigned trflags;
 
 	    case SLP_GAS_TRAP:
 		seetrap(trap);
-		if(Sleep_resistance || breathless(youmonst.data)) {
+		if(how_resistant(SLEEP_RES) == 100 || breathless(youmonst.data)) {
 			monstseesu(M_SEEN_SLEEP);
 		    You("are enveloped in a cloud of gas!");
 		    break;
 		}
 		pline("A cloud of gas puts you to sleep!");
-		fall_asleep(-rnd(25), TRUE);
+		fall_asleep(-resist_reduce(rnd(25),SLEEP_RES), TRUE);
 #ifdef STEED
 		(void) steedintrap(trap, (struct obj *)0);
 #endif
@@ -2588,7 +2588,7 @@ struct obj *box;	/* null for floor trap */
 	if ((box && !carried(box)) ? is_pool(box->ox, box->oy) : Underwater) {
 	    pline("A cascade of steamy bubbles erupts from %s!",
 		    the(box ? xname(box) : surface(u.ux,u.uy)));
-	    if (Fire_resistance) {
+	    if (how_resistant(FIRE_RES) > 50) {
 			 You("are uninjured.");
 			 monstseesu(M_SEEN_FIRE);
 		 }
@@ -2598,7 +2598,7 @@ struct obj *box;	/* null for floor trap */
 	pline("A %s %s from %s!", tower_of_flame,
 	      box ? "bursts" : "erupts",
 	      the(box ? xname(box) : surface(u.ux,u.uy)));
-	if (Fire_resistance) {
+	if (how_resistant(FIRE_RES) == 100) {
 	    shieldeff(u.ux, u.uy);
 		 monstseesu(M_SEEN_FIRE);
 	    num = rn2(2);
@@ -2613,11 +2613,11 @@ struct obj *box;	/* null for floor trap */
 	    }
 	    if (alt > num) num = alt;
 	    if (u.mhmax > mons[u.umonnum].mlevel)
-		u.mhmax -= rn2(min(u.mhmax,num + 1)), flags.botl = 1;
+			u.mhmax -= rn2(min(u.mhmax,num + 1)), flags.botl = 1;
 	} else {
-	    num = d(2,4);
+	    num = resist_reduce(d(2,4),FIRE_RES);
 	    if (u.uhpmax > u.ulevel)
-		u.uhpmax -= rn2(min(u.uhpmax,num + 1)), flags.botl = 1;
+			u.uhpmax -= rn2(min(u.uhpmax,num + 1)), flags.botl = 1;
 	}
 	if (!num)
 	    You("are uninjured.");
@@ -3901,13 +3901,13 @@ boolean disarm;
 			int dmg;
 
 			You("are jolted by a surge of electricity!");
-			if(Shock_resistance)  {
+			if(how_resistant(SHOCK_RES) == 100)  {
 			    shieldeff(u.ux, u.uy);
 				 monstseesu(M_SEEN_ELEC);
 			    You("don't seem to be affected.");
 			    dmg = 0;
 			} else
-			    dmg = d(4, 4);
+				dmg = resist_reduce(d(4,4),SHOCK_RES);
 			destroy_item(RING_CLASS, AD_ELEC);
 			destroy_item(WAND_CLASS, AD_ELEC);
 			if (dmg) losehp(dmg, "electric shock", KILLED_BY_AN);
@@ -4107,9 +4107,9 @@ lava_effects()
     burn_away_slime();
     if (likes_lava(youmonst.data)) return FALSE;
 
-    if (!Fire_resistance) {
+    if (how_resistant(FIRE_RES) < 100) {
 	if(Wwalking) {
-	    dmg = d(6,6);
+	    dmg = resist_reduce(d(6,6),FIRE_RES);
 	    pline_The("lava here burns you!");
 	    if(dmg < u.uhp) {
 		losehp(dmg, lava_killer, KILLED_BY);
