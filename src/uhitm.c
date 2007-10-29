@@ -2338,14 +2338,15 @@ uchar aatyp;
 		break;
 	      case AD_COLD:		/* brown mold or blue jelly */
 		if(monnear(mon, u.ux, u.uy)) {
-		    if(Cold_resistance) {
-			shieldeff(u.ux, u.uy);
-			monstseesu(M_SEEN_COLD);
-			You_feel("a mild chill.");
-			ugolemeffects(AD_COLD, tmp);
-			break;
+		    if(how_resistant(COLD_RES) == 100) {
+				shieldeff(u.ux, u.uy);
+				monstseesu(M_SEEN_COLD);
+				You_feel("a mild chill.");
+				ugolemeffects(AD_COLD, tmp);
+				break;
 		    }
 		    You("are suddenly very cold!");
+			 tmp = resist_reduce(tmp,COLD_RES);
 		    mdamageu(mon, tmp);
 		/* monster gets stronger with your heat! */
 		    mon->mhp += tmp / 2;
@@ -2360,38 +2361,40 @@ uchar aatyp;
 		    make_stunned((long)tmp, TRUE);
 		break;
 	      case AD_FIRE:
-		if(monnear(mon, u.ux, u.uy)) {
-		    if(Fire_resistance) {
-			shieldeff(u.ux, u.uy);
-			monstseesu(M_SEEN_FIRE);
-			You_feel("mildly warm.");
-			ugolemeffects(AD_FIRE, tmp);
-			break;
-		    }
-		    You("are suddenly very hot!");
-		    mdamageu(mon, tmp);
-		}
-		break;
+				if(monnear(mon, u.ux, u.uy)) {
+					if(how_resistant(FIRE_RES) == 100) {
+						shieldeff(u.ux, u.uy);
+						monstseesu(M_SEEN_FIRE);
+						You_feel("mildly warm.");
+						ugolemeffects(AD_FIRE, tmp);
+						break;
+					}
+					You("are suddenly very hot!");
+					tmp = resist_reduce(tmp,FIRE_RES);
+					mdamageu(mon, tmp);
+				}
+				break;
 	      case AD_ELEC:
-		if(Shock_resistance) {
-		    shieldeff(u.ux, u.uy);
-			 monstseesu(M_SEEN_ELEC);
-		    You_feel("a mild tingle.");
-		    ugolemeffects(AD_ELEC, tmp);
-		    break;
-		}
-		You("are jolted with electricity!");
-		mdamageu(mon, tmp);
-		break;
+				if(how_resistant(SHOCK_RES) == 100) {
+					shieldeff(u.ux, u.uy);
+					monstseesu(M_SEEN_ELEC);
+					You_feel("a mild tingle.");
+					ugolemeffects(AD_ELEC, tmp);
+					break;
+				} 
+				You("are jolted with electricity!");
+				tmp = resist_reduce(tmp,SHOCK_RES);
+				mdamageu(mon, tmp);
+				break;
 			case AD_DISE:	/* gray fungus */
-		if (Sick_resistance) {
-			You("are covered with botulism spores, but they seem to be inert.");
-		} else {
-			You("are covered with botulism spores!");
-			mdamageu(mon, tmp);
-			make_sick(20, "bad case of botulism", TRUE, SICK_NONVOMITABLE);
-		}
-		break;
+				if (Sick_resistance) {
+					You("are covered with botulism spores, but they seem to be inert.");
+				} else {
+					You("are covered with botulism spores!");
+					mdamageu(mon, tmp);
+					make_sick(20, "bad case of botulism", TRUE, SICK_NONVOMITABLE);
+				}
+				break;
 	      default:
 		break;
 	    }

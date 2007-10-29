@@ -108,11 +108,9 @@ boolean pushing;
 		    vision_full_recalc = 1;
 		    You("find yourself on dry land again!");
 		} else if (lava && distu(rx,ry) <= 2) {
-		    You("are hit by molten lava%c",
-			Fire_resistance ? '.' : '!');
+		    You("are hit by molten lava%c", (how_resistant(FIRE_RES) > 50) ? '.' : '!');
 			burn_away_slime();
-		    losehp(d((Fire_resistance ? 1 : 3), 6),
-			   "molten lava", KILLED_BY);
+		    losehp(resist_reduce(d(3,6),FIRE_RES), "molten lava", KILLED_BY);
 		} else if (!fills_up && flags.verbose &&
 			   (pushing ? !Blind : cansee(rx,ry)))
 		    pline("It sinks without a trace!");

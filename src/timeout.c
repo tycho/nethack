@@ -220,7 +220,9 @@ nh_timeout()
 #endif
 
 	for(upp = u.uprops; upp < u.uprops+SIZE(u.uprops); upp++)
-	    if((upp->intrinsic & TIMEOUT) && !(--upp->intrinsic & TIMEOUT)) {
+	    if(!(upp->intrinsic & HAVEPARTIAL) &&	 /* partial intrinsics don't time out */
+				 (upp->intrinsic & TIMEOUT) && 
+				 !(--upp->intrinsic & TIMEOUT)) {
 		switch(upp - u.uprops){
 		case STONED:
 			if (delayed_killer && !killer) {
@@ -321,11 +323,11 @@ nh_timeout()
 			stop_occupation();
 			break;
 		case SLEEPING:
-			if (unconscious() || Sleep_resistance)
+			if (unconscious() || how_resistant(SLEEP_RES) == 100)
 				HSleeping += rnd(100);
 			else if (Sleeping) {
 				You("fall asleep.");
-				sleeptime = rnd(20);
+				sleeptime = resist_reduce(rnd(20),SLEEP_RES);
 				fall_asleep(-sleeptime, TRUE);
 				HSleeping += sleeptime + rnd(100);
 			}

@@ -656,19 +656,13 @@ int type;
 register struct permonst *ptr;
 {
 	register int chance;
+	long percentincrease;
 
 #ifdef DEBUG
 	debugpline("Attempting to give intrinsic %d", type);
 #endif
 	/* some intrinsics are easier to get than others */
 	switch (type) {
-		case POISON_RES:
-			if ((ptr == &mons[PM_KILLER_BEE] ||
-					ptr == &mons[PM_SCORPION]) && !rn2(4))
-				chance = 1;
-			else
-				chance = 15;
-			break;
 		case TELEPORT:
 			chance = 10;
 			break;
@@ -679,75 +673,76 @@ register struct permonst *ptr;
 			chance = 1;
 			break;
 		default:
-			chance = 15;
+			chance = 1;	/* the rest use the new system, give it to them all the time */
 			break;
 	}
 
 	if (ptr->mlevel <= rn2(chance))
 		return;		/* failed die roll */
 
+	percentincrease = (ptr->cwt / 45);
+	if (percentincrease < 10) { percentincrease = 10; }
+
 	switch (type) {
+		 /* All these use the new system, which is based on corpse weight. */
 	    case FIRE_RES:
 #ifdef DEBUG
 		debugpline("Trying to give fire resistance");
 #endif
-		if(!(HFire_resistance & FROMOUTSIDE)) {
-			You(Hallucination ? "be chillin'." :
-			    "feel a momentary chill.");
-			HFire_resistance |= FROMOUTSIDE;
+		if((HFire_resistance & TIMEOUT) < 100) {
+			You(Hallucination ? "be chillin'." : "feel a momentary chill.");
+			incr_resistance(&HFire_resistance,percentincrease);
 		}
 		break;
 	    case SLEEP_RES:
 #ifdef DEBUG
 		debugpline("Trying to give sleep resistance");
 #endif
-		if(!(HSleep_resistance & FROMOUTSIDE)) {
+		if((HSleep_resistance & TIMEOUT) < 100) {
 			You_feel("wide awake.");
-			HSleep_resistance |= FROMOUTSIDE;
+			incr_resistance(&HSleep_resistance,percentincrease);
 		}
 		break;
 	    case COLD_RES:
 #ifdef DEBUG
 		debugpline("Trying to give cold resistance");
 #endif
-		if(!(HCold_resistance & FROMOUTSIDE)) {
+		if((HCold_resistance & TIMEOUT) < 100) {
 			You_feel("full of hot air.");
-			HCold_resistance |= FROMOUTSIDE;
+			incr_resistance(&HCold_resistance,percentincrease);
 		}
 		break;
 	    case DISINT_RES:
 #ifdef DEBUG
 		debugpline("Trying to give disintegration resistance");
 #endif
-		if(!(HDisint_resistance & FROMOUTSIDE)) {
-			You_feel(Hallucination ?
-			    "totally together, man." :
-			    "very firm.");
-			HDisint_resistance |= FROMOUTSIDE;
+		if((HDisint_resistance & TIMEOUT) < 100) {
+			You_feel(Hallucination ? "totally together, man." : "very firm.");
+			incr_resistance(&HDisint_resistance,percentincrease);
 		}
 		break;
 	    case SHOCK_RES:	/* shock (electricity) resistance */
 #ifdef DEBUG
 		debugpline("Trying to give shock resistance");
 #endif
-		if(!(HShock_resistance & FROMOUTSIDE)) {
+		if((HShock_resistance & TIMEOUT) < 100) {
 			if (Hallucination)
 				You_feel("grounded in reality.");
 			else
 				Your("health currently feels amplified!");
-			HShock_resistance |= FROMOUTSIDE;
+			incr_resistance(&HShock_resistance,percentincrease);
 		}
 		break;
 	    case POISON_RES:
 #ifdef DEBUG
 		debugpline("Trying to give poison resistance");
 #endif
-		if(!(HPoison_resistance & FROMOUTSIDE)) {
-			You_feel(Poison_resistance ?
-				 "especially healthy." : "healthy.");
-			HPoison_resistance |= FROMOUTSIDE;
+		if((HPoison_resistance & TIMEOUT) < 100) {
+			You_feel(how_resistant(POISON_RES) == 100 ? "especially healthy." : "healthy.");
+			incr_resistance(&HPoison_resistance,percentincrease);
 		}
 		break;
+		/* From here forward, we'll use the old stuff.  But. */
 	    case TELEPORT:
 #ifdef DEBUG
 		debugpline("Trying to give teleport");
@@ -960,30 +955,23 @@ register int pm;
 		 * Elliott Kleinrock, October 5, 1990
 		 */
 
+		/* Above proof recorded for posterity, even though i'm about
+		 * to vigorously jostle the means of getting most of
+		 * the resistances in the first place; it's no longer random
+		 * for anything except telecontrol, teleport, and telepathy.
+		 *
+		 * Derek S. Ray, October 28, 2007
+		 */
+
 		 count = 0;	/* number of possible intrinsics */
 		 tmp = 0;	/* which one we will try to give */
 		 for (i = 1; i <= LAST_PROP; i++) {
 			if (intrinsic_possible(i, ptr)) {
-				count++;
-				/* a 1 in count chance of replacing the old
-				 * one with this one, and a count-1 in count
-				 * chance of keeping the old one.  (note
-				 * that 1 in 1 and 0 in 1 are what we want
-				 * for the first one
-				 */
-				if (!rn2(count)) {
-#ifdef DEBUG
-					debugpline("Intrinsic %d replacing %d",
-								i, tmp);
-#endif
-					tmp = i;
-				}
+				givit(i,ptr);
 			}
 		 }
 
-		 /* if any found try to give them one */
-		 if (count) givit(tmp, ptr);
-	    }
+		}
 	    break;
 	}
 
@@ -1303,9 +1291,9 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	} else if (poisonous(&mons[mnum]) && rn2(5)) {
 		tp++;
 		pline("Ecch - that must have been poisonous!");
-		if(!Poison_resistance) {
-			losestr(rnd(4));
-			losehp(rnd(15), "poisonous corpse", KILLED_BY_AN);
+		if(how_resistant(POISON_RES) < 100) {
+			losestr(resist_reduce(rnd(4),POISON_RES));
+			losehp(resist_reduce(rnd(15),POISON_RES), "poisonous corpse", KILLED_BY_AN);
 		} else	You("seem unaffected by the poison.");
 	/* now any corpse left too long will make you mildly ill */
 	} else if ((rotted > 5L || (rotted > 3L && rn2(5)))
@@ -1566,13 +1554,13 @@ struct obj *otmp;
 		flags.botl = 1;
 		break;
 	    case RIN_FREE_ACTION:
-		/* Give sleep resistance instead */
-		if (!(HSleep_resistance & FROMOUTSIDE))
-		    accessory_has_effect(otmp);
-		if (!Sleep_resistance)
-		    You_feel("wide awake.");
-		HSleep_resistance |= FROMOUTSIDE;
-		break;
+			/* Give sleep resistance instead */
+			if (how_resistant(SLEEP_RES) < 100) {
+				accessory_has_effect(otmp);
+				You_feel("wide awake.");
+			}
+			incr_resistance(&HSleep_resistance,100);
+			break;
 	    case AMULET_OF_CHANGE:
 		accessory_has_effect(otmp);
 		makeknown(typ);
@@ -1819,7 +1807,7 @@ struct obj *otmp;
 		if (yn_function(buf,ynchars,'n')=='n') return 1;
 		else return 2;
 	}
-	if (cadaver && poisonous(&mons[mnum]) && !Poison_resistance) {
+	if (cadaver && poisonous(&mons[mnum]) && how_resistant(POISON_RES) < 100) {
 		/* poisonous */
 		Sprintf(buf, "%s like %s might be poisonous! %s",
 			foodsmell, it_or_they, eat_it_anyway);
@@ -1985,9 +1973,9 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 
 	    if (otmp->oclass == WEAPON_CLASS && otmp->opoisoned) {
 		pline("Ecch - that must have been poisonous!");
-		if(!Poison_resistance) {
-		    losestr(rnd(4));
-		    losehp(rnd(15), xname(otmp), KILLED_BY_AN);
+		if (how_resistant(POISON_RES) < 100) {
+		    losestr(resist_reduce(rnd(4),POISON_RES));
+		    losehp(resist_reduce(rnd(15),POISON_RES), xname(otmp), KILLED_BY_AN);
 		} else
 		    You("seem unaffected by the poison.");
 	    } else if (!otmp->cursed)

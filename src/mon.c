@@ -2111,7 +2111,7 @@ int  typ, fatal;
 			string, plural ? "were" : "was");
 	}
 
-	if(Poison_resistance) {
+	if(how_resistant(POISON_RES) == 100) {
 		if(!strcmp(string, "blast")) shieldeff(u.ux, u.uy);
 		pline_The("poison doesn't seem to affect you.");
 		return;
@@ -2131,15 +2131,15 @@ int  typ, fatal;
 		/* used to be instantly fatal; now just gongs your maxhp for (4d6)/2
 		 * ...which is probably pretty close to fatal anyway for low-levels */
 		pline_The("poison was extremely toxic!");
-		i = d(4,6);
+		i = resist_reduce(d(4,6),POISON_RES);
 		losehp(i,pname,kprefix);
 		gainmaxhp(i/-2);
 	} else if(i <= 5) {
 		/* Check that a stat change was made */
-		if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3,3), 1))
+		if (adjattrib(typ, thrown_weapon ? -1 : -resist_reduce(rn1(3,3),POISON_RES), 1))
 		    pline("You%s!", poiseff[typ]);
 	} else {
-		i = thrown_weapon ? rnd(6) : rn1(10,6);
+		i = resist_reduce(thrown_weapon ? rnd(6) : rn1(10,6),POISON_RES);
 		if(Half_physical_damage) i = (i+1) / 2;
 		losehp(i, pname, kprefix);
 	}

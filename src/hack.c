@@ -927,10 +927,10 @@ domove()
 			    || is_floater(youmonst.data) || is_clinger(youmonst.data)
 			    || is_whirly(youmonst.data))
 			on_ice = FALSE;
-		    else if (!rn2(Cold_resistance ? 3 : 2)) {
-			HFumbling |= FROMOUTSIDE;
-			HFumbling &= ~TIMEOUT;
-			HFumbling += 1;  /* slip on next move */
+		    else if (!rn2((how_resistant(COLD_RES) > 50) ? 3 : 2)) {	
+				HFumbling |= FROMOUTSIDE;
+				HFumbling &= ~TIMEOUT;
+				HFumbling += 1;  /* slip on next move */
 		    }
 		}
 		if (!on_ice && (HFumbling & FROMOUTSIDE))

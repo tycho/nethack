@@ -493,12 +493,12 @@ aligntyp resp_god;
 		    pline("For some reason you're unaffected.");
 		else
 		    (void) ureflects("%s reflects from your %s.", "It");
-	    } else if (Shock_resistance) {
-		shieldeff(u.ux, u.uy);
-		monstseesu(M_SEEN_ELEC);
-		pline("It seems not to affect you.");
+	    } else if (how_resistant(SHOCK_RES) == 100) {
+			shieldeff(u.ux, u.uy);
+			monstseesu(M_SEEN_ELEC);
+			pline("It seems not to affect you.");
 	    } else
-		fry_by_god(resp_god);
+			fry_by_god(resp_god);
 	}
 
 	pline("%s is not deterred...", align_gname(resp_god));
@@ -528,12 +528,12 @@ aligntyp resp_god;
 #ifdef TOURIST
 	    if (uarmu && !uarm && !uarmc) (void) destroy_arm(uarmu);
 #endif
-	    if (!Disint_resistance)
-		fry_by_god(resp_god);
+	    if (how_resistant(DISINT_RES) < 100)
+			fry_by_god(resp_god);
 	    else {
-		You("bask in its %s glow for a minute...", NH_BLACK);
-		monstseesu(M_SEEN_DISINT);
-		godvoice(resp_god, "I believe it not!");
+			You("bask in its %s glow for a minute...", NH_BLACK);
+			monstseesu(M_SEEN_DISINT);
+			godvoice(resp_god, "I believe it not!");
 	    }
 	    if (Is_astralevel(&u.uz) || Is_sanctum(&u.uz)) {
 		/* one more try for high altars */
@@ -655,11 +655,11 @@ gcrownu()
 #define ok_wep(o) ((o) && ((o)->oclass == WEAPON_CLASS || is_weptool(o)))
 
     HSee_invisible |= FROMOUTSIDE;
-    HFire_resistance |= FROMOUTSIDE;
-    HCold_resistance |= FROMOUTSIDE;
-    HShock_resistance |= FROMOUTSIDE;
-    HSleep_resistance |= FROMOUTSIDE;
-    HPoison_resistance |= FROMOUTSIDE;
+	 incr_resistance(&HFire_resistance,100);
+    incr_resistance(&HCold_resistance,100);
+    incr_resistance(&HShock_resistance,100);
+    incr_resistance(&HSleep_resistance,100);
+    incr_resistance(&HPoison_resistance,100);
 	 monstseesu(M_SEEN_FIRE|M_SEEN_COLD|M_SEEN_ELEC|M_SEEN_SLEEP|M_SEEN_POISON);
     godvoice(u.ualign.type, (char *)0);
 

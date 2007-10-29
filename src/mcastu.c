@@ -298,21 +298,25 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 
 	    case AD_FIRE:
 		pline("You're enveloped in flames.");
-		if(Fire_resistance) {
+		if (how_resistant(FIRE_RES) == 100) {
 			shieldeff(u.ux, u.uy);
 			pline("But you resist the effects.");
 			monstseesu(M_SEEN_FIRE);
 			dmg = 0;
+		} else {
+			dmg = resist_reduce(dmg,FIRE_RES);
 		}
 		burn_away_slime();
 		break;
 	    case AD_COLD:
 		pline("You're covered in frost.");
-		if(Cold_resistance) {
+		if(how_resistant(COLD_RES) == 100) {
 			shieldeff(u.ux, u.uy);
 			pline("But you resist the effects.");
 			monstseesu(M_SEEN_COLD);
 			dmg = 0;
+		} else {
+			dmg = resist_reduce(dmg,COLD_RES);
 		}
 		break;
 	    case AD_MAGM:
@@ -561,12 +565,12 @@ int spellnum;
 	break;
     case CLC_FIRE_PILLAR:
 	pline("A pillar of fire strikes all around you!");
-	if (Fire_resistance) {
+	if (how_resistant(FIRE_RES) == 100) {
 	    shieldeff(u.ux, u.uy);
 		 monstseesu(M_SEEN_FIRE);
 	    dmg = 0;
 	} else
-	    dmg = d(8, 6);
+	    dmg = resist_reduce(d(8,6),FIRE_RES);
 	if (Half_spell_damage) dmg = (dmg + 1) / 2;
 	burn_away_slime();
 	(void) burnarmor(&youmonst);
@@ -580,19 +584,19 @@ int spellnum;
 		boolean reflects;
 		pline("A bolt of lightning strikes down at you from above!");
 		reflects = ureflects("Some of it bounces off your %s%s.", "");
-		if (reflects || Shock_resistance) {
+		if (reflects || (how_resistant(SHOCK_RES) == 100)) {
 			shieldeff(u.ux, u.uy);
 			if (reflects) {
-				dmg = d(4,6);
+				dmg = resist_reduce(d(4,6),SHOCK_RES);
 				monstseesu(M_SEEN_REFL);
 			}
-			if (Shock_resistance) {
+			if (how_resistant(SHOCK_RES) == 100) {
 				pline("You aren't shocked.");
 				dmg = 0;
 				monstseesu(M_SEEN_ELEC);
 			}
 		} else {
-			dmg = d(8, 6);
+			dmg = resist_reduce(d(8,6),SHOCK_RES);
 		}
 		if (dmg && Half_spell_damage)  { dmg = (dmg + 1) / 2; }
 		if (!reflects) {
