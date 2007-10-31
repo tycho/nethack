@@ -99,10 +99,10 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define KICKED_WEAPON	2
 #define FLASHED_LIGHT	3
 #define INVIS_BEAM	4
-
 #define MATCH_WARN_OF_MON(mon)	 (Warn_of_mon && flags.warntype && \
 		   		 ((flags.warntype == (unsigned long)(mon)->data->mlet) || \
-						(flags.warntype == S_WERE && (mon)->data->mflags2 & M2_WERE)))
+						(flags.warntype == S_WERE && (mon)->data->mflags2 & M2_WERE) || \
+					   (flags.warntype == S_UNDEAD && (mon)->data->mflags2 & M2_UNDEAD)))
 
 #include "trap.h"
 #include "flag.h"
