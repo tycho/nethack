@@ -689,7 +689,7 @@ register struct permonst *ptr;
 #ifdef DEBUG
 		debugpline("Trying to give fire resistance");
 #endif
-		if((HFire_resistance & TIMEOUT) < 100) {
+		if((HFire_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
 			You(Hallucination ? "be chillin'." : "feel a momentary chill.");
 			incr_resistance(&HFire_resistance,percentincrease);
 		}
@@ -698,7 +698,7 @@ register struct permonst *ptr;
 #ifdef DEBUG
 		debugpline("Trying to give sleep resistance");
 #endif
-		if((HSleep_resistance & TIMEOUT) < 100) {
+		if((HSleep_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
 			You_feel("wide awake.");
 			incr_resistance(&HSleep_resistance,percentincrease);
 		}
@@ -707,7 +707,7 @@ register struct permonst *ptr;
 #ifdef DEBUG
 		debugpline("Trying to give cold resistance");
 #endif
-		if((HCold_resistance & TIMEOUT) < 100) {
+		if((HCold_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
 			You_feel("full of hot air.");
 			incr_resistance(&HCold_resistance,percentincrease);
 		}
@@ -716,7 +716,7 @@ register struct permonst *ptr;
 #ifdef DEBUG
 		debugpline("Trying to give disintegration resistance");
 #endif
-		if((HDisint_resistance & TIMEOUT) < 100) {
+		if((HDisint_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
 			You_feel(Hallucination ? "totally together, man." : "very firm.");
 			incr_resistance(&HDisint_resistance,percentincrease);
 		}
@@ -725,7 +725,7 @@ register struct permonst *ptr;
 #ifdef DEBUG
 		debugpline("Trying to give shock resistance");
 #endif
-		if((HShock_resistance & TIMEOUT) < 100) {
+		if((HShock_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
 			if (Hallucination)
 				You_feel("grounded in reality.");
 			else
@@ -737,7 +737,7 @@ register struct permonst *ptr;
 #ifdef DEBUG
 		debugpline("Trying to give poison resistance");
 #endif
-		if((HPoison_resistance & TIMEOUT) < 100) {
+		if((HPoison_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
 			You_feel(how_resistant(POISON_RES) == 100 ? "especially healthy." : "healthy.");
 			incr_resistance(&HPoison_resistance,percentincrease);
 		}
