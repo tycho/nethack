@@ -714,6 +714,10 @@ int how;
 			if (how == GENOCIDED)
 				pline("Unfortunately you are still genocided...");
 			else {
+#ifdef WISH_TRACKER
+				Sprintf(pbuf,"%s lifesaved instead of being killed by a %s on T:%d",plname,killer,moves);
+				makeannounce(pbuf);
+#endif
 				killer = 0;
 				killer_format = 0;
 				return;
