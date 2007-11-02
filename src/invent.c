@@ -259,12 +259,14 @@ struct obj *obj;
 	} else if (obj->otyp == AMULET_OF_YENDOR) {
 		if (u.uhave.amulet) impossible("already have amulet?");
 		u.uhave.amulet = 1;
+#ifdef WISH_TRACKER
 		if (Is_sanctum(&u.uz)) {
 			Sprintf(buf,
 				"%s picked up the Amulet of Yendor in Moloch's Sanctum on T:%d", 
 				plname,moves);
 			makeannounce(buf);
 		}
+#endif
 	} else if (obj->otyp == CANDELABRUM_OF_INVOCATION) {
 		if (u.uhave.menorah) impossible("already have candelabrum?");
 		u.uhave.menorah = 1;
