@@ -2501,6 +2501,12 @@ long hmask, emask;     /* might cancel timeout */
 		if(is_pool(u.ux,u.uy) && !Wwalking && !Swimming && !u.uinwater)
 			no_msg = drown();
 
+		if (is_pool(u.ux,u.uy) && uarm &&
+				(uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
+			levl[u.ux][u.uy].typ = ICE;
+			pline("The pool crackles and freezes under your feet.");
+		}
+
 		if(is_lava(u.ux,u.uy)) {
 			(void) lava_effects();
 			no_msg = TRUE;
@@ -4108,71 +4114,86 @@ lava_effects()
     if (likes_lava(youmonst.data)) return FALSE;
 
     if (how_resistant(FIRE_RES) < 100) {
-	if(Wwalking) {
-	    dmg = resist_reduce(d(6,6),FIRE_RES);
-	    pline_The("lava here burns you!");
-	    if(dmg < u.uhp) {
-		losehp(dmg, lava_killer, KILLED_BY);
-		goto burn_stuff;
-	    }
-	} else
-	    You("fall into the lava!");
+		if(Wwalking) {
+			if (uarm && (uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
+				levl[u.ux][u.uy].typ = ROOM;
+				if (!rn2(4)) {
+					pline_The("lava cools and solidifies under your feet.");
+				}
+				return;
+			}
+			dmg = resist_reduce(d(6,6),FIRE_RES);
+			pline_The("lava here burns you!");
+			if(dmg < u.uhp) {
+				losehp(dmg, lava_killer, KILLED_BY);
+				goto burn_stuff;
+			}
+		} else
+			You("fall into the lava!");
 
-	usurvive = Lifesaved || discover;
+		usurvive = Lifesaved || discover;
 #ifdef WIZARD
-	if (wizard) usurvive = TRUE;
+		if (wizard) usurvive = TRUE;
 #endif
-	for(obj = invent; obj; obj = obj2) {
-	    obj2 = obj->nobj;
-	    if(is_organic(obj) && !obj->oerodeproof) {
-		if(obj->owornmask) {
-		    if (usurvive)
-			Your("%s into flame!", aobjnam(obj, "burst"));
+		for(obj = invent; obj; obj = obj2) {
+			obj2 = obj->nobj;
+			if(is_organic(obj) && !obj->oerodeproof) {
+				if(obj->owornmask) {
+					if (usurvive)
+						Your("%s into flame!", aobjnam(obj, "burst"));
 
-		    if(obj == uarm) (void) Armor_gone();
-		    else if(obj == uarmc) (void) Cloak_off();
-		    else if(obj == uarmh) (void) Helmet_off();
-		    else if(obj == uarms) (void) Shield_off();
-		    else if(obj == uarmg) (void) Gloves_off();
-		    else if(obj == uarmf) (void) Boots_off();
+					if(obj == uarm) (void) Armor_gone();
+					else if(obj == uarmc) (void) Cloak_off();
+					else if(obj == uarmh) (void) Helmet_off();
+					else if(obj == uarms) (void) Shield_off();
+					else if(obj == uarmg) (void) Gloves_off();
+					else if(obj == uarmf) (void) Boots_off();
 #ifdef TOURIST
-		    else if(obj == uarmu) setnotworn(obj);
+					else if(obj == uarmu) setnotworn(obj);
 #endif
-		    else if(obj == uleft) Ring_gone(obj);
-		    else if(obj == uright) Ring_gone(obj);
-		    else if(obj == ublindf) Blindf_off(obj);
-		    else if(obj == uamul) Amulet_off();
-		    else if(obj == uwep) uwepgone();
-		    else if (obj == uquiver) uqwepgone();
-		    else if (obj == ulauncher) ulwepgone();
-		    else if (obj == uswapwep) uswapwepgone();
+					else if(obj == uleft) Ring_gone(obj);
+					else if(obj == uright) Ring_gone(obj);
+					else if(obj == ublindf) Blindf_off(obj);
+					else if(obj == uamul) Amulet_off();
+					else if(obj == uwep) uwepgone();
+					else if (obj == uquiver) uqwepgone();
+					else if (obj == ulauncher) ulwepgone();
+					else if (obj == uswapwep) uswapwepgone();
+				}
+				useupall(obj);
+			}
 		}
-		useupall(obj);
-	    }
-	}
 
-	/* s/he died... */
-	u.uhp = -1;
-	killer_format = KILLED_BY;
-	killer = lava_killer;
-	You("burn to a crisp...");
-	done(BURNING);
-	while (!safe_teleds(TRUE)) {
-		pline("You're still burning.");
+		/* s/he died... */
+		u.uhp = -1;
+		killer_format = KILLED_BY;
+		killer = lava_killer;
+		You("burn to a crisp...");
 		done(BURNING);
-	}
-	You("find yourself back on solid %s.", surface(u.ux, u.uy));
-	return(TRUE);
+		while (!safe_teleds(TRUE)) {
+			pline("You're still burning.");
+			done(BURNING);
+		}
+		You("find yourself back on solid %s.", surface(u.ux, u.uy));
+		return(TRUE);
     }
 
     if (!Wwalking) {
-	u.utrap = rn1(4, 4) + (rn1(4, 12) << 8);
-	u.utraptype = TT_LAVA;
-	You("sink into the lava, but it only burns slightly!");
-	monstseesu(M_SEEN_FIRE);
-	if (u.uhp > 1)
-	    losehp(1, lava_killer, KILLED_BY);
-    }
+		u.utrap = rn1(4, 4) + (rn1(4, 12) << 8);
+		u.utraptype = TT_LAVA;
+		You("sink into the lava, but it only burns slightly!");
+		monstseesu(M_SEEN_FIRE);
+		if (u.uhp > 1)
+			losehp(1, lava_killer, KILLED_BY);
+    } else {
+		if (uarm && (uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
+			levl[u.ux][u.uy].typ = ROOM;
+			if (!rn2(4)) {
+				pline_The("lava cools and solidifies under your feet.");
+			}
+			return;
+		}
+	 }
     /* just want to burn boots, not all armor; destroy_item doesn't work on
        armor anyway */
 burn_stuff:

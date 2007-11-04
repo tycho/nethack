@@ -2556,7 +2556,7 @@ register struct attack *mattk;
 				if (!haseyes(mtmp->data)) { return 1; }
 				if (canseemon(mtmp) && mtmp->mcansee && rn2(2)) {
 					Sprintf(plurbuf,"%s",s_suffix(mon_nam(mtmp)));
-					pline("The %s eye%s veiled in darkness!",plurbuf,
+					pline("%s eye%s veiled in darkness!",plurbuf,
 							eyecount(mtmp->data) > 1 ? "s are" : " is");
 				}
 				mtmp->mcansee = 0;

@@ -599,6 +599,10 @@ Armor_on()
 				EConfusion_resistance |= W_ARM;
 				EStun_resistance |= W_ARM;
 				break;
+			case WHITE_DRAGON_SCALE_MAIL:
+			case WHITE_DRAGON_SCALES:
+				EWwalking |= W_ARM;
+				break;
 			default:
 				break;
 		}
@@ -628,6 +632,9 @@ Armor_off()
 				EConfusion_resistance &= ~W_ARM;
 				EStun_resistance &= ~W_ARM;
 				break;
+			case WHITE_DRAGON_SCALE_MAIL:
+			case WHITE_DRAGON_SCALES:
+				EWwalking &= ~W_ARM;
 			default:
 				break;
 		}
@@ -662,6 +669,9 @@ Armor_gone()
 				EConfusion_resistance &= ~W_ARM;
 				EStun_resistance &= ~W_ARM;
 				break;
+			case WHITE_DRAGON_SCALE_MAIL:
+			case WHITE_DRAGON_SCALES:
+				EWwalking &= ~W_ARM;
 			default:
 				break;
 		}

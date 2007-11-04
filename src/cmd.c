@@ -890,8 +890,9 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	if (Sick_resistance) you_are("immune to sickness");
 	if (Antimagic) you_are("magic-protected");
 	if (Acid_resistance) you_are("acid resistant");
-	if (Stone_resistance)
-		you_are("petrification resistant");
+	if (Stone_resistance) you_are("petrification resistant");
+	if (Confusion_resistance) you_are("confusion resistant");
+	if (Stun_resistance) you_are("stun resistant");
 	if (Invulnerable) you_are("invulnerable");
 	if (u.uedibility) you_can("recognize detrimental food");
 
@@ -1231,6 +1232,8 @@ int final;
 	if (Antimagic) dump(youwere, "magic-protected");
 	if (Acid_resistance) dump(youwere, "acid resistant");
 	if (Stone_resistance) dump(youwere, "petrification resistant");
+	if (Confusion_resistance) dump(youwere, "confusion resistant");
+	if (Stun_resistance) dump(youwere, "stun resistant");
 	if (Invulnerable) dump(youwere, "invulnerable");
 	if (u.uedibility) dump(youcould, "recognize detrimental food");
 
