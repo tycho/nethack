@@ -938,6 +938,11 @@ int thrown;
 			tmp += (dbon() > 1) ? 2 : dbon();
 	}
 
+	/* Red make Zog MAD!  Zog hit harder. */
+	if (uarm && (uarm->otyp == RED_DRAGON_SCALE_MAIL || uarm->otyp == RED_DRAGON_SCALES)) {
+		tmp += rnd(6);
+	}
+
 	if (valid_weapon_attack) {
 	    struct obj *wep;
 
