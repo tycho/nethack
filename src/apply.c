@@ -2379,10 +2379,10 @@ struct obj *obj;
 
 	if (mtmp) {
 	    if (bigmonst(mtmp->data)) {
-		wrapped_what = strcpy(buf, mon_nam(mtmp));
+			wrapped_what = strcpy(buf, mon_nam(mtmp));
 	    } else if (proficient) {
-		if (attack(mtmp)) return 1;
-		else pline(msg_snap);
+			if (attack(mtmp)) return 1;
+			else pline(msg_snap);
 	    }
 	}
 	if (!wrapped_what) {
@@ -2414,6 +2414,20 @@ struct obj *obj;
 		!glyph_is_invisible(levl[rx][ry].glyph)) {
 	   pline("A monster is there that you couldn't see.");
 	   map_invisible(rx, ry);
+	}
+	/* Disciplining your pets? */
+	if (mtmp->mtame) {
+		pline("You severely beat %s!",y_monnam(mtmp));
+		abuse_dog(mtmp);
+		return 1;
+	}
+	/* invitation to a little S&M perhaps? */
+	if (mtmp->data == &mons[PM_SUCCUBUS] || mtmp->data == &mons[PM_INCUBUS]) {
+		pline("As you crack the whip, %s winks at you.",mon_nam(mtmp));
+		if (!Upolyd && mtmp->female != flags.female) {
+			mattacku(mtmp);
+		}
+		return 1;
 	}
 	otmp = MON_WEP(mtmp);	/* can be null */
 	if (otmp) {
