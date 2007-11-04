@@ -3210,13 +3210,26 @@ doapply()
 	/* Tools that aren't in perfect condition might break... 
 	 * ...but only tools, not the weapons */
 	if (obj && !obj->oerodeproof && obj->otyp != BULLWHIP && 
-			!is_pole(obj) && !is_pick(obj)) {
+			!is_pole(obj) && !is_pick(obj) && !obj->oartifact) {	 /* don't break the Key */
 		breakchance = obj->blessed ? 100 : obj->cursed ? 5 : 10;
 		if (rn2(breakchance) < greatest_erosion(obj)) {
 			Strcpy(eroded,"");
 			add_erosion_words(obj,(char*)eroded);
 			Strcat(eroded,xname(obj));
 			pline("Your %s breaks!",eroded);
+			if (Has_contents(obj)) {
+				pline("The contents spill out everywhere!");
+				struct obj* octmp;
+				struct obj* tobj;
+				for (octmp = obj->cobj; octmp; octmp = tobj) {
+					tobj = octmp->nobj;
+					obj_extract_self(octmp);
+					if (!flooreffects(octmp,u.ux,u.uy,"falls")) {
+						place_object(octmp,u.ux,u.uy);
+						stackobj(octmp);
+					}
+				}
+			}
 			useup(obj);
 			return res;
 		}
