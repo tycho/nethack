@@ -133,6 +133,11 @@ boolean talk;
 {
 	long old = HConfusion;
 
+	if (Confusion_resistance) { 
+		set_itimeout(&HConfusion, 0);
+		return; 
+	}
+
 	if (!xtime && old) {
 		if (talk)
 		    You_feel("less %s now.",
@@ -149,6 +154,11 @@ long xtime;
 boolean talk;
 {
 	long old = HStun;
+
+	if (Stun_resistance) { 
+		set_itimeout(&HStun, 0);
+		return; 
+	}
 
 	if (!xtime && old) {
 		if (talk)
