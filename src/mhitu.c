@@ -2517,6 +2517,56 @@ register struct monst *mtmp;
 register struct attack *mattk;
 {
 	int i, tmp;
+	char plurbuf[BUFSZ];
+
+	/* Putting this in this way is kind of ugly but most of the alternatives are worse;
+	 * at least this way there's a hook available for use.
+	 *
+	 * Yes, the dragons themselves don't get these effects, for good reason. */
+	if (uarm) {
+		switch(uarm->otyp) {
+			case GREEN_DRAGON_SCALE_MAIL:
+			case GREEN_DRAGON_SCALES:
+				if (resists_poison(mtmp)) { return 1; }
+				i = rn2(20);
+				if (i) { 
+					mtmp->mhp -= rnd(6); 
+					if (rn2(3) || mtmp->mhp < 1) { pline("%s staggers from the poison!",Monnam(mtmp)); }
+				}
+				else { 
+					mtmp->mhp = -1; 
+					pline("%s is fatally poisoned!",Monnam(mtmp));
+				}
+				if (mtmp->mhp < 1) {
+					xkilled(mtmp,1);
+				}
+				return 1;
+				break;
+			case ORANGE_DRAGON_SCALE_MAIL:
+			case ORANGE_DRAGON_SCALES:
+				if (resists_sleep(mtmp)) { return 1; }
+				if (canseemon(mtmp) && mtmp->mspeed != MSLOW) {
+					pline("%s looks a little sleepy...",Monnam(mtmp));
+				}
+				mtmp->mspeed = MSLOW;
+				return 1;
+				break;
+			case BLACK_DRAGON_SCALE_MAIL:
+			case BLACK_DRAGON_SCALES:
+				if (!haseyes(mtmp->data)) { return 1; }
+				if (canseemon(mtmp) && mtmp->mcansee && rn2(2)) {
+					Sprintf(plurbuf,"%s",s_suffix(mon_nam(mtmp)));
+					pline("The %s eye%s veiled in darkness!",plurbuf,
+							eyecount(mtmp->data) > 1 ? "s are" : " is");
+				}
+				mtmp->mcansee = 0;
+				mtmp->mblinded += rnd(20);
+				return 1;
+				break;
+			default:	  /* all other types of armor, just pass on through */
+				break;
+		}
+	}
 
 	for (i = 0; ; i++) {
 	    if (i >= NATTK) return 1;
