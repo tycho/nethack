@@ -92,12 +92,18 @@
 
 /* Those implemented solely as timeouts (we use just intrinsic) */
 #define HStun			u.uprops[STUNNED].intrinsic
-#define Stunned			(HStun || u.umonnum == PM_STALKER || \
-				 youmonst.data->mlet == S_BAT)
+#define Stunned			(!Stun_resistance && \
+							(HStun || u.umonnum == PM_STALKER || youmonst.data->mlet == S_BAT))
 		/* Note: birds will also be stunned */
 
-#define HConfusion		u.uprops[CONFUSION].intrinsic
-#define Confusion		HConfusion
+#define HConfusion				  u.uprops[CONFUSION].intrinsic
+#define Confusion					  (HConfusion && !Confusion_resistance)
+
+/* cheap hack to avoid breaking save */
+#define EConfusion_resistance	  u.uprops[CONFUSION].extrinsic
+#define Confusion_resistance	  EConfusion_resistance
+#define EStun_resistance		  u.uprops[STUNNED].extrinsic
+#define Stun_resistance			  EStun_resistance
 
 #define Blinded			u.uprops[BLINDED].intrinsic
 #define Blindfolded		(ublindf && ublindf->otyp != LENSES)
