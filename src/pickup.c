@@ -1553,7 +1553,6 @@ doloot()	/* loot a container on the floor or loot saddle from mon. */
     boolean underfoot = TRUE;
     const char *dont_find_anything = "don't find anything";
     struct monst *mtmp;
-	 struct permonst* mdat;
     char qbuf[BUFSZ];
     int prev_inquiry = 0;
     boolean prev_loot = FALSE;

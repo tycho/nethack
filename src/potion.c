@@ -121,7 +121,7 @@ int
 resist_reduce(amount,which)
 int amount, which;
 {
-	float tmp = 100 - how_resistant(which);
+	float tmp = (float)(100 - how_resistant(which));
 	tmp /= 100;
 	return (int)((float)amount * tmp);
 }
