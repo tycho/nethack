@@ -79,8 +79,6 @@ int
 picklock()	/* try to open/close a lock */
 {
 
-	int rn;
-
 	if (xlock.box) {
 	    if(((xlock.box->ox != u.ux) || (xlock.box->oy != u.uy)) &&
 				 (xlock.box->otyp != IRON_SAFE || abs(xlock.box->oy - u.uy) > 1 ||

@@ -4120,7 +4120,7 @@ lava_effects()
 				if (!rn2(4)) {
 					pline_The("lava cools and solidifies under your feet.");
 				}
-				return;
+				return FALSE;
 			}
 			dmg = resist_reduce(d(6,6),FIRE_RES);
 			pline_The("lava here burns you!");
@@ -4191,7 +4191,7 @@ lava_effects()
 			if (!rn2(4)) {
 				pline_The("lava cools and solidifies under your feet.");
 			}
-			return;
+			return FALSE;
 		}
 	 }
     /* just want to burn boots, not all armor; destroy_item doesn't work on

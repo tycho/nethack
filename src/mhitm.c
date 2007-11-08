@@ -876,11 +876,11 @@ mdamagem(magr, mdef, mattk)
 		break;
 	    case AD_TLPT:
 		if (!cancelled && tmp < mdef->mhp && !tele_restrict(mdef)) {
+		    char mdef_Monnam[BUFSZ];
 			/* works on other critters too.. */
 			if (magr->mnum == PM_BOOJUM) {
 				mdef->perminvis = mdef->minvis = TRUE;
 			}
-		    char mdef_Monnam[BUFSZ];
 		    /* save the name before monster teleports, otherwise
 		       we'll get "it" in the suddenly disappears message */
 		    if (vis) Strcpy(mdef_Monnam, Monnam(mdef));

@@ -681,6 +681,7 @@ boolean magic_dmg;
 
 	erosion = (acid_dmg || magic_dmg) ? target->oeroded2 : target->oeroded;
 	corrosion = (acid_dmg || magic_dmg);
+	rotting = FALSE; /* TODO: temporary */
 
 	if (target->greased && !magic_dmg) {
 	    grease_protect(target,(char *)0,victim);

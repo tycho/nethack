@@ -3232,9 +3232,9 @@ doapply()
 			Strcat(eroded,xname(obj));
 			pline("Your %s breaks!",eroded);
 			if (Has_contents(obj)) {
-				pline("The contents spill out everywhere!");
 				struct obj* octmp;
 				struct obj* tobj;
+				pline("The contents spill out everywhere!");
 				for (octmp = obj->cobj; octmp; octmp = tobj) {
 					tobj = octmp->nobj;
 					obj_extract_self(octmp);
