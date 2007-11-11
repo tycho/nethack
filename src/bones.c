@@ -249,6 +249,10 @@ struct obj *corpse;
 	if(uarm && (uarm->otyp == GOLD_DRAGON_SCALE_MAIL || uarm->otyp == GOLD_DRAGON_SCALES))
 		end_burn(uarm,FALSE);
 
+	if(uarms && uarms->otyp == SHIELD_OF_LIGHT) {
+		end_burn(uarms,FALSE);
+	}
+
 	/* dispose of your possessions, usually cursed */
 	if (u.ugrave_arise == (NON_PM - 1)) {
 		struct obj *otmp;
