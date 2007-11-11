@@ -621,7 +621,8 @@ CONTAINER("large box", (char *)0,       1, 0, 0,  40,350,   8, WOOD, HI_WOOD),
 CONTAINER("chest", (char *)0,           1, 0, 0,  25,600,  16, WOOD, HI_WOOD),
 CONTAINER("iron safe", (char *)0,       1, 0, 0,  10,900,  50, IRON, HI_METAL),
 CONTAINER("ice box", (char *)0,         1, 0, 0,   5,900,  42, PLASTIC, CLR_WHITE),
-CONTAINER("sack", "bag",                0, 0, 0,  30, 15,   2, CLOTH, HI_CLOTH),
+CONTAINER("small sack", "small bag",    0, 0, 0,  30, 15,   2, CLOTH, HI_CLOTH),
+CONTAINER("sack", "bag",                0, 0, 0,  20, 15,   2, CLOTH, HI_CLOTH),
 CONTAINER("oilskin sack", "bag",        0, 0, 0,   5, 15, 100, CLOTH, HI_CLOTH),
 CONTAINER("bag of holding", "bag",      0, 1, 0,  20, 15, 100, CLOTH, HI_CLOTH),
 CONTAINER("bag of tricks", "bag",       0, 1, 1,  20, 15, 100, CLOTH, HI_CLOTH),
@@ -629,7 +630,7 @@ CONTAINER("bag of poo", "bag",          0, 0, 0,   5, 15,   2, CLOTH, HI_CLOTH),
 #undef CONTAINER
 
 /* lock opening tools */
-TOOL("skeleton key", "key",     0, 0, 0, 0,  80,  3,  10, IRON, HI_METAL),
+TOOL("skeleton key", "key",     0, 0, 0, 0,  60,  3,  10, IRON, HI_METAL),
 #ifdef TOURIST
 TOOL("lock pick", (char *)0,    1, 0, 0, 0,  60,  4,  20, IRON, HI_METAL),
 TOOL("credit card", (char *)0,  1, 0, 0, 0,  15,  1,  10, PLASTIC, CLR_WHITE),

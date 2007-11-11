@@ -1821,6 +1821,7 @@ register struct obj *obj;
 	boolean floor_container = !carried(current_container);
 	boolean was_unpaid = FALSE;
 	char buf[BUFSZ];
+	long one_item_weight = obj->quan < 2 ? obj->owt : (obj->owt / obj->quan);
 
 	if (!current_container) {
 		impossible("<in> no current_container?");
@@ -1852,6 +1853,13 @@ register struct obj *obj;
 	} else if (obj->otyp == LEASH && obj->leashmon != 0) {
 		pline("%s attached to your pet.", Tobjnam(obj, "are"));
 		return 0;
+	} else if (obj->owt + get_container_weight(current_container) > current_container->capacity) {
+		pline("You can't seem to fit %s into %s; it's too full.",
+				doname(obj),doname(current_container));
+		return -1;
+	} else if (current_container->otyp == SMALL_SACK && (one_item_weight > 30 || is_spear(obj))) {
+		pline("You aren't going to be able to wedge %s in there.",doname(obj));
+		return -1;
 	} else if (obj == uwep) {
 		if (welded(obj)) {
 			weldmsg(obj);

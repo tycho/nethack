@@ -144,17 +144,26 @@ struct obj *box;
 	box->cobj = (struct obj *) 0;
 
 	switch (box->otyp) {
-	case ICE_BOX:		n = 20; break;
-	case IRON_SAFE:   n = 10; break;
-	case CHEST:		   n = 5; break;
-	case LARGE_BOX:	n = 3; break;
-	case SACK:
-	case OILSKIN_SACK:
-				/* initial inventory: sack starts out empty */
-				if (moves <= 1 && !in_mklev) { n = 0; break; }
-				/*else FALLTHRU*/
-	case BAG_OF_HOLDING:	n = 1; break;
-	default:		n = 0; break;
+		case ICE_BOX:		
+			n = 20; box->capacity = MAX_CAPACITY; break;
+		case IRON_SAFE:   
+			n = 10; box->capacity = MAX_CAPACITY; break;
+		case CHEST:		   
+			n = 5; box->capacity = MAX_CAPACITY; break;
+		case LARGE_BOX:	
+			n = 3; box->capacity = 3000; break;
+		case SMALL_SACK:
+			n = 1; box->capacity = 200; break;
+		case SACK:
+			box->capacity = 1000;
+		case OILSKIN_SACK:
+			/* initial inventory: sack starts out empty */
+			if (moves <= 1 && !in_mklev) { n = 0; } else { n = 1; }
+			break;
+		case BAG_OF_HOLDING:	
+			n = 1; box->capacity = MAX_CAPACITY; break;
+		default:		
+			n = 0; box->capacity = 1000; break;
 	}
 
 	for (n = rn2(n+1); n > 0; n--) {
@@ -493,6 +502,7 @@ boolean artif;
 					}
 					otmp->otrapped = !(rn2(10));
 		case ICE_BOX:
+		case SMALL_SACK:
 		case SACK:
 		case OILSKIN_SACK:
 		case BAG_OF_HOLDING:	mkbox_cnts(otmp);
@@ -612,6 +622,7 @@ boolean artif;
 		switch (otmp->otyp) {
 		    case STATUE:
 			/* possibly overridden by mkcorpstat() */
+			otmp->capacity = MAX_CAPACITY;
 			otmp->corpsenm = rndmonnum();
 			if (!verysmall(&mons[otmp->corpsenm]) &&
 				rn2(level_difficulty()/2 + 10) > 10)
@@ -1427,13 +1438,13 @@ add_to_container(container, obj)
     struct obj *otmp;
 
     if (obj->where != OBJ_FREE)
-	panic("add_to_container: obj not free");
+		panic("add_to_container: obj not free");
     if (container->where != OBJ_INVENT && container->where != OBJ_MINVENT)
-	obj_no_longer_held(obj);
+		obj_no_longer_held(obj);
 
     /* merge if possible */
     for (otmp = container->cobj; otmp; otmp = otmp->nobj)
-	if (merged(&otmp, &obj)) return (otmp);
+		if (merged(&otmp, &obj)) return (otmp);
 
     obj->where = OBJ_CONTAINED;
     obj->ocontainer = container;
@@ -1441,6 +1452,26 @@ add_to_container(container, obj)
     container->cobj = obj;
     return (obj);
 }
+
+/* Small utility function to allow us to check against capacity quickly.
+ * Do not confuse with container_weight! */
+long
+get_container_weight(container)
+struct obj* container;
+{
+	struct obj* ot;
+	long total_weight = 0;
+
+	if (container && container->cobj) {
+		/* quick recalculate so we can be lazy */
+		container_weight(container);
+		for (ot = container->cobj; ot; ot = ot->nobj) {
+			total_weight += ot->owt;
+		}
+	}
+	return total_weight;
+}
+
 
 void
 add_to_migration(obj)

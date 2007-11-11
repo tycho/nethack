@@ -1519,7 +1519,7 @@ STATIC_DCL const struct o_range o_ranges[];
 
 /* wishable subranges of objects */
 STATIC_OVL NEARDATA const struct o_range o_ranges[] = {
-	{ "bag",	TOOL_CLASS,   SACK,	      BAG_OF_TRICKS },
+	{ "bag",	  TOOL_CLASS,   SMALL_SACK,      BAG_OF_POO },
 	{ "lamp",	TOOL_CLASS,   OIL_LAMP,	      MAGIC_LAMP },
 	{ "candle",	TOOL_CLASS,   TALLOW_CANDLE,  WAX_CANDLE },
 	{ "horn",	TOOL_CLASS,   TOOLED_HORN,    HORN_OF_PLENTY },
