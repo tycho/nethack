@@ -1099,6 +1099,7 @@ E void FDECL(extract_nobj, (struct obj *, struct obj **));
 E void FDECL(extract_nexthere, (struct obj *, struct obj **));
 E int FDECL(add_to_minv, (struct monst *, struct obj *));
 E struct obj *FDECL(add_to_container, (struct obj *, struct obj *));
+E long FDECL(get_container_weight, (struct obj *));
 E void FDECL(add_to_migration, (struct obj *));
 E void FDECL(add_to_buried, (struct obj *));
 E void FDECL(dealloc_obj, (struct obj *));

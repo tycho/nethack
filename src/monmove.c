@@ -1396,7 +1396,7 @@ struct monst *mtmp;
 #ifdef WIZARD
 		    obj->oclass != VENOM_CLASS &&
 #endif
-		    typ != SACK && typ != BAG_OF_HOLDING &&
+		    typ != SMALL_SACK && typ != SACK && typ != BAG_OF_HOLDING &&
 		    typ != BAG_OF_TRICKS && !Is_candle(obj) &&
 		    typ != OILSKIN_SACK && typ != LEASH &&
 		    typ != STETHOSCOPE && typ != BLINDFOLD && typ != TOWEL &&

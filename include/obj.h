@@ -99,6 +99,8 @@ struct obj {
 #define fromsink  corpsenm	/* a potion from a sink */
 	unsigned oeaten;	/* nutrition left in food, if partly eaten */
 	long age;		/* creation date */
+	long capacity;	  /* how much can this container hold? */
+#define MAX_CAPACITY 0xFFFFFF	  /* "lots" */
 
 	uchar onamelth;		/* length of name (following oxlth) */
 	short oxlth;		/* length of following data */
