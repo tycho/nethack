@@ -220,7 +220,8 @@ boolean on, silently;
     int which = (int) objects[obj->otyp].oc_oprop;
 
     unseen = !canseemon(mon);
-	if(obj->otyp == GOLD_DRAGON_SCALE_MAIL || obj->otyp == GOLD_DRAGON_SCALES) {
+	if(obj->otyp == GOLD_DRAGON_SCALE_MAIL || obj->otyp == GOLD_DRAGON_SCALES ||
+			obj->otyp == SHIELD_OF_LIGHT) {
 		if(on)
 			begin_burn(obj,FALSE);
 		else

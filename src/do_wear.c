@@ -499,41 +499,36 @@ Gloves_off()
 STATIC_OVL int
 Shield_on()
 {
-/*
-    switch (uarms->otyp) {
-	case SMALL_SHIELD:
-	case ELVEN_SHIELD:
-	case URUK_HAI_SHIELD:
-	case ORCISH_SHIELD:
-	case DWARVISH_ROUNDSHIELD:
-	case LARGE_SHIELD:
-	case SHIELD_OF_REFLECTION:
-		break;
-	default: impossible(unknown_type, c_shield, uarms->otyp);
-    }
-*/
-    return 0;
+	switch (uarms->otyp) {
+		case SHIELD_OF_LIGHT:
+			begin_burn(uarms,FALSE);
+			if(!Blind)
+				pline("%s to glow.",Tobjnam(uarms,"begin"));
+			break;
+		default:	 /* impossible() here was a bit paranoid */
+			break;
+	}
+	return 0;
 }
 
 int
 Shield_off()
 {
-    takeoff_mask &= ~W_ARMS;
-/*
-    switch (uarms->otyp) {
-	case SMALL_SHIELD:
-	case ELVEN_SHIELD:
-	case URUK_HAI_SHIELD:
-	case ORCISH_SHIELD:
-	case DWARVISH_ROUNDSHIELD:
-	case LARGE_SHIELD:
-	case SHIELD_OF_REFLECTION:
+	takeoff_mask &= ~W_ARMS;
+
+	switch (uarms->otyp) {
+		case SHIELD_OF_LIGHT:
+			end_burn(uarms,FALSE);
+			if(!Blind)
+				pline("%s glowing.",Tobjnam(uarms,"stop"));
+			break;
 		break;
-	default: impossible(unknown_type, c_shield, uarms->otyp);
-    }
-*/
-    setworn((struct obj *)0, W_ARMS);
-    return 0;
+	default: 
+		break;
+	}
+
+	setworn((struct obj *)0, W_ARMS);
+	return 0;
 }
 
 #ifdef TOURIST
