@@ -447,25 +447,30 @@ register struct monst *mtmp;
 
 		if (canseemon(mtmp))
 			pline("%s concentrates.", Monnam(mtmp));
-		if (distu(mtmp->mx, mtmp->my) > BOLT_LIM * BOLT_LIM) {
+		/* tinfoil hat is the only way to get blocked telepathy, so
+		 * it'll protect us here, though so should other future things 
+		 * that might block telepathy */
+		if (distu(mtmp->mx, mtmp->my) > BOLT_LIM * BOLT_LIM && !BTelepat) {
 			You("sense a faint wave of psychic energy.");
 			goto toofar;
 		}
-		pline("A wave of psychic energy pours over you!");
-		if (mtmp->mpeaceful &&
-		    (!Conflict || resist_conflict(mtmp)))
-			pline("It feels quite soothing.");
-		else {
-			register boolean m_sen = sensemon(mtmp);
+		if (!BTelepat) {
+			pline("A wave of psychic energy pours over you!");
+			if (mtmp->mpeaceful &&
+				(!Conflict || resist_conflict(mtmp)))
+				pline("It feels quite soothing.");
+			else {
+				register boolean m_sen = sensemon(mtmp);
 
-			if (m_sen || (Blind_telepat && rn2(2)) || !rn2(10)) {
-				int dmg;
-				pline("It locks on to your %s!",
-					m_sen ? "telepathy" :
-					Blind_telepat ? "latent telepathy" : "mind");
-				dmg = rnd(15);
-				if (Half_spell_damage) dmg = (dmg+1) / 2;
-				losehp(dmg, "psychic blast", KILLED_BY_AN);
+				if (m_sen || (Blind_telepat && rn2(2)) || !rn2(10)) {
+					int dmg;
+					pline("It locks on to your %s!",
+						m_sen ? "telepathy" :
+						Blind_telepat ? "latent telepathy" : "mind");
+					dmg = rnd(15);
+					if (Half_spell_damage) dmg = (dmg+1) / 2;
+					losehp(dmg, "psychic blast", KILLED_BY_AN);
+				}
 			}
 		}
 		for(m2=fmon; m2; m2 = nmon) {

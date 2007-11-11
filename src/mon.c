@@ -1504,7 +1504,7 @@ register struct monst *mtmp;
 		(otmp->otyp==GOLD_DRAGON_SCALE_MAIL || otmp->otyp == GOLD_DRAGON_SCALES) )
 		end_burn(otmp,FALSE);
 
-	if (otmp = which_armor(mtmp,W_ARMS) && otmp->otyp == SHIELD_OF_LIGHT) {
+	if ((otmp = which_armor(mtmp, W_ARMS)) && otmp->otyp == SHIELD_OF_LIGHT) {
 		end_burn(otmp,FALSE);
 	}
 

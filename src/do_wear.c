@@ -324,6 +324,8 @@ Helmet_on()
 	case DWARVISH_IRON_HELM:
 	case GNOMISH_HELM:
 	case ORCISH_HELM:
+	case HELM_OF_CLARITY:
+	case HELM_OF_DISCOVERY:
 	case HELM_OF_TELEPATHY:
 		break;
 	case HELM_OF_BRILLIANCE:
@@ -384,6 +386,7 @@ Helmet_off()
 	case DWARVISH_IRON_HELM:
 	case GNOMISH_HELM:
 	case ORCISH_HELM:
+	case HELM_OF_DISCOVERY:
 	    break;
 	case DUNCE_CAP:
 	    flags.botl = 1;
@@ -395,6 +398,7 @@ Helmet_off()
 	    }
 	    break;
 	case HELM_OF_TELEPATHY:
+	case HELM_OF_CLARITY:
 	    /* need to update ability before calling see_monsters() */
 	    setworn((struct obj *)0, W_ARMH);
 	    see_monsters();

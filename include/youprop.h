@@ -83,7 +83,7 @@
 #define Were_resistance	  (EWere_resistance)
 
 #define EBlind_resistance  u.uprops[BLIND_RES].extrinsic
-#define Blind_resistance	(EBlind_resistance)
+#define Blind_resistance	(EBlind_resistance || Vision)
 
 
 /*** Troubles ***/
@@ -109,9 +109,12 @@
 #define Blindfolded		(ublindf && ublindf->otyp != LENSES)
 		/* ...means blind because of a cover */
 #define Blind	((Blinded || Blindfolded || !haseyes(youmonst.data)) && \
-		 !(ublindf && ublindf->oartifact == ART_EYES_OF_THE_OVERWORLD))
+		 !(ublindf && ublindf->oartifact == ART_EYES_OF_THE_OVERWORLD) && \
+		 !(haseyes(youmonst.data) && Blind_resistance))
+
 		/* ...the Eyes operate even when you really are blind
-		    or don't have any eyes */
+		    or don't have any eyes, but blindness resistance won't
+			 grant sight to something that didn't have it... */
 
 #define Sick			u.uprops[SICK].intrinsic
 #define Stoned			u.uprops[STONED].intrinsic
@@ -123,7 +126,7 @@
 /* Hallucination is solely a timeout; its resistance is extrinsic */
 #define HHallucination		u.uprops[HALLUC].intrinsic
 #define EHalluc_resistance	u.uprops[HALLUC_RES].extrinsic
-#define Halluc_resistance	(EHalluc_resistance || \
+#define Halluc_resistance	(EHalluc_resistance || Vision || \
 				 (Upolyd && dmgtype(youmonst.data, AD_HALU)))
 #define Hallucination		(HHallucination && !Halluc_resistance)
 
@@ -149,17 +152,24 @@
 #define HSee_invisible		u.uprops[SEE_INVIS].intrinsic
 #define ESee_invisible		u.uprops[SEE_INVIS].extrinsic
 #define See_invisible		(HSee_invisible || ESee_invisible || \
-				 perceives(youmonst.data))
+				 perceives(youmonst.data) || Vision)
 
 #define HTelepat		u.uprops[TELEPAT].intrinsic
 #define ETelepat		u.uprops[TELEPAT].extrinsic
-#define Blind_telepat		(HTelepat || ETelepat || \
-				 telepathic(youmonst.data))
-#define Unblind_telepat		(ETelepat)
+#define Blind_telepat		((HTelepat || ETelepat || \
+				 telepathic(youmonst.data)) && !BTelepat)
+#define Unblind_telepat		(ETelepat && !BTelepat)
+#define BTelepat	 u.uprops[TELEPAT].blocked
 
 #define HWarning		u.uprops[WARNING].intrinsic
 #define EWarning		u.uprops[WARNING].extrinsic
 #define Warning			(HWarning || EWarning)
+
+/* See invisible, infravision, protection from shape changers,
+ * blindness and hallucination resistance all rolled into one */
+#define EVision		 u.uprops[VISION].extrinsic
+#define Vision			 (EVision)
+
 
 /* Warning for a specific type of monster */
 #define HWarn_of_mon		u.uprops[WARN_OF_MON].intrinsic
@@ -182,7 +192,7 @@
 #define HInfravision		u.uprops[INFRAVISION].intrinsic
 #define EInfravision		u.uprops[INFRAVISION].extrinsic
 #define Infravision		(HInfravision || EInfravision || \
-				  infravision(youmonst.data))
+				  infravision(youmonst.data) || Vision)
 
 #define HDetect_monsters	u.uprops[DETECT_MONSTERS].intrinsic
 #define EDetect_monsters	u.uprops[DETECT_MONSTERS].extrinsic
@@ -322,7 +332,8 @@
 				u.uprops[PROT_FROM_SHAPE_CHANGERS].extrinsic
 #define Protection_from_shape_changers \
 				(HProtection_from_shape_changers || \
-				 EProtection_from_shape_changers)
+				 EProtection_from_shape_changers || \
+				 Vision)
 
 #define HPolymorph		u.uprops[POLYMORPH].intrinsic
 #define EPolymorph		u.uprops[POLYMORPH].extrinsic

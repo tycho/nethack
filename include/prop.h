@@ -76,7 +76,8 @@
 #define WERE_RES			67
 #define BLIND_RES			68
 #define SLOW				69
-#define LAST_PROP		(SLOW)
+#define VISION				70
+#define LAST_PROP		(VISION)
 
 /*** Where the properties come from ***/
 /* Definitions were moved here from obj.h and you.h */
