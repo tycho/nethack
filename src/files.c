@@ -639,6 +639,7 @@ char* announcement;
 	fp = fopen_datafile(wish_tracker_file,"a+",LEVELPREFIX);
 	if (fp) {
 		fwrite(announcement,strlen(announcement),1,fp);
+		if (announcement[strlen(announcement)-1] != '\n') { fwrite("\n",1,1,fp); }
 		fclose(fp);
 	}
 
