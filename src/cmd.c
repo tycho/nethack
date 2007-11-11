@@ -949,6 +949,7 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 			something); 
 		you_are(buf);
 	}
+	if (Blind_resistance) enl_msg(You_,"resist","resisted"," blindness");
 	if (Undead_warning) you_are("warned of undead");
 	if (Searching) you_have("automatic searching");
 	if (Clairvoyant) you_are("clairvoyant");
@@ -1289,6 +1290,7 @@ int final;
 			something); 
 		dump(youwere, buf);
 	}
+	if (Blind_resistance) dump("  ", "You resisted blindness");
 	if (Undead_warning) dump(youwere, "warned of undead");
 	if (Searching) dump(youhad, "automatic searching");
 	if (Clairvoyant) dump(youwere, "clairvoyant");

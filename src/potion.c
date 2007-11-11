@@ -272,17 +272,17 @@ boolean talk;
 	} else if (old && !xtime) {
 	    /* clearing temporary blindness without toggling blindness */
 	    if (talk) {
-		if (!haseyes(youmonst.data)) {
-		    strange_feeling((struct obj *)0, (char *)0);
-		} else if (Blindfolded) {
-		    Strcpy(buf, body_part(EYE));
-		    eyecnt = eyecount(youmonst.data);
-		    Your(eyemsg, (eyecnt == 1) ? buf : makeplural(buf),
-			 (eyecnt == 1) ? "itches" : "itch");
-		} else {	/* Eyes of the Overworld */
-		    Your(vismsg, "brighten",
-			 Hallucination ? "sadder" : "normal");
-		}
+			if (!haseyes(youmonst.data)) {
+				strange_feeling((struct obj *)0, (char *)0);
+			} else if (Blindfolded) {
+				Strcpy(buf, body_part(EYE));
+				eyecnt = eyecount(youmonst.data);
+				Your(eyemsg, (eyecnt == 1) ? buf : makeplural(buf),
+				(eyecnt == 1) ? "itches" : "itch");
+			} else {	/* Eyes of the Overworld */
+				Your(vismsg, "brighten",
+				Hallucination ? "sadder" : "normal");
+			}
 	    }
 	}
 

@@ -362,6 +362,7 @@ int spellnum;
 {
 	struct obj* oatmp;
 	int erodelvl;
+	const char* desc = 0;
 
     if (dmg == 0 && !is_undirected_spell(AD_SPEL, spellnum)) {
 	impossible("cast directed wizard spell (%d) with dmg=0?", spellnum);
@@ -525,6 +526,15 @@ int spellnum;
 	    shieldeff(u.ux, u.uy);
 		 monstseesu(M_SEEN_MAGR);
 	    dmg = (dmg + 1) / 2;
+	} else if (uarmh) {
+		desc = OBJ_DESCR(objects[uarmh->otyp]);
+		if (desc && strstri(desc,"tinfoil")) {
+			shieldeff(u.ux, u.uy);
+			dmg = 0;
+			Your("%s tingles.%s", body_part(HEAD), Hallucination ?
+					" You think your dandruff might be clearing up." : "");
+			break;
+		}
 	}
 	if (dmg <= 5)
 	    You("get a slight %sache.", body_part(HEAD));

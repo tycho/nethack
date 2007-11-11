@@ -7,6 +7,7 @@
 STATIC_DCL void FDECL(m_lose_armor, (struct monst *,struct obj *));
 STATIC_DCL void FDECL(m_dowear_type, (struct monst *,long, BOOLEAN_P, BOOLEAN_P));
 STATIC_DCL int FDECL(extra_pref, (struct monst *, struct obj *));
+STATIC_DCL int FDECL(w_blocks, (struct obj *, long));
 
 const struct worn {
 	long w_mask;
@@ -34,14 +35,39 @@ const struct worn {
 	{ 0, 0 }
 };
 
-/* This only allows for one blocking item per property */
+/* This only allows for one blocking item per property
 #define w_blocks(o,m) \
 		((o->otyp == MUMMY_WRAPPING && ((m) & W_ARMC)) ? INVIS : \
 		 (o->otyp == CORNUTHAUM && ((m) & W_ARMH) && \
-			!Role_if(PM_WIZARD)) ? CLAIRVOYANT : 0)
-		/* note: monsters don't have clairvoyance, so your role
-		   has no significant effect on their use of w_blocks() */
+			!Role_if(PM_WIZARD)) ? CLAIRVOYANT : \
+		 (strcmpi(OBJ_DESCR(objects[o->otyp]),"tinfoil") == 0 ? TELEPAT : 0)
 
+		 note: monsters don't have clairvoyance, so your role
+		 has no significant effect on their use of w_blocks()
+
+*/
+
+int
+w_blocks(obj, mask) 
+struct obj* obj;
+long mask;
+{
+	const char* desc = 0;
+
+	if (!obj) { return 0; }
+	desc = OBJ_DESCR(objects[obj->otyp]);
+
+	if (obj->otyp == MUMMY_WRAPPING && 
+			(mask & W_ARMC)) { return INVIS; }
+
+	if (obj->otyp == CORNUTHAUM && (mask & W_ARMH) && 
+			!Role_if(PM_WIZARD)) { return CLAIRVOYANT; }
+
+	if (desc && strstri(desc,"tinfoil") && 
+			(mask & W_ARMH)) { return TELEPAT; }
+
+	return 0;
+}
 
 /* Updated to use the extrinsic and blocked fields. */
 void
