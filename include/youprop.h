@@ -367,5 +367,7 @@
 
 #define Lifesaved		u.uprops[LIFESAVED].extrinsic
 
+#define ELucky				u.uprops[LUCKY].extrinsic
+#define Lucky				(ELucky)
 
 #endif /* YOUPROP_H */

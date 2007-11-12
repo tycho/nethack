@@ -485,13 +485,17 @@ SHIELD("shield of mobility", "slippery shield",
  * CLR_BROWN (== HI_LEATHER)
  */
 GLOVES("leather gloves", "old gloves",
-		0, 0,  0,	  16, 1, 10,  8,  9, 0, LEATHER, HI_LEATHER),
+		0, 0,  0,		  14, 1, 10,  8,  9, 0, LEATHER, HI_LEATHER),
 GLOVES("gauntlets of fumbling", "padded gloves",
-		0, 1,  FUMBLING,   8, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
+		0, 1,  FUMBLING,  6, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
 GLOVES("gauntlets of power", "riding gloves",
-		0, 1,  0,	   8, 1, 30, 50,  9, 0, IRON, CLR_BROWN),
+		0, 1,  0,			5, 1, 30, 50,  9, 0, IRON, CLR_BROWN),
 GLOVES("gauntlets of dexterity", "fencing gloves",
-		0, 1,  0,	   8, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
+		0, 1,  0,			5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
+GLOVES("gauntlets of force", "fur-lined mittens",
+		0, 0,  0,			5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
+GLOVES("gauntlets of fortune", "ragged gloves",
+		0, 0,  LUCKY,		5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
 
 /* boots */
 BOOTS("low boots", "walking shoes",

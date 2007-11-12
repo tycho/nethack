@@ -549,6 +549,7 @@ int thrown;
 	boolean silvermsg = FALSE, silverobj = FALSE;
 	boolean valid_weapon_attack = FALSE;
 	boolean unarmed = !uwep && !uarm && !uarms;
+	boolean bigpunch = (uarmg && uarmg->otyp == GAUNTLETS_OF_FORCE);
 #ifdef STEED
 	int jousting = 0;
 	int joustdmg;
@@ -1029,18 +1030,21 @@ int thrown;
 
 	/* VERY small chance of stunning opponent if unarmed. */
 	if (unarmed && tmp > 1 && !thrown && !obj && !Upolyd) {
-	    if (rnd(100) < P_SKILL(P_BARE_HANDED_COMBAT) &&
-			!bigmonst(mdat) && !thick_skinned(mdat)) {
-		if (canspotmon(mon))
-		    pline("%s %s from your powerful strike!", Monnam(mon),
-			  makeplural(stagger(mon->data, "stagger")));
-		/* avoid migrating a dead monster */
-		if (mon->mhp > tmp) {
-		    mhurtle(mon, u.dx, u.dy, 1);
-		    mdat = mon->data; /* in case of a polymorph trap */
-		    if (DEADMONSTER(mon)) already_killed = TRUE;
-		}
-		hittxt = TRUE;
+	    if ((rnd(100) < P_SKILL(P_BARE_HANDED_COMBAT) && !bigmonst(mdat) && !thick_skinned(mdat)) || bigpunch) {
+			/* try to avoid spamming the user with "powerful strike" messages just because they're
+			 * slinging around the gloves of punchy */
+			if (canspotmon(mon)) {
+				if (!bigpunch || !rn2(3)) {
+					pline("%s %s from your powerful strike!", Monnam(mon), makeplural(stagger(mon->data, "stagger")));
+					hittxt = TRUE;
+				}
+			}
+			/* avoid migrating a dead monster */
+			if (mon->mhp > tmp) {
+				mhurtle(mon, u.dx, u.dy, (bigmonst(mdat) || thick_skinned(mdat) || !bigpunch) ? 1 : rnd(4));
+				mdat = mon->data; /* in case of a polymorph trap */
+				if (DEADMONSTER(mon)) already_killed = TRUE;
+			}
 	    }
 	}
 
