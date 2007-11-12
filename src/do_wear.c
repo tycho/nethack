@@ -422,24 +422,25 @@ STATIC_PTR
 int
 Gloves_on()
 {
-    long oldprop =
-	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
+    long oldprop = u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
 
     switch(uarmg->otyp) {
-	case LEATHER_GLOVES:
-		break;
-	case GAUNTLETS_OF_FUMBLING:
-		if (!oldprop && !(HFumbling & ~TIMEOUT))
-			incr_itimeout(&HFumbling, rnd(20));
-		break;
-	case GAUNTLETS_OF_POWER:
-		makeknown(uarmg->otyp);
-		flags.botl = 1; /* taken care of in attrib.c */
-		break;
-	case GAUNTLETS_OF_DEXTERITY:
-		adj_abon(uarmg, uarmg->spe);
-		break;
-	default: impossible(unknown_type, c_gloves, uarmg->otyp);
+		case LEATHER_GLOVES:
+		case GAUNTLETS_OF_FORCE:
+		case GAUNTLETS_OF_FORTUNE:
+			break;
+		case GAUNTLETS_OF_FUMBLING:
+			if (!oldprop && !(HFumbling & ~TIMEOUT))
+				incr_itimeout(&HFumbling, rnd(20));
+			break;
+		case GAUNTLETS_OF_POWER:
+			makeknown(uarmg->otyp);
+			flags.botl = 1; /* taken care of in attrib.c */
+			break;
+		case GAUNTLETS_OF_DEXTERITY:
+			adj_abon(uarmg, uarmg->spe);
+			break;
+		default: impossible(unknown_type, c_gloves, uarmg->otyp);
     }
     return 0;
 }
@@ -447,26 +448,27 @@ Gloves_on()
 int
 Gloves_off()
 {
-    long oldprop =
-	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
+    long oldprop = u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
 
     takeoff_mask &= ~W_ARMG;
 
     switch(uarmg->otyp) {
-	case LEATHER_GLOVES:
-	    break;
-	case GAUNTLETS_OF_FUMBLING:
-	    if (!oldprop && !(HFumbling & ~TIMEOUT))
-		HFumbling = EFumbling = 0;
-	    break;
-	case GAUNTLETS_OF_POWER:
-	    makeknown(uarmg->otyp);
-	    flags.botl = 1; /* taken care of in attrib.c */
-	    break;
-	case GAUNTLETS_OF_DEXTERITY:
-	    if (!cancelled_don) adj_abon(uarmg, -uarmg->spe);
-	    break;
-	default: impossible(unknown_type, c_gloves, uarmg->otyp);
+		case LEATHER_GLOVES:
+		case GAUNTLETS_OF_FORCE:
+		case GAUNTLETS_OF_FORTUNE:
+			break;
+		case GAUNTLETS_OF_FUMBLING:
+			if (!oldprop && !(HFumbling & ~TIMEOUT))
+			HFumbling = EFumbling = 0;
+			break;
+		case GAUNTLETS_OF_POWER:
+			makeknown(uarmg->otyp);
+			flags.botl = 1; /* taken care of in attrib.c */
+			break;
+		case GAUNTLETS_OF_DEXTERITY:
+			if (!cancelled_don) adj_abon(uarmg, -uarmg->spe);
+			break;
+		default: impossible(unknown_type, c_gloves, uarmg->otyp);
     }
     setworn((struct obj *)0, W_ARMG);
     cancelled_don = FALSE;

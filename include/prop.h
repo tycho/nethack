@@ -77,7 +77,8 @@
 #define BLIND_RES			68
 #define SLOW				69
 #define VISION				70
-#define LAST_PROP		(VISION)
+#define LUCKY				71
+#define LAST_PROP		(LUCKY)
 
 /*** Where the properties come from ***/
 /* Definitions were moved here from obj.h and you.h */

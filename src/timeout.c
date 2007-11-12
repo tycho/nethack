@@ -166,13 +166,15 @@ nh_timeout()
 	int baseluck = (flags.moonphase == FULL_MOON) ? 1 : 0;
 
 	if (flags.friday13) baseluck -= 1;
+	if (Lucky) { baseluck += 5; }
 
 	if (u.uluck != baseluck &&
 		moves % (u.uhave.amulet || u.ugangr ? 300 : 600) == 0) {
 	/* Cursed luckstones stop bad luck from timing out; blessed luckstones
 	 * stop good luck from timing out; normal luckstones stop both;
 	 * neither is stopped if you don't have a luckstone.
-	 * Luck is based at 0 usually, +1 if a full moon and -1 on Friday 13th
+	 * Luck is based at 0 usually, +1 if a full moon, -1 on Friday 13th
+	 * and +5 if you have the gauntlets of fortune
 	 */
 	    register int time_luck = stone_luck(FALSE);
 	    boolean nostone = !carrying(LUCKSTONE) && !stone_luck(TRUE);
