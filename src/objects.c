@@ -328,9 +328,9 @@ HELM("helm of opposite alignment", "crested helmet",
 HELM("helm of telepathy", "visored helmet", 
 		0, 1, TELEPAT,		2, 1, 50,  50, 9, 0, IRON, HI_METAL),
 HELM("helm of discovery", "viking helmet", 
-		0, 0, SEARCHING,	2, 1, 50,  50, 9, 0, IRON, HI_METAL),
+		0, 1, SEARCHING,	2, 1, 50,  50, 9, 0, IRON, HI_METAL),
 HELM("helm of clarity", "tinfoil hat", 
-		0, 0, VISION,		2, 1, 50,  50, 9, 0, IRON, HI_SILVER),
+		0, 1, VISION,		2, 1, 50,  50, 9, 0, IRON, HI_SILVER),
 
 /* suits of armor */
 /*
@@ -493,9 +493,9 @@ GLOVES("gauntlets of power", "riding gloves",
 GLOVES("gauntlets of dexterity", "fencing gloves",
 		0, 1,  0,			5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
 GLOVES("gauntlets of force", "fur-lined mittens",
-		0, 0,  0,			5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
+		0, 1,  0,			5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
 GLOVES("gauntlets of fortune", "ragged gloves",
-		0, 0,  LUCKY,		5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
+		0, 1,  LUCKY,		5, 1, 10, 50,  9, 0, LEATHER, HI_LEATHER),
 
 /* boots */
 BOOTS("low boots", "walking shoes",
