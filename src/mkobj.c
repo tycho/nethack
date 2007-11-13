@@ -155,8 +155,8 @@ struct obj *box;
 		case SMALL_SACK:
 			n = 1; box->capacity = 200; break;
 		case SACK:
-			box->capacity = 1000;
 		case OILSKIN_SACK:
+			box->capacity = 1000;
 			/* initial inventory: sack starts out empty */
 			if (moves <= 1 && !in_mklev) { n = 0; } else { n = 1; }
 			break;
