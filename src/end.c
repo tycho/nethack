@@ -1221,15 +1221,26 @@ boolean identified, all_containers, want_dump, want_disp;
 #endif
 			 }
 		} else {
+			if (box->otyp == BAG_OF_POO) {
+				Sprintf(buf," is rather full of %s poo.",rndmonnam());
+			}
 #ifdef DUMP_LOG
 		    if (want_disp) {
 #endif
-		    pline("%s empty.", Tobjnam(box, "are"));
-		    display_nhwindow(WIN_MESSAGE, FALSE);
+				 if (box->otyp == BAG_OF_POO) {
+					 pline("%s%s",The(xname(box)),buf);
+				 } else {
+					pline("%s empty.", Tobjnam(box, "are"));
+				 }
+					display_nhwindow(WIN_MESSAGE, FALSE);
 #ifdef DUMP_LOG
 		    }
 		    if (want_dump) {
-		      dump(The(xname(box)), " is empty.");
+				 if (box->otyp == BAG_OF_POO) {
+					 dump(The(xname(box)),buf);
+				 } else {
+					dump(The(xname(box)), " is empty.");
+				 }
 		      dump("", "");
 		    }
 #endif

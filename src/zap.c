@@ -1529,9 +1529,13 @@ struct obj *obj, *otmp;
 		/* target object has now been "seen (up close)" */
 		obj->dknown = 1;
 		if (Is_container(obj) || obj->otyp == STATUE) {
-		    if (!obj->cobj)
-			pline("%s empty.", Tobjnam(obj, "are"));
-		    else {
+		    if (!obj->cobj) {
+				 if (obj->otyp == BAG_OF_POO) {
+					 pline("%s rather full of %s poo.",Tobjnam(obj,"are"),rndmonnam());
+				 } else {
+					pline("%s empty.", Tobjnam(obj, "are"));
+				 }
+			 } else {
 			struct obj *o;
 			/* view contents (not recursively) */
 			for (o = obj->cobj; o; o = o->nobj)
