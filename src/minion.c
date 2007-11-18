@@ -175,10 +175,12 @@ register struct monst *mtmp;
 	 * the trivial case of people being able to bribe demons with 
 	 * 10 gold pieces to bypass him.  You can still carry lots of gold,
 	 * of course, but at least now you have to lug it with you. */
-	cash = rnd(10000) + 5000;
+	while (demand < 3000) {
+		cash = rnd(15000) + 5000;
 
-	demand = (cash * (rnd(80) + 20 * Athome)) /
-	    (100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
+		demand = (cash * (rnd(80) + 20 * Athome)) /
+			(100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
+	}
 
 	if (
 #ifndef GOLDOBJ
