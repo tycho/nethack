@@ -993,7 +993,13 @@ boolean at_stairs, falling, portal;
 	 *	 -1    8.33   4.17   0.0	 -1    6.25   8.33  12.5      12.5
 	 *	 -2    8.33   4.17   0.0	 -2    6.25   8.33   0.0       0.0
 	 *	 -3    8.33   4.17   0.0	 -3    6.25   0.0    0.0       0.0
+	 *
+	 *	 11/19: Removed entirely as part of an experiment with new nasty()
+	 *	 functionality; clog the stairs with critters, but let the player move
+	 *	 between levels without jerking him around.
+	 *
 	 */
+#if 0
 	if (Inhell && up && u.uhave.amulet && !newdungeon && !portal &&
 				(dunlev(&u.uz) < dunlevs_in_dungeon(&u.uz)-3)) {
 		if (!rn2(4)) {
@@ -1019,6 +1025,7 @@ boolean at_stairs, falling, portal;
 			at_stairs = at_ladder = FALSE;
 		}
 	}
+#endif
 
 	/* Prevent the player from going past the first quest level unless
 	 * (s)he has been given the go-ahead by the leader.

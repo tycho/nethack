@@ -2342,7 +2342,7 @@ E int FDECL(tactics, (struct monst *));
 E void NDECL(aggravate);
 E void NDECL(clonewiz);
 E int NDECL(pick_nasty);
-E int FDECL(nasty, (struct monst*));
+E int FDECL(nasty, (struct monst*,BOOLEAN_P));
 E void NDECL(resurrect);
 E void NDECL(intervene);
 E void NDECL(wizdead);

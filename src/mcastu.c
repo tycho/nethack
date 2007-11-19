@@ -404,7 +404,7 @@ int spellnum;
     {
 	int count;
 
-	count = nasty(mtmp);	/* summon something nasty */
+	count = nasty(mtmp,FALSE);	/* summon something nasty */
 	if (mtmp->iswiz)
 	    verbalize("Destroy the thief, my pet%s!", plur(count));
 	else {
