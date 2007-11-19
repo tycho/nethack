@@ -771,7 +771,14 @@ mon_tele:
 			return 2;
 		}
 		m_flee(mtmp);
-		if (Inhell && mon_has_amulet(mtmp) && !rn2(4) &&
+		/* 
+		 * This has been removed from the player, but not so for the monsters...
+		 * ...and a little more common, too.
+		 *
+		 * Why else do you think none of them have walked out with the Amulet?
+		 * You're the "chosen one", right?  ;)
+		 */
+		if (Inhell && mon_has_amulet(mtmp) && !rn2(2) &&
 			(dunlev(&u.uz) < dunlevs_in_dungeon(&u.uz) - 3)) {
 		    if (vismon) pline(
      "As %s climbs the stairs, a mysterious force momentarily surrounds %s...",

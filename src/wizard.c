@@ -419,8 +419,9 @@ pick_nasty()
 /* create some nasty monsters, aligned or neutral with the caster */
 /* a null caster defaults to a chaotic caster (e.g. the wizard) */
 int
-nasty(mcast)
-	struct monst *mcast;
+nasty(mcast,centered_on_stairs)
+struct monst *mcast;
+BOOLEAN_P centered_on_stairs;
 {
     register struct monst	*mtmp;
 	 struct permonst* mdat;
@@ -430,47 +431,54 @@ nasty(mcast)
     int count=0;
 
     if(!rn2(10) && Inhell) {
-	msummon((struct monst *) 0);	/* summons like WoY */
-	count++;
+		msummon((struct monst *) 0);	/* summons like WoY */
+		count++;
     } else {
-	tmp = (u.ulevel > 3) ? u.ulevel/3 : 1; /* just in case -- rph */
-	/* if we don't have a casting monster, the nasties appear around you */
-	bypos.x = u.ux;
-	bypos.y = u.uy;
-	for(i = rnd(tmp); i > 0; --i)
-	    for(j=0; j<20; j++) {
-		int makeindex;
-
-		/* Don't create more spellcasters of the monsters' level or
-		 * higher--avoids chain summoners filling up the level.
-		 */
-		do {
-		    makeindex = pick_nasty();
-		} while(mcast && attacktype(&mons[makeindex], AT_MAGC) &&
-			monstr[makeindex] >= monstr[mcast->mnum]);
-		/* do this after picking the monster to place */
-		if (mcast &&
-		    !enexto(&bypos, mcast->mux, mcast->muy, &mons[makeindex]))
-		    continue;
-		/* If this is a demon prince, tend to make more demons */
-		if (mcast && is_dprince(mcast->data) && !rn2(2)) {
-			mdat = mkclass(S_DEMON,0);
-			mtmp = makemon(mdat ? mdat : &mons[makeindex],bypos.x, bypos.y, NO_MM_FLAGS);
+		tmp = (u.ulevel > 3) ? u.ulevel/3 : 1; /* just in case -- rph */
+		/* if we don't have a casting monster, the nasties appear around you
+		 * ...unless we're being called with the 'stairs' flag to block the
+		 * adventurer's return with the amulet */
+		if (centered_on_stairs && xupstair) {
+			bypos.x = xupstair;
+			bypos.y = yupstair;
 		} else {
-			mtmp = makemon(&mons[makeindex], bypos.x, bypos.y, NO_MM_FLAGS);
+			bypos.x = u.ux;
+			bypos.y = u.uy;
 		}
-		if (mtmp != 0) {
-		    mtmp->msleeping = mtmp->mpeaceful = mtmp->mtame = 0;
-		    set_malign(mtmp);
-		} else /* GENOD? */
-		    mtmp = makemon((struct permonst *)0,
-					bypos.x, bypos.y, NO_MM_FLAGS);
-		if(mtmp && (mtmp->data->maligntyp == 0 ||
-		            sgn(mtmp->data->maligntyp) == sgn(castalign)) ) {
-		    count++;
-		    break;
-		}
-	    }
+		for(i = rnd(tmp); i > 0; --i)
+			for(j=0; j<20; j++) {
+				int makeindex;
+
+				/* Don't create more spellcasters of the monsters' level or
+				* higher--avoids chain summoners filling up the level.
+				*/
+				do {
+					makeindex = pick_nasty();
+				} while(mcast && attacktype(&mons[makeindex], AT_MAGC) &&
+					monstr[makeindex] >= monstr[mcast->mnum]);
+				/* do this after picking the monster to place */
+				if (mcast &&
+					!enexto(&bypos, mcast->mux, mcast->muy, &mons[makeindex]))
+					continue;
+				/* If this is a demon prince, tend to make more demons */
+				if (mcast && is_dprince(mcast->data) && !rn2(2)) {
+					mdat = mkclass(S_DEMON,0);
+					mtmp = makemon(mdat ? mdat : &mons[makeindex],bypos.x, bypos.y, MM_ADJACENTOK);
+				} else {
+					mtmp = makemon(&mons[makeindex], bypos.x, bypos.y, MM_ADJACENTOK);
+				}
+				if (mtmp != 0) {
+					mtmp->msleeping = mtmp->mpeaceful = mtmp->mtame = 0;
+					set_malign(mtmp);
+				} else /* GENOD? */
+					mtmp = makemon((struct permonst *)0,
+							bypos.x, bypos.y, MM_ADJACENTOK);
+				if(mtmp && (mtmp->data->maligntyp == 0 ||
+								sgn(mtmp->data->maligntyp) == sgn(castalign)) ) {
+					count++;
+					break;
+				}
+			}
     }
     return count;
 }
@@ -529,10 +537,8 @@ resurrect()
 void
 intervene()
 {
-	/* cases 0, 5, and 6 don't apply on the Astral level
-	 * also, make Rodney more likely to show up in person for lawfuls/neutrals
-	 * ...since we just fixed the force to be nicer */
-	int which = Is_astralevel(&u.uz) ? rnd(4) : rn2(u.ualign.type >= 0 ? 7 : 6);
+	/* many cases don't apply on the Astral level or Planes */
+	int which = Is_astralevel(&u.uz) ? rnd(4) : rn2(8);
 
 	switch (which) {
 	    case 0:
@@ -546,11 +552,13 @@ intervene()
 	    case 3:	aggravate();
 			break;
 	    case 4:	
-			(void)nasty((struct monst *)0);
+			(void)nasty((struct monst *)0,FALSE);
 			break;
 	    case 5:	
-		 case 6:
 			resurrect();
+		 case 6:
+		 case 7:
+			(void)nasty((struct monst*)0,TRUE);
 			break;
 	}
 }
