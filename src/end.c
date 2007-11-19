@@ -36,6 +36,7 @@ STATIC_PTR void FDECL(done_intr, (int));
 static void FDECL(done_hangup, (int));
 # endif
 #endif
+STATIC_DCL long FDECL(count_score,(int));
 STATIC_DCL void FDECL(disclose,(int,BOOLEAN_P));
 STATIC_DCL void FDECL(get_valuables, (struct obj *));
 STATIC_DCL void FDECL(sort_valuables, (struct valuable_data *,int));
@@ -660,6 +661,7 @@ int how;
 	boolean bones_ok, have_windows = iflags.window_inited;
 	struct obj *corpse = (struct obj *)0;
 	long umoney;
+	long uscore;
 
 	if (how == TRICKED) {
 	    if (killer) {
@@ -841,8 +843,11 @@ die:
 
 	if (have_windows) display_nhwindow(WIN_MESSAGE, FALSE);
 
+	/* Must pre-calculate score here for correct logfile writing */
+
 #ifdef LOGFILE
-	write_log_entry(how);
+	uscore = count_score(how);
+	write_log_entry(how,uscore);
 #endif
 
 	if (strcmp(flags.end_disclose, "none") && how != PANICKED) {
@@ -1448,6 +1453,89 @@ boolean ask;
 	    destroy_nhwindow(klwin);
 	}
     }
+}
+
+
+/* All of this is bolted together in an effort to get an accurate
+ * score now that the logfile's been moved so far up.  Don't
+ * suggest using it for anything else. */
+
+STATIC_OVL 
+long count_score(how)
+int how;
+{
+	long tmp, newscore, umoney, old_exp;
+	int deepest = deepest_lev_reached(FALSE);
+
+	newscore = u.urexp;
+
+#ifndef GOLDOBJ
+	umoney = u.ugold;
+	tmp = u.ugold0;
+#else
+	umoney = money_cnt(invent);
+	tmp = u.umoney0;
+#endif
+	umoney += hidden_gold();
+	tmp = umoney - tmp;
+
+	if (tmp < 0L) tmp = 0L;
+
+	if (how < PANICKED) {
+		tmp -= tmp / 10L;
+	}
+
+	newscore += tmp;
+	newscore += 50L * (long)(deepest - 1);
+
+	if (deepest > 20) {
+		newscore += 1000L * (long)((deepest > 30) ? 10 : deepest - 20);
+	}
+
+	if (how == ASCENDED) {
+		newscore *= 2L;
+	}
+
+	if (how == ESCAPED || how == ASCENDED) {
+		register struct monst *mtmp;
+		register struct obj *otmp;
+		register struct val_list *val;
+		register int i;
+
+		for (val = valuables; val->list; val++) {
+			for (i = 0; i < val->size; i++) {
+				val->list[i].count = 0L;
+			}
+		}
+		get_valuables(invent);
+
+		/* add points for collected valuables */
+		for (val = valuables; val->list; val++)
+				for (i = 0; i < val->size; i++)
+					if (val->list[i].count != 0L)
+						newscore += val->list[i].count * (long)objects[val->list[i].typ].oc_cost;
+
+		/* count the points for artifacts, with a juggling act since
+		 * it's inherently somewhat destructive */
+		old_exp = u.urexp;
+		u.urexp = newscore;
+		artifact_score(invent, TRUE, WIN_ERR);
+		newscore = u.urexp;
+		u.urexp = old_exp;
+
+		viz_array[0][0] |= IN_SIGHT; /* need visibility for naming */
+		mtmp = mydogs;
+		if (mtmp) {
+			while (mtmp) {
+				if (mtmp->mtame) {
+					newscore += mtmp->mhp;
+				}
+				mtmp = mtmp->nmon;
+			}
+		}
+	}
+
+	return newscore;
 }
 
 /*end.c*/
