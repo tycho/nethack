@@ -2028,7 +2028,7 @@ E void NDECL(timer_sanity_check);
 
 E void FDECL(topten, (int));
 #ifdef LOGFILE
-E void FDECL(write_log_entry, (int));
+E void FDECL(write_log_entry, (int,long));
 #endif
 E void FDECL(prscore, (int,char **));
 E struct obj *FDECL(tt_oname, (struct obj *));
