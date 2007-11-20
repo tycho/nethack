@@ -282,7 +282,7 @@ moveloop()
 			if (u.udg_cnt) u.udg_cnt--;
 			if (!u.udg_cnt) {
 			    intervene();
-			    u.udg_cnt = rn1(200, 50);
+			    u.udg_cnt = rn1(100, 50);
 			}
 		    }
 		    restore_attrib();
