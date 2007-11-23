@@ -2001,11 +2001,12 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    int conf = d(3,4);
 
 		    mtmp->mspec_used = mtmp->mspec_used + (conf + rn2(6));
-		    if(!Confusion)
-			pline("%s gaze confuses you!",
-			                  s_suffix(Monnam(mtmp)));
-		    else
-			You("are getting more and more confused.");
+			 if (!Confusion_resistance) {
+				if(!Confusion)
+					pline("%s gaze confuses you!", s_suffix(Monnam(mtmp)));
+				else
+					You("are getting more and more confused.");
+			 }
 		    make_confused(HConfusion + conf, FALSE);
 		    stop_occupation();
 		}
