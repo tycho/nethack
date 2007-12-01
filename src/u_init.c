@@ -288,7 +288,7 @@ static const struct def_skill Skill_B[] = {
     { P_FLAIL, P_BASIC },		{ P_HAMMER, P_EXPERT },
     { P_QUARTERSTAFF, P_BASIC },	{ P_SPEAR, P_SKILLED },
     { P_TRIDENT, P_SKILLED },		{ P_BOW, P_BASIC },
-    { P_ATTACK_SPELL, P_SKILLED },
+    { P_ATTACK_SPELL, P_SKILLED }, { P_ESCAPE_SPELL, P_BASIC },
 #ifdef STEED
     { P_RIDING, P_BASIC },
 #endif
