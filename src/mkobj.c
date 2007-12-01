@@ -168,41 +168,51 @@ struct obj *box;
 
 	for (n = rn2(n+1); n > 0; n--) {
 	    if (box->otyp == ICE_BOX) {
-		if (!(otmp = mksobj(CORPSE, TRUE, TRUE))) continue;
-		/* Note: setting age to 0 is correct.  Age has a different
-		 * from usual meaning for objects stored in ice boxes. -KAA
-		 */
-		otmp->age = 0L;
-		if (otmp->timed) {
-		    (void) stop_timer(ROT_CORPSE, (genericptr_t)otmp);
-		    (void) stop_timer(REVIVE_MON, (genericptr_t)otmp);
-		}
+			if (!(otmp = mksobj(CORPSE, TRUE, TRUE))) continue;
+			/* Note: setting age to 0 is correct.  Age has a different
+			* from usual meaning for objects stored in ice boxes. -KAA
+			*/
+			otmp->age = 0L;
+			if (otmp->timed) {
+				(void) stop_timer(ROT_CORPSE, (genericptr_t)otmp);
+				(void) stop_timer(REVIVE_MON, (genericptr_t)otmp);
+			}
 	    } else {
-		register int tprob;
-		const struct icp *iprobs = boxiprobs;
+			register int tprob;
+			const struct icp *iprobs = boxiprobs;
 
-		for (tprob = rnd(100); (tprob -= iprobs->iprob) > 0; iprobs++)
-		    ;
-		if (!(otmp = mkobj(iprobs->iclass, TRUE))) continue;
+			for (tprob = rnd(100); (tprob -= iprobs->iprob) > 0; iprobs++)
+				;
 
-		/* handle a couple of special cases */
-		if (otmp->oclass == COIN_CLASS) {
-		    /* 2.5 x level's usual amount; weight adjusted below */
-		    otmp->quan = (long)(rnd(level_difficulty()+2) * rnd(75));
-		    otmp->owt = weight(otmp);
-		} else while (otmp->otyp == ROCK) {
-		    otmp->otyp = rnd_class(DILITHIUM_CRYSTAL, LOADSTONE);
-		    if (otmp->quan > 2L) otmp->quan = 1L;
-		    otmp->owt = weight(otmp);
-		}
-		if (box->otyp == BAG_OF_HOLDING) {
-		    if (Is_mbag(otmp)) {
-			otmp->otyp = SACK;
-			otmp->spe = 0;
-			otmp->owt = weight(otmp);
-		    } else while (otmp->otyp == WAN_CANCELLATION)
-			    otmp->otyp = rnd_class(WAN_LIGHT, WAN_LIGHTNING);
-		}
+			if (!(otmp = mkobj(iprobs->iclass, TRUE))) continue;
+
+			/* handle a couple of special cases */
+			if (otmp->oclass == COIN_CLASS) {
+				/* 2.5 x level's usual amount; weight adjusted below */
+				otmp->quan = (long)(rnd(level_difficulty()+2) * rnd(75));
+				otmp->owt = weight(otmp);
+			} else { 
+				while (otmp->otyp == ROCK) {
+				otmp->otyp = rnd_class(DILITHIUM_CRYSTAL, LOADSTONE);
+				if (otmp->quan > 2L) otmp->quan = 1L;
+				otmp->owt = weight(otmp);
+				}
+			}
+			if (box->otyp == BAG_OF_HOLDING) {
+				if (Is_mbag(otmp)) {
+				otmp->otyp = SACK;
+				otmp->spe = 0;
+				otmp->owt = weight(otmp);
+				} else while (otmp->otyp == WAN_CANCELLATION)
+					otmp->otyp = rnd_class(WAN_LIGHT, WAN_LIGHTNING);
+			}
+
+			/* now that we know the weight, only add it if it fits */
+			if (weight(box) + otmp->owt > box->capacity) {
+				obfree(otmp,(struct obj*) 0);
+				continue;
+			}
+
 	    }
 	    (void) add_to_container(box, otmp);
 	}

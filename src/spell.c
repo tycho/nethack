@@ -1243,10 +1243,9 @@ int spell;
 	paladin_bonus = Role_if(PM_KNIGHT) && spell_skilltype(spellid(spell)) == P_CLERIC_SPELL;
 
 	if (uarm && is_metallic(uarm) && !paladin_bonus)
-	    splcaster += (uarmc && uarmc->otyp == ROBE) ?
-		urole.spelarmr/2 : urole.spelarmr;
+	    splcaster += (uarmc && uarmc->otyp == ROBE) ? urole.spelarmr/2 : urole.spelarmr;
 	else if (uarmc && uarmc->otyp == ROBE)
-	    splcaster -= urole.spelarmr;
+	    splcaster -= urole.spelarmr/2;
 	if (uarms) splcaster += urole.spelshld;
 
 	if (uarmh && is_metallic(uarmh) && uarmh->otyp != HELM_OF_BRILLIANCE && !paladin_bonus)
