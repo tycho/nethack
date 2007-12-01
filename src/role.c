@@ -101,7 +101,7 @@ const struct Role roles[] = {
 	/* Init   Lower  Higher */
 	{ 14, 0,  0, 8,  2, 0 },	/* Hit points */
 	{  1, 0,  0, 1,  0, 1 },10,	/* Energy */
-	0, 12, 0, 1,  8, A_INT, SPE_DIG,             -4
+	0, 12, 0, 1,  8, A_INT, SPE_DIG,   -4
 },
 {	{"Healer", 0}, {
 	{"Rhizotomist",    0},
@@ -272,7 +272,7 @@ const struct Role roles[] = {
 	/* Init   Lower  Higher */
 	{ 13, 0,  0, 6,  1, 0 },	/* Hit points */
 	{  1, 0,  0, 1,  0, 1 },12,	/* Energy */
-	10, 9, 2, 1, 10, A_INT, SPE_INVISIBILITY,   -4
+	10, 9, 2, 1, 10, A_INT, SPE_DETECT_MONSTERS,   -4
 },
 {	{"Samurai", 0}, {
 	{"Hatamoto",    0},  /* Banner Knight */
@@ -373,7 +373,7 @@ const struct Role roles[] = {
 	{   7, 10,  7,  7,  7,  7 },
 	{  10, 30, 10, 20, 20, 10 },
 	/* Init   Lower  Higher */
-	{ 10, 0,  0, 8,  1, 0 },	/* Hit points */
+	{ 12, 0,  0, 6,  1, 0 },	/* Hit points */
 	{  4, 3,  0, 2,  0, 3 },12,	/* Energy */
 	0, 1, 0, 3, 10, A_INT, SPE_MAGIC_MISSILE,   -4
 },

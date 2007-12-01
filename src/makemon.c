@@ -688,6 +688,7 @@ register struct	monst	*mtmp;
 		if (!rn2(20)) {
 			otmp = mksobj(LARGE_BOX, FALSE, FALSE);
 			otmp->spe = 1; /* flag for special box */
+			otmp->capacity = 3000; /* it should still be standard capacity */
 			otmp->owt = weight(otmp);
 			(void) mpickobj(mtmp, otmp);
 		}
