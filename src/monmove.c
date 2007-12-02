@@ -828,7 +828,7 @@ not_special:
 		likeobjs = (likes_objs(ptr) && pctload < 75);
 		likemagic = (likes_magic(ptr) && pctload < 85);
 		likerock = ((throws_rocks(ptr) && pctload < 50 && !In_sokoban(&u.uz)));
-		breakrock = (!mtmp->mpeaceful && ptr->msound == MS_LEADER);
+		breakrock = is_rockbreaker(ptr);
 		conceals = hides_under(ptr);
 		setlikes = TRUE;
 	    }
@@ -947,8 +947,8 @@ not_special:
 	if (can_tunnel) flag |= ALLOW_DIG;
 	if (is_human(ptr) || ptr == &mons[PM_MINOTAUR]) flag |= ALLOW_SSM;
 	if (is_undead(ptr) && ptr->mlet != S_GHOST) flag |= NOGARLIC;
-	if (throws_rocks(ptr) || (ptr->msound == MS_LEADER && !mtmp->mpeaceful)) {
-		flag |= ALLOW_ROCK;	 /* so leaders can break rocks */
+	if (throws_rocks(ptr) || is_rockbreaker(ptr)) {
+		flag |= ALLOW_ROCK;	
 	}
 	if (can_open) flag |= OPENDOOR;
 	if (can_unlock) flag |= UNLOCKDOOR;
@@ -1214,7 +1214,7 @@ postmov:
 		    likeobjs = (likes_objs(ptr) && pctload < 75);
 		    likemagic = (likes_magic(ptr) && pctload < 85);
 		    likerock = ((throws_rocks(ptr) && pctload < 50 && !In_sokoban(&u.uz))); 
-			 breakrock = (!mtmp->mpeaceful && ptr->msound == MS_LEADER);
+			 breakrock = is_rockbreaker(ptr);
 		    conceals = hides_under(ptr);
 		}
 

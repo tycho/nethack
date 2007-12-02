@@ -200,4 +200,8 @@
 				(is_domestic(ptr) || (Role_if(PM_CAVEMAN) && (ptr) == &mons[PM_MASTODON]) || \
 				 ((obj)->otyp == BANANA && ((ptr) == &mons[PM_MONKEY] || (ptr) == &mons[PM_APE]))))
 
+#define is_rockbreaker(ptr)							\
+				(((ptr)->msound == MS_LEADER || is_rider((ptr))) && \
+				 !mtmp->mpeaceful)
+
 #endif /* MONDATA_H */
