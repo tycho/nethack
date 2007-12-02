@@ -1516,7 +1516,7 @@ struct obj *obj;
 	 * absolutely junk at the moment, because the unicorn horn handles 
 	 * it all.  So we can fix that; let the unicorn horn handle
 	 * transitional troubles, and make the player find restore ability
-	 * potions and whatnot for stat abuse/stat drop.  -- DSR 12/02/08 */
+	 * potions and whatnot for stat abuse/stat drop.  -- DSR 12/02/07 */
 
 	int idx, val, val_limit,
 	    trouble_count, unfixable_trbl, did_prop;
