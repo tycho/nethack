@@ -910,7 +910,7 @@ mpickstuff(mtmp, str)
 #ifdef INVISIBLE_OBJECTS
 		if (otmp->oinvis && !perceives(mtmp->data)) continue;
 #endif
-		if (otmp->otyp == BOULDER && mtmp->data->msound == MS_LEADER) {
+		if (otmp->otyp == BOULDER && is_rockbreaker(mtmp->data)) {
 			if (cansee(mtmp->mx,mtmp->my)) {
 				pline("A thunderclap rings out, and %s shatters!", (distu(mtmp->mx, mtmp->my) <= 5) ? doname(otmp) : distant_name(otmp, doname));
 				pline("%s strides through the dust cloud.", Monnam(mtmp));
@@ -922,7 +922,7 @@ mpickstuff(mtmp, str)
 				pline("%s picks up %s.", Monnam(mtmp), (distu(mtmp->mx, mtmp->my) <= 5) ? doname(otmp) : distant_name(otmp, doname));
 			}
 		}
-		if (otmp->otyp == BOULDER && mtmp->data->msound == MS_LEADER) {
+		if (otmp->otyp == BOULDER && is_rockbreaker(mtmp->data)) {
 			remove_object(otmp);
 		} else {
 			obj_extract_self(otmp);
@@ -1029,7 +1029,7 @@ struct obj *otmp;
 
 	/* special--boulder throwers carry unlimited amounts of boulders
 	 * and quest leaders can shatter boulders (will be handled in mpickstuff) */
-	if ((throws_rocks(mdat) || mdat->msound == MS_LEADER) && otyp == BOULDER)
+	if ((throws_rocks(mdat) || is_rockbreaker(mdat)) && otyp == BOULDER)
 		return(TRUE);
 
 	/* nymphs deal in stolen merchandise, but not boulders or statues */
