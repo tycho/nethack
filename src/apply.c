@@ -1509,10 +1509,18 @@ use_unicorn_horn(obj)
 struct obj *obj;
 {
 #define PROP_COUNT 6		/* number of properties we're dealing with */
-#define ATTR_COUNT (A_MAX*3)	/* number of attribute points we might fix */
+#define ATTR_COUNT 0	 	/* number of attribute points we might fix */
+
+	/* Changing this to 0 is going to cause people's hair to stand on end.
+	 * The problem is, the spellbook and potion of restore ability are
+	 * absolutely junk at the moment, because the unicorn horn handles 
+	 * it all.  So we can fix that; let the unicorn horn handle
+	 * transitional troubles, and make the player find restore ability
+	 * potions and whatnot for stat abuse/stat drop.  -- DSR 12/02/08 */
+
 	int idx, val, val_limit,
-	    trouble_count, unfixable_trbl, did_prop, did_attr;
-	int trouble_list[PROP_COUNT + ATTR_COUNT];
+	    trouble_count, unfixable_trbl, did_prop;
+	int trouble_list[PROP_COUNT];
 
 	if (obj && obj->cursed) {
 	    long lcount = (long) rnd(100);
@@ -1546,7 +1554,7 @@ struct obj *obj;
 #define prop_trouble(X) trouble_list[trouble_count++] = prop2trbl(X)
 #define attr_trouble(Y) trouble_list[trouble_count++] = attr2trbl(Y)
 
-	trouble_count = unfixable_trbl = did_prop = did_attr = 0;
+	trouble_count = unfixable_trbl = did_prop = 0;
 
 	/* collect property troubles */
 	if (Sick) prop_trouble(SICK);
@@ -1558,6 +1566,9 @@ struct obj *obj;
 
 	unfixable_trbl = unfixable_trouble_count(TRUE);
 
+#if 0
+	... don't need to fix these anymore
+
 	/* collect attribute troubles */
 	for (idx = 0; idx < A_MAX; idx++) {
 	    val_limit = AMAX(idx);
@@ -1567,10 +1578,11 @@ struct obj *obj;
 	    if (val_limit > ABASE(idx) + 3) val_limit = ABASE(idx) + 3;
 
 	    for (val = ABASE(idx); val < val_limit; val++)
-		attr_trouble(idx);
+			attr_trouble(idx);
 	    /* keep track of unfixed trouble, for message adjustment below */
 	    unfixable_trbl += (AMAX(idx) - val_limit);
 	}
+#endif
 
 	if (trouble_count == 0) {
 	    pline(nothing_happens);
@@ -1600,48 +1612,55 @@ struct obj *obj;
 	    idx = trouble_list[val];
 
 	    switch (idx) {
-	    case prop2trbl(SICK):
-		make_sick(0L, (char *) 0, TRUE, SICK_ALL);
-		did_prop++;
-		break;
-	    case prop2trbl(BLINDED):
-		make_blinded((long)u.ucreamed, TRUE);
-		did_prop++;
-		break;
-	    case prop2trbl(HALLUC):
-		(void) make_hallucinated(0L, TRUE, 0L);
-		did_prop++;
-		break;
-	    case prop2trbl(VOMITING):
-		make_vomiting(0L, TRUE);
-		did_prop++;
-		break;
-	    case prop2trbl(CONFUSION):
-		make_confused(0L, TRUE);
-		did_prop++;
-		break;
-	    case prop2trbl(STUNNED):
-		make_stunned(0L, TRUE);
-		did_prop++;
-		break;
-	    default:
-		if (idx >= 0 && idx < A_MAX) {
-		    ABASE(idx) += 1;
-		    did_attr++;
-		} else
-		    panic("use_unicorn_horn: bad trouble? (%d)", idx);
-		break;
+			case prop2trbl(SICK):
+				make_sick(0L, (char *) 0, TRUE, SICK_ALL);
+				did_prop++;
+				break;
+			case prop2trbl(BLINDED):
+				make_blinded((long)u.ucreamed, TRUE);
+				did_prop++;
+				break;
+			case prop2trbl(HALLUC):
+				(void) make_hallucinated(0L, TRUE, 0L);
+				did_prop++;
+				break;
+			case prop2trbl(VOMITING):
+				make_vomiting(0L, TRUE);
+				did_prop++;
+				break;
+			case prop2trbl(CONFUSION):
+				make_confused(0L, TRUE);
+				did_prop++;
+				break;
+			case prop2trbl(STUNNED):
+				make_stunned(0L, TRUE);
+				did_prop++;
+				break;
+			default:
+#if 0
+				if (idx >= 0 && idx < A_MAX) {
+					ABASE(idx) += 1;
+					did_attr++;
+				} else
+					panic("use_unicorn_horn: bad trouble? (%d)", idx); 
+#endif
+			break;
 	    }
 	}
 
+#if 0
 	if (did_attr)
 	    pline("This makes you feel %s!",
 		  (did_prop + did_attr) == (trouble_count + unfixable_trbl) ?
 		  "great" : "better");
-	else if (!did_prop)
+	else
+#endif
+
+	if (!did_prop)
 	    pline("Nothing seems to happen.");
 
-	flags.botl = (did_attr || did_prop);
+	flags.botl = (did_prop);
+
 #undef PROP_COUNT
 #undef ATTR_COUNT
 #undef prop2trbl
