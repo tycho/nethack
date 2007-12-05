@@ -197,7 +197,13 @@ register struct monst *mtmp;
 	       has the Amulet, preventing monster from being satisified
 	       and removed from the game (along with said Amulet...) */
 	    if (mon_has_amulet(mtmp))
-		demand = cash + (long)rn1(1000,40);
+			demand = 
+#ifndef GOLDOBJ
+				u.ugold
+#else
+				money_cnt(invent)
+#endif
+				+ (long)rn1(10000,40);
 
 	    pline("%s demands %ld %s for safe passage.",
 		  Amonnam(mtmp), demand, currency(demand));
