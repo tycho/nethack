@@ -1927,7 +1927,7 @@ boolean ordinary;
 
 		case SPE_FIREBALL:
 		    You("explode a fireball on top of yourself!");
-		    explode(u.ux, u.uy, 11, d(6,6), WAND_CLASS, EXPL_FIERY);
+		    explode(u.ux, u.uy, AD_FIRE - 1, d(12,6), WAND_CLASS, EXPL_FIERY);
 		    break;
 		case WAN_FIRE:
 		    makeknown(WAN_FIRE);
@@ -2459,6 +2459,7 @@ void
 weffects(obj)
 register struct	obj	*obj;
 {
+	int sp_skill;
 	int otyp = obj->otyp;
 	boolean disclose = FALSE, was_unkn = !objects[otyp].oc_name_known;
 
@@ -2490,18 +2491,23 @@ register struct	obj	*obj;
 	} else {
 	    /* neither immediate nor directionless */
 
-	    if (otyp == WAN_DIGGING || otyp == SPE_DIG)
-		zap_dig();
-	    else if (otyp >= SPE_MAGIC_MISSILE && otyp <= SPE_FINGER_OF_DEATH)
-		buzz(otyp - SPE_MAGIC_MISSILE + 10,
-		     u.ulevel / 2 + 1,
-		     u.ux, u.uy, u.dx, u.dy);
-	    else if (otyp >= WAN_MAGIC_MISSILE && otyp <= WAN_LIGHTNING)
-		buzz(otyp - WAN_MAGIC_MISSILE,
-		     (otyp == WAN_MAGIC_MISSILE) ? 2 : 6,
-		     u.ux, u.uy, u.dx, u.dy);
-	    else
-		impossible("weffects: unexpected spell or wand");
+	    if (otyp == WAN_DIGGING || otyp == SPE_DIG) {
+			zap_dig();
+		 } else if (otyp == SPE_MAGIC_MISSILE) {
+			 /* Special case added here; level 2 magic missile shouldn't be doing
+			  * the same damage as level 4 fire blasts/cold rays, especially since
+			  * almost nothing is magic-missile resistant and many things are fire
+			  * and/or cold resistant */
+			 sp_skill = (P_SKILL(spell_skilltype(SPE_MAGIC_MISSILE)) == P_EXPERT) ? 3 : 4;
+			buzz(AD_MAGM + 9, u.ulevel / sp_skill + 1, u.ux, u.uy, u.dx, u.dy);
+		 } else if (otyp >= SPE_FIREBALL && otyp <= SPE_FINGER_OF_DEATH) {
+			buzz(otyp - SPE_MAGIC_MISSILE + 10, u.ulevel / 2 + 1, u.ux, u.uy, u.dx, u.dy);
+		 } else if (otyp >= WAN_MAGIC_MISSILE && otyp <= WAN_LIGHTNING) {
+			buzz(otyp - WAN_MAGIC_MISSILE, (otyp == WAN_MAGIC_MISSILE) ? 2 : 6,
+				u.ux, u.uy, u.dx, u.dy);
+		 } else {
+			impossible("weffects: unexpected spell or wand");
+		 }
 	    disclose = TRUE;
 	}
 	if (disclose && was_unkn) {
