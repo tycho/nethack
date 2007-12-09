@@ -2353,7 +2353,7 @@ register struct monst *mon;
 	/* by this point you have discovered mon's identity, blind or not... */
 	pline("Time stands still while you and %s lie in each other's arms...",
 		noit_mon_nam(mon));
-	if (rn2(35) > ACURR(A_CHA) + ACURR(A_INT)) {
+	if (rn2(40) > ACURR(A_CHA) + ACURR(A_INT)) {
 		/* Don't bother with mspec_used here... it didn't get tired! */
 		pline("%s seems to have enjoyed it more than you...",
 			noit_Monnam(mon));
@@ -2397,9 +2397,10 @@ register struct monst *mon;
 		You("seem to have enjoyed it more than %s...",
 		    noit_mon_nam(mon));
 		switch (rn2(5)) {
-		case 0: You_feel("raised to your full potential.");
+		case 0: You_feel("full of new energy!");
 			exercise(A_CON, TRUE);
-			u.uen = (u.uenmax += rnd(5));
+			u.uen += (rnd((u.uenmax/5)+1));
+			if (u.uen > u.uenmax) u.uen = u.uenmax;
 			break;
 		case 1: You_feel("good enough to do it again.");
 			(void) adjattrib(A_CON, 1, TRUE);
