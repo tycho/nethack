@@ -791,6 +791,7 @@ POTION("sickness", "fizzy",             0, 0,          42,  50, CLR_CYAN),
 POTION("fruit juice", "dark",           0, 0,          42,  50, CLR_BLACK),
 POTION("acid", "white",                 0, 0,          10, 250, CLR_WHITE),
 POTION("oil", "murky",                  0, 0,          30, 250, CLR_BROWN),
+POTION("salt water",	"polka-dot",	    0, 0,			  0,  50, CLR_RED),
 POTION((char*)0, "greasy",              0, 0,           0, 100, CLR_BLACK),
 POTION((char*)0, "slimy",               0, 0,           0, 100, CLR_BROWN),
 POTION((char*)0, "chartreuse",          0, 0,           0, 100, CLR_GREEN),
@@ -977,10 +978,11 @@ GEM("worthless piece of violet glass", "violet", 77, 1, 0, 6, 5, GLASS, CLR_MAGE
  * "gray stones" in the o_ranges[] array in objnam.c
  * that is currently everything between luckstones and flint (inclusive).
  */
-ROCK("luckstone", "gray",	0, 10,  10, 60, 3, 3, 1, 10, 7, MINERAL, CLR_GRAY),
-ROCK("loadstone", "gray",	0, 10, 500,  1, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
-ROCK("touchstone", "gray",	0,  8,  10, 45, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
-ROCK("flint", "gray",		0, 10,  10,  1, 6, 6, 0, 10, 7, MINERAL, CLR_GRAY),
+ROCK("luckstone", "gray",	0,  8,  10, 60, 3, 3, 1, 10, 7, MINERAL, CLR_GRAY),
+ROCK("loadstone", "gray",	0,  9, 500,  1, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
+ROCK("touchstone", "gray",	0,  7,  10, 45, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
+ROCK("salt chunk", "gray", 0,  5,   5,  1, 2, 2, 0, 10, 2, MINERAL, CLR_GRAY),
+ROCK("flint", "gray",		0,  9,  10,  1, 6, 6, 0, 10, 7, MINERAL, CLR_GRAY),
 ROCK("rock", (char *)0,		1,100,  10,  0, 3, 3, 0, 10, 7, MINERAL, CLR_GRAY),
 #undef GEM
 #undef ROCK
