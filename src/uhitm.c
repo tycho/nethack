@@ -8,6 +8,7 @@ STATIC_DCL boolean FDECL(known_hitum, (struct monst *,int *,struct attack *));
 STATIC_DCL void FDECL(steal_it, (struct monst *, struct attack *));
 STATIC_DCL boolean FDECL(hitum, (struct monst *,int,struct attack *));
 STATIC_DCL boolean FDECL(hmon_hitmon, (struct monst *,struct obj *,int));
+STATIC_DCL void FDECL(noisy_hit,(struct monst*,struct obj*,int));
 #ifdef STEED
 STATIC_DCL int FDECL(joust, (struct monst *,struct obj *));
 #endif
@@ -521,9 +522,16 @@ int thrown;
 			    (mon->ispriest || mon->isshk ||
 			     mon->data == &mons[PM_WATCHMAN] ||
 			     mon->data == &mons[PM_WATCH_CAPTAIN]));
+
+	/* check to see if what we're doing would wake up nearby critters */
+	noisy_hit(mon,obj,thrown);
+
+	/* go ahead and 'hit' the monster */
 	result = hmon_hitmon(mon, obj, thrown);
+
 	if (mon->ispriest && !rn2(2)) ghod_hitsu(mon);
 	if (anger_guards) (void)angry_guards(!flags.soundok);
+
 	return result;
 }
 
@@ -1126,6 +1134,53 @@ int thrown;
 
 	return((boolean)(destroyed ? FALSE : TRUE));
 }
+
+/* It's always seemed a bit odd that you can chop up a throne room,
+ * piece by piece, and nothing ever wakes up, yes?  Let's curb
+ * that behavior a bit; fighting is noisy!  This is a place to
+ * drop any special noise effects you may want to occur when a
+ * particular monster is hit.  */
+
+STATIC_OVL void
+noisy_hit(mtmp,otmp,thrown)
+struct monst* mtmp;
+struct obj* otmp;
+int thrown;
+{
+	struct monst* mtmp2;
+	int noiserange;
+
+	/* properly fired missiles shouldn't make much noise on impact,
+	 * and thrown darts and knives are by definition sneaky */
+	if (otmp && thrown) {
+		if ((ammo_and_launcher(otmp,uwep) && rn2(3)) ||
+			otmp->otyp == DART || otmp->otyp == KNIFE) {
+			return;
+		}
+	}
+
+	/* Stealth will reduce the amount of noise made while fighting,
+	 * but won't reduce it entirely to zero */
+	noiserange = Stealth ? 9 : BOLT_LIM*BOLT_LIM;
+
+	/* Smacking things with lightning is loud.
+	 * TODO: add wand sounds for loud wands */
+	if (otmp && otmp->oartifact == ART_MJOLLNIR) {
+		noiserange = BOLT_LIM*BOLT_LIM;
+	}
+
+	/* Check and see who was close enough to hear it */
+	for (mtmp2 = fmon; mtmp2; mtmp2 = mtmp2->nmon) {
+		if (dist2(mtmp->mx,mtmp->my,mtmp2->mx,mtmp2->my) < noiserange) {
+			/* Rogues get a bit of a bonus for knowing how to kill
+			 * in nice, quiet ways */
+			if (rn2(Role_if(PM_ROGUE) ? 3 : 5)) {
+				wakeup(mtmp2);
+			}
+		}
+	}
+}
+
 
 STATIC_OVL boolean
 shade_aware(obj)
