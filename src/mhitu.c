@@ -918,7 +918,7 @@ hitmu(mtmp, mattk)
 	/* undead do extra damage in the witching hour;
 	 * berserk monsters always do extra damage;
 	 * and elementals on their home plane hit really hard */
-	if((is_undead(mdat) && midnight()) || is_berserker(mdat) ||
+	if((is_undead(mdat) && midnight()) || mtmp->mberserk ||
 			(is_home_elemental(mdat) && mtmp->mnum != PM_AIR_ELEMENTAL)) {
 		dmg += d((int)mattk->damn, (int)mattk->damd);
 	}

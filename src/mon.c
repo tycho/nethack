@@ -1267,23 +1267,22 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 {
 	/* supposedly purple worms are attracted to shrieking because they
 	   like to eat shriekers, so attack the latter when feasible */
-	if (magr->data == &mons[PM_PURPLE_WORM] &&
-		mdef->data == &mons[PM_SHRIEKER])
+	if (magr->data == &mons[PM_PURPLE_WORM] && mdef->data == &mons[PM_SHRIEKER])
 	    return ALLOW_M|ALLOW_TM;
 	/* Various other combinations such as dog vs cat, cat vs rat, and
 	   elf vs orc have been suggested.  For the time being we don't
 	   support those. */
 
 	/* don't let pets kill each other, as amusing as it can be */
-	if (!magr->mtame) {
+	if (!magr->mtame && !magr->mpeaceful) {
 		/* bigger critters and Riders will step on your pets to get to you */
-		if ((is_rider(magr->data) || magr->data->msize > mdef->data->msize + 1) && 
-					!magr->mpeaceful && mdef->mtame) {
+		if ((is_rider(magr->data) || 
+					magr->data->msize > mdef->data->msize + 1) && mdef->mtame) {
 			return ALLOW_M|ALLOW_TM;
 		}
 		if (m_canseeu(magr)) {	/* if you're in sight... */
 			/* Berserk monsters will attack anything but their own to reach you... */
-			if (is_berserker(magr->data) && magr->data->mlet != mdef->data->mlet) {
+			if (magr->mberserk && magr->data->mlet != mdef->data->mlet) {
 				return ALLOW_M|ALLOW_TM;
 			} 
 			/* and just about everything will step on an insect in the way */
