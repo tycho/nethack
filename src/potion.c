@@ -987,6 +987,11 @@ peffects(otmp)
 		You_feel("a little %s.", Hallucination ? "normal" : "strange");
 		if (!Unchanging) polyself(FALSE);
 		break;
+	case POT_SALT_WATER:
+		pline("Yuck... this is salt water!");
+		exercise(A_WIS, FALSE);
+		make_vomiting(Vomiting + rnd(10) + 5,TRUE);
+		break;
 	default:
 		impossible("What a funny potion! (%u)", otmp->otyp);
 		return(0);

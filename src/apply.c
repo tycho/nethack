@@ -3222,6 +3222,7 @@ doapply()
 	case LUCKSTONE:
 	case LOADSTONE:
 	case TOUCHSTONE:
+	case SALT_CHUNK:
 		use_stone(obj);
 		break;
 	default:

@@ -1750,6 +1750,7 @@ struct alt_spellings {
 	{ "bag of poop", BAG_OF_POO },
 	{ "mattock", DWARVISH_MATTOCK },
 	{ "amulet of poison resistance", AMULET_VERSUS_POISON },
+	{ "salt", SALT_CHUNK },
 	{ "stone", ROCK },
 #ifdef TOURIST
 	{ "camera", EXPENSIVE_CAMERA },
