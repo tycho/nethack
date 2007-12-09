@@ -898,6 +898,7 @@ static const char * const bogusmons[] = {
 	"brogmoid", "dornbeast",		/* Quendor (Zork, &c.) */
 	"Ancient Multi-Hued Dragon", "Evil Iggy",
 						/* Moria */
+	"Evil Otto", /* Berzerk */
 	"emu", "kestrel", "xeroc", "venus flytrap",
 						/* Rogue */
 	"creeping coins",			/* Wizardry */
