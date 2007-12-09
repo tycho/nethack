@@ -1841,6 +1841,7 @@ register struct obj *obj;
 	      pline_The("stone%s won't leave your person.", plur(obj->quan));
 		return 0;
 	} else if (obj->otyp == AMULET_OF_YENDOR ||
+			obj->otyp == FAKE_AMULET_OF_YENDOR ||
 		   obj->otyp == CANDELABRUM_OF_INVOCATION ||
 		   obj->otyp == BELL_OF_OPENING ||
 		   obj->otyp == SPE_BOOK_OF_THE_DEAD) {
