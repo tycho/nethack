@@ -1523,6 +1523,7 @@ register struct obj *obj;
 /* returns TRUE if something happened (potion should be used up) */
 {
 	char Your_buf[BUFSZ];
+	struct obj* otmp;
 
 	if (snuff_lit(obj)) return(TRUE);
 
@@ -1604,6 +1605,20 @@ register struct obj *obj;
 			return TRUE;
 		}
 		break;
+		 case GEM_CLASS:
+			if (obj->otyp == SALT_CHUNK) {
+				pline("The %s dissolves!",xname2(obj,TRUE));
+				makeknown(obj->otyp);
+				useup(obj);
+				otmp = mksobj(POT_SALT_WATER,TRUE,FALSE);
+				if (otmp) {
+					otmp->blessed = otmp->cursed = 0;
+					addinv(otmp);
+					update_inventory();
+				}
+				return TRUE;
+			}
+			break;
 	    case WEAPON_CLASS:
 	    /* Just "fall through" to generic rustprone check for now. */
 	    /* fall through */
