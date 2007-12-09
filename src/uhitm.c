@@ -1175,7 +1175,7 @@ int thrown;
 			/* Rogues get a bit of a bonus for knowing how to kill
 			 * in nice, quiet ways */
 			if (rn2(Role_if(PM_ROGUE) ? 3 : 5)) {
-				wakeup(mtmp2);
+				mtmp2->msleeping = 0;
 			}
 		}
 	}
