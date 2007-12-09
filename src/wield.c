@@ -577,6 +577,9 @@ drop_uswapwep()
 	dropx(obj);
 }
 
+/* This needs to take a turn, really.  You've either _got_ a sharp thing
+ * in each hand and are trying to put it away, or you're trying to get a
+ * sharp thing out and get it operational. */
 int
 dotwoweapon()
 {
@@ -585,7 +588,7 @@ dotwoweapon()
 		You("switch to your primary weapon.");
 		u.twoweap = 0;
 		update_inventory();
-		return (0);
+		return 1;
 	}
 
 	/* May we use two weapons? */
@@ -594,9 +597,9 @@ dotwoweapon()
 		You("begin two-weapon combat.");
 		u.twoweap = 1;
 		update_inventory();
-		return (rnd(20) > ACURR(A_DEX));
+		return 1;
 	}
-	return (0);
+	return 0;
 }
 
 /*** Functions to empty a given slot ***/
