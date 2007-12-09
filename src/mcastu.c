@@ -3,6 +3,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "edog.h"
 
 /* monster mage spells */
 #define MGC_PSI_BOLT	 0
@@ -18,6 +19,7 @@
 #define MGC_CLONE_WIZ	10
 #define MGC_DEATH_TOUCH	11
 #define MGC_FLY			12
+#define MGC_ENRAGE		13
 
 /* monster cleric spells */
 #define CLC_OPEN_WOUNDS	 0
@@ -97,12 +99,13 @@ int spellval;
 	switch (spellval) {
 		case 22:
 		case 21:
-		case 20:
 			return MGC_DEATH_TOUCH;
+		case 20:
 		case 19:
-		case 18:
 			return MGC_CLONE_WIZ;
+		case 18:
 		case 17:
+			return MGC_ENRAGE;
 		case 16:
 		case 15:
 			return MGC_SUMMON_MONS;
@@ -361,8 +364,11 @@ int dmg;
 int spellnum;
 {
 	struct obj* oatmp;
+	struct monst* mtmp2;
 	int erodelvl;
 	const char* desc = 0;
+	int seen,count;
+	struct edog* edog;
 
     if (dmg == 0 && !is_undirected_spell(AD_SPEL, spellnum)) {
 	impossible("cast directed wizard spell (%d) with dmg=0?", spellnum);
@@ -400,6 +406,44 @@ int spellnum;
 	} else
 	    impossible("bad wizard cloning?");
 	break;
+	/* Inspire critters to fight a little more vigorously...
+	 *
+	 * -- Peaceful critters may become hostile.
+	 * -- Hostile critters may become berserk.
+	 * -- Borderline tame critters, or tame critters
+	 *    who have been treated poorly may ALSO become hostile!
+	 */
+	 case MGC_ENRAGE:
+		for (mtmp2 = fmon; mtmp2; mtmp2 = mtmp2->nmon) {
+			if (m_cansee(mtmp,mtmp2->mx,mtmp2->my) && rn2(3) &&
+					mtmp2 != mtmp && distu(mtmp2->mx,mtmp2->my) < 16) {
+				seen++;
+				if (mtmp2->mtame) {
+					edog = (mtmp2->isminion) ? 0 : EDOG(mtmp2);
+					if (mtmp2->mtame <= 3 || (edog && edog->abuse >= 5)) {
+						mtmp2->mtame = mtmp2->mpeaceful = 0;
+						if (mtmp2->mleashed) { m_unleash(mtmp2,FALSE); }
+						count++;
+					}
+				} else if (mtmp2->mpeaceful) {
+					mtmp2->mpeaceful = 0;
+					count++;
+				} else {
+					mtmp2->mberserk = 1;
+					count++;
+				}
+			}
+		}
+		/* Don't yell if we didn't see anyone to yell at. */
+		if (seen && (!rn2(3) || mtmp->iswiz)) {
+			verbalize("Get him, you fools, or I'll have your figgin on a stick!");
+		}
+		if (count) {
+			pline("It seems a little more dangerous here now...");
+			doredraw();
+		}
+		dmg = 0;
+		break;
     case MGC_SUMMON_MONS:
     {
 	int count;
@@ -768,6 +812,7 @@ int spellnum;
 	case MGC_HASTE_SELF:
 	case MGC_CURE_SELF:
 	case MGC_FLY:
+	case MGC_ENRAGE:
 	    return TRUE;
 	default:
 	    break;
