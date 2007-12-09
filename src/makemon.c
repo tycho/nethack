@@ -1044,6 +1044,7 @@ register int	mmflags;
 	mtmp->mcansee = mtmp->mcanmove = TRUE;
 	mtmp->mflying = is_flyer(mtmp->data);	  /* fliers start out flying */
 	mtmp->seen_resistance = M_SEEN_NOTHING;
+	mtmp->mberserk = is_berserker(mtmp->data); /* berserkers start out crazed */
 	mtmp->mpeaceful = (mmflags & MM_ANGRY) ? FALSE : peace_minded(ptr);
 
 	switch(ptr->mlet) {

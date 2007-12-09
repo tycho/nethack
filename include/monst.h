@@ -81,7 +81,7 @@ struct monst {
 #define m_setseen(mon,mask)	((mon)->seen_resistance |= (mask))
 #define m_sawlose(mon,mask)	((mon)->seen_resistance &= (~mask))
 
-	unsigned long seen_resistance;			 /* Has seen you resist an element or magical effect */
+	unsigned long seen_resistance;  /* Has seen you resist an element or magical effect */
 
 	Bitfield(female,1);	/* is female */
 	Bitfield(minvis,1);	/* currently invisible */
@@ -123,9 +123,12 @@ struct monst {
 	Bitfield(mpeaceful,1);	/* does not attack unprovoked */
 	Bitfield(mtrapped,1);	/* trapped in a pit, web or bear trap */
 	Bitfield(mleashed,1);	/* monster is on a leash */
+	Bitfield(mberserk,1);    /* monster is berserk */
+
 	Bitfield(isshk,1);	/* is shopkeeper */
 	Bitfield(isminion,1);	/* is a minion */
 
+	Bitfield(isshopguard,1);	 /* monster is a shop guard */
 	Bitfield(isgd,1);	/* is guard */
 	Bitfield(ispriest,1);	/* is a priest */
 	Bitfield(iswiz,1);	/* is the Wizard of Yendor */
