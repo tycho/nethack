@@ -903,6 +903,10 @@ int spellnum;
 	if ((is_flyer(mtmp->data) || is_flying(mtmp) || 
 				(mtmp->mpeaceful && !mtmp->mtame)) && spellnum == MGC_FLY)
 		return TRUE;
+	/* Don't go making everything else bonkers if you're peaceful! */
+	if (spellnum == MGC_ENRAGE && (mtmp->mpeaceful || mtmp->mtame)) {
+		return TRUE;
+	}
     } else if (adtyp == AD_CLRC) {
 	/* summon insects/sticks to snakes won't be cast by peaceful monsters */
 	if (mtmp->mpeaceful && spellnum == CLC_INSECTS)
