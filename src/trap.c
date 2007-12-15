@@ -2501,10 +2501,11 @@ long hmask, emask;     /* might cancel timeout */
 		if(is_pool(u.ux,u.uy) && !Wwalking && !Swimming && !u.uinwater)
 			no_msg = drown();
 
-		if (is_pool(u.ux,u.uy) && uarm &&
+		if (is_pool(u.ux,u.uy) && !Levitation && !Flying && uarm &&
 				(uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
 			levl[u.ux][u.uy].typ = ICE;
 			pline("The pool crackles and freezes under your feet.");
+			bury_objs(u.ux,u.uy);
 		}
 
 		if(is_lava(u.ux,u.uy)) {
@@ -4115,11 +4116,13 @@ lava_effects()
 
     if (how_resistant(FIRE_RES) < 100) {
 		if(Wwalking) {
-			if (uarm && (uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
+			if (!Levitation && !Flying && uarm && 
+					(uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
 				levl[u.ux][u.uy].typ = ROOM;
 				if (!rn2(4)) {
 					pline_The("lava cools and solidifies under your feet.");
 				}
+				bury_objs(u.ux,u.uy);
 				return FALSE;
 			}
 			dmg = resist_reduce(d(6,6),FIRE_RES);
@@ -4186,11 +4189,13 @@ lava_effects()
 		if (u.uhp > 1)
 			losehp(1, lava_killer, KILLED_BY);
     } else {
-		if (uarm && (uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
+		if (!Levitation && !Flying && uarm && 
+				(uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
 			levl[u.ux][u.uy].typ = ROOM;
 			if (!rn2(4)) {
 				pline_The("lava cools and solidifies under your feet.");
 			}
+			bury_objs(u.ux,u.uy);
 			return FALSE;
 		}
 	 }
