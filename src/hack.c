@@ -1407,12 +1407,13 @@ domove()
 
 	/* Special effects of WDSM; don't spam the player unless he's stepped onto
 	 * water from something that wasn't water/ice already */
-	if (is_pool(u.ux,u.uy) && uarm && 
+	if (is_pool(u.ux,u.uy) && !Levitation && !Flying && uarm && 
 			(uarm->otyp == WHITE_DRAGON_SCALE_MAIL || uarm->otyp == WHITE_DRAGON_SCALES)) {
 		levl[u.ux][u.uy].typ = ICE;
       if (!is_pool(u.ux0,u.uy0) && !is_ice(u.ux0,u.uy0)) {
 			pline("The pool crackles and freezes under your feet.");
 		}
+		bury_objs(u.ux,u.uy);
 	}
 
 	spoteffects(TRUE);
