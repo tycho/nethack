@@ -436,7 +436,7 @@ int spellnum;
 		}
 		/* Don't yell if we didn't see anyone to yell at. */
 		if (seen && (!rn2(3) || mtmp->iswiz)) {
-			verbalize("Get him, you fools, or I'll have your figgin on a stick!");
+			verbalize("Get %s, you fools, or I'll have your figgin on a stick!",uhim());
 		}
 		if (count) {
 			pline("It seems a little more dangerous here now...");
