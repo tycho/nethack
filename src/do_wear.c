@@ -324,12 +324,14 @@ Helmet_on()
 	case DWARVISH_IRON_HELM:
 	case GNOMISH_HELM:
 	case ORCISH_HELM:
-	case HELM_OF_CLARITY:
 	case HELM_OF_DISCOVERY:
 	case HELM_OF_TELEPATHY:
 		break;
 	case HELM_OF_BRILLIANCE:
 		adj_abon(uarmh, uarmh->spe);
+		break;
+	case HELM_OF_CLARITY:
+		see_monsters();
 		break;
 	case CORNUTHAUM:
 		/* people think marked wizards know what they're talking
