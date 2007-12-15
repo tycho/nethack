@@ -2591,6 +2591,7 @@ register struct attack *mattk;
 				}
 				if (mtmp->mhp < 1) {
 					xkilled(mtmp,1);
+					return 2;  /* let the chain upstream know it died */
 				}
 				return 1;
 				break;
