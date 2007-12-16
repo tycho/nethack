@@ -5,7 +5,9 @@
 
 /* We could include only config.h, except for the overlay definitions... */
 #include "hack.h"
+#ifdef UNIX
 #include <sys/times.h>
+#endif
 /*=
     Assorted 'small' utility routines.	They're virtually independent of
 NetHack, except that rounddiv may call panic().
@@ -461,11 +463,18 @@ static struct tm *NDECL(getlt);
 void
 setrandom()
 {
-	/* TODO: Make this at least a little more portable; for now, the quick fix will do */
+	/* This isn't terribly portable at the moment, but it will compile
+	 * on both foonix and MinGW; it isn't the best situation, since someone
+	 * on Win32 should be able to predict process IDs with little effort, but
+	 * it's more of a "problem" on public servers anywa -- which are foonix. */
 	unsigned long seed;
+#ifdef UNIX
 	struct tms buf;
-
 	seed = (unsigned long)times(&buf) * getpid();
+#else
+	seed = (unsigned long)time((time_t*)0) * getpid();
+#endif
+
 
 	/* the types are different enough here that sweeping the different
 	 * routine names into one via #defines is even more confusing
