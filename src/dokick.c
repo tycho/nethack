@@ -604,7 +604,7 @@ char *buf;
 
 	if (kickobj) what = distant_name(kickobj,doname);
 	else if (IS_DOOR(maploc->typ)) what = "a door";
-	else if (IS_TREE(maploc->typ)) what = "a tree";
+	else if (IS_TREE(maploc->typ)) what = christmas() ? "a christmas tree" : "a tree";
 	else if (IS_STWALL(maploc->typ)) what = "a wall";
 	else if (IS_ROCK(maploc->typ)) what = "a rock";
 	else if (IS_THRONE(maploc->typ)) what = "a throne";
@@ -892,56 +892,74 @@ dokick()
 		if(IS_GRAVE(maploc->typ) || maploc->typ == IRONBARS)
 		    goto ouch;
 		if(IS_TREE(maploc->typ)) {
-		    struct obj *treefruit;
-		    /* nothing, fruit or trouble? 75:23.5:1.5% */
-		    if (rn2(3)) {
-			if ( !rn2(6) && !(mvitals[PM_KILLER_BEE].mvflags & G_GONE) )
-			    You_hear("a low buzzing."); /* a warning */
+			struct obj *treefruit;
+			/* special-case for christmas... :) */
+			if (christmas()) {
+				coord loc;
+				/* we can cheat with enexto to find an empty spot
+				 * next to the tree to drop our present... */
+				if (!rn2(5) || !enexto(&loc,x,y,(struct permonst*)0) ||
+						(maploc->looted & TREE_LOOTED) || In_quest(&u.uz)) {
+					goto ouch;
+				}
+				treefruit = mkobj_at(RANDOM_CLASS,loc.x,loc.y,FALSE);
+				if (treefruit) {
+					pline("%s falls out!",Blind ? "Something" : "A present");
+					newsym(loc.x,loc.y);
+					maploc->looted |= TREE_LOOTED;
+					return 1;
+				} else {
+					goto ouch;
+				}
+			}
+			/* nothing, fruit or trouble? 75:23.5:1.5% */
+			if (rn2(3)) {
+				if ( !rn2(6) && !(mvitals[PM_KILLER_BEE].mvflags & G_GONE) )
+					You_hear("a low buzzing."); /* a warning */
+				goto ouch;
+			}
+			if (rn2(15) && !(maploc->looted & TREE_LOOTED) && 
+					(treefruit = rnd_treefruit_at(x, y))) {
+				long nfruit = 8L-rnl(7), nfall;
+				short frtype = treefruit->otyp;
+				treefruit->quan = nfruit;
+				if (is_plural(treefruit))
+					pline("Some %s fall from the tree!", xname(treefruit));
+				else
+					pline("%s falls from the tree!", An(xname(treefruit)));
+				nfall = scatter(x,y,2,MAY_HIT,treefruit);
+				if (nfall != nfruit) {
+					/* scatter left some in the tree, but treefruit
+					* may not refer to the correct object */
+					treefruit = mksobj(frtype, TRUE, FALSE);
+					treefruit->quan = nfruit-nfall;
+					pline("%ld %s got caught in the branches.",
+					nfruit-nfall, xname(treefruit));
+					dealloc_obj(treefruit);
+				}
+				exercise(A_DEX, TRUE);
+				exercise(A_WIS, TRUE);	/* discovered a new food source! */
+				newsym(x, y);
+				maploc->looted |= TREE_LOOTED;
+				return(1);
+			} else if (!(maploc->looted & TREE_SWARM)) {
+				int cnt = rnl(4) + 2;
+				int made = 0;
+				coord mm;
+				mm.x = x; mm.y = y;
+				while (cnt--) {
+					if (enexto(&mm, mm.x, mm.y, &mons[PM_KILLER_BEE]) && 
+							makemon(&mons[PM_KILLER_BEE], mm.x, mm.y, MM_ANGRY))
+								made++;
+				}
+				if ( made )
+					pline("You've attracted the tree's former occupants!");
+				else
+					You("smell stale honey.");
+				maploc->looted |= TREE_SWARM;
+				return(1);
+			}
 			goto ouch;
-		    }
-		    if (rn2(15) && !(maploc->looted & TREE_LOOTED) &&
-			  (treefruit = rnd_treefruit_at(x, y))) {
-			long nfruit = 8L-rnl(7), nfall;
-			short frtype = treefruit->otyp;
-			treefruit->quan = nfruit;
-			if (is_plural(treefruit))
-			    pline("Some %s fall from the tree!", xname(treefruit));
-			else
-			    pline("%s falls from the tree!", An(xname(treefruit)));
-			nfall = scatter(x,y,2,MAY_HIT,treefruit);
-			if (nfall != nfruit) {
-			    /* scatter left some in the tree, but treefruit
-			     * may not refer to the correct object */
-			    treefruit = mksobj(frtype, TRUE, FALSE);
-			    treefruit->quan = nfruit-nfall;
-			    pline("%ld %s got caught in the branches.",
-				nfruit-nfall, xname(treefruit));
-			    dealloc_obj(treefruit);
-			}
-			exercise(A_DEX, TRUE);
-			exercise(A_WIS, TRUE);	/* discovered a new food source! */
-			newsym(x, y);
-			maploc->looted |= TREE_LOOTED;
-			return(1);
-		    } else if (!(maploc->looted & TREE_SWARM)) {
-		    	int cnt = rnl(4) + 2;
-			int made = 0;
-		    	coord mm;
-		    	mm.x = x; mm.y = y;
-			while (cnt--) {
-			    if (enexto(&mm, mm.x, mm.y, &mons[PM_KILLER_BEE])
-				&& makemon(&mons[PM_KILLER_BEE],
-					       mm.x, mm.y, MM_ANGRY))
-				made++;
-			}
-			if ( made )
-			    pline("You've attracted the tree's former occupants!");
-			else
-			    You("smell stale honey.");
-			maploc->looted |= TREE_SWARM;
-			return(1);
-		    }
-		    goto ouch;
 		}
 #ifdef SINKS
 		if(IS_SINK(maploc->typ)) {

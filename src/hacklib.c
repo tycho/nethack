@@ -613,6 +613,14 @@ friday_13th()
 	return((boolean)(lt->tm_wday == 5 /* friday */ && lt->tm_mday == 13));
 }
 
+boolean
+christmas()
+{
+	struct tm* lt = getlt();
+	return (boolean)(lt->tm_mon == 11 && (lt->tm_mday > 15 && lt->tm_mday < 26));
+	/* 'twas the week(ish) before christmas, and all through the dungeon... */
+}
+
 int
 night()
 {
