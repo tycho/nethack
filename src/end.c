@@ -1357,10 +1357,13 @@ boolean want_dump;
 		    if (want_dump)  dump("  ", buf);
 #endif
 		}
-	    /*
-	     * if (Hallucination)
-	     *     putstr(klwin, 0, "and a partridge in a pear tree");
-	     */
+		 Strcpy(buf,"and a partridge in a pear tree");
+	     if (christmas()) {
+	         if (c == 'y') putstr(klwin, 0, buf);
+#ifdef DUMP_LOG
+				if (want_dump) dump("  ",buf);
+#endif
+		  }
 	    if (ntypes > 1) {
 		if (c == 'y') putstr(klwin, 0, "");
 		Sprintf(buf, "%ld creatures vanquished.", total_killed);

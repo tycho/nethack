@@ -730,6 +730,12 @@ do_look(quick)
 
 	/* Finally, print out our explanation. */
 	if (found) {
+		/* Really lame hijack, but... */
+		if (christmas() && strstri(out_str,"a tree")) {
+			char temp_buf[BUFSZ];
+			Sprintf(temp_buf," (with little colored balls on it)");
+			(void)strncat(out_str, temp_buf, BUFSZ-strlen(out_str)-1);
+		}
 	    pline("%s", out_str);
 	    /* check the data file for information about this thing */
 	    if (found == 1 && ans != LOOK_QUICK && ans != LOOK_ONCE &&

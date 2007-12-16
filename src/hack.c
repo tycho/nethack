@@ -316,13 +316,15 @@ still_chewing(x,y)
     struct rm *lev = &levl[x][y];
     struct obj *boulder = sobj_at(BOULDER,x,y);
     const char *digtxt = (char *)0, *dmgtxt = (char *)0;
+	 boolean getcoal = FALSE;
 
     if (digging.down)		/* not continuing previous dig (w/ pick-axe) */
 	(void) memset((genericptr_t)&digging, 0, sizeof digging);
 
     if (!boulder && IS_ROCK(lev->typ) && !may_dig(x,y)) {
 	You("hurt your teeth on the %s.",
-	    IS_TREE(lev->typ) ? "tree" : "hard stone");
+			/* ternary abuse! */
+	    IS_TREE(lev->typ) ? christmas() ? "christmas tree" : "tree" : "hard stone");
 	nomul(0);
 	return 1;
     } else if (digging.pos.x != x || digging.pos.y != y ||
@@ -339,7 +341,8 @@ still_chewing(x,y)
 	You("start chewing %s %s.",
 	    (boulder || IS_TREE(lev->typ)) ? "on a" : "a hole in the",
 	    boulder ? "boulder" :
-	    IS_TREE(lev->typ) ? "tree" : IS_ROCK(lev->typ) ? "rock" : "door");
+	    IS_TREE(lev->typ) ? christmas() ? "christmas tree" : "tree" : 
+			IS_ROCK(lev->typ) ? "rock" : "door");
 	watch_dig((struct monst *)0, x, y, FALSE);
 	return 1;
     } else if ((digging.effort += (30 + u.udaminc)) <= 100)  {
@@ -347,8 +350,8 @@ still_chewing(x,y)
 	    You("%s chewing on the %s.",
 		digging.chew ? "continue" : "begin",
 		boulder ? "boulder" :
-		IS_TREE(lev->typ) ? "tree" :
-		IS_ROCK(lev->typ) ? "rock" : "door");
+		IS_TREE(lev->typ) ? christmas() ? "christmas tree" : "tree" :
+			IS_ROCK(lev->typ) ? "rock" : "door");
 	digging.chew = TRUE;
 	watch_dig((struct monst *)0, x, y, FALSE);
 	return 1;
@@ -391,8 +394,13 @@ still_chewing(x,y)
 	    lev->doormask = D_NODOOR;
 	}
     } else if (IS_TREE(lev->typ)) {
-	digtxt = "chew through the tree.";
-	lev->typ = ROOM;
+		 if (christmas()) {
+			digtxt = "chew through the christmas tree.";
+			getcoal = TRUE;
+		 } else {
+			digtxt = "chew through the tree.";
+		 }
+		lev->typ = ROOM;
     } else if (lev->typ == SDOOR) {
 	if (lev->doormask & D_TRAPPED) {
 	    lev->doormask = D_NODOOR;
@@ -424,6 +432,7 @@ still_chewing(x,y)
     unblock_point(x, y);	/* vision */
     newsym(x, y);
     if (digtxt) You(digtxt);	/* after newsym */
+	 if (getcoal) get_coal();
     if (dmgtxt) pay_for_damage(dmgtxt, FALSE);
     (void) memset((genericptr_t)&digging, 0, sizeof digging);
     return 0;

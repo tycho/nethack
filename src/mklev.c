@@ -22,6 +22,7 @@ STATIC_DCL void FDECL(mkfount,(int,struct mkroom *));
 #ifdef SINKS
 STATIC_DCL void FDECL(mksink,(struct mkroom *));
 #endif
+STATIC_DCL void FDECL(mktree,(struct mkroom*));
 STATIC_DCL void FDECL(mkaltar,(struct mkroom *));
 STATIC_DCL void FDECL(mkgrave,(struct mkroom *));
 STATIC_DCL void NDECL(makevtele);
@@ -792,6 +793,8 @@ skip0:
 #ifdef SINKS
 		if(!rn2(60)) mksink(croom);
 #endif
+		if (christmas() && !rn2(20)) mktree(croom);
+
 		if(!rn2(60)) mkaltar(croom);
 		x = 80 - (depth(&u.uz) * 2);
 		if (x < 2) x = 2;
@@ -1371,6 +1374,22 @@ register struct mkroom *croom;
 	level.flags.nsinks++;
 }
 #endif /* SINKS */
+
+STATIC_OVL void
+mktree(croom)
+struct mkroom* croom;
+{
+	coord loc;
+	int count = 0;
+
+	do { 
+		if (!somexy(croom,&loc)) return;
+		count++;
+	} while (count < 200 && (occupied(loc.x,loc.y) || bydoor(loc.x,loc.y)));
+
+	/* ho, ho, ho */
+	levl[loc.x][loc.y].typ = TREE;
+}
 
 
 STATIC_OVL void

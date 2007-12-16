@@ -250,6 +250,7 @@ E void FDECL(bury_objs, (int,int));
 E void FDECL(unearth_objs, (int,int));
 E void FDECL(rot_organic, (genericptr_t, long));
 E void FDECL(rot_corpse, (genericptr_t, long));
+E void NDECL(get_coal);
 #if 0
 E void FDECL(bury_monst, (struct monst *));
 E void NDECL(bury_you);
@@ -771,6 +772,7 @@ E char *FDECL(yymmdd, (time_t));
 E long FDECL(yyyymmdd, (time_t));
 E int NDECL(phase_of_the_moon);
 E boolean NDECL(friday_13th);
+E boolean NDECL(christmas);
 E int NDECL(night);
 E int NDECL(midnight);
 

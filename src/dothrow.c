@@ -484,7 +484,7 @@ hurtle_step(arg, x, y)
 
 	    pline("Ouch!");
 	    if (IS_TREE(levl[x][y].typ))
-		s = "bumping into a tree";
+		s = christmas() ? "bumping into a christmas tree" : "bumping into a tree";
 	    else if (IS_ROCK(levl[x][y].typ))
 		s = "bumping into a wall";
 	    else
