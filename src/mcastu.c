@@ -570,7 +570,9 @@ int spellnum;
 	    shieldeff(u.ux, u.uy);
 		 monstseesu(M_SEEN_MAGR);
 	    dmg = (dmg + 1) / 2;
-	} else if (uarmh) {
+	} 
+	/* Tinfoil hat? ;) */
+	if (uarmh) {
 		desc = OBJ_DESCR(objects[uarmh->otyp]);
 		if (desc && strstri(desc,"tinfoil")) {
 			shieldeff(u.ux, u.uy);
