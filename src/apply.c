@@ -1567,7 +1567,7 @@ struct obj *obj;
 	unfixable_trbl = unfixable_trouble_count(TRUE);
 
 #if 0
-	... don't need to fix these anymore
+	/*... don't need to fix these anymore */
 
 	/* collect attribute troubles */
 	for (idx = 0; idx < A_MAX; idx++) {
