@@ -330,7 +330,6 @@ typedef unsigned char	uchar;
 /* difficulty */
 #define ELBERETH	/* Engraving the E-word repels monsters */
 #define SORTLOOT
-#define HPMON
 /* I/O */
 #define REDO		/* support for redoing last command - DGK */
 #if !defined(MAC)
