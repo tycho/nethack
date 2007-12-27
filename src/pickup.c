@@ -1874,9 +1874,12 @@ register struct obj *obj;
 	} else if (obj == uquiver) {
 		setuqwep((struct obj *) 0);
 		if (uquiver) return 0;     /* unwielded, died, rewielded */
-	} else if (obj == ulauncher) {
+	} 
+	/* it's possible for this to also be uwep since ulauncher
+	 * is a virtual, not a physical location on the player */
+	if (obj == ulauncher) {
 		setulauncher((struct obj *) 0);
-		if (ulauncher) return 0;     /* unwielded, died, rewielded */
+		if (ulauncher) return 0;  
 	}
 
 	if (obj->otyp == CORPSE) {
