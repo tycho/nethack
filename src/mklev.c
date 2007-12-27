@@ -1389,6 +1389,9 @@ struct mkroom* croom;
 
 	/* ho, ho, ho */
 	levl[loc.x][loc.y].typ = TREE;
+	if (level.objects[loc.x][loc.y]) {  /* "under" the tree */
+		bury_objs(loc.x,loc.y);
+	}
 }
 
 
