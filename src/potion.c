@@ -1955,7 +1955,7 @@ dodip()
 	if (!strcmp(potion_descr,"greasy")) {
 		/* Drop through to "...Interesting" if you're dipping already greasy stuff */
 		if (!obj->greased) {
-			Your("%s is covered with a thick layer of grease.",xname(obj));
+			Your("%s %s covered with a thick layer of grease.",xname(obj),otense(obj, "are"));
 			obj->greased = 1;
 			if (potion->cursed && !nohands(youmonst.data)) {
 			    incr_itimeout(&Glib, rnd(10)+5);
