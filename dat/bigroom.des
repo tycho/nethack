@@ -49,6 +49,12 @@ IF [75%] THEN
       	 TERRAIN[75%]:(37,9),vertical,6, 'L', lit
       ENDIF
    ENDIF
+ELSE
+   IF [25%] THEN
+      TERRAIN:(4,4,70,13),unfilled, '-',lit
+      TERRAIN:(25, 4),horizontal,25, '.',lit
+      TERRAIN:(25,13),horizontal,25, '.',lit
+   ENDIF
 ENDIF
 
 
