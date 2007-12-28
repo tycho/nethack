@@ -29,6 +29,23 @@ MAP
 |        |..|..B...........| |.|..........|.|              |.|........|    |
 ----------------------------------------------------------------------------
 ENDMAP
+
+IF [50%] THEN
+   TERRAIN:(50,8),horizontal,4, '-',unlit
+   TERRAIN:(40,8),horizontal,4, 'B',unlit
+ENDIF
+
+IF [50%] THEN
+   TERRAIN:(27,12),'|',unlit
+   TERRAIN:(27,3),horizontal,3, 'B',unlit
+   TERRAIN:(28,2), '-',unlit
+ENDIF
+
+IF [50%] THEN
+   TERRAIN:(16,10),vertical,2,'|',unlit
+   TERRAIN:(9,13),horizontal,6, 'B',unlit
+ENDIF
+
 # Dungeon Description
 # The shrine to Moloch.
 REGION:(01,06,05,14),lit,"temple"
