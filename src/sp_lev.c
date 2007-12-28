@@ -1305,7 +1305,17 @@ struct mkroom *croom;
 	    levl[x1][y + y1].lit = terr->tlit;
 	}
 	break;
-    case 3: /* rectangle */
+    case 3: /* filled rectangle */
+	x2 = terr->x2;  y2 = terr->y2;
+	get_location(&x2, &y2, DRY|WET, croom);
+	for (x = x1; x <= x2; x++) {
+	    for (y = y1; y <= y2; y++) {
+		levl[x][y].typ = terr->ter;
+		levl[x][y].lit = terr->tlit;
+	    }
+	}
+	break;
+    case 4: /* rectangle */
 	x2 = terr->x2;  y2 = terr->y2;
 	get_location(&x2, &y2, DRY|WET, croom);
 	for (x = x1; x <= x2; x++) {
@@ -1319,16 +1329,6 @@ struct mkroom *croom;
 	    levl[x1][y].lit = terr->tlit;
 	    levl[x2][y].typ = terr->ter;
 	    levl[x2][y].lit = terr->tlit;
-	}
-	break;
-    case 4: /* filled rectangle */
-	x2 = terr->x2;  y2 = terr->y2;
-	get_location(&x2, &y2, DRY|WET, croom);
-	for (x = x1; x <= x2; x++) {
-	    for (y = y1; y <= y2; y++) {
-		levl[x][y].typ = terr->ter;
-		levl[x][y].lit = terr->tlit;
-	    }
 	}
 	break;
     }
