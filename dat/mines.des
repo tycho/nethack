@@ -424,6 +424,36 @@ MAP
 -----                   ------                     -------  ---------------
 ENDMAP
 
+IF [75%] THEN
+   IF [50%] THEN
+      TERRAIN:(25,8),vertical,2, '|', unlit
+   ELSE
+      TERRAIN:(16,13),horizontal,2, '-', unlit
+   ENDIF
+ENDIF
+
+IF [75%] THEN
+   IF [50%] THEN
+      TERRAIN:(36,10),vertical,2, '|', unlit
+   ELSE
+      TERRAIN:(32,15),horizontal,2, '-', unlit
+   ENDIF
+ENDIF
+
+IF [50%] THEN
+   TERRAIN:(21,4, 22,5),filled, '.',unlit
+   TERRAIN:(14,9),vertical,2, '|', unlit
+ENDIF
+
+IF [50%] THEN
+   TERRAIN:(46,13), '|',unlit
+   TERRAIN:(43,5), horizontal, 5, '-',unlit
+   TERRAIN:(42,6), horizontal, 6, '.',unlit
+   TERRAIN:(47,7), '.', lit
+ENDIF
+
+TERRAIN[50%]:(69,11, 71,11), filled, '-',unlit
+
 STAIR:(01,01),up
 STAIR:(46,03),down
 FOUNTAIN:(50,09)
