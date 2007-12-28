@@ -28,6 +28,30 @@ MAP
 |.........................................................................|
 ---------------------------------------------------------------------------
 ENDMAP
+
+
+IF [75%] THEN
+   IF [50%] THEN
+      TERRAIN[75%]:(10,8),horizontal,28, '-', lit
+      TERRAIN[75%]:(37,8),horizontal,28, '-', lit
+      TERRAIN[75%]:(37,3),vertical,6, '|', lit
+      TERRAIN[75%]:(37,9),vertical,6, '|', lit
+   ELSE
+      IF [50%] THEN
+      	 TERRAIN[75%]:(10,8),horizontal,28, 'F', lit
+      	 TERRAIN[75%]:(37,8),horizontal,28, 'F', lit
+      	 TERRAIN[75%]:(37,3),vertical,6, 'F', lit
+      	 TERRAIN[75%]:(37,9),vertical,6, 'F', lit
+      ELSE
+      	 TERRAIN[75%]:(10,8),horizontal,28, 'L', lit
+      	 TERRAIN[75%]:(37,8),horizontal,28, 'L', lit
+      	 TERRAIN[75%]:(37,3),vertical,6, 'L', lit
+      	 TERRAIN[75%]:(37,9),vertical,6, 'L', lit
+      ENDIF
+   ENDIF
+ENDIF
+
+
 # Dungeon Description
 REGION:(01,01,73,16),lit,"ordinary"
 # Stairs

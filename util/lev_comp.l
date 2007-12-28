@@ -141,11 +141,14 @@ SUBROOM		return SUBROOM_ID;
 RANDOM_CORRIDORS	return RAND_CORRIDOR_ID;
 CORRIDOR	return CORRIDOR_ID;
 SPILL	  return SPILL_ID;
+TERRAIN		return TERRAIN_ID;
 GOLD		return GOLD_ID;
 ENGRAVING	return ENGRAVING_ID;
 NAME		return NAME_ID;
 CHANCE		return CHANCE_ID;
 levregion	return LEV;
+horizontal	{ yylval.i=1; return HORIZ_OR_VERT; }
+vertical	{ yylval.i=2; return HORIZ_OR_VERT; }
 open		{ yylval.i=D_ISOPEN; return DOOR_STATE; }
 closed		{ yylval.i=D_CLOSED; return DOOR_STATE; }
 locked		{ yylval.i=D_LOCKED; return DOOR_STATE; }

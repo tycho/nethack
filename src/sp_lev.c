@@ -1275,6 +1275,66 @@ int		typ;
 	levl[x][y].typ = typ;
 }
 
+void
+set_terrain(terr, croom)
+terrain *terr;
+struct mkroom *croom;
+{
+    schar x, y, x1, y1, x2, y2;
+
+    if (rn2(100) >= terr->chance) return;
+
+    x1 = terr->x1;  y1 = terr->y1;
+    get_location(&x1, &y1, DRY|WET, croom);
+
+    switch (terr->areatyp) {
+    case 0: /* point */
+    default:
+	levl[x1][y1].typ = terr->ter;
+	levl[x1][y1].lit = terr->tlit;
+	break;
+    case 1: /* horiz line */
+	for (x = 0; x < (terr->x2); x++) {
+	    levl[x + x1][y1].typ = terr->ter;
+	    levl[x + x1][y1].lit = terr->tlit;
+	}
+	break;
+    case 2: /* vert line */
+	for (y = 0; y < (terr->y2); y++) {
+	    levl[x1][y + y1].typ = terr->ter;
+	    levl[x1][y + y1].lit = terr->tlit;
+	}
+	break;
+    case 3: /* rectangle */
+	x2 = terr->x2;  y2 = terr->y2;
+	get_location(&x2, &y2, DRY|WET, croom);
+	for (x = x1; x <= x2; x++) {
+	    levl[x][y1].typ = terr->ter;
+	    levl[x][y1].lit = terr->tlit;
+	    levl[x][y2].typ = terr->ter;
+	    levl[x][y2].lit = terr->tlit;
+	}
+	for (y = y1; y <= y2; y++) {
+	    levl[x1][y].typ = terr->ter;
+	    levl[x1][y].lit = terr->tlit;
+	    levl[x2][y].typ = terr->ter;
+	    levl[x2][y].lit = terr->tlit;
+	}
+	break;
+    case 4: /* filled rectangle */
+	x2 = terr->x2;  y2 = terr->y2;
+	get_location(&x2, &y2, DRY|WET, croom);
+	for (x = x1; x <= x2; x++) {
+	    for (y = y1; y <= y2; y++) {
+		levl[x][y].typ = terr->ter;
+		levl[x][y].lit = terr->tlit;
+	    }
+	}
+	break;
+    }
+}
+
+
 /*
  * Search for a door in a room on a specified wall.
  */
@@ -2014,6 +2074,10 @@ sp_lev *lvl;
 	    opdat = alloc(sizeof(opjmp));
 	    Fread(opdat, 1, sizeof(opjmp), fd);
 	    break;
+	case SPO_TERRAIN:
+	    opdat = alloc(sizeof(terrain));
+	    Fread(opdat, 1, sizeof(terrain), fd);
+	    break;
 	case SPO_SPILL:
 		 opdat = alloc(sizeof(spill));
 		 Fread(opdat, 1, sizeof(spill), fd);
@@ -2091,6 +2155,7 @@ sp_lev *lvl;
 	case SPO_NON_PASSWALL:
 	case SPO_ROOM_DOOR:
 	case SPO_WALLIFY:
+	case SPO_TERRAIN:
 	case SPO_SPILL:
 	    /* nothing extra to free here */
 	    break;
@@ -2177,6 +2242,7 @@ sp_lev *lvl;
     sink *tmpsink;
     pool *tmppool;
     corridor *tmpcorridor;
+    terrain *tmpterrain;
 	 spill* tmpspill;
     room *tmproom, *tmpsubroom;
     room_door *tmproomdoor;
@@ -2375,6 +2441,10 @@ sp_lev *lvl;
 	case SPO_CORRIDOR:
 	    tmpcorridor = (corridor *) opdat;
 	    create_corridor(tmpcorridor);
+	    break;
+	case SPO_TERRAIN:
+	    tmpterrain = (terrain *) opdat;
+	    set_terrain(tmpterrain, croom);
 	    break;
 	case SPO_SPILL:
 		 tmpspill = (spill*) opdat;
