@@ -119,7 +119,7 @@ extern const char *fname;
 %token	<i> ALIGNMENT LEFT_OR_RIGHT CENTER TOP_OR_BOT ALTAR_TYPE UP_OR_DOWN
 %token	<i> SUBROOM_ID NAME_ID FLAGS_ID FLAG_TYPE MON_ATTITUDE MON_ALERTNESS
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID THEN_ID ELSE_ID ENDIF_ID
-%token	<i> CONTAINED SPILL_ID
+%token	<i> CONTAINED SPILL_ID TERRAIN_ID HORIZ_OR_VERT
 %token	<i> ',' ':' '(' ')' '[' ']'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -261,6 +261,7 @@ levstatement 	: message
 		| room_def
 		| room_name
 		| sink_detail
+		| terrain_detail
 		| spill_detail
 		| stair_detail
 		| stair_region
@@ -1205,6 +1206,59 @@ pool_detail : POOL_ID ':' coordinate
 		     add_opcode(&splev, SPO_POOL, tmppool);
 		  }
 		;
+
+terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
+		 {
+		     terrain *tmpterrain = New(terrain);
+
+		     tmpterrain->chance = $2;
+		     tmpterrain->areatyp = 0;
+		     tmpterrain->x1 = current_coord.x;
+		     tmpterrain->y1 = current_coord.y;
+		     tmpterrain->x2 = tmpterrain->y2 = -1;
+		     tmpterrain->ter = what_map_char((char) $6);
+		     tmpterrain->tlit = $8;
+
+		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
+		 }
+	       |
+	         TERRAIN_ID chance ':' coordinate ',' HORIZ_OR_VERT ',' INTEGER ',' CHAR ',' light_state
+		 {
+		     terrain *tmpterrain = New(terrain);
+
+		     tmpterrain->chance = $2;
+		     tmpterrain->areatyp = $<i>6;
+		     tmpterrain->x1 = current_coord.x;
+		     tmpterrain->y1 = current_coord.y;
+		     if (tmpterrain->areatyp == 1) {
+			 tmpterrain->x2 = $8;
+			 tmpterrain->y2 = -1;
+		     } else {
+			 tmpterrain->y2 = $8;
+			 tmpterrain->x2 = -1;
+		     }
+		     tmpterrain->ter = what_map_char((char) $10);
+		     tmpterrain->tlit = $12;
+
+		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
+		 }
+	       |
+	         TERRAIN_ID chance ':' region ',' FILLING ',' CHAR ',' light_state
+		 {
+		     terrain *tmpterrain = New(terrain);
+
+		     tmpterrain->chance = $2;
+		     tmpterrain->areatyp = 3 + $<i>6;
+		     tmpterrain->x1 = current_region.x1;
+		     tmpterrain->y1 = current_region.y1;
+		     tmpterrain->x2 = current_region.x2;
+		     tmpterrain->y2 = current_region.y2;
+		     tmpterrain->ter = what_map_char((char) $8);
+		     tmpterrain->tlit = $10;
+
+		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
+		 }
+	       ;
 
 spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' light_state
 			{
