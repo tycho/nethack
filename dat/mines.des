@@ -853,6 +853,25 @@ MAP
 ---------------------------------------------------------------------------
 ENDMAP
 
+IF [50%] THEN
+   TERRAIN:(18,1), '|',unlit
+   TERRAIN:(7,12, 8,13), unfilled, '.',unlit
+ENDIF
+
+IF [50%] THEN
+   TERRAIN:(49,4), '|', unlit
+   TERRAIN:(21,5), '.', unlit
+ENDIF
+
+IF [50%] THEN
+   IF [50%] THEN
+      TERRAIN:(22,1), '|', unlit
+   ELSE
+      TERRAIN:(50,7), '-', unlit
+      TERRAIN:(51,7), '-', unlit
+   ENDIF
+ENDIF
+
 # Dungeon Description
 FOUNTAIN:(14,13)
 REGION:(23,03,48,06),lit,"ordinary"
