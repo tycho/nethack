@@ -36,9 +36,9 @@ static const char *random_mesg[] = {
 	"Arooo!  Werewolves of Yendor!", /* gang tag */
 	"Dig for Victory here", /* pun, duh */
 	"Don't go this way",
-	"Gaius Julius Primigenius was here. Why are you late?",
-	"Go left --->",
-	"Haermund Hardaxe carved these runes",
+	"Gaius Julius Primigenius was here. Why are you late?", /* pompeii */
+	"Go left --->", "<--- Go right",
+	"Haermund Hardaxe carved these runes", /* viking graffiti */
 	"Here be dragons",
 	"Need a light? Come visit the Minetown branch of Izchak's Lighting Store!",
 	"Save now, and do your homework!",
