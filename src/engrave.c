@@ -33,6 +33,26 @@ static const char *random_mesg[] = {
 	"You've got mail!", /* AOL */
 #endif
 	"As if!", /* Clueless */
+	"Arooo!  Werewolves of Yendor!", /* gang tag */
+	"Dig for Victory here", /* pun, duh */
+	"Don't go this way",
+	"Gaius Julius Primigenius was here. Why are you late?",
+	"Go left --->",
+	"Haermund Hardaxe carved these runes",
+	"Here be dragons",
+	"Need a light? Come visit the Minetown branch of Izchak's Lighting Store!",
+	"Save now, and do your homework!",
+	"Snakes on the Astral Plane - Soon in a dungeon near you",
+	"There was a hole here.  It's gone now.",
+	"The Vibrating Square",
+	"This is a pit!",
+	"This is not the dungeon you are looking for.",
+	"This square deliberately left blank.",
+	"Warning, Exploding runes!",
+	"Watch out! The-Gnome-With-The-Wand-Of-Death is behind that door!",
+	"X marks the spot",
+	"X <--- You are here.",
+	"You are the one millionth visitor to this place!  Please wait 200 turns for your wand of wishing.",
 };
 
 char *
