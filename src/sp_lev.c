@@ -782,7 +782,7 @@ struct mkroom* croom;
 	 *
 	 * If we were given a specific coordinate, though, it doesn't have
 	 * to start from a wall... */
-	if (x <= -(MAX_REGISTERS+1) || y <= -(MAX_REGISTERS+1)) {
+	if (sp->x <= -(MAX_REGISTERS+1) || sp->y <= -(MAX_REGISTERS+1)) {
 		for (j = 0;j < 500;j++) {
 			x = sp->x; 
 			y = sp->y;
