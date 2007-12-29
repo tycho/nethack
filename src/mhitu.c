@@ -1130,6 +1130,7 @@ dopois:
 				Your("last thought fades away.");
 			    killer = "brainlessness";
 			    killer_format = KILLED_BY;
+				 ukiller = mtmp;
 			    done(DIED);
 			    lifesaved++;
 			}
@@ -1534,6 +1535,7 @@ dopois:
 		    if (!Antimagic) {
 			killer_format = KILLED_BY_AN;
 			killer = "touch of death";
+			ukiller = mtmp;
 			done(DIED);
 			dmg = 0;
 			break;

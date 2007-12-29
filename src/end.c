@@ -308,6 +308,12 @@ register struct monst *mtmp;
 
 	if (multi) Strcat(buf, ", while helpless");
 	killer = buf;
+	ukiller = mtmp;
+	if (ukiller && (likes_gold(ukiller->data) || likes_gems(ukiller->data) ||
+				likes_objs(ukiller->data) || likes_magic(ukiller->data) ||
+				is_covetous(ukiller->data))) {
+		pline("%s rummages through your possessions.",Monnam(ukiller));
+	}
 	if (mtmp->data->mlet == S_WRAITH)
 		u.ugrave_arise = PM_WRAITH;
 	else if (mtmp->data->mlet == S_MUMMY && urace.mummynum != NON_PM)
@@ -722,6 +728,7 @@ int how;
 #endif
 				killer = 0;
 				killer_format = 0;
+				ukiller = (struct monst*)0;
 				return;
 			}
 		}
@@ -738,6 +745,7 @@ int how;
 		savelife(how);
 		killer = 0;
 		killer_format = 0;
+		ukiller = (struct monst*)0;
 		return;
 	}
 
