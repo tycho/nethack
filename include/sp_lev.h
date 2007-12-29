@@ -69,7 +69,8 @@
 #define SPO_JG			32 /* opjmp    jump if greater than */
 #define SPO_SPILL			  33	  /* spill a particular type of terrain into an area */
 #define SPO_TERRAIN		34 /* terrain */
-#define MAX_SP_OPCODES		35
+#define SPO_REPLACETERRAIN	35 /* replaceterrain */
+#define MAX_SP_OPCODES		36
 
 
 /* special level coder CPU flags */
@@ -172,6 +173,12 @@ typedef struct {
     xchar x1,y1,x2,y2;
     xchar ter, tlit;
 } terrain;
+
+typedef struct {
+    xchar chance;
+    xchar x1,y1,x2,y2;
+    xchar fromter, toter, tolit;
+} replaceterrain;
 
 /* values for rtype are defined in dungeon.h */
 typedef struct {
