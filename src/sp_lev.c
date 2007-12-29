@@ -778,26 +778,36 @@ struct mkroom* croom;
 	boolean found = FALSE;
 
 	/* This code assumes that you're going to spill one particular
-	 * type of terrain from a wall into somewhere. */
-	for (j = 0;j < 500;j++) {
-		x = sp->x; 
+	 * type of terrain from a wall into somewhere.
+	 *
+	 * If we were given a specific coordinate, though, it doesn't have
+	 * to start from a wall... */
+	if (x <= -(MAX_REGISTERS+1) || y <= -(MAX_REGISTERS+1)) {
+		for (j = 0;j < 500;j++) {
+			x = sp->x; 
+			y = sp->y;
+			get_location(&x, &y, DRY|WET, croom);
+			nx = x; ny = y;
+			switch (sp->direction) {
+				case W_NORTH: ny++; break;	  /* backwards to make sure we're against a wall */
+				case W_SOUTH: ny--; break;
+				case W_WEST: nx++; break;
+				case W_EAST: nx--; break;
+				default: return; break;
+			}
+			if (!isok(nx,ny)) { continue; }
+			if (IS_WALL(levl[nx][ny].typ)) {	 /* mark it as broken through */
+				levl[nx][ny].typ = sp->typ;
+				levl[nx][ny].lit = sp->lit;
+				found = TRUE; 
+				break; 
+			}
+		}
+	} else {
+		found = TRUE;
+		x = sp->x;
 		y = sp->y;
-		get_location(&x, &y, DRY|WET, croom);
-		nx = x; ny = y;
-		switch (sp->direction) {
-			case W_NORTH: ny++; break;	  /* backwards to make sure we're against a wall */
-			case W_SOUTH: ny--; break;
-			case W_WEST: nx++; break;
-			case W_EAST: nx--; break;
-			default: return; break;
-		}
-		if (!isok(nx,ny)) { continue; }
-		if (IS_WALL(levl[nx][ny].typ)) {	 /* mark it as broken through */
-			levl[nx][ny].typ = sp->typ;
-			levl[nx][ny].lit = sp->lit;
-			found = TRUE; 
-			break; 
-		}
+		get_location(&x, &y, DRY|WET, croom); /* support random registers too */
 	}
 
 	if (!found) { return; }
@@ -811,23 +821,25 @@ struct mkroom* croom;
 		do {
 			guard++;
 			do {
-				k = rn2(4);
+				k = rn2(5);
 				qx = nx;qy = ny;
+				if (k > 3) { k = sp->direction; }
+				else { k = 1 << k; }
 				switch(k) {
-					case 3: qy--; break;
-					case 2: qy++; break;
-					case 1: qx--; break;
-					case 0: qx++; break;
+					case W_NORTH: qy--; break;
+					case W_SOUTH: qy++; break;
+					case W_WEST: qx--; break;
+					case W_EAST: qx++; break;
 				}
 			} while (!isok(qx,qy));
 		} while ((k == lastdir || levl[qx][qy].typ == sp->typ) && guard < 200);	 
 		/* tend to not make rivers, but pools; and don't redo stuff of the same type! */
 
 		switch(k) {
-			case 3: ny--; break;
-			case 2: ny++; break;
-			case 1: nx--; break;
-			case 0: nx++; break;
+			case W_NORTH: ny--; break;
+			case W_SOUTH: ny++; break;
+			case W_WEST: nx--; break;
+			case W_EAST: nx++; break;
 		}
 		lastdir = k;
 	}
