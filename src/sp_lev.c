@@ -1288,6 +1288,27 @@ int		typ;
 }
 
 void
+replace_terrain(terr, croom)
+replaceterrain *terr;
+struct mkroom *croom;
+{
+    schar x, y, x1, y1, x2, y2;
+
+    x1 = terr->x1;  y1 = terr->y1;
+    get_location(&x1, &y1, DRY|WET, croom);
+
+    x2 = terr->x2;  y2 = terr->y2;
+    get_location(&x2, &y2, DRY|WET, croom);
+
+    for (x = x1; x <= x2; x++)
+	for (y = y1; y <= y2; y++)
+	    if ((levl[x][y].typ == terr->fromter) && (rn2(100) < terr->chance)) {
+	    levl[x][y].typ = terr->toter;
+	    levl[x][y].lit = terr->tolit;
+	}
+}
+
+void
 set_terrain(terr, croom)
 terrain *terr;
 struct mkroom *croom;
@@ -2086,6 +2107,10 @@ sp_lev *lvl;
 	    opdat = alloc(sizeof(opjmp));
 	    Fread(opdat, 1, sizeof(opjmp), fd);
 	    break;
+	case SPO_REPLACETERRAIN:
+	    opdat = alloc(sizeof(replaceterrain));
+	    Fread(opdat, 1, sizeof(replaceterrain), fd);
+	    break;
 	case SPO_TERRAIN:
 	    opdat = alloc(sizeof(terrain));
 	    Fread(opdat, 1, sizeof(terrain), fd);
@@ -2168,6 +2193,7 @@ sp_lev *lvl;
 	case SPO_ROOM_DOOR:
 	case SPO_WALLIFY:
 	case SPO_TERRAIN:
+	case SPO_REPLACETERRAIN:
 	case SPO_SPILL:
 	    /* nothing extra to free here */
 	    break;
@@ -2255,6 +2281,7 @@ sp_lev *lvl;
     pool *tmppool;
     corridor *tmpcorridor;
     terrain *tmpterrain;
+    replaceterrain *tmpreplaceterrain;
 	 spill* tmpspill;
     room *tmproom, *tmpsubroom;
     room_door *tmproomdoor;
@@ -2457,6 +2484,10 @@ sp_lev *lvl;
 	case SPO_TERRAIN:
 	    tmpterrain = (terrain *) opdat;
 	    set_terrain(tmpterrain, croom);
+	    break;
+	case SPO_REPLACETERRAIN:
+	    tmpreplaceterrain = (replaceterrain *) opdat;
+	    replace_terrain(tmpreplaceterrain, croom);
 	    break;
 	case SPO_SPILL:
 		 tmpspill = (spill*) opdat;

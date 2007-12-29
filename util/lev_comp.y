@@ -106,7 +106,7 @@ extern const char *fname;
 }
 
 
-%token	<i> CHAR INTEGER BOOLEAN PERCENT
+%token	<i> CHAR INTEGER BOOLEAN PERCENT SPERCENT
 %token	<i> MESSAGE_ID MAZE_ID LEVEL_ID LEV_INIT_ID GEOMETRY_ID NOMAP_ID
 %token	<i> OBJECT_ID COBJECT_ID MONSTER_ID TRAP_ID DOOR_ID DRAWBRIDGE_ID
 %token	<i> MAZEWALK_ID WALLIFY_ID REGION_ID FILLING
@@ -119,7 +119,7 @@ extern const char *fname;
 %token	<i> ALIGNMENT LEFT_OR_RIGHT CENTER TOP_OR_BOT ALTAR_TYPE UP_OR_DOWN
 %token	<i> SUBROOM_ID NAME_ID FLAGS_ID FLAG_TYPE MON_ATTITUDE MON_ALERTNESS
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID THEN_ID ELSE_ID ENDIF_ID
-%token	<i> CONTAINED SPILL_ID TERRAIN_ID HORIZ_OR_VERT
+%token	<i> CONTAINED SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
 %token	<i> ',' ':' '(' ')' '[' ']'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -262,6 +262,7 @@ levstatement 	: message
 		| room_name
 		| sink_detail
 		| terrain_detail
+		| replace_terrain_detail
 		| spill_detail
 		| stair_detail
 		| stair_region
@@ -1204,6 +1205,23 @@ pool_detail : POOL_ID ':' coordinate
 		     tmppool->y = current_coord.y;
 
 		     add_opcode(&splev, SPO_POOL, tmppool);
+		  }
+		;
+
+replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' CHAR ',' light_state ',' SPERCENT
+		  {
+		      replaceterrain *tmprepl = New(replaceterrain);
+		      tmprepl->chance = $11;
+		      if (tmprepl->chance < 0) tmprepl->chance = 0;
+		      else if (tmprepl->chance > 100) tmprepl->chance = 100;
+		      tmprepl->x1 = current_region.x1;
+		      tmprepl->y1 = current_region.y1;
+		      tmprepl->x2 = current_region.x2;
+		      tmprepl->y2 = current_region.y2;
+		      tmprepl->fromter = what_map_char((char) $5);
+		      tmprepl->toter = what_map_char((char) $7);
+		      tmprepl->tolit = $9;
+		      add_opcode(&splev, SPO_REPLACETERRAIN, tmprepl);
 		  }
 		;
 
