@@ -222,7 +222,8 @@ typedef struct _room {
 } room;
 
 typedef struct {
-	char halign, valign;
+    	schar zaligntyp;
+	schar halign, valign;
 	char xsize, ysize;
 	char **map;
 } mazepart;

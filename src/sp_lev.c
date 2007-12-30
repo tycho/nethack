@@ -2124,6 +2124,7 @@ sp_lev *lvl;
 	    /*tmpmazepart = ((mazepart *) opdat = alloc(sizeof(mazepart)));*/
 	    opdat = alloc(sizeof(mazepart));
 	    tmpmazepart = (mazepart *) opdat;
+	    Fread((genericptr_t) &tmpmazepart->zaligntyp, 1, sizeof(tmpmazepart->zaligntyp), fd);
 	    Fread((genericptr_t) &tmpmazepart->halign, 1, sizeof(tmpmazepart->halign), fd);
 	    Fread((genericptr_t) &tmpmazepart->valign, 1, sizeof(tmpmazepart->valign), fd);
 	    Fread((genericptr_t) &tmpmazepart->xsize, 1, sizeof(tmpmazepart->xsize), fd);
@@ -2748,20 +2749,32 @@ sp_lev *lvl;
 	    valign = tmpmazepart->valign;
 	    xsize = tmpmazepart->xsize;
 	    ysize = tmpmazepart->ysize;
-	    switch((int) halign) {
-	    case LEFT:	    xstart = 3;					break;
-	    case H_LEFT:    xstart = 2+((x_maze_max-2-xsize)/4);	break;
-	    case CENTER:    xstart = 2+((x_maze_max-2-xsize)/2);	break;
-	    case H_RIGHT:   xstart = 2+((x_maze_max-2-xsize)*3/4);	break;
-	    case RIGHT:     xstart = x_maze_max-xsize-1;		break;
+	    switch (tmpmazepart->zaligntyp) {
+	    default:
+	    case 0:
+		break;
+	    case 1:
+		switch((int) halign) {
+		case LEFT:	    xstart = 3;					break;
+		case H_LEFT:    xstart = 2+((x_maze_max-2-xsize)/4);	break;
+		case CENTER:    xstart = 2+((x_maze_max-2-xsize)/2);	break;
+		case H_RIGHT:   xstart = 2+((x_maze_max-2-xsize)*3/4);	break;
+		case RIGHT:     xstart = x_maze_max-xsize-1;		break;
+		}
+		switch((int) valign) {
+		case TOP:	    ystart = 3;					break;
+		case CENTER:    ystart = 2+((y_maze_max-2-ysize)/2);	break;
+		case BOTTOM:    ystart = y_maze_max-ysize-1;		break;
+		}
+		if (!(xstart % 2)) xstart++;
+		if (!(ystart % 2)) ystart++;
+		break;
+	    case 2:
+		get_location(&halign, &valign, DRY|WET, croom);
+		xstart = halign;
+		ystart = valign;
+		break;
 	    }
-	    switch((int) valign) {
-	    case TOP:	    ystart = 3;					break;
-	    case CENTER:    ystart = 2+((y_maze_max-2-ysize)/2);	break;
-	    case BOTTOM:    ystart = y_maze_max-ysize-1;		break;
-	    }
-	    if (!(xstart % 2)) xstart++;
-	    if (!(ystart % 2)) ystart++;
 	    if ((ystart < 0) || (ystart + ysize > ROWNO)) {
 		/* try to move the start a bit */
 		ystart += (ystart > 0) ? -2 : 2;
