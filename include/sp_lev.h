@@ -70,7 +70,8 @@
 #define SPO_SPILL			  33	  /* spill a particular type of terrain into an area */
 #define SPO_TERRAIN		34 /* terrain */
 #define SPO_REPLACETERRAIN	35 /* replaceterrain */
-#define MAX_SP_OPCODES		36
+#define SPO_EXIT		36
+#define MAX_SP_OPCODES		37
 
 
 /* special level coder CPU flags */
