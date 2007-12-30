@@ -820,6 +820,7 @@ sp_lev *maze;
 	   _opcode tmpo = maze->opcodes[i];
 	   Write(fd, &(tmpo.opcode), sizeof(tmpo.opcode));
 	   switch (tmpo.opcode) {
+	    case SPO_EXIT:
 	    case SPO_WALLIFY:
 	    case SPO_NULL:
 	      break;

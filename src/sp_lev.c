@@ -1966,6 +1966,7 @@ sp_lev *lvl;
 
 	switch (opcode) {
 	case SPO_NULL:
+	case SPO_EXIT:
 	case SPO_WALLIFY:
 	    break;
 	case SPO_MESSAGE:
@@ -2171,6 +2172,7 @@ sp_lev *lvl;
         case SPO_JL:
         case SPO_JG:
         case SPO_NULL:
+	case SPO_EXIT:
 	case SPO_MESSAGE:
 	case SPO_DOOR:
 	case SPO_STAIR:
@@ -2347,6 +2349,9 @@ sp_lev *lvl;
 
 	switch (opcode) {
         case SPO_NULL:
+	    break;
+	case SPO_EXIT:
+	    exit_script = TRUE;
 	    break;
 	case SPO_MESSAGE:
 	    if (opdat) {

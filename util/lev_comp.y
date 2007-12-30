@@ -120,6 +120,7 @@ extern const char *fname;
 %token	<i> SUBROOM_ID NAME_ID FLAGS_ID FLAG_TYPE MON_ATTITUDE MON_ALERTNESS
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID THEN_ID ELSE_ID ENDIF_ID
 %token	<i> CONTAINED SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
+%token	<i> EXIT_ID
 %token	<i> ',' ':' '(' ')' '[' ']'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -246,6 +247,7 @@ levstatement 	: message
 		| fountain_detail
 		| gold_detail
 		| ifstatement
+		| exitstatement
 		| init_reg
 		| ladder_detail
 		| map_definition
@@ -270,6 +272,12 @@ levstatement 	: message
 		| teleprt_region
 		| trap_detail
 		| wallify_detail
+		;
+
+exitstatement	: EXIT_ID
+		  {
+		      add_opcode(&splev, SPO_EXIT, NULL);
+		  }
 		;
 
 ifstatement 	: IF_ID chance

@@ -136,6 +136,7 @@ IF		return IF_ID;
 THEN		return THEN_ID;
 ELSE		return ELSE_ID;
 ENDIF		return ENDIF_ID;
+EXIT		return EXIT_ID;
 ROOM		return ROOM_ID;
 SUBROOM		return SUBROOM_ID;
 RANDOM_CORRIDORS	return RAND_CORRIDOR_ID;
