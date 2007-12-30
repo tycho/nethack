@@ -585,6 +585,7 @@ map_definition	: NOMAP_ID
 		  {
 		     mazepart *tmppart = New(mazepart);
 
+		     tmppart->zaligntyp = 0;
 		     tmppart->halign = 1;
 		     tmppart->valign = 1;
 		     tmppart->xsize = 0;
@@ -599,10 +600,21 @@ map_definition	: NOMAP_ID
 		  {
 		     mazepart *tmpp = New(mazepart);
 
+		     tmpp->zaligntyp = 1;
 		     tmpp->halign = $<i>1 % 10;
 		     tmpp->valign = $<i>1 / 10;
 		     scan_map($2, &splev, tmpp);
 		     Free($2);
+		  }
+		| GEOMETRY_ID ':' coordinate MAP_ID
+		  {
+		     mazepart *tmpp = New(mazepart);
+
+		     tmpp->zaligntyp = 2;
+		     tmpp->halign = current_coord.x;
+		     tmpp->valign = current_coord.y;
+		     scan_map($4, &splev, tmpp);
+		     Free($4);
 		  }
 		;
 

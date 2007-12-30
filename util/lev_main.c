@@ -722,6 +722,7 @@ mazepart *pt;
 {
 	int j;
 
+	Write(fd, &(pt->zaligntyp), sizeof(pt->zaligntyp));
 	Write(fd, &(pt->halign), sizeof(pt->halign));
 	Write(fd, &(pt->valign), sizeof(pt->valign));
 	Write(fd, &(pt->xsize), sizeof(pt->xsize));
