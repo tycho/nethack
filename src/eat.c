@@ -661,13 +661,15 @@ register struct permonst *ptr;
 #ifdef DEBUG
 	debugpline("Attempting to give intrinsic %d", type);
 #endif
-	/* some intrinsics are easier to get than others */
+	/* some intrinsics are easier to get than others...
+	 * the values seem high because there's a chance to get each when
+	 * you eat a critter now, so it has to be adjusted slightly */
 	switch (type) {
 		case TELEPORT:
-			chance = 10;
+			chance = 30;
 			break;
 		case TELEPORT_CONTROL:
-			chance = 12;
+			chance = 36;
 			break;
 		case TELEPAT:
 			chance = 1;
