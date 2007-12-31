@@ -777,6 +777,8 @@ struct mkroom* croom;
 	int j,k,lastdir,guard;
 	boolean found = FALSE;
 
+	if (sp->typ >= MAX_TYPE) return;
+
 	/* This code assumes that you're going to spill one particular
 	 * type of terrain from a wall into somewhere.
 	 *
@@ -1294,6 +1296,8 @@ struct mkroom *croom;
 {
     schar x, y, x1, y1, x2, y2;
 
+    if (terr->toter >= MAX_TYPE) return;
+
     x1 = terr->x1;  y1 = terr->y1;
     get_location(&x1, &y1, DRY|WET, croom);
 
@@ -1314,6 +1318,8 @@ terrain *terr;
 struct mkroom *croom;
 {
     schar x, y, x1, y1, x2, y2;
+
+    if (terr->ter >= MAX_TYPE) return;
 
     if (rn2(100) >= terr->chance) return;
 
@@ -2792,6 +2798,8 @@ sp_lev *lvl;
 		/* Load the map */
 		for(y = ystart; y < ystart+ysize; y++)
 		    for(x = xstart; x < xstart+xsize; x++) {
+			if (tmpmazepart->map[y-ystart][x-xstart] >= MAX_TYPE)
+			    continue;
 			levl[x][y].typ = tmpmazepart->map[y-ystart][x-xstart];
 			levl[x][y].lit = FALSE;
 			/* clear out levl: load_common_data may set them */
