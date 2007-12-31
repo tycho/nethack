@@ -223,6 +223,7 @@ typedef struct _room {
 
 typedef struct {
     	schar zaligntyp;
+	schar keep_region;
 	schar halign, valign;
 	char xsize, ysize;
 	char **map;

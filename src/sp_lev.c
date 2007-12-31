@@ -2131,6 +2131,7 @@ sp_lev *lvl;
 	    opdat = alloc(sizeof(mazepart));
 	    tmpmazepart = (mazepart *) opdat;
 	    Fread((genericptr_t) &tmpmazepart->zaligntyp, 1, sizeof(tmpmazepart->zaligntyp), fd);
+	    Fread((genericptr_t) &tmpmazepart->keep_region, 1, sizeof(tmpmazepart->keep_region), fd);
 	    Fread((genericptr_t) &tmpmazepart->halign, 1, sizeof(tmpmazepart->halign), fd);
 	    Fread((genericptr_t) &tmpmazepart->valign, 1, sizeof(tmpmazepart->valign), fd);
 	    Fread((genericptr_t) &tmpmazepart->xsize, 1, sizeof(tmpmazepart->xsize), fd);
@@ -2306,6 +2307,8 @@ sp_lev *lvl;
 
     int     xi, dir;
     int     tmpi;
+
+    xchar tmpxstart, tmpystart, tmpxsize, tmpysize;
 
     struct trap *badtrap;
     boolean has_bounds = FALSE;
@@ -2751,6 +2754,10 @@ sp_lev *lvl;
 	case SPO_MAP:
 	    tmproom = tmpsubroom = (room *)0;
 	    tmpmazepart = (mazepart *) opdat;
+
+	    tmpxsize = xsize; tmpysize = ysize;
+	    tmpxstart = xstart; tmpystart = ystart;
+
 	    halign = tmpmazepart->halign;
 	    valign = tmpmazepart->valign;
 	    xsize = tmpmazepart->xsize;
@@ -2834,6 +2841,13 @@ sp_lev *lvl;
 		if (lvl->init_lev.init_present && lvl->init_lev.joined)
 		    remove_rooms(xstart, ystart, xstart+xsize, ystart+ysize);
 	    }
+
+	    if (!tmpmazepart->keep_region) {
+		/* should use a stack for this stuff... */
+		xstart = tmpxstart; ystart = tmpystart;
+		xsize = tmpxsize; ysize = tmpysize;
+	    }
+
 	    break;
 	default:
 	    panic("sp_level_coder: Unknown opcode %i", opcode);
