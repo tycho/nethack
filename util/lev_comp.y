@@ -586,6 +586,7 @@ map_definition	: NOMAP_ID
 		     mazepart *tmppart = New(mazepart);
 
 		     tmppart->zaligntyp = 0;
+		     tmppart->keep_region = 1;
 		     tmppart->halign = 1;
 		     tmppart->valign = 1;
 		     tmppart->xsize = 0;
@@ -596,25 +597,27 @@ map_definition	: NOMAP_ID
 		     add_opcode(&splev, SPO_MAP, tmppart);
 
 		  }
-		| map_geometry MAP_ID
+		| map_geometry roomfill MAP_ID
 		  {
 		     mazepart *tmpp = New(mazepart);
 
 		     tmpp->zaligntyp = 1;
+		     tmpp->keep_region = $2;
 		     tmpp->halign = $<i>1 % 10;
 		     tmpp->valign = $<i>1 / 10;
-		     scan_map($2, &splev, tmpp);
-		     Free($2);
+		     scan_map($3, &splev, tmpp);
+		     Free($3);
 		  }
-		| GEOMETRY_ID ':' coordinate MAP_ID
+		| GEOMETRY_ID ':' coordinate roomfill MAP_ID
 		  {
 		     mazepart *tmpp = New(mazepart);
 
 		     tmpp->zaligntyp = 2;
+		     tmpp->keep_region = $4;
 		     tmpp->halign = current_coord.x;
 		     tmpp->valign = current_coord.y;
-		     scan_map($4, &splev, tmpp);
-		     Free($4);
+		     scan_map($5, &splev, tmpp);
+		     Free($5);
 		  }
 		;
 
