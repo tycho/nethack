@@ -31,6 +31,8 @@ init_map(bg_typ)
 {
 	register int i,j;
 
+	if (bg_typ >= MAX_TYPE) return;
+
 	for(i=1; i<COLNO; i++)
 	    for(j=0; j<ROWNO; j++)
 		levl[i][j].typ = bg_typ;
@@ -42,6 +44,8 @@ backfill(bg_typ,filler)
 schar bg_typ,filler;
 {
 	int x,y;
+
+	if (filler >= MAX_TYPE) return;
 
 	for(x=1;x<COLNO;x++) {
 		for(y=0;y<ROWNO;y++) {
@@ -63,6 +67,8 @@ init_fill(bg_typ, fg_typ)
 {
 	register int i,j;
 	long limit, count;
+
+	if (fg_typ >= MAX_TYPE) return;
 
 	limit = (WIDTH * HEIGHT * 2) / 5;
 	count = 0;
@@ -109,12 +115,14 @@ pass_one(bg_typ, fg_typ)
 		  case 0 : /* death */
 		  case 1 :
 		  case 2:
+		      if (bg_typ >= MAX_TYPE) break;
 			  levl[i][j].typ = bg_typ;
 			  break;
 		  case 5:
 		  case 6:
 		  case 7:
 		  case 8:
+		      if (fg_typ >= MAX_TYPE) break;
 			  levl[i][j].typ = fg_typ;
 			  break;
 		  default:
@@ -146,7 +154,8 @@ pass_two(bg_typ, fg_typ)
 
 	for(i=2; i<=WIDTH; i++)
 	    for(j=1; j<HEIGHT; j++)
-		levl[i][j].typ = new_loc(i,j);
+		if (new_loc(i,j) < MAX_TYPE)
+		    levl[i][j].typ = new_loc(i,j);
 }
 
 STATIC_OVL void
@@ -170,7 +179,8 @@ pass_three(bg_typ, fg_typ)
 
 	for(i=2; i<=WIDTH; i++)
 	    for(j=1; j<HEIGHT; j++)
-		levl[i][j].typ = new_loc(i,j);
+		if (new_loc(i,j) < MAX_TYPE)
+		    levl[i][j].typ = new_loc(i,j);
 }
 
 /*
@@ -473,7 +483,8 @@ mkmap(init_lev)
 
 	new_locations = (char *)alloc((WIDTH+1) * HEIGHT);
 
-	init_map(bg_typ);
+	if (bg_typ < MAX_TYPE)
+	    init_map(bg_typ);
 	init_fill(bg_typ, fg_typ);
 
 	for(i = 0; i < N_P1_ITER; i++)
