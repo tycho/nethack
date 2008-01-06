@@ -1149,23 +1149,35 @@ int thrown;
 {
 	struct monst* mtmp2;
 	int noiserange;
+	schar skilltype = P_NONE;
+
+	if (otmp && otmp->oclass == WEAPON_CLASS) { 
+		skilltype = objects[otmp->otyp].oc_skill; 
+	}
 
 	/* properly fired missiles shouldn't make much noise on impact,
-	 * and thrown darts and knives are by definition sneaky */
+	 * and thrown darts, shuriken, and knives are by definition sneaky */
 	if (otmp && thrown) {
-		if ((ammo_and_launcher(otmp,uwep) && rn2(3)) ||
-			otmp->otyp == DART || otmp->otyp == KNIFE) {
+		if ((ammo_and_launcher(otmp,uwep) && rn2(3)) || 
+				otmp->otyp == DART || otmp->otyp == SHURIKEN || skilltype == P_KNIFE) {
 			return;
 		}
+	}
+
+	/* If you're stealthy, you can slit throats with knives */
+	if (otmp && Stealth && skilltype == P_KNIFE) {
+		return;
 	}
 
 	/* Stealth will reduce the amount of noise made while fighting,
 	 * but won't reduce it entirely to zero */
 	noiserange = Stealth ? 9 : BOLT_LIM*BOLT_LIM;
 
-	/* Smacking things with lightning is loud.
-	 * TODO: add wand sounds for loud wands */
-	if (otmp && otmp->oartifact == ART_MJOLLNIR) {
+	/* Some things are just never sneaky.
+	 * For example, smacking things with lightning is loud.
+	 * (TODO: add wand sounds for loud wands) */
+	if (otmp && (otmp->oclass != WEAPON_CLASS || 
+				otmp->oartifact == ART_MJOLLNIR || otmp->otyp == BULLWHIP)) {
 		noiserange = BOLT_LIM*BOLT_LIM;
 	}
 
