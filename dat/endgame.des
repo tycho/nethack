@@ -49,6 +49,7 @@ REPLACE_TERRAIN:(0,0,75,19), ' ', '.', unlit, 15%
 
 #  Since there are no stairs, this forces the hero's initial placement
 TELEPORT_REGION:(69,16,69,16),(0,0,0,0)
+TERRAIN:(69,16),'.',lit
 PORTAL:(0,0,75,19),(65,13,75,19),"air"
 #  Some helpful monsters.  Making sure a
 #  pick axe and at least one wand of digging
