@@ -339,6 +339,17 @@ bot1()
 }
 
 /* provide the name of the current level for display by various ports */
+const char* short_dgn_names[] = {
+	"Dungeons of Doom",
+	"Gehennom",
+	"Gnomish Mines",
+	"Quest Levels",	 /* Placeholder; this is overridden below */
+	"Sokoban",
+	"Fort Ludios",		 /* this too */
+	"Vlad's Tower",
+	"End Game"			 /* and this */
+};
+
 int
 describe_level(buf)
 char *buf;
@@ -355,7 +366,9 @@ char *buf;
 			Is_astralevel(&u.uz) ? "Astral Plane " : "End Game ");
 	else {
 		/* ports with more room may expand this one */
-		Sprintf(buf, "Dlvl:%-2d ", depth(&u.uz));
+		Sprintf(buf, "%s:%-2d ", 
+				iflags.show_dgn_name ? short_dgn_names[u.uz.dnum] : "Dlvl",
+				depth(&u.uz));
 		ret = 0;
 	}
 	return ret;
