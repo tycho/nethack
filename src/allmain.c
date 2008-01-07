@@ -28,8 +28,8 @@ moveloop()
     boolean didmove = FALSE, monscanmove = FALSE;
 	 /* don't make it obvious when monsters will start speeding up */
 	 int monclock;
-	 int timeout_start = rnd(10000)+25000;
-	 int clock_base = 80000L-timeout_start;
+	 int timeout_start = rnd(10000)+15000;
+	 int clock_base = 70000L-timeout_start;
 	 int past_clock;
 
     flags.moonphase = phase_of_the_moon();
@@ -129,7 +129,7 @@ moveloop()
 				 }
 				 past_clock = moves - timeout_start;
 				 if (past_clock > 0) {
-					 monclock -= (past_clock/clock_base)*60;
+					 monclock -= past_clock*60/clock_base;
 				 }
 			 }
 			 /* make sure we don't fall off the bottom */
