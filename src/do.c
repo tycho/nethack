@@ -1389,6 +1389,7 @@ final_level()
 {
 	struct monst *mtmp;
 	struct obj *otmp;
+	char buf[512];
 	coord mm;
 	int i;
 
@@ -1398,6 +1399,11 @@ final_level()
 
 	/* create some player-monsters */
 	create_mplayers(rn1(4, 3), TRUE);
+
+#ifdef WISH_TRACKER
+	Sprintf(buf,"%s just entered the Astral Plane on T:%d!",plname,moves);
+	makeannounce(buf);
+#endif
 
 	/* create a guardian angel next to player, if worthy */
 	if (Conflict) {
