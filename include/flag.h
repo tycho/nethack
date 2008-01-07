@@ -279,6 +279,9 @@ struct instance_flags {
 	boolean  lootabc;	/* use "a/b/c" rather than "o/i/b" when looting */
 	boolean  showrace;	/* show hero glyph by race rather than by role */
 	boolean  travelcmd;	/* allow travel command */
+	boolean  show_dgn_name; /* show dungeon names instead of Dlvl: on bottom line
+										 probably only good for people taking advantage of 
+										 the wide terminals allowed in Spork */
 	int	 runmode;	/* update screen display during run moves */
 #ifdef AUTOPICKUP_EXCEPTIONS
 	struct autopickup_exception *autopickup_exceptions[2];
