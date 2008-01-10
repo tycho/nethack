@@ -1484,10 +1484,15 @@ do_it:
 	vision_full_recalc = 1;	/* delayed vision recalculation */
 }
 
+/* 1/9/08 DSR: Experimental change; what if blessed geno wiped out
+ * two species, but selected those species at random (with preference
+ * to the weaker stuff first)?
+ */
 static void
 do_class_genocide()
 {
 	int i, j, immunecnt, gonecnt, goodcnt, class, feel_dead = 0;
+	int killed, candidates;
 	char buf[BUFSZ];
 	boolean gameover = FALSE;	/* true iff killed self */
 
@@ -1518,13 +1523,12 @@ do_class_genocide()
 		}
 		immunecnt = gonecnt = goodcnt = 0;
 		for (i = LOW_PM; i < NUMMONS; i++) {
-		    if (class == 0 &&
-			    strstri(monexplain[(int)mons[i].mlet], buf) != 0)
-			class = mons[i].mlet;
+		    if (class == 0 && strstri(monexplain[(int)mons[i].mlet], buf) != 0)
+				class = mons[i].mlet;
 		    if (mons[i].mlet == class) {
-			if (!(mons[i].geno & G_GENO)) immunecnt++;
-			else if(mvitals[i].mvflags & G_GENOD) gonecnt++;
-			else goodcnt++;
+				if (!(mons[i].geno & G_GENO)) immunecnt++;
+				else if(mvitals[i].mvflags & G_GENOD) gonecnt++;
+				else goodcnt++;
 		    }
 		}
 		/*
@@ -1534,13 +1538,12 @@ do_class_genocide()
 		if (!goodcnt && class != mons[urole.malenum].mlet &&
 				class != mons[urace.malenum].mlet) {
 			if (gonecnt)
-	pline("All such monsters are already nonexistent.");
-			else if (immunecnt ||
-				(buf[0] == DEF_INVISIBLE && buf[1] == '\0'))
-	You("aren't permitted to genocide such monsters.");
+				pline("All such monsters are already nonexistent.");
+			else if (immunecnt || (buf[0] == DEF_INVISIBLE && buf[1] == '\0'))
+				You("aren't permitted to genocide such monsters.");
 			else
 #ifdef WIZARD	/* to aid in topology testing; remove pesky monsters */
-			  if (wizard && buf[0] == '*') {
+			if (wizard && buf[0] == '*') {
 			    register struct monst *mtmp, *mtmp2;
 
 			    gonecnt = 0;
@@ -1550,7 +1553,7 @@ do_class_genocide()
 				mongone(mtmp);
 				gonecnt++;
 			    }
-	pline("Eliminated %d monster%s.", gonecnt, plur(gonecnt));
+				pline("Eliminated %d monster%s.", gonecnt, plur(gonecnt));
 			    return;
 			} else
 #endif
@@ -1558,6 +1561,7 @@ do_class_genocide()
 			continue;
 		}
 
+		killed = candidates = 0;
 		for (i = LOW_PM; i < NUMMONS; i++) {
 		    if(mons[i].mlet == class) {
 			char nam[BUFSZ];
@@ -1566,42 +1570,49 @@ do_class_genocide()
 			/* Although "genus" is Latin for race, the hero benefits
 			 * from both race and role; thus genocide affects either.
 			 */
+			candidates++;
 			if (Your_Own_Role(i) || Your_Own_Race(i) ||
-				((mons[i].geno & G_GENO)
-				&& !(mvitals[i].mvflags & G_GENOD))) {
+				((mons[i].geno & G_GENO) && !(mvitals[i].mvflags & G_GENOD))) {
 			/* This check must be first since player monsters might
-			 * have G_GENOD or !G_GENO.
+			 * have G_GENOD or !G_GENO.  We also have to keep track of
+			 * whether there are only two or fewer critters left available for us
+			 * to geno in the first place; we must get them all then.
+			 * finally, we have to make sure the self-geno cases always happen.
 			 */
-			    mvitals[i].mvflags |= (G_GENOD|G_NOCORPSE);
-			    reset_rndmonst(i);
-			    kill_genocided_monsters();
-			    update_inventory();		/* eggs & tins */
-			    pline("Wiped out all %s.", nam);
-			    if (Upolyd && i == u.umonnum) {
-				u.mh = -1;
-				if (Unchanging) {
-				    if (!feel_dead++) You("die.");
-				    /* finish genociding this class of
-				       monsters before ultimately dying */
-				    gameover = TRUE;
-				} else
-				    rehumanize();
-			    }
-			    /* Self-genocide if it matches either your race
-			       or role.  Assumption:  male and female forms
-			       share same monster class. */
-			    if (i == urole.malenum || i == urace.malenum) {
-				u.uhp = -1;
-				if (Upolyd) {
-				    if (!feel_dead++) You_feel("dead inside.");
-				} else {
-				    if (!feel_dead++) You("die.");
-				    gameover = TRUE;
-				}
-			    }
+				if ((killed < 2 && (!rn2(goodcnt) || (killed+candidates > goodcnt-2))) ||
+					Your_Own_Role(i) || Your_Own_Race(i)) {
+					killed++;
+					mvitals[i].mvflags |= (G_GENOD|G_NOCORPSE);
+					reset_rndmonst(i);
+					kill_genocided_monsters();
+					update_inventory();		/* eggs & tins */
+					pline("Wiped out all %s.", nam);
+					if (Upolyd && i == u.umonnum) {
+						u.mh = -1;
+						if (Unchanging) {
+							if (!feel_dead++) You("die.");
+							/* finish genociding this class of
+								monsters before ultimately dying */
+							gameover = TRUE;
+						} else
+							rehumanize();
+					}
+					/* Self-genocide if it matches either your race
+						or role.  Assumption:  male and female forms
+						share same monster class. */
+					if (i == urole.malenum || i == urace.malenum) {
+						u.uhp = -1;
+						if (Upolyd) {
+							if (!feel_dead++) You_feel("dead inside.");
+						} else {
+							if (!feel_dead++) You("die.");
+							gameover = TRUE;
+						}
+					}
+				} 
 			} else if (mvitals[i].mvflags & G_GENOD) {
 			    if (!gameover)
-				pline("All %s are already nonexistent.", nam);
+					pline("All %s are already nonexistent.", nam);
 			} else if (!gameover) {
 			  /* suppress feedback about quest beings except
 			     for those applicable to our own role */
@@ -1614,18 +1625,18 @@ do_class_genocide()
 			/* non-leader/nemesis/guardian role-specific monster */
 			   && (i != PM_NINJA ||		/* nuisance */
 			       Role_if(PM_SAMURAI))) {
-				boolean named, uniq;
+					boolean named, uniq;
 
-				named = type_is_pname(&mons[i]) ? TRUE : FALSE;
-				uniq = (mons[i].geno & G_UNIQ) ? TRUE : FALSE;
-				/* one special case */
-				if (i == PM_HIGH_PRIEST) uniq = FALSE;
+					named = type_is_pname(&mons[i]) ? TRUE : FALSE;
+					uniq = (mons[i].geno & G_UNIQ) ? TRUE : FALSE;
+					/* one special case */
+					if (i == PM_HIGH_PRIEST) uniq = FALSE;
 
-				You("aren't permitted to genocide %s%s.",
-				    (uniq && !named) ? "the " : "",
-				    (uniq || named) ? mons[i].mname : nam);
+					You("aren't permitted to genocide %s%s.",
+						(uniq && !named) ? "the " : "",
+						(uniq || named) ? mons[i].mname : nam);
 			    }
-			}
+				}
 		    }
 		}
 		if (gameover || u.uhp == -1) {
