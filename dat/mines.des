@@ -854,6 +854,14 @@ MAP
 ENDMAP
 
 IF [50%] THEN
+   TERRAIN:(55,14),'-',unlit
+   TERRAIN:(56,14),'-',unlit
+   TERRAIN:(61,15),'|',unlit
+   TERRAIN:(52,5), 'S',unlit
+   DOOR:locked, (52,5)
+ENDIF
+
+IF [50%] THEN
    TERRAIN:(18,1), '|',unlit
    TERRAIN:(7,12, 8,13), unfilled, '.',unlit
 ENDIF
