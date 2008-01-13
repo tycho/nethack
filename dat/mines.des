@@ -104,28 +104,11 @@ DOOR:random,(15,13)
 DOOR:random,(25,13)
 DOOR:random,(31,11)
 
-# knock a few holes in the shop walls
-IF [33%] THEN
-	TERRAIN:(7,4),'.',lit
-ENDIF
-IF [33%] THEN
-	TERRAIN:(12,4),'.',lit
-ENDIF
-IF [33%] THEN
-	TERRAIN:(25,4),'.',lit
-ENDIF
-IF [33%] THEN
-	TERRAIN:(29,4),'.',lit
-ENDIF
-IF [33%] THEN
-	TERRAIN:(29,14),'.',lit
-ENDIF
-IF [33%] THEN
-	TERRAIN:(12,14),'.',lit
-ENDIF
-IF [33%] THEN
-	TERRAIN:(07,14),'.',lit
-ENDIF
+# knock a few holes in the shop interior walls
+REPLACE_TERRAIN:(07,04,11,06),'|','.',lit,18%
+REPLACE_TERRAIN:(25,04,29,06),'|','.',lit,18%
+REPLACE_TERRAIN:(07,12,11,14),'|','.',lit,18%
+REPLACE_TERRAIN:(28,12,28,14),'|','.',lit,33%
 
 # One spot each in most shops...
 RANDOM_PLACES:(05,04),(09,05),(13,04),(26,04),(31,05),(30,14),(05,14),(10,13),(26,14),(27,13)
