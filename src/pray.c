@@ -1448,25 +1448,21 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 	consume_offering(otmp);
 	/* OK, you get brownie points. */
 	if(u.ugangr) {
-	    u.ugangr -=
-		((value * (u.ualign.type == A_CHAOTIC ? 2 : 3)) / MAXVALUE);
+	    u.ugangr -= ((value * (u.ualign.type == A_CHAOTIC ? 2 : 3)) / MAXVALUE);
 	    if(u.ugangr < 0) u.ugangr = 0;
 	    if(u.ugangr != saved_anger) {
-		if (u.ugangr) {
-		    pline("%s seems %s.", u_gname(),
-			  Hallucination ? "groovy" : "slightly mollified");
-
-		    if ((int)u.uluck < 0) change_luck(1);
-		} else {
-		    pline("%s seems %s.", u_gname(), Hallucination ?
-			  "cosmic (not a new fact)" : "mollified");
-
-		    if ((int)u.uluck < 0) u.uluck = 0;
-		}
+			if (u.ugangr) {
+				pline("%s seems %s.", u_gname(),
+					Hallucination ? "groovy" : "slightly mollified");
+				if ((int)u.uluck < 0) change_luck(1);
+			} else {
+				pline("%s seems %s.", u_gname(), Hallucination ?
+					"cosmic (not a new fact)" : "mollified");
+				if ((int)u.uluck < 0) u.uluck = 0;
+			}
 	    } else { /* not satisfied yet */
-		if (Hallucination)
-		    pline_The("gods seem tall.");
-		else You("have a feeling of inadequacy.");
+			if (Hallucination) pline_The("gods seem tall.");
+			else You("have a feeling of inadequacy.");
 	    }
 	} else if(ugod_is_angry()) {
 	    if(value > MAXVALUE) value = MAXVALUE;
@@ -1474,58 +1470,99 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 	    adjalign(value);
 	    You_feel("partially absolved.");
 	} else if (u.ublesscnt > 0) {
-	    u.ublesscnt -=
-		((value * (u.ualign.type == A_CHAOTIC ? 500 : 300)) / MAXVALUE);
+	    u.ublesscnt -= ((value * (u.ualign.type == A_CHAOTIC ? 500 : 300)) / MAXVALUE);
 	    if(u.ublesscnt < 0) u.ublesscnt = 0;
 	    if(u.ublesscnt != saved_cnt) {
-		if (u.ublesscnt) {
-		    if (Hallucination)
-			You("realize that the gods are not like you and I.");
-		    else
-			You("have a hopeful feeling.");
-		    if ((int)u.uluck < 0) change_luck(1);
-		} else {
-		    if (Hallucination)
-			pline("Overall, there is a smell of fried onions.");
-		    else
-			You("have a feeling of reconciliation.");
-		    if ((int)u.uluck < 0) u.uluck = 0;
-		}
+			if (u.ublesscnt) {
+				if (Hallucination)
+					You("realize that the gods are not like you and I.");
+				else
+					You("have a hopeful feeling.");
+				if ((int)u.uluck < 0) change_luck(1);
+			} else {
+				if (Hallucination)
+					pline("Overall, there is a smell of fried onions.");
+				else
+					You("have a feeling of reconciliation.");
+				if ((int)u.uluck < 0) u.uluck = 0;
+			}
 	    }
 	} else {
 	    int nartifacts = nartifact_exist();
+		 int nchance = u.ulevel+6;
 
-	    /* you were already in pretty good standing */
-	    /* The player can gain an artifact */
-	    /* The chance goes down as the number of artifacts goes up */
-	    if (u.ulevel > 2 && u.uluck >= 0 &&
-		!rn2(10 + (2 * u.ugifts * nartifacts))) {
-		otmp = mk_artifact((struct obj *)0, a_align(u.ux,u.uy));
-		if (otmp) {
-		    if (otmp->spe < 0) otmp->spe = 0;
-		    if (otmp->cursed) uncurse(otmp);
-		    otmp->oerodeproof = TRUE;
-		    dropy(otmp);
-		    at_your_feet("An object");
-		    godvoice(u.ualign.type, "Use my gift wisely!");
-		    u.ugifts++;
-		    u.ublesscnt = rnz(300 + (50 * nartifacts));
-		    exercise(A_WIS, TRUE);
-		    /* make sure we can use this weapon */
-		    unrestrict_weapon_skill(weapon_type(otmp));
-		    discover_artifact(otmp->oartifact);
-		    return(1);
-		}
+	    /* you were already in pretty good standing
+		  *
+		  * The player can gain an artifact;
+	     * The chance goes down as the number of artifacts goes up.
+		  * 
+		  * The player can also get handed just a plain old hunk of weaponry,
+		  * but it will be blessed, +3, rustproof, and in one of the player's
+		  * available skill slots. The lower level you are, the more likely it 
+		  * is that you'll get a hunk of weaponry rather than an artifact.
+		  *
+		  * Note that no artifact is guaranteed; it's still subject to the
+		  * chances of generating one of those in the first place; these are
+		  * just the chances that an artifact will even be considered as a gift.
+		  *
+		  * level  4: 10% chance  level  9: 20% chance  level 12: 30% chance 
+		  * level 14: 40% chance  level 17: 50% chance  level 19: 60% chance 
+		  * level 21: 70% chance  level 23: 80% chance  level 24: 90% chance 
+		  * level 26: 100% chance
+		  */
+
+		 if (rn2(10) >= (nchance*nchance)/100) {
+			 if (u.uluck >= 0 && !rn2(10 + (2 * u.ugifts))) {
+				 int typ, ncount = 0; 
+				 do {
+					/* don't give unicorn horns or anything the player's restricted in */
+					 typ = rnd_class(SPEAR,CROSSBOW);
+				 } while (ncount++ < 500 && typ && P_RESTRICTED(objects[typ].oc_skill));
+				 if (ncount > 499) { return 1; }
+				 if (typ) {
+					otmp = mksobj(typ, FALSE, FALSE);
+					if (otmp) {
+						bless(otmp);
+						otmp->spe = 5;
+						otmp->oerodeproof = TRUE;
+						dropy(otmp);
+						at_your_feet("An object");
+						godvoice(u.ualign.type, "Use this gift valorously!");
+						u.ugifts++;
+						u.ublesscnt = rnz(300 + (50 * u.ugifts));
+						exercise(A_WIS, TRUE);
+						makeknown(otmp->otyp);
+						return 1;
+					}
+				 }
+			 }
+		 } else if (u.uluck >= 0 && !rn2(10 + (2 * nartifacts))) {
+			otmp = mk_artifact((struct obj *)0, a_align(u.ux,u.uy));
+			if (otmp) {
+				if (otmp->spe < 0) otmp->spe = 0;
+				if (otmp->cursed) uncurse(otmp);
+				otmp->oerodeproof = TRUE;
+				dropy(otmp);
+				at_your_feet("An object");
+				godvoice(u.ualign.type, "Use my gift wisely!");
+				u.ugifts++;
+				u.ublesscnt = rnz(300 + (50 * nartifacts));
+				exercise(A_WIS, TRUE);
+				/* make sure we can use this weapon */
+				unrestrict_weapon_skill(weapon_type(otmp));
+				discover_artifact(otmp->oartifact);
+				return(1);
+			}
 	    }
 	    change_luck((value * LUCKMAX) / (MAXVALUE * 2));
 	    if ((int)u.uluck < 0) u.uluck = 0;
 	    if (u.uluck != saved_luck) {
-		if (Blind)
-		    You("think %s brushed your %s.",something, body_part(FOOT));
-		else You(Hallucination ?
-		    "see crabgrass at your %s.  A funny thing in a dungeon." :
-		    "glimpse a four-leaf clover at your %s.",
-		    makeplural(body_part(FOOT)));
+			if (Blind)
+				You("think %s brushed your %s.",something, body_part(FOOT));
+			else You(Hallucination ?
+				"see crabgrass at your %s.  A funny thing in a dungeon." :
+				"glimpse a four-leaf clover at your %s.",
+				makeplural(body_part(FOOT)));
 	    }
 	}
     }
