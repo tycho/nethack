@@ -1496,10 +1496,11 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		  * The player can gain an artifact;
 	     * The chance goes down as the number of artifacts goes up.
 		  * 
-		  * The player can also get handed just a plain old hunk of weaponry,
-		  * but it will be blessed, +3, rustproof, and in one of the player's
-		  * available skill slots. The lower level you are, the more likely it 
-		  * is that you'll get a hunk of weaponry rather than an artifact.
+		  * The player can also get handed just a plain old hunk of weaponry
+		  * or piece of armor, but it will be blessed, +5, fire/rustproof, and 
+		  * if it's a weapon, it'll be in one of the player's available skill 
+		  * slots. The lower level you are, the more likely it is that you'll 
+		  * get a hunk of ordinary junk rather than an artifact.
 		  *
 		  * Note that no artifact is guaranteed; it's still subject to the
 		  * chances of generating one of those in the first place; these are
@@ -1512,13 +1513,17 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		  */
 
 		 if (rn2(10) >= (nchance*nchance)/100) {
-			 if (u.uluck >= 0 && !rn2(10 + (2 * u.ugifts))) {
+			 if (u.uluck >= 0 && !rn2(6 + (2 * u.ugifts))) {
 				 int typ, ncount = 0; 
-				 do {
+				 if (rn2(2)) {
 					/* don't give unicorn horns or anything the player's restricted in */
-					 typ = rnd_class(SPEAR,CROSSBOW);
-				 } while (ncount++ < 500 && typ && P_RESTRICTED(objects[typ].oc_skill));
-				 if (ncount > 499) { return 1; }
+					do {
+						typ = rnd_class(SPEAR,CROSSBOW);
+					} while (ncount++ < 500 && typ && P_RESTRICTED(objects[typ].oc_skill));
+					if (ncount > 499) { return 1; }
+				 } else {
+					 typ = rnd_class(ELVEN_LEATHER_HELM,LEVITATION_BOOTS);
+				 }
 				 if (typ) {
 					otmp = mksobj(typ, FALSE, FALSE);
 					if (otmp) {
