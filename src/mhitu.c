@@ -1372,9 +1372,14 @@ dopois:
 			 * You will softly and suddenly vanish away,
 			 * And never be met with again!" */
 			if (mtmp->mnum == PM_BOOJUM) {
-				/* don't 'vanish' if we're already invisible and the level is notele */
-				if ((!Invisible && !BInvis) || !level.flags.noteleport) {
+				/* depending on what we are or if we can't teleport,
+				 * display appropriate messages */
+				if (!level.flags.noteleport) {
 					You("suddenly vanish!");
+				} else {
+					if (!Invis) {
+						You("suddenly %s!",See_invisible ? "become transparent" : "vanish");
+					}
 				}
 				HInvis |= FROMOUTSIDE;	  /* In multiple senses of 'vanish' :) */
 			} else {
