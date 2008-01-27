@@ -1237,6 +1237,8 @@ register struct obj   *obj;
 		break;
 	    case LEATHER_GLOVES:
 	    case GAUNTLETS_OF_DEXTERITY:
+		 case GAUNTLETS_OF_FORTUNE:
+		 case GAUNTLETS_OF_FORCE:
 		break;
 	    default:
 		impossible("Unknown type of gloves (%d)", uarmg->otyp);
