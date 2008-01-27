@@ -1855,6 +1855,9 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 	mdamageu(mtmp, tmp);
 	if (tmp) stop_occupation();
 
+	/* glomp attacks should still trigger these effects */
+	passiveum(youmonst.data,mtmp,mattk);
+
 	if (touch_petrifies(youmonst.data) && !resists_ston(mtmp)) {
 	    pline("%s very hurriedly %s you!", Monnam(mtmp),
 		  is_animal(mtmp->data)? "regurgitates" : "expels");
@@ -2615,8 +2618,8 @@ register struct attack *mattk;
 			case BLACK_DRAGON_SCALES:
 				if (!haseyes(mtmp->data)) { return 1; }
 				if (canseemon(mtmp) && mtmp->mcansee && rn2(2)) {
-					Sprintf(plurbuf,"%s",s_suffix(mon_nam(mtmp)));
-					pline("%s eye%s veiled in darkness!",plurbuf,
+					Sprintf(plurbuf,"%s",s_suffix(Monnam(mtmp)));
+					pline("%s eye%s veiled with darkness!",plurbuf,
 							eyecount(mtmp->data) > 1 ? "s are" : " is");
 				}
 				mtmp->mcansee = 0;
