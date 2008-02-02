@@ -266,9 +266,8 @@ MAP
 ENDMAP
 
 REPLACE_TERRAIN:(0,0,75,19), '.', 'L', lit, 30%
-
-
 TELEPORT_REGION:(69,16,69,16),(0,0,0,0)
+TERRAIN:(69,16),'.',lit
 PORTAL:(0,0,75,19),(65,13,75,19),"water"
 
 TRAP:"fire",random
