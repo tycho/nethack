@@ -49,13 +49,13 @@ char msgbuf[BUFSZ];
 #endif /* OVLB */
 
 /* hunger texts used on bottom line (each 8 chars long) */
-#define SATIATED	0
-#define NOT_HUNGRY	1
-#define HUNGRY		2
-#define WEAK		3
-#define FAINTING	4
-#define FAINTED		5
-#define STARVED		6
+#define SATIATED		 0
+#define NOT_HUNGRY	 1
+#define HUNGRY			 2
+#define WEAK			 3
+#define FAINTING		 4
+#define FAINTED		 5
+#define STARVED		 6
 
 /* also used to see if you're allowed to eat cats and dogs */
 #define CANNIBAL_ALLOWED() (Role_if(PM_CAVEMAN) || Race_if(PM_ORC))
@@ -2278,9 +2278,10 @@ boolean incr;
 	int h = u.uhunger;
 
 	newhs = (h > 1000) ? SATIATED :
-		(h > 150) ? NOT_HUNGRY :
+		(h > 200) ? NOT_HUNGRY :
 		(h > 50) ? HUNGRY :
-		(h > 0) ? WEAK : FAINTING;
+		(h > 0) ? WEAK : 
+		FAINTING;
 
 	/* While you're eating, you may pass from WEAK to HUNGRY to NOT_HUNGRY.
 	 * This should not produce the message "you only feel hungry now";
