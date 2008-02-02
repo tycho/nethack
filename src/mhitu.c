@@ -2655,7 +2655,7 @@ register struct attack *mattk;
 		    }
 		} else tmp = 0;
 		if (!rn2(30)) erode_armor(mtmp, TRUE);
-		if (!rn2(6)) erode_obj(MON_WEP(mtmp), TRUE, TRUE, FALSE);
+		if (!rn2(6)) _erode_obj(MON_WEP(mtmp),AD_ACID);
 		goto assess_dmg;
 	    case AD_STON: /* cockatrice */
 	    {

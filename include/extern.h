@@ -2323,6 +2323,7 @@ E void NDECL(uswapwepgone);
 E void NDECL(uqwepgone);
 E void NDECL(ulwepgone);
 E void NDECL(untwoweapon);
+E boolean FDECL(_erode_obj, (struct obj *,int));
 E void FDECL(erode_obj, (struct obj *,BOOLEAN_P,BOOLEAN_P,BOOLEAN_P));
 E int FDECL(chwepon, (struct obj *,int));
 E int FDECL(welded, (struct obj *));

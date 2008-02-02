@@ -2517,17 +2517,17 @@ struct attack *mattk;		/* null means we find one internally */
 
 	case AD_ACID:
 	    if(!rn2(6)) {
-		erode_obj(obj, TRUE, FALSE, FALSE);
+		_erode_obj(obj,AD_ACID);
 	    }
 	    break;
 	case AD_RUST:
 	    if(!mon->mcan) {
-		erode_obj(obj, FALSE, FALSE, FALSE);
+		_erode_obj(obj,AD_RUST);
 	    }
 	    break;
 	case AD_CORR:
 	    if(!mon->mcan) {
-		erode_obj(obj, TRUE, FALSE, FALSE);
+		_erode_obj(obj,AD_ACID);
 	    }
 	    break;
 	case AD_ENCH:
@@ -2542,7 +2542,8 @@ struct attack *mattk;		/* null means we find one internally */
 	    break;
 	}
 
-	if (carried(obj)) update_inventory();
+	/* erode_obj might have made it go away */
+	if (obj && carried(obj)) update_inventory();
 }
 
 /* Note: caller must ascertain mtmp is mimicking... */
