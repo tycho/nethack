@@ -643,6 +643,10 @@ migrate_to_level(mtmp, tolev, xyloc, cc)
 	mtmp->mux = new_lev.dnum;
 	mtmp->muy = new_lev.dlevel;
 	mtmp->mx = mtmp->my = 0;	/* this implies migration */
+	/* if we were targeting it, clear the target */
+	if (mtmp == polemonst) {
+		polemonst = 0;
+	}
 }
 
 #endif /* OVLB */
