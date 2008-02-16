@@ -865,7 +865,8 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	else if (u.ualign.record == 0)	you_are("nominally aligned");
 	else if (u.ualign.record >= -3)	you_have("strayed");
 	else if (u.ualign.record >= -8)	you_have("sinned");
-	else you_have("transgressed");
+	else if (u.ualign.record >= -15) you_have("transgressed");
+	else you_are("a filthy heretic");
 #ifdef WIZARD
 	if (wizard) {
 		Sprintf(buf, " %d", u.ualign.record);
@@ -1210,7 +1211,8 @@ int final;
 	    dump(youwere, "nominally aligned");
 	else if (u.ualign.record >= -3)	dump(youhave, "strayed");
 	else if (u.ualign.record >= -8)	dump(youhave, "sinned");
-	else dump("  You have ", "transgressed");
+	else if (u.ualign.record >= -15) dump(youhave, "transgressed");
+	else dump("  You are ", "a filthy heretic");
 	Sprintf(buf, " %d", u.ualign.record);
 	dump("  Your alignment was ", buf);
 

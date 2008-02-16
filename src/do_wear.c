@@ -347,7 +347,7 @@ Helmet_on()
 		    u.ualign.type = (uarmh->o_id % 2) ? A_CHAOTIC : A_LAWFUL;
 		else u.ualign.type = -(u.ualign.type);
 		u.ublessed = 0; /* lose your god's protection */
-	     /* makeknown(uarmh->otyp);   -- moved below, after xname() */
+		u.ualign.record = -(u.ualign.record/2); /* your past actions now count against you */
 		/*FALLTHRU*/
 	case DUNCE_CAP:
 		if (!uarmh->cursed) {
@@ -411,6 +411,10 @@ Helmet_off()
 	case HELM_OF_OPPOSITE_ALIGNMENT:
 	    u.ualign.type = u.ualignbase[A_CURRENT];
 	    u.ublessed = 0; /* lose the other god's protection */
+		 u.ualign.record = -(u.ualign.record); 
+								/* your past actions may count for you again...
+								 * we don't divide it by 2 here because we 
+								 * don't want to decrease it _too_ sharply */
 	    flags.botl = 1;
 	    break;
 	default: impossible(unknown_type, c_helmet, uarmh->otyp);
