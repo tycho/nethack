@@ -1317,15 +1317,28 @@ dosacrifice()
 		pline("A cloud of %s smoke surrounds you...",
 		      hcolor((const char *)"orange"));
 		done(ESCAPED);
-	    } else { /* super big win */
-		adjalign(10);
-pline("An invisible choir sings, and you are bathed in radiance...");
-		godvoice(altaralign, "Congratulations, mortal!");
-		display_nhwindow(WIN_MESSAGE, FALSE);
-verbalize("In return for thy service, I grant thee the gift of Immortality!");
-		You("ascend to the status of Demigod%s...",
-		    flags.female ? "dess" : "");
-		done(ASCENDED);
+	    } else { 
+			/* Would this action put you in positive standing? */
+			adjalign(10);
+			/* You'd better hope so... */
+			if (u.ualign.record < 0) {
+				pline("%s accepts your gift...",a_gname());
+				godvoice(altaralign,"Mortal, thou art unworthy to join me!");
+				verbalize("Thou art no longer a follower of the path of %s, "
+						"and this I cannot forgive.",a_gname());
+				verbalize("I permit thee to retain thy treasure, but "
+						"thou shalt not be freed of this mortal coil.  BEGONE!");
+				pline("A cloud of %s smoke surrounds you...",hcolor((const char*)"orange"));
+				done(ESCAPED);
+			}
+			/* super big win */
+			pline("An invisible choir sings, and you are bathed in radiance...");
+			godvoice(altaralign, "Congratulations, mortal!");
+			display_nhwindow(WIN_MESSAGE, FALSE);
+			verbalize("In return for thy service, I grant thee the gift of Immortality!");
+			You("ascend to the status of Demigod%s...",
+				flags.female ? "dess" : "");
+			done(ASCENDED);
 	    }
 	}
     } /* real Amulet */
