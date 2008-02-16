@@ -738,7 +738,7 @@ uchar damage_type;
 	/* weed out all the fooproof stuff here */
 	if ((damage_type != AD_MAGM && target->oerodeproof) ||
 			(damage_type == AD_ACID && !is_corrodeable(target) && !is_rottable(target)) ||
-			(damage_type == AD_RUST && !is_rustprone(target) && !is_rottable(target)) ||
+			(damage_type == AD_RUST && !is_rustprone(target)) ||
 			(damage_type == AD_FIRE && !is_flammable(target))) {
 		unaffected = TRUE;
 	}
