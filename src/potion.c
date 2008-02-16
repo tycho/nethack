@@ -505,28 +505,26 @@ peffects(otmp)
 		    pline("Ulch!  This makes you feel mediocre!");
 		    break;
 		} else {
-		    pline("Wow!  This makes you feel %s!",
-			  (otmp->blessed) ?
-				(unfixable_trouble_count(FALSE) ? "better" : "great")
-			  : "good");
+		    pline("Wow!  This makes you feel %s!", (otmp->blessed) ?
+				(unfixable_trouble_count(FALSE) ? "better" : "great") : "good");
 		    i = rn2(A_MAX);		/* start at a random point */
 		    for (ii = 0; ii < A_MAX; ii++) {
-			lim = AMAX(i);
-			if (i == A_STR && u.uhs >= 3) --lim;	/* WEAK */
-			if (ABASE(i) < lim) {
-			    ABASE(i) = lim;
-			    flags.botl = 1;
-			    /* only first found if not blessed */
-			    if (!otmp->blessed) break;
-			}
-			if(++i >= A_MAX) i = 0;
+				lim = AMAX(i);
+				if (i == A_STR && u.uhs >= 3) --lim;	/* WEAK */
+				if (ABASE(i) < lim) {
+					ABASE(i) = lim;
+					flags.botl = 1;
+					/* only first found if not blessed */
+					if (!otmp->blessed) break;
+				}
+				if(++i >= A_MAX) i = 0;
 		    }
 		}
 		break;
 	case POT_HALLUCINATION:
 		if (Hallucination || Halluc_resistance) nothing++;
 		(void) make_hallucinated(itimeout_incr(HHallucination,
-					   rn1(200, 600 - 300 * bcsign(otmp))),
+					   rn1(otmp->odiluted ? 100 : 200, 600 - 300 * bcsign(otmp))),
 				  TRUE, 0L);
 		break;
 	case POT_WATER:
@@ -663,7 +661,7 @@ peffects(otmp)
 		if (otmp->blessed)
 			HSee_invisible |= FROMOUTSIDE;
 		else
-			incr_itimeout(&HSee_invisible, rn1(100,750));
+			incr_itimeout(&HSee_invisible, rn1(otmp->odiluted ? 50 : 100,750));
 		set_mimic_blocking(); /* do special mimic handling */
 		see_monsters();	/* see invisible monsters */
 		newsym(u.ux,u.uy); /* see yourself! */
@@ -686,7 +684,7 @@ peffects(otmp)
 		    else
 			Your("%s are frozen to the %s!",
 			     makeplural(body_part(FOOT)), surface(u.ux, u.uy));
-		    nomul(-(rn1(10, 25 - 12*bcsign(otmp))));
+		    nomul(-(rn1(otmp->odiluted ? 5 : 10, 25 - 12*bcsign(otmp))));
 		    nomovemsg = You_can_move_again;
 		    exercise(A_DEX, FALSE);
 		}
@@ -700,7 +698,8 @@ peffects(otmp)
 		    You("yawn.");
 		} else {
 		    You("suddenly fall asleep!");
-		    fall_asleep(-resist_reduce(rn1(10, 25 - 12*bcsign(otmp)),SLEEP_RES), TRUE);
+		    fall_asleep(-resist_reduce(rn1(otmp->odiluted ? 5 : 10, 
+							 25 - 12*bcsign(otmp)),SLEEP_RES),TRUE);
 		}
 		break;
 	case POT_MONSTER_DETECTION:
@@ -714,7 +713,7 @@ peffects(otmp)
 		    if (HDetect_monsters >= 300L)
 			i = 1;
 		    else
-			i = rn1(40,21);
+			i = rn1(otmp->odiluted ? 20 : 40,21);
 		    incr_itimeout(&HDetect_monsters, i);
 		    for (x = 1; x < COLNO; x++) {
 			for (y = 0; y < ROWNO; y++) {
@@ -785,7 +784,7 @@ peffects(otmp)
 			pline("Huh, What?  Where am I?");
 		else	nothing++;
 		make_confused(itimeout_incr(HConfusion,
-					    rn1(7, 16 - 8 * bcsign(otmp))),
+					    rn1(otmp->odiluted ? 4 : 7, 16 - 8 * bcsign(otmp))),
 			      FALSE);
 		break;
 	case POT_GAIN_ABILITY:
@@ -798,12 +797,12 @@ peffects(otmp)
 		    int itmp; /* 6 times to find one which can be increased. */
 		    i = -1;		/* increment to 0 */
 		    for (ii = A_MAX; ii > 0; ii--) {
-			i = (otmp->blessed ? i + 1 : rn2(A_MAX));
-			/* only give "your X is already as high as it can get"
-			   message on last attempt (except blessed potions) */
-			itmp = (otmp->blessed || ii == 1) ? 0 : -1;
-			if (adjattrib(i, 1, itmp) && !otmp->blessed)
-			    break;
+				i = (otmp->blessed ? i + 1 : rn2(A_MAX));
+				/* only give "your X is already as high as it can get"
+					message on last attempt (except blessed potions) */
+				itmp = (otmp->blessed || ii == 1) ? 0 : -1;
+				if (adjattrib(i, 1, itmp) && !otmp->blessed)
+					break;
 		    }
 		}
 		break;
@@ -835,12 +834,12 @@ peffects(otmp)
 			unkn++;
 		}
 		exercise(A_DEX, TRUE);
-		incr_itimeout(&HFast, rn1(10, 100 + 60 * bcsign(otmp)));
+		incr_itimeout(&HFast, rn1(otmp->odiluted ? 5 : 10, 100 + 60 * bcsign(otmp)));
 		break;
 	case POT_BLINDNESS:
 		if(Blind) nothing++;
 		make_blinded(itimeout_incr(Blinded,
-					   rn1(200, 250 - 125 * bcsign(otmp))),
+					   rn1(otmp->odiluted ? 100 : 200, 250 - 125 * bcsign(otmp))),
 			     (boolean)!Blind);
 		break;
 	case POT_GAIN_LEVEL:
@@ -877,14 +876,14 @@ peffects(otmp)
 		break;
 	case POT_HEALING:
 		You_feel("better.");
-		healup(d(6 + 2 * bcsign(otmp), 4),
+		healup(d(10 + 2 * bcsign(otmp), 4) / otmp->odiluted ? 2 : 1,
 		       !otmp->cursed ? 1 : 0, !!otmp->blessed, !otmp->cursed);
 		exercise(A_CON, TRUE);
 		break;
 	case POT_EXTRA_HEALING:
 		You_feel("much better.");
-		healup(d(6 + 2 * bcsign(otmp), 8),
-		       otmp->blessed ? 5 : !otmp->cursed ? 2 : 0,
+		healup(d(10 + 2 * bcsign(otmp), 8) / otmp->odiluted ? 2 : 1,
+		       (otmp->blessed ? 5 : !otmp->cursed ? 2 : 0) / otmp->odiluted ? 2 : 1,
 		       !otmp->cursed, TRUE);
 		(void) make_hallucinated(0L,TRUE,0L);
 		exercise(A_CON, TRUE);
@@ -892,7 +891,7 @@ peffects(otmp)
 		break;
 	case POT_FULL_HEALING:
 		You_feel("completely healed.");
-		healup(400, 4+4*bcsign(otmp), !otmp->cursed, TRUE);
+		healup(400, (4+4*bcsign(otmp)) / otmp->odiluted ? 2 : 1, !otmp->cursed, TRUE);
 		/* Restore one lost level if blessed */
 		if (otmp->blessed && u.ulevel < u.ulevelmax) {
 		    /* when multiple levels have been lost, drinking
@@ -929,9 +928,9 @@ peffects(otmp)
 		} else
 			nothing++;
 		if (otmp->blessed) {
-		    incr_itimeout(&HLevitation, rn1(50,250));
+		    incr_itimeout(&HLevitation, rn1(otmp->odiluted ? 25 : 50,250));
 		    HLevitation |= I_SPECIAL;
-		} else incr_itimeout(&HLevitation, rn1(140,10));
+		} else incr_itimeout(&HLevitation, rn1(otmp->odiluted ? 70 : 140,10));
 		spoteffects(FALSE);	/* for sinks */
 		break;
 	case POT_GAIN_ENERGY:			/* M. Stephenson */
@@ -942,7 +941,7 @@ peffects(otmp)
 			    pline("Magical energies course through your body.");
 			num = rnd(5) + 5 * otmp->blessed + 1;
 			u.uenmax += (otmp->cursed) ? -num : num;
-			num = rnd(75) + 75 * otmp->blessed + 1;  /* make this part matter */
+			num = rnd(otmp->odiluted ? 0 : 75) + 75 * otmp->blessed + 1;  /* make this part matter */
 			u.uen += (otmp->cursed) ? -num : num;
 			if(u.uen > u.uenmax) u.uen = u.uenmax;
 			if(u.uenmax <= 0) u.uenmax = 0;
