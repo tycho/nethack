@@ -35,6 +35,8 @@ register boolean clumsy;
 	int kick_skill = P_NONE;
 	int blessed_foot_damage = 0;
 	boolean trapkilled = FALSE;
+	boolean forcepush = FALSE;
+	struct trap* ttmp;
 
 	if (uarmf && uarmf->otyp == KICKING_BOOTS)
 	    dmg += 5;
@@ -88,13 +90,26 @@ register boolean clumsy;
 	dmg += u.udaminc;	/* add ring(s) of increase damage */
 	if (dmg > 0)
 		mon->mhp -= dmg;
-	if (mon->mhp > 0 && martial() && !bigmonst(mon->data) && !rn2(3) &&
-	    mon->mcanmove && mon != u.ustuck && !mon->mtrapped) {
+
+	/* THIS. IS. YENDOOOOOR? */
+	mdx = mon->mx + u.dx;
+	mdy = mon->my + u.dy;
+	if (isok(mdx,mdy)) {
+		ttmp = t_at(mdx,mdy);
+		if (ttmp && (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT)) { 
+			forcepush = TRUE;
+		}
+	}
+
+	if ((mon->mhp > 0 && !bigmonst(mon->data) && mon != u.ustuck && !mon->mtrapped) && 
+			((!rn2(3) && martial() && mon->mcanmove) || forcepush)) {
 		/* see if the monster has a place to move into */
 		mdx = mon->mx + u.dx;
 		mdy = mon->my + u.dy;
 		if(goodpos(mdx, mdy, mon, 0)) {
-			pline("%s reels from the blow.", Monnam(mon));
+			if (!forcepush) {
+				pline("%s reels from the blow.", Monnam(mon));
+			}
 			if (m_in_out_region(mon, mdx, mdy)) {
 			    remove_monster(mon->mx, mon->my);
 			    newsym(mon->mx, mon->my);
@@ -121,6 +136,8 @@ register xchar x, y;
 	register boolean clumsy = FALSE;
 	register struct monst *mon = m_at(x, y);
 	register int i, j;
+	struct trap* ttmp;
+	int mdx,mdy;
 
 	bhitpos.x = x;
 	bhitpos.y = y;
@@ -181,6 +198,15 @@ register xchar x, y;
 	if(i < (j*3)/10) {
 		if(!rn2((i < j/10) ? 2 : (i < j/5) ? 3 : 4)) {
 			if(martial() && !rn2(2)) goto doit;
+			mdx = mon->mx + u.dx;
+			mdy = mon->my + u.dy;
+			/* even a zero-damage kick may push them in */
+			if (isok(mdx,mdy)) {
+				ttmp = t_at(mdx,mdy);
+				if (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT) {
+					goto doit;
+				}
+			}
 			Your("clumsy kick does no damage.");
 			(void) passive(mon, FALSE, 1, AT_KICK);
 			return;
