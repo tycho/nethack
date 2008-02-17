@@ -88,7 +88,7 @@ PROJECTILE("elven arrow", "runed arrow",
 PROJECTILE("orcish arrow", "crude arrow",
 		0, 20, 1, 2, 5, 6, 0, IRON, -P_BOW, CLR_BLACK),
 PROJECTILE("silver arrow", (char *)0,
-		1, 12, 1, 5, 6, 6, 0, SILVER, -P_BOW, HI_SILVER),
+		1, 15, 1, 5, 6, 6, 0, SILVER, -P_BOW, HI_SILVER),
 PROJECTILE("ya", "bamboo arrow",
 		0, 15, 1, 4, 7, 7, 1, METAL, -P_BOW, HI_METAL),
 PROJECTILE("crossbow bolt", (char *)0,
@@ -111,12 +111,12 @@ WEAPON("orcish spear", "crude spear",
 WEAPON("dwarvish spear", "stout spear",
 	0, 1, 0, 12, 30,  3,  8,  8, 0, P,   P_SPEAR, IRON, HI_METAL),
 WEAPON("silver spear", (char *)0,
-	1, 1, 0,  2, 30, 40,  6,  8, 0, P,   P_SPEAR, SILVER, HI_SILVER),
+	1, 1, 0,  6, 30, 40,  6,  8, 0, P,   P_SPEAR, SILVER, HI_SILVER),
 WEAPON("javelin", "throwing spear",
-	0, 1, 0, 10, 20,  3,  6,  6, 0, P,   P_JAVELIN, IRON, HI_METAL),
+	0, 1, 0, 15, 20,  3,  6,  6, 0, P,   P_JAVELIN, IRON, HI_METAL),
 
 WEAPON("trident", (char *)0,
-	1, 0, 0,  8, 25,  5,  6,  4, 0, P,   P_TRIDENT, IRON, HI_METAL),
+	1, 0, 0, 12, 25,  5,  6,  4, 0, P,   P_TRIDENT, IRON, HI_METAL),
 						/* +1 small, +2d4 large */
 
 /* blades */
@@ -127,7 +127,7 @@ WEAPON("elven dagger", "runed dagger",
 WEAPON("orcish dagger", "crude dagger",
 	0, 1, 0, 12, 10,  4,  3,  3, 2, P,   P_DAGGER, IRON, CLR_BLACK),
 WEAPON("silver dagger", (char *)0,
-	1, 1, 0,  3, 10, 40,  4,  3, 2, P,   P_DAGGER, SILVER, HI_SILVER),
+	1, 1, 0,  4, 10, 40,  4,  3, 2, P,   P_DAGGER, SILVER, HI_SILVER),
 WEAPON("athame", (char *)0,
 	1, 1, 0,  0, 10,  4,  4,  3, 2, S,   P_DAGGER, IRON, HI_METAL),
 WEAPON("scalpel", (char *)0,
@@ -135,7 +135,7 @@ WEAPON("scalpel", (char *)0,
 WEAPON("knife", (char *)0,
 	1, 1, 0, 20,  5,  4,  3,  2, 0, P|S, P_KNIFE, IRON, HI_METAL),
 WEAPON("stiletto", (char *)0,
-	1, 1, 0,  5,  5,  4,  3,  2, 0, P|S, P_KNIFE, IRON, HI_METAL),
+	1, 1, 0,  6,  5,  4,  3,  2, 0, P|S, P_KNIFE, IRON, HI_METAL),
 WEAPON("worm tooth", (char *)0,
 	1, 0, 0,  0, 20,  2,  2,  2, 0, 0,   P_KNIFE, 0, CLR_WHITE),
 WEAPON("crysknife", (char *)0,
@@ -144,32 +144,32 @@ WEAPON("crysknife", (char *)0,
 WEAPON("axe", (char *)0,
 	1, 0, 0, 40, 60,  8,  6,  4, 0, S,   P_AXE, IRON, HI_METAL),
 WEAPON("battle-axe", "double-headed axe",
-	0, 0, 1, 10,120, 40,  8,  6, 0, S,   P_AXE, IRON, HI_METAL),
+	0, 0, 1, 12,120, 40,  8,  6, 0, S,   P_AXE, IRON, HI_METAL),
 						/* "double-bitted" ? */
 
 /* swords */
 WEAPON("short sword", (char *)0,
-	1, 0, 0,  6, 30, 10,  6,  8, 0, P,   P_SHORT_SWORD, IRON, HI_METAL),
+	1, 0, 0, 10, 30, 10,  6,  8, 0, P,   P_SHORT_SWORD, IRON, HI_METAL),
 WEAPON("elven short sword", "runed short sword",
-	0, 0, 0,  2, 30, 10,  8,  8, 0, P,   P_SHORT_SWORD, WOOD, HI_WOOD),
+	0, 0, 0,  6, 30, 10,  8,  8, 0, P,   P_SHORT_SWORD, WOOD, HI_WOOD),
 WEAPON("orcish short sword", "crude short sword",
-	0, 0, 0,  3, 30, 10,  5,  8, 0, P,   P_SHORT_SWORD, IRON, CLR_BLACK),
+	0, 0, 0,  6, 30, 10,  5,  8, 0, P,   P_SHORT_SWORD, IRON, CLR_BLACK),
 WEAPON("dwarvish short sword", "broad short sword",
-	0, 0, 0,  2, 30, 10,  7,  8, 0, P,   P_SHORT_SWORD, IRON, HI_METAL),
+	0, 0, 0,  6, 30, 10,  7,  8, 0, P,   P_SHORT_SWORD, IRON, HI_METAL),
 WEAPON("silver short sword", (char *)0,
-	0, 0, 0,  2, 30, 10,  6,  8, 0, P,   P_SHORT_SWORD, SILVER, HI_SILVER),
+	0, 0, 0,  6, 30, 10,  6,  8, 0, P,   P_SHORT_SWORD, SILVER, HI_SILVER),
 WEAPON("scimitar", "curved sword",
 	0, 0, 0, 15, 40, 15,  8,  8, 0, S,   P_SCIMITAR, IRON, HI_METAL),
 WEAPON("silver saber", (char *)0,
 	1, 0, 0,  6, 40, 75,  8,  8, 0, S,   P_SABER, SILVER, HI_SILVER),
 WEAPON("broadsword", (char *)0,
-	1, 0, 0,  8, 70, 10,  4,  6, 0, S,   P_BROAD_SWORD, IRON, HI_METAL),
+	1, 0, 0, 10, 70, 10,  4,  6, 0, S,   P_BROAD_SWORD, IRON, HI_METAL),
 						/* +d4 small, +1 large */
 WEAPON("elven broadsword", "runed broadsword",
-	0, 0, 0,  4, 70, 10,  6,  6, 0, S,   P_BROAD_SWORD, WOOD, HI_WOOD),
+	0, 0, 0,  8, 70, 10,  6,  6, 0, S,   P_BROAD_SWORD, WOOD, HI_WOOD),
 						/* +d4 small, +1 large */
 WEAPON("long sword", (char *)0,
-	1, 0, 0, 50, 40, 15,  8, 12, 0, S,   P_LONG_SWORD, IRON, HI_METAL),
+	1, 0, 0, 40, 40, 15,  8, 12, 0, S,   P_LONG_SWORD, IRON, HI_METAL),
 /* Base artifact for Sunsword */
 WEAPON("silver long sword", (char *)0,
 	1, 0, 0, 0, 40, 150,  8, 12, 0, S,   P_LONG_SWORD, SILVER, HI_SILVER),
@@ -177,7 +177,7 @@ WEAPON("two-handed sword", (char *)0,
 	1, 0, 1, 22,150, 50, 12,  6, 0, S,   P_TWO_HANDED_SWORD, IRON, HI_METAL),
 						/* +2d6 large */
 WEAPON("katana", "samurai sword",
-	0, 0, 0,  4, 40, 80, 10, 12, 1, S,   P_LONG_SWORD, IRON, HI_METAL),
+	0, 0, 0,  8, 40, 80, 10, 12, 1, S,   P_LONG_SWORD, IRON, HI_METAL),
 /* special swords set up for artifacts */
 WEAPON("tsurugi", "long samurai sword",
 	0, 0, 1,  0, 60,500, 16,  8, 2, S,   P_TWO_HANDED_SWORD, METAL, HI_METAL),
@@ -190,46 +190,46 @@ WEAPON("runesword", "runed broadsword",
 /* polearms */
 /* spear-type */
 WEAPON("partisan", "vulgar polearm",
-	0, 0, 1,  5, 80, 10,  6,  6, 0, P,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0, 80, 10,  6,  6, 0, P,   P_POLEARMS, IRON, HI_METAL),
 						/* +1 large */
 WEAPON("ranseur", "hilted polearm",
-	0, 0, 1,  5, 50,  6,  4,  4, 0, P,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0, 50,  6,  4,  4, 0, P,   P_POLEARMS, IRON, HI_METAL),
 						/* +d4 both */
 WEAPON("spetum", "forked polearm",
-	0, 0, 1,  5, 50,  5,  6,  6, 0, P,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0, 50,  5,  6,  6, 0, P,   P_POLEARMS, IRON, HI_METAL),
 						/* +1 small, +d6 large */
 WEAPON("glaive", "single-edged polearm",
-	0, 0, 1,  8, 75,  6,  6, 10, 0, S,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0, 75,  6,  6, 10, 0, S,   P_POLEARMS, IRON, HI_METAL),
 WEAPON("lance", (char *)0,
-	1, 0, 0,  4,180, 10,  6,  8, 0, P,   P_LANCE, IRON, HI_METAL),
+	1, 0, 0,  8,180, 10,  6,  8, 0, P,   P_LANCE, IRON, HI_METAL),
 /* axe-type */
 WEAPON("halberd", "angled poleaxe",
 	0, 0, 1,  8,150, 10, 10,  6, 0, P|S, P_POLEARMS, IRON, HI_METAL),
 						/* +1d6 large */
 WEAPON("bardiche", "long poleaxe",
-	0, 0, 1,  4,120,  7,  4,  4, 0, S,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0,120,  7,  4,  4, 0, S,   P_POLEARMS, IRON, HI_METAL),
 						/* +1d4 small, +2d4 large */
 WEAPON("voulge", "pole cleaver",
-	0, 0, 1,  4,125,  5,  4,  4, 0, S,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0,125,  5,  4,  4, 0, S,   P_POLEARMS, IRON, HI_METAL),
 						/* +d4 both */
 WEAPON("dwarvish mattock", "broad pick",
 	0, 0, 1, 13,120, 50, 12,  8,-1, B,   P_PICK_AXE, IRON, HI_METAL),
 
 /* curved/hooked */
 WEAPON("fauchard", "pole sickle",
-	0, 0, 1,  6, 60,  5,  6,  8, 0, P|S, P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0, 60,  5,  6,  8, 0, P|S, P_POLEARMS, IRON, HI_METAL),
 WEAPON("guisarme", "pruning hook",
-	0, 0, 1,  6, 80,  5,  4,  8, 0, S,   P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0, 80,  5,  4,  8, 0, S,   P_POLEARMS, IRON, HI_METAL),
 						/* +1d4 small */
 WEAPON("bill-guisarme", "hooked polearm",
-	0, 0, 1,  4,120,  7,  4, 10, 0, P|S, P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0,120,  7,  4, 10, 0, P|S, P_POLEARMS, IRON, HI_METAL),
 						/* +1d4 small */
 /* other */
 WEAPON("lucern hammer", "pronged polearm",
-	0, 0, 1,  5,150,  7,  4,  6, 0, B|P, P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0,150,  7,  4,  6, 0, B|P, P_POLEARMS, IRON, HI_METAL),
 						/* +1d4 small */
 WEAPON("bec de corbin", "beaked polearm",
-	0, 0, 1,  4,100,  8,  8,  6, 0, B|P, P_POLEARMS, IRON, HI_METAL),
+	0, 0, 1,  0,100,  8,  8,  6, 0, B|P, P_POLEARMS, IRON, HI_METAL),
 
 /* bludgeons */
 WEAPON("mace", (char *)0,
@@ -240,19 +240,19 @@ WEAPON("silver mace", (char *)0,
 						/* +1 small */
 
 WEAPON("morning star", (char *)0,
-	1, 0, 0, 12,120, 10,  4,  6, 0, B,   P_MORNING_STAR, IRON, HI_METAL),
+	1, 0, 0, 15,120, 10,  4,  6, 0, B,   P_MORNING_STAR, IRON, HI_METAL),
 						/* +d4 small, +1 large */
 WEAPON("war hammer", (char *)0,
 	1, 0, 0, 15, 50,  5,  4,  4, 0, B,   P_HAMMER, IRON, HI_METAL),
 						/* +1 small */
 WEAPON("club", (char *)0,
-	1, 0, 0, 12, 30,  3,  6,  3, 0, B,   P_CLUB, WOOD, HI_WOOD),
+	1, 0, 0, 15, 30,  3,  6,  3, 0, B,   P_CLUB, WOOD, HI_WOOD),
 #ifdef KOPS
 WEAPON("rubber hose", (char *)0,
 	1, 0, 0,  0, 20,  3,  4,  3, 0, B,   P_WHIP, PLASTIC, CLR_BROWN),
 #endif
 WEAPON("quarterstaff", "staff",
-	0, 0, 1, 11, 40,  5,  6,  6, 0, B,   P_QUARTERSTAFF, WOOD, HI_WOOD),
+	0, 0, 1, 15, 40,  5,  6,  6, 0, B,   P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* two-piece */
 WEAPON("aklys", "thonged club",
 	0, 0, 0,  8, 15,  4,  6,  3, 0, B,   P_CLUB, IRON, HI_METAL),
@@ -261,7 +261,7 @@ WEAPON("flail", (char *)0,
 						/* +1 small, +1d4 large */
 /* misc */
 WEAPON("bullwhip", (char *)0,
-	1, 0, 0,  2, 20,  4,  2,  1, 0, 0,   P_WHIP, LEATHER, CLR_BROWN),
+	1, 0, 0,  5, 20,  4,  2,  1, 0, 0,   P_WHIP, LEATHER, CLR_BROWN),
 
 /* bows */
 BOW("bow", (char *)0,			  1, 32, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
