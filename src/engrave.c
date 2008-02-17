@@ -717,6 +717,9 @@ doengrave()
 			    teleengr = TRUE;
 			}
 			break;
+		    case WAN_WIND:
+			Strcpy(post_engr_text, "The bugs on the floor are blown away!");
+			break;
 
 		    /* type = ENGRAVE wands */
 		    case WAN_DIGGING:

@@ -2889,6 +2889,7 @@ do_break_wand(obj)
     case WAN_POLYMORPH:
     case WAN_TELEPORTATION:
     case WAN_UNDEAD_TURNING:
+	 case WAN_WIND:
 	affects_objects = TRUE;
 	break;
     default:

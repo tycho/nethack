@@ -107,8 +107,9 @@ struct obj *otmp;
 {
 	boolean wake = TRUE;	/* Most 'zaps' should wake monster */
 	boolean reveal_invis = FALSE;
-	boolean dbldam = Role_if(PM_KNIGHT) && u.uhave.questart;
+	boolean dbldam = FALSE;
 	int dmg, otyp = otmp->otyp;
+	int hurtlex,hurtley;
 	const char *zap_type_text = "spell";
 	struct obj *obj;
 	boolean disguised_mimic = (mtmp->data->mlet == S_MIMIC &&
@@ -336,6 +337,17 @@ struct obj *otmp;
 			    pline("%s suddenly seems weaker!", Monnam(mtmp));
 		    }
 		}
+		break;
+	case WAN_WIND:
+		/* Actually distance, not damage */
+		dmg = rnd(2) + (bigmonst(mtmp->data) ? 0 : rnd(3));	
+		hurtlex = sgn(mtmp->mx - u.ux);
+		hurtley = sgn(mtmp->my - u.uy);
+		if (hurtlex) { hurtley = rnd(3)-2; }
+		else if (hurtley) { hurtlex = rnd(3)-2; }
+		pline("%s is blown around!",Monnam(mtmp));
+		mhurtle(mtmp,hurtlex,hurtley,dmg);
+		makeknown(otyp);
 		break;
 	default:
 		impossible("What an interesting effect (%d)", otyp);
@@ -1706,6 +1718,13 @@ smell:
 		}
 		newsym(refresh_x, refresh_y);
 		break;
+	case WAN_WIND:
+		refresh_x = obj->ox;
+		refresh_y = obj->oy;
+		scatter(obj->ox,obj->oy,4,VIS_EFFECTS|MAY_HIT|MAY_DESTROY|MAY_FRACTURE,(struct obj*)0);
+		newsym(refresh_x,refresh_y);
+		makeknown(otmp->otyp);
+		break;
 	default:
 		impossible("What an interesting effect (%d)", otmp->otyp);
 		break;
@@ -1903,7 +1922,13 @@ boolean ordinary;
 			exercise(A_STR, FALSE);
 		    }
 		    break;
-
+		case WAN_WIND:
+			 /* This is not usually a bright idea. */
+			 You("are caught up in the winds!");
+			 scatter(u.ux,u.uy,4,VIS_EFFECTS|MAY_HIT|MAY_DESTROY|MAY_FRACTURE,(struct obj*)0);
+			 hurtle(rnd(3)-2,rnd(3)-2,rnd(3)+2,FALSE);
+			 exercise(A_WIS,FALSE);
+			 break;
 		case WAN_LIGHTNING:
 		    makeknown(WAN_LIGHTNING);
 		    if (how_resistant(SHOCK_RES) < 100) {
@@ -2212,6 +2237,7 @@ struct obj *obj;	/* wand or spell */
 		case SPE_DRAIN_LIFE:
 		case WAN_OPENING:
 		case SPE_KNOCK:
+		case WAN_WIND:
 		    (void) bhitm(u.usteed, obj);
 		    steedhit = TRUE;
 		    break;
@@ -2338,6 +2364,7 @@ struct obj *obj;	/* wand or spell */
 	    break;
 	case WAN_STRIKING:
 	case SPE_FORCE_BOLT:
+	case WAN_WIND:
 	    striking = TRUE;
 	    /*FALLTHRU*/
 	case WAN_LOCKING:
@@ -2440,6 +2467,7 @@ struct obj *obj;	/* wand or spell */
 		    break;
 		case WAN_STRIKING:
 		case SPE_FORCE_BOLT:
+		case WAN_WIND:
 		    wipe_engr_at(x, y, d(2,4));
 		    break;
 		default:
@@ -2473,13 +2501,17 @@ register struct	obj	*obj;
 	if (objects[otyp].oc_dir == IMMEDIATE) {
 	    obj_zapped = FALSE;
 
+		if (obj->otyp == WAN_WIND) {
+			pline("Winds swirl around you!");
+			makeknown(obj->otyp);
+		}
 	    if (u.uswallow) {
-		(void) bhitm(u.ustuck, obj);
-		/* [how about `bhitpile(u.ustuck->minvent)' effect?] */
+			(void) bhitm(u.ustuck, obj);
+			/* [how about `bhitpile(u.ustuck->minvent)' effect?] */
 	    } else if (u.dz) {
-		disclose = zap_updown(obj);
+			disclose = zap_updown(obj);
 	    } else {
-		(void) bhit(u.dx,u.dy, rn1(8,6),ZAPPED_WAND, bhitm,bhito, obj);
+			(void) bhit(u.dx,u.dy, rn1(8,6),ZAPPED_WAND, bhitm,bhito, obj);
 	    }
 	    /* give a clue if obj_zapped */
 	    if (obj_zapped)
@@ -2717,6 +2749,7 @@ struct obj *obj;			/* object tossed/used */
 			break;
 		    case WAN_STRIKING:
 		    case SPE_FORCE_BOLT:
+			 case WAN_WIND:
 			if (typ != DRAWBRIDGE_UP)
 			    destroy_drawbridge(x,y);
 			makeknown(obj->otyp);
@@ -2786,6 +2819,7 @@ struct obj *obj;			/* object tossed/used */
 		case SPE_KNOCK:
 		case SPE_WIZARD_LOCK:
 		case SPE_FORCE_BOLT:
+		case WAN_WIND:
 		    if (doorlock(obj, bhitpos.x, bhitpos.y)) {
 			if (cansee(bhitpos.x, bhitpos.y) ||
 			    (obj->otyp == WAN_STRIKING))
