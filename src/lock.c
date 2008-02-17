@@ -863,6 +863,7 @@ int x, y;
 	    break;
 	case WAN_STRIKING:
 	case SPE_FORCE_BOLT:
+	case WAN_WIND:
 	    if (door->doormask & (D_LOCKED | D_CLOSED)) {
 		if (door->doormask & D_TRAPPED) {
 		    if (MON_AT(x, y))
