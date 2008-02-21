@@ -203,7 +203,7 @@ register xchar x, y;
 			/* even a zero-damage kick may push them in */
 			if (isok(mdx,mdy)) {
 				ttmp = t_at(mdx,mdy);
-				if (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT) {
+				if (ttmp && (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT)) {
 					goto doit;
 				}
 			}
