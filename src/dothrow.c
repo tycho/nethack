@@ -584,16 +584,20 @@ mhurtle_step(arg, x, y)
 {
 	struct monst *mon = (struct monst *)arg;
 
-	/* TODO: Treat walls, doors, iron bars, pools, lava, etc. specially
+	/* TODO: Treat walls, doors, iron bars, etc. specially
 	 * rather than just stopping before.
+	 *
+	 * DONE: pools and lava (DSR 3/2/08)
 	 */
-	if (goodpos(x, y, mon, 0) && m_in_out_region(mon, x, y)) {
+	if (goodpos(x, y, mon, MM_UNSAFEOK) && m_in_out_region(mon, x, y)) {
 	    remove_monster(mon->mx, mon->my);
 	    newsym(mon->mx, mon->my);
 	    place_monster(mon, x, y);
 	    newsym(mon->mx, mon->my);
 	    set_apparxy(mon);
 	    (void) mintrap(mon);
+		 /* TODO: we need to check minliquid here eventually to see
+		  * if monsters can properly die, but for now... */
 	    return TRUE;
 	}
 	return FALSE;
