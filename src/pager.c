@@ -134,7 +134,7 @@ lookat(x, y, buf, monbuf)
 		name = distant_monnam(mtmp, ARTICLE_NONE, monnambuf);
 
 	    pm = mtmp->data;
-	    Sprintf(buf, "%s%s%s%s",
+	    Sprintf(buf, "%s%s%s%s%s",
 		    (mtmp->mx != x || mtmp->my != y) ?
 			((mtmp->isshk && accurate)
 				? "tail of " : "tail of a ") : "",
@@ -142,6 +142,8 @@ lookat(x, y, buf, monbuf)
 		    (mtmp->mpeaceful && accurate) ? "peaceful " : "",
 			 /* don't show 'flying' unless they're not a natural flier */
 			 (is_flying(mtmp) && !is_flyer(mtmp->data) && accurate) ? "flying " : "",
+			 /* don't show 'berserk' unless they've had the spell cast on them */
+			 (mtmp->mberserk && !is_berserker(mtmp->data) && accurate) ? "enraged " : "",
 		    name);
 	    if (u.ustuck == mtmp)
 		Strcat(buf, (Upolyd && sticks(youmonst.data)) ?
