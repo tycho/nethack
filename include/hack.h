@@ -132,16 +132,17 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define NO_SPELL	0
 
 /* flags to control makemon() */
-#define NO_MM_FLAGS	  0x00	/* use this rather than plain 0 */
-#define NO_MINVENT	  0x01	/* suppress minvent when creating mon */
-#define MM_NOWAIT	  0x02	/* don't set STRAT_WAITMASK flags */
-#define MM_EDOG		  0x04	/* add edog structure */
-#define MM_EMIN		  0x08	/* add emin structure */
-#define MM_ANGRY	  0x10  /* monster is created angry */
-#define MM_NONAME	  0x20  /* monster is not christened */
+#define NO_MM_FLAGS		  0x00	/* use this rather than plain 0 */
+#define NO_MINVENT		  0x01	/* suppress minvent when creating mon */
+#define MM_NOWAIT			  0x02	/* don't set STRAT_WAITMASK flags */
+#define MM_EDOG			  0x04	/* add edog structure */
+#define MM_EMIN			  0x08	/* add emin structure */
+#define MM_ANGRY			  0x10  /* monster is created angry */
+#define MM_NONAME			  0x20  /* monster is not christened */
 #define MM_NOCOUNTBIRTH	  0x40  /* don't increment born counter (for revival) */
 #define MM_IGNOREWATER	  0x80	/* ignore water when positioning */
 #define MM_ADJACENTOK	  0x100 /* it is acceptable to use adjacent coordinates */
+#define MM_UNSAFEOK		  0x200 /* potentially dangerous locations (lava) are OK */
 
 /* special mhpmax value when loading bones monster to flag as extinct or genocided */
 #define DEFUNCT_MONSTER	(-100)

@@ -25,6 +25,7 @@ unsigned gpflags;
 {
 	struct permonst *mdat = NULL;
 	boolean ignorewater = ((gpflags & MM_IGNOREWATER) != 0);
+	boolean unsafe = ((gpflags & MM_UNSAFEOK) != 0);
 
 	if (!isok(x, y)) return FALSE;
 
@@ -55,33 +56,46 @@ unsigned gpflags;
 	     * to place the worm segment and the worm's head is at x,y.
 	     */
 	    if (mtmp2 && (mtmp2 != mtmp || mtmp->wormno))
-		return FALSE;
+			return FALSE;
 
 	    mdat = mtmp->data;
 	    if (is_pool(x,y) && !ignorewater) {
-		if (mtmp == &youmonst)
-			return !!(HLevitation || Flying || Wwalking ||
-					Swimming || Amphibious);
-		else	return (is_flyer(mdat) || is_swimmer(mdat) ||
-							is_clinger(mdat) || is_flying(mtmp));
+			 if (unsafe) {
+				 return TRUE;
+			 }
+			if (mtmp == &youmonst)
+				return !!(HLevitation || Flying || Wwalking || Swimming || Amphibious);
+			else	
+				return (is_flyer(mdat) || is_swimmer(mdat) || is_clinger(mdat) || is_flying(mtmp));
 	    } else if (mdat->mlet == S_EEL && rn2(13) && !ignorewater) {
-		return FALSE;
+			return FALSE;
 	    } else if (is_lava(x,y)) {
-		if (mtmp == &youmonst)
-		    return !!HLevitation;
-		else
-		    return (is_flyer(mdat) || likes_lava(mdat) || is_flying(mtmp));
+			 if (unsafe) {
+				 return TRUE;
+			 }
+			if (mtmp == &youmonst)
+				return !!HLevitation;
+			else
+				return (is_flyer(mdat) || likes_lava(mdat) || is_flying(mtmp));
 	    }
 	    if (passes_walls(mdat) && may_passwall(x,y)) return TRUE;
 	}
+
 	if (!ACCESSIBLE(levl[x][y].typ)) {
+		if (unsafe) {
+			if (is_pool(x,y) || is_lava(x,y)) {
+				return TRUE;
+			}
+		}
 		if (!(is_pool(x,y) && ignorewater)) return FALSE;
 	}
 
 	if (closed_door(x, y) && (!mdat || !amorphous(mdat)))
 		return FALSE;
+
 	if (sobj_at(BOULDER, x, y) && (!mdat || !throws_rocks(mdat)))
 		return FALSE;
+
 	return TRUE;
 }
 
