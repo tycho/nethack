@@ -1331,6 +1331,14 @@ struct mkroom *croom;
     default:
 	levl[x1][y1].typ = terr->ter;
 	levl[x1][y1].lit = terr->tlit;
+	/* handle doors and secret doors */
+	if (levl[x1][y1].typ == SDOOR || IS_DOOR(levl[x1][y1].typ)) {
+	    if(levl[x1][y1].typ == SDOOR)
+		levl[x1][y1].doormask = D_CLOSED;
+	    if (x1 && (IS_WALL(levl[x1-1][y1].typ) ||
+				levl[x1-1][y1].horizontal))
+		levl[x1][y1].horizontal = 1;
+	}
 	break;
     case 1: /* horiz line */
 	for (x = 0; x < (terr->x2); x++) {
