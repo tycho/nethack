@@ -1784,7 +1784,7 @@ doturn()
 	exercise(A_WIS, TRUE);
 
 	/* note: does not perform unturn_dead() on victims' inventories */
-	range = BOLT_LIM + (u.ulevel / 5);	/* 5 to 11 */
+	range = 8 + (u.ulevel / 5);	/* 5 to 11 */
 	range *= range;
 	once = 0;
 	for(mtmp = fmon; mtmp; mtmp = mtmp2) {

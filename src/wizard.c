@@ -317,7 +317,7 @@ tactics(mtmp)
 		    (void) mnearto(mtmp, xupstair, yupstair, TRUE);
 		}
 		/* if you're not around, cast healing spells */
-		if (distu(mtmp->mx,mtmp->my) > (BOLT_LIM * BOLT_LIM))
+		if (distu(mtmp->mx,mtmp->my) > 64)
 		    if(mtmp->mhp <= mtmp->mhpmax - 8) {
 			mtmp->mhp += rnd(8);
 			return(1);

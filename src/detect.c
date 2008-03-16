@@ -1105,7 +1105,7 @@ findit()	/* returns number of things found */
 	int num = 0;
 
 	if(u.uswallow) return(0);
-	do_clear_area(u.ux, u.uy, BOLT_LIM, findone, (genericptr_t) &num);
+	do_clear_area(u.ux, u.uy, 8, findone, (genericptr_t) &num);
 	return(num);
 }
 
@@ -1123,7 +1123,7 @@ openit()	/* returns number of things found and opened */
 		return(-1);
 	}
 
-	do_clear_area(u.ux, u.uy, BOLT_LIM, openone, (genericptr_t) &num);
+	do_clear_area(u.ux, u.uy, 8, openone, (genericptr_t) &num);
 	return(num);
 }
 
