@@ -1430,21 +1430,28 @@ dosacrifice()
 		    /* Yes, this is supposed to be &=, not |= */
 		    levl[u.ux][u.uy].altarmask &= AM_SHRINE;
 		    /* the following accommodates stupid compilers */
-		    levl[u.ux][u.uy].altarmask =
-			levl[u.ux][u.uy].altarmask | (Align2amask(u.ualign.type));
+		    levl[u.ux][u.uy].altarmask = levl[u.ux][u.uy].altarmask | (Align2amask(u.ualign.type));
 		    if (!Blind)
 			pline_The("altar glows %s.",
 			      hcolor(
 			      u.ualign.type == A_LAWFUL ? NH_WHITE :
 			      u.ualign.type ? NH_BLACK : (const char *)"gray"));
-
-		    if (rnl(u.ulevel) > 6 && u.ualign.record > 0 &&
-		       rnd(u.ualign.record) > (3*ALIGNLIM)/4)
-			summon_minion(altaralign, TRUE);
+			 /* 
+			  * The old test here started with "if rnl(u.ulevel) > 6", thus ensuring
+			  * that the vast majority of altars converted in the dungeon never,
+			  * EVER pissed off the owner due to the stilted effect of luck.
+			  *
+			  * We can fix that.  god should be pissed if you muck up his altars.
+			  * If you muck up his temples, he should be even more pissed.
+			  */
+		    if (u.ualign.record > 0 && rnd(u.ualign.record) > 
+					 (3*ALIGNLIM)/(temple_occupied(u.urooms) ? 12 : u.ulevel)) {
+				summon_minion(altaralign, TRUE);
+			 }
 		    /* anger priest; test handles bones files */
-		    if((pri = findpriest(temple_occupied(u.urooms))) &&
-		       !p_coaligned(pri))
-			angry_priest();
+		    if((pri = findpriest(temple_occupied(u.urooms))) && !p_coaligned(pri)) {
+				angry_priest();
+			 }
 		} else {
 		    pline("Unluckily, you feel the power of %s decrease.",
 			  u_gname());
