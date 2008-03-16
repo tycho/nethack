@@ -960,6 +960,12 @@ boolean twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 		}
 	} else {
 		urange = (int)(ACURRSTR)/2;
+
+		/* hard limit this so crossbows will fire further
+		 * than anything except a superstrong elf wielding a
+		 * racial bow, or a samurai with his yumi */
+		if (urange > 9) { urange = 9; }
+
 		/* balls are easy to throw or at least roll */
 		/* also, this insures the maximum range of a ball is greater
 		 * than 1, so the effects from throwing attached balls are
@@ -976,10 +982,35 @@ boolean twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 		if (range < 1) range = 1;
 
 		if (is_ammo(obj)) {
-		    if (ammo_and_launcher(obj, uwep))
-			range++;
-		    else if (obj->oclass != GEM_CLASS)
-			range /= 2;
+			/* stuff that's fired from a proper launcher should have
+			 * a noticeably longer range than stuff that was just
+			 * flung (like daggers, darts, etc.) */
+		    if (ammo_and_launcher(obj, uwep)) {
+				 switch (uwep->otyp) {
+					 case ELVEN_BOW:
+					 case YUMI:
+						 range += urange + 2;	/* better workmanship... */
+						 break;
+					 case ORCISH_BOW:
+						 range += urange - 2;	/* orcish gear sucks */
+						 break;
+					 case BOW:
+						 range += urange;
+						 break;
+					 case CROSSBOW:
+						 range += 10;	 /* not strength dependent! */
+						 break;
+					 case SLING:
+						 range += (int)urange/2;
+						 break;
+					 /* case BLOWGUN: maaaybe? */
+					 default:
+						 break;
+				 }
+			 } else if (obj->oclass != GEM_CLASS) {
+				range /= 2;
+			 } 
+
 		}
 
 		if (Is_airlevel(&u.uz) || Levitation) {
