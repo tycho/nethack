@@ -1176,14 +1176,14 @@ int thrown;
 
 	/* Stealth will reduce the amount of noise made while fighting,
 	 * but won't reduce it entirely to zero */
-	noiserange = Stealth ? 9 : BOLT_LIM*BOLT_LIM;
+	noiserange = Stealth ? 9 : 64;
 
 	/* Some things are just never sneaky.
 	 * For example, smacking things with lightning is loud.
 	 * (TODO: add wand sounds for loud wands) */
 	if (otmp && (otmp->oclass != WEAPON_CLASS || 
 				otmp->oartifact == ART_MJOLLNIR || otmp->otyp == BULLWHIP)) {
-		noiserange = BOLT_LIM*BOLT_LIM;
+		noiserange = 64;
 	}
 
 	/* Check and see who was close enough to hear it */

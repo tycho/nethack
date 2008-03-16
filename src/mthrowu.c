@@ -493,6 +493,7 @@ struct monst *mtmp;
 	xchar x, y;
 	schar skill;
 	int multishot;
+	int maxrange;
 	const char *onm;
 
 	/* Rearranged beginning so monsters can use polearms not in a line */
@@ -531,20 +532,46 @@ struct monst *mtmp;
 	    return;
 	}
 
+	skill = objects[otmp->otyp].oc_skill;
+	mwep = MON_WEP(mtmp);		/* wielded weapon */
 	x = mtmp->mx;
 	y = mtmp->my;
+
+	/* critters get to shoot things further, too */
+	maxrange = BOLT_LIM/2;
+	if (ammo_and_launcher(otmp,mwep)) {
+		switch (mwep->otyp) {
+			case ELVEN_BOW:
+			case YUMI:
+				maxrange += 6;
+				break;
+			case ORCISH_BOW:
+			case SLING:
+				maxrange += 2;
+				break;
+			case BOW:
+				maxrange += 4;
+				break;
+			case CROSSBOW:
+				maxrange *= 2;
+				break;
+			default:
+				break;
+		}
+	}
+
 	/* If you are coming toward the monster, the monster
 	 * should try to soften you up with missiles.  If you are
 	 * going away, you are probably hurt or running.  Give
 	 * chase, but if you are getting too far away, throw.
 	 */
-	if (!lined_up(mtmp) ||
-		(URETREATING(x,y) &&
-			rn2(BOLT_LIM - distmin(x,y,mtmp->mux,mtmp->muy))))
+	if (!lined_up(mtmp) || (URETREATING(x,y) && 
+				rn2(BOLT_LIM - distmin(x,y,mtmp->mux,mtmp->muy))))
 	    return;
 
-	skill = objects[otmp->otyp].oc_skill;
-	mwep = MON_WEP(mtmp);		/* wielded weapon */
+	/* oh, and don't plink foolishly if we can't reach the hero */
+	if (distmin(x,y,mtmp->mux,mtmp->muy) > maxrange)
+		return;
 
 	/* Multishot calculations */
 	multishot = 1;
@@ -606,8 +633,7 @@ struct monst *mtmp;
 
 	m_shot.n = multishot;
 	for (m_shot.i = 1; m_shot.i <= m_shot.n; m_shot.i++)
-	    m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),
-		    distmin(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy), otmp);
+	    m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby), maxrange, otmp);
 	m_shot.n = m_shot.i = 0;
 	m_shot.o = STRANGE_OBJECT;
 	m_shot.s = FALSE;
