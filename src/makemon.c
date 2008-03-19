@@ -458,6 +458,27 @@ register struct monst *mtmp;
 			if (rn2(5)) { (void)mongets(mtmp, GNOMISH_HELM); }
 			if (!rn2(3)) { (void)mongets(mtmp, GNOMISH_BOOTS); }
 			if (!rn2(5)) { (void)mongets(mtmp, GNOMISH_SUIT); }
+			/* some of this ported up from below, so gnomes are
+			 * more than a speedbump again */
+			switch (rn2(4)) {
+				case 3:
+					(void) mongets(mtmp, CROSSBOW);
+					m_initthrow(mtmp, CROSSBOW_BOLT, 12);
+					break;
+				case 2:
+					(void) mongets(mtmp, BOW);
+					m_initthrow(mtmp, ARROW, 12);
+					break;
+				case 1:
+					m_initthrow(mtmp, DAGGER, 3);
+					break;
+				case 0:
+				default:
+					(void) mongets(mtmp, AKLYS);
+					if ((int) mtmp->m_lev > rn2(75)) {
+						(void) mongets(mtmp, rnd_offensive_item(mtmp));
+					}
+			}
 		break;
 	    case S_DEMON:
 		switch (mm) {
