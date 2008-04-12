@@ -247,7 +247,7 @@ worm_nomove(worm)
     shrink_worm((int) worm->wormno);	/* shrink */
 
     if (worm->mhp > 3)
-	worm->mhp -= 3;		/* mhpmax not changed ! */
+	worm->mhp -= 3;		/* mhpmax not changed!  no need to call damage_mon() here */
     else
 	worm->mhp = 1;
 }
@@ -373,7 +373,7 @@ cutworm(worm, x, y, weap)
 		else
 			You("cut part of the tail off of %s.", mon_nam(worm));
 		toss_wsegs(new_tail, TRUE);
-		if (worm->mhp > 1) worm->mhp /= 2;
+		if (worm->mhp > 1) worm->mhp /= 2;	/* no need to call damage_mon */
 		return;
     }
 

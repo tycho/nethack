@@ -33,6 +33,7 @@
 #define CLC_FIRE_PILLAR	 8
 #define CLC_GEYSER		9
 #define CLC_FLY			10
+#define CLC_VULN_YOU		11
 
 STATIC_DCL void FDECL(cursetxt,(struct monst *,BOOLEAN_P));
 STATIC_DCL int FDECL(choose_magic_spell, (struct monst *, int));
@@ -160,20 +161,21 @@ int spellnum;
 		case 12:
 			return CLC_FIRE_PILLAR;
 		case 11:
-			return CLC_LIGHTNING;
 		case 10:
-		case 9:
-			return CLC_CURSE_ITEMS;
-		case 8:
-			return CLC_INSECTS;
-		case 7:
-		case 6:
-			return CLC_BLIND_YOU;
-		case 5:
-		case 4:
 			return CLC_PARALYZE;
-		case 3:
+		case 9:
+			return CLC_LIGHTNING;
+		case 8:
+		case 7:
+			return CLC_CURSE_ITEMS;
+		case 6:
+			return CLC_INSECTS;
+		case 5:
+			return CLC_BLIND_YOU;
+		case 4:
 			return CLC_FLY;
+		case 3:
+			return CLC_VULN_YOU;
 		case 2:
 			return CLC_CONFUSE_YOU;
 		case 1:
@@ -600,6 +602,14 @@ int spellnum;
     if (dmg) mdamageu(mtmp, dmg);
 }
 
+const char* vulntext[] = {
+	"chartreuse polka-dot",
+	"reddish-orange",
+	"purplish-blue",
+	"coppery-yellow",
+	"greenish-mottled"
+};
+
 STATIC_OVL
 void
 cast_cleric_spell(mtmp, dmg, spellnum)
@@ -774,6 +784,34 @@ int spellnum;
 	break;
 	 case CLC_FLY:
 		cast_fly(mtmp);
+		break;
+	 case CLC_VULN_YOU:
+		dmg = rnd(4);
+		pline("A %s film oozes over your skin!",Blind ? "slimy" : vulntext[dmg]);
+		switch (dmg) {
+			case 1:
+				if (Vulnerable_fire) return;
+				incr_itimeout(&HVulnerable_fire,rnd(100)+150);
+				You_feel("more inflammable.");
+				break;
+			case 2:
+				if (Vulnerable_cold) return;
+				incr_itimeout(&HVulnerable_cold,rnd(100)+150);
+				You_feel("like Jack Frost is out to get you.");
+				break;
+			case 3:
+				if (Vulnerable_elec) return;
+				incr_itimeout(&HVulnerable_elec,rnd(100)+150);
+				You_feel("overly conductive.");
+				break;
+			case 4:
+				if (Vulnerable_acid) return;
+				incr_itimeout(&HVulnerable_acid,rnd(100)+150);
+				You_feel("easily corrodable.");
+				break;
+			default:
+				break;
+		}
 		break;
     case CLC_OPEN_WOUNDS:
 	if (Antimagic) {

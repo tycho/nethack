@@ -1165,7 +1165,7 @@ mdamagem(magr, mdef, mattk)
 	}
 	if(!tmp) return(MM_MISS);
 
-	if((mdef->mhp -= tmp) < 1) {
+	if(damage_mon(mdef,tmp,mattk->adtyp)) {
 	    if (m_at(mdef->mx, mdef->my) == magr) {  /* see gulpmm() */
 		remove_monster(mdef->mx, mdef->my);
 		mdef->mhp = 1;	/* otherwise place_monster will complain */
@@ -1447,7 +1447,7 @@ int mdead;
 	else tmp = 0;
 
     assess_dmg:
-	if((magr->mhp -= tmp) <= 0) {
+	if(damage_mon(magr,tmp,(int)mddat->mattk[i].adtyp)) {
 		monkilled(magr, "", (int)mddat->mattk[i].adtyp);
 		return (mdead | mhit | MM_AGR_DIED);
 	}

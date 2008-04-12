@@ -327,7 +327,7 @@ struct obj *otmp;
 		    shieldeff(mtmp->mx, mtmp->my);
 		else if (!resist(mtmp, otmp->oclass, dmg, NOTELL) &&
 				mtmp->mhp > 0) {
-		    mtmp->mhp -= dmg;
+			 damage_mon(mtmp,dmg,AD_DRIN);
 		    mtmp->mhpmax -= dmg;
 		    if (mtmp->mhp <= 0 || mtmp->mhpmax <= 0 || mtmp->m_lev < 1)
 			xkilled(mtmp, 1);
@@ -3117,7 +3117,7 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 #ifdef WIZ_PATCH_DEBUG
 	pline("zapped monster hp = %d (= %d - %d)", mon->mhp-tmp,mon->mhp,tmp);
 #endif
-	mon->mhp -= tmp;
+	damage_mon(mon,tmp,abstype);
 	return(tmp);
 }
 
@@ -4175,7 +4175,7 @@ int damage, tell;
 	}
 
 	if (damage) {
-	    mtmp->mhp -= damage;
+		 damage_mon(mtmp,damage,AD_RBRE);
 	    if (mtmp->mhp < 1) {
 		if(m_using) monkilled(mtmp, "", AD_RBRE);
 		else killed(mtmp);

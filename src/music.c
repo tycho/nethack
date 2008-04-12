@@ -305,7 +305,7 @@ do_pit:		    chasm = maketrap(x,y,PIT);
 				You_hear("a scream!");
 			    mselftouch(mtmp, "Falling, ", TRUE);
 			    if (mtmp->mhp > 0)
-				if ((mtmp->mhp -= rnd(6)) <= 0) {
+				if (damage_mon(mtmp,rnd(6),AD_PHYS)) {
 				    if(!cansee(x,y))
 					pline("It is destroyed!");
 				    else {

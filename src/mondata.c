@@ -212,6 +212,26 @@ struct obj *obj;		/* aatyp == AT_WEAP, AT_SPIT */
 	return TRUE;
 }
 
+boolean
+vulnerable_to(mon,element)
+struct monst* mon;
+int element;
+{
+	switch (element) {
+		case AD_FIRE:
+			return (mon->data->mflags4 && M4_VULNERABLE_FIRE);
+		case AD_COLD:
+			return (mon->data->mflags4 && M4_VULNERABLE_COLD);
+		case AD_ELEC:
+			return (mon->data->mflags4 && M4_VULNERABLE_ELEC);
+		case AD_ACID:
+			return (mon->data->mflags4 && M4_VULNERABLE_ACID);
+		default:
+			break;
+	}
+	return FALSE;
+}
+
 #endif /* OVLB */
 #ifdef OVL0
 
@@ -754,6 +774,7 @@ struct attack *mattk;
     }
     return what;
 }
+
 
 #endif /* OVLB */
 

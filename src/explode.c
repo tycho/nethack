@@ -283,7 +283,7 @@ int expltype;
 
 		if (explmask[i][j] == 1) {
 			golemeffects(mtmp, (int) adtyp, dam + idamres);
-			mtmp->mhp -= idamnonres;
+			damage_mon(mtmp,idamnonres,adtyp);
 		} else {
 		/* call resist with 0 and do damage manually so 1) we can
 		 * get out the message before doing the damage, and 2) we can
@@ -302,8 +302,8 @@ int expltype;
 				mdam *= 2;
 			else if (resists_fire(mtmp) && adtyp == AD_COLD)
 				mdam *= 2;
-			mtmp->mhp -= mdam;
-			mtmp->mhp -= (idamres + idamnonres);
+			damage_mon(mtmp,mdam,adtyp);
+			damage_mon(mtmp,idamres + idamnonres,adtyp);
 		}
 		if (mtmp->mhp <= 0) {
 			/* KMH -- Don't blame the player for pets killing gas spores */

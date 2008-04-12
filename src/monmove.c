@@ -31,7 +31,7 @@ register struct monst *mtmp;
 	}
 	wake_nearto(mtmp->mx, mtmp->my, 7*7);
 	mtmp->mstun = 1;
-	mtmp->mhp -= rnd(15);
+	damage_mon(mtmp,rnd(15),AD_PHYS);
 	if(mtmp->mhp <= 0) {
 		mondied(mtmp);
 		if (mtmp->mhp > 0) /* lifesaved */
@@ -502,7 +502,7 @@ register struct monst *mtmp;
 			    (rn2(2) || m2->mblinded)) || !rn2(10)) {
 				if (cansee(m2->mx, m2->my))
 				    pline("It locks on to %s.", mon_nam(m2));
-				m2->mhp -= rnd(15);
+				damage_mon(m2,rnd(15),AD_DRIN);
 				if (m2->mhp <= 0)
 				    monkilled(m2, "", AD_DRIN);
 				else

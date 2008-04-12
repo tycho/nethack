@@ -285,6 +285,25 @@ nh_timeout()
 			/* Monsters will see this, too, and assume it's safe to shoot again */
 			monstseesulose(M_SEEN_REFL);
 			break;
+		/*
+		 * all these need to make sure the external intrinsic isn't there too
+		 */
+		case VULN_FIRE:
+			if (!Vulnerable_fire)
+				You("don't shy away from sparks anymore.");
+			break;
+		case VULN_COLD:
+			if (!Vulnerable_cold)
+				You("aren't nervous about open iceboxes now.");
+			break;
+		case VULN_ELEC:
+			if (!Vulnerable_elec)
+				You("seem to be a less ideal conductor again.");
+			break;
+		case VULN_ACID:
+			if (!Vulnerable_acid)
+				You("don't seem to dissolve so easily anymore.");
+			break;
 		case CONFUSION:
 			HConfusion = 1; /* So make_confused works properly */
 			make_confused(0L, TRUE);

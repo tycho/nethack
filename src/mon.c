@@ -410,7 +410,7 @@ register struct monst *mtmp;
 	int dam = d(2,6);
 	if (cansee(mtmp->mx,mtmp->my))
 	    pline("%s rusts.", Monnam(mtmp));
-	mtmp->mhp -= dam;
+	damage_mon(mtmp,dam,AD_PHYS); /* Not quite accurate but no resistance to rusting */
 	if (mtmp->mhpmax > dam) mtmp->mhpmax -= dam;
 	if (mtmp->mhp < 1) {
 	    mondead(mtmp);
@@ -435,7 +435,7 @@ register struct monst *mtmp;
 		mondead(mtmp);
 	    }
 	    else {
-		if (--mtmp->mhp < 1) {
+		if (damage_mon(mtmp,1,AD_FIRE)) {
 		    if (cansee(mtmp->mx,mtmp->my))
 			pline("%s surrenders to the fire.", Monnam(mtmp));
 		    mondead(mtmp);
@@ -478,7 +478,7 @@ register struct monst *mtmp;
     } else {
 	/* but eels have a difficult time outside */
 	if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz)) {
-	    if(mtmp->mhp > 1) mtmp->mhp--;
+		if(mtmp->mhp > 1) damage_mon(mtmp,1,AD_PHYS);
 	    monflee(mtmp, 2, FALSE, mtmp->mflee ? FALSE : TRUE);
 	}
     }
@@ -1606,7 +1606,7 @@ boolean was_swallowed;			/* digestion */
 			losehp(tmp, killer_buf, KILLED_BY_AN);
 		    } else {
 			if (flags.soundok) You_hear("an explosion.");
-			magr->mhp -= tmp;
+			damage_mon(magr,tmp,AD_PHYS);
 			if (magr->mhp < 1) mondied(magr);
 			if (magr->mhp < 1) { /* maybe lifesaved */
 			    if (canspotmon(magr))
@@ -2826,6 +2826,23 @@ int damtype, dam;
 	}
     }
 }
+
+/* Damages mon by amount of type; handles vulnerabilities.
+ * Returns whether mon should have died or not.
+ */
+boolean
+damage_mon(mon,amount,type)
+struct monst* mon;
+int amount;
+int type;
+{
+	if (vulnerable_to(mon,type)) {
+		amount *= 1.5;
+	}
+	mon->mhp -= amount;
+	return (mon->mhp < 1);
+}
+
 
 boolean
 angry_guards(silent)

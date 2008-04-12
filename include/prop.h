@@ -78,7 +78,11 @@
 #define SLOW				69
 #define VISION				70
 #define LUCKY				71
-#define LAST_PROP		(LUCKY)
+#define VULN_FIRE			72
+#define VULN_COLD			73
+#define VULN_ELEC			74
+#define VULN_ACID			75
+#define LAST_PROP		 	(VULN_ACID)
 
 /*** Where the properties come from ***/
 /* Definitions were moved here from obj.h and you.h */

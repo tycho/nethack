@@ -1265,7 +1265,7 @@ int zx,zy;
 					mdmg /= 2;
 				}
 				if (!unsolid(mtmp->data)) {
-					mtmp->mhp -= mdmg;
+					damage_mon(mtmp,mdmg,AD_PHYS);
 					if (mtmp->mhp <= 0) { monkilled(mtmp,"shower of rocks",AD_PHYS); }
 				}
 			}
@@ -3307,7 +3307,7 @@ boolean force_failure;
 		    if (mtmp) {		/* must be a trap that holds monsters */
 			if (ttype == BEAR_TRAP) {
 			    if (mtmp->mtame) abuse_dog(mtmp);
-			    if ((mtmp->mhp -= rnd(4)) <= 0) killed(mtmp);
+			    if (damage_mon(mtmp,rnd(4),AD_PHYS)) killed(mtmp);
 			} else if (ttype == WEB) {
 			    if (!webmaker(youmonst.data)) {
 				struct trap *ttmp2 = maketrap(u.ux, u.uy, WEB);
@@ -4074,7 +4074,7 @@ boolean nocorpse;
 			dam = dmgval(obj, mon);
 			if (dam < 1) dam = 1;
 		}
-		if ((mon->mhp -= dam) <= 0) {
+		if (damage_mon(mon,dam,AD_PHYS)) {
 			int xx = mon->mx;
 			int yy = mon->my;
 
