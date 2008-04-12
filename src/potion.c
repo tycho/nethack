@@ -93,23 +93,32 @@ int
 how_resistant(which)
 int which;
 {
-	unsigned long val;
+	int val;
 
 	/* externals and level/race based intrinsics always provide 100%
 	 * as do monster resistances */
 	if (u.uprops[which].extrinsic || 
 			(u.uprops[which].intrinsic & (FROMEXPER|FROMRACE)) ||
 			(youmonst.mintrinsics & (1 << (which-1)))) {	  /* depends on FIRE_RES/MR_FIRE order matching! */
-		return 100; 
+		val = 100; 
+	} else {
+		/* None of this is necessary, but this is going in without a savebreak
+		* so people might load save files that have values higher than 100 */
+		val = (u.uprops[which].intrinsic & TIMEOUT);
+		if (val > 100) {
+			val = 100;
+			u.uprops[which].intrinsic &= ~TIMEOUT;
+			u.uprops[which].intrinsic |= (val|HAVEPARTIAL);
+		}
 	}
 
-	/* None of this is necessary, but this is going in without a savebreak
-	 * so people might load save files that have values higher than 100 */
-	val = (u.uprops[which].intrinsic & TIMEOUT);
-	if (val > 100) {
-		val = 100;
-		u.uprops[which].intrinsic &= ~TIMEOUT;
-		u.uprops[which].intrinsic |= (val|HAVEPARTIAL);
+	/* vulnerability will affect things... */
+	switch (which) {
+		case FIRE_RES:	 if (Vulnerable_fire) { val -= 50; } break;
+		case COLD_RES:	 if (Vulnerable_cold) { val -= 50; } break;
+		case SHOCK_RES: if (Vulnerable_elec) { val -= 50; } break;
+		case ACID_RES:	 if (Vulnerable_acid) { val -= 50; } break;
+		default: break;
 	}
 
 	return val;
@@ -1084,7 +1093,7 @@ boolean your_fault;
 			   botlnam, buf);
 		}
 		if(rn2(5) && mon->mhp > 1)
-			mon->mhp--;
+			damage_mon(mon,1,AD_PHYS);
 	}
 
 	/* oil doesn't instantly evaporate */
@@ -1193,7 +1202,7 @@ boolean your_fault;
 		    if (obj->blessed) {
 			pline("%s %s in pain!", Monnam(mon),
 			      is_silent(mon->data) ? "writhes" : "shrieks");
-			mon->mhp -= d(2,6);
+			damage_mon(mon,d(2,6),AD_ACID);
 			/* should only be by you */
 			if (mon->mhp < 1) killed(mon);
 			else if (is_were(mon->data) && !is_human(mon->data))
@@ -1214,7 +1223,7 @@ boolean your_fault;
 		} else if(mon->data == &mons[PM_IRON_GOLEM]) {
 		    if (canseemon(mon))
 			pline("%s rusts.", Monnam(mon));
-		    mon->mhp -= d(1,6);
+			 damage_mon(mon,d(1,6),AD_PHYS);
 		    /* should only be by you */
 		    if (mon->mhp < 1) killed(mon);
 		}
@@ -1227,7 +1236,7 @@ boolean your_fault;
 		if (!resists_acid(mon) && !resist(mon, POTION_CLASS, 0, NOTELL)) {
 		    pline("%s %s in pain!", Monnam(mon),
 			  is_silent(mon->data) ? "writhes" : "shrieks");
-		    mon->mhp -= d(obj->cursed ? 2 : 1, obj->blessed ? 4 : 8);
+		    damage_mon(mon,d(obj->cursed ? 2 : 1, obj->blessed ? 4 : 8),AD_ACID);
 		    if (mon->mhp < 1) {
 			if (your_fault)
 			    killed(mon);

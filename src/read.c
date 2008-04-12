@@ -1276,7 +1276,7 @@ register struct obj	*sobj;
 						mhim(mtmp));
 				    }
 				}
-	    	    	    	mtmp->mhp -= mdmg;
+							damage_mon(mtmp,mdmg,AD_PHYS);
 	    	    	    	if (mtmp->mhp <= 0)
 	    	    	    	    xkilled(mtmp, 1);
 	    	    	    }

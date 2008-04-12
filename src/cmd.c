@@ -898,6 +898,10 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	if (u.uedibility) you_can("recognize detrimental food");
 
 	/*** Troubles ***/
+	if (Vulnerable_fire) you_are("vulnerable to fire");
+	if (Vulnerable_cold) you_are("vulnerable to cold");
+	if (Vulnerable_elec) you_are("vulnerable to electricity");
+	if (Vulnerable_acid) you_are("vulnerable to acid");
 	if (Halluc_resistance)
 		enl_msg("You resist", "", "ed", " hallucinations");
 	if (final) {
@@ -1242,6 +1246,10 @@ int final;
 
 	/*** Troubles ***/
 	if (Halluc_resistance) 	dump("  ", "You resisted hallucinations");
+	if (Vulnerable_fire) dump(youwere,"vulnerable to fire");
+	if (Vulnerable_cold) dump(youwere,"vulnerable to cold");
+	if (Vulnerable_elec) dump(youwere,"vulnerable to elec");
+	if (Vulnerable_acid) dump(youwere,"vulnerable to acid");
 	if (Hallucination) dump(youwere, "hallucinating");
 	if (Stunned) dump(youwere, "stunned");
 	if (Confusion) dump(youwere, "confused");

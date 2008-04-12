@@ -88,8 +88,9 @@ register boolean clumsy;
 	if (blessed_foot_damage) dmg += rnd(4);
 	if (uarmf) dmg += uarmf->spe;
 	dmg += u.udaminc;	/* add ring(s) of increase damage */
-	if (dmg > 0)
-		mon->mhp -= dmg;
+	if (dmg > 0) {
+		damage_mon(mon,dmg,AD_PHYS);
+	}
 
 	/* THIS. IS. YENDOOOOOR? */
 	mdx = mon->mx + u.dx;

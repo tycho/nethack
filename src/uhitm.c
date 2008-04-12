@@ -1061,7 +1061,8 @@ int thrown;
 	    }
 	}
 
-	if (!already_killed) mon->mhp -= tmp;
+	/* artifact_hit handles flaming-sword type damage */
+	if (!already_killed) damage_mon(mon,tmp,AD_PHYS);
 	/* adjustments might have made tmp become less than what
 	   a level draining artifact has already done to max HP */
 	if (mon->mhp > mon->mhpmax) mon->mhp = mon->mhpmax;
@@ -1603,7 +1604,7 @@ register struct attack *mattk;
 			int xtmp = d(2,6);
 			pline("%s suddenly seems weaker!", Monnam(mdef));
 			mdef->mhpmax -= xtmp;
-			if ((mdef->mhp -= xtmp) <= 0 || !mdef->m_lev) {
+			if (damage_mon(mdef,xtmp,AD_DRLI) || !mdef->m_lev) {
 				pline("%s dies!", Monnam(mdef));
 				xkilled(mdef,0);
 			} else
@@ -1773,7 +1774,7 @@ register struct attack *mattk;
 	}
 
 	mdef->mstrategy &= ~STRAT_WAITFORU; /* in case player is very fast */
-	if((mdef->mhp -= tmp) < 1) {
+	if(damage_mon(mdef,tmp,mattk->adtyp)) {
 	    if (mdef->mtame && !cansee(mdef->mx,mdef->my)) {
 		You_feel("embarrassed for a moment.");
 		if (tmp) xkilled(mdef, 0); /* !tmp but hp<1: already killed */
@@ -1823,7 +1824,7 @@ register struct attack *mattk;
 common:
 		if (!resistance) {
 		    pline("%s gets blasted!", Monnam(mdef));
-		    mdef->mhp -= tmp;
+			 damage_mon(mdef,tmp,AD_ELEC);
 		    if (mdef->mhp <= 0) {
 			 killed(mdef);
 			 return(2);
@@ -2025,7 +2026,7 @@ register struct attack *mattk;
 			break;
 		}
 		end_engulf();
-		if ((mdef->mhp -= dam) <= 0) {
+		if (damage_mon(mdef,dam,mattk->adtyp)) {
 		    killed(mdef);
 		    if (mdef->mhp <= 0)	/* not lifesaved */
 			return(2);
@@ -2634,7 +2635,7 @@ struct obj *otmp;	/* source of flash */
 		          rn2(min(mtmp->mhp,4));
 		    pline("%s %s!", Monnam(mtmp), amt > mtmp->mhp / 2 ?
 			  "wails in agony" : "cries out in pain");
-		    if ((mtmp->mhp -= amt) <= 0) {
+		    if (damage_mon(mtmp,amt,AD_BLND)) {
 			if (flags.mon_moving)
 			    monkilled(mtmp, (char *)0, AD_BLND);
 			else

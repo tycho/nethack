@@ -150,6 +150,7 @@ int range;		/* how much farther will object travel if it misses */
 boolean verbose;  /* give message(s) even when you can't see what happened */
 {
 	int damage, tmp;
+	int damtype = AD_PHYS;
 	boolean vis, ismimic;
 	int objgone = 1;
 
@@ -186,6 +187,7 @@ boolean verbose;  /* give message(s) even when you can't see what happened */
 		    if (vis) pline_The("poison doesn't seem to affect %s.",
 				   mon_nam(mtmp));
 		} else {
+			damtype = AD_DRST;
 		    if (rn2(30)) {
 			damage += rnd(6);
 		    } else {
@@ -206,11 +208,12 @@ boolean verbose;  /* give message(s) even when you can't see what happened */
 			pline("%s is unaffected.", Monnam(mtmp));
 		    damage = 0;
 		} else {
+			damtype = AD_ACID;
 		    if (vis) pline_The("acid burns %s!", mon_nam(mtmp));
 		    else if (verbose) pline("It is burned!");
 		}
 	    }
-	    mtmp->mhp -= damage;
+		 damage_mon(mtmp,damage,AD_ACID);
 	    if (mtmp->mhp < 1) {
 		if (vis || verbose)
 		    pline("%s is %s!", Monnam(mtmp),

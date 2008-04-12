@@ -136,7 +136,7 @@ struct obj *obj;
 		monkilled(mon, "", AD_RBRE);
 		return 1;
 	    }
-	    else mon->mhp -= dam;
+		 else damage_mon(mon,dam,AD_RBRE);
 	    m.has_defense = m.has_offense = m.has_misc = 0;
 	    /* Only one needed to be set to 0 but the others are harmless */
 	}
@@ -1426,7 +1426,7 @@ struct monst *mtmp;
 						mhim(mtmp2));
 				    }
 				}
-	    	    	    	mtmp2->mhp -= mdmg;
+							damage_mon(mtmp2,mdmg,AD_PHYS);
 	    	    	    	if (mtmp2->mhp <= 0) {
 				    pline("%s is killed.", Monnam(mtmp2));
 	    	    	    	    mondied(mtmp2);
@@ -2204,7 +2204,7 @@ boolean stoning;
     m_useup(mon, obj);
     if (((obj->otyp == POT_ACID) || acidic(&mons[obj->corpsenm])) &&
 		    !resists_acid(mon)) {
-	mon->mhp -= rnd(15);
+	damage_mon(mon,rnd(15),AD_ACID);
 	pline("%s has a very bad case of stomach acid.",
 	    Monnam(mon));
     }
