@@ -301,8 +301,30 @@ tactics(mtmp)
 	register struct monst *mtmp;
 {
 	long strat = strategy(mtmp);
+	int j;
+	schar nx,ny;
 
 	mtmp->mstrategy = (mtmp->mstrategy & STRAT_WAITMASK) | strat;
+
+	/* this should be in strategy() but the STRAT_ flags are
+	 * overloaded and i'm in no mood to fix them right now;
+	 * if monster is magically scared, don't 'flee' right next
+	 * to the player */
+	if (mtmp->mflee) {
+		mtmp->mavenge = 1;
+		for (j=0;j<400;j++) {
+			nx = rnd(COLNO-1);
+			ny = rn2(ROWNO);
+			if (rloc_pos_ok(nx,ny,mtmp) && distu(nx,ny) > 64) {
+				rloc_to(mtmp,nx,ny);
+				return 1;
+			}
+		}
+		/* we couldn't find someplace far enough away from the player
+		 * to run to, which should be very rare, but ...
+		 * and in that case, just fall through so we do something */
+		pline("%s looks around nervously.",Monnam(mtmp));
+	}
 
 	switch (strat) {
 	    case STRAT_HEAL:	/* hide and recover */
