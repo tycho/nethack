@@ -1985,6 +1985,7 @@ E void NDECL(level_tele);
 E void FDECL(domagicportal, (struct trap *));
 E void FDECL(tele_trap, (struct trap *));
 E void FDECL(level_tele_trap, (struct trap *));
+E boolean FDECL(rloc_pos_ok, (int,int,struct monst *));
 E void FDECL(rloc_to, (struct monst *,int,int));
 E boolean FDECL(rloc, (struct monst *, BOOLEAN_P));
 E boolean FDECL(tele_restrict, (struct monst *));
