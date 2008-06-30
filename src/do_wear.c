@@ -331,6 +331,7 @@ Helmet_on()
 		adj_abon(uarmh, uarmh->spe);
 		break;
 	case HELM_OF_CLARITY:
+	   make_hallucinated(0, TRUE, 0);
 		see_monsters();
 		break;
 	case CORNUTHAUM:
