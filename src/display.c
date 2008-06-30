@@ -890,20 +890,20 @@ tmp_at(x, y)
 
 	default:	/* do it */
 	    if (tglyph->style == DISP_BEAM) {
-		if (!cansee(x,y)) break;
-		/* save pos for later erasing */
-		tglyph->saved[tglyph->sidx].x = x;
-		tglyph->saved[tglyph->sidx].y = y;
-		tglyph->sidx += 1;
-	    } else {	/* DISP_FLASH/ALWAYS */
-		if (tglyph->sidx) { /* not first call, so reset previous pos */
-		    newsym(tglyph->saved[0].x, tglyph->saved[0].y);
-		    tglyph->sidx = 0;	/* display is presently up to date */
-		}
-		if (!cansee(x,y) && tglyph->style != DISP_ALWAYS) break;
-		tglyph->saved[0].x = x;
-		tglyph->saved[0].y = y;
-		tglyph->sidx = 1;
+			if (!isok(x,y) || !cansee(x,y)) break;
+			/* save pos for later erasing */
+			tglyph->saved[tglyph->sidx].x = x;
+			tglyph->saved[tglyph->sidx].y = y;
+			tglyph->sidx += 1;
+			} else {	/* DISP_FLASH/ALWAYS */
+			if (tglyph->sidx) { /* not first call, so reset previous pos */
+				newsym(tglyph->saved[0].x, tglyph->saved[0].y);
+				tglyph->sidx = 0;	/* display is presently up to date */
+			}
+			if (isok(x,y) && !cansee(x,y) && tglyph->style != DISP_ALWAYS) break;
+			tglyph->saved[0].x = x;
+			tglyph->saved[0].y = y;
+			tglyph->sidx = 1;
 	    }
 
 	    show_glyph(x, y, tglyph->glyph);	/* show it */
