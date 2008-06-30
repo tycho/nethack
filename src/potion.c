@@ -186,6 +186,8 @@ boolean talk;
 	}
 	if ((!xtime && old) || (xtime && !old)) flags.botl = TRUE;
 
+	/* Stops us from wandering around with travel while stunned */
+	nomul(0);
 	set_itimeout(&HStun, xtime);
 }
 
