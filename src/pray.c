@@ -1239,7 +1239,7 @@ dosacrifice()
 		 /* create Dirge from player's longsword here if possible */
 		 if (u.ualign.type == A_CHAOTIC && Role_if(PM_KNIGHT) && 
 				 !u.ugangr && u.ualign.record > 0 &&
-				 uwep->otyp == LONG_SWORD && !uwep->oartifact &&
+				 uwep && uwep->otyp == LONG_SWORD && !uwep->oartifact &&
 				 !exist_artifact(LONG_SWORD, artiname(ART_DIRGE))) {
 
 			 uwep = oname(uwep, artiname(ART_DIRGE));
