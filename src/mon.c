@@ -1020,10 +1020,13 @@ struct obj *otmp;
 	 * (Technically they could do it one item at a time, but that
 	 * requires a lot of elaborate fiddling and doesn't add to gameplay.)
 	 *
-	 * Dragons are excepted from this for obvious thematic reasons.
+	 * This will also prevent them from picking up a significant stack
+	 * anything; ie. 100 darts.
+	 *
+	 * Dragons are exempted from this for obvious thematic reasons.
 	 */
-	if ((otmp->oclass == COIN_CLASS || otmp->oclass == GEM_CLASS) && 
-		nohands(mdat) && mdat->mlet != S_DRAGON) {
+	if ((otmp->oclass == COIN_CLASS || otmp->oclass == GEM_CLASS ||
+				otmp->quan > 3) && nohands(mdat) && mdat->mlet != S_DRAGON) {
 		return FALSE;
 	}
 
