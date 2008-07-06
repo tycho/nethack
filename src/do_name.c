@@ -462,7 +462,9 @@ ddocall()
 #endif
 		allowall[0] = ALL_CLASSES; allowall[1] = '\0';
 		obj = getobj(allowall, "name");
-		if(obj) do_oname(obj);
+		if (obj && obj->otyp == SKULL) {
+			pline("That already has its own name.");
+		} else if (obj) do_oname(obj);
 		break;
 	default :
 #ifdef REDO

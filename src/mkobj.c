@@ -937,7 +937,7 @@ int x, y;
  */
 struct obj *
 mkcorpstat(objtype, mtmp, ptr, x, y, init)
-int objtype;	/* CORPSE or STATUE */
+int objtype;	/* CORPSE, SKULL or STATUE */
 struct monst *mtmp;
 struct permonst *ptr;
 int x, y;
@@ -945,7 +945,7 @@ boolean init;
 {
 	register struct obj *otmp;
 
-	if (objtype != CORPSE && objtype != STATUE)
+	if (objtype != CORPSE && objtype != STATUE && objtype != SKULL)
 	    impossible("making corpstat type %d", objtype);
 	if (x == 0 && y == 0) {		/* special case - random placement */
 		otmp = mksobj(objtype, init, FALSE);
