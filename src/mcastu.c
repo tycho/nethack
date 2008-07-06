@@ -4,6 +4,7 @@
 
 #include "hack.h"
 #include "edog.h"
+#include "epri.h"
 
 /* monster mage spells */
 #define MGC_PSI_BOLT	 0
@@ -34,6 +35,7 @@
 #define CLC_GEYSER		9
 #define CLC_FLY			10
 #define CLC_VULN_YOU		11
+#define CLC_SUMMON_ELM  12
 
 STATIC_DCL void FDECL(cursetxt,(struct monst *,BOOLEAN_P));
 STATIC_DCL int FDECL(choose_magic_spell, (struct monst *, int));
@@ -156,6 +158,8 @@ int spellnum;
 	if ((mtmp->mhp * 4) <= mtmp->mhpmax) { spellnum = 1; }
 
     switch (spellnum) {
+		case 14:
+			return CLC_SUMMON_ELM;
 		case 13:
 			return CLC_GEYSER;
 		case 12:
@@ -617,12 +621,24 @@ struct monst *mtmp;
 int dmg;
 int spellnum;
 {
+	int aligntype;
+
     if (dmg == 0 && !is_undirected_spell(AD_CLRC, spellnum)) {
 	impossible("cast directed cleric spell (%d) with dmg=0?", spellnum);
 	return;
     }
 
     switch (spellnum) {
+	 case CLC_SUMMON_ELM:
+		 if (mtmp->ispriest) {
+			 aligntype = EPRI(mtmp)->shralign;
+		 } else {
+			 /* uh, who fed the orc shaman so many gain level potions? */
+			 aligntype = (int)mtmp->data->maligntyp;
+		 }
+		 pline("A servant of %s appears!",aligns[1 - aligntype].noun);
+		summon_minion(aligntype, TRUE);
+		 break;
     case CLC_GEYSER:
 	/* this is physical damage, not magical damage */
 	pline("A sudden geyser slams into you from nowhere!");
