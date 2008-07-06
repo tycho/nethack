@@ -1215,8 +1215,7 @@ dopois:
 		    } else {
 			if (flags.soundok)
 			    You_hear("%s hissing!", s_suffix(mon_nam(mtmp)));
-			if(!rn2(10) ||
-			    (flags.moonphase == NEW_MOON && !have_lizard())) {
+			if(!rn2(3) || (flags.moonphase == NEW_MOON && !have_lizard())) {
  do_stone:
 			    if (!Stoned && !Stone_resistance
 				    && !(poly_when_stoned(youmonst.data) &&
