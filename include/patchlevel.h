@@ -4,7 +4,7 @@
 
 /* SporkHack 0.3.0 */
 #define VERSION_MAJOR	0
-#define VERSION_MINOR	5
+#define VERSION_MINOR	6
 /*
  * PATCHLEVEL is updated for each release.
  */
@@ -35,7 +35,7 @@
  */
 
 /*                            0xMMmmPPeeL            */
-#define VERSION_COMPATIBILITY 0x00050000L	/* 0.5.0-0 */
+#define VERSION_COMPATIBILITY 0x00060000L	/* 0.5.0-0 */
 
 
 /*****************************************************************************/
