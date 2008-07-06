@@ -64,11 +64,13 @@ boolean restore;
 		if (otmp->cobj)
 		    resetobjs(otmp->cobj,restore);
 
-		if (((otmp->otyp != CORPSE || otmp->corpsenm < SPECIAL_PM)
-			&& otmp->otyp != STATUE)
-			&& (!otmp->oartifact ||
-			   (restore && (exist_artifact(otmp->otyp, ONAME(otmp))
-					|| is_quest_artifact(otmp))))) {
+		if (
+			 ((otmp->otyp != CORPSE || otmp->corpsenm < SPECIAL_PM) && 
+				otmp->otyp != STATUE && otmp->otyp != SKULL) && 
+					(!otmp->oartifact || (restore && 
+						(exist_artifact(otmp->otyp, ONAME(otmp)) || 
+							 is_quest_artifact(otmp))))
+				) {
 			otmp->oartifact = 0;
 			otmp->onamelth = 0;
 			*ONAME(otmp) = '\0';
@@ -155,6 +157,11 @@ struct obj *cont;
 	}
 #endif
 	if (cont) cont->owt = weight(cont);
+
+	/* should we leave a skull behind? */
+	if (rn2(3) && has_head(youmonst.data) && !unsolid(youmonst.data)) {
+		otmp = mk_named_object(SKULL,youmonst.data,u.ux,u.uy,plname);
+	}
 }
 
 /* check whether bones are feasible */

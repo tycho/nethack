@@ -486,7 +486,11 @@ boolean ignore_oquan;
 	if (obj->quan != 1L) Strcpy(buf, makeplural(buf));
 
 	if (obj->onamelth && obj->dknown) {
-		Strcat(buf, " named ");
+		if (obj->otyp == SKULL) {
+			Strcat(buf, " of ");		 /* cheesy hotwire */
+		} else {
+			Strcat(buf, " named ");
+		}
 nameit:
 		Strcat(buf, ONAME(obj));
 	}
