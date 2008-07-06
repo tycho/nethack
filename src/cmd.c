@@ -1248,7 +1248,7 @@ int final;
 	if (Halluc_resistance) 	dump("  ", "You resisted hallucinations");
 	if (Vulnerable_fire) dump(youwere,"vulnerable to fire");
 	if (Vulnerable_cold) dump(youwere,"vulnerable to cold");
-	if (Vulnerable_elec) dump(youwere,"vulnerable to elec");
+	if (Vulnerable_elec) dump(youwere,"vulnerable to electricity");
 	if (Vulnerable_acid) dump(youwere,"vulnerable to acid");
 	if (Hallucination) dump(youwere, "hallucinating");
 	if (Stunned) dump(youwere, "stunned");
