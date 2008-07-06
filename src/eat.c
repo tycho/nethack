@@ -682,8 +682,8 @@ register struct permonst *ptr;
 	if (ptr->mlevel <= rn2(chance))
 		return;		/* failed die roll */
 
-	percentincrease = (ptr->cwt / 45);
-	if (percentincrease < 10) { percentincrease = 10; }
+	percentincrease = (ptr->cwt / 90);
+	if (percentincrease < 5) { percentincrease = 5; }
 
 	switch (type) {
 		 /* All these use the new system, which is based on corpse weight. */
