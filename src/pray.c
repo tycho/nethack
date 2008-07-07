@@ -1517,7 +1517,7 @@ dosacrifice()
 	     * The chance goes down as the number of artifacts goes up.
 		  * 
 		  * The player can also get handed just a plain old hunk of weaponry
-		  * or piece of armor, but it will be blessed, +5, fire/rustproof, and 
+		  * or piece of armor, but it will be blessed, +3 to +5, fire/rustproof, and 
 		  * if it's a weapon, it'll be in one of the player's available skill 
 		  * slots. The lower level you are, the more likely it is that you'll 
 		  * get a hunk of ordinary junk rather than an artifact.
@@ -1548,7 +1548,7 @@ dosacrifice()
 					otmp = mksobj(typ, FALSE, FALSE);
 					if (otmp) {
 						bless(otmp);
-						otmp->spe = 5;
+						otmp->spe = rn2(3)+3; /* +3 to +5 */
 						otmp->oerodeproof = TRUE;
 						dropy(otmp);
 						at_your_feet("An object");
