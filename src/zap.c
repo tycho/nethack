@@ -784,7 +784,7 @@ struct monst *mon;
 #endif /*OVL1*/
 
 #ifdef OVLB
-static const char charged_objs[] = { WAND_CLASS, WEAPON_CLASS, ARMOR_CLASS, 0 };
+static const char charged_objs[] = { WAND_CLASS, 0 };
 
 STATIC_OVL void
 costly_cancel(obj)
@@ -1250,6 +1250,12 @@ poly_obj(obj, id)
 	/* preserve inventory letter if in inventory */
 	if (obj_location == OBJ_INVENT)
 	    otmp->invlet = obj->invlet;
+
+	/* Meddle with obj->spe to reduce utility of polying heavily enchanted stuff */
+	if (obj->spe > 0) {
+		otmp->spe = rn2(obj->spe);
+	}
+
 #ifdef MAIL
 	/* You can't send yourself 100 mail messages and then
 	 * polymorph them into useful scrolls
@@ -1274,11 +1280,11 @@ poly_obj(obj, id)
 		otmp->corpsenm = NON_PM;
 		otmp->spe = 0;
 
-		/* now change it into something layed by the hero */
+		/* now change it into something laid by the hero */
 		while (tryct--) {
 		    mnum = can_be_hatched(random_monster());
 		    if (mnum != NON_PM && !dead_species(mnum, TRUE)) {
-			otmp->spe = 1;	/* layed by hero */
+			otmp->spe = 1;	/* laid by hero */
 			otmp->corpsenm = mnum;
 			attach_egg_hatch_timeout(otmp);
 			break;
@@ -1286,7 +1292,7 @@ poly_obj(obj, id)
 		}
 	}
 
-	/* keep special fields (including charges on wands) */
+	/* keep special fields and charges on wands */
 	if (index(charged_objs, otmp->oclass)) otmp->spe = obj->spe;
 	otmp->recharged = obj->recharged;
 
