@@ -667,7 +667,7 @@ NEARDATA struct permonst mons[] = {
  * orcs
  */
     MON("goblin", S_ORC,
-	LVL(0, 6, 10, 0, -3), (G_GENO|2),
+	LVL(0, 6, 10, 0, -3), (G_GENO|2|G_SGROUP),
 	A(ATTK(AT_WEAP, AD_PHYS, 1, 4),
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
 	SIZ(400, 100, 0, MS_ORC, MZ_SMALL), 0, 0,
