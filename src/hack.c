@@ -1352,7 +1352,7 @@ domove()
 		case 3:		/* changed levels */
 		    /* there's already been a trap message, reinforce it */
 		    abuse_dog(mtmp);
-		    adjalign(-3);
+			 minor_sin();
 		    break;
 		case 2:
 		    /* it may have drowned or died.  that's no way to
@@ -1360,8 +1360,8 @@ domove()
 		     */
 		    if (rn2(4)) {
 			You_feel("guilty about losing your pet like this.");
-			u.ugangr++;
-			adjalign(-15);
+				u.ugangr++;
+				major_sin();
 		    }
 
 		    /* you killed your pet by direct action.

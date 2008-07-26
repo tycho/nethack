@@ -3905,7 +3905,7 @@ register struct obj *obj;
 	}
 	if (Role_if(PM_ARCHEOLOGIST) && !flags.mon_moving && (obj->spe & STATUE_HISTORIC)) {
 	    You_feel("guilty about damaging such a historic statue.");
-	    adjalign(-1);
+		 minor_sin();
 	}
 	obj->spe = 0;
 	fracture_rock(obj);

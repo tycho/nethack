@@ -492,7 +492,7 @@ struct monst *shkp;
 	You("stole %ld %s worth of merchandise.",
 	    total, currency(total));
 	if (!Role_if(PM_ROGUE))	/* stealing is unlawful */
-	    adjalign(-sgn(u.ualign.type));
+		minor_sin();
 
 	hot_pursuit(shkp);
 	return TRUE;
@@ -3432,7 +3432,7 @@ register int fall;
     if(!inhishop(shkp)) {
 	if (Role_if(PM_KNIGHT)) {
 	    You_feel("like a common thief.");
-	    adjalign(-sgn(u.ualign.type));
+		 major_sin();
 	}
 	return;
     }
@@ -3449,7 +3449,7 @@ register int fall;
 	}
 	if (Role_if(PM_KNIGHT)) {
 	    You_feel("like a common thief.");
-	    adjalign(-sgn(u.ualign.type));
+		 major_sin();
 	}
     } else if(!um_dist(shkp->mx, shkp->my, 5) &&
 		!shkp->msleeping && shkp->mcanmove &&
@@ -3678,7 +3678,7 @@ getcad:
 	} else {
 		verbalize("Oh, yes!  You'll pay!");
 		hot_pursuit(shkp);
-		adjalign(-sgn(u.ualign.type));
+		minor_sin();
 	}
 }
 #endif /*OVLB*/

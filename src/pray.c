@@ -812,7 +812,7 @@ pleased(g_align)
 
 	/* not your deity */
 	if (on_altar() && p_aligntyp != u.ualign.type) {
-		adjalign(-1);
+		major_sin();
 		return;
 	} else if (u.ualign.record < 2 && trouble <= 0) adjalign(1);
 
@@ -1227,12 +1227,14 @@ dosacrifice()
 	    }
 
 	    if (u.ualign.type != A_CHAOTIC) {
-		adjalign(-5);
-		u.ugangr += 3;
-		(void) adjattrib(A_WIS, -1, TRUE);
-		if (!Inhell) angrygods(u.ualign.type);
-		change_luck(-5);
-	    } else adjalign(5);
+			 mortal_sin();
+			u.ugangr += 3;
+			(void) adjattrib(A_WIS, -1, TRUE);
+			if (!Inhell) angrygods(u.ualign.type);
+			change_luck(-5);
+	    } else {
+			 adjalign(5);
+		 }
 	    if (carried(otmp)) useup(otmp);
 	    else useupf(otmp, 1L);
 
@@ -1258,7 +1260,7 @@ dosacrifice()
 	    /* mtmp is a temporary pointer to a tame monster's attributes,
 	     * not a real monster */
 	    pline("So this is how you repay loyalty?");
-	    adjalign(-3);
+		 major_sin();
 	    value = -1;
 	    HAggravate_monster |= FROMOUTSIDE;
 	} else if (is_undead(ptr)) { /* Not demons--no demon corpses */
@@ -1269,11 +1271,12 @@ dosacrifice()
 
 	    /* If same as altar, always a very bad action. */
 	    if (unicalign == altaralign) {
-		pline("Such an action is an insult to %s!",
-		      (unicalign == A_CHAOTIC)
-		      ? "chaos" : unicalign ? "law" : "balance");
-		(void) adjattrib(A_WIS, -1, TRUE);
-		value = -5;
+			pline("Such an action is an insult to %s!",
+					(unicalign == A_CHAOTIC)
+					? "chaos" : unicalign ? "law" : "balance");
+			(void) adjattrib(A_WIS, -1, TRUE);
+			major_sin();
+			value = -1;
 	    } else if (u.ualign.type == altaralign) {
 		/* If different from altar, and altar is same as yours, */
 		/* it's a very good action */
@@ -1309,7 +1312,7 @@ dosacrifice()
 	    if (u.ualign.type != altaralign) {
 		/* And the opposing team picks you up and
 		   carries you off on their shoulders */
-		adjalign(-99);
+		adjalign(-2*ALIGNLIM);
 		pline("%s accepts your gift, and gains dominion over %s...",
 		      a_gname(), u_gname());
 		pline("%s is enraged...", u_gname());
@@ -1355,7 +1358,7 @@ dosacrifice()
 	    } else {
 		/* don't you dare try to fool the gods */
 		change_luck(-3);
-		adjalign(-1);
+		minor_sin();
 		u.ugangr += 3;
 		value = -3;
 	    }
@@ -1410,7 +1413,7 @@ dosacrifice()
 		    adjalign((int)(u.ualignbase[A_ORIGINAL] * (ALIGNLIM / 2)));
 		} else {
 		    u.ugangr += 3;
-		    adjalign(-5);
+			 major_sin();
 		    pline("%s rejects your sacrifice!", a_gname());
 		    godvoice(altaralign, "Suffer, infidel!");
 		    change_luck(-5);

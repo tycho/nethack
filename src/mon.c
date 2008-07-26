@@ -1948,7 +1948,13 @@ cleanup:
 		u.ualign.type != A_CHAOTIC) {
 		HTelepat &= ~INTRINSIC;
 		change_luck(-2);
-		You("murderer!");
+		if (u.ualign.type == A_LAWFUL) {
+			You("murderer! You feel very guilty.");
+			mortal_sin();
+		} else {
+			You("murderer!");
+			major_sin();
+		}
 		if (Blind && !Blind_telepat)
 		    see_monsters(); /* Can't sense monsters any more. */
 	}
@@ -1956,6 +1962,7 @@ cleanup:
 	if (is_unicorn(mdat) &&
 				sgn(u.ualign.type) == sgn(mdat->maligntyp)) {
 		change_luck(-5);
+		major_sin();
 		You_feel("guilty...");
 	}
 
@@ -1976,18 +1983,23 @@ cleanup:
 	    if (!Hallucination) pline("That was probably a bad idea...");
 	    else pline("Whoopsie-daisy!");
 	}else if (mtmp->ispriest) {
-		adjalign((p_coaligned(mtmp)) ? -2 : 2);
 		/* cancel divine protection for killing your priest */
-		if (p_coaligned(mtmp)) u.ublessed = 0;
+		if (p_coaligned(mtmp)) {
+			mortal_sin();
+			u.ublessed = 0;
+		} else {
+			adjalign(5);
+		}
 		if (mdat->maligntyp == A_NONE)
 			adjalign((int)(ALIGNLIM / 4));		/* BIG bonus */
 	} else if (mtmp->mtame) {
-		adjalign(-15);	/* bad!! */
-		/* your god is mighty displeased... */
+		major_sin();	 /* bad!  your god is mighty displeased... */
 		if (!Hallucination) You_hear("the rumble of distant thunder...");
 		else You_hear("the studio audience applaud!");
-	} else if (mtmp->mpeaceful)
-		adjalign(-5);
+	} else if (mtmp->mpeaceful) {
+		You("slaughter the unwary!");
+		minor_sin();	 /* very hard to get this, but */
+	}
 
 	/* malign was already adjusted for u.ualign.type and randomization */
 	adjalign(mtmp->malign);
@@ -2200,10 +2212,11 @@ register struct monst *mtmp;
 	if(mtmp->mtame) return;
 	mtmp->mpeaceful = 0;
 	if(mtmp->ispriest) {
-		if(p_coaligned(mtmp)) adjalign(-5); /* very bad */
+		if (p_coaligned(mtmp)) minor_sin(); /* very bad */
 		else adjalign(2);
-	} else
-		adjalign(-1);		/* attacking peaceful monsters is bad */
+	} else {
+		venial_sin();		/* attacking peaceful monsters is bad */
+	}
 	if (couldsee(mtmp->mx, mtmp->my)) {
 		if (humanoid(mtmp->data) || mtmp->isshk || mtmp->isgd)
 		    pline("%s gets angry!", Monnam(mtmp));

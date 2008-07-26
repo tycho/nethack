@@ -1704,14 +1704,19 @@ int how;
 			killplayer++;
 			break;
 		}
-		if (is_human(ptr)) adjalign(-sgn(u.ualign.type));
-		if (is_demon(ptr)) adjalign(sgn(u.ualign.type));
+
+		/* you'll still be punished for some of this... */
+		if ((is_human(ptr) && u.ualign.type != A_CHAOTIC) ||
+				(is_demon(ptr) && u.ualign.type == A_CHAOTIC)) {
+			major_sin();
+		} else {
+			adjalign(sgn(u.ualign.type));
+		}
 
 		if(!(ptr->geno & G_GENO)) {
 			if(flags.soundok) {
-	/* fixme: unconditional "caverns" will be silly in some circumstances */
 			    if(flags.verbose)
-			pline("A thunderous voice booms through the caverns:");
+			pline("A thunderous voice booms:");
 			    verbalize("No, mortal!  That will not be done.");
 			}
 			continue;

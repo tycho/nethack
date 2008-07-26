@@ -2358,6 +2358,10 @@ register struct monst *mon;
 	}
 	if (u.ualign.type == A_CHAOTIC)
 		adjalign(1);
+	if (u.ualign.type == A_LAWFUL) {
+		pline("You feel a little guilty about doing this...");
+		minor_sin();
+	}
 
 	/* by this point you have discovered mon's identity, blind or not... */
 	pline("Time stands still while you and %s lie in each other's arms...",

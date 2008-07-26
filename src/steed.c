@@ -563,13 +563,13 @@ dismount_steed(reason)
 							surface(u.ux, u.uy));
 			if (!is_swimmer(mdat) && !amphibious(mdat)) {
 			    killed(mtmp);
-			    adjalign(-1);
+				 major_sin();
 			}
 		    } else if (is_lava(u.ux, u.uy)) {
 			pline("%s is pulled into the lava!", Monnam(mtmp));
 			if (!likes_lava(mdat)) {
 			    killed(mtmp);
-			    adjalign(-1);
+				 major_sin();
 			}
 		    }
 		}
@@ -611,7 +611,7 @@ dismount_steed(reason)
 	    /* Otherwise, kill the steed */
 	    } else {
 		killed(mtmp);
-		adjalign(-1);
+		major_sin();
 	    }
 	}
 
