@@ -779,13 +779,13 @@ dig_up_grave()
 	/* Grave-robbing is frowned upon... */
 	exercise(A_WIS, FALSE);
 	if (Role_if(PM_ARCHEOLOGIST)) {
-	    adjalign(-sgn(u.ualign.type)*3);
+	    minor_sin();
 	    You_feel("like a despicable grave-robber!");
 	} else if (Role_if(PM_SAMURAI)) {
-	    adjalign(-sgn(u.ualign.type));
+	    venial_sin();
 	    You("disturb the honorable dead!");
 	} else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > -10)) {
-	    adjalign(-sgn(u.ualign.type));
+	    venial_sin();
 	    You("have violated the sanctity of this grave!");
 	}
 

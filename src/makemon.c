@@ -1794,7 +1794,7 @@ struct monst *mtmp;
 		if (coaligned)
 			mtmp->malign = 0;
 		else
-			mtmp->malign = max(5,absmal);
+			mtmp->malign = max(3,absmal);
 	} else if (coaligned) {
 		int absmal = abs(mal);
 		if (mtmp->mpeaceful)

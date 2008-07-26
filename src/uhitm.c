@@ -222,7 +222,7 @@ struct monst *mtmp;
 	    (!mtmp->mcanmove || mtmp->msleeping ||
 	     (mtmp->mflee && !mtmp->mavenge))) {
 	    You("caitiff!");
-	    adjalign(-10);
+		 minor_sin();
 	}
 }
 
@@ -242,7 +242,7 @@ register struct monst *mtmp;
 	if (Role_if(PM_SAMURAI) && mtmp->mpeaceful &&
 	    u.ualign.record > -10) {
 	    You("dishonorably attack the innocent!");
-	    adjalign(-1);
+		 minor_sin();
 	}
 
 /*	Adjust vs. (and possibly modify) monster state.		*/
@@ -973,10 +973,14 @@ int thrown;
 	    if(nopoison < 2) nopoison = 2;
 	    if Role_if(PM_SAMURAI) {
 		You("dishonorably use a poisoned weapon!");
-		adjalign(-sgn(u.ualign.type));
+		minor_sin();
 	    } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > -10)) {
 		You_feel("like an evil coward for using a poisoned weapon.");
-		adjalign(Role_if(PM_KNIGHT) ? -10 : -1);
+		if (Role_if(PM_KNIGHT)) {
+			minor_sin();
+		} else {
+			venial_sin();
+		}
 	    }
 	    if (obj && !rn2(nopoison) && obj->oartifact != ART_DIRGE) {
 		obj->opoisoned = FALSE;

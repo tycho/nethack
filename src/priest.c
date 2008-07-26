@@ -480,7 +480,7 @@ register struct monst *priest;
 			Monnam(priest));
 	    if((offer = bribe(priest)) == 0) {
 		verbalize("Thou shalt regret thine action!");
-		if(coaligned) adjalign(-1);
+		if(coaligned) venial_sin();
 	    } else if(offer < (u.ulevel * 200)) {
 #ifndef GOLDOBJ
 		if(u.ugold > (offer * 2L)) verbalize("Cheapskate.");

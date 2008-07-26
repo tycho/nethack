@@ -231,7 +231,7 @@ choke(food)	/* To a full belly all food is bad. (It.) */
 		if (!food || food->otyp != AMULET_OF_STRANGULATION)
 			return;
 	} else if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL) {
-			adjalign(-10);		/* gluttony is unchivalrous */
+			major_sin();		/* gluttony is unchivalrous */
 			You_feel("like a glutton!");
 	}
 
@@ -993,7 +993,7 @@ violated_vegetarian()
     u.uconduct.unvegetarian++;
     if (Role_if(PM_MONK)) {
 	You_feel("guilty.");
-	adjalign(-1);
+		venial_sin();
     }
     return;
 }
@@ -1949,6 +1949,11 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 		/* Don't split it, we don't need to if it's 1 move */
 	    victual.usedtime = 0;
 	    victual.canchoke = (u.uhs == SATIATED);
+		 /* for characters with code of conduct, gluttony is bad */
+		if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL) {
+			You("are slightly ashamed for overeating.");
+			venial_sin();
+		}
 		/* Note: gold weighs 1 pt. for each 1000 pieces (see */
 		/* pickup.c) so gold and non-gold is consistent. */
 	    if (otmp->oclass == COIN_CLASS)

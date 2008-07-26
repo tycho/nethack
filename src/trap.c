@@ -496,7 +496,7 @@ int *fail_reason;
 			canspotmon(mon) ? comes_to_life : "disappears");
 	    if (historic) {
 		    You_feel("guilty that the historic statue is now gone.");
-		    adjalign(-1);
+			 venial_sin();
 	    }
 	} else if (cause == ANIMATE_SHATTER)
 	    pline("Instead of shattering, the statue suddenly %s!",
