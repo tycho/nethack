@@ -1658,11 +1658,14 @@ register struct attack *mattk;
 		    pline("%s doesn't seem harmed.", Monnam(mdef));
 		    tmp = 0;
 		    if (!Unchanging && mdef->data == &mons[PM_GREEN_SLIME]) {
-			if (!Slimed) {
-			    You("suck in some slime and don't feel very well.");
-			    Slimed = 10L;
-			}
+				if (!Slimed) {
+					You("suck in some slime and don't feel very well.");
+					Slimed = 10L;
+				}
 		    }
+		    if (how_resistant(COLD_RES) != 100 && mdef->data == &mons[PM_BLUE_JELLY]) {
+				pline("Aggh!  Brain freeze!");
+			 }
 		    break;
 		}
 		if (m_slips_free(mdef, mattk)) break;
