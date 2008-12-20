@@ -1807,6 +1807,7 @@ register struct obj *obj;
 		case SPE_LIGHT:
 			litroom(TRUE,obj);
 			if (!Blind) known = TRUE;
+			blindingflash();
 			break;
 		case WAN_SECRET_DOOR_DETECTION:
 		case SPE_DETECT_UNSEEN:
@@ -4268,6 +4269,30 @@ unsigned long mask;
 		if (!DEADMONSTER(mtmp) && m_canseeu(mtmp)) m_sawlose(mtmp,mask);
 	}
 
+}
+
+void
+blindingflash()
+{
+	struct monst* mtmp;
+	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
+	{
+		/* if it can't see the flash, don't bother */
+		if (DEADMONSTER(mtmp) || mtmp->msleeping || 
+				!haseyes(mtmp->data) || !mtmp->mcansee || mtmp->mblinded)
+		{
+			continue;
+		}
+		/* must be able to see our location... */
+		if (m_cansee(mtmp,u.ux,u.uy) && !rn2(3))
+		{
+			if (!Blind && canseemon(mtmp)) {
+				pline("%s is blinded by the flash!", Monnam(mtmp));
+			}
+			mtmp->mblinded = d(8,8);
+			mtmp->mcansee = 0;
+		}
+	}
 }
 
 #endif /*OVL2*/
