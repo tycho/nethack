@@ -4284,7 +4284,7 @@ blindingflash()
 			continue;
 		}
 		/* must be able to see our location... */
-		if (m_cansee(mtmp,u.ux,u.uy) && !rn2(3))
+		if (m_cansee(mtmp,u.ux,u.uy) && !rn2(5))
 		{
 			if (!Blind && canseemon(mtmp)) {
 				pline("%s is blinded by the flash!", Monnam(mtmp));
