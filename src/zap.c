@@ -4275,6 +4275,12 @@ void
 blindingflash()
 {
 	struct monst* mtmp;
+	long blindprop;
+
+	/* Due to some sloppiness by the vision code, we need to
+		* force the player to always be unblind during this part */
+	blindprop = u.uprops[BLIND_RES].extrinsic;
+	u.uprops[BLIND_RES].extrinsic = 0xFFFF;
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
 	{
 		/* if it can't see the flash, don't bother */
@@ -4286,7 +4292,7 @@ blindingflash()
 		/* must be able to see our location... */
 		if (m_cansee(mtmp,u.ux,u.uy) && !rn2(5))
 		{
-			if (!Blind && canseemon(mtmp)) {
+			if (canseemon(mtmp)) {
 				pline("%s is blinded by the flash!", Monnam(mtmp));
 			}
 			if (mtmp->mtame) { abuse_dog(mtmp); }
@@ -4295,6 +4301,7 @@ blindingflash()
 			mtmp->mcansee = 0;
 		}
 	}
+	u.uprops[BLIND_RES].extrinsic = blindprop;
 }
 
 #endif /*OVL2*/
