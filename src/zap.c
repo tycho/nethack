@@ -4289,7 +4289,7 @@ blindingflash()
 			if (!Blind && canseemon(mtmp)) {
 				pline("%s is blinded by the flash!", Monnam(mtmp));
 			}
-			mtmp->mblinded = d(8,8);
+			mtmp->mblinded = rnd(20);
 			mtmp->mcansee = 0;
 		}
 	}
