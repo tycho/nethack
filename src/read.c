@@ -1434,7 +1434,6 @@ struct obj *obj;
 			return;
 		}
 		pline("A lit field surrounds you!");
-		blindingflash();
 	}
 
 do_it:
@@ -1474,6 +1473,8 @@ do_it:
 	 *  correctly update all previously seen positions *and* correctly
 	 *  set the waslit bit [could be messed up from above].
 	 */
+	blindingflash();
+
 	if (!Blind) {
 	    vision_recalc(2);
 

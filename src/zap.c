@@ -1807,7 +1807,6 @@ register struct obj *obj;
 		case SPE_LIGHT:
 			litroom(TRUE,obj);
 			if (!Blind) known = TRUE;
-			blindingflash();
 			break;
 		case WAN_SECRET_DOOR_DETECTION:
 		case SPE_DETECT_UNSEEN:
@@ -4290,7 +4289,7 @@ blindingflash()
 			continue;
 		}
 		/* must be able to see our location... */
-		if (m_cansee(mtmp,u.ux,u.uy) && !rn2(5))
+		if (m_cansee(mtmp,u.ux,u.uy) && !rn2(4))
 		{
 			if (canseemon(mtmp)) {
 				pline("%s is blinded by the flash!", Monnam(mtmp));
