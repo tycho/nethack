@@ -1434,6 +1434,7 @@ struct obj *obj;
 			return;
 		}
 		pline("A lit field surrounds you!");
+		blindingflash();
 	}
 
 do_it:
