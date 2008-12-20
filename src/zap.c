@@ -4278,7 +4278,7 @@ blindingflash()
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
 	{
 		/* if it can't see the flash, don't bother */
-		if (DEADMONSTER(mtmp) || mtmp->msleeping || 
+		if (DEADMONSTER(mtmp) || mtmp->msleeping || mtmp->mflee ||
 				!haseyes(mtmp->data) || !mtmp->mcansee || mtmp->mblinded)
 		{
 			continue;
@@ -4289,6 +4289,8 @@ blindingflash()
 			if (!Blind && canseemon(mtmp)) {
 				pline("%s is blinded by the flash!", Monnam(mtmp));
 			}
+			if (mtmp->mtame) { abuse_dog(mtmp); }
+			else if (mtmp->mpeaceful) { setmangry(mtmp); }
 			mtmp->mblinded = rnd(20);
 			mtmp->mcansee = 0;
 		}
