@@ -99,6 +99,7 @@ struct color_option color_option;
 const char *str;
 int x;
 {
+	if (x >= CO) return;
 	curs(WIN_STATUS, x, 1);
 	if (iflags.use_status_colors) start_color_option(color_option);
 	putstr(WIN_STATUS, 0, str);
