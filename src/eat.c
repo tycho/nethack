@@ -839,7 +839,7 @@ register int pm;
 			if(!Invis) {
 				if (!Blind && !BInvis) self_invis_message();
 			} else {
-				HSee_invisible |= FROMOUTSIDE;
+				incr_itimeout(&HSee_invisible, (long)rn1(100, 50));
 			}
 			newsym(u.ux, u.uy);
 			/* fall into next case */

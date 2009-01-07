@@ -668,10 +668,9 @@ peffects(otmp)
 			 */
 			make_blinded(0L,TRUE);
 		}
-		if (otmp->blessed)
-			HSee_invisible |= FROMOUTSIDE;
-		else
-			incr_itimeout(&HSee_invisible, rn1(otmp->odiluted ? 50 : 100,750));
+		/* remove free permanent see-invis... */
+		incr_itimeout(&HSee_invisible, 
+				rn1(otmp->odiluted ? 50 : 100, otmp->blessed ? 1500: 750));
 		set_mimic_blocking(); /* do special mimic handling */
 		see_monsters();	/* see invisible monsters */
 		newsym(u.ux,u.uy); /* see yourself! */
