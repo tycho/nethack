@@ -835,16 +835,14 @@ register int pm;
 		flags.botl = 1;
 		break;
 	    case PM_STALKER:
-		if(!Invis) {
-			set_itimeout(&HInvis, (long)rn1(100, 50));
-			if (!Blind && !BInvis) self_invis_message();
-		} else {
-			if (!(HInvis & INTRINSIC)) You_feel("hidden!");
-			HInvis |= FROMOUTSIDE;
-			HSee_invisible |= FROMOUTSIDE;
-		}
-		newsym(u.ux, u.uy);
-		/* fall into next case */
+			incr_itimeout(&HInvis, (long)rn1(100, 50));
+			if(!Invis) {
+				if (!Blind && !BInvis) self_invis_message();
+			} else {
+				HSee_invisible |= FROMOUTSIDE;
+			}
+			newsym(u.ux, u.uy);
+			/* fall into next case */
 	    case PM_YELLOW_LIGHT:
 		/* fall into next case */
 	    case PM_GIANT_BAT:

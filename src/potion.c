@@ -634,8 +634,7 @@ peffects(otmp)
 		} else {
 		    self_invis_message();
 		}
-		if (otmp->blessed) HInvis |= FROMOUTSIDE;
-		else incr_itimeout(&HInvis, rn1(15,31));
+		incr_itimeout(&HInvis, rn1(15,31*(otmp->blessed ? rnd(4) : 1)));
 		newsym(u.ux,u.uy);	/* update position */
 		if(otmp->cursed) {
 		    pline("For some reason, you feel your presence is known.");
