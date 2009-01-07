@@ -1380,7 +1380,7 @@ dopois:
 						You("suddenly %s!",See_invisible ? "become transparent" : "vanish");
 					}
 				}
-				HInvis |= FROMOUTSIDE;	  /* In multiple senses of 'vanish' :) */
+				incr_itimeout(&HInvis, d(6,100));   /* In multiple senses of 'vanish' :) */
 			} else {
 				if(flags.verbose)
 					Your("position suddenly seems very uncertain!");
