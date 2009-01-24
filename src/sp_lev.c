@@ -1654,7 +1654,7 @@ boolean prefilled;
 			for (x=croom->lx;x<=croom->hx;x++)
 				for (y=croom->ly;y<=croom->hy;y++)
 					(void) mkgold((long)rn1(abs(depth(&u.uz))*100, 51), x, y);
-			if (rn2(3)) {
+			if (rn2(2)) {
 				/* it's an aquarium!  :) */
 				level.flags.vault_is_aquarium = TRUE;
 				create_feature(0,0,croom,POOL);
