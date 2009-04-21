@@ -356,6 +356,20 @@ typedef unsigned char	uchar;
  * bugs left here.
  */
 
+#if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
+# define MENU_COLOR
+#if !defined(_MSC_VER)
+# define MENU_COLOR_REGEX
+# define MENU_COLOR_REGEX_POSIX
+#endif
+/* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
+ * GNU specific functions by default, POSIX functions with
+ * MENU_COLOR_REGEX_POSIX).
+ * otherwise use pmatch() to match menu color lines.
+ * pmatch() provides basic globbing: '*' and '?' wildcards.
+ */
+#endif
+
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
 /*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
 
