@@ -287,6 +287,7 @@ struct instance_flags {
     int     wc2_petattr;        /* points to text attributes for pet */
     boolean wc2_guicolor;       /* allow colors in GUI (outside map) */
 
+	boolean show_buc;	/* always show BUC status */
 	boolean  cmdassist;	/* provide detailed assistance for some commands */
 	boolean	 obsolete;	/* obsolete options can point at this, it isn't used */
 	/* Items which belong in flags, but are here to allow save compatibility */
