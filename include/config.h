@@ -370,6 +370,8 @@ typedef unsigned char	uchar;
  */
 #endif
 
+#define STATUS_COLORS
+
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
 /*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
 
