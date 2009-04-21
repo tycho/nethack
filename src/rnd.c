@@ -2,18 +2,30 @@
 
 #include "hack.h"
 
+#define STRONG_RNG 1
+
+#if defined(STRONG_RNG)
+unsigned int good_random(void);
+#endif
+
 /* "Rand()"s definition is determined by [OS]conf.h */
-#if defined(LINT) && defined(UNIX)	/* rand() is long... */
-extern int NDECL(rand);
-#define RND(x)	(rand() % x)
-#else /* LINT */
+#if defined(STRONG_RNG)
+# define RND(x) (good_random() % x)
+#else
 # if defined(UNIX) || defined(RANDOM)
-#define RND(x)	(int)(Rand() % (long)(x))
+#  define RND(x) (int)(Rand() % (long)(x))
 # else
 /* Good luck: the bottom order bits are cyclic. */
-#define RND(x)	(int)((Rand()>>3) % (x))
+#  define RND(x) (int)((Rand()>>3) % (x))
 # endif
-#endif /* LINT */
+#endif
+
+#if defined(WIN32)
+#define WIN32_LEAN_AND_MEAN 1
+#include <windows.h>
+#include <wincrypt.h>
+#endif
+#include <stdint.h>
 
 #ifdef OVL0
 
@@ -140,5 +152,72 @@ int i;
 }
 
 #endif /* OVLB */
+
+#if defined(STRONG_RNG)
+
+#ifdef RND
+# undef RND
+#endif
+
+#if defined(__SSE2__)
+# define HAVE_SSE2 1
+#endif
+#define SFMT_MEXP 19937
+#include "sfmt/SFMT.h"
+
+#define ENTROPY_BYTES 256
+
+static void collect_entropy(char* data)
+{
+#if defined(UNIX)
+	/* UNIX /dev/random Linux /dev/urandom entropy collector */
+#ifdef LINUX
+	FILE* f = fopen("/dev/urandom", "rb");
+#else
+	FILE* f = fopen("/dev/random", "rb");
+#endif
+	memset(data, 0, ENTROPY_BYTES);
+
+	if (!f)
+		return;
+
+	fread(data, ENTROPY_BYTES, 1, f);
+
+	fclose(f);
+#elif defined(WIN32)
+	/* Windows CryptoAPI PRNG */
+	static HCRYPTPROV hProv = 0;
+	if (hProv == 0) {
+		if (!CryptAcquireContext(&hProv, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_SILENT))
+			assert(!"Could not acquire cryptographic context");
+	}
+	if (!CryptGenRandom(hProv, ENTROPY_BYTES, (BYTE *)data))
+		assert(!"Failed to get entropy from system");
+#else
+#error "Don't know how to gather entropy on this platform."
+#endif
+}
+
+unsigned int good_random(void)
+{
+	static uint32_t counter = 0;
+	static sfmt_t sfmt;
+	char entropy[ENTROPY_BYTES];
+
+	/* Collect entropy and reseed every 128k iterations */
+	if ((counter & 0x1ffff) == 0)
+	{
+		collect_entropy(entropy);
+
+		sfmt_init_by_array(&sfmt, (uint32_t *)entropy, sizeof(entropy) / sizeof(uint32_t));
+	}
+
+	counter++;
+
+	return sfmt_genrand_uint32(&sfmt);
+}
+
+#include "sfmt/SFMT.c"
+#endif
 
 /*rnd.c*/
