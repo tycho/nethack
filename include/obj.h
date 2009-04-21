@@ -164,9 +164,10 @@ struct obj {
 #define is_multigen(otmp)	(otmp->oclass == WEAPON_CLASS && \
 			 objects[otmp->otyp].oc_skill >= -P_SHURIKEN && \
 			 objects[otmp->otyp].oc_skill <= -P_BOW)
-#define is_poisonable(otmp)	(otmp->oclass == WEAPON_CLASS && \
+#define is_poisonable(otmp)	( (otmp->oclass == WEAPON_CLASS && \
 			 objects[otmp->otyp].oc_skill >= -P_SHURIKEN && \
-			 objects[otmp->otyp].oc_skill <= -P_BOW)
+			 objects[otmp->otyp].oc_skill <= -P_BOW) \
+			 || otmp->oartifact==ART_GRIMTOOTH )
 #define uslinging()	(uwep && objects[uwep->otyp].oc_skill == P_SLING)
 
 /* Armor */

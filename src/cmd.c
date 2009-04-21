@@ -959,9 +959,18 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	if (Warning) you_are("warned");
 	if (Warn_of_mon && flags.warntype) {
 		Sprintf(buf, "aware of the presence of %s",
+			(flags.warntype & 0x80000000) ?
+			((flags.warntype==(0x80000000|S_OGRE)) ? "ogres" :
+			(flags.warntype==(0x80000000|S_TROLL)) ? "trolls" :
+			(flags.warntype==(0x80000000|S_DRAGON)) ? "dragons" : something)
+			: (
 			(flags.warntype & M2_ORC) ? "orcs" :
 			(flags.warntype & M2_DEMON) ? "demons" :
-			something); 
+			(flags.warntype & M2_WERE) ? "lycanthropes" :
+			(flags.warntype & M2_GIANT) ? "giants" :
+			(flags.warntype & M2_UNDEAD) ? "undead" :
+			something)
+				);
 		you_are(buf);
 	}
 	if (Undead_warning) you_are("warned of undead");

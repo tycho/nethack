@@ -923,6 +923,12 @@ boolean init;
 	    if (mtmp) {
 		struct obj *otmp2;
 
+		/* NDA - I'm using the m_ap_type field to mark that a troll was killed by Trollsbane.
+		* Yes, it's a filthy kludge. I feel so dirty.
+		*/
+		if(mtmp->m_ap_type!=0)
+			otmp->norevive = 1;
+
 		if (!ptr) ptr = mtmp->data;
 		/* save_mtraits frees original data pointed to by otmp */
 		otmp2 = save_mtraits(otmp, mtmp);

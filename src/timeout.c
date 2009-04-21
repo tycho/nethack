@@ -1094,7 +1094,7 @@ begin_burn(obj, already_lit)
                 if (artifact_light(obj)) {
 		    obj->lamplit = 1;
 		    do_timer = FALSE;
-		    radius = 2;
+		    radius = 3;
 		} else {
 		    impossible("begin burn: unexpected %s", xname(obj));
 		    turns = obj->age;

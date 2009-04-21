@@ -25,6 +25,8 @@ STATIC_DCL int FDECL(arti_invoke, (struct obj*));
 STATIC_DCL boolean FDECL(Mb_hit, (struct monst *magr,struct monst *mdef,
 				  struct obj *,int *,int,BOOLEAN_P,char *));
 
+STATIC_DCL int FDECL(brave_little_tailor, (struct monst *magr,BOOLEAN_P));
+
 /* The amount added to the victim's total hit points to insure that the
    victim will be killed even after damage bonus/penalty adjustments.
    Most such penalties are small, and 200 is plenty; the exception is
@@ -157,6 +159,11 @@ make_artif: if (by_align) otmp = mksobj((int)a->otyp, TRUE, FALSE);
 	    /* nothing appropriate could be found; return the original object */
 	    if (by_align) otmp = 0;	/* (there was no original object) */
 	}
+
+	/* poison Grimtooth */
+	if(otmp->oartifact==ART_GRIMTOOTH)
+		otmp->opoisoned=1;
+
 	return otmp;
 }
 
@@ -440,12 +447,14 @@ long wp_mask;
 	}
 	if (spfx & SPFX_WARN) {
 	    if (spec_m2(otmp)) {
-	    	if (on) {
+		if (on) {
 			EWarn_of_mon |= wp_mask;
-			flags.warntype |= spec_m2(otmp);
-	    	} else {
+			/* Right now I'm going to assume that you can only be warned of one type at a time */
+			flags.warntype = spec_m2(otmp)|((spfx & SPFX_DCLAS) ? 0x80000000:0);
+		} else {
 			EWarn_of_mon &= ~wp_mask;
-	    		flags.warntype &= ~spec_m2(otmp);
+			/* flags.warntype &= ~spec_m2(otmp); */
+				flags.warntype = 0;
 		}
 		see_monsters();
 	    } else {
@@ -1010,8 +1019,29 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 	    return Mb_hit(magr, mdef, otmp, dmgptr, dieroll, vis, hittee);
 	}
 
+	/* Blinding attack */
+	if (spec_ability(otmp, SPFX_BLIND) && !resists_blnd(mdef) && !rn2(3)) {
+		long rnd_tmp;
+		if (realizes_damage && mdef->mcansee)
+			pline_The("brilliant blade blinds %s!", hittee);
+		rnd_tmp = rn2(5)+otmp->spe;
+		if(rnd_tmp<2) rnd_tmp = 2;
+		if(youdefend) {
+			make_blinded(Blinded+rnd_tmp, FALSE);
+			if (!Blind) Your(vision_clears);
+		} else {
+		    if ((rnd_tmp += mdef->mblinded) > 127) rnd_tmp = 127;
+		    mdef->mblinded = rnd_tmp;
+		    mdef->mcansee = 0;
+		    mdef->mstrategy &= ~STRAT_WAITFORU;
+		}
+	}
+
+	if(otmp->oartifact==ART_GIANTSLAYER && spec_dbon_applies && magr && dieroll==1)
+		return brave_little_tailor(magr,realizes_damage) > 1;
+
 	if (!spec_dbon_applies) {
-	    /* since damage bonus didn't apply, nothing more to do;  
+	    /* since damage bonus didn't apply, nothing more to do;
 	       no further attacks have side-effects on inventory */
 	    return FALSE;
 	}
@@ -1470,6 +1500,58 @@ struct obj *otmp;
 	    return (artilist[(int) otmp->oartifact].cost);
 	else
 	    return (100L * (long)objects[otmp->otyp].oc_cost);
+}
+
+/* Kills multiple giants at one blow */
+STATIC_OVL int
+brave_little_tailor(magr,vis)
+struct monst *magr;	/* attacker */
+boolean vis;		/* whether the action can be seen */
+{
+	int blow,count, i,j, x,y;
+	struct monst* mtmp;
+	boolean youattack = (magr == &youmonst);
+	static const char *numbers[] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven" };
+
+	if(youattack) {
+		x = u.ux; y = u.uy;
+	} else {
+		x = magr->mx; y = magr->my;
+	}
+	blow = 0;
+	for(i=0;i<3;i++) for(j=0;j<3;j++) {
+		if (isok(i+x-1, j+y-1) && (i!=1 || j!=1)) {
+			mtmp = m_at(i+x-1, j+y-1);
+			if(mtmp && is_giant(mtmp->data))
+				blow++;
+		}
+	}
+	if(blow > 7) blow=7;
+	if(blow > 1) {
+		if(vis) pline("%s at one blow!",numbers[blow]);
+		count = blow;
+		for(i=0;i<3 && count;i++) for(j=0;j<3 && count;j++) {
+			if (isok(i+x-1, j+y-1) && (i!=1 || j!=1)) {
+				mtmp = m_at(i+x-1, j+y-1);
+				if(mtmp && is_giant(mtmp->data)) {
+					count--;
+					if(mtmp==&youmonst) {
+						mdamageu(magr,2 * mtmp->mhp + FATAL_DAMAGE_MODIFIER);
+					} else {
+						mtmp->mhp=0;
+						if(youattack) {
+							killed(mtmp);
+							if(mtmp->mhp > 0)
+								setmangry(mtmp);
+						} else {
+							monkilled(mtmp,"",AD_PHYS);
+						}
+					}
+				}
+			}
+		}
+	}
+	return blow;
 }
 
 #endif /* OVLB */
