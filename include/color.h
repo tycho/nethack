@@ -70,4 +70,23 @@ struct menucoloring {
 };
 #endif /* MENU_COLOR */
 
+#ifdef STATUS_COLORS
+struct color_option {
+    int color;
+    int attr_bits;
+};
+
+struct percent_color_option {
+	int percentage;
+	struct color_option color_option;
+	struct percent_color_option *next;
+};
+
+struct text_color_option {
+	char *text;
+	struct color_option color_option;
+	struct text_color_option *next;
+};
+#endif
+
 #endif /* COLOR_H */

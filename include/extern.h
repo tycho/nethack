@@ -130,6 +130,10 @@ E long NDECL(botl_score);
 E int FDECL(describe_level, (char *));
 E const char *FDECL(rank_of, (int,SHORT_P,BOOLEAN_P));
 E void NDECL(bot);
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+E struct color_option text_color_of(const char *, const struct text_color_option *);
+E struct color_option percentage_color_of(int, int, const struct percent_color_option *);
+#endif
 
 /* ### cmd.c ### */
 
