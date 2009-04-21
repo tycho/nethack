@@ -693,9 +693,13 @@ mdamagem(magr, mdef, mattk)
 			tmp += dmgval(otmp, mdef);
 			if (otmp->oartifact) {
 			    (void)artifact_hit(magr,mdef, otmp, &tmp, dieroll);
-			    if (mdef->mhp <= 0)
-				return (MM_DEF_DIED |
-					(grow_up(magr,mdef) ? 0 : MM_AGR_DIED));
+				if (mdef->mhp <= 0) {
+					if(otmp->oartifact==ART_TROLLSBANE)
+						/* so that makecorpstat can mark the corpse as norevive */
+						mdef->m_ap_type = 1;
+					return (MM_DEF_DIED |
+						(grow_up(magr,mdef) ? 0 : MM_AGR_DIED));
+				}
 			}
 			if (tmp)
 				mrustm(magr, mdef, otmp);
@@ -1131,6 +1135,10 @@ mdamagem(magr, mdef, mattk)
 	if(!tmp) return(MM_MISS);
 
 	if((mdef->mhp -= tmp) < 1) {
+		if(mattk->adtyp == AD_PHYS && mattk->aatyp == AT_WEAP &&
+			otmp && otmp->oartifact==ART_TROLLSBANE)
+			/* so that makecorpstat can mark the corpse as norevive */
+			mdef->m_ap_type = 1;
 	    if (m_at(mdef->mx, mdef->my) == magr) {  /* see gulpmm() */
 		remove_monster(mdef->mx, mdef->my);
 		mdef->mhp = 1;	/* otherwise place_monster will complain */

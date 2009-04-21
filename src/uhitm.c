@@ -657,8 +657,12 @@ int thrown;
 
 		    if (obj->oartifact &&
 			artifact_hit(&youmonst, mon, obj, &tmp, dieroll)) {
-			if(mon->mhp <= 0) /* artifact killed monster */
+			if(mon->mhp <= 0) /* artifact killed monster */ {
+				if(obj->oartifact==ART_TROLLSBANE)
+					/* so that makecorpstat can mark the corpse as norevive */
+					mon->m_ap_type = 1;
 			    return FALSE;
+			}
 			if (tmp == 0) return TRUE;
 			hittxt = TRUE;
 		    }
@@ -687,9 +691,9 @@ int thrown;
 				     uwep->otyp == ELVEN_BOW)
 				tmp++;
 			}
+		    }
 			if(obj->opoisoned && is_poisonable(obj))
 			    ispoisoned = TRUE;
-		    }
 		}
 	    } else if(obj->oclass == POTION_CLASS) {
 		if (obj->quan > 1L)
@@ -934,7 +938,7 @@ int thrown;
 		You_feel("like an evil coward for using a poisoned weapon.");
 		adjalign(-1);
 	    }
-	    if (obj && !rn2(nopoison)) {
+	    if (obj && !obj->oartifact && !rn2(nopoison)) {
 		obj->opoisoned = FALSE;
 		Your("%s %s no longer poisoned.", xname(obj),
 		     otense(obj, "are"));
@@ -1007,8 +1011,12 @@ int thrown;
 	/* adjustments might have made tmp become less than what
 	   a level draining artifact has already done to max HP */
 	if (mon->mhp > mon->mhpmax) mon->mhp = mon->mhpmax;
-	if (mon->mhp < 1)
+	if (mon->mhp < 1) {
 		destroyed = TRUE;
+		if(obj && obj->oartifact==ART_TROLLSBANE)
+			/* so that makecorpstat can mark the corpse as norevive */
+			mon->m_ap_type=1;
+	}
 	if (mon->mtame && (!mon->mflee || mon->mfleetim) && tmp > 0) {
 		abuse_dog(mon);
 		monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
@@ -1304,7 +1312,8 @@ register struct attack *mattk;
 
 	if (is_demon(youmonst.data) && !rn2(13) && !uwep
 		&& u.umonnum != PM_SUCCUBUS && u.umonnum != PM_INCUBUS
-		&& u.umonnum != PM_BALROG) {
+		&& u.umonnum != PM_BALROG
+		&& (!MON_WEP(mdef) || MON_WEP(mdef)->oartifact!=ART_DEMONBANE) ) {
 	    demonpet();
 	    return(0);
 	}
