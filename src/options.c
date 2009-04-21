@@ -224,6 +224,7 @@ static struct Bool_Opt
 	{"tombstone",&flags.tombstone, TRUE, SET_IN_GAME},
 	{"toptenwin",&flags.toptenwin, FALSE, SET_IN_GAME},
 	{"travel", &iflags.travelcmd, TRUE, SET_IN_GAME},
+	{"use_darkgray", &iflags.wc2_darkgray, FALSE, SET_IN_FILE},
 #ifdef WIN32CON
 	{"use_inverse",   &iflags.wc_inverse, TRUE, SET_IN_GAME},		/*WC*/
 #else
@@ -4031,6 +4032,7 @@ struct wc_Opt wc2_options[] = {
 	{"windowborders", WC2_WINDOWBORDERS},
 	{"petattr", WC2_PETATTR},
 	{"guicolor", WC2_GUICOLOR},
+	{"use_darkgray", WC2_DARKGRAY},
 	{(char *)0, 0L}
 };
 

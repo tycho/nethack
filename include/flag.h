@@ -286,6 +286,8 @@ struct instance_flags {
     int     wc2_windowborders;  /* display borders on NetHack windows */
     int     wc2_petattr;        /* points to text attributes for pet */
     boolean wc2_guicolor;       /* allow colors in GUI (outside map) */
+	boolean wc2_darkgray;		/* try to use PC dark-gray color
+					 * to represent black object */
 
 	boolean show_buc;	/* always show BUC status */
 	boolean  cmdassist;	/* provide detailed assistance for some commands */
