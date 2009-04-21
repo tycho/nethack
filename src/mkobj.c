@@ -501,7 +501,7 @@ boolean artif;
 					blessorcurse(otmp, 2);
 					break;
 		case HORN_OF_PLENTY:
-		case BAG_OF_TRICKS:	otmp->spe = rnd(20);
+		case BAG_OF_TRICKS:	otmp->spe = rnd(30);
 					break;
 		case FIGURINE:	{	int tryct2 = 0;
 					do

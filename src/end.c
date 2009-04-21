@@ -952,8 +952,8 @@ boolean identified, all_containers;
 
 	for (box = list; box; box = box->nobj) {
 	    if (Is_container(box) || box->otyp == STATUE) {
-		if (box->otyp == BAG_OF_TRICKS) {
-		    continue;	/* wrong type of container */
+		if (box->otyp == BAG_OF_TRICKS && box->spe) {
+		    continue;	/* bag of tricks with charges can't contain anything */
 		} else if (box->cobj) {
 		    winid tmpwin = create_nhwindow(NHW_MENU);
 		    Sprintf(buf, "Contents of %s:", the(xname(box)));
