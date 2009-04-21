@@ -323,6 +323,8 @@ typedef unsigned char	uchar;
  * complexity of the game but also to the size of the load module.
  */
 
+#define PARANOID	/* make sure the user isn't making a mistake */
+
 /* dungeon features */
 #define SINKS		/* Kitchen sinks - Janet Walz */
 /* dungeon levels */
