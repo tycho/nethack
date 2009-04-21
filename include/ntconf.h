@@ -4,6 +4,8 @@
 #ifndef NTCONF_H
 #define NTCONF_H
 
+#include <sys/stat.h>
+
 /* #define SHELL	/* nt use of pcsys routines caused a hang */
 
 #define RANDOM		/* have Berkeley random(3) */
@@ -106,7 +108,7 @@ extern void FDECL(interject, (int));
 #define Rand()	rand()
 #endif
 
-#define FCMASK	0660	/* file creation mask */
+#define FCMASK	(S_IREAD|S_IWRITE) /* file creation mask */
 #define regularize	nt_regularize
 #define HLOCK "NHPERM"
 
