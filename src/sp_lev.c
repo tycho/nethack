@@ -2549,6 +2549,7 @@ sp_lev *lvl;
 
     int     xi, dir;
     int     tmpi;
+    int     allow_flips = 3;
 
     xchar tmpxstart, tmpystart, tmpxsize, tmpysize;
 
@@ -2587,6 +2588,8 @@ sp_lev *lvl;
     if (lvl->init_lev.flags & NOMMAP)       level.flags.nommap = 1;
     if (lvl->init_lev.flags & SHORTSIGHTED) level.flags.shortsighted = 1;
     if (lvl->init_lev.flags & ARBOREAL)     level.flags.arboreal = 1;
+    if (lvl->init_lev.flags & NOFLIPX)      allow_flips &= ~1;
+    if (lvl->init_lev.flags & NOFLIPY)      allow_flips &= ~2;
 
     while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
 	int opcode = lvl->opcodes[n_opcode].opcode;
@@ -3123,7 +3126,7 @@ sp_lev *lvl;
 
     wallification(1, 0, COLNO-1, ROWNO-1);
 
-    flip_level_rnd(3);
+    flip_level_rnd(allow_flips);
 
     count_features();
 
