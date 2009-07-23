@@ -95,6 +95,36 @@ char *lev_message = 0;
 lev_region *lregions = 0;
 int num_lregions = 0;
 
+
+
+void flip_drawbridge_horizontal(lev)
+struct rm *lev;
+{
+        if (IS_DRAWBRIDGE(lev->typ)) {
+                if ((lev->drawbridgemask & DB_DIR) == DB_WEST) {
+                        lev->drawbridgemask &= ~DB_WEST;
+                        lev->drawbridgemask |=  DB_EAST;
+                } else if ((lev->drawbridgemask & DB_DIR) == DB_EAST) {
+                        lev->drawbridgemask &= ~DB_EAST;
+                        lev->drawbridgemask |=  DB_WEST;
+                }
+        }
+}
+
+void flip_drawbridge_vertical(lev)
+struct rm *lev;
+{
+        if (IS_DRAWBRIDGE(lev->typ)) {
+                if ((lev->drawbridgemask & DB_DIR) == DB_NORTH) {
+                        lev->drawbridgemask &= ~DB_NORTH;
+                        lev->drawbridgemask |=  DB_SOUTH;
+                } else if ((lev->drawbridgemask & DB_DIR) == DB_SOUTH) {
+                        lev->drawbridgemask &= ~DB_SOUTH;
+                        lev->drawbridgemask |=  DB_NORTH;
+                }
+        }
+}
+
 void
 flip_level(int flp)
 {
@@ -279,6 +309,9 @@ flip_level(int flp)
 	for (x = 0; x <= x2; x++)
 	    for (y = 0; y <= (y2 / 2); y++) {
 
+		flip_drawbridge_vertical(&levl[x][y]);
+		flip_drawbridge_vertical(&levl[x][y2-y]);
+
 		trm = levl[x][y];
 		levl[x][y] = levl[x][y2-y];
 		levl[x][y2-y] = trm;
@@ -295,6 +328,9 @@ flip_level(int flp)
     if (flp & 2) {
 	for (x = 0; x <= (x2 / 2); x++)
 	    for (y = 0; y <= y2; y++) {
+
+		flip_drawbridge_horizontal(&levl[x][y]);
+		flip_drawbridge_horizontal(&levl[x2-x][y]);
 
 		trm = levl[x][y];
 		levl[x][y] = levl[x2-x][y];
