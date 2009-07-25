@@ -1222,59 +1222,68 @@ show_glyph(x,y,glyph)
      * Check for bad positions and glyphs.
      */
     if (!isok(x, y)) {
-	const char *text;
-	int  offset;
 
-	/* column 0 is invalid, but it's often used as a flag, so ignore it */
-	if (x == 0) return;
+		/* Stop crashing the game just because you couldn't draw a character */
 
-	/*
-	 *  This assumes an ordering of the offsets.  See display.h for
-	 *  the definition.
-	 */
+#if 0
+		const char *text;
+		int  offset;
 
-	if (glyph >= GLYPH_WARNING_OFF) {	/* a warning */
-	    text = "warning";		offset = glyph - GLYPH_WARNING_OFF;
-	} else if (glyph >= GLYPH_SWALLOW_OFF) {	/* swallow border */
-	    text = "swallow border";	offset = glyph - GLYPH_SWALLOW_OFF;
-	} else if (glyph >= GLYPH_ZAP_OFF) {		/* zap beam */
-	    text = "zap beam";		offset = glyph - GLYPH_ZAP_OFF;
-	} else if (glyph >= GLYPH_EXPLODE_OFF) {	/* explosion */
-	    text = "explosion";		offset = glyph - GLYPH_EXPLODE_OFF;
-	} else if (glyph >= GLYPH_CMAP_OFF) {		/* cmap */
-	    text = "cmap_index";	offset = glyph - GLYPH_CMAP_OFF;
-	} else if (glyph >= GLYPH_OBJ_OFF) {		/* object */
-	    text = "object";		offset = glyph - GLYPH_OBJ_OFF;
-	} else if (glyph >= GLYPH_RIDDEN_OFF) {		/* ridden mon */
-	    text = "ridden mon";	offset = glyph - GLYPH_RIDDEN_OFF;
-	} else if (glyph >= GLYPH_BODY_OFF) {		/* a corpse */
-	    text = "corpse";		offset = glyph - GLYPH_BODY_OFF;
-	} else if (glyph >= GLYPH_DETECT_OFF) {		/* detected mon */
-	    text = "detected mon";	offset = glyph - GLYPH_DETECT_OFF;
-	} else if (glyph >= GLYPH_INVIS_OFF) {		/* invisible mon */
-	    text = "invisible mon";	offset = glyph - GLYPH_INVIS_OFF;
-	} else if (glyph >= GLYPH_PET_OFF) {		/* a pet */
-	    text = "pet";		offset = glyph - GLYPH_PET_OFF;
-	} else {					/* a monster */
-	    text = "monster";		offset = glyph;
+		/* column 0 is invalid, but it's often used as a flag, so ignore it */
+		if (x == 0) return;
+
+		/*
+		*  This assumes an ordering of the offsets.  See display.h for
+		*  the definition.
+		*/
+
+		if (glyph >= GLYPH_WARNING_OFF) {	/* a warning */
+			text = "warning";		offset = glyph - GLYPH_WARNING_OFF;
+		} else if (glyph >= GLYPH_SWALLOW_OFF) {	/* swallow border */
+			text = "swallow border";	offset = glyph - GLYPH_SWALLOW_OFF;
+		} else if (glyph >= GLYPH_ZAP_OFF) {		/* zap beam */
+			text = "zap beam";		offset = glyph - GLYPH_ZAP_OFF;
+		} else if (glyph >= GLYPH_EXPLODE_OFF) {	/* explosion */
+			text = "explosion";		offset = glyph - GLYPH_EXPLODE_OFF;
+		} else if (glyph >= GLYPH_CMAP_OFF) {		/* cmap */
+			text = "cmap_index";	offset = glyph - GLYPH_CMAP_OFF;
+		} else if (glyph >= GLYPH_OBJ_OFF) {		/* object */
+			text = "object";		offset = glyph - GLYPH_OBJ_OFF;
+		} else if (glyph >= GLYPH_RIDDEN_OFF) {		/* ridden mon */
+			text = "ridden mon";	offset = glyph - GLYPH_RIDDEN_OFF;
+		} else if (glyph >= GLYPH_BODY_OFF) {		/* a corpse */
+			text = "corpse";		offset = glyph - GLYPH_BODY_OFF;
+		} else if (glyph >= GLYPH_DETECT_OFF) {		/* detected mon */
+			text = "detected mon";	offset = glyph - GLYPH_DETECT_OFF;
+		} else if (glyph >= GLYPH_INVIS_OFF) {		/* invisible mon */
+			text = "invisible mon";	offset = glyph - GLYPH_INVIS_OFF;
+		} else if (glyph >= GLYPH_PET_OFF) {		/* a pet */
+			text = "pet";		offset = glyph - GLYPH_PET_OFF;
+		} else {					/* a monster */
+			text = "monster";		offset = glyph;
+		}
+
+		 impossible("show_glyph:  bad pos %d %d with glyph %d [%s %d].", x, y, glyph, text, offset);
+
+#endif
+
+		return;
 	}
 
-	impossible("show_glyph:  bad pos %d %d with glyph %d [%s %d].",
-						x, y, glyph, text, offset);
-	return;
-    }
-
-    if (glyph >= MAX_GLYPH) {
-	impossible("show_glyph:  bad glyph %d [max %d] at (%d,%d).",
-					glyph, MAX_GLYPH, x, y);
-	return;
-    }
+	if (glyph >= MAX_GLYPH) {
+		/*
+		 * Same here.  There's no reason to crash out, just don't show an illegal glyph and move on
+		 *
+		 * impossible("show_glyph:  bad glyph %d [max %d] at (%d,%d).", glyph, MAX_GLYPH, x, y);
+		 */
+		return;
+	}
 
     if (gbuf[y][x].glyph != glyph) {
-	gbuf[y][x].glyph = glyph;
-	gbuf[y][x].new   = 1;
-	if (gbuf_start[y] > x) gbuf_start[y] = x;
-	if (gbuf_stop[y]  < x) gbuf_stop[y]  = x;
+		gbuf[y][x].glyph = glyph;
+		gbuf[y][x].new   = 1;
+		if (gbuf_start[y] > x) gbuf_start[y] = x;
+		if (gbuf_stop[y]  < x) gbuf_stop[y]  = x;
     }
 }
 
