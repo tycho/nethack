@@ -14,17 +14,18 @@
 
 # make NetHack
 PREFIX	 = /opt/nethack
+
 GAME     = nethack
 # GAME     = nethack.prg
 GAMEUID  = games
-GAMEGRP  = bin
+GAMEGRP  = games
 
 # Permissions - some places use setgid instead of setuid, for instance
 # See also the option "SECURE" in include/config.h
-GAMEPERM = 04755
-FILEPERM = 0644
+GAMEPERM = 02755
+FILEPERM = 0664
 EXEPERM  = 0755
-DIRPERM  = 0755
+DIRPERM  = 0775
 
 # GAMEDIR also appears in config.h as "HACKDIR".
 # VARDIR may also appear in unixconf.h as "VAR_PLAYGROUND" else GAMEDIR
@@ -36,10 +37,10 @@ DIRPERM  = 0755
 # instructions)
 GAMEDIR  = $(PREFIX)/lib/nethack
 VARDIR  = $(GAMEDIR)
-SHELLDIR = $(PREFIX)/games
+SHELLDIR = $(PREFIX)/bin
 
 # per discussion in Install.X11 and Install.Qt
-VARDATND = 
+# VARDATND =
 # VARDATND = x11tiles NetHack.ad pet_mark.xbm
 # VARDATND = x11tiles NetHack.ad pet_mark.xbm rip.xpm
 # for Atari/Gem
@@ -47,7 +48,7 @@ VARDATND =
 # for BeOS
 # VARDATND = beostiles
 # for Gnome
-# VARDATND = x11tiles pet_mark.xbm rip.xpm mapbg.xpm
+VARDATND = x11tiles pet_mark.xbm rip.xpm mapbg.xpm
 
 VARDATD = data oracles options quest.dat rumors
 VARDAT = $(VARDATD) $(VARDATND)

@@ -89,6 +89,18 @@ CC = gcc
 # CFLAGS = -g -I../include
 
 CFLAGS = -O2 -std=c89 -fno-strict-aliasing -Wno-format-security -Wundef -U_FORTIFY_SOURCE -I../include
+
+CFLAGS += -I../include
+ifeq ("$(GRAPHICS)","X11_GRAPHICS")
+CFLAGS += -DX11_GRAPHICS
+endif
+ifeq ("$(GRAPHICS)","QT_GRAPHICS")
+CFLAGS += -DQT_GRAPHICS
+endif
+ifeq ("$(GRAPHICS)","GNOME_GRAPHICS")
+CFLAGS += -DGNOME_GRAPHICS
+endif
+
 LFLAGS =
 
 LIBS =

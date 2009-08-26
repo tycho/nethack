@@ -216,10 +216,6 @@ int *wid, *hgt;
 	    error("Terminal must backspace.");
 # else
 	    if(!(BC = Tgetstr("bc"))) {	/* termcap also uses bc/bs */
-#  ifndef MINIMAL_TERM
-		if(!tgetflag("bs"))
-			error("Terminal must backspace.");
-#  endif
 		BC = tbufptr;
 		tbufptr += 2;
 		*BC = '\b';
