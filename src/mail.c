@@ -4,6 +4,8 @@
 #include "hack.h"
 
 #ifdef MAIL
+#include <fcntl.h>
+#include <errno.h>
 #include "mail.h"
 
 /*
@@ -34,6 +36,8 @@ STATIC_DCL boolean FDECL(md_start,(coord *));
 STATIC_DCL boolean FDECL(md_stop,(coord *, coord *));
 STATIC_DCL boolean FDECL(md_rush,(struct monst *,int,int));
 STATIC_DCL void FDECL(newmail, (struct mail_info *));
+
+int mailckfreq = 0;
 
 extern char *viz_rmin, *viz_rmax;	/* line-of-sight limits (vision.c) */
 
@@ -179,7 +183,7 @@ retry:
 		    max_distance = dd;
 		    startp->y = row;
 		    startp->x = viz_rmin[row];
-		
+
 		} else if (enexto(&testcc, (xchar)viz_rmin[row], row,
 						(struct permonst *) 0) &&
 			   !cansee(testcc.x, testcc.y) &&
@@ -194,7 +198,7 @@ retry:
 		    max_distance = dd;
 		    startp->y = row;
 		    startp->x = viz_rmax[row];
-		
+
 		} else if (enexto(&testcc, (xchar)viz_rmax[row], row,
 						(struct permonst *) 0) &&
 			   !cansee(testcc.x,testcc.y) &&
@@ -463,11 +467,15 @@ struct obj *otmp;
 void
 ckmailstatus()
 {
+#ifdef SIMPLE_MAIL
+	if (mailckfreq == 0)
+	  mailckfreq = (iflags.simplemail ? 5 : 10);
+#else
+	mailckfreq = 10;
+#endif
+
 	if(!mailbox || u.uswallow || !flags.biff
-#  ifdef MAILCKFREQ
-		    || moves < laststattime + MAILCKFREQ
-#  endif
-							)
+		    || moves < laststattime + mailckfreq)
 		return;
 
 	laststattime = moves;
@@ -500,9 +508,68 @@ void
 readmail(otmp)
 struct obj *otmp;
 {
-#  ifdef DEF_MAILREADER			/* This implies that UNIX is defined */
+#ifdef DEF_MAILREADER
 	register const char *mr = 0;
+#endif /* DEF_MAILREADER */
+#ifdef SIMPLE_MAIL
+	if (iflags.simplemail)
+	{
+		FILE* mb = fopen(mailbox, "r");
+		char curline[102], *msg;
+		boolean seen_one_already = FALSE;
+		struct flock fl = { 0 };
 
+		fl.l_type = F_RDLCK;
+		fl.l_whence = SEEK_SET;
+		fl.l_start = 0;
+		fl.l_len = 0;
+
+		if (!mb)
+			goto bail;
+
+		/* Allow this call to block. */
+		if (fcntl (fileno (mb), F_SETLKW, &fl) == -1)
+		  goto bail;
+
+		errno = 0;
+
+		while (fgets(curline, 102, mb) != NULL)
+		{
+		  fl.l_type = F_UNLCK;
+		  fcntl (fileno(mb), F_UNLCK, &fl);
+
+		  pline("There is a%s message on this scroll.",
+		      seen_one_already ? "nother" : "");
+
+		  msg = strchr(curline, ':');
+
+		  if (!msg)
+		    goto bail;
+
+		  *msg = '\0';
+		  msg++;
+
+		  pline ("This message is from '%s'.", curline);
+
+		  msg[strlen(msg) - 1] = '\0'; /* kill newline */
+		  pline ("It reads: \"%s\".", msg);
+
+		  seen_one_already = TRUE;
+		  errno = 0;
+
+		  fl.l_type = F_RDLCK;
+		  fcntl(fileno(mb), F_SETLKW, &fl);
+		}
+
+		fl.l_type = F_UNLCK;
+		fcntl(fileno(mb), F_UNLCK, &fl);
+
+		fclose(mb);
+		unlink(mailbox);
+		return;
+	}
+# endif /* SIMPLE_MAIL */
+# ifdef DEF_MAILREADER			/* This implies that UNIX is defined */
 	display_nhwindow(WIN_MESSAGE, FALSE);
 	if(!(mr = nh_getenv("MAILREADER")))
 		mr = DEF_MAILREADER;
@@ -511,15 +578,21 @@ struct obj *otmp;
 		(void) execl(mr, mr, (char *)0);
 		terminate(EXIT_FAILURE);
 	}
-#  else
-#   ifndef AMS				/* AMS mailboxes are directories */
+# else
+#  ifndef AMS				/* AMS mailboxes are directories */
 	display_file(mailbox, TRUE);
-#   endif /* AMS */
-#  endif /* DEF_MAILREADER */
+#  endif /* AMS */
+# endif /* DEF_MAILREADER */
 
 	/* get new stat; not entirely correct: there is a small time
 	   window where we do not see new mail */
 	getmailstatus();
+	return;
+
+#ifdef SIMPLE_MAIL
+bail:
+	pline("It appears to be all gibberish."); /* bail out _professionally_ */
+#endif
 }
 
 # endif /* UNIX */
@@ -586,10 +659,7 @@ ckmailstatus()
 	static int laststattime = 0;
 	
 	if(u.uswallow || !flags.biff
-#  ifdef MAILCKFREQ
-		    || moves < laststattime + MAILCKFREQ
-#  endif
-							)
+		    || moves < laststattime + mailckfreq)
 		return;
 
 	laststattime = moves;
