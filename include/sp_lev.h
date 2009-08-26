@@ -73,7 +73,8 @@
 #define SPO_TERRAIN		34 /* terrain */
 #define SPO_REPLACETERRAIN	35 /* replaceterrain */
 #define SPO_EXIT		36
-#define MAX_SP_OPCODES		37
+#define SPO_ENDROOM		37
+#define MAX_SP_OPCODES		38
 
 
 /* special level coder CPU flags */

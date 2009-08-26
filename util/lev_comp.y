@@ -86,7 +86,6 @@ static long lev_flags;
 
 unsigned int max_x_map, max_y_map;
 
-static xchar in_room;
 
 extern int fatal_error;
 extern int want_warnings;
@@ -112,7 +111,7 @@ extern const char *fname;
 %token	<i> MAZEWALK_ID WALLIFY_ID REGION_ID FILLING
 %token	<i> RANDOM_OBJECTS_ID RANDOM_MONSTERS_ID RANDOM_PLACES_ID
 %token	<i> ALTAR_ID LADDER_ID STAIR_ID NON_DIGGABLE_ID NON_PASSWALL_ID ROOM_ID
-%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID
+%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID ENDROOM_ID
 %token	<i> CORRIDOR_ID GOLD_ID ENGRAVING_ID FOUNTAIN_ID POOL_ID SINK_ID NONE
 %token	<i> RAND_CORRIDOR_ID DOOR_STATE LIGHT_STATE CURSE_TYPE ENGRAVING_TYPE
 %token	<i> DIRECTION RANDOM_TYPE O_REGISTER M_REGISTER P_REGISTER A_REGISTER
@@ -170,7 +169,6 @@ level_def	: MAZE_ID ':' string ',' filling
 			if ((int) strlen($3) > 8)
 			    yyerror("Level names limited to 8 characters.");
 			$$ = $3;
-			in_room = 0;
 			n_plist = n_mlist = n_olist = 0;
 		  }
 		| LEVEL_ID ':' string
@@ -236,6 +234,10 @@ levstatements	: /* nothing */
 		| levstatement levstatements
 		;
 
+roomstatements	: /* nothing */
+		| roomstatement roomstatements
+		;
+
 levstatement 	: message
 		| altar_detail
 		| branch_region
@@ -259,8 +261,8 @@ levstatement 	: message
 		| portal_region
 		| random_corridors
 		| region_detail
-		| room_chance
 		| room_def
+		| room_chance
 		| room_name
 		| sink_detail
 		| terrain_detail
@@ -268,10 +270,25 @@ levstatement 	: message
 		| spill_detail
 		| stair_detail
 		| stair_region
-		| subroom_def
 		| teleprt_region
 		| trap_detail
 		| wallify_detail
+		;
+
+roomstatement	: subroom_def
+		| room_chance
+		| room_name
+		| door_detail
+		| monster_detail
+		| object_detail
+		| trap_detail
+		| altar_detail
+		| fountain_detail
+		| sink_detail
+		| pool_detail
+		| gold_detail
+		| engraving_detail
+		| stair_detail
 		;
 
 exitstatement	: EXIT_ID
@@ -403,8 +420,10 @@ subroom_def	: SUBROOM_ID ':' room_type ',' light_state ',' subroom_pos ',' room_
 		     tmpr->h = current_size.height;
 
 		     add_opcode(&splev, SPO_SUBROOM, tmpr);
-
-		     in_room = 1;
+		  }
+		  roomstatements ENDROOM_ID
+		  {
+		      add_opcode(&splev, SPO_ENDROOM, NULL);
 		  }
 		;
 
@@ -425,8 +444,10 @@ room_def	: ROOM_ID ':' room_type ',' light_state ',' room_pos ',' room_align ','
 		     tmpr->h = current_size.height;
 
 		     add_opcode(&splev, SPO_ROOM, tmpr);
-
-		     in_room = 1;
+		  }
+		  roomstatements ENDROOM_ID
+		  {
+		      add_opcode(&splev, SPO_ENDROOM, NULL);
 		  }
 		;
 
