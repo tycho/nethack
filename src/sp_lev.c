@@ -2588,6 +2588,7 @@ sp_lev *lvl;
     int     xi, dir;
     int     tmpi;
     int     allow_flips = 3;
+    int     room_build_fail = 0;
 
     xchar tmpxstart, tmpystart, tmpxsize, tmpysize;
 
@@ -2640,6 +2641,8 @@ sp_lev *lvl;
 
 	croom = mkrsub ? mkrsub : mkr;
 
+	if (room_build_fail && (opcode != SPO_ENDROOM) && (opcode != SPO_ROOM) && (opcode != SPO_SUBROOM)) goto next_opcode;
+
 	switch (opcode) {
         case SPO_NULL:
 	    break;
@@ -2676,27 +2679,44 @@ sp_lev *lvl;
 		create_engraving(tmpengraving, croom);
 	    break;
 	case SPO_SUBROOM:
-	    tmpsubroom = (room *) opdat;
-	    if (!mkr) {
-		panic("Subroom without a parent room?!");
-	    } else if (!tmpsubroom) panic("Subroom without data?");
-	    croom = build_room(tmpsubroom, mkr);
-	    if (croom) mkrsub = croom;
+	    if (!room_build_fail) {
+		tmpsubroom = (room *) opdat;
+		if (!mkr) {
+		    panic("Subroom without a parent room?!");
+		} else if (!tmpsubroom) panic("Subroom without data?");
+		croom = build_room(tmpsubroom, mkr);
+		if (croom) mkrsub = croom;
+		else room_build_fail++;
+	    } else room_build_fail++; /* room failed to get built, fail subroom too. */
 	    break;
 	case SPO_ROOM:
-	    tmproom = (room *) opdat;
-	    tmpsubroom = (room *)0;
-	    mkrsub = (struct mkroom *)0;
-	    if (!tmproom) panic("Room without data?");
-	    croom = build_room(tmproom, (struct mkroom *)0);
-	    if (croom) mkr = croom;
+	    if (!room_build_fail) {
+		tmproom = (room *) opdat;
+		tmpsubroom = (room *)0;
+		mkrsub = (struct mkroom *)0;
+		if (!tmproom) panic("Room without data?");
+		croom = build_room(tmproom, (struct mkroom *)0);
+		if (croom) mkr = croom;
+		else room_build_fail++;
+	    } else room_build_fail++; /* one room failed alreaedy, fail this one too. */
 	    break;
 	case SPO_ENDROOM:
-	    croom = (struct mkroom *)0;
-	    if (mkrsub)
+	    if (mkrsub) {
 		mkrsub = (struct mkroom *)0; /* get out of subroom */
-	    else if (mkr)
+	    } else if (mkr) {
 		mkr = (struct mkroom *)0; /* no subroom, get out of top-level room */
+		/* Need to ensure xstart/ystart/xsize/ysize have something sensible,
+		   in case there's some stuff to be created outside the outermost room,
+		   and there's no MAP.
+		 */
+		if(xsize <= 1 && ysize <= 1) {
+		    xstart = 1;
+		    ystart = 0;
+		    xsize = COLNO-1;
+		    ysize = ROWNO;
+		}
+	    }
+	    if (room_build_fail > 0) room_build_fail--;
 	    break;
 	case SPO_DOOR:
 	    croom = &rooms[0];
