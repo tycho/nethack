@@ -269,31 +269,37 @@ ROOM: "ordinary" , random, random, random, random
 STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'Z', "human zombie", random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random,random,random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'Z', "human zombie", random
+ENDROOM
 
 ROOM: "morgue" , random, random, random, random
 STAIR: random, down
 OBJECT: random, random, random
 TRAP: random, random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'W', "wraith", random
+ENDROOM
 
 ROOM: "morgue" , random, random, random, random
 OBJECT: random, random, random
 TRAP: random, random
+ENDROOM
 
 RANDOM_CORRIDORS
 
@@ -304,11 +310,13 @@ STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'Z', "human zombie", random
 MONSTER: 'W', "wraith", random
+ENDROOM
 
 ROOM: "morgue" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random, random, random
 OBJECT: random,random,random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -316,12 +324,14 @@ TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'Z', "human zombie", random
 MONSTER: 'W', "wraith", random
+ENDROOM
 
 ROOM: "morgue" , random, random, random, random
 STAIR: random, down
 OBJECT: random, random, random
 OBJECT: random, random, random
 TRAP: random, random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -329,9 +339,11 @@ OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'Z', "human zombie", random
 MONSTER: 'W', "wraith", random
+ENDROOM
 
 ROOM: "morgue" , random, random, random, random
 OBJECT: random, random, random
 TRAP: random, random
+ENDROOM
 
 RANDOM_CORRIDORS

@@ -393,12 +393,14 @@ ROOM: "ordinary" , random, random, random, random
 STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'l', "leprechaun", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random,random,random
 MONSTER: 'l', "leprechaun", random, hostile
 MONSTER: 'N', "guardian naga", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -406,6 +408,7 @@ TRAP: random, random
 TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'n', "water nymph", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 STAIR: random, down
@@ -414,6 +417,7 @@ TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', random, random, hostile
 MONSTER: 'N', "guardian naga", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -421,6 +425,7 @@ OBJECT: random, random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -428,6 +433,7 @@ TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile
 MONSTER: 'n', "water nymph", random, hostile
+ENDROOM
 
 RANDOM_CORRIDORS
 
@@ -440,12 +446,14 @@ ROOM: "ordinary" , random, random, random, random
 STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'l', "leprechaun", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random,random,random
 MONSTER: 'l', "leprechaun", random, hostile
 MONSTER: 'N', "guardian naga", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -453,6 +461,7 @@ TRAP: random, random
 TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'n', "water nymph", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 STAIR: random, down
@@ -461,6 +470,7 @@ TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', random, random, hostile
 MONSTER: 'N', "guardian naga", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -468,6 +478,7 @@ OBJECT: random, random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -475,5 +486,6 @@ TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile
 MONSTER: 'n', "water nymph", random, hostile
+ENDROOM
 
 RANDOM_CORRIDORS

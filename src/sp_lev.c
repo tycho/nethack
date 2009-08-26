@@ -2252,6 +2252,7 @@ sp_lev *lvl;
 	case SPO_NULL:
 	case SPO_EXIT:
 	case SPO_WALLIFY:
+	case SPO_ENDROOM:
 	    break;
 	case SPO_MESSAGE:
 	    Fread((genericptr_t) &n, 1, sizeof(n), fd);
@@ -2461,6 +2462,7 @@ sp_lev *lvl;
 	case SPO_EXIT:
 	case SPO_MESSAGE:
 	case SPO_DOOR:
+	case SPO_ENDROOM:
 	case SPO_STAIR:
 	case SPO_LADDER:
 	case SPO_ALTAR:
@@ -2688,6 +2690,13 @@ sp_lev *lvl;
 	    if (!tmproom) panic("Room without data?");
 	    croom = build_room(tmproom, (struct mkroom *)0);
 	    if (croom) mkr = croom;
+	    break;
+	case SPO_ENDROOM:
+	    croom = (struct mkroom *)0;
+	    if (mkrsub)
+		mkrsub = (struct mkroom *)0; /* get out of subroom */
+	    else if (mkr)
+		mkr = (struct mkroom *)0; /* no subroom, get out of top-level room */
 	    break;
 	case SPO_DOOR:
 	    croom = &rooms[0];

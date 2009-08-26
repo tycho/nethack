@@ -278,11 +278,13 @@ ROOM: "ordinary" , random, random, random, random
 STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'E', random, random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random,random,random
 MONSTER: 'E', random, random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
@@ -290,6 +292,7 @@ TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'X', "xorn", random
 MONSTER: 'E', "earth elemental", random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 STAIR: random, down
@@ -297,17 +300,20 @@ OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'E', random, random, hostile
 MONSTER: 'E', "earth elemental", random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'X', random, random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'E', "earth elemental", random
+ENDROOM
 
 RANDOM_CORRIDORS
 
@@ -319,17 +325,20 @@ ROOM: "ordinary" , random, random, random, random
 STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'X', random, random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random,random,random
 MONSTER: 'X', random, random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'E', random, random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 STAIR: random, down
@@ -337,17 +346,20 @@ OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'E', random, random, hostile
 MONSTER: 'E', "earth elemental", random
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'X', random, random, hostile
+ENDROOM
 
 ROOM: "ordinary" , random, random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'E', "earth elemental", random
+ENDROOM
 
 RANDOM_CORRIDORS
 

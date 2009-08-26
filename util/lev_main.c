@@ -826,6 +826,7 @@ sp_lev *maze;
 	    case SPO_EXIT:
 	    case SPO_WALLIFY:
 	    case SPO_NULL:
+	    case SPO_ENDROOM:
 	      break;
 	    case SPO_MESSAGE:
 	    case SPO_RANDOM_OBJECTS:
