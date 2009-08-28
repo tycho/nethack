@@ -223,6 +223,14 @@ lintdefs:
 panic.o:     panic.c $(CONFIG_H)
 
 
+#   dependencies for dice roller
+#
+roll: roll.o ../src/rnd.o ../src/decl.o
+
+roll.o: roll.c
+
+roll.c: $(HACK_H)
+
 #	dependencies for lev_comp
 #
 lev_comp:  $(SPLEVOBJS)
@@ -407,7 +415,7 @@ spotless: clean
 	-rm -f lev_lex.c lev_yacc.c dgn_lex.c dgn_yacc.c
 	-rm -f ../include/lev_comp.h ../include/dgn_comp.h
 	-rm -f ../include/tile.h
-	-rm -f makedefs lev_comp dgn_comp recover dlb
+	-rm -f makedefs lev_comp dgn_comp recover dlb roll
 	-rm -rf lev_comp_tmp dgn_comp_tmp
 	-rm -f gif2txt txt2ppm tile2x11 tile2img.ttp xpm2img.ttp tilemap
 
