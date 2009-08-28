@@ -235,11 +235,11 @@ install: $(GAME) recover $(VARDAT) dungeon spec_levs
 # not all mkdirs have -p; those that don't will create a -p directory
 	-mkdir -p $(SHELLDIR)
 	-rm -rf $(GAMEDIR) $(VARDIR)
-	-mkdir -p $(GAMEDIR) $(VARDIR) $(VARDIR)/save
+	-mkdir -p $(GAMEDIR) $(VARDIR) $(VARDIR)/save $(VARDIR)/dumps
 	-rmdir ./-p
-	-$(CHOWN) $(GAMEUID) $(GAMEDIR) $(VARDIR) $(VARDIR)/save
-	$(CHGRP) $(GAMEGRP) $(GAMEDIR) $(VARDIR) $(VARDIR)/save
-	chmod $(DIRPERM) $(GAMEDIR) $(VARDIR) $(VARDIR)/save
+	-$(CHOWN) $(GAMEUID) $(GAMEDIR) $(VARDIR) $(VARDIR)/save $(VARDIR)/dumps
+	$(CHGRP) $(GAMEGRP) $(GAMEDIR) $(VARDIR) $(VARDIR)/save $(VARDIR)/dumps
+	chmod $(DIRPERM) $(GAMEDIR) $(VARDIR) $(VARDIR)/save $(VARDIR)/dumps
 # set up the game files
 	( $(MAKE) dofiles )
 # set up some additional files
