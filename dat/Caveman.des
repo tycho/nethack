@@ -37,10 +37,10 @@ ENDMAP
 REPLACE_TERRAIN:(40,1, 74,18), 'P', ' ', unlit, 25%
 REPLACE_TERRAIN:(40,1, 74,18), 'P', '.', unlit, 5%
 
-IF [90%] THEN
+IF [90%] {
    TERRAIN:(43,11),' ',unlit
    TERRAIN:(40,10),'.',unlit
-ENDIF
+}
 
 # Dungeon Description
 REGION:(00,00,75,19),unlit,"ordinary"

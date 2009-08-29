@@ -30,32 +30,32 @@ MAP
 ENDMAP
 
 
-IF [75%] THEN
-   IF [50%] THEN
+IF [75%] {
+   IF [50%] {
       TERRAIN[75%]:(10,8),horizontal,28, '-', lit
       TERRAIN[75%]:(37,8),horizontal,28, '-', lit
       TERRAIN[75%]:(37,3),vertical,6, '|', lit
       TERRAIN[75%]:(37,9),vertical,6, '|', lit
-   ELSE
-      IF [50%] THEN
+   } ELSE {
+      IF [50%] {
       	 TERRAIN[75%]:(10,8),horizontal,28, 'F', lit
       	 TERRAIN[75%]:(37,8),horizontal,28, 'F', lit
       	 TERRAIN[75%]:(37,3),vertical,6, 'F', lit
       	 TERRAIN[75%]:(37,9),vertical,6, 'F', lit
-      ELSE
+      } ELSE {
       	 TERRAIN[75%]:(10,8),horizontal,28, 'L', lit
       	 TERRAIN[75%]:(37,8),horizontal,28, 'L', lit
       	 TERRAIN[75%]:(37,3),vertical,6, 'L', lit
       	 TERRAIN[75%]:(37,9),vertical,6, 'L', lit
-      ENDIF
-   ENDIF
-ELSE
-   IF [25%] THEN
+      }
+   }
+} ELSE {
+   IF [25%] {
       TERRAIN:(4,4,70,13),unfilled, '-',lit
       TERRAIN:(25, 4),horizontal,25, '.',lit
       TERRAIN:(25,13),horizontal,25, '.',lit
-   ENDIF
-ENDIF
+   }
+}
 
 
 # Dungeon Description
