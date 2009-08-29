@@ -98,7 +98,7 @@ static int map_cnt = 0;
 		  map[map_cnt - 1] = '\n';
 		  map[map_cnt] = '\0';
 		}
-^#.*\n		{ line_number++; }
+^[ \t]*#.*\n		{ line_number++; }
 :		{ colon_line_number = line_number; return ':'; }
 MESSAGE		return MESSAGE_ID;
 MAZE		return MAZE_ID;
