@@ -111,7 +111,7 @@ extern const char *fname;
 %token	<i> MAZEWALK_ID WALLIFY_ID REGION_ID FILLING
 %token	<i> RANDOM_OBJECTS_ID RANDOM_MONSTERS_ID RANDOM_PLACES_ID
 %token	<i> ALTAR_ID LADDER_ID STAIR_ID NON_DIGGABLE_ID NON_PASSWALL_ID ROOM_ID
-%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID
+%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID RANDLINE_ID
 %token	<i> CORRIDOR_ID GOLD_ID ENGRAVING_ID FOUNTAIN_ID POOL_ID SINK_ID NONE
 %token	<i> RAND_CORRIDOR_ID DOOR_STATE LIGHT_STATE CURSE_TYPE ENGRAVING_TYPE
 %token	<i> DIRECTION RANDOM_TYPE O_REGISTER M_REGISTER P_REGISTER A_REGISTER
@@ -268,6 +268,7 @@ levstatement 	: message
 		| terrain_detail
 		| replace_terrain_detail
 		| spill_detail
+		| randline_detail
 		| stair_detail
 		| stair_region
 		| teleprt_region
@@ -1322,6 +1323,23 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		 }
 	       ;
 
+randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER
+		  {
+		      randline* tmprandline = New(randline);
+
+		      tmprandline->x1 = current_region.x1;
+		      tmprandline->y1 = current_region.y1;
+		      tmprandline->x2 = current_region.x2;
+		      tmprandline->y2 = current_region.y2;
+		      tmprandline->fg = what_map_char((char) $5);
+		      if (tmprandline->fg == INVALID_TYPE) {
+			  yyerror("Invalid map character in randline!");
+		      }
+		      tmprandline->lit = $7;
+		      tmprandline->roughness = $9;
+		      add_opcode(&splev, SPO_RANDLINE, tmprandline);
+		  }
+
 spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' light_state
 			{
 				spill* tmpspill = New(spill);
@@ -1626,6 +1644,18 @@ coord		: '(' INTEGER ',' INTEGER ')'
 		           yyerror("Coordinates out of map range!");
 			current_coord.x = $2;
 			current_coord.y = $4;
+		  }
+		;
+
+lineends	: coordinate ','
+		  {
+			current_region.x1 = current_coord.x;
+			current_region.y1 = current_coord.y;
+		  }
+		  coordinate
+		  {
+			current_region.x2 = current_coord.x;
+			current_region.y2 = current_coord.y;
 		  }
 		;
 

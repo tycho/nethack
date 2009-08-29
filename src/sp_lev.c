@@ -1583,6 +1583,71 @@ struct mkroom *croom;
 }
 
 void
+line_midpoint_core(x1,y1,x2,y2,rough, ter,lit, rec)
+     schar x1,y1,x2,y2,rough,ter,lit,rec;
+{
+    int mx, my;
+    int dx, dy;
+
+    if (rec < 1) {
+	return;
+    }
+
+    if ((x2 == x1) && (y2 == y1)) {
+	if (!(x1 >= COLNO-1 || x1 <= 0 || y1 <= 0 || y1 >= ROWNO-1)) {
+	    levl[x1][y1].typ = ter;
+	    levl[x1][y1].lit = lit;
+	}
+	return;
+    }
+
+    if (rough > max(abs(x2-x1), abs(y2-y1)))
+	rough = max(abs(x2-x1), abs(y2-y1));
+
+    if (rough < 2) {
+	mx = ((x1 + x2) / 2);
+	my = ((y1 + y2) / 2);
+    } else {
+	do {
+	    dx = (rand() % rough) - (rough / 2);
+	    dy = (rand() % rough) - (rough / 2);
+	    mx = ((x1 + x2) / 2) + dx;
+	    my = ((y1 + y2) / 2) + dy;
+	} while ((mx >= COLNO-1 || mx <= 0 || my <= 0 || my >= ROWNO-1));
+    }
+
+    if (!(mx >= COLNO-1 || mx <= 0 || my <= 0 || my >= ROWNO-1)) {
+	levl[mx][my].typ = ter;
+	levl[mx][my].lit = lit;
+    }
+
+    rough = (rough * 2) / 3;
+
+    rec--;
+
+    line_midpoint_core(x1,y1,mx,my, rough,ter,lit, rec);
+    line_midpoint_core(mx,my,x2,y2, rough,ter,lit, rec);
+}
+
+void
+line_midpoint(rndline,croom)
+randline *rndline;
+struct mkroom *croom;
+{
+    schar x1,y1,x2,y2;
+
+    x1 = rndline->x1; y1 = rndline->y1;
+    get_location(&x1, &y1, DRY|WET, croom);
+
+    x2 = rndline->x2; y2 = rndline->y2;
+    get_location(&x2, &y2, DRY|WET, croom);
+
+    line_midpoint_core(x1,y1,x2,y2,rndline->roughness, rndline->fg, rndline->lit, 12);
+}
+
+
+
+void
 set_terrain(terr, croom)
 terrain *terr;
 struct mkroom *croom;
@@ -2401,6 +2466,10 @@ sp_lev *lvl;
 	    opdat = alloc(sizeof(terrain));
 	    Fread(opdat, 1, sizeof(terrain), fd);
 	    break;
+	case SPO_RANDLINE:
+	    opdat = alloc(sizeof(randline));
+	    Fread(opdat, 1, sizeof(randline), fd);
+	    break;
 	case SPO_SPILL:
 		 opdat = alloc(sizeof(spill));
 		 Fread(opdat, 1, sizeof(spill), fd);
@@ -2484,6 +2553,7 @@ sp_lev *lvl;
 	case SPO_WALLIFY:
 	case SPO_TERRAIN:
 	case SPO_REPLACETERRAIN:
+	case SPO_RANDLINE:
 	case SPO_SPILL:
 	    /* nothing extra to free here */
 	    break;
@@ -2571,6 +2641,7 @@ sp_lev *lvl;
     pool *tmppool;
     corridor *tmpcorridor;
     terrain *tmpterrain;
+    randline *tmprandline;
     replaceterrain *tmpreplaceterrain;
 	 spill* tmpspill;
     room *tmproom, *tmpsubroom;
@@ -2813,6 +2884,10 @@ sp_lev *lvl;
 	case SPO_REPLACETERRAIN:
 	    tmpreplaceterrain = (replaceterrain *) opdat;
 	    replace_terrain(tmpreplaceterrain, croom);
+	    break;
+	case SPO_RANDLINE:
+	    tmprandline = (randline *) opdat;
+	    line_midpoint(tmprandline, croom);
 	    break;
 	case SPO_SPILL:
 		 tmpspill = (spill*) opdat;
