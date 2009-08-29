@@ -225,85 +225,103 @@ MONSTER: 'o', "goblin", random, hostile
 #
 LEVEL: "minetn-2"
 ROOM: "ordinary" , lit, (3,3), (center,center), (31,15)
+{
 NAME: "town"
 
 SUBROOM: "ordinary", random, (2,0), (2,2), "town"
+{
 ROOMDOOR: false, closed, west, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", unlit, (5,0), (2,2), "town"
+{
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (8,0), (2,2), "town"
+{
 ROOMDOOR: false, closed, east, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", lit, (16,0), (2,2), "town"
+{
 ROOMDOOR: false, closed, west, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", unlit, (19,0), (2,2), "town"
+{
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (22,0), (2,2), "town"
+{
 ROOMDOOR: false, locked, south, random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 SUBROOM: "ordinary", unlit, (25,0), (2,2), "town"
+{
 ROOMDOOR: false, closed, east, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", lit, (2,5), (2,2), "town"
+{
 ROOMDOOR: false, closed, north, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", lit, (5,5), (2,2), "town"
+{
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (8,5), (2,2), "town"
+{
 ROOMDOOR: false, locked, north, random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 SUBROOM: "shop" , lit, (2,10), (4,3), "town"
+{
 CHANCE: 90
 ROOMDOOR: false, closed, west, random
-ENDROOM
+}
 
 SUBROOM: "tool shop", lit, (23,10), (4,3), "town"
+{
 CHANCE: 90
 ROOMDOOR: false, closed, east, random
-ENDROOM
+}
 
 SUBROOM: "food shop", lit, (24,5), (3,4), "town"
+{
 CHANCE: 90
 ROOMDOOR: false, closed, north, random
-ENDROOM
+}
 
 SUBROOM: "candle shop", lit, (11,10), (4,3), "town"
+{
 ROOMDOOR: false, closed, east, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", unlit, (7,10), (3,3), "town"
+{
 ROOMDOOR: false, locked, north, random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 SUBROOM: "temple", lit, (19,5), (4,4), "town"
+{
 ROOMDOOR: false, closed, north, random
 ALTAR:(02,02),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
-ENDROOM
+}
 
 SUBROOM: "ordinary", lit, (18,10), (4,3), "town"
+{
 ROOMDOOR: false, locked, west, random
 MONSTER: 'G', "gnome lord", random
-ENDROOM
+}
 
 FOUNTAIN: (17, 5)
 FOUNTAIN: (13, 8)
@@ -315,27 +333,31 @@ MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watch captain", random, peaceful
 
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, up
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, down
 TRAP: random, random
 MONSTER: 'G', "gnome", random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 MONSTER: 'h', "dwarf", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 TRAP: random, random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 RANDOM_CORRIDORS
 
@@ -345,81 +367,98 @@ RANDOM_CORRIDORS
 #
 LEVEL: "minetn-3"
 ROOM: "ordinary",lit,(3,3),(center,center),(31,15)
+{
 NAME: "town"
 
 SUBROOM:"ordinary",random,(2,2),(2,2),"town"
+{
 ROOMDOOR: false,closed,south,random
-ENDROOM
+}
 
 SUBROOM:"tool shop",lit,(5,3),(2,3),"town"
+{
 CHANCE: 30
 ROOMDOOR: false,closed,south,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(2,10),(2,3),"town"
+{
 ROOMDOOR: false, locked, north, random
 MONSTER: 'G',random,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(5,9),(2,2),"town"
+{
 ROOMDOOR: false,closed,north,random
-ENDROOM
+}
 
 SUBROOM:"temple",lit,(10,2),(3,4),"town"
+{
 ROOMDOOR: false,closed,east,random
 ALTAR:(1,1),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(11,7),(2,2),"town"
+{
 ROOMDOOR: false,closed,west,random
-ENDROOM
+}
 
 SUBROOM:"shop",lit,(10,10),(3,3),"town"
+{
 ROOMDOOR:false,closed,west,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(14,8),(2,2),"town"
+{
 ROOMDOOR:false,locked,north,random
 MONSTER: 'G',random,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(14,11),(2,2),"town"
+{
 ROOMDOOR:false,closed,south,random
-ENDROOM
+}
 
 SUBROOM:"tool shop",lit,(17,10),(3,3),"town"
+{
 CHANCE:40
 ROOMDOOR:false,closed,north,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(21,11),(2,2),"town"
+{
 ROOMDOOR:false,locked,east,random
 MONSTER:'G',random,random
-ENDROOM
+}
 
 SUBROOM:"food shop",lit,(26,8),(3,2),"town"
+{
 CHANCE:90
 ROOMDOOR:false,closed,west,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(16,2),(2,2),"town"
+{
 ROOMDOOR:false,closed,west,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(19,2),(2,2),"town"
+{
 ROOMDOOR:false,closed,north,random
-ENDROOM
+}
 
 SUBROOM:"wand shop",lit,(19,5),(3,2),"town"
+{
 CHANCE:30
 ROOMDOOR:false,closed,west,random
-ENDROOM
+}
 
 SUBROOM: "candle shop",lit,(25,2),(3,3),"town"
+{
 ROOMDOOR:false,closed,south,random
-ENDROOM
+}
 
 FOUNTAIN:(01,06)
 FOUNTAIN:(29,13)
@@ -429,27 +468,31 @@ MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watch captain", random, peaceful
 
-ENDROOM
+}
 
 ROOM: "ordinary", random, random, random, random
+{
 STAIR: random, up
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, down
 TRAP: random, random
 MONSTER: 'G', "gnome", random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 MONSTER: 'h', "dwarf", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 TRAP: random, random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 RANDOM_CORRIDORS
 
@@ -459,68 +502,81 @@ RANDOM_CORRIDORS
 #
 LEVEL: "minetn-4"
 ROOM: "ordinary",lit,(3,3),(center,center),(30,15)
+{
 NAME: "town"
 
 SUBROOM:"book shop",lit,(4,2),(3,3),"town"
+{
 ROOMDOOR: false,closed,south,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(8,2),(2,2),"town"
+{
 ROOMDOOR: false,closed,south,random
-ENDROOM
+}
 
 SUBROOM:"temple",lit,(11,3),(5,4),"town"
+{
 ROOMDOOR: false,closed,south,random
 ALTAR:(2,1),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(19,2),(2,2),"town"
+{
 ROOMDOOR: false,closed,south,random
 MONSTER: 'G', random, random
-ENDROOM
+}
 
 SUBROOM:"candle shop",lit,(22,2),(3,3),"town"
+{
 ROOMDOOR:false,closed,south,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(26,2),(2,2),"town"
+{
 ROOMDOOR:false,locked,east,random
 MONSTER: 'G',random,random
-ENDROOM
+}
 
 SUBROOM:"tool shop",lit,(4,10),(3,3),"town"
+{
 CHANCE:90
 ROOMDOOR:false,closed,north,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(8,11),(2,2),"town"
+{
 ROOMDOOR:false,locked,south,random
 MONSTER: 'k',"kobold shaman",random
 MONSTER: 'k',"kobold shaman",random
 MONSTER: 'f',"kitten",random
 MONSTER: 'f',random,random
-ENDROOM
+}
 
 SUBROOM:"food shop",lit,(11,11),(3,2),"town"
+{
 CHANCE:90
 ROOMDOOR:false,closed,east,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(17,11),(2,2),"town"
+{
 ROOMDOOR:false,closed,west,random
-ENDROOM
+}
 
 SUBROOM:"ordinary",random,(20,10),(2,2),"town"
+{
 ROOMDOOR:false,locked,north,random
 MONSTER:'G',random,random
-ENDROOM
+}
 
 SUBROOM:"shop",lit,(23,10),(3,3),"town"
+{
 CHANCE:90
 ROOMDOOR:false,closed,north,random
-ENDROOM
+}
 
 FOUNTAIN:(08,07)
 FOUNTAIN:(18,07)
@@ -530,27 +586,31 @@ MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watch captain", random, peaceful
 
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, up
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, down
 TRAP: random, random
 MONSTER: 'G', "gnome", random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 MONSTER: 'h', "dwarf", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 TRAP: random, random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 RANDOM_CORRIDORS
 
@@ -769,95 +829,114 @@ MONSTER: '@', "watch captain", random, peaceful
 #
 LEVEL: "minetn-7"
 ROOM: "ordinary" , lit, (3,3), (center,center), (30,15)
+{
 NAME: "town"
 
 SUBROOM: "ordinary", random, (2,2), (4,2), "town"
+{
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (7,2), (2,2), "town"
+{
 ROOMDOOR: false, closed, north, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (7,5), (2,2), "town"
+{
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", lit, (10,2), (3,4), "town"
+{
 MONSTER:'G',"gnome",random
 MONSTER:'Y',"monkey",random
 MONSTER:'Y',"monkey",random
 MONSTER:'Y',"monkey",random
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (14,2), (4,2), "town"
+{
 ROOMDOOR: false, closed, south, 0
 MONSTER: 'n', random, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (16,5), (2,2), "town"
+{
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", unlit, (19,2), (2,2), "town"
+{
 ROOMDOOR: false, locked, east, random
 MONSTER: 'G',"gnome king",random
-ENDROOM
+}
 
 SUBROOM: "food shop", lit, (19,5), (2,3), "town"
+{
 CHANCE: 50
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (2,7), (2,2), "town"
+{
 ROOMDOOR: false, closed, east, random
-ENDROOM
+}
 
 SUBROOM: "tool shop", lit, (2,10), (2,3), "town"
+{
 CHANCE: 50
 ROOMDOOR: false, closed, south, random
-ENDROOM
+}
 
 SUBROOM: "candle shop", lit, (5,10),(3,3), "town"
+{
 ROOMDOOR: false, closed, north, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (11,10), (2,2), "town"
+{
 ROOMDOOR: false, locked, west, random
 MONSTER: 'G',random,random
-ENDROOM
+}
 
 SUBROOM: "shop", lit, (14,10), (2,3), "town"
+{
 CHANCE: 60
 ROOMDOOR: false, closed, north, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (17,11), (4,2), "town"
+{
 ROOMDOOR: false, closed, north, random
-ENDROOM
+}
 
 SUBROOM: "ordinary", random, (22,11), (2,2), "town"
+{
 ROOMDOOR: false, closed, south, random
 SINK: (00,00)
-ENDROOM
+}
 
 SUBROOM: "food shop", lit, (25,11), (3,2), "town"
+{
 CHANCE: 50
 ROOMDOOR: false, closed, east, random
-ENDROOM
+}
 
 SUBROOM: "tool shop", lit, (25,2), (3,3), "town"
+{
 CHANCE: 30
 ROOMDOOR: false, closed, west, random
-ENDROOM
+}
 
 SUBROOM: "temple", lit, (24,6), (4,4), "town"
+{
 ROOMDOOR: false, closed, west, random
 ALTAR:(02,01),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
-ENDROOM
+}
 
 FOUNTAIN: (12, 07)
 FOUNTAIN: (11, 13)
@@ -874,30 +953,34 @@ MONSTER:'G',"gnome lord",random
 MONSTER:'Y',"monkey",random
 MONSTER:'Y',"monkey",random
 
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, up
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, down
 TRAP: random, random
 MONSTER: 'G', "gnome", random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 MONSTER: 'h', "dwarf", random
-ENDROOM
-  
+}
+
 ROOM: "ordinary" , random, random, random, random
+{
 TRAP: random, random
 MONSTER: 'G', "gnome", random
-ENDROOM
+}
 
 RANDOM_CORRIDORS
-  
+
 
 
 # Mine end level variant 1

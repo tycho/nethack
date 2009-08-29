@@ -111,7 +111,7 @@ extern const char *fname;
 %token	<i> MAZEWALK_ID WALLIFY_ID REGION_ID FILLING
 %token	<i> RANDOM_OBJECTS_ID RANDOM_MONSTERS_ID RANDOM_PLACES_ID
 %token	<i> ALTAR_ID LADDER_ID STAIR_ID NON_DIGGABLE_ID NON_PASSWALL_ID ROOM_ID
-%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID ENDROOM_ID
+%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID
 %token	<i> CORRIDOR_ID GOLD_ID ENGRAVING_ID FOUNTAIN_ID POOL_ID SINK_ID NONE
 %token	<i> RAND_CORRIDOR_ID DOOR_STATE LIGHT_STATE CURSE_TYPE ENGRAVING_TYPE
 %token	<i> DIRECTION RANDOM_TYPE O_REGISTER M_REGISTER P_REGISTER A_REGISTER
@@ -120,7 +120,7 @@ extern const char *fname;
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID THEN_ID ELSE_ID ENDIF_ID
 %token	<i> CONTAINED SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
 %token	<i> EXIT_ID
-%token	<i> ',' ':' '(' ')' '[' ']'
+%token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill filling door_pos
@@ -421,7 +421,7 @@ subroom_def	: SUBROOM_ID ':' room_type ',' light_state ',' subroom_pos ',' room_
 
 		     add_opcode(&splev, SPO_SUBROOM, tmpr);
 		  }
-		  roomstatements ENDROOM_ID
+		  '{' roomstatements '}'
 		  {
 		      add_opcode(&splev, SPO_ENDROOM, NULL);
 		  }
@@ -445,7 +445,7 @@ room_def	: ROOM_ID ':' room_type ',' light_state ',' room_pos ',' room_align ','
 
 		     add_opcode(&splev, SPO_ROOM, tmpr);
 		  }
-		  roomstatements ENDROOM_ID
+		  '{' roomstatements '}'
 		  {
 		      add_opcode(&splev, SPO_ENDROOM, NULL);
 		  }

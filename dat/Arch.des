@@ -386,87 +386,99 @@ MONSTER:'M',random,random
 LEVEL: "Arc-fila"
 #
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'S', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 OBJECT: random,random,random
 MONSTER: 'S', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'S', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, down
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'S', random, random
 MONSTER: 'M', "human mummy", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'S', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'S', random, random
-ENDROOM
+}
 
 RANDOM_CORRIDORS
 
 LEVEL: "Arc-filb"
 #
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, up
 OBJECT: random,random,random
 MONSTER: 'M', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 OBJECT: random,random,random
 MONSTER: 'M', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 TRAP: random, random
 OBJECT: random,random,random
 MONSTER: 'M', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 STAIR: random, down
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'S', random, random
 MONSTER: 'M', "human mummy", random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'S', random, random
-ENDROOM
+}
 
 ROOM: "ordinary" , random, random, random, random
+{
 OBJECT: random, random, random
 TRAP: random, random
 MONSTER: 'S', random, random
-ENDROOM
+}
 
 RANDOM_CORRIDORS
