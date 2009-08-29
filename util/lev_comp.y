@@ -117,7 +117,7 @@ extern const char *fname;
 %token	<i> DIRECTION RANDOM_TYPE O_REGISTER M_REGISTER P_REGISTER A_REGISTER
 %token	<i> ALIGNMENT LEFT_OR_RIGHT CENTER TOP_OR_BOT ALTAR_TYPE UP_OR_DOWN
 %token	<i> SUBROOM_ID NAME_ID FLAGS_ID FLAG_TYPE MON_ATTITUDE MON_ALERTNESS
-%token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID THEN_ID ELSE_ID ENDIF_ID
+%token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID ELSE_ID
 %token	<i> CONTAINED SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
 %token	<i> EXIT_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
@@ -317,7 +317,7 @@ ifstatement 	: IF_ID chance
 		  }
 		;
 
-if_ending	: THEN_ID levstatements ENDIF_ID
+if_ending	: '{' levstatements '}'
 		  {
 		     if (n_if_list > 0) {
 			opjmp *tmpjmp;
@@ -325,7 +325,7 @@ if_ending	: THEN_ID levstatements ENDIF_ID
 			tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
 		     } else yyerror("IF...THEN ... huh?!");
 		  }
-		| THEN_ID levstatements
+		| '{' levstatements '}'
 		  {
 		     if (n_if_list > 0) {
 			long tmppos = splev.init_lev.n_opcodes;
@@ -340,7 +340,7 @@ if_ending	: THEN_ID levstatements ENDIF_ID
 			if_list[n_if_list++] = tmppos;
 		     } else yyerror("IF...THEN ... huh?!");
 		  }
-		 ELSE_ID levstatements ENDIF_ID
+		 ELSE_ID '{' levstatements '}'
 		  {
 		     if (n_if_list > 0) {
 			opjmp *tmpjmp;

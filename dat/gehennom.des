@@ -30,21 +30,21 @@ MAP
 ----------------------------------------------------------------------------
 ENDMAP
 
-IF [50%] THEN
+IF [50%] {
    TERRAIN:(50,8),horizontal,4, '-',unlit
    TERRAIN:(40,8),horizontal,4, 'B',unlit
-ENDIF
+}
 
-IF [50%] THEN
+IF [50%] {
    TERRAIN:(27,12),'|',unlit
    TERRAIN:(27,3),horizontal,3, 'B',unlit
    TERRAIN:(28,2), '-',unlit
-ENDIF
+}
 
-IF [50%] THEN
+IF [50%] {
    TERRAIN:(16,10),vertical,2,'|',unlit
    TERRAIN:(9,13),horizontal,6, 'B',unlit
-ENDIF
+}
 
 # Dungeon Description
 # The shrine to Moloch.
@@ -704,31 +704,31 @@ NOMAP
 #  always put stairs relatively far apart
 #
 # outer loop
-IF [50%] THEN
+IF [50%] {
 # inner loop
-IF [50%] THEN
-# Option 1: Up Left, Down Right
-STAIR:levregion(01,01,20,20),levregion(40,10,44,12),up
-STAIR:levregion(50,01,70,20),levregion(45,10,49,12),down
-ELSE
-# Option 2: Up Right, Down Left
-STAIR:levregion(50,01,70,20),levregion(45,10,49,12),up
-STAIR:levregion(01,01,20,20),levregion(40,10,44,12),down
-ENDIF
+  IF [50%] {
+#   Option 1: Up Left, Down Right
+    STAIR:levregion(01,01,20,20),levregion(40,10,44,12),up
+    STAIR:levregion(50,01,70,20),levregion(45,10,49,12),down
+  } ELSE {
+#   Option 2: Up Right, Down Left
+    STAIR:levregion(50,01,70,20),levregion(45,10,49,12),up
+    STAIR:levregion(01,01,20,20),levregion(40,10,44,12),down
+  }
 # outer loop again
-ELSE
+} ELSE {
 # inner loop 2
-IF [50%] THEN
-# Option 3: Up Center, Down Elsewhere
-STAIR:levregion(30,01,50,20),levregion(38,01,42,20),up
-STAIR:levregion(01,01,70,20),levregion(30,01,50,20),down
-ELSE
-# Option 4: Down Center, Up Elsewhere
-STAIR:levregion(01,01,70,20),levregion(30,01,50,20),up
-STAIR:levregion(30,01,50,20),levregion(38,01,42,20),down
-ENDIF
+  IF [50%] {
+#   Option 3: Up Center, Down Elsewhere
+    STAIR:levregion(30,01,50,20),levregion(38,01,42,20),up
+    STAIR:levregion(01,01,70,20),levregion(30,01,50,20),down
+  } ELSE {
+#   Option 4: Down Center, Up Elsewhere
+    STAIR:levregion(01,01,70,20),levregion(30,01,50,20),up
+    STAIR:levregion(30,01,50,20),levregion(38,01,42,20),down
+  }
 # end of outer loop
-ENDIF
+}
 #
 RANDOM_OBJECTS:'(','/','=','+',')','[','?','*','%'
 OBJECT: object[0], random, random
@@ -750,30 +750,30 @@ MONSTER:monster[3],random,random,hostile
 MONSTER:random,random,random,hostile
 MONSTER:'H',random,random,hostile
 # chance of evil critters
-IF [50%] THEN
-MONSTER:'L',random,random,hostile
-ELSE
-MONSTER:random,random,random,hostile
-ENDIF
-IF [66%] THEN
+IF [50%] {
+  MONSTER:'L',random,random,hostile
+} ELSE {
+  MONSTER:random,random,random,hostile
+}
+IF [66%] {
 # could be a snark now, so up the percentage a bit
-MONSTER:'J',random,random,hostile
-ELSE
-MONSTER:random,random,random,hostile
-ENDIF
+  MONSTER:'J',random,random,hostile
+} ELSE {
+  MONSTER:random,random,random,hostile
+}
 # chance of lava spillage?
-IF [75%] THEN
-SPILL: random, 'L', north, 20, lit
-ENDIF
-IF [75%] THEN
-SPILL: random, 'L', south, 20, lit
-ENDIF
-IF [75%] THEN
-SPILL: random, 'L', east, 20, lit
-ENDIF
-IF [75%] THEN
-SPILL: random, 'L', west, 20, lit
-ENDIF
+IF [75%] {
+  SPILL: random, 'L', north, 20, lit
+}
+IF [75%] {
+  SPILL: random, 'L', south, 20, lit
+}
+IF [75%] {
+  SPILL: random, 'L', east, 20, lit
+}
+IF [75%] {
+  SPILL: random, 'L', west, 20, lit
+}
 #
 TRAP: random, random
 TRAP: random, random
