@@ -1,0 +1,6 @@
+*.[ao]
+/Makefile
+/dat/Makefile
+/doc/Makefile
+/src/Makefile
+/util/Makefile
