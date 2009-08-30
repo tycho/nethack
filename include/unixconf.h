@@ -6,6 +6,8 @@
 #ifndef UNIXCONF_H
 #define UNIXCONF_H
 
+#include <platform.h>
+
 /*
  * Some include files are in a different place under SYSV
  *	BSD		   SYSV
@@ -19,16 +21,23 @@
  */
 
 /* define exactly one of the following four choices */
-/* #define BSD 1 */	/* define for 4.n/Free/Open/Net BSD  */
+/*#define BSD 1	/* define for 4.n/Free/Open/Net BSD  */
 			/* also for relatives like SunOS 4.x, DG/UX, and */
 			/* older versions of Linux */
-/* #define ULTRIX */	/* define for Ultrix v3.0 or higher (but not lower) */
+#ifdef TARGET_OS_ULTRIX
+#define ULTRIX	/* define for Ultrix v3.0 or higher (but not lower) */
 			/* Use BSD for < v3.0 */
 			/* "ULTRIX" not to be confused with "ultrix" */
+#endif
+#if defined(TARGET_OS_LINUX) || defined(TARGET_OS_MACOSX)
 #define SYSV		/* define for System V, Solaris 2.x, newer versions */
-			/* of Linux */
-/* #define HPUX */	/* Hewlett-Packard's Unix, version 6.5 or higher */
+					/* of Linux */
+#endif
+
+#if defined(TARGET_OS_HPUX)
+#define HPUX /* Hewlett-Packard's Unix, version 6.5 or higher */
 			/* use SYSV for < v6.5 */
+#endif
 
 
 /* define any of the following that are appropriate */
@@ -37,9 +46,15 @@
 #define NETWORK		/* if running on a networked system */
 			/* e.g. Suns sharing a playground through NFS */
 /* #define SUNOS4 */	/* SunOS 4.x */
+#ifdef TARGET_OS_LINUX
 #define LINUX /* Another Unix clone */
-/* #define OSX	 /* Apple OS X */
-/* #define CYGWIN32 */	/* Unix on Win32 -- use with case sensitive defines */
+#endif
+#ifdef TARGET_OS_MACOSX
+#define OSX	 /* Apple OS X */
+#endif
+#ifdef TARGET_COMPILER_CYGWIN
+#define CYGWIN32 /* Unix on Win32 -- use with case sensitive defines */
+#endif
 /* #define GENIX */	/* Yet Another Unix Clone */
 /* #define HISX */	/* Bull Unix for XPS Machines */
 /* #define BOS */	/* Bull Open Software - Unix for DPX/2 Machines */
