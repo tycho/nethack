@@ -153,16 +153,17 @@ REGION:(51,01,73,06),lit,"ordinary"
 REGION:(51,07,73,10),unlit,"ordinary"
 REGION:(51,11,73,16),lit,"ordinary"
 
+
 IF [40%] {
    RANDLINE:random,random,'L',lit,20
    IF [50%] {
       RANDLINE:random,random,'L',lit,25
    }
    IF [50%] {
-      RANDLINE:random,random,'L',lit,25
+      RANDLINE:random,random,'L',lit,25,2
    }
-   IF [50%] {
-      RANDLINE:random,random,'L',lit,25
+   IF [25%] {
+      RANDLINE:random,random,'L',lit,25,3
    }
 }
 

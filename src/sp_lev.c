@@ -1582,9 +1582,27 @@ struct mkroom *croom;
 	}
 }
 
+
 void
-line_midpoint_core(x1,y1,x2,y2,rough, ter,lit, rec)
-     schar x1,y1,x2,y2,rough,ter,lit,rec;
+put_terr_spot(x,y,ter,lit,thick)
+     schar x,y,ter,lit,thick;
+{
+    int dx, dy;
+
+    if (thick < 1) thick = 1;
+    else if (thick > 10) thick = 10;
+
+    for (dx = x-(thick/2); dx < x+((thick+1)/2); dx++)
+	for (dy = y-(thick/2); dy < y+((thick+1)/2); dy++)
+	    if (!(dx >= COLNO-1 || dx <= 0 || dy <= 0 || dy >= ROWNO-1)) {
+		levl[dx][dy].typ = ter;
+		levl[dx][dy].lit = lit;
+	    }
+}
+
+void
+line_midpoint_core(x1,y1,x2,y2,rough, ter,lit,thick, rec)
+     schar x1,y1,x2,y2,rough,ter,lit,thick,rec;
 {
     int mx, my;
     int dx, dy;
@@ -1594,10 +1612,7 @@ line_midpoint_core(x1,y1,x2,y2,rough, ter,lit, rec)
     }
 
     if ((x2 == x1) && (y2 == y1)) {
-	if (!(x1 >= COLNO-1 || x1 <= 0 || y1 <= 0 || y1 >= ROWNO-1)) {
-	    levl[x1][y1].typ = ter;
-	    levl[x1][y1].lit = lit;
-	}
+	put_terr_spot(x1,y1,ter,lit,thick);
 	return;
     }
 
@@ -1616,17 +1631,14 @@ line_midpoint_core(x1,y1,x2,y2,rough, ter,lit, rec)
 	} while ((mx >= COLNO-1 || mx <= 0 || my <= 0 || my >= ROWNO-1));
     }
 
-    if (!(mx >= COLNO-1 || mx <= 0 || my <= 0 || my >= ROWNO-1)) {
-	levl[mx][my].typ = ter;
-	levl[mx][my].lit = lit;
-    }
+    put_terr_spot(mx,my,ter,lit,thick);
 
     rough = (rough * 2) / 3;
 
     rec--;
 
-    line_midpoint_core(x1,y1,mx,my, rough,ter,lit, rec);
-    line_midpoint_core(mx,my,x2,y2, rough,ter,lit, rec);
+    line_midpoint_core(x1,y1,mx,my, rough,ter,lit,thick, rec);
+    line_midpoint_core(mx,my,x2,y2, rough,ter,lit,thick, rec);
 }
 
 void
@@ -1634,7 +1646,7 @@ line_midpoint(rndline,croom)
 randline *rndline;
 struct mkroom *croom;
 {
-    schar x1,y1,x2,y2;
+    schar x1,y1,x2,y2,thick;
 
     x1 = rndline->x1; y1 = rndline->y1;
     get_location(&x1, &y1, DRY|WET, croom);
@@ -1642,7 +1654,9 @@ struct mkroom *croom;
     x2 = rndline->x2; y2 = rndline->y2;
     get_location(&x2, &y2, DRY|WET, croom);
 
-    line_midpoint_core(x1,y1,x2,y2,rndline->roughness, rndline->fg, rndline->lit, 12);
+    thick = rndline->thick;
+
+    line_midpoint_core(x1,y1,x2,y2,rndline->roughness, rndline->fg, rndline->lit, thick, 12);
 }
 
 
