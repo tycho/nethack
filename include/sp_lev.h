@@ -92,6 +92,7 @@ typedef struct {
     xchar x1,y1,x2,y2;
     xchar fg, lit;
     int roughness;
+    xchar thick;
 } randline;
 
 typedef struct {

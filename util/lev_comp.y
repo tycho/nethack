@@ -1323,7 +1323,7 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		 }
 	       ;
 
-randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER
+randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER opt_int
 		  {
 		      randline* tmprandline = New(randline);
 
@@ -1337,8 +1337,19 @@ randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER
 		      }
 		      tmprandline->lit = $7;
 		      tmprandline->roughness = $9;
+		      tmprandline->thick = $<i>10;
 		      add_opcode(&splev, SPO_RANDLINE, tmprandline);
 		  }
+
+opt_int		: /* empty */
+		  {
+			$<i>$ = 0;
+		  }
+		| ',' INTEGER
+		  {
+			$<i>$ = $2;
+		  }
+		;
 
 spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' light_state
 			{
