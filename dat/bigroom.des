@@ -422,6 +422,16 @@ MAP
 ENDMAP
 # Dungeon Description
 REGION:(00,00,72,18),lit,"ordinary"
+
+IF [33%] {
+   IF [50%] {
+      RANDLINE:(37,0),(37,18),'P',lit,20,2
+   } ELSE {
+      RANDLINE:(0,10),(73,10),'P',lit,20,2
+   }
+}
+
+
 # Stairs
 STAIR:random,up
 STAIR:random,down
