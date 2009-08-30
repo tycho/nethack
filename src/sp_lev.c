@@ -1628,7 +1628,7 @@ line_midpoint_core(x1,y1,x2,y2,rough, ter,lit,thick, rec)
 	    dy = (rand() % rough) - (rough / 2);
 	    mx = ((x1 + x2) / 2) + dx;
 	    my = ((y1 + y2) / 2) + dy;
-	} while ((mx >= COLNO-1 || mx <= 0 || my <= 0 || my >= ROWNO-1));
+	} while ((mx > COLNO-1 || mx < 0 || my < 0 || my > ROWNO-1));
     }
 
     put_terr_spot(mx,my,ter,lit,thick);
