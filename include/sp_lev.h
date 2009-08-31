@@ -24,10 +24,7 @@
 #define ARBOREAL	16
 #define NOFLIPX		32
 #define NOFLIPY		64
-
-    /* special level types */
-#define SP_LEV_ROOMS	1
-#define SP_LEV_MAZE	2
+#define MAZELEVEL	128
 
 /* max. # of random registers */
 #define MAX_REGISTERS	10
@@ -115,7 +112,6 @@ typedef struct {
 	boolean smoothed, joined;
 	xchar	lit, walled;
 	long	flags;
-	char	levtyp;	/* SP_LEV_xxx */
 	schar	filling;
 	long	n_opcodes;
 } lev_init;

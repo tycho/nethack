@@ -6,7 +6,8 @@
 # These are the bigroom levels:
 #
 
-MAZE:"bigrm-1",' '
+LEVEL:"bigrm-1",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -120,7 +121,8 @@ MONSTER:random,random,random
 
 #	Here, just play with the lighting...
 
-MAZE:"bigrm-2",' '
+LEVEL:"bigrm-2",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -227,7 +229,8 @@ MONSTER:random,random,random
 
 #	Now, let's get fancy...
 
-MAZE:"bigrm-3",' '
+LEVEL:"bigrm-3",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -308,7 +311,8 @@ MONSTER:random,random,(37,16)
 MONSTER:random,random,(49,16)
 MONSTER:random,random,(61,16)
 MONSTER:random,random,(73,16)
-MAZE:"bigrm-4",' '
+LEVEL:"bigrm-4",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
 -----------                                                     -----------
@@ -397,7 +401,8 @@ MONSTER:random,random,random
 
 #	Try an oval room...
 
-MAZE:"bigrm-5",' '
+LEVEL:"bigrm-5",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
                             ------------------                            
@@ -494,7 +499,8 @@ MONSTER:random,random,random
 
 # The Four Circles
 
-MAZE:"bigrm-6",' '
+LEVEL:"bigrm-6",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
      ---------         ---------         ---------         ---------     
@@ -580,7 +586,8 @@ MONSTER:random,random,random
 
 # Let's tilt it a bit
 
-MAZE:"bigrm-7",' '
+LEVEL:"bigrm-7",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
                                                         -----              
@@ -666,7 +673,8 @@ MONSTER:random,random,random
 
 # Two streams
 
-MAZE:"bigrm-8",' '
+LEVEL:"bigrm-8",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
         |------------------------       -------------------------        
@@ -753,7 +761,8 @@ MONSTER:random,random,random
 
 # Slanted
 
-MAZE:"bigrm-9",' '
+LEVEL:"bigrm-9",' '
+FLAGS:mazelevel
 GEOMETRY:center,center
 MAP
 ----------------------------------------------                             

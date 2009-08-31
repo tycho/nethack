@@ -3,8 +3,8 @@
 # NetHack may be freely redistributed.  See license for details.
 #
 # Upper stage of Vlad's tower
-MAZE:"tower1",' '
-FLAGS: noteleport,hardfloor
+LEVEL:"tower1",' '
+FLAGS: noteleport,hardfloor,mazelevel
 GEOMETRY:half-left,center
 MAP
   --- --- ---  
@@ -49,8 +49,8 @@ NON_DIGGABLE:(00,00,14,10)
 
 
 # Intermediate stage of Vlad's tower
-MAZE:"tower2",' '
-FLAGS: noteleport,hardfloor
+LEVEL:"tower2",' '
+FLAGS: noteleport,hardfloor,mazelevel
 GEOMETRY:half-left,center
 MAP
   --- --- ---  
@@ -89,8 +89,8 @@ NON_DIGGABLE:(00,00,14,10)
 
 
 # Bottom most stage of Vlad's tower
-MAZE:"tower3",' '
-FLAGS: noteleport,hardfloor
+LEVEL:"tower3",' '
+FLAGS: noteleport,hardfloor,mazelevel
 GEOMETRY:half-left,center
 MAP
     --- --- ---  

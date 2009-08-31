@@ -8,8 +8,8 @@
 #	Here you meet your (besieged) class leader, the Norn,
 #	and receive your quest assignment.
 #
-MAZE: "Val-strt",' '
-FLAGS: noteleport,hardfloor
+LEVEL: "Val-strt",' '
+FLAGS: noteleport,hardfloor,mazelevel
 GEOMETRY:center,center
 MAP
 IIIIIIPPPIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -90,8 +90,8 @@ MONSTER: 'H',"fire giant",(10,16),hostile
 #	further towards your assigned quest.
 #
 
-MAZE: "Val-loca",' '
-FLAGS: hardfloor
+LEVEL: "Val-loca",' '
+FLAGS: hardfloor,mazelevel
 INIT_MAP: '.' , 'I' , true , true , lit , false
 GEOMETRY:center,center
 MAP
@@ -176,7 +176,8 @@ MONSTER:'H',random,random,hostile
 #	been assigned to retrieve.
 #
 
-MAZE: "Val-goal", 'L'
+LEVEL: "Val-goal", 'L'
+FLAGS:mazelevel
 INIT_MAP: '.' , 'L' , true , true , lit , false
 GEOMETRY:center,center
 MAP
@@ -266,7 +267,8 @@ MONSTER:'H',random,random,hostile
 #	and goal levels.
 #
 
-MAZE: "Val-fila" , 'I'
+LEVEL: "Val-fila" , 'I'
+FLAGS:mazelevel
 INIT_MAP: '.' , 'I' , true , true , lit, false
 NOMAP
 #
@@ -299,7 +301,8 @@ TRAP: random, random
 TRAP: random, random
 TRAP: random, random
 
-MAZE: "Val-filb" , 'L'
+LEVEL: "Val-filb" , 'L'
+FLAGS:mazelevel
 INIT_MAP: '.' , 'L' , true , true , lit, false
 NOMAP
 #

@@ -160,25 +160,24 @@ level		: level_def flags lev_init levstatements
 		  }
 		;
 
-level_def	: MAZE_ID ':' string ',' filling
+level_def	: LEVEL_ID ':' string opt_filling
 		  {
-			splev.init_lev.filling = (schar) $5;
-		        splev.init_lev.levtyp = SP_LEV_MAZE;
 			if (index($3, '.'))
 			    yyerror("Invalid dot ('.') in level name.");
 			if ((int) strlen($3) > 8)
 			    yyerror("Level names limited to 8 characters.");
-			$$ = $3;
 			n_plist = n_mlist = n_olist = 0;
-		  }
-		| LEVEL_ID ':' string
-		  {
-			splev.init_lev.levtyp = SP_LEV_ROOMS;
-			if (index($3, '.'))
-			    yyerror("Invalid dot ('.') in level name.");
-			if ((int) strlen($3) > 8)
-			    yyerror("Level names limited to 8 characters.");
 			$$ = $3;
+		  }
+		;
+
+opt_filling	: /* nothing */
+		  {
+		      /* really, nothing */
+		  }
+		| ',' filling
+		  {
+		      splev.init_lev.filling = (schar) $2;
 		  }
 		;
 
