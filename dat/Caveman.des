@@ -8,8 +8,9 @@
 #	Here you meet your (besieged) class leader, Shaman Karnov
 #	and receive your quest assignment.
 #
-LEVEL: "Cav-strt",' '
+LEVEL: "Cav-strt"
 FLAGS: noteleport,hardfloor,arboreal,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
                                                                             
@@ -126,8 +127,9 @@ MONSTER: 'f',"panther",random,hostile
 #	further towards your assigned quest.
 #
 
-LEVEL: "Cav-loca",' '
+LEVEL: "Cav-loca"
 FLAGS: noteleport,hardfloor,arboreal,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
                                                                             
@@ -224,8 +226,9 @@ MONSTER:'S',"python",random,hostile
 #	been assigned to retrieve.
 #
 
-LEVEL: "Cav-goal", ' '
+LEVEL: "Cav-goal"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
                                                                             
@@ -289,8 +292,9 @@ WALLIFY
 #	where the actual caves are.
 #
 
-LEVEL: "Cav-fila" , ' '
+LEVEL: "Cav-fila"
 FLAGS: noteleport,hardfloor,arboreal,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY: center,center
 MAP
                                                                             
@@ -370,9 +374,9 @@ MONSTER: 'Y',"carnivorous ape",random,hostile
 #	Obviously, "fila" has been hijacked and moved above.  :)
 #
 
-LEVEL: "Cav-filb" , ' '
+LEVEL: "Cav-filb"
 FLAGS:mazelevel
-INIT_MAP: '.' , ' ' , true , true , random , true
+INIT_MAP: mines, '.' , ' ' , true , true , random , true
 NOMAP
 #
 LADDER: random, up

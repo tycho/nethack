@@ -8,8 +8,9 @@
 #	Here you meet your (besieged) class leader, Hippocrates
 #	and receive your quest assignment.
 #
-LEVEL: "Hea-strt",' '
+LEVEL: "Hea-strt"
 FLAGS: noteleport,hardfloor,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
@@ -110,10 +111,10 @@ MONSTER: 'S',random,random,hostile
 #	further towards your assigned quest.
 #
 
-LEVEL: "Hea-loca",' '
+LEVEL: "Hea-loca"
 FLAGS: hardfloor,mazelevel
 #
-INIT_MAP: '.' , 'P', true , true , lit , false
+INIT_MAP: mines, '.' , 'P', true , true , lit , false
 GEOMETRY:center,center
 MAP
 PPPPPPPPPPPPP.......PPPPPPPPPPP
@@ -210,10 +211,10 @@ MONSTER: 'S',random,random,hostile
 #	been assigned to retrieve.
 #
 
-LEVEL: "Hea-goal", 'P'
+LEVEL: "Hea-goal"
 FLAGS:mazelevel
 #
-INIT_MAP: '.' , 'P' , false , true , lit , false
+INIT_MAP: mines, '.' , 'P' , false , true , lit , false
 GEOMETRY:center,center
 MAP
 .P....................................PP.
@@ -302,9 +303,9 @@ MONSTER: 'S',random,random,hostile
 #	and goal levels.
 #
 
-LEVEL: "Hea-fila" , 'P'
+LEVEL: "Hea-fila"
 FLAGS:mazelevel
-INIT_MAP: '.' , 'P' , false , true , lit , false
+INIT_MAP: mines, '.' , 'P' , false , true , lit , false
 NOMAP
 #
 STAIR: random, up
@@ -338,9 +339,9 @@ TRAP: random, random
 TRAP: random, random
 TRAP: random, random
 
-LEVEL: "Hea-filb" , 'P'
+LEVEL: "Hea-filb"
 FLAGS:mazelevel
-INIT_MAP: '.' , 'P' , false , true , lit , false
+INIT_MAP: mines, '.' , 'P' , false , true , lit , false
 NOMAP
 #
 STAIR: random, up

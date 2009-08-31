@@ -9,9 +9,9 @@
 #	This level is used to fill out any levels not occupied by
 #	specific levels as defined below.
 #
-LEVEL: "minefill" , ' '
+LEVEL: "minefill"
 FLAGS:mazelevel
-INIT_MAP: '.' , ' ' , true , true , random , true
+INIT_MAP: mines, '.' , ' ' , true , true , random , true
 NOMAP
 #
 STAIR: random, up
@@ -54,9 +54,9 @@ TRAP: random, random
 # Orcish Town - a variant of Frontier Town that has been
 # overrun by orcs.  Note the barricades (iron bars).
 #
-LEVEL: "minetn-1",' '
+LEVEL: "minetn-1"
 FLAGS:mazelevel
-INIT_MAP:'.',' ',true,true,random,true
+INIT_MAP:mines,'.',' ',true,true,random,true
 GEOMETRY:center,center
 MAP
 .....................................
@@ -619,8 +619,9 @@ RANDOM_CORRIDORS
 
 # "Grotto Town" by Kelly Bailey
 #
-LEVEL: "minetn-5",' '
+LEVEL: "minetn-5"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 -----         ---------                                                    
@@ -754,9 +755,9 @@ ALTAR:(31,03),align[0],shrine
 
 # "Bustling Town" by Kelly Bailey
 #
-LEVEL: "minetn-6",' '
+LEVEL: "minetn-6"
 FLAGS:mazelevel
-INIT_MAP:'.','-',true,true,lit,true
+INIT_MAP:mines,'.','-',true,true,lit,true
 GEOMETRY:center,top
 MAP
 .-----................----------------.-
@@ -990,8 +991,9 @@ RANDOM_CORRIDORS
 # Mine end level variant 1
 # "Mimic of the Mines"
 #
-LEVEL: "minend-1", ' '
+LEVEL: "minend-1"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 #1234567890123456789012345678901234567890123456789012345678901234567890
 MAP
@@ -1103,8 +1105,9 @@ MONSTER:'h',random,random
 # Mine end level variant 2
 # "Gnome King's Wine Cellar"
 #
-LEVEL: "minend-2", ' '
+LEVEL: "minend-2"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -1252,8 +1255,9 @@ MONSTER:'h',random,random
 # "Catacombs" by Kelly Bailey
 # Relies on some very specific behavior of MAZEWALK.
 #
-LEVEL:"minend-3",'-'
+LEVEL:"minend-3"
 FLAGS:nommap,mazelevel
+INIT_MAP:solidfill,'-'
 GEOMETRY:center,bottom
 MAP
  - - - - - - - - - - -- -- - - . - - - - - - - - - -- - - -- - - - - . - - |

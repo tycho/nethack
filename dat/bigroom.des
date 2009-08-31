@@ -6,8 +6,9 @@
 # These are the bigroom levels:
 #
 
-LEVEL:"bigrm-1",' '
+LEVEL:"bigrm-1"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -121,8 +122,9 @@ MONSTER:random,random,random
 
 #	Here, just play with the lighting...
 
-LEVEL:"bigrm-2",' '
+LEVEL:"bigrm-2"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -229,8 +231,9 @@ MONSTER:random,random,random
 
 #	Now, let's get fancy...
 
-LEVEL:"bigrm-3",' '
+LEVEL:"bigrm-3"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ---------------------------------------------------------------------------
@@ -311,8 +314,10 @@ MONSTER:random,random,(37,16)
 MONSTER:random,random,(49,16)
 MONSTER:random,random,(61,16)
 MONSTER:random,random,(73,16)
-LEVEL:"bigrm-4",' '
+
+LEVEL:"bigrm-4"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 -----------                                                     -----------
@@ -401,8 +406,9 @@ MONSTER:random,random,random
 
 #	Try an oval room...
 
-LEVEL:"bigrm-5",' '
+LEVEL:"bigrm-5"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
                             ------------------                            
@@ -499,8 +505,9 @@ MONSTER:random,random,random
 
 # The Four Circles
 
-LEVEL:"bigrm-6",' '
+LEVEL:"bigrm-6"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
      ---------         ---------         ---------         ---------     
@@ -586,8 +593,9 @@ MONSTER:random,random,random
 
 # Let's tilt it a bit
 
-LEVEL:"bigrm-7",' '
+LEVEL:"bigrm-7"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
                                                         -----              
@@ -673,8 +681,9 @@ MONSTER:random,random,random
 
 # Two streams
 
-LEVEL:"bigrm-8",' '
+LEVEL:"bigrm-8"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
         |------------------------       -------------------------        
@@ -761,8 +770,9 @@ MONSTER:random,random,random
 
 # Slanted
 
-LEVEL:"bigrm-9",' '
+LEVEL:"bigrm-9"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ----------------------------------------------                             

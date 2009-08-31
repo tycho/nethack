@@ -16,8 +16,9 @@
 # To motivate the player : there are 4 storerooms (armors, weapons, food and
 # gems) and a wand of wishing in one of the 4 towers...
 
-LEVEL:"castle",random
+LEVEL:"castle"
 FLAGS: noteleport,mazelevel
+INIT_MAP:mazegrid,'-'
 GEOMETRY:center,center
 MAP
 }}}}}}}}}.............................................}}}}}}}}}

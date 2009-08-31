@@ -4,8 +4,9 @@
 # NetHack may be freely redistributed.  See license for details.
 #
 
-LEVEL: "valley", ' '
+LEVEL: "valley"
 FLAGS: noteleport,hardfloor,nommap,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ----------------------------------------------------------------------------
@@ -172,9 +173,9 @@ MONSTER:'M',random,random
 #
 # The Juiblex level
 #
-LEVEL:"juiblex",' '
+LEVEL:"juiblex"
 FLAGS:noteleport,shortsighted,mazelevel
-INIT_MAP:'.','}',true,true,unlit,false
+INIT_MAP:mines,'.','}',true,true,unlit,false
 # guarantee at least one open spot to ensure successful stair placement
 GEOMETRY:left,bottom
 MAP
@@ -289,8 +290,9 @@ TRAP:"magic",random
 #
 # The Orcus Level
 #
-LEVEL:"orcus",random
+LEVEL:"orcus"
 FLAGS: noteleport,shortsighted,mazelevel
+INIT_MAP:mazegrid,'-'
 GEOMETRY:right,center
 # A ghost town
 MAP
@@ -429,8 +431,9 @@ MONSTER:random,random,random
 #
 # The Asmodeus Level
 #
-LEVEL:"asmodeus",random
+LEVEL:"asmodeus"
 FLAGS: noteleport,mazelevel
+INIT_MAP:mazegrid,'-'
 # First part
 GEOMETRY:half-left,center
 MAP
@@ -513,8 +516,9 @@ TRAP:"magic", random
 #
 # The Baalzebub level
 #
-LEVEL:"baalz",random
+LEVEL:"baalz"
 FLAGS: noteleport,mazelevel
+INIT_MAP:mazegrid,'-'
 GEOMETRY:right,center
 MAP
 -------------------------------------------------
@@ -570,8 +574,9 @@ MONSTER:'V',random,random
 #
 # The Sanctum Level
 #
-LEVEL:"sanctum", ' '
+LEVEL:"sanctum"
 FLAGS: noteleport,hardfloor,nommap,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ----------------------------------------------------------------------------
@@ -696,9 +701,9 @@ STAIR:(63,15),up
 #	This level is used to fill out any levels not occupied by
 #	specific levels as defined above.
 #
-LEVEL: "hellfill",'L'
+LEVEL: "hellfill"
 FLAGS:mazelevel
-INIT_MAP: '.',' ',true,true,unlit,true
+INIT_MAP: mines,'.',' ',true,true,unlit,true,'L'
 TELEPORT_REGION:levregion(11,01,59,19),levregion(01,01,02,02)
 NOMAP
 #

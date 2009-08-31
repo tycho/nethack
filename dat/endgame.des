@@ -9,8 +9,9 @@
 # Players are supposed to sacrifice the Amulet of Yendor on the appropriate
 # shrine.
 
-LEVEL:"earth",' '
+LEVEL:"earth"
 FLAGS: noteleport,hardfloor,shortsighted,mazelevel
+INIT_MAP:solidfill,' '
 MESSAGE: "Well done, mortal!"
 MESSAGE: "But now thou must face the final Test..."
 MESSAGE: "Prove thyself worthy or perish!"
@@ -129,8 +130,9 @@ MONSTER:'E',"earth elemental",(04,18),hostile
 OBJECT:'`',"boulder",random
 
 
-LEVEL:"air",' '
+LEVEL:"air"
 FLAGS: noteleport,hardfloor,shortsighted,mazelevel
+INIT_MAP:solidfill,' '
 # The following messages are somewhat obtuse, to make then
 # equally meaningful if the player can see or not.
 MESSAGE: "What a strange feeling!"
@@ -234,8 +236,9 @@ MONSTER:'v',"steam vortex",random,hostile
 MONSTER:'v',"steam vortex",random,hostile
 
 
-LEVEL:"fire",' '
+LEVEL:"fire"
 FLAGS: noteleport,hardfloor,shortsighted,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 # The player lands, upon arrival, in the
 # lower-right.  The location of the
@@ -388,8 +391,9 @@ OBJECT:'`',"boulder",random
 OBJECT:'`',"boulder",random
 
 
-LEVEL:"water",' '
+LEVEL:"water"
 FLAGS: noteleport,hardfloor,shortsighted,mazelevel
+INIT_MAP:solidfill,' '
 MESSAGE: "You find yourself suspended in an air bubble surrounded by water."
 GEOMETRY:center,center
 # The player lands upon arrival to an air bubble
@@ -485,8 +489,9 @@ MONSTER:'E',"water elemental",random,hostile
 MONSTER:'E',"water elemental",random,hostile
 
 
-LEVEL:"astral",' '
+LEVEL:"astral"
 FLAGS: noteleport,hardfloor,nommap,shortsighted,mazelevel
+INIT_MAP:solidfill,' '
 MESSAGE: "You arrive on the Astral Plane!"
 MESSAGE: "Here the High Temples of the aligned gods are located."
 MESSAGE: "You sense alarm, hostility, and excitement in the air!"

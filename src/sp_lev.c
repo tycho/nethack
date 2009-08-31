@@ -2715,20 +2715,34 @@ sp_lev *lvl;
 
     level.flags.is_maze_lev = 0;
 
-    if (lvl->init_lev.init_present) {
-	if (lvl->init_lev.lit < 0) lvl->init_lev.lit = rn2(2);
-	mkmap(&(lvl->init_lev));
-    } else {
-	if (lvl->init_lev.filling == -1)
-	    lvlfill_maze_grid(2,0, x_maze_max,y_maze_max, HWALL);
-	else
-	    lvlfill_solid(lvl->init_lev.filling);
-	/* ensure the whole level is marked as mapped area */
+    switch (lvl->init_lev.init_style) {
+    default: impossible("Unrecognized level init style."); break;
+    case LVLINIT_NONE: break;
+    case LVLINIT_SOLIDFILL:
+	lvlfill_solid(lvl->init_lev.filling);
 	xstart = 1;
 	ystart = 0;
 	xsize = COLNO-1;
 	ysize = ROWNO;
+	break;
+    case LVLINIT_MAZEGRID:
+	lvlfill_maze_grid(2,0, x_maze_max,y_maze_max, HWALL);
+	xstart = 1;
+	ystart = 0;
+	xsize = COLNO-1;
+	ysize = ROWNO;
+	break;
+    case LVLINIT_MINES:
+	if (lvl->init_lev.lit < 0) lvl->init_lev.lit = rn2(2);
+	if (lvl->init_lev.filling > -1) lvlfill_solid(lvl->init_lev.filling);
+	mkmap(&(lvl->init_lev));
+	xstart = 1;
+	ystart = 0;
+	xsize = COLNO-1;
+	ysize = ROWNO;
+	break;
     }
+
 
     if (lvl->init_lev.flags & NOTELEPORT)   level.flags.noteleport = 1;
     if (lvl->init_lev.flags & HARDFLOOR)    level.flags.hardfloor = 1;
@@ -3219,12 +3233,13 @@ sp_lev *lvl;
 		    panic("reading special level with ysize too large");
 	    }
 
-	    if(lvl->init_lev.init_present && xsize <= 1 && ysize <= 1) {
+	    if (xsize <= 1 && ysize <= 1) {
 		xstart = 1;
 		ystart = 0;
 		xsize = COLNO-1;
 		ysize = ROWNO;
 	    } else {
+
 		/* Load the map */
 		for(y = ystart; y < ystart+ysize; y++)
 		    for(x = xstart; x < xstart+xsize; x++) {
@@ -3237,6 +3252,7 @@ sp_lev *lvl;
 			levl[x][y].horizontal = 0;
 			levl[x][y].roomno = 0;
 			levl[x][y].edge = 0;
+
 
 			/*
 			 *  Set secret doors to closed (why not trapped too?).  Set
@@ -3261,8 +3277,9 @@ sp_lev *lvl;
 			else if(levl[x][y].typ == CROSSWALL)
 			    has_bounds = TRUE;
 		    }
-		if (lvl->init_lev.init_present && lvl->init_lev.joined)
+		if (lvl->init_lev.joined)
 		    remove_rooms(xstart, ystart, xstart+xsize, ystart+ysize);
+
 	    }
 
 	    if (!tmpmazepart->keep_region) {
