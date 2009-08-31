@@ -106,6 +106,7 @@ extern const char *fname;
 
 
 %token	<i> CHAR INTEGER BOOLEAN PERCENT SPERCENT
+%token	<i> MAZE_GRID_ID SOLID_FILL_ID MINES_ID
 %token	<i> MESSAGE_ID MAZE_ID LEVEL_ID LEV_INIT_ID GEOMETRY_ID NOMAP_ID
 %token	<i> OBJECT_ID COBJECT_ID MONSTER_ID TRAP_ID DOOR_ID DRAWBRIDGE_ID
 %token	<i> MAZEWALK_ID WALLIFY_ID REGION_ID FILLING
@@ -123,7 +124,7 @@ extern const char *fname;
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
-%type	<i> alignment altar_type a_register roomfill filling door_pos
+%type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> door_wall walled secret amount chance opt_boolean
 %type	<i> engraving_type flags flag_list prefilled lev_region lev_init
 %type	<i> monster monster_c m_register object object_c o_register
@@ -147,7 +148,7 @@ level		: level_def flags lev_init levstatements
 				"%s : %d errors detected. No output created!\n",
 					fname, fatal_error);
 			} else {
-			        splev.init_lev.init_present = (boolean) $3;
+			        splev.init_lev.init_style = (xchar) $3;
 				splev.init_lev.flags = (long) $2;
 			        if (check_subrooms(&splev)) {
 				   if (!write_level_file($1, &splev)) {
@@ -160,7 +161,7 @@ level		: level_def flags lev_init levstatements
 		  }
 		;
 
-level_def	: LEVEL_ID ':' string opt_filling
+level_def	: LEVEL_ID ':' string
 		  {
 			if (index($3, '.'))
 			    yyerror("Invalid dot ('.') in level name.");
@@ -171,40 +172,64 @@ level_def	: LEVEL_ID ':' string opt_filling
 		  }
 		;
 
-opt_filling	: /* nothing */
+lev_init	: /* nothing */
 		  {
-		      /* really, nothing */
+			$$ = LVLINIT_NONE;
 		  }
-		| ',' filling
+		| LEV_INIT_ID ':' SOLID_FILL_ID ',' CHAR
 		  {
-		      splev.init_lev.filling = (schar) $2;
+		      splev.init_lev.filling = what_map_char((char) $5);
+		      if (splev.init_lev.filling == INVALID_TYPE)
+			    yyerror("INIT_MAP: Invalid fill char type.");
+		      $$ = LVLINIT_SOLIDFILL;
 		      max_x_map = COLNO-1;
 		      max_y_map = ROWNO;
 		  }
-		;
-
-lev_init	: /* nothing */
+		| LEV_INIT_ID ':' MAZE_GRID_ID ',' CHAR
 		  {
-			$$ = 0;
+		      splev.init_lev.filling = what_map_char((char) $5);
+		      if (splev.init_lev.filling == INVALID_TYPE)
+			    yyerror("INIT_MAP: Invalid fill char type.");
+		      $$ = LVLINIT_MAZEGRID;
+		      max_x_map = COLNO-1;
+		      max_y_map = ROWNO;
 		  }
-		| LEV_INIT_ID ':' CHAR ',' CHAR ',' BOOLEAN ',' BOOLEAN ',' light_state ',' walled
+		| LEV_INIT_ID ':' MINES_ID ',' CHAR ',' CHAR ',' BOOLEAN ',' BOOLEAN ',' light_state ',' walled opt_fillchar
 		  {
-			splev.init_lev.fg = what_map_char((char) $3);
+			splev.init_lev.fg = what_map_char((char) $5);
 			if (splev.init_lev.fg == INVALID_TYPE)
 			    yyerror("INIT_MAP: Invalid foreground type.");
-			splev.init_lev.bg = what_map_char((char) $5);
+			splev.init_lev.bg = what_map_char((char) $7);
 			if (splev.init_lev.bg == INVALID_TYPE)
 			    yyerror("INIT_MAP: Invalid background type.");
-			splev.init_lev.smoothed = $7;
-			splev.init_lev.joined = $9;
+			splev.init_lev.smoothed = $9;
+			splev.init_lev.joined = $11;
 			if (splev.init_lev.joined &&
 			    splev.init_lev.fg != CORR && splev.init_lev.fg != ROOM)
 			    yyerror("INIT_MAP: Invalid foreground type for joined map.");
-			splev.init_lev.lit = $11;
-			splev.init_lev.walled = $13;
-			$$ = 1;
+			splev.init_lev.lit = $13;
+			splev.init_lev.walled = $15;
+
+			splev.init_lev.filling = $<i>16;
+			if (splev.init_lev.filling == INVALID_TYPE)
+			    yyerror("INIT_MAP: Invalid fill char type.");
+
+			$$ = LVLINIT_MINES;
+			max_x_map = COLNO-1;
+			max_y_map = ROWNO;
 		  }
 		;
+
+opt_fillchar	: /* nothing */
+		  {
+		      $<i>$ = -1;
+		  }
+		| ',' CHAR
+		  {
+		      $<i>$ = what_map_char((char) $2);
+		  }
+		;
+
 
 walled		: BOOLEAN
 		| RANDOM_TYPE
@@ -592,16 +617,6 @@ door_wall	: DIRECTION
 
 door_pos	: INTEGER
 		| RANDOM_TYPE
-		;
-
-filling		: CHAR
-		  {
-			$$ = get_floor_type((char)$1);
-		  }
-		| RANDOM_TYPE
-		  {
-			$$ = -1;
-		  }
 		;
 
 map_definition	: NOMAP_ID

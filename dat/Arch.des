@@ -8,8 +8,9 @@
 #	Here you meet your (besieged) class leader, Lord Carnarvon
 #	and receive your quest assignment.
 #
-LEVEL: "Arc-strt",' '
+LEVEL: "Arc-strt"
 FLAGS: noteleport,hardfloor,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ............................................................................
@@ -117,8 +118,9 @@ MONSTER: 'S',random,(10,19)
 #	to go further towards your assigned quest.
 #
 
-LEVEL: "Arc-loca",' '
+LEVEL: "Arc-loca"
 FLAGS: hardfloor,mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
 ............................................................................
@@ -265,8 +267,9 @@ MONSTER:'M',random,random
 #	been assigned to retrieve.
 #
 
-LEVEL: "Arc-goal", ' '
+LEVEL: "Arc-goal"
 FLAGS:mazelevel
+INIT_MAP:solidfill,' '
 GEOMETRY:center,center
 MAP
                                                                             

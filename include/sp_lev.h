@@ -26,6 +26,13 @@
 #define NOFLIPY		64
 #define MAZELEVEL	128
 
+/* different level layout initializers */
+#define LVLINIT_NONE		0
+#define LVLINIT_SOLIDFILL	1
+#define LVLINIT_MAZEGRID	2
+#define LVLINIT_MINES		3
+
+
 /* max. # of random registers */
 #define MAX_REGISTERS	10
 
@@ -107,7 +114,7 @@ typedef union str_or_len {
 } Str_or_Len;
 
 typedef struct {
-	boolean init_present, padding;
+	xchar   init_style; /* one of LVLINIT_foo */
 	char	fg, bg;
 	boolean smoothed, joined;
 	xchar	lit, walled;

@@ -105,6 +105,9 @@ MAZE		return MAZE_ID;
 NOMAP		return NOMAP_ID;
 LEVEL		return LEVEL_ID;
 INIT_MAP	return LEV_INIT_ID;
+mazegrid	return MAZE_GRID_ID;
+solidfill	return SOLID_FILL_ID;
+mines		return MINES_ID;
 FLAGS		return FLAGS_ID;
 GEOMETRY	return GEOMETRY_ID;
 ^MAP\r?\n		{ BEGIN(MAPC); line_number++; }
