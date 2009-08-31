@@ -213,6 +213,7 @@ shortsighted	{ yylval.i=SHORTSIGHTED; return FLAG_TYPE; }
 noflipx		{ yylval.i=NOFLIPX; return FLAG_TYPE; }
 noflipy		{ yylval.i=NOFLIPY; return FLAG_TYPE; }
 noflip		{ yylval.i=(NOFLIPX + NOFLIPY); return FLAG_TYPE; }
+mazelevel	{ yylval.i=MAZELEVEL; return FLAG_TYPE; }
 \[\ *[0-9]+\%\ *\] { yylval.i = atoi(yytext + 1); return PERCENT; }
 [0-9]+\%	{ yylval.i = atoi(yytext); return SPERCENT; }
 [+\-]?[0-9]+	{ yylval.i=atoi(yytext); return INTEGER; }

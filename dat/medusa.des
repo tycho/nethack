@@ -6,8 +6,8 @@
 # These are the Medusa's levels :
 #
 
-MAZE:"medusa-1",' '
-FLAGS: noteleport
+LEVEL:"medusa-1",' '
+FLAGS: noteleport,mazelevel
 GEOMETRY:center,center
 MAP
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
@@ -109,8 +109,8 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-MAZE:"medusa-2",' '
-FLAGS: noteleport
+LEVEL:"medusa-2",' '
+FLAGS: noteleport,mazelevel
 GEOMETRY:center,center
 MAP
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
@@ -220,8 +220,8 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-MAZE:"medusa-3",' '
-FLAGS: noteleport
+LEVEL:"medusa-3",' '
+FLAGS: noteleport,mazelevel
 GEOMETRY:center,center
 #
 # Here you disturb ravens nesting in the trees.
@@ -340,8 +340,8 @@ MONSTER:'B',"raven",random,hostile
 MONSTER:'B',"raven",random,hostile
 
 
-MAZE:"medusa-4",' '
-FLAGS: noteleport
+LEVEL:"medusa-4",' '
+FLAGS: noteleport,mazelevel
 GEOMETRY:center,center
 #
 # Here the Medusa rules some slithery monsters from her 'palace', with

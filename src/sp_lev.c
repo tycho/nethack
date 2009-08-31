@@ -2687,7 +2687,7 @@ sp_lev *lvl;
 
     (void) memset((genericptr_t)&SpLev_Map[0][0], 0, sizeof SpLev_Map);
 
-    level.flags.is_maze_lev = lvl->init_lev.levtyp == SP_LEV_MAZE;
+    level.flags.is_maze_lev = 0;
 
     if (lvl->init_lev.init_present) {
 	if (lvl->init_lev.lit < 0) lvl->init_lev.lit = rn2(2);
@@ -2719,6 +2719,7 @@ sp_lev *lvl;
     if (lvl->init_lev.flags & ARBOREAL)     level.flags.arboreal = 1;
     if (lvl->init_lev.flags & NOFLIPX)      allow_flips &= ~1;
     if (lvl->init_lev.flags & NOFLIPY)      allow_flips &= ~2;
+    if (lvl->init_lev.flags & MAZELEVEL)    level.flags.is_maze_lev = 1;
 
     while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
 	int opcode = lvl->opcodes[n_opcode].opcode;
