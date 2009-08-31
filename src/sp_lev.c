@@ -2705,6 +2705,11 @@ sp_lev *lvl;
 		} else {
 		    levl[x][y].typ = lvl->init_lev.filling;
 		}
+	/* ensure the whole level is marked as mapped area */
+	xstart = 1;
+	ystart = 0;
+	xsize = COLNO-1;
+	ysize = ROWNO;
     }
 
     if (lvl->init_lev.flags & NOTELEPORT)   level.flags.noteleport = 1;
@@ -3083,7 +3088,7 @@ sp_lev *lvl;
 	    }
 
 	    walkfrom(x, y);
-	    fill_empty_maze();
+	    if (tmpwalk->stocked) fill_empty_maze();
 	    break;
 	case SPO_NON_DIGGABLE:
 	    tmpdig = (digpos *) opdat;
