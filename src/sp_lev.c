@@ -95,7 +95,33 @@ char *lev_message = 0;
 lev_region *lregions = 0;
 int num_lregions = 0;
 
+void
+lvlfill_maze_grid(x1,y1,x2,y2,filling)
+     int x1,y1,x2,y2;
+     schar filling;
+{
+    int x,y;
 
+    for (x = x1; x <= x2; x++)
+	for (y = y1; y <= y2; y++) {
+#ifndef WALLIFIED_MAZE
+	    levl[x][y].typ = STONE;
+#else
+            levl[x][y].typ =
+		(y < 2 || ((x % 2) && (y % 2))) ? STONE : filling;
+#endif
+	}
+}
+
+void
+lvlfill_solid(filling)
+     schar filling;
+{
+    int x,y;
+    for (x = 2; x <= x_maze_max; x++)
+	for (y = 0; y <= y_maze_max; y++)
+	    levl[x][y].typ = filling;
+}
 
 void flip_drawbridge_horizontal(lev)
 struct rm *lev;
@@ -2693,18 +2719,10 @@ sp_lev *lvl;
 	if (lvl->init_lev.lit < 0) lvl->init_lev.lit = rn2(2);
 	mkmap(&(lvl->init_lev));
     } else {
-	for(x = 2; x <= x_maze_max; x++)
-	    for(y = 0; y <= y_maze_max; y++)
-		if (lvl->init_lev.filling == -1) {
-#ifndef WALLIFIED_MAZE
-		    levl[x][y].typ = STONE;
-#else
-		    levl[x][y].typ =
-			(y < 2 || ((x % 2) && (y % 2))) ? STONE : HWALL;
-#endif
-		} else {
-		    levl[x][y].typ = lvl->init_lev.filling;
-		}
+	if (lvl->init_lev.filling == -1)
+	    lvlfill_maze_grid(2,0, x_maze_max,y_maze_max, HWALL);
+	else
+	    lvlfill_solid(lvl->init_lev.filling);
 	/* ensure the whole level is marked as mapped area */
 	xstart = 1;
 	ystart = 0;
