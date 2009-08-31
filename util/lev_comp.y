@@ -178,6 +178,8 @@ opt_filling	: /* nothing */
 		| ',' filling
 		  {
 		      splev.init_lev.filling = (schar) $2;
+		      max_x_map = COLNO-1;
+		      max_y_map = ROWNO;
 		  }
 		;
 
@@ -189,15 +191,15 @@ lev_init	: /* nothing */
 		  {
 			splev.init_lev.fg = what_map_char((char) $3);
 			if (splev.init_lev.fg == INVALID_TYPE)
-			    yyerror("Invalid foreground type.");
+			    yyerror("INIT_MAP: Invalid foreground type.");
 			splev.init_lev.bg = what_map_char((char) $5);
 			if (splev.init_lev.bg == INVALID_TYPE)
-			    yyerror("Invalid background type.");
+			    yyerror("INIT_MAP: Invalid background type.");
 			splev.init_lev.smoothed = $7;
 			splev.init_lev.joined = $9;
 			if (splev.init_lev.joined &&
 			    splev.init_lev.fg != CORR && splev.init_lev.fg != ROOM)
-			    yyerror("Invalid foreground type for joined map.");
+			    yyerror("INIT_MAP: Invalid foreground type for joined map.");
 			splev.init_lev.lit = $11;
 			splev.init_lev.walled = $13;
 			$$ = 1;
@@ -1344,7 +1346,7 @@ randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER 
 		      tmprandline->y2 = current_region.y2;
 		      tmprandline->fg = what_map_char((char) $5);
 		      if (tmprandline->fg == INVALID_TYPE) {
-			  yyerror("Invalid map character in randline!");
+			  yyerror("RANDLINE: Invalid map character!");
 		      }
 		      tmprandline->lit = $7;
 		      tmprandline->roughness = $9;
@@ -1370,12 +1372,12 @@ spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' li
 				tmpspill->y = current_coord.y;
 				tmpspill->typ = what_map_char((char) $5);
 				if (tmpspill->typ == INVALID_TYPE) {
-					yyerror("Invalid map character in spill!");
+					yyerror("SPILL: Invalid map character!");
 				}
 				tmpspill->direction = $7;
 				tmpspill->count = $9;
 				if (tmpspill->count < 1) {
-					yyerror("Invalid count in spill!");
+					yyerror("SPILL: Invalid count!");
 				}
 				tmpspill->lit = $11;
 
@@ -1686,13 +1688,13 @@ region		: '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
 /* This series of if statements is a hack for MSC 5.1.  It seems that its
    tiny little brain cannot compile if these are all one big if statement. */
 			if ($2 < 0 || $2 > (int)max_x_map)
-				yyerror("Region out of map range!");
+			  yyerror("Region out of map range (x1)!");
 			else if ($4 < 0 || $4 > (int)max_y_map)
-				yyerror("Region out of map range!");
+			  yyerror("Region out of map range (y1)!");
 			else if ($6 < 0 || $6 > (int)max_x_map)
-				yyerror("Region out of map range!");
+			  yyerror("Region out of map range (x2)!");
 			else if ($8 < 0 || $8 > (int)max_y_map)
-				yyerror("Region out of map range!");
+			  yyerror("Region out of map range (y2)!");
 			current_region.x1 = $2;
 			current_region.y1 = $4;
 			current_region.x2 = $6;
