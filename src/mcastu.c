@@ -7,10 +7,10 @@
 #include "epri.h"
 
 /* monster mage spells */
-#define MGC_PSI_BOLT	 0
+#define MGC_PSI_BOLT	    0
 #define MGC_CURE_SELF	 1
 #define MGC_HASTE_SELF	 2
-#define MGC_STUN_YOU	 3
+#define MGC_STUN_YOU	    3
 #define MGC_DISAPPEAR	 4
 #define MGC_WEAKEN_YOU	 5
 #define MGC_DESTRY_ARMR	 6
@@ -21,18 +21,20 @@
 #define MGC_DEATH_TOUCH	11
 #define MGC_FLY			12
 #define MGC_ENRAGE		13
+#define MGC_FIRE_BOLT   14
+#define MGC_ICE_BOLT    15
 
 /* monster cleric spells */
 #define CLC_OPEN_WOUNDS	 0
 #define CLC_CURE_SELF	 1
 #define CLC_CONFUSE_YOU	 2
-#define CLC_PARALYZE		3
+#define CLC_PARALYZE	 	 3
 #define CLC_BLIND_YOU	 4
-#define CLC_INSECTS		5
+#define CLC_INSECTS		 5
 #define CLC_CURSE_ITEMS	 6
 #define CLC_LIGHTNING	 7
 #define CLC_FIRE_PILLAR	 8
-#define CLC_GEYSER		9
+#define CLC_GEYSER		 9
 #define CLC_FLY			10
 #define CLC_VULN_YOU		11
 #define CLC_SUMMON_ELM  12
@@ -90,6 +92,7 @@ struct monst* mtmp;
 int spellval;
 {
 	struct trap* tr;
+	int i;
 
 	/* If we're stuck in a pit, we know a way out */
 	tr = t_at(mtmp->mx,mtmp->my);
@@ -137,7 +140,16 @@ int spellval;
 			return MGC_CURE_SELF;
 		case 0:
 		default:
-			return MGC_PSI_BOLT;
+			i = rn2(3);
+			switch (i) {
+				case 2:
+					return MGC_FIRE_BOLT;
+				case 1:
+					return MGC_ICE_BOLT;
+				case 0:
+				default:
+					return MGC_PSI_BOLT;
+			}
 	}
 }
 
@@ -221,22 +233,21 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 	    int cnt = 40;
 
 	    do {
-		spellnum = rn2(ml);
-		if (mattk->adtyp == AD_SPEL)
-		    spellnum = choose_magic_spell(mtmp,spellnum);
-		else
-		    spellnum = choose_clerical_spell(mtmp,spellnum);
-		/* not trying to attack?  don't allow directed spells */
-		if (!thinks_it_foundyou) {
-		    if (!is_undirected_spell(mattk->adtyp, spellnum) ||
-			spell_would_be_useless(mtmp, mattk->adtyp, spellnum)) {
-			if (foundyou)
-			    impossible("spellcasting monster found you and doesn't know it?");
-			return 0;
-		    }
-		    break;
-		}
-	    } while(--cnt > 0 &&
+			spellnum = rn2(ml);
+			if (mattk->adtyp == AD_SPEL)
+				spellnum = choose_magic_spell(mtmp,spellnum);
+			else
+				spellnum = choose_clerical_spell(mtmp,spellnum);
+			/* not trying to attack?  don't allow directed spells */
+			if (!thinks_it_foundyou) {
+				if (!is_undirected_spell(mattk->adtyp, spellnum) || spell_would_be_useless(mtmp, mattk->adtyp, spellnum)) {
+					if (foundyou)
+						impossible("spellcasting monster found you and doesn't know it?");
+					return 0;
+				}
+				break;
+			}
+			} while(--cnt > 0 &&
 		    spell_would_be_useless(mtmp, mattk->adtyp, spellnum));
 	    if (cnt == 0) return 0;
 	}
@@ -248,7 +259,7 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 	}
 
 	if (mattk->adtyp == AD_SPEL || mattk->adtyp == AD_CLRC) {
-	    mtmp->mspec_used = 10 - mtmp->m_lev;
+	    mtmp->mspec_used = 8 - mtmp->m_lev;
 	    if (mtmp->mspec_used < 2) mtmp->mspec_used = 2;
 		 /* your quest leader is a badass and does not need recharge time */
 		 if (mtmp->data->msound == MS_LEADER) mtmp->mspec_used = 0;
@@ -267,11 +278,17 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 	}
 
 	nomul(0);
-	if(rn2(ml*10) < (mtmp->mconf ? 100 : 20)) {	/* fumbled attack */
-	    if (canseemon(mtmp) && flags.soundok)
-		pline_The("air crackles around %s.", mon_nam(mtmp));
+	if(rn2(ml*10) < (mtmp->mconf ? 100 : 10)) {	/* fumbled attack */
+	    if (flags.soundok) {
+			 if (canseemon(mtmp)) {
+				pline_The("air crackles around %s.", mon_nam(mtmp));
+			 } else {
+				 You("hear the air crackling with magical energy.");
+			 }
+		 }
 	    return(0);
 	}
+
 	if (canspotmon(mtmp) || !is_undirected_spell(mattk->adtyp, spellnum)) {
 	    pline("%s casts a spell%s!",
 		  canspotmon(mtmp) ? Monnam(mtmp) : "Something",
@@ -512,6 +529,24 @@ int spellnum;
 		Your("skin itches.");
 	}
 	dmg = 0;
+	break;
+	 case MGC_FIRE_BOLT:
+	 case MGC_ICE_BOLT:
+		/* hotwire these to only go off if the critter can see you
+		 * to avoid bugs WRT the Eyes and detect monsters */
+		if (m_canseeu(mtmp)) {
+			pline("%s blasts you with %s!",Monnam(mtmp), spellnum == MGC_FIRE_BOLT ? "fire" : "cold");
+			explode(u.ux,u.uy,spellnum == MGC_FIRE_BOLT ? AD_FIRE-1 : AD_COLD-1,
+					d((mtmp->m_lev/5)+1,8),WAND_CLASS,1);
+		} else {
+			if (canspotmon(mtmp)) {
+				pline("%s blasts the %s with %s and curses!", Monnam(mtmp), rn2(2) ? "ceiling" : "floor",  
+						spellnum == MGC_FIRE_BOLT ? "fire" : "cold");
+			} else {
+				You_hear("some cursing!");
+			}
+		}
+		dmg = 0;
 	break;
     case MGC_WEAKEN_YOU:		/* drain strength */
 	if (Antimagic) {
@@ -869,6 +904,8 @@ int spellnum;
 	case MGC_CURE_SELF:
 	case MGC_FLY:
 	case MGC_ENRAGE:
+	case MGC_FIRE_BOLT:
+	case MGC_ICE_BOLT:
 	    return TRUE;
 	default:
 	    break;
@@ -963,6 +1000,16 @@ int spellnum;
 	if (spellnum == MGC_ENRAGE && (mtmp->mpeaceful || mtmp->mtame)) {
 		return TRUE;
 	}
+ 	/* Don't waste time zapping resisted spells at the player,
+ 	 * and don't blast ourselves with our own explosions */
+ 	if ((m_seenres(mtmp,M_SEEN_FIRE) || distu(mtmp->mx,mtmp->my) < 2) && 
+ 			spellnum == MGC_FIRE_BOLT) {
+ 		return TRUE;
+ 	}
+ 	if ((m_seenres(mtmp,M_SEEN_COLD) || distu(mtmp->mx,mtmp->my) < 2) && 
+ 			spellnum == MGC_ICE_BOLT) {
+ 		return TRUE;
+ 	}
     } else if (adtyp == AD_CLRC) {
 	/* summon insects/sticks to snakes won't be cast by peaceful monsters */
 	if (mtmp->mpeaceful && spellnum == CLC_INSECTS)

@@ -41,6 +41,7 @@ int expltype;
 		/* 0=normal explosion, 1=do shieldeff, 2=do nothing */
 	boolean shopdamage = FALSE;
 	boolean generic = FALSE;
+	boolean skipitems = FALSE;
 
 #if 0
 	// No good justification for this.  Why should
@@ -319,17 +320,23 @@ int expltype;
 			You("are caught in the %s!", str);
 		/* do property damage first, in case we end up leaving bones */
 		if (adtyp == AD_FIRE) burn_away_slime();
+		/* small explosions won't burn your items up anymore
+		 * ...this needs to be here so gnomish wizards aren't
+		 * frosting or toasting all your stuff on xl2 */
+		skipitems = (damu <= 16);
 		if (Invulnerable) {
 		    damu = 0;
 		    You("are unharmed!");
 		} else if (Half_physical_damage && adtyp == AD_PHYS)
 		    damu = (damu+1) / 2;
-		if (adtyp == AD_FIRE) (void) burnarmor(&youmonst);
-		destroy_item(SCROLL_CLASS, (int) adtyp);
-		destroy_item(SPBOOK_CLASS, (int) adtyp);
-		destroy_item(POTION_CLASS, (int) adtyp);
-		destroy_item(RING_CLASS, (int) adtyp);
-		destroy_item(WAND_CLASS, (int) adtyp);
+		if (adtyp == AD_FIRE && !skipitems) (void) burnarmor(&youmonst);
+		if (!skipitems) {
+			destroy_item(SCROLL_CLASS, (int) adtyp);
+			destroy_item(SPBOOK_CLASS, (int) adtyp);
+			destroy_item(POTION_CLASS, (int) adtyp);
+			destroy_item(RING_CLASS, (int) adtyp);
+			destroy_item(WAND_CLASS, (int) adtyp);
+		}
 
 		ugolemeffects((int) adtyp, damu);
 		if (uhurt == 2) {
