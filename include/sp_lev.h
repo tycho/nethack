@@ -159,7 +159,7 @@ typedef struct {
 } drawbridge;
 
 typedef struct {
-	xchar x, y, dir;
+    xchar x, y, dir, stocked;
 } walk;
 
 typedef struct {

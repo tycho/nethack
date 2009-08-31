@@ -124,7 +124,7 @@ extern const char *fname;
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill filling door_pos
-%type	<i> door_wall walled secret amount chance
+%type	<i> door_wall walled secret amount chance opt_boolean
 %type	<i> engraving_type flags flag_list prefilled lev_region lev_init
 %type	<i> monster monster_c m_register object object_c o_register
 %type	<map> string level_def m_name o_name
@@ -1020,15 +1020,27 @@ drawbridge_detail: DRAWBRIDGE_ID ':' coordinate ',' DIRECTION ',' door_state
 		   }
 		;
 
-mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION
+mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION opt_boolean
 		  {
 		      walk *tmpwalk = New(walk);
 
 		      tmpwalk->x = current_coord.x;
 		      tmpwalk->y = current_coord.y;
 		      tmpwalk->dir = $5;
+		      tmpwalk->stocked = $<i>6;
 
 		      add_opcode(&splev, SPO_MAZEWALK, tmpwalk);
+		  }
+		;
+
+/* opt_boolean is the same as roomfill, should consolidate */
+opt_boolean	: /* nothing */
+		  {
+		      $$ = 1;
+		  }
+		| ',' BOOLEAN
+		  {
+		      $$ = $2;
 		  }
 		;
 
