@@ -957,33 +957,40 @@ struct mkroom *broom;
 
 		dpos = dd->pos;
 		if (dpos == -1)	/* The position is RANDOM */
-		    dpos = rn2((dwall == W_WEST || dwall == W_EAST) ?
+		    dpos = rn2(((dwall & (W_WEST|W_EAST)) ? 2 : 1) ?
 			    (broom->hy - broom->ly) : (broom->hx - broom->lx));
 
 		/* Convert wall and pos into an absolute coordinate! */
-
-		switch (dwall) {
-		      case W_NORTH:
+		wtry = rn2(4);
+		for (walltry = 0; walltry < 4; walltry++) {
+		    switch ((wtry+walltry) % 4) {
+		      case 0:
+			if (!(dwall & W_NORTH)) break;
 			y = broom->ly - 1;
 			x = broom->lx + dpos;
-			break;
-		      case W_SOUTH:
+			goto outdirloop;
+		      case 1:
+			if (!(dwall & W_SOUTH)) break;
 			y = broom->hy + 1;
 			x = broom->lx + dpos;
-			break;
-		      case W_WEST:
+			goto outdirloop;
+		      case 2:
+			if (!(dwall & W_WEST)) break;
 			x = broom->lx - 1;
 			y = broom->ly + dpos;
-			break;
-		      case W_EAST:
+			goto outdirloop;
+		      case 3:
+			if (!(dwall & W_EAST)) break;
 			x = broom->hx + 1;
 			y = broom->ly + dpos;
-			break;
+			goto outdirloop;
 		      default:
 			x = y = 0;
 			panic("create_door: No wall for door!");
-			break;
+			goto outdirloop;
+		    }
 		}
+outdirloop:
 		if (okdoor(x,y))
 		    break;
 	} while (++trycnt <= 100);
