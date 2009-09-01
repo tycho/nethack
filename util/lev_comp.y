@@ -261,10 +261,6 @@ levstatements	: /* nothing */
 		| levstatement levstatements
 		;
 
-roomstatements	: /* nothing */
-		| roomstatement roomstatements
-		;
-
 levstatement 	: message
 		| altar_detail
 		| branch_region
@@ -289,6 +285,7 @@ levstatement 	: message
 		| random_corridors
 		| region_detail
 		| room_def
+		| subroom_def
 		| room_chance
 		| room_name
 		| sink_detail
@@ -301,22 +298,6 @@ levstatement 	: message
 		| teleprt_region
 		| trap_detail
 		| wallify_detail
-		;
-
-roomstatement	: subroom_def
-		| room_chance
-		| room_name
-		| door_detail
-		| monster_detail
-		| object_detail
-		| trap_detail
-		| altar_detail
-		| fountain_detail
-		| sink_detail
-		| pool_detail
-		| gold_detail
-		| engraving_detail
-		| stair_detail
 		;
 
 exitstatement	: EXIT_ID
@@ -449,7 +430,7 @@ subroom_def	: SUBROOM_ID ':' room_type ',' light_state ',' subroom_pos ',' room_
 
 		     add_opcode(&splev, SPO_SUBROOM, tmpr);
 		  }
-		  '{' roomstatements '}'
+		  '{' levstatements '}'
 		  {
 		      add_opcode(&splev, SPO_ENDROOM, NULL);
 		  }
@@ -473,7 +454,7 @@ room_def	: ROOM_ID ':' room_type ',' light_state ',' room_pos ',' room_align ','
 
 		     add_opcode(&splev, SPO_ROOM, tmpr);
 		  }
-		  '{' roomstatements '}'
+		  '{' levstatements '}'
 		  {
 		      add_opcode(&splev, SPO_ENDROOM, NULL);
 		  }
