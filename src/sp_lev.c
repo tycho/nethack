@@ -2712,6 +2712,7 @@ sp_lev *lvl;
 
     struct trap *badtrap;
     boolean has_bounds = FALSE;
+    boolean premapped = FALSE;
 
     prevstair.x = prevstair.y = 0;
     tmproom = tmpsubroom = (room *) 0;
@@ -2759,6 +2760,7 @@ sp_lev *lvl;
     if (lvl->init_lev.flags & NOFLIPX)      allow_flips &= ~1;
     if (lvl->init_lev.flags & NOFLIPY)      allow_flips &= ~2;
     if (lvl->init_lev.flags & MAZELEVEL)    level.flags.is_maze_lev = 1;
+    if (lvl->init_lev.flags & PREMAPPED)    premapped = TRUE;
 
     while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
 	int opcode = lvl->opcodes[n_opcode].opcode;
@@ -3331,6 +3333,8 @@ sp_lev *lvl;
     flip_level_rnd(allow_flips);
 
     count_features();
+
+    if (premapped) sokoban_detect();
 
     return TRUE;
 }
