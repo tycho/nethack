@@ -6,7 +6,8 @@
 # The top (real) wizard level.
 # Keeping the Moat for old-time's sake
 LEVEL:"wizard1"
-FLAGS:noteleport,hardfloor,mazelevel
+# Must have noflipx, due to the morgue-hack (see below).
+FLAGS:noteleport,hardfloor,mazelevel,noflipx
 INIT_MAP:mazegrid,'-'
 GEOMETRY:center,center
 MAP
