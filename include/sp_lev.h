@@ -25,6 +25,7 @@
 #define NOFLIPX		32
 #define NOFLIPY		64
 #define MAZELEVEL	128
+#define PREMAPPED	256
 
 /* different level layout initializers */
 #define LVLINIT_NONE		0
