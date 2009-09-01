@@ -126,6 +126,7 @@ extern const char *fname;
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> door_wall walled secret amount chance opt_boolean
+%type	<i> dir_list
 %type	<i> engraving_type flags flag_list prefilled lev_region lev_init
 %type	<i> monster monster_c m_register object object_c o_register
 %type	<map> string level_def m_name o_name
@@ -611,8 +612,18 @@ secret		: BOOLEAN
 		| RANDOM_TYPE
 		;
 
-door_wall	: DIRECTION
+door_wall	: dir_list
 		| RANDOM_TYPE
+		;
+
+dir_list	: DIRECTION
+		  {
+		      $$ = $1;
+		  }
+		| DIRECTION '|' dir_list
+		  {
+		      $$ = ($1 | $3);
+		  }
 		;
 
 door_pos	: INTEGER
