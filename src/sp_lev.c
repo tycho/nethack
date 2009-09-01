@@ -2726,7 +2726,7 @@ sp_lev *lvl;
 	ysize = ROWNO;
 	break;
     case LVLINIT_MAZEGRID:
-	lvlfill_maze_grid(2,0, x_maze_max,y_maze_max, HWALL);
+	lvlfill_maze_grid(2,0, x_maze_max,y_maze_max, lvl->init_lev.filling);
 	xstart = 1;
 	ystart = 0;
 	xsize = COLNO-1;
