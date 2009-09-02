@@ -1492,18 +1492,20 @@ dopois:
 		}
 		break;
 	    case AD_ACID:
-		hitmsg(mtmp, mattk);
-		if (!mtmp->mcan && !rn2(3))
-		    if (Acid_resistance) {
-			pline("You're covered in acid, but it seems harmless.");
-			monstseesu(M_SEEN_ACID);
-			dmg = 0;
-		    } else {
-			pline("You're covered in acid!	It burns!");
-			exercise(A_STR, FALSE);
-		    }
-		else		dmg = 0;
-		break;
+			hitmsg(mtmp, mattk);
+			if (!mtmp->mcan && !rn2(3)) {
+				if (Acid_resistance) {
+					pline("You're covered in acid, but it seems harmless.");
+					monstseesu(M_SEEN_ACID);
+					dmg = 0;
+				} else {
+					pline("You're covered in acid! It burns!");
+					exercise(A_STR, FALSE);
+				}
+			} else {	
+				dmg /= 2;	/* less painful... */
+			}
+			break;
 	    case AD_SLOW:
 		hitmsg(mtmp, mattk);
 		if (uncancelled && HFast &&

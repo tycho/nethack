@@ -799,9 +799,12 @@ xchar x, y;	/* clone's preferred location or 0 (near mon) */
 	 * there'll be a finite end to things...
 	 */
 	m2->mhpmax = mon->mhpmax / 2;
-	mon->mhpmax -= m2->mhpmax;
 	m2->mhp = mon->mhp / 2;
-	mon->mhp -= m2->mhp;
+	/* Big Daddy is a bit meaner; the originals don't suffer from the split */
+	if (mon->data != &mons[PM_JUIBLEX]) {
+		mon->mhpmax -= m2->mhpmax;
+		mon->mhp -= m2->mhp;
+	}
 
 	/* don't accidentally set any of these to zero
 	 * since our caller will be expecting a live critter */

@@ -1087,6 +1087,14 @@ int thrown;
 		}
 	}
 
+	if (mdat == &mons[PM_JUIBLEX] && mon->mhp > 1 && !thrown && !mon->mcan)
+	{
+		if (clone_mon(mon, 0, 0)) {
+			pline("%s swirls and reforms in two!", Monnam(mon));
+			hittxt = FALSE;
+		}
+	}
+
 	if (!hittxt &&			/*( thrown => obj exists )*/
 	  (!destroyed || (thrown && m_shot.n > 1 && m_shot.o == obj->otyp))) {
 		if (thrown) hit(mshot_xname(obj), mon, exclam(tmp));
@@ -2475,13 +2483,23 @@ uchar aatyp;
 				tmp = resist_reduce(tmp,SHOCK_RES);
 				mdamageu(mon, tmp);
 				break;
-			case AD_DISE:	/* gray fungus */
-				if (Sick_resistance) {
-					You("are covered with botulism spores, but they seem to be inert.");
+			case AD_DISE:	/* gray fungus or Juiblex, for now */
+				if (mon->data = &mons[PM_JUIBLEX])
+				{
+					if (Sick_resistance) {
+						You("are sprayed with a vile ichor, but it doesn't hurt at all.");
+					} else {
+						You("are sprayed with a vile ichor!");
+						make_sick(20, "the blood of Juiblex", TRUE, SICK_NONVOMITABLE);
+					}
 				} else {
-					You("are covered with botulism spores!");
-					mdamageu(mon, tmp);
-					make_sick(20, "bad case of botulism", TRUE, SICK_NONVOMITABLE);
+					if (Sick_resistance) {
+						You("are covered with botulism spores, but they seem to be inert.");
+					} else {
+						You("are covered with botulism spores!");
+						mdamageu(mon, tmp);
+						make_sick(20, "bad case of botulism", TRUE, SICK_NONVOMITABLE);
+					}
 				}
 				break;
 	      default:
