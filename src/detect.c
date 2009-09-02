@@ -1282,7 +1282,13 @@ sokoban_detect()
 	/* Map the background and boulders */
 	for (x = 1; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++) {
-	    	levl[x][y].seenv = SVALL;
+		if (IS_WALL(levl[x][y].typ))
+		    levl[x][y].seenv = SVALL;
+		else if (levl[x][y].typ == SDOOR)
+		    levl[x][y].typ = DOOR;
+		else if (levl[x][y].typ == SCORR)
+		    levl[x][y].typ = CORR;
+
 		levl[x][y].waslit = (levl[x][y].typ != CORR) ? TRUE : levl[x][y].lit;
 	    	map_background(x, y, 1);
 	    	for (obj = level.objects[x][y]; obj; obj = obj->nexthere)
