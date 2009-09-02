@@ -240,7 +240,7 @@ IF [75%] {
 IF [75%] {
   SUBROOM: "ordinary", unlit, (5,0), (2,2), "town"
   {
-    ROOMDOOR: false, closed, west|south|east, random
+    ROOMDOOR: false, closed, west|south, random
   }
 }
 
