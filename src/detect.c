@@ -1283,7 +1283,7 @@ sokoban_detect()
 	for (x = 1; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++) {
 	    	levl[x][y].seenv = SVALL;
-	    	levl[x][y].waslit = TRUE;
+		levl[x][y].waslit = (levl[x][y].typ != CORR) ? TRUE : levl[x][y].lit;
 	    	map_background(x, y, 1);
 	    	for (obj = level.objects[x][y]; obj; obj = obj->nexthere)
 	    	    if (obj->otyp == BOULDER)
