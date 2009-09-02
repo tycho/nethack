@@ -268,6 +268,13 @@ strategy(mtmp)
 			break;
 	}
 
+	/* do not let multiple Juiblexes fight for the stairs;
+	 * it's not like he needs to heal anyway */
+	if (mtmp->data == &mons[PM_JUIBLEX] && dstrat == STRAT_HEAL)
+	{
+		dstrat = STRAT_NONE;
+	}
+
 	if(flags.made_amulet)
 	    if((strat = target_on(M3_WANTSAMUL, mtmp)) != STRAT_NONE)
 		return(strat);
@@ -356,7 +363,7 @@ tactics(mtmp)
 					sty = ty;
 
 			/* If we're close enough, pounce */
-			if (distu(mtmp->mx, mtmp->my) <= 7) {
+			if (distu(mtmp->mx, mtmp->my) <= 25) {
 				mnexto(mtmp);
 			} else {
 				/* figure out what direction the player's in */
@@ -391,7 +398,7 @@ tactics(mtmp)
 				/* player is standing on it (or has it) */
 				if ((u.ux == tx && u.uy == ty) || where == STRAT_PLAYER) {
 					/* If we're close enough, pounce */
-					if (distu(mtmp->mx, mtmp->my) <= 7) {
+					if (distu(mtmp->mx, mtmp->my) <= 25) {
 						mnexto(mtmp);
 					} else {
 						/* figure out what direction the player's in */
