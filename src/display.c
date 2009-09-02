@@ -639,6 +639,8 @@ newsym(x,y)
     register xchar worm_tail;
 
     if (in_mklev) return;
+	 
+	 if (!isok(x,y)) return;
 
     /* only permit updating the hero when swallowed */
     if (u.uswallow) {
