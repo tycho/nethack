@@ -26,6 +26,7 @@
 #define NOFLIPY		64
 #define MAZELEVEL	128
 #define PREMAPPED	256
+#define NOMEMORY	512
 
 /* different level layout initializers */
 #define LVLINIT_NONE		0
