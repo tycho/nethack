@@ -17,16 +17,16 @@
 #define MAP_Y_LIM	21
 
     /* Per level flags */
-#define NOTELEPORT	1
-#define HARDFLOOR	2
-#define NOMMAP		4
-#define SHORTSIGHTED	8
-#define ARBOREAL	16
-#define NOFLIPX		32
-#define NOFLIPY		64
-#define MAZELEVEL	128
-#define PREMAPPED	256
-#define NOMEMORY	512
+#define NOTELEPORT	0x00000001L
+#define HARDFLOOR	0x00000002L
+#define NOMMAP		0x00000004L
+#define SHORTSIGHTED	0x00000008L
+#define ARBOREAL	0x00000010L
+#define NOFLIPX		0x00000020L
+#define NOFLIPY		0x00000040L
+#define MAZELEVEL	0x00000080L
+#define PREMAPPED	0x00000100L
+#define SHROUD		0x00000200L
 
 /* different level layout initializers */
 #define LVLINIT_NONE		0
