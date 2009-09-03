@@ -2761,7 +2761,7 @@ struct permonst _mons2[] = {
 	 * (their order matters; see minion.c)
 	 */
     MON("Juiblex", S_DEMON,
-	LVL(50, 3, -7, 65, -15), (G_HELL|G_NOCORPSE|G_NOGEN),
+	LVL(50, 6, -7, 65, -15), (G_HELL|G_NOCORPSE|G_NOGEN),
 	A(ATTK(AT_SPIT, AD_ACID, 3, 6), ATTK(AT_CLAW, AD_ACID, 2, 6),
 		ATTK(AT_NONE, AD_DISE, 1,10), NO_ATTK, NO_ATTK, NO_ATTK),
 	SIZ(1500, 0, 0, MS_GURGLE, MZ_LARGE),
