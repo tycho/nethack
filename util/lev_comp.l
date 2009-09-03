@@ -101,7 +101,6 @@ static int map_cnt = 0;
 ^[ \t]*#.*\n		{ line_number++; }
 :		{ colon_line_number = line_number; return ':'; }
 MESSAGE		return MESSAGE_ID;
-MAZE		return MAZE_ID;
 NOMAP		return NOMAP_ID;
 LEVEL		return LEVEL_ID;
 INIT_MAP	return LEV_INIT_ID;

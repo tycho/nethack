@@ -676,9 +676,9 @@ schar typ;
 	int dirs[4];
 
 #ifndef WALLIFIED_MAZE
-	if (typ) typ = CORR;
+	if (!typ) typ = CORR;
 #else
-	if (typ) typ = ROOM;
+	if (!typ) typ = ROOM;
 #endif
 
 	pos = 1;
