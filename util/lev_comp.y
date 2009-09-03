@@ -1028,7 +1028,7 @@ drawbridge_detail: DRAWBRIDGE_ID ':' coordinate ',' DIRECTION ',' door_state
 		   }
 		;
 
-mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION opt_boolean
+mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION opt_boolean opt_fillchar
 		  {
 		      walk *tmpwalk = New(walk);
 
@@ -1036,6 +1036,7 @@ mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION opt_boolean
 		      tmpwalk->y = current_coord.y;
 		      tmpwalk->dir = $5;
 		      tmpwalk->stocked = $<i>6;
+		      tmpwalk->typ = $<i>7;
 
 		      add_opcode(&splev, SPO_MAZEWALK, tmpwalk);
 		  }

@@ -3084,6 +3084,14 @@ sp_lev *lvl;
 	    x = (xchar)tmpwalk->x;  y = (xchar)tmpwalk->y;
 	    dir = tmpwalk->dir;
 
+	    if (tmpwalk->typ < 1) {
+#ifndef WALLIFIED_MAZE
+		tmpwalk->typ = CORR;
+#else
+		tmpwalk->typ = ROOM;
+#endif
+	    }
+
 	    /* don't use move() - it doesn't use W_NORTH, etc. */
 	    switch (dir) {
 	    case W_NORTH: --y; break;
@@ -3094,11 +3102,7 @@ sp_lev *lvl;
 	    }
 
 	    if(!IS_DOOR(levl[x][y].typ)) {
-#ifndef WALLIFIED_MAZE
-		levl[x][y].typ = CORR;
-#else
-		levl[x][y].typ = ROOM;
-#endif
+		levl[x][y].typ = tmpwalk->typ;
 		levl[x][y].flags = 0;
 	    }
 
@@ -3114,11 +3118,7 @@ sp_lev *lvl;
 		    x--;
 
 		/* no need for IS_DOOR check; out of map bounds */
-#ifndef WALLIFIED_MAZE
-		levl[x][y].typ = CORR;
-#else
-		levl[x][y].typ = ROOM;
-#endif
+		levl[x][y].typ = tmpwalk->typ;
 		levl[x][y].flags = 0;
 	    }
 
@@ -3129,7 +3129,7 @@ sp_lev *lvl;
 		    y--;
 	    }
 
-	    walkfrom(x, y);
+	    walkfrom(x, y, tmpwalk->typ);
 	    if (tmpwalk->stocked) fill_empty_maze();
 	    break;
 	case SPO_NON_DIGGABLE:
