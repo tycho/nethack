@@ -2761,7 +2761,7 @@ sp_lev *lvl;
     if (lvl->init_lev.flags & NOFLIPY)      allow_flips &= ~2;
     if (lvl->init_lev.flags & MAZELEVEL)    level.flags.is_maze_lev = 1;
     if (lvl->init_lev.flags & PREMAPPED)    premapped = TRUE;
-    if (lvl->init_lev.flags & NOMEMORY)     level.flags.hero_memory = 0;
+    if (lvl->init_lev.flags & SHROUD)       level.flags.hero_memory = 0;
 
     while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
 	int opcode = lvl->opcodes[n_opcode].opcode;
