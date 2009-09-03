@@ -356,7 +356,6 @@ fixup_special()
 	u.uinwater = 0;
 	unsetup_waterlevel();
     } else if (Is_waterlevel(&u.uz)) {
-	level.flags.hero_memory = 0;
 	was_waterlevel = TRUE;
 	/* water level is an odd beast - it has to be set up
 	   before calling place_lregions etc. */
