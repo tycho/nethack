@@ -2484,7 +2484,7 @@ uchar aatyp;
 				mdamageu(mon, tmp);
 				break;
 			case AD_DISE:	/* gray fungus or Juiblex, for now */
-				if (mon->data = &mons[PM_JUIBLEX])
+				if (mon->data == &mons[PM_JUIBLEX])
 				{
 					if (Sick_resistance) {
 						You("are sprayed with a vile ichor, but it doesn't hurt at all.");
