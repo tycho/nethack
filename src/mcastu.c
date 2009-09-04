@@ -965,69 +965,73 @@ int spellnum;
     boolean mcouldseeu = couldsee(mtmp->mx, mtmp->my);
 
     if (adtyp == AD_SPEL) {
-	/* aggravate monsters, etc. won't be cast by peaceful monsters */
-	if (mtmp->mpeaceful && (spellnum == MGC_AGGRAVATION ||
-		spellnum == MGC_SUMMON_MONS || spellnum == MGC_CLONE_WIZ))
-	    return TRUE;
-	/* haste self when already fast */
-	if (mtmp->permspeed == MFAST && spellnum == MGC_HASTE_SELF)
-	    return TRUE;
-	/* invisibility when already invisible */
-	if ((mtmp->minvis || mtmp->invis_blkd) && spellnum == MGC_DISAPPEAR)
-	    return TRUE;
-	/* peaceful monster won't cast invisibility if you can't see invisible,
-	   same as when monsters drink potions of invisibility.  This doesn't
-	   really make a lot of sense, but lets the player avoid hitting
-	   peaceful monsters by mistake */
-	if (mtmp->mpeaceful && !See_invisible && spellnum == MGC_DISAPPEAR)
-	    return TRUE;
-	/* healing when already healed */
-	if (mtmp->mhp == mtmp->mhpmax && spellnum == MGC_CURE_SELF)
-	    return TRUE;
-	/* don't summon monsters if it doesn't think you're around */
-	if (!mcouldseeu && (spellnum == MGC_SUMMON_MONS ||
-		(!mtmp->iswiz && spellnum == MGC_CLONE_WIZ)))
-	    return TRUE;
-	if ((!mtmp->iswiz || flags.no_of_wizards > 1)
-						&& spellnum == MGC_CLONE_WIZ)
-	    return TRUE;
-	/* don't lift off if we're already in the air or just-peaceful
-	 * ...but go ahead and let pets do it */
-	if ((is_flyer(mtmp->data) || is_flying(mtmp) || 
-				(mtmp->mpeaceful && !mtmp->mtame)) && spellnum == MGC_FLY)
-		return TRUE;
-	/* Don't go making everything else bonkers if you're peaceful! */
-	if (spellnum == MGC_ENRAGE && (mtmp->mpeaceful || mtmp->mtame)) {
-		return TRUE;
-	}
- 	/* Don't waste time zapping resisted spells at the player,
- 	 * and don't blast ourselves with our own explosions */
- 	if ((m_seenres(mtmp,M_SEEN_FIRE) || distu(mtmp->mx,mtmp->my) < 2) && 
- 			spellnum == MGC_FIRE_BOLT) {
- 		return TRUE;
- 	}
- 	if ((m_seenres(mtmp,M_SEEN_COLD) || distu(mtmp->mx,mtmp->my) < 2) && 
- 			spellnum == MGC_ICE_BOLT) {
- 		return TRUE;
- 	}
+		/* aggravate monsters, etc. won't be cast by peaceful monsters */
+		if (mtmp->mpeaceful && (spellnum == MGC_AGGRAVATION ||
+			spellnum == MGC_SUMMON_MONS || spellnum == MGC_CLONE_WIZ))
+			return TRUE;
+		/* haste self when already fast */
+		if (mtmp->permspeed == MFAST && spellnum == MGC_HASTE_SELF)
+			return TRUE;
+		/* invisibility when already invisible */
+		if ((mtmp->minvis || mtmp->invis_blkd) && spellnum == MGC_DISAPPEAR)
+			return TRUE;
+		/* peaceful monster won't cast invisibility if you can't see invisible,
+			same as when monsters drink potions of invisibility.  This doesn't
+			really make a lot of sense, but lets the player avoid hitting
+			peaceful monsters by mistake */
+		if (mtmp->mpeaceful && !See_invisible && spellnum == MGC_DISAPPEAR)
+			return TRUE;
+		/* healing when already healed */
+		if (mtmp->mhp == mtmp->mhpmax && spellnum == MGC_CURE_SELF)
+			return TRUE;
+		/* don't summon monsters if it doesn't think you're around */
+		if (!mcouldseeu && (spellnum == MGC_SUMMON_MONS ||
+			(!mtmp->iswiz && spellnum == MGC_CLONE_WIZ)))
+			return TRUE;
+		if ((!mtmp->iswiz || flags.no_of_wizards > 1)
+							&& spellnum == MGC_CLONE_WIZ)
+			return TRUE;
+		/* don't lift off if we're already in the air or just-peaceful
+		* ...but go ahead and let pets do it */
+		if ((is_flyer(mtmp->data) || is_flying(mtmp) || 
+					(mtmp->mpeaceful && !mtmp->mtame)) && spellnum == MGC_FLY)
+			return TRUE;
+		/* Don't go making everything else bonkers if you're peaceful! */
+		if (spellnum == MGC_ENRAGE && (mtmp->mpeaceful || mtmp->mtame)) {
+			return TRUE;
+		}
+		/* Don't waste time zapping resisted spells at the player,
+		* and don't blast ourselves with our own explosions */
+		if ((m_seenres(mtmp,M_SEEN_FIRE) || distu(mtmp->mx,mtmp->my) < 2) && 
+				spellnum == MGC_FIRE_BOLT) {
+			return TRUE;
+		}
+		if ((m_seenres(mtmp,M_SEEN_COLD) || distu(mtmp->mx,mtmp->my) < 2) && 
+				spellnum == MGC_ICE_BOLT) {
+			return TRUE;
+		}
+		if ((spellnum == MGC_ICE_BOLT || spellnum == MGC_FIRE_BOLT) && mtmp->mpeaceful)
+		{
+			return TRUE;
+		}
     } else if (adtyp == AD_CLRC) {
-	/* summon insects/sticks to snakes won't be cast by peaceful monsters */
-	if (mtmp->mpeaceful && spellnum == CLC_INSECTS)
-	    return TRUE;
-	/* healing when already healed */
-	if (mtmp->mhp == mtmp->mhpmax && spellnum == CLC_CURE_SELF)
-	    return TRUE;
-	/* don't summon insects if it doesn't think you're around */
-	if (!mcouldseeu && spellnum == CLC_INSECTS)
-	    return TRUE;
-	/* blindness spell on blinded player */
-	if (Blinded && spellnum == CLC_BLIND_YOU)
-	    return TRUE;
-	/* don't lift off if we're already in the air or just-peaceful
-	 * ...but go ahead and let pets do it */
-	if ((is_flyer(mtmp->data) || is_flying(mtmp) || 
-				(mtmp->mpeaceful && !mtmp->mtame)) && spellnum == CLC_FLY)
-		return TRUE;
+		/* summon insects/sticks to snakes won't be cast by peaceful monsters */
+		if (mtmp->mpeaceful && spellnum == CLC_INSECTS)
+			return TRUE;
+		/* healing when already healed */
+		if (mtmp->mhp == mtmp->mhpmax && spellnum == CLC_CURE_SELF)
+			return TRUE;
+		/* don't summon insects if it doesn't think you're around */
+		if (!mcouldseeu && spellnum == CLC_INSECTS)
+			return TRUE;
+		/* blindness spell on blinded player */
+		if (Blinded && spellnum == CLC_BLIND_YOU)
+			return TRUE;
+		/* don't lift off if we're already in the air or just-peaceful
+		* ...but go ahead and let pets do it */
+		if ((is_flyer(mtmp->data) || is_flying(mtmp) || 
+					(mtmp->mpeaceful && !mtmp->mtame)) && spellnum == CLC_FLY)
+			return TRUE;
     }
     return FALSE;
 }
