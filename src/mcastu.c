@@ -535,13 +535,13 @@ int spellnum;
 		/* hotwire these to only go off if the critter can see you
 		 * to avoid bugs WRT the Eyes and detect monsters */
 		if (m_canseeu(mtmp)) {
-			pline("%s blasts you with %s!",Monnam(mtmp), spellnum == MGC_FIRE_BOLT ? "fire" : "cold");
-			explode(u.ux,u.uy,spellnum == MGC_FIRE_BOLT ? AD_FIRE-1 : AD_COLD-1,
-					d((mtmp->m_lev/5)+1,8),WAND_CLASS,1);
+			pline("%s blasts you with %s!",Monnam(mtmp), (spellnum == MGC_FIRE_BOLT) ? "fire" : "cold");
+			explode(u.ux,u.uy,(spellnum == MGC_FIRE_BOLT) ? AD_FIRE-1 : AD_COLD-1,
+					d((mtmp->m_lev/5)+1,8),MON_CASTBALL,(spellnum == MGC_FIRE_BOLT) ? EXPL_FIERY : EXPL_FROSTY);
 		} else {
 			if (canspotmon(mtmp)) {
 				pline("%s blasts the %s with %s and curses!", Monnam(mtmp), rn2(2) ? "ceiling" : "floor",  
-						spellnum == MGC_FIRE_BOLT ? "fire" : "cold");
+						(spellnum == MGC_FIRE_BOLT) ? "fire" : "cold");
 			} else {
 				You_hear("some cursing!");
 			}

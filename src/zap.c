@@ -3432,7 +3432,7 @@ register int dx,dy;
 	bhitpos.x = sx,  bhitpos.y = sy;
 	/* Fireballs only damage when they explode */
 	if (type != ZT_SPELL(ZT_FIRE))
-	    range += zap_over_floor(sx, sy, type, &shopdamage);
+	    range += zap_over_floor(sx, sy, type, &shopdamage, FALSE);
 
 	if (mon) {
 	    if (type == ZT_SPELL(ZT_FIRE)) break;
@@ -3660,12 +3660,16 @@ xchar x, y;
  * both for normal bolts of fire, cold, etc... and for fireballs.
  * Sets shopdamage to TRUE if a shop door is destroyed, and returns the
  * amount by which range is reduced (the latter is just ignored by fireballs)
+ *
+ * If moncast is TRUE, then a monster is causing this damage; do not penalize
+ * the player for any shop damage or miscellaneous item destruction.
  */
 int
-zap_over_floor(x, y, type, shopdamage)
+zap_over_floor(x, y, type, shopdamage, moncast)
 xchar x, y;
 int type;
 boolean *shopdamage;
+boolean moncast;
 {
 	struct monst *mon;
 	int abstype = abs(type) % 10;
@@ -3811,7 +3815,7 @@ boolean *shopdamage;
 		}
 		if (new_doormask >= 0) {	/* door gets broken */
 		    if (*in_rooms(x, y, SHOPBASE)) {
-			if (type >= 0) {
+			if (type >= 0 && !moncast) {
 			    add_damage(x, y, 400L);
 			    *shopdamage = TRUE;
 			} else	/* caused by monster */
@@ -3835,7 +3839,7 @@ boolean *shopdamage;
 	}
 
 	if(OBJ_AT(x, y) && abstype == ZT_FIRE)
-		if (burn_floor_paper(x, y, FALSE, type > 0) && couldsee(x, y)) {
+		if (burn_floor_paper(x, y, FALSE, (type > 0 && !moncast)) && couldsee(x, y)) {
 		    newsym(x,y);
 		    You("%s of smoke.",
 			!Blind ? "see a puff" : "smell a whiff");
@@ -3844,12 +3848,13 @@ boolean *shopdamage;
 		/* Cannot use wakeup() which also angers the monster */
 		mon->msleeping = 0;
 		if(mon->m_ap_type) seemimic(mon);
-		if(type >= 0) {
+		/* again, don't penalize player for critter fireballs */
+		if(type >= 0 && !moncast) {
 		    setmangry(mon);
 		    if(mon->ispriest && *in_rooms(mon->mx, mon->my, TEMPLE))
-			ghod_hitsu(mon);
+				ghod_hitsu(mon);
 		    if(mon->isshk && !*u.ushops)
-			hot_pursuit(mon);
+				hot_pursuit(mon);
 		}
 	}
 	return rangemod;
