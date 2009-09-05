@@ -789,9 +789,6 @@ static const char *window_opts[] = {
 #ifdef TTY_GRAPHICS
 		"traditional tty-based graphics",
 #endif
-#ifdef CURSES_GRAPHICS
-        "curses",
-#endif
 #ifdef X11_GRAPHICS
 		"X11",
 #endif
