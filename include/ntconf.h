@@ -159,9 +159,7 @@ int  _RTLENTRY _EXPFUNC open  (const char _FAR *__path, int __access,... /*unsig
 long _RTLENTRY _EXPFUNC lseek  (int __handle, long __offset, int __fromwhere);
 int  _RTLENTRY _EXPFUNC read  (int __handle, void _FAR *__buf, unsigned __len);
 #endif
-#ifndef CURSES_GRAPHICS
-# include <conio.h>
-#endif
+#include <conio.h>
 #undef kbhit		/* Use our special NT kbhit */
 #define kbhit (*nt_kbhit)
 

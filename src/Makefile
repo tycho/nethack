@@ -174,14 +174,6 @@ WINTTYSRC = ../win/tty/getline.c ../win/tty/termcap.c ../win/tty/topl.c \
 	../win/tty/wintty.c
 WINTTYOBJ = getline.o termcap.o topl.o wintty.o
 #
-# Files for curses interface
-WINCURSESSRC = ../win/curses/cursmain.c ../win/curses/curswins.c \
-	../win/curses/cursmisc.c ../win/curses/cursdial.c \
-	../win/curses/cursstat.c ../win/curses/cursinit.c \
-	../win/curses/cursmesg.c
-WINCURSESOBJ = cursmain.o curswins.o cursmisc.o cursdial.o cursstat.o \
-	cursinit.o cursmesg.o
-#
 # files for an X11 port
 # (tile.c is a generated source file)
 WINX11SRC = ../win/X11/Window.c ../win/X11/dialogs.c ../win/X11/winX.c \
@@ -222,8 +214,8 @@ WINBEOBJ =
 
 #
 #
-WINSRC = $(WINTTYSRC) $(WINCURSESSRC)
-WINOBJ = $(WINTTYOBJ) $(WINCURSESOBJ)
+WINSRC = $(WINTTYSRC)
+WINOBJ = $(WINTTYOBJ)
 
 # on some systems the termcap library is in -ltermcap or -lcurses
 # on 386 Xenix, the -ltermlib tputs() seems not to work; use -lcurses instead
@@ -235,9 +227,6 @@ WINOBJ = $(WINTTYOBJ) $(WINCURSESOBJ)
 # OSX uses -lncurses
 # Be uses -ltermcap
 #
-# libraries for curses port
-# link with ncurses
-WINCURSESLIB = -lncurses
 # libraries for tty ports
 # WINTTYLIB = -ltermcap
 # WINTTYLIB = -lcurses
@@ -267,7 +256,7 @@ WINGEMLIB = -le_gem -lgem
 # libraries for BeOS 
 WINBELIB = -lbe
 
-WINLIB = $(WINTTYLIB) $(WINCURSESLIB)
+WINLIB = $(WINTTYLIB)
 
 # any other strange libraries your system needs (for Sysunix only -- the more
 # specialized targets should already be right)
@@ -617,26 +606,6 @@ topl.o: ../win/tty/topl.c $(HACK_H) ../include/tcap.h
 wintty.o: ../win/tty/wintty.c $(HACK_H) ../include/dlb.h \
 		../include/patchlevel.h ../include/tcap.h
 	$(CC) $(CFLAGS) -c ../win/tty/wintty.c
-cursmain.o: ../win/curses/cursmain.c $(HACK_H) ../include/wincurs.h
-	$(CC) $(CFLAGS) -c ../win/curses/cursmain.c
-curswins.o: ../win/curses/curswins.c $(HACK_H) ../include/func_tab.h \
-		../include/wincurs.h ../win/curses/curswins.h
-	$(CC) $(CFLAGS) -c ../win/curses/curswins.c
-cursmisc.o: ../win/curses/cursmisc.c $(HACK_H) ../include/wincurs.h \
-		../win/curses/cursmisc.h
-	$(CC) $(CFLAGS) -c ../win/curses/cursmisc.c
-cursdial.o: ../win/curses/cursdial.c $(HACK_H) ../include/func_tab.h \
-		../include/wincurs.h ../win/curses/cursdial.h
-	$(CC) $(CFLAGS) -c ../win/curses/cursdial.c
-cursstat.o: ../win/curses/cursstat.c $(HACK_H) ../include/wincurs.h \
-		../win/curses/cursstat.h
-	$(CC) $(CFLAGS) -c ../win/curses/cursstat.c
-cursinit.o: ../win/curses/cursinit.c $(HACK_H) ../include/wincurs.h \
-		../win/curses/cursinit.h
-	$(CC) $(CFLAGS) -c ../win/curses/cursinit.c
-cursmesg.o: ../win/curses/cursmesg.c $(HACK_H) ../include/wincurs.h \
-		../win/curses/cursmesg.h
-	$(CC) $(CFLAGS) -c ../win/curses/cursmesg.c
 Window.o: ../win/X11/Window.c ../include/xwindowp.h ../include/xwindow.h \
 		$(CONFIG_H)
 	$(CC) $(CFLAGS) -c ../win/X11/Window.c
