@@ -226,92 +226,96 @@ int expltype;
 		tmp_at(DISP_END, 0); /* clear the explosion */
 	} else {
 	    if (olet == MON_EXPLODE) {
-		str = "explosion";
-		generic = TRUE;
+			str = "explosion";
+			generic = TRUE;
 	    }
 	    if (flags.soundok) You_hear("a blast.");
 	}
 
-    if (dam)
-	for (i=0; i<3; i++) for (j=0; j<3; j++) {
-		if (explmask[i][j] == 2) continue;
-		if (i+x-1 == u.ux && j+y-1 == u.uy)
-			uhurt = (explmask[i][j] == 1) ? 1 : 2;
-		idamres = idamnonres = 0;
-		if (type >= 0)
-		    (void)zap_over_floor((xchar)(i+x-1), (xchar)(j+y-1),
-		    		type, &shopdamage);
+    if (dam) {
+		for (i=0; i<3; i++) for (j=0; j<3; j++) {
+			if (explmask[i][j] == 2) continue;
+			if (i+x-1 == u.ux && j+y-1 == u.uy)
+				uhurt = (explmask[i][j] == 1) ? 1 : 2;
+			idamres = idamnonres = 0;
+			if (type >= 0)
+				(void)zap_over_floor((xchar)(i+x-1), (xchar)(j+y-1), type, &shopdamage, MON_CASTBALL);
 
-		mtmp = m_at(i+x-1, j+y-1);
+			mtmp = m_at(i+x-1, j+y-1);
 #ifdef STEED
-		if (!mtmp && i+x-1 == u.ux && j+y-1 == u.uy)
-			mtmp = u.usteed;
+			if (!mtmp && i+x-1 == u.ux && j+y-1 == u.uy)
+				mtmp = u.usteed;
 #endif
-		if (!mtmp) continue;
-		if (u.uswallow && mtmp == u.ustuck) {
-			if (is_animal(u.ustuck->data))
-				pline("%s gets %s!",
-				      Monnam(u.ustuck),
-				      (adtyp == AD_FIRE) ? "heartburn" :
-				      (adtyp == AD_COLD) ? "chilly" :
-				      (adtyp == AD_DISN) ? ((olet == WAND_CLASS) ?
-				       "irradiated by pure energy" : "perforated") :
-				      (adtyp == AD_ELEC) ? "shocked" :
-				      (adtyp == AD_DRST) ? "poisoned" :
-				      (adtyp == AD_ACID) ? "an upset stomach" :
-				       "fried");
-			else
-				pline("%s gets slightly %s!",
-				      Monnam(u.ustuck),
-				      (adtyp == AD_FIRE) ? "toasted" :
-				      (adtyp == AD_COLD) ? "chilly" :
-				      (adtyp == AD_DISN) ? ((olet == WAND_CLASS) ?
-				       "overwhelmed by pure energy" : "perforated") :
-				      (adtyp == AD_ELEC) ? "shocked" :
-				      (adtyp == AD_DRST) ? "intoxicated" :
-				      (adtyp == AD_ACID) ? "burned" :
-				       "fried");
-		} else if (cansee(i+x-1, j+y-1)) {
-		    if(mtmp->m_ap_type) seemimic(mtmp);
-		    pline("%s is caught in the %s!", Monnam(mtmp), str);
-		}
-
-		idamres += destroy_mitem(mtmp, SCROLL_CLASS, (int) adtyp);
-		idamres += destroy_mitem(mtmp, SPBOOK_CLASS, (int) adtyp);
-		idamnonres += destroy_mitem(mtmp, POTION_CLASS, (int) adtyp);
-		idamnonres += destroy_mitem(mtmp, WAND_CLASS, (int) adtyp);
-		idamnonres += destroy_mitem(mtmp, RING_CLASS, (int) adtyp);
-
-		if (explmask[i][j] == 1) {
-			golemeffects(mtmp, (int) adtyp, dam + idamres);
-			damage_mon(mtmp,idamnonres,adtyp);
-		} else {
-		/* call resist with 0 and do damage manually so 1) we can
-		 * get out the message before doing the damage, and 2) we can
-		 * call mondied, not killed, if it's not your blast
-		 */
-			int mdam = dam;
-
-			if (resist(mtmp, olet, 0, FALSE)) {
-			    if (cansee(i+x-1,j+y-1))
-				pline("%s resists the %s!", Monnam(mtmp), str);
-			    mdam = dam/2;
+			if (!mtmp) continue;
+			if (u.uswallow && mtmp == u.ustuck) {
+				if (is_animal(u.ustuck->data))
+					pline("%s gets %s!",
+							Monnam(u.ustuck),
+							(adtyp == AD_FIRE) ? "heartburn" :
+							(adtyp == AD_COLD) ? "chilly" :
+							(adtyp == AD_DISN) ? ((olet == WAND_CLASS) ?
+							"irradiated by pure energy" : "perforated") :
+							(adtyp == AD_ELEC) ? "shocked" :
+							(adtyp == AD_DRST) ? "poisoned" :
+							(adtyp == AD_ACID) ? "an upset stomach" :
+							"fried");
+				else
+					pline("%s gets slightly %s!",
+							Monnam(u.ustuck),
+							(adtyp == AD_FIRE) ? "toasted" :
+							(adtyp == AD_COLD) ? "chilly" :
+							(adtyp == AD_DISN) ? ((olet == WAND_CLASS) ?
+							"overwhelmed by pure energy" : "perforated") :
+							(adtyp == AD_ELEC) ? "shocked" :
+							(adtyp == AD_DRST) ? "intoxicated" :
+							(adtyp == AD_ACID) ? "burned" :
+							"fried");
+			} else if (cansee(i+x-1, j+y-1)) {
+				if(mtmp->m_ap_type) seemimic(mtmp);
+				pline("%s is caught in the %s!", Monnam(mtmp), str);
 			}
-			if (mtmp == u.ustuck)
-				mdam *= 2;
-			if (resists_cold(mtmp) && adtyp == AD_FIRE)
-				mdam *= 2;
-			else if (resists_fire(mtmp) && adtyp == AD_COLD)
-				mdam *= 2;
-			damage_mon(mtmp,mdam,adtyp);
-			damage_mon(mtmp,idamres + idamnonres,adtyp);
+
+			idamres += destroy_mitem(mtmp, SCROLL_CLASS, (int) adtyp);
+			idamres += destroy_mitem(mtmp, SPBOOK_CLASS, (int) adtyp);
+			idamnonres += destroy_mitem(mtmp, POTION_CLASS, (int) adtyp);
+			idamnonres += destroy_mitem(mtmp, WAND_CLASS, (int) adtyp);
+			idamnonres += destroy_mitem(mtmp, RING_CLASS, (int) adtyp);
+
+			if (explmask[i][j] == 1) {
+				golemeffects(mtmp, (int) adtyp, dam + idamres);
+				damage_mon(mtmp,idamnonres,adtyp);
+			} else {
+			/* call resist with 0 and do damage manually so 1) we can
+			* get out the message before doing the damage, and 2) we can
+			* call mondied, not killed, if it's not your blast
+			*/
+				int mdam = dam;
+
+				if (resist(mtmp, olet, 0, FALSE)) {
+					if (cansee(i+x-1,j+y-1))
+					pline("%s resists the %s!", Monnam(mtmp), str);
+					mdam = dam/2;
+				}
+				if (mtmp == u.ustuck)
+					mdam *= 2;
+				if (resists_cold(mtmp) && adtyp == AD_FIRE)
+					mdam *= 2;
+				else if (resists_fire(mtmp) && adtyp == AD_COLD)
+					mdam *= 2;
+				damage_mon(mtmp,mdam,adtyp);
+				damage_mon(mtmp,idamres + idamnonres,adtyp);
+			}
+			if (mtmp->mhp <= 0) {
+				/* KMH -- Don't blame the player for pets killing gas spores
+				 * DSR -- And don't blame the player for monsters fireballing things */
+				if (!flags.mon_moving && olet != MON_CASTBALL) {
+					killed(mtmp);
+				} else {
+					monkilled(mtmp, "", (int)adtyp);
+				}
+			} else if (!flags.mon_moving && olet != MON_CASTBALL) setmangry(mtmp);
 		}
-		if (mtmp->mhp <= 0) {
-			/* KMH -- Don't blame the player for pets killing gas spores */
-			if (!flags.mon_moving) killed(mtmp);
-			else monkilled(mtmp, "", (int)adtyp);
-		} else if (!flags.mon_moving) setmangry(mtmp);
-	}
+	 }
 
 	/* Do your injury last */
 	if (uhurt) {
