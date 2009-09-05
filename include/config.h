@@ -42,7 +42,8 @@
  * Define all of those you want supported in your binary.
  * Some combinations make no sense.  See the installation document.
  */
-#define TTY_GRAPHICS	/* good old tty based graphics */
+/* #define TTY_GRAPHICS	 *//* good old tty based graphics */
+#define CURSES_GRAPHICS     /* Proper curses interface */
 /* #define X11_GRAPHICS */	/* X11 interface */
 /* #define QT_GRAPHICS */	/* Qt interface */
 /* #define GNOME_GRAPHICS */	/* Gnome interface */
@@ -52,7 +53,7 @@
  * Define the default window system.  This should be one that is compiled
  * into your system (see defines above).  Known window systems are:
  *
- *	tty, X11, mac, amii, BeOS, Qt, Gem, Gnome
+ *	tty, curses, X11, mac, amii, BeOS, Qt, Gem, Gnome
  */
 
 /* MAC also means MAC windows */
@@ -111,6 +112,17 @@
 #  define DEFAULT_WINDOW_SYS "mswin"
 # endif
 # define HACKDIR "\\nethack"
+#endif
+
+#ifdef CURSES_GRAPHICS
+/*
+ * # ifdef TTY_GRAPHICS		 // Dude.  Don't do this.
+ * # undef TTY_GRAPHICS
+ * # endif
+ */
+# ifndef DEFAULT_WINDOW_SYS
+#  define DEFAULT_WINDOW_SYS "curses"
+# endif
 #endif
 
 #ifndef DEFAULT_WINDOW_SYS
@@ -368,7 +380,7 @@ typedef unsigned char	uchar;
  */
 #endif
 
-#define STATUS_COLORS
+/* #define STATUS_COLORS */
 #define GOLDOBJ /* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
 #define WHEREIS_FILE /* Write out player's current location to player.whereis */
