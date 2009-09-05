@@ -180,7 +180,8 @@ lev_init	: /* nothing */
 		| LEV_INIT_ID ':' SOLID_FILL_ID ',' CHAR
 		  {
 		      splev.init_lev.filling = what_map_char((char) $5);
-		      if (splev.init_lev.filling == INVALID_TYPE)
+		      if (splev.init_lev.filling == INVALID_TYPE ||
+			  splev.init_lev.filling >= MAX_TYPE)
 			    yyerror("INIT_MAP: Invalid fill char type.");
 		      $$ = LVLINIT_SOLIDFILL;
 		      max_x_map = COLNO-1;
@@ -189,7 +190,8 @@ lev_init	: /* nothing */
 		| LEV_INIT_ID ':' MAZE_GRID_ID ',' CHAR
 		  {
 		      splev.init_lev.filling = what_map_char((char) $5);
-		      if (splev.init_lev.filling == INVALID_TYPE)
+		      if (splev.init_lev.filling == INVALID_TYPE ||
+			  splev.init_lev.filling >= MAX_TYPE)
 			    yyerror("INIT_MAP: Invalid fill char type.");
 		      $$ = LVLINIT_MAZEGRID;
 		      max_x_map = COLNO-1;
@@ -198,10 +200,12 @@ lev_init	: /* nothing */
 		| LEV_INIT_ID ':' MINES_ID ',' CHAR ',' CHAR ',' BOOLEAN ',' BOOLEAN ',' light_state ',' walled opt_fillchar
 		  {
 			splev.init_lev.fg = what_map_char((char) $5);
-			if (splev.init_lev.fg == INVALID_TYPE)
+			if (splev.init_lev.fg == INVALID_TYPE ||
+			  splev.init_lev.filling >= MAX_TYPE)
 			    yyerror("INIT_MAP: Invalid foreground type.");
 			splev.init_lev.bg = what_map_char((char) $7);
-			if (splev.init_lev.bg == INVALID_TYPE)
+			if (splev.init_lev.bg == INVALID_TYPE ||
+			  splev.init_lev.filling >= MAX_TYPE)
 			    yyerror("INIT_MAP: Invalid background type.");
 			splev.init_lev.smoothed = $9;
 			splev.init_lev.joined = $11;
@@ -1286,7 +1290,11 @@ replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' CHAR ',' lig
 		      tmprepl->x2 = current_region.x2;
 		      tmprepl->y2 = current_region.y2;
 		      tmprepl->fromter = what_map_char((char) $5);
+		      if (tmprepl->fromter >= MAX_TYPE)
+			  yyerror("Replace terrain: illegal 'from' map char");
 		      tmprepl->toter = what_map_char((char) $7);
+		      if (tmprepl->toter >= MAX_TYPE)
+			  yyerror("Replace terrain: illegal 'to' map char");
 		      tmprepl->tolit = $9;
 		      add_opcode(&splev, SPO_REPLACETERRAIN, tmprepl);
 		  }
@@ -1302,6 +1310,8 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     tmpterrain->y1 = current_coord.y;
 		     tmpterrain->x2 = tmpterrain->y2 = -1;
 		     tmpterrain->ter = what_map_char((char) $6);
+		     if (tmpterrain->ter >= MAX_TYPE)
+			 yyerror("Terrain: illegal map char");
 		     tmpterrain->tlit = $8;
 
 		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
@@ -1323,6 +1333,8 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 			 tmpterrain->x2 = -1;
 		     }
 		     tmpterrain->ter = what_map_char((char) $10);
+		     if (tmpterrain->ter >= MAX_TYPE)
+			 yyerror("Terrain: illegal map char");
 		     tmpterrain->tlit = $12;
 
 		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
@@ -1339,6 +1351,8 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     tmpterrain->x2 = current_region.x2;
 		     tmpterrain->y2 = current_region.y2;
 		     tmpterrain->ter = what_map_char((char) $8);
+		     if (tmpterrain->ter >= MAX_TYPE)
+			 yyerror("Terrain: illegal map char");
 		     tmpterrain->tlit = $10;
 
 		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
@@ -1354,7 +1368,8 @@ randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER 
 		      tmprandline->x2 = current_region.x2;
 		      tmprandline->y2 = current_region.y2;
 		      tmprandline->fg = what_map_char((char) $5);
-		      if (tmprandline->fg == INVALID_TYPE) {
+		      if (tmprandline->fg == INVALID_TYPE ||
+			  tmprandline->fg >= MAX_TYPE) {
 			  yyerror("RANDLINE: Invalid map character!");
 		      }
 		      tmprandline->lit = $7;
@@ -1380,7 +1395,8 @@ spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' li
 				tmpspill->x = current_coord.x;
 				tmpspill->y = current_coord.y;
 				tmpspill->typ = what_map_char((char) $5);
-				if (tmpspill->typ == INVALID_TYPE) {
+				if (tmpspill->typ == INVALID_TYPE ||
+				    tmpspill->typ >= MAX_TYPE) {
 					yyerror("SPILL: Invalid map character!");
 				}
 				tmpspill->direction = $7;
