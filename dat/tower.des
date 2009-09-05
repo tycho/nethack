@@ -79,10 +79,12 @@ MONSTER:'&',random,place[1]
 MONSTER:'d',"hell hound pup",place[2]
 MONSTER:'d',"hell hound pup",place[3]
 MONSTER:'d',"winter wolf",place[4]
-CONTAINER:'(',"chest",place[5]
-OBJECT:'"',"amulet of life saving",contained
-CONTAINER:'(',"chest",place[6]
-OBJECT:'"',"amulet of strangulation",contained
+CONTAINER:'(',"chest",place[5] {
+  OBJECT:'"',"amulet of life saving"
+}
+CONTAINER:'(',"chest",place[6] {
+  OBJECT:'"',"amulet of strangulation"
+}
 OBJECT:'[',"water walking boots",place[7]
 OBJECT:'[',"crystal plate mail",place[8]
 OBJECT:'+',"invisibility",place[9]

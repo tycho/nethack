@@ -824,6 +824,7 @@ sp_lev *maze;
 	   Write(fd, &(tmpo.opcode), sizeof(tmpo.opcode));
 	   switch (tmpo.opcode) {
 	    case SPO_EXIT:
+	    case SPO_POP_CONTAINER:
 	    case SPO_WALLIFY:
 	    case SPO_NULL:
 	    case SPO_ENDROOM:
