@@ -288,15 +288,31 @@ int
 dlord(atyp)
 aligntyp atyp;
 {
+	/*
+	 * This code is ridiculous given that there are exactly two demon lords who
+	 * could be summoned by this -- Yeenoghu and Juiblex.
+	 *
+	 * With the Juiblex changes, this means we don't want him to get summoned
+	 * by accident anywhere, so all of this code now becomes "Check for Yeeny;
+	 * is Yeeny available?  No?  Send in a dingus."
+	 *
 	int tryct, pm;
-
+	
 	for (tryct = 0; tryct < 20; tryct++) {
 	    pm = rn1(PM_YEENOGHU + 1 - PM_JUIBLEX, PM_JUIBLEX);
 	    if (!(mvitals[pm].mvflags & G_GONE) &&
 		    (atyp == A_NONE || sgn(mons[pm].maligntyp) == sgn(atyp)))
 		return(pm);
 	}
-	return(ndemon(atyp));	/* approximate */
+
+	*/
+
+	if (!(mvitals[PM_YEENOGHU].mvflags & G_GONE) && 
+			(atyp == A_NONE || sgn(mons[PM_YEENOGHU].maligntyp) == sgn(atyp))) {
+		return PM_YEENOGHU;
+	}
+
+	return(ndemon(atyp));	/* launch the dingus! */
 }
 
 /* create lawful (good) lord */
