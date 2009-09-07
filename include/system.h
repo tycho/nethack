@@ -473,7 +473,7 @@ E  char *sprintf();
 #ifndef __SASC_60
 #ifdef NEED_VARARGS
 # if defined(USE_STDARG) || defined(USE_VARARGS)
-#  if !defined(SVR4) && !defined(apollo)
+#  if !defined(SVR4) && !defined(apollo) && !defined(OSX)
 #   if !(defined(ULTRIX_PROTO) && defined(__GNUC__))
 #    if !(defined(SUNOS4) && defined(__STDC__)) /* Solaris unbundled cc (acc) */
 E int FDECL(vsprintf, (char *, const char *, va_list));
