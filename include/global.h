@@ -236,6 +236,10 @@ typedef xchar	boolean;		/* 0 or 1 */
 #endif
 #endif
 
+#ifdef OSX
+# define MENU_COLOR_REGEX_POSIX
+#endif
+
 #ifdef VMS
 /* vms_exit() (sys/vms/vmsmisc.c) expects the non-VMS EXIT_xxx values below.
  * these definitions allow all systems to be treated uniformly, provided

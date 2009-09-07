@@ -166,7 +166,7 @@ title.img:
 check-dlb: options
 	@if egrep -s librarian dat/options ; then $(MAKE) dlb ; else true ; fi
 
-dlb:
+dlb: spec_levs
 	( cd util ; $(MAKE) dlb )
 	( cd dat ; ../util/dlb cf nhdat $(DATDLB) )
 
