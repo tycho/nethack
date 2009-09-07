@@ -960,7 +960,7 @@ struct obj* obj;
 	check_unpaid(obj);
 	pline("%s %s burns with a dim flame and vile stench.", Shk_Your(buf, obj), xname(obj));
 	begin_burn(obj, FALSE);
-	BStealth = (int)obj;
+	BStealth = (size_t)obj;
 
 }
 
