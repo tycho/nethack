@@ -1335,6 +1335,9 @@ dosacrifice()
 				done(ESCAPED);
 			}
 			/* super big win */
+#ifdef RECORD_ACHIEVE
+			achieve.ascended = 1;
+#endif
 			pline("An invisible choir sings, and you are bathed in radiance...");
 			godvoice(altaralign, "Congratulations, mortal!");
 			display_nhwindow(WIN_MESSAGE, FALSE);

@@ -447,6 +447,12 @@ bot2()
 	    putstr(WIN_STATUS, 0, nb);
 	    x += strlen(nb);
 	}
+#ifdef REALTIME_ON_BOTL
+  if(iflags.showrealtime) {
+    time_t currenttime = get_realtime();
+    Sprintf(nb = eos(nb), " %d:%2.2d", currenttime / 3600, (currenttime % 3600) / 60);
+  }
+#endif
 	x++;
  	if(strcmp(hu_stat[u.uhs], "        ")) {
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
