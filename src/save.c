@@ -963,7 +963,7 @@ const struct percent_color_option *list_head;
 {
 	if (list_head == NULL) return;
 	free_percent_color_options(list_head->next);
-	free(list_head);
+	free((void*)list_head);
 }
 
 void
@@ -972,8 +972,8 @@ const struct text_color_option *list_head;
 {
 	if (list_head == NULL) return;
 	free_text_color_options(list_head->next);
-	free(list_head->text);
-	free(list_head);
+	free((void*)list_head->text);
+	free((void*)list_head);
 }
 
 void

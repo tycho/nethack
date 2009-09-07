@@ -1059,7 +1059,7 @@ char *start;
 			text_colors = text_color_option;
 			return TRUE;
 		}
-		free(text_color_option->text);
+		free((void*)text_color_option->text);
 		free(text_color_option);
 		return FALSE;
 	}
