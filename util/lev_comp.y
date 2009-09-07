@@ -372,6 +372,61 @@ message		: MESSAGE_ID ':' STRING
 		  }
 		;
 
+cobj_ifstatement : IF_ID chance
+		  {
+		     opcmp *tmpcmp = New(opcmp);
+		     opjmp *tmpjmp = New(opjmp);
+
+		     if (n_if_list >= MAX_NESTED_IFS)
+		       yyerror("Too deeply nested IF-statements!");
+		     tmpcmp->cmp_what = 0;
+		     tmpcmp->cmp_val = (long) $2;
+		     add_opcode(&splev, SPO_CMP, tmpcmp);
+		     tmpjmp->jmp_target = -1;
+		     if_list[n_if_list++] = splev.init_lev.n_opcodes;
+		     add_opcode(&splev, SPO_JG, tmpjmp);
+		  }
+		 cobj_if_ending
+		  {
+		     /* do nothing */
+		  }
+		;
+
+cobj_if_ending	: '{' cobj_statements '}'
+		  {
+		     if (n_if_list > 0) {
+			opjmp *tmpjmp;
+			tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+		     } else yyerror("IF...THEN ... huh?!");
+		  }
+		| '{' cobj_statements '}'
+		  {
+		     if (n_if_list > 0) {
+			long tmppos = splev.init_lev.n_opcodes;
+			opjmp *tmpjmp = New(opjmp);
+
+			tmpjmp->jmp_target = -1;
+			add_opcode(&splev, SPO_JMP, tmpjmp);
+
+			tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+
+			if_list[n_if_list++] = tmppos;
+		     } else yyerror("IF...THEN ... huh?!");
+		  }
+		 ELSE_ID '{' cobj_statements '}'
+		  {
+		     if (n_if_list > 0) {
+			opjmp *tmpjmp;
+			tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+		     } else yyerror("IF...THEN...ELSE ... huh?!");
+		  }
+		;
+
+
+
 random_corridors: RAND_CORRIDOR_ID
 		  {
 		     corridor *tmpcorridor = New(corridor);
@@ -835,20 +890,24 @@ monster_info	: ',' string
 		  }
 		;
 
-cobject_list	: /* nothing */
+cobj_statements	: /* nothing */
 		  {
 		  }
-		| cobject_detail cobject_list
+		| cobj_statement cobj_statements
 		;
 
-cobject_detail	: OBJECT_ID cobject_desc
+cobj_statement  : cobj_detail
+		| cobj_ifstatement
+		;
+
+cobj_detail	: OBJECT_ID cobj_desc
 		  {
 		      object *tmpobj =
 			  (object *) get_last_opcode_data1(&splev, SPO_OBJECT);
 		      if (!tmpobj) yyerror("No object defined?!");
 		      tmpobj->containment = (obj_containment ? 1 : 0);
 		  }
-		| COBJECT_ID cobject_desc
+		| COBJECT_ID cobj_desc
 		  {
 		     object *tmpobj =
 		       (object *) get_last_opcode_data1(&splev, SPO_OBJECT);
@@ -860,7 +919,7 @@ cobject_detail	: OBJECT_ID cobject_desc
 			/* 2: is a container */
 			/* 0: neither */
 		  }
-		 '{' cobject_list '}'
+		 '{' cobj_statements '}'
 		  {
 		      add_opcode(&splev, SPO_POP_CONTAINER, NULL);
 		      obj_containment--;
@@ -882,14 +941,14 @@ object_detail	: OBJECT_ID object_desc
 			/* 2: is a container */
 			/* 0: neither */
 		  }
-		 '{' cobject_list '}'
+		 '{' cobj_statements '}'
 		  {
 		      add_opcode(&splev, SPO_POP_CONTAINER, NULL);
 		      obj_containment--;
 		  }
 		;
 
-cobject_desc	: chance ':' object_c ',' o_name
+cobj_desc	: chance ':' object_c ',' o_name
 		  {
 		     object *tmpobj = New(object);
 
