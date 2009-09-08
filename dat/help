@@ -158,8 +158,8 @@ Commands:
         (       Tell what tools you are using.
         *       Tell what equipment you are using; combines the preceding five.
         $       Count your gold pieces.
-		  %		 Set your chosen ranged weapon; this weapon will be auto-wielded
-					 when you attempt to 'f'ire a missile.
+        %       Set your chosen ranged weapon; this weapon will be auto-wielded
+                when you attempt to 'f'ire a missile.
         +       List the spells you know; also rearrange them if desired.
         \       Show what types of objects have been discovered.
         !       Escape to a shell, if supported in your version and OS.
