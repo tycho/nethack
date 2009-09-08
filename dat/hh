@@ -72,7 +72,7 @@ Z       Zap     cast a spell
 ),[,=,",(       ask for current items of specified symbol in use
 *               ask for combination of ),[,=,",( all at once
 $       gold    count your gold
-%		  rwield	 assign chosen ranged weapon
+%       rwield  assign chosen ranged weapon
 +       spells  list the spells you know; also rearrange them if desired
 _       travel  move via a shortest-path algorithm to a point on the map 
 .       rest    wait a moment
