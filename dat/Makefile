@@ -6,7 +6,7 @@
 # UUDECODE=uudecode
 
 VARDAT = data rumors quest.dat oracles options
-LEVCOMP_FLAGS=-w -v
+LEVCOMP_FLAGS=-v
 
 all:	$(VARDAT) spec_levs quest_levs dungeon
 

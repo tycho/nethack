@@ -88,7 +88,6 @@ unsigned int max_x_map, max_y_map;
 int obj_containment = 0;
 
 extern int fatal_error;
-extern int want_warnings;
 extern const char *fname;
 
 %}
