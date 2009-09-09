@@ -6,6 +6,7 @@
 # UUDECODE=uudecode
 
 VARDAT = data rumors quest.dat oracles options
+LEVCOMP_FLAGS=-w -v
 
 all:	$(VARDAT) spec_levs quest_levs dungeon
 
@@ -102,36 +103,36 @@ options:	../util/makedefs
 spec_levs: ../util/lev_comp \
 	bigroom.des castle.des endgame.des gehennom.des knox.des medusa.des \
 	mines.des oracle.des sokoban.des tower.des yendor.des
-	../util/lev_comp bigroom.des
-	../util/lev_comp castle.des
-	../util/lev_comp endgame.des
-	../util/lev_comp gehennom.des
-	../util/lev_comp knox.des
-	../util/lev_comp medusa.des
-	../util/lev_comp mines.des
-	../util/lev_comp oracle.des
-	../util/lev_comp sokoban.des
-	../util/lev_comp tower.des
-	../util/lev_comp yendor.des
+	../util/lev_comp $(LEVCOMP_FLAGS) bigroom.des
+	../util/lev_comp $(LEVCOMP_FLAGS) castle.des
+	../util/lev_comp $(LEVCOMP_FLAGS) endgame.des
+	../util/lev_comp $(LEVCOMP_FLAGS) gehennom.des
+	../util/lev_comp $(LEVCOMP_FLAGS) knox.des
+	../util/lev_comp $(LEVCOMP_FLAGS) medusa.des
+	../util/lev_comp $(LEVCOMP_FLAGS) mines.des
+	../util/lev_comp $(LEVCOMP_FLAGS) oracle.des
+	../util/lev_comp $(LEVCOMP_FLAGS) sokoban.des
+	../util/lev_comp $(LEVCOMP_FLAGS) tower.des
+	../util/lev_comp $(LEVCOMP_FLAGS) yendor.des
 	touch spec_levs
 
 quest_levs: ../util/lev_comp \
 	Arch.des Barb.des Caveman.des Healer.des Knight.des Monk.des \
 	Priest.des Ranger.des Rogue.des Samurai.des Tourist.des Valkyrie.des \
 	Wizard.des
-	../util/lev_comp Arch.des
-	../util/lev_comp Barb.des
-	../util/lev_comp Caveman.des
-	../util/lev_comp Healer.des
-	../util/lev_comp Knight.des
-	../util/lev_comp Monk.des
-	../util/lev_comp Priest.des
-	../util/lev_comp Ranger.des
-	../util/lev_comp Rogue.des
-	../util/lev_comp Samurai.des
-	../util/lev_comp Tourist.des
-	../util/lev_comp Valkyrie.des
-	../util/lev_comp Wizard.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Arch.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Barb.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Caveman.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Healer.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Knight.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Monk.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Priest.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Ranger.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Rogue.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Samurai.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Tourist.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Valkyrie.des
+	../util/lev_comp $(LEVCOMP_FLAGS) Wizard.des
 	touch quest_levs
 
 dungeon: dungeon.def ../util/makedefs ../util/dgn_comp
