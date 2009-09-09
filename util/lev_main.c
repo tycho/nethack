@@ -169,7 +169,6 @@ static struct {
 
 const char *fname = "(stdin)";
 int fatal_error = 0;
-int want_warnings = 0;
 int be_verbose = 0;
 
 #ifdef FLEX23_BUG
@@ -239,10 +238,6 @@ char **argv;
 	} else {			/* Otherwise every argument is a filename */
 	    for(i=1; i<argc; i++) {
 		    fname = argv[i];
-		    if(!strcmp(fname, "-w")) {
-			want_warnings++;
-			continue;
-		    } else
 		    if(!strcmp(fname, "-v")) {
 			be_verbose++;
 			continue;
