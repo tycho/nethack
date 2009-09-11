@@ -1060,7 +1060,6 @@ struct mkroom	*croom;
     schar	x,y;
     coord	tm;
 
-    if (rn2(100) < t->chance) {
 	x = t->x;
 	y = t->y;
 	if (croom)
@@ -1072,7 +1071,6 @@ struct mkroom	*croom;
 	tm.y = y;
 
 	mktrap(t->type, 1, (struct mkroom*) 0, &tm);
-    }
 }
 
 STATIC_OVL void
@@ -1184,7 +1182,6 @@ struct mkroom	*croom;
     struct permonst *pm;
     unsigned g_mvflags;
 
-    if (rn2(100) < m->chance) {
 
 	if (m->class >= 0)
 	    class = (char) def_char_to_monclass((char)m->class);
@@ -1318,7 +1315,6 @@ struct mkroom	*croom;
 	    }
 	}
 
-    }		/* if (rn2(100) < m->chance) */
 }
 
 /*
@@ -1335,7 +1331,6 @@ struct mkroom	*croom;
     char c;
     boolean named;	/* has a name been supplied in level description? */
 
-    if (rn2(100) < o->chance) {
 	named = o->name.str ? TRUE : FALSE;
 
 	x = o->x; y = o->y;
@@ -1473,7 +1468,6 @@ struct mkroom	*croom;
 
 	stackobj(otmp);
 
-    }		/* if (rn2(100) < o->chance) */
 }
 
 /*
@@ -1727,8 +1721,6 @@ struct mkroom *croom;
     schar x, y, x1, y1, x2, y2;
 
     if (terr->ter >= MAX_TYPE) return;
-
-    if (rn2(100) >= terr->chance) return;
 
     x1 = terr->x1;  y1 = terr->y1;
     get_location(&x1, &y1, DRY|WET, croom);
