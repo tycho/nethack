@@ -639,9 +639,40 @@ wiz_level_change()
 STATIC_PTR int
 wiz_panic()
 {
+	/*
+	 * Hijacked temporarily to sanity-check the new rnd.c code.
+	 * Uncomment to test on your own machine.
+	 *
+
+	int x;
+	int z[20];
+	double q;
+	FILE* testfile;
+
+	for(x=0;x<20;x++)
+	{
+		z[x] = 0;
+	}
+
+	for(x=0;x<=9999999;x++)
+	{
+		z[rn2(20)]++;
+	}
+
+	testfile = fopen("randtest","w");
+	for(x=0;x<20;x++)
+	{
+		q = ((double)z[x] / (double)9999999) * 100;
+		fprintf(testfile,"%2d: %d (%2.3f%%)\n",x,z[x],q);
+	}
+	fclose(testfile);
+
+	*/
+
 	if (yn("Do you want to call panic() and end your game?") == 'y')
 		panic("crash test.");
-        return 0;
+
+	return 0;
 }
 
 /* #polyself command - change hero's form */
