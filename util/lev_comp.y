@@ -311,17 +311,9 @@ exitstatement	: EXIT_ID
 
 ifstatement 	: IF_ID chance
 		  {
-		     opcmp *tmpcmp = New(opcmp);
-		     opjmp *tmpjmp = New(opjmp);
-
-		     if (n_if_list >= MAX_NESTED_IFS)
-		       yyerror("Too deeply nested IF-statements!");
-		     tmpcmp->cmp_what = 0;
-		     tmpcmp->cmp_val = (long) $2;
-		     add_opcode(&splev, SPO_CMP, tmpcmp);
-		     tmpjmp->jmp_target = -1;
-		     if_list[n_if_list++] = splev.init_lev.n_opcodes;
-		     add_opcode(&splev, SPO_JG, tmpjmp);
+		      if ( 0 == $2 )
+			  yyerror("Empty comparison in if-statement.");
+		      /* do nothing here; chance handles it */
 		  }
 		 if_ending
 		  {
@@ -373,17 +365,9 @@ message		: MESSAGE_ID ':' STRING
 
 cobj_ifstatement : IF_ID chance
 		  {
-		     opcmp *tmpcmp = New(opcmp);
-		     opjmp *tmpjmp = New(opjmp);
-
-		     if (n_if_list >= MAX_NESTED_IFS)
-		       yyerror("Too deeply nested IF-statements!");
-		     tmpcmp->cmp_what = 0;
-		     tmpcmp->cmp_val = (long) $2;
-		     add_opcode(&splev, SPO_CMP, tmpcmp);
-		     tmpjmp->jmp_target = -1;
-		     if_list[n_if_list++] = splev.init_lev.n_opcodes;
-		     add_opcode(&splev, SPO_JG, tmpjmp);
+		      if ( 0 == $2 )
+			  yyerror("Empty comparison in if-statement.");
+		      /* chance handles adding the comparison and jump */
 		  }
 		 cobj_if_ending
 		  {
@@ -827,7 +811,6 @@ monster_detail	: MONSTER_ID chance ':' monster_c ',' m_name ',' coordinate
 		     tmpm->name.str = 0;
 		     tmpm->appear = 0;
 		     tmpm->appear_as.str = 0;
-		     tmpm->chance = $2;
 		     tmpm->id = NON_PM;
 		     if ($6) {
 			int token = get_monster_id($6, (char) $<i>4);
@@ -840,6 +823,13 @@ monster_detail	: MONSTER_ID chance ':' monster_c ',' m_name ',' coordinate
 		     }
 		     add_opcode(&splev, SPO_MONSTER, tmpm);
 
+		     if ( 1 == $2 ) {
+			 if (n_if_list > 0) {
+			     opjmp *tmpjmp;
+			     tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			     tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+			 } else yyerror("conditional creation of monster, but no jump point marker.");
+		     }
 		  }
 		 monster_infos
 		  {
@@ -955,7 +945,6 @@ cobj_desc	: chance ':' object_c ',' o_name
 		     tmpobj->corpsenm = NON_PM;
 		     tmpobj->curse_state = -1;
 		     tmpobj->name.str = 0;
-		     tmpobj->chance = $1;
 		     tmpobj->id = -1;
 		     if ($5) {
 			int token = get_object_id($5, $<i>3);
@@ -967,6 +956,14 @@ cobj_desc	: chance ':' object_c ',' o_name
 			Free($5);
 		     }
 		     add_opcode(&splev, SPO_OBJECT, tmpobj);
+
+		     if ( 1 == $1 ) {
+			 if (n_if_list > 0) {
+			     opjmp *tmpjmp;
+			     tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			     tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+			 } else yyerror("conditional creation of contained obj, but no jump point marker.");
+		     }
 
 		  }
 		  object_infos
@@ -983,7 +980,6 @@ object_desc	: chance ':' object_c ',' o_name
 		     tmpobj->corpsenm = NON_PM;
 		     tmpobj->curse_state = -1;
 		     tmpobj->name.str = 0;
-		     tmpobj->chance = $1;
 		     tmpobj->id = -1;
 		     if ($5) {
 			int token = get_object_id($5, $<i>3);
@@ -995,6 +991,14 @@ object_desc	: chance ':' object_c ',' o_name
 			Free($5);
 		     }
 		     add_opcode(&splev, SPO_OBJECT, tmpobj);
+
+		     if ( 1 == $1 ) {
+			 if (n_if_list > 0) {
+			     opjmp *tmpjmp;
+			     tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			     tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+			 } else yyerror("conditional creation of object, but no jump point marker.");
+		     }
 
 		  }
 		 ',' object_where object_infos
@@ -1108,9 +1112,17 @@ trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
 		     tmptrap->x = current_coord.x;
 		     tmptrap->y = current_coord.y;
 		     tmptrap->type = $<i>4;
-		     tmptrap->chance = $2;
 
 		     add_opcode(&splev, SPO_TRAP, tmptrap);
+
+		     if ( 1 == $2 ) {
+			 if (n_if_list > 0) {
+			     opjmp *tmpjmp;
+			     tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			     tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+			 } else yyerror("conditional creation of trap, but no jump point marker.");
+		     }
+
 		  }
 		;
 
@@ -1417,7 +1429,6 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		 {
 		     terrain *tmpterrain = New(terrain);
 
-		     tmpterrain->chance = $2;
 		     tmpterrain->areatyp = 0;
 		     tmpterrain->x1 = current_coord.x;
 		     tmpterrain->y1 = current_coord.y;
@@ -1428,13 +1439,21 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     tmpterrain->tlit = $8;
 
 		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
+
+		     if ( 1 == $2 ) {
+			 if (n_if_list > 0) {
+			     opjmp *tmpjmp;
+			     tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			     tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+			 } else yyerror("conditional terrain modification, but no jump point marker.");
+		     }
+
 		 }
 	       |
 	         TERRAIN_ID chance ':' coordinate ',' HORIZ_OR_VERT ',' INTEGER ',' CHAR ',' light_state
 		 {
 		     terrain *tmpterrain = New(terrain);
 
-		     tmpterrain->chance = $2;
 		     tmpterrain->areatyp = $<i>6;
 		     tmpterrain->x1 = current_coord.x;
 		     tmpterrain->y1 = current_coord.y;
@@ -1451,13 +1470,21 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     tmpterrain->tlit = $12;
 
 		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
+
+		     if ( 1 == $2 ) {
+			 if (n_if_list > 0) {
+			     opjmp *tmpjmp;
+			     tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			     tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+			 } else yyerror("conditional terrain modification, but no jump point marker.");
+		     }
+
 		 }
 	       |
 	         TERRAIN_ID chance ':' region ',' FILLING ',' CHAR ',' light_state
 		 {
 		     terrain *tmpterrain = New(terrain);
 
-		     tmpterrain->chance = $2;
 		     tmpterrain->areatyp = 3 + $<i>6;
 		     tmpterrain->x1 = current_region.x1;
 		     tmpterrain->y1 = current_region.y1;
@@ -1469,6 +1496,15 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     tmpterrain->tlit = $10;
 
 		     add_opcode(&splev, SPO_TERRAIN, tmpterrain);
+
+		     if ( 1 == $2 ) {
+			 if (n_if_list > 0) {
+			     opjmp *tmpjmp;
+			     tmpjmp = (opjmp *) splev.opcodes[if_list[--n_if_list]].opdat;
+			     tmpjmp->jmp_target = splev.init_lev.n_opcodes-1;
+			 } else yyerror("conditional terrain modification, but no jump point marker.");
+		     }
+
 		 }
 	       ;
 
@@ -1786,13 +1822,29 @@ amount		: INTEGER
 
 chance		: /* empty */
 		  {
-			$$ = 100;	/* default is 100% */
+		      /* by default we just do it, unconditionally. */
+		      $$ = 0;
 		  }
 		| PERCENT
 		  {
-			if ($1 <= 0 || $1 > 100)
-			    yyerror("Expected percentile chance.");
-			$$ = $1;
+		      if ($1 <= 0 || $1 > 100)
+			  yyerror("Expected percentile chance.");
+		      else {
+			  /* otherwise we generate a comparison and a
+			     conditional jump, aka an if-statement */
+			  opcmp *tmpcmp = New(opcmp);
+			  opjmp *tmpjmp = New(opjmp);
+
+			  if (n_if_list >= MAX_NESTED_IFS)
+			      yyerror("Too deeply nested IF-statements!");
+			  tmpcmp->cmp_what = 0;
+			  tmpcmp->cmp_val = (long) $1;
+			  add_opcode(&splev, SPO_CMP, tmpcmp);
+			  tmpjmp->jmp_target = -1;
+			  if_list[n_if_list++] = splev.init_lev.n_opcodes;
+			  add_opcode(&splev, SPO_JG, tmpjmp);
+			  $$ = 1;
+		      }
 		  }
 		;
 

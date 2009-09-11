@@ -137,14 +137,14 @@ typedef struct {
 } room_door;
 
 typedef struct {
-	xchar x, y, chance, type;
+	xchar x, y, type;
 } trap;
 
 typedef struct {
 	Str_or_Len name, appear_as;
 	short id;
 	aligntyp align;
-	xchar x, y, chance, class, appear;
+	xchar x, y, class, appear;
 	schar peaceful, asleep;
 } monster;
 
@@ -152,7 +152,7 @@ typedef struct {
 	Str_or_Len name;
 	int   corpsenm;
 	short id, spe;
-	xchar x, y, chance, class, containment;
+	xchar x, y, class, containment;
 	schar curse_state;
 } object;
 
@@ -188,7 +188,6 @@ typedef struct {
 } region;
 
 typedef struct {
-    xchar chance;
     xchar areatyp;
     xchar x1,y1,x2,y2;
     xchar ter, tlit;
