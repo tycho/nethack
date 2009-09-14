@@ -522,6 +522,8 @@ void
 u_init()
 {
 	register int i;
+	struct permonst* shambler = &mons[PM_SHAMBLING_HORROR];
+	struct attack* attkptr;
 
 	flags.female = flags.initgend;
 	flags.beginner = 1;
@@ -853,6 +855,76 @@ u_init()
 		if (adjattrib(A_CON, 1, TRUE)) continue;
 		/* only get here when didn't boost strength or constitution */
 		break;
+	}
+
+	/* what a horrible night to have a curse */
+	shambler->mlevel += rnd(6)-3;				/* shuffle level */
+	shambler->mmove = rn2(10)+9;				/* slow to very fast */
+	shambler->ac = rn2(21)-10;					/* any AC */
+	shambler->mr = rn2(5)*25;					/* varying amounts of MR */
+	shambler->maligntyp = rn2(21)-10;			/* any alignment */
+	/* attacks...?  */
+	for (i = 0; i < rnd(4); i++) {
+		attkptr = &shambler->mattk[i];
+		attkptr->aatyp = rn2(AT_GAZE);		/* limit it to semi-normal attacks for now */
+		/* theoretically rnd(AT_GAZE)-3 should work since these are uchar, but
+		 * let's not totally confuse the poor people browsing... */
+		if (attkptr->aatyp == AT_BOOM) {
+			attkptr->aatyp = AT_MAGC;
+		}
+		if (attkptr->aatyp == AT_EXPL) {
+			attkptr->aatyp = AT_WEAP;
+		}
+		attkptr->adtyp = 0;
+		/* Don't let the special Rider attacks be used here 
+		 * ...everything else is fair game :D */
+		while (attkptr->adtyp == 0 || attkptr->adtyp == AD_DETH ||
+					attkptr->adtyp == AD_PEST || attkptr->adtyp == AD_FAMN ||
+					attkptr->adtyp == AD_SPC1 || attkptr->adtyp == AD_SPC2) {
+			attkptr->adtyp = rnd(AD_CORR);
+		}
+		if (attkptr->aatyp == AT_MAGC) {
+			attkptr->adtyp = AD_CLRC + rn2(2);	 /* AT_MAGC must correspond to a spell type */
+		}
+		if (attkptr->aatyp == AT_BREA) {
+			attkptr->adtyp == AD_RBRE;				 /* Tiamat's breath weapon if you're a breather at all :)  */
+		}
+		attkptr->damn = 2;							 /* we're almost sure to get this wrong first time */
+		attkptr->damd = 10;							 /* either too high or too low */
+		pline("Adding attack: %d %d %d %d",attkptr->aatyp,attkptr->adtyp,attkptr->damn,attkptr->damd);
+	}
+	shambler->msize = rn2(MZ_GIGANTIC+1);	/* any size */
+	shambler->cwt = 20;							/* fortunately moot as it's flagged NOCORPSE */
+	shambler->cnutrit = 20;						/* see above */
+	shambler->msound = rn2(MS_HUMANOID);	/* any but the specials */
+	shambler->mresists = 0;
+	for (i = 0; i < rnd(6); i++) {
+		shambler->mresists |= (1 << rn2(8));		/* physical resistances... */
+	}
+	for (i = 0; i < rnd(5); i++) {
+		shambler->mresists |= (0x100 << rn2(7));	/* 'different' resistances, even clumsy */
+	}
+	shambler->mconveys = 0;						/* flagged NOCORPSE */
+	/*
+	 * now time for the random flags.  this will likely produce
+	 * a number of complete trainwreck monsters at first, but
+	 * every so often something will dial up nasty stuff
+	 */
+	shambler->mflags1 = 0;
+	for (i = 0; i < rnd(17); i++) {
+		shambler->mflags1 |= (1 << rn2(33));		/* trainwreck this way :D */
+	}
+	shambler->mflags2 = M2_NOPOLY | M2_HOSTILE;	/* Don't let the player be one of these yet. */
+	for (i = 0; i < rnd(17); i++) {
+		shambler->mflags2 |= (1 << rn2(33));
+	}
+	shambler->mflags2 &= ~M2_MERC;					/* no guards */
+	shambler->mflags2 &= ~M2_PEACEFUL;				/* no peacefuls */
+	for (i = 0; i < rnd(5); i++) {
+		shambler->mflags3 |= (0x100 << rn2(6));	/* no covetous, but any of the middle M3_ flags are OK */
+	}
+	if (rn2(2)) {
+		shambler->mflags4 |= (1 << rn2(4));			/* don't overload it with vulnerabilities */
 	}
 
 	return;
