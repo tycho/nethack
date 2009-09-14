@@ -891,7 +891,6 @@ u_init()
 		}
 		attkptr->damn = 2;							 /* we're almost sure to get this wrong first time */
 		attkptr->damd = 10;							 /* either too high or too low */
-		pline("Adding attack: %d %d %d %d",attkptr->aatyp,attkptr->adtyp,attkptr->damn,attkptr->damd);
 	}
 	shambler->msize = rn2(MZ_GIGANTIC+1);	/* any size */
 	shambler->cwt = 20;							/* fortunately moot as it's flagged NOCORPSE */
