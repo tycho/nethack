@@ -502,33 +502,43 @@ struct monst *mon;
 	mmove = (4 * mmove + 2) / 3;
 
 #ifdef STEED
-    if (mon == u.usteed) {
-		 /* if you aren't a good rider you can't go as fast
-		  * this offsets to some degree the perma-bonus we had to
-		  * give Knights to let them be able to use starting equipment
-		  * (ie. their pony) safely */
+	if (mon == u.usteed) {
+		/* if you aren't a good rider you can't go as fast
+		* this offsets to some degree the perma-bonus we had to
+		* give Knights to let them be able to use starting equipment
+		* (ie. their pony) safely */
 
-		 switch (P_SKILL(P_RIDING)) {
-			 case P_BASIC:
-				 mmove -= 4;
-				 break;
-			 case P_SKILLED:
-				 break;
-			 case P_EXPERT:
-				 mmove += 4;
-				 break;
-			 case P_UNSKILLED:
-			 default:
-				 mmove -= 6;
-				 break;
-		 }
+		switch (P_SKILL(P_RIDING)) {
+			case P_BASIC:
+				mmove -= 4;
+				break;
+			case P_SKILLED:
+				break;
+			case P_EXPERT:
+				mmove += 4;
+				break;
+			case P_UNSKILLED:
+			default:
+				mmove -= 6;
+				break;
+		}
 
 		if (u.ugallop && flags.mv) {
 			/* average movement is 1.50 times normal */
 			mmove = ((rn2(2) ? 4 : 5) * mmove) / 3;
 		}
-    }
+
+		/* If we don't do this, player riding a slow monster at unskilled
+		* or basic will never get any turns.  such as a wumpus.
+		*
+		* don't ask me why someone tried to ride a wumpus, but they did.
+		*/
+		if (mmove < 1) {
+			mmove = 1;
+		}
+	}
 #endif
+
 
     return mmove;
 }
