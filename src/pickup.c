@@ -38,7 +38,7 @@ STATIC_DCL int FDECL(in_or_out_menu, (const char *,struct obj *, BOOLEAN_P, BOOL
 STATIC_DCL int FDECL(container_at, (int, int, BOOLEAN_P));
 STATIC_DCL boolean FDECL(able_to_loot, (int, int));
 STATIC_DCL boolean FDECL(mon_beside, (int, int));
-STATIC_DCL void FDECL(dump_container, (struct obj*, BOOLEAN_P));
+STATIC_DCL int FDECL(dump_container, (struct obj*, BOOLEAN_P));
 
 /* define for query_objlist() and autopickup() */
 #define FOLLOW(curr, flags) \
@@ -1949,8 +1949,9 @@ register struct obj *obj;
 		obfree(obj, (struct obj *)0);
 
 		/* dump it out onto the floor so the scatterage can take effect */
-		dump_container(current_container, TRUE);
-		pline("The contents fly everywhere!");
+		if (dump_container(current_container, TRUE)) {
+			pline("The contents fly everywhere!");
+		}
 		scatter(u.ux,u.uy,10,VIS_EFFECTS|MAY_HIT|MAY_DESTROY|MAY_FRACTURE,0);
 
 		losehp(d(6,6),"magical explosion", KILLED_BY_AN);
@@ -2479,19 +2480,23 @@ boolean outokay, inokay;
  * destroy_after trashes the container afterwards; try not to use it :P
  *
  * Player is assumed to not be handling the contents directly.
+ *
+ * Returns 1 if at least one object was present, 0 if empty.
  */ 
-void
+int
 dump_container(container, destroy_after)
 struct obj* container;
 BOOLEAN_P destroy_after;
 {
 	struct obj* otmp,*otmp2;
+	int ret = 0;
 
 	/* sanity check */
-	if (!container) { return; }
+	if (!container) { return 0; }
 
 	for (otmp = container->cobj; otmp; otmp = otmp2)
 	{
+		ret = 1;
 		otmp2 = otmp->nobj;
 		obj_extract_self(otmp);
 		container->owt = weight(container);
@@ -2520,6 +2525,8 @@ BOOLEAN_P destroy_after;
 			useupf(container, container->quan);
 		}
 	}
+
+	return ret;
 }
 
 /*pickup.c*/
