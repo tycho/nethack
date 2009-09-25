@@ -228,45 +228,44 @@ MONSTER: 'o', "goblin", random, hostile
 LEVEL: "minetn-2"
 ROOM: "ordinary" , lit, (3,3), (center,center), (31,15)
 {
-NAME: "town"
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (2,0), (2,2), "town"
+  SUBROOM: "ordinary", random, (2,0), (2,2)
   {
     ROOMDOOR: false, closed, west|south, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", unlit, (5,0), (2,2), "town"
+  SUBROOM: "ordinary", unlit, (5,0), (2,2)
   {
     ROOMDOOR: false, closed, west|south, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (8,0), (2,2), "town"
+  SUBROOM: "ordinary", random, (8,0), (2,2)
   {
     ROOMDOOR: false, closed, east|south, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", lit, (16,0), (2,2), "town"
+  SUBROOM: "ordinary", lit, (16,0), (2,2)
   {
     ROOMDOOR: false, closed, west|south, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", unlit, (19,0), (2,2), "town"
+  SUBROOM: "ordinary", unlit, (19,0), (2,2)
   {
     ROOMDOOR: false, closed, west|south, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (22,0), (2,2), "town"
+  SUBROOM: "ordinary", random, (22,0), (2,2)
   {
     ROOMDOOR: false, locked, west|south, random
     MONSTER: 'G', "gnome", random
@@ -274,21 +273,21 @@ IF [75%] {
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", unlit, (25,0), (2,2), "town"
+  SUBROOM: "ordinary", unlit, (25,0), (2,2)
   {
     ROOMDOOR: false, closed, east|south|west, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", lit, (2,5), (2,2), "town"
+  SUBROOM: "ordinary", lit, (2,5), (2,2)
   {
     ROOMDOOR: false, closed, north|south|west, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (8,5), (2,2), "town"
+  SUBROOM: "ordinary", random, (8,5), (2,2)
   {
     ROOMDOOR: false, locked, north|south|east, random
     MONSTER: 'G', "gnome", random
@@ -296,44 +295,41 @@ IF [75%] {
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", lit, (5,5), (2,2), "town"
+  SUBROOM: "ordinary", lit, (5,5), (2,2)
   {
     ROOMDOOR: false, closed, north|south|east|west, random
   }
 }
 
-SUBROOM: "shop" , lit, (2,10), (4,3), "town"
+SUBROOM: "shop" [90%] , lit, (2,10), (4,3)
 {
-CHANCE: 90
 ROOMDOOR: false, closed, north|south|west, random
 }
 
-SUBROOM: "tool shop", lit, (23,10), (4,3), "town"
+SUBROOM: "tool shop" [90%], lit, (23,10), (4,3)
 {
-CHANCE: 90
 ROOMDOOR: false, closed, south|east, random
 }
 
-SUBROOM: "food shop", lit, (24,5), (3,4), "town"
+SUBROOM: "food shop" [90%], lit, (24,5), (3,4)
 {
-CHANCE: 90
 ROOMDOOR: false, closed, north|east, random
 }
 
-SUBROOM: "candle shop", lit, (11,10), (4,3), "town"
+SUBROOM: "candle shop", lit, (11,10), (4,3)
 {
 ROOMDOOR: false, closed, north|south|east, random
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", unlit, (7,10), (3,3), "town"
+  SUBROOM: "ordinary", unlit, (7,10), (3,3)
   {
     ROOMDOOR: false, locked, north|south, random
     MONSTER: 'G', "gnome", random
   }
 }
 
-SUBROOM: "temple", lit, (19,5), (4,4), "town"
+SUBROOM: "temple", lit, (19,5), (4,4)
 {
 ROOMDOOR: false, closed, north|west, random
 ALTAR:(02,02),align[0],shrine
@@ -342,7 +338,7 @@ MONSTER: 'G', "gnomish wizard", random
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", lit, (18,10), (4,3), "town"
+  SUBROOM: "ordinary", lit, (18,10), (4,3)
   {
     ROOMDOOR: false, locked, south|west, random
     MONSTER: 'G', "gnome lord", random
@@ -394,23 +390,21 @@ RANDOM_CORRIDORS
 LEVEL: "minetn-3"
 ROOM: "ordinary",lit,(3,3),(center,center),(31,15)
 {
-NAME: "town"
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(2,2),(2,2),"town"
+  SUBROOM:"ordinary",random,(2,2),(2,2)
   {
     ROOMDOOR: false,closed,north|south|west,random
   }
 }
 
-SUBROOM:"tool shop",lit,(5,3),(2,3),"town"
+SUBROOM:"tool shop" [30%],lit,(5,3),(2,3)
 {
-CHANCE: 30
 ROOMDOOR: false,closed,north|south|east,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(2,10),(2,3),"town"
+  SUBROOM:"ordinary",random,(2,10),(2,3)
   {
     ROOMDOOR: false, locked, north|south|west, random
     MONSTER: 'G',random,random
@@ -418,13 +412,13 @@ IF [75%] {
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(5,9),(2,2),"town"
+  SUBROOM:"ordinary",random,(5,9),(2,2)
   {
     ROOMDOOR: false,closed,north|south|east,random
   }
 }
 
-SUBROOM:"temple",lit,(10,2),(3,4),"town"
+SUBROOM:"temple",lit,(10,2),(3,4)
 {
 ROOMDOOR: false,closed,north|west|east,random
 ALTAR:(1,1),align[0],shrine
@@ -433,19 +427,19 @@ MONSTER: 'G', "gnomish wizard", random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(11,7),(2,2),"town"
+  SUBROOM:"ordinary",random,(11,7),(2,2)
   {
     ROOMDOOR: false,closed,west,random
   }
 }
 
-SUBROOM:"shop",lit,(10,10),(3,3),"town"
+SUBROOM:"shop",lit,(10,10),(3,3)
 {
 ROOMDOOR:false,closed,west|south,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(14,8),(2,2),"town"
+  SUBROOM:"ordinary",random,(14,8),(2,2)
   {
     ROOMDOOR:false,locked,north,random
     MONSTER: 'G',random,random
@@ -453,53 +447,50 @@ IF [75%] {
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(14,11),(2,2),"town"
+  SUBROOM:"ordinary",random,(14,11),(2,2)
   {
     ROOMDOOR:false,closed,north|south,random
   }
 }
 
-SUBROOM:"tool shop",lit,(17,10),(3,3),"town"
+SUBROOM:"tool shop" [40%],lit,(17,10),(3,3)
 {
-CHANCE:40
 ROOMDOOR:false,closed,north|south,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(21,11),(2,2),"town"
+  SUBROOM:"ordinary",random,(21,11),(2,2)
   {
     ROOMDOOR:false,locked,north|south|east,random
     MONSTER:'G',random,random
   }
 }
 
-SUBROOM:"food shop",lit,(26,8),(3,2),"town"
+SUBROOM:"food shop" [90%],lit,(26,8),(3,2)
 {
-CHANCE:90
 ROOMDOOR:false,closed,north|south|east|west,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(16,2),(2,2),"town"
+  SUBROOM:"ordinary",random,(16,2),(2,2)
   {
     ROOMDOOR:false,closed,north|south|west,random
   }
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(19,2),(2,2),"town"
+  SUBROOM:"ordinary",random,(19,2),(2,2)
   {
     ROOMDOOR:false,closed,north|east|west,random
   }
 }
 
-SUBROOM:"wand shop",lit,(19,5),(3,2),"town"
+SUBROOM:"wand shop" [30%],lit,(19,5),(3,2)
 {
-CHANCE:30
 ROOMDOOR:false,closed,south|east|west,random
 }
 
-SUBROOM: "candle shop",lit,(25,2),(3,3),"town"
+SUBROOM: "candle shop",lit,(25,2),(3,3)
 {
 ROOMDOOR:false,closed,north|south|east|west,random
 }
@@ -547,21 +538,20 @@ RANDOM_CORRIDORS
 LEVEL: "minetn-4"
 ROOM: "ordinary",lit,(3,3),(center,center),(30,15)
 {
-NAME: "town"
 
-SUBROOM:"book shop",lit,(4,2),(3,3),"town"
+SUBROOM:"book shop",lit,(4,2),(3,3)
 {
 ROOMDOOR: false,closed,north|south|west,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(8,2),(2,2),"town"
+  SUBROOM:"ordinary",random,(8,2),(2,2)
   {
     ROOMDOOR: false,closed,north|south,random
   }
 }
 
-SUBROOM:"temple",lit,(11,3),(5,4),"town"
+SUBROOM:"temple",lit,(11,3),(5,4)
 {
 ROOMDOOR: false,closed,north|south|east,random
 ALTAR:(2,1),align[0],shrine
@@ -570,34 +560,33 @@ MONSTER: 'G', "gnomish wizard", random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(19,2),(2,2),"town"
+  SUBROOM:"ordinary",random,(19,2),(2,2)
   {
     ROOMDOOR: false,closed,north|south|west,random
     MONSTER: 'G', random, random
   }
 }
 
-SUBROOM:"candle shop",lit,(22,2),(3,3),"town"
+SUBROOM:"candle shop",lit,(22,2),(3,3)
 {
 ROOMDOOR:false,closed,north|south,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(26,2),(2,2),"town"
+  SUBROOM:"ordinary",random,(26,2),(2,2)
   {
     ROOMDOOR:false,locked,north|south|east,random
     MONSTER: 'G',random,random
   }
 }
 
-SUBROOM:"tool shop",lit,(4,10),(3,3),"town"
+SUBROOM:"tool shop" [90%],lit,(4,10),(3,3)
 {
-CHANCE:90
 ROOMDOOR:false,closed,north|south|west,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(8,11),(2,2),"town"
+  SUBROOM:"ordinary",random,(8,11),(2,2)
   {
     ROOMDOOR:false,locked,north|south,random
     MONSTER: 'k',"kobold shaman",random
@@ -607,30 +596,28 @@ IF [75%] {
   }
 }
 
-SUBROOM:"food shop",lit,(11,11),(3,2),"town"
+SUBROOM:"food shop" [90%],lit,(11,11),(3,2)
 {
-CHANCE:90
 ROOMDOOR:false,closed,north|south|east,random
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(17,11),(2,2),"town"
+  SUBROOM:"ordinary",random,(17,11),(2,2)
   {
     ROOMDOOR:false,closed,north|south|west,random
   }
 }
 
 IF [75%] {
-  SUBROOM:"ordinary",random,(20,10),(2,2),"town"
+  SUBROOM:"ordinary",random,(20,10),(2,2)
   {
     ROOMDOOR:false,locked,north|south,random
     MONSTER:'G',random,random
   }
 }
 
-SUBROOM:"shop",lit,(23,10),(3,3),"town"
+SUBROOM:"shop" [90%],lit,(23,10),(3,3)
 {
-CHANCE:90
 ROOMDOOR:false,closed,north|south|east,random
 }
 
@@ -901,31 +888,30 @@ OBJECT: '/', random, (19,4)
 LEVEL: "minetn-7"
 ROOM: "ordinary" , lit, (3,3), (center,center), (30,15)
 {
-NAME: "town"
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (2,2), (4,2), "town"
+  SUBROOM: "ordinary", random, (2,2), (4,2)
   {
     ROOMDOOR: false, closed, north|south|west, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (7,2), (2,2), "town"
+  SUBROOM: "ordinary", random, (7,2), (2,2)
   {
     ROOMDOOR: false, closed, north|west, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (7,5), (2,2), "town"
+  SUBROOM: "ordinary", random, (7,5), (2,2)
   {
     ROOMDOOR: false, closed, south|west, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", lit, (10,2), (3,4), "town"
+  SUBROOM: "ordinary", lit, (10,2), (3,4)
   {
     MONSTER:'G',"gnome",random
     MONSTER:'Y',"monkey",random
@@ -936,7 +922,7 @@ IF [75%] {
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (14,2), (4,2), "town"
+  SUBROOM: "ordinary", random, (14,2), (4,2)
   {
     ROOMDOOR: false, closed, south, 0
     MONSTER: 'n', random, random
@@ -944,86 +930,81 @@ IF [75%] {
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (16,5), (2,2), "town"
+  SUBROOM: "ordinary", random, (16,5), (2,2)
   {
     ROOMDOOR: false, closed, south|west, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", unlit, (19,2), (2,2), "town"
+  SUBROOM: "ordinary", unlit, (19,2), (2,2)
   {
     ROOMDOOR: false, locked, north|west|east, random
     MONSTER: 'G',"gnome king",random
   }
 }
 
-SUBROOM: "food shop", lit, (19,5), (2,3), "town"
+SUBROOM: "food shop" [50%], lit, (19,5), (2,3)
 {
-CHANCE: 50
 ROOMDOOR: false, closed, south|east, random
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (2,7), (2,2), "town"
+  SUBROOM: "ordinary", random, (2,7), (2,2)
   {
     ROOMDOOR: false, closed, north|west|east, random
   }
 }
 
-SUBROOM: "tool shop", lit, (2,10), (2,3), "town"
+SUBROOM: "tool shop" [50%], lit, (2,10), (2,3)
 {
-CHANCE: 50
 ROOMDOOR: false, closed, south|west, random
 }
 
-SUBROOM: "candle shop", lit, (5,10),(3,3), "town"
+SUBROOM: "candle shop", lit, (5,10),(3,3)
 {
 ROOMDOOR: false, closed, north|south|east, random
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (11,10), (2,2), "town"
+  SUBROOM: "ordinary", random, (11,10), (2,2)
   {
     ROOMDOOR: false, locked, north|south|west, random
     MONSTER: 'G',random,random
   }
 }
 
-SUBROOM: "shop", lit, (14,10), (2,3), "town"
+SUBROOM: "shop" [60%], lit, (14,10), (2,3)
 {
-CHANCE: 60
 ROOMDOOR: false, closed, north|south, random
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (17,11), (4,2), "town"
+  SUBROOM: "ordinary", random, (17,11), (4,2)
   {
     ROOMDOOR: false, closed, north|south, random
   }
 }
 
 IF [75%] {
-  SUBROOM: "ordinary", random, (22,11), (2,2), "town"
+  SUBROOM: "ordinary", random, (22,11), (2,2)
   {
     ROOMDOOR: false, closed, north|south|west, random
     SINK: (00,00)
   }
 }
 
-SUBROOM: "food shop", lit, (25,11), (3,2), "town"
+SUBROOM: "food shop" [50%], lit, (25,11), (3,2)
 {
-CHANCE: 50
 ROOMDOOR: false, closed, south|east, random
 }
 
-SUBROOM: "tool shop", lit, (25,2), (3,3), "town"
+SUBROOM: "tool shop" [30%], lit, (25,2), (3,3)
 {
-CHANCE: 30
 ROOMDOOR: false, closed, north|west|east, random
 }
 
-SUBROOM: "temple", lit, (24,6), (4,4), "town"
+SUBROOM: "temple", lit, (24,6), (4,4)
 {
 ROOMDOOR: false, closed, west, random
 ALTAR:(02,01),align[0],shrine
