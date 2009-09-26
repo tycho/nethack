@@ -90,6 +90,16 @@ static long lev_flags;
 unsigned int max_x_map, max_y_map;
 int obj_containment = 0;
 
+int in_switch_statement = 0;
+static struct opvar *switch_case_list[MAX_NESTED_IFS];
+int n_switch_case_list = 0;
+static struct opvar *switch_jump_list[MAX_NESTED_IFS];
+int n_switch_jump_list = 0;
+static struct opvar *switch_break_list[MAX_NESTED_IFS];
+int n_switch_break_list = 0;
+int switch_case_n = 0;
+
+
 extern int fatal_error;
 extern const char *fname;
 
@@ -124,6 +134,7 @@ extern const char *fname;
 %token	<i> SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
 %token	<i> EXIT_ID
 %token	<i> QUANTITY_ID BURIED_ID LOOP_ID
+%token	<i> SWITCH_ID CASE_ID BREAK_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -277,6 +288,7 @@ levstatement 	: message
 		| engraving_detail
 		| fountain_detail
 		| gold_detail
+		| switchstatement
 		| loopstatement
 		| ifstatement
 		| exitstatement
@@ -320,6 +332,106 @@ comparestmt     : PERCENT
 		      add_opvars(&splev, "ioi", 100, SPO_RN2, $1);
 		      $$ = SPO_JGE; /* TODO: shouldn't this be SPO_JG? */
                   }
+		;
+
+switchstatement	: SWITCH_ID '[' INTEGER ']'
+		  {
+		      if (in_switch_statement > 0)
+			  yyerror("Cannot nest switch-statements.");
+		      in_switch_statement++;
+
+		      switch_case_n = 0;
+
+		      if (n_switch_case_list != 0 || n_switch_break_list != 0)
+			  yyerror("Switch list counter != 0");
+
+		      if ($3 < 1)
+			  yyerror("Switch with fewer than 1 available choices.");
+
+		      add_opvars(&splev, "io", $3, SPO_RN2);
+		  }
+		'{' switchcases '}'
+		  {
+		      while (n_switch_break_list) {
+			  struct opvar *tmppush = switch_break_list[--n_switch_break_list];
+			  set_opvar_int(tmppush, splev.init_lev.n_opcodes-1);
+		      }
+
+		      while (n_switch_case_list) {
+			  struct opvar *tmppush = switch_case_list[--n_switch_case_list];
+			  set_opvar_int(tmppush, splev.init_lev.n_opcodes-1);
+		      }
+
+		      while (n_switch_jump_list) {
+			  struct opvar *tmppush = switch_jump_list[--n_switch_jump_list];
+			  set_opvar_int(tmppush, splev.init_lev.n_opcodes-1);
+		      }
+
+		      add_opcode(&splev, SPO_POP, NULL); /* get rid of the value in stack */
+		      in_switch_statement--;
+		  }
+		;
+
+switchcases	: /* nothing */
+		| switchcase switchcases
+		;
+
+switchcase	: CASE_ID INTEGER ':'
+		  {
+		      struct opvar *tmppush = New(struct opvar);
+		      struct opvar *tmppush2;
+
+		      if (switch_case_n > 0) {
+			  tmppush2 = New(struct opvar);
+			  set_opvar_int(tmppush2, -1);
+			  switch_case_list[n_switch_case_list++] = tmppush2;
+			  add_opcode(&splev, SPO_PUSH, tmppush2);
+			  add_opcode(&splev, SPO_JMP, NULL);
+		      }
+
+		      switch_case_n++;
+
+		      if (n_switch_jump_list) {
+			  struct opvar *tmppush3;
+			  tmppush3 = switch_jump_list[--n_switch_jump_list];
+			  set_opvar_int(tmppush3, splev.init_lev.n_opcodes-1);
+		      }
+
+		      add_opvars(&splev, "oio", SPO_COPY, $2, SPO_CMP);
+		      set_opvar_int(tmppush, -1);
+		      switch_jump_list[n_switch_jump_list++] = tmppush;
+		      add_opcode(&splev, SPO_PUSH, tmppush);
+		      add_opcode(&splev, SPO_JNE, NULL);
+
+		      if (n_switch_case_list) {
+			  struct opvar *tmppush4;
+			  tmppush4 = switch_case_list[--n_switch_case_list];
+			  set_opvar_int(tmppush4, splev.init_lev.n_opcodes-1);
+		      }
+		  }
+		breakstatements
+		  {
+		  }
+		;
+
+breakstatements	: /* nothing */
+		| breakstatement breakstatements
+		;
+
+breakstatement	: BREAK_ID
+		  {
+		      struct opvar *tmppush = New(struct opvar);
+		      set_opvar_int(tmppush, -1);
+		      if (n_switch_break_list >= MAX_NESTED_IFS)
+			  yyerror("Too many BREAKs inside single SWITCH");
+		      switch_break_list[n_switch_break_list++] = tmppush;
+
+		      add_opcode(&splev, SPO_PUSH, tmppush);
+		      add_opcode(&splev, SPO_JMP, NULL);
+		  }
+		| levstatement
+		  {
+		  }
 		;
 
 loopstatement	: LOOP_ID '[' INTEGER ']'
