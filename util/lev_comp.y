@@ -1019,6 +1019,11 @@ object_info	: ',' CURSE_TYPE
 		      add_opvars(&splev, "ii", 1, SP_O_V_BURIED);
 		      $<i>$ = 0x20;
 		  }
+		| ',' LIGHT_STATE
+		  {
+		      add_opvars(&splev, "ii", $2, SP_O_V_LIT);
+		      $<i>$ = 0x40;
+		  }
 		;
 
 trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
