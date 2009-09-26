@@ -59,6 +59,7 @@ extern boolean FDECL(check_subrooms, (sp_lev *));
 extern boolean FDECL(write_level_file, (char *,sp_lev *));
 extern struct opvar *FDECL(set_opvar_int, (struct opvar *, long));
 extern struct opvar *FDECL(set_opvar_str, (struct opvar *, char *));
+extern void VDECL(add_opvars, (sp_lev *, const char *, ...));
 
 static struct reg {
 	int x1, y1;
@@ -313,19 +314,9 @@ exitstatement	: EXIT_ID
 
 comparestmt     : PERCENT
                   {
-                     /* val > rn2(100) */
-                     struct opvar *tmppush = New(struct opvar);
-                     struct opvar *tmprn2 = New(struct opvar);
-
-                     set_opvar_int(tmprn2, 100);
-
-                     add_opcode(&splev, SPO_PUSH, tmprn2);
-                     add_opcode(&splev, SPO_RN2, NULL);
-
-                     set_opvar_int(tmppush, (long) $1);
-                     add_opcode(&splev, SPO_PUSH, tmppush);
-
-                     $$ = SPO_JGE; /* TODO: shouldn't this be SPO_JG? */
+		      /* val > rn2(100) */
+		      add_opvars(&splev, "ioi", 100, SPO_RN2, $1);
+		      $$ = SPO_JGE; /* TODO: shouldn't this be SPO_JG? */
                   }
 		;
 
@@ -394,10 +385,7 @@ message		: MESSAGE_ID ':' STRING
 		      if (strlen($3) > 254)
 			  yyerror("Message string > 255 characters.");
 		      else {
-			  struct opvar *tmppush = New(struct opvar);
-			  set_opvar_str(tmppush, $3);
-			  add_opcode(&splev, SPO_PUSH, tmppush);
-			  add_opcode(&splev, SPO_MESSAGE, NULL);
+			  add_opvars(&splev, "so", $3, SPO_MESSAGE);
 		      }
 		  }
 		;
@@ -466,82 +454,23 @@ cobj_if_ending	: '{' cobj_statements '}'
 
 random_corridors: RAND_CORRIDOR_ID
 		  {
-		      struct opvar *srcroom = New(struct opvar);
-		      struct opvar *srcwall = New(struct opvar);
-		      struct opvar *srcdoor = New(struct opvar);
-		      struct opvar *desroom = New(struct opvar);
-		      struct opvar *deswall = New(struct opvar);
-		      struct opvar *desdoor = New(struct opvar);
-
-		      set_opvar_int(srcroom, -1);
-		      set_opvar_int(srcwall, -1);
-		      set_opvar_int(srcdoor, -1);
-		      set_opvar_int(desroom, -1);
-		      set_opvar_int(deswall, -1);
-		      set_opvar_int(desdoor, -1);
-
-		      add_opcode(&splev, SPO_PUSH, srcroom);
-		      add_opcode(&splev, SPO_PUSH, srcdoor);
-		      add_opcode(&splev, SPO_PUSH, srcwall);
-		      add_opcode(&splev, SPO_PUSH, desroom);
-		      add_opcode(&splev, SPO_PUSH, desdoor);
-		      add_opcode(&splev, SPO_PUSH, deswall);
-
-		      add_opcode(&splev, SPO_CORRIDOR, NULL);
+		      add_opvars(&splev, "iiiiiio", -1, -1, -1, -1, -1, -1, SPO_CORRIDOR);
 		  }
 		;
 
 corridor	: CORRIDOR_ID ':' corr_spec ',' corr_spec
 		  {
-		      struct opvar *srcroom = New(struct opvar);
-		      struct opvar *srcwall = New(struct opvar);
-		      struct opvar *srcdoor = New(struct opvar);
-		      struct opvar *desroom = New(struct opvar);
-		      struct opvar *deswall = New(struct opvar);
-		      struct opvar *desdoor = New(struct opvar);
-
-		      set_opvar_int(srcroom, $3.room);
-		      set_opvar_int(srcwall, $3.wall);
-		      set_opvar_int(srcdoor, $3.door);
-
-		      set_opvar_int(desroom, $5.room);
-		      set_opvar_int(deswall, $5.wall);
-		      set_opvar_int(desdoor, $5.door);
-
-		      add_opcode(&splev, SPO_PUSH, srcroom);
-		      add_opcode(&splev, SPO_PUSH, srcdoor);
-		      add_opcode(&splev, SPO_PUSH, srcwall);
-		      add_opcode(&splev, SPO_PUSH, desroom);
-		      add_opcode(&splev, SPO_PUSH, desdoor);
-		      add_opcode(&splev, SPO_PUSH, deswall);
-
-		      add_opcode(&splev, SPO_CORRIDOR, NULL);
+		      add_opvars(&splev, "iiiiiio",
+				 $3.room, $3.door, $3.wall,
+				 $5.room, $5.door, $5.wall,
+				 SPO_CORRIDOR);
 		  }
 		| CORRIDOR_ID ':' corr_spec ',' INTEGER
 		  {
-		      struct opvar *srcroom = New(struct opvar);
-		      struct opvar *srcwall = New(struct opvar);
-		      struct opvar *srcdoor = New(struct opvar);
-		      struct opvar *desroom = New(struct opvar);
-		      struct opvar *deswall = New(struct opvar);
-		      struct opvar *desdoor = New(struct opvar);
-
-		      set_opvar_int(srcroom, $3.room);
-		      set_opvar_int(srcwall, $3.wall);
-		      set_opvar_int(srcdoor, $3.door);
-
-		      set_opvar_int(desroom, -1);
-		      set_opvar_int(deswall, $5);
-		      set_opvar_int(desdoor, -1);
-
-		      add_opcode(&splev, SPO_PUSH, srcroom);
-		      add_opcode(&splev, SPO_PUSH, srcdoor);
-		      add_opcode(&splev, SPO_PUSH, srcwall);
-		      add_opcode(&splev, SPO_PUSH, desroom);
-		      add_opcode(&splev, SPO_PUSH, desdoor);
-		      add_opcode(&splev, SPO_PUSH, deswall);
-
-		      add_opcode(&splev, SPO_CORRIDOR, NULL);
+		      add_opvars(&splev, "iiiiiio",
+				 $3.room, $3.door, $3.wall,
+				 -1, -1, $5,
+				 SPO_CORRIDOR);
 		  }
 		;
 
@@ -558,48 +487,17 @@ room_begin      : room_type chance ',' light_state
 		      if (($2 == 1) && ($1 == OROOM))
 			  yyerror("Only typed rooms can have a chance.");
 		      else {
-			  struct opvar *rtype = New(struct opvar);
-			  struct opvar *rchance = New(struct opvar);
-			  struct opvar *rlit = New(struct opvar);
-
-			  set_opvar_int(rtype, $1);
-			  set_opvar_int(rchance, $2);
-			  set_opvar_int(rlit, $4);
-
-			  add_opcode(&splev, SPO_PUSH, rtype);
-			  add_opcode(&splev, SPO_PUSH, rchance);
-			  add_opcode(&splev, SPO_PUSH, rlit);
+			  add_opvars(&splev, "iii", $1, $2, $4);
 		      }
                   }
                 ;
 
 subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
 		  {
-		      struct opvar *filled = New(struct opvar);
-		      struct opvar *xalign = New(struct opvar);
-		      struct opvar *yalign = New(struct opvar);
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *w = New(struct opvar);
-		      struct opvar *h = New(struct opvar);
-
-		      set_opvar_int(filled, $8);
-		      set_opvar_int(xalign, ERR);
-		      set_opvar_int(yalign, ERR);
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(w, current_size.width);
-		      set_opvar_int(h, current_size.height);
-
-		      add_opcode(&splev, SPO_PUSH, filled);
-		      add_opcode(&splev, SPO_PUSH, xalign);
-		      add_opcode(&splev, SPO_PUSH, yalign);
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, w);
-		      add_opcode(&splev, SPO_PUSH, h);
-
-		      add_opcode(&splev, SPO_SUBROOM, NULL);
+		      add_opvars(&splev, "iiiiiiio", $8, ERR, ERR,
+				 current_coord.x, current_coord.y,
+				 current_size.width, current_size.height,
+				 SPO_SUBROOM);
 		  }
 		  '{' levstatements '}'
 		  {
@@ -609,31 +507,11 @@ subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
 
 room_def	: ROOM_ID ':' room_begin ',' room_pos ',' room_align ',' room_size roomfill
 		  {
-		      struct opvar *filled = New(struct opvar);
-		      struct opvar *xalign = New(struct opvar);
-		      struct opvar *yalign = New(struct opvar);
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *w = New(struct opvar);
-		      struct opvar *h = New(struct opvar);
-
-		      set_opvar_int(filled, $10);
-		      set_opvar_int(xalign, current_align.x);
-		      set_opvar_int(yalign, current_align.y);
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(w, current_size.width);
-		      set_opvar_int(h, current_size.height);
-
-		      add_opcode(&splev, SPO_PUSH, filled);
-		      add_opcode(&splev, SPO_PUSH, xalign);
-		      add_opcode(&splev, SPO_PUSH, yalign);
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, w);
-		      add_opcode(&splev, SPO_PUSH, h);
-
-		      add_opcode(&splev, SPO_ROOM, NULL);
+		      add_opvars(&splev, "iiiiiiio", $10,
+				 current_align.x, current_align.y,
+				 current_coord.x, current_coord.y,
+				 current_size.width, current_size.height,
+				 SPO_ROOM);
 		  }
 		  '{' levstatements '}'
 		  {
@@ -707,6 +585,7 @@ room_size	: '(' INTEGER ',' INTEGER ')'
 room_name	: NAME_ID ':' string
 		  {
 		      yyerror("NAME for rooms is not used anymore.");
+		      Free($3);
 		  }
 		;
 
@@ -722,39 +601,14 @@ door_detail	: ROOMDOOR_ID ':' secret ',' door_state ',' door_wall ',' door_pos
 			if ($7 == ERR && $9 != ERR) {
 		     yyerror("If the door wall is random, so must be its pos!");
 			} else {
-			    struct opvar *secret = New(struct opvar);
-			    struct opvar *mask = New(struct opvar);
-			    struct opvar *wall = New(struct opvar);
-			    struct opvar *pos = New(struct opvar);
-
-			    set_opvar_int(secret, $3);
-			    set_opvar_int(mask, $5);
-			    set_opvar_int(wall, $7);
-			    set_opvar_int(pos, $9);
-
-			    add_opcode(&splev, SPO_PUSH, pos);
-			    add_opcode(&splev, SPO_PUSH, mask);
-			    add_opcode(&splev, SPO_PUSH, secret);
-			    add_opcode(&splev, SPO_PUSH, wall);
-
-			    add_opcode(&splev, SPO_ROOM_DOOR, NULL);
+			    add_opvars(&splev, "iiiio", $9, $5, $3, $7, SPO_ROOM_DOOR);
 			}
 		  }
 		| DOOR_ID ':' door_state ',' coordinate
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *mask = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(mask, $<i>3);
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, mask);
-
-		      add_opcode(&splev, SPO_DOOR, NULL);
+		      add_opvars(&splev, "iiio",
+				 current_coord.x, current_coord.y,
+				 $<i>3, SPO_DOOR);
 		  }
 		;
 
@@ -782,75 +636,20 @@ door_pos	: INTEGER
 
 map_definition	: NOMAP_ID
 		  {
-		      struct opvar *zaligntyp = New(struct opvar);
-		      struct opvar *keep_region = New(struct opvar);
-		      struct opvar *halign = New(struct opvar);
-		      struct opvar *valign = New(struct opvar);
-		      struct opvar *xsize = New(struct opvar);
-		      struct opvar *ysize = New(struct opvar);
-		      struct opvar *mpart = New(struct opvar);
-
-		      set_opvar_int(zaligntyp, 0);
-		      set_opvar_int(keep_region, 1);
-		      set_opvar_int(halign, 1);
-		      set_opvar_int(valign, 1);
-		      set_opvar_int(xsize, 0);
-		      set_opvar_int(ysize, 0);
-		      set_opvar_str(mpart, (char *)0);
-
-		      add_opcode(&splev, SPO_PUSH, zaligntyp);
-		      add_opcode(&splev, SPO_PUSH, keep_region);
-		      add_opcode(&splev, SPO_PUSH, halign);
-		      add_opcode(&splev, SPO_PUSH, valign);
-		      add_opcode(&splev, SPO_PUSH, mpart);
-		      add_opcode(&splev, SPO_PUSH, ysize);
-		      add_opcode(&splev, SPO_PUSH, xsize);
-
-		      add_opcode(&splev, SPO_MAP, NULL);
-
+		      add_opvars(&splev, "iiiisiio", 0, 1, 1, 1, (char *)0, 0, 0, SPO_MAP);
 		      max_x_map = COLNO-1;
 		      max_y_map = ROWNO;
 		  }
 		| map_geometry roomfill MAP_ID
 		  {
-		      struct opvar *zaligntyp = New(struct opvar);
-		      struct opvar *keep_region = New(struct opvar);
-		      struct opvar *halign = New(struct opvar);
-		      struct opvar *valign = New(struct opvar);
-
-		      set_opvar_int(zaligntyp, 1);
-		      set_opvar_int(keep_region, $2);
-		      set_opvar_int(halign, $<i>1 % 10);
-		      set_opvar_int(valign, $<i>1 / 10);
-
-		      add_opcode(&splev, SPO_PUSH, zaligntyp);
-		      add_opcode(&splev, SPO_PUSH, keep_region);
-		      add_opcode(&splev, SPO_PUSH, halign);
-		      add_opcode(&splev, SPO_PUSH, valign);
-
+		      add_opvars(&splev, "iiii", 1, $2, ($<i>1 % 10), ($<i>1 / 10));
 		      scan_map($3, &splev);
-
 		      Free($3);
 		  }
 		| GEOMETRY_ID ':' coordinate roomfill MAP_ID
 		  {
-		      struct opvar *zaligntyp = New(struct opvar);
-		      struct opvar *keep_region = New(struct opvar);
-		      struct opvar *halign = New(struct opvar);
-		      struct opvar *valign = New(struct opvar);
-
-		      set_opvar_int(zaligntyp, 2);
-		      set_opvar_int(keep_region, $4);
-		      set_opvar_int(halign, current_coord.x);
-		      set_opvar_int(valign, current_coord.y);
-
-		      add_opcode(&splev, SPO_PUSH, zaligntyp);
-		      add_opcode(&splev, SPO_PUSH, keep_region);
-		      add_opcode(&splev, SPO_PUSH, halign);
-		      add_opcode(&splev, SPO_PUSH, valign);
-
+		      add_opvars(&splev, "iiii", 2, $4, current_coord.x, current_coord.y);
 		      scan_map($5, &splev);
-
 		      Free($5);
 		  }
 		;
@@ -871,24 +670,19 @@ v_justif	: TOP_OR_BOT
 
 init_reg	: RANDOM_OBJECTS_ID ':' object_list
 		  {
-		      struct opvar *ol = New(struct opvar);
 		     char *tmp_olist;
 
 		     tmp_olist = (char *) alloc(n_olist+1);
 		     (void) memcpy((genericptr_t)tmp_olist,
 				   (genericptr_t)olist, n_olist);
 		     tmp_olist[n_olist] = 0;
+		     add_opvars(&splev, "so", tmp_olist, SPO_RANDOM_OBJECTS);
 
-		     set_opvar_str(ol, tmp_olist);
-		     add_opcode(&splev, SPO_PUSH, ol);
-
-		     add_opcode(&splev, SPO_RANDOM_OBJECTS, NULL);
 		     on_olist = n_olist;
 		     n_olist = 0;
 		  }
 		| RANDOM_PLACES_ID ':' place_list
 		  {
-		      struct opvar *coords = New(struct opvar);
 		     char *tmp_plist;
 		     int i;
 
@@ -899,28 +693,20 @@ init_reg	: RANDOM_OBJECTS_ID ':' object_list
 			tmp_plist[i*2+1] = plist[i].y+1;
 		     }
 		     tmp_plist[n_plist*2] = 0;
+		     add_opvars(&splev, "so", tmp_plist, SPO_RANDOM_PLACES);
 
-		     set_opvar_str(coords, tmp_plist);
-		     add_opcode(&splev, SPO_PUSH, coords);
-
-		     add_opcode(&splev, SPO_RANDOM_PLACES, NULL);
 		     on_plist = n_plist;
 		     n_plist = 0;
 		  }
 		| RANDOM_MONSTERS_ID ':' monster_list
 		  {
-		      struct opvar *ml = New(struct opvar);
 		     char *tmp_mlist;
 
 		     tmp_mlist = (char *) alloc(n_mlist+1);
 		     (void) memcpy((genericptr_t)tmp_mlist,
 				   (genericptr_t)mlist, n_mlist);
 		     tmp_mlist[n_mlist] = 0;
-
-		     set_opvar_str(ml, tmp_mlist);
-		     add_opcode(&splev, SPO_PUSH, ml);
-
-		     add_opcode(&splev, SPO_RANDOM_MONSTERS, NULL);
+		     add_opvars(&splev, "so", tmp_mlist, SPO_RANDOM_MONSTERS);
 		     on_mlist = n_mlist;
 		     n_mlist = 0;
 		  }
@@ -991,29 +777,16 @@ monster_detail	: MONSTER_ID chance ':' monster_desc
 
 monster_desc	: monster_c ',' m_name ',' coordinate monster_infos
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *class = New(struct opvar);
-		      struct opvar *id = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(class, $<i>1);
-		      set_opvar_int(id, NON_PM);
-
+		      int token = NON_PM;
 		      if ($3) {
-			  int token = get_monster_id($3, (char) $<i>1);
-			  if (token == ERR)
+			  token = get_monster_id($3, (char) $<i>1);
+			  if (token == ERR) {
 			      yywarning("Invalid monster name!  Making random monster.");
-			  else
-			      set_opvar_int(id, token);
+			      token = NON_PM;
+			  }
 			  Free($3);
 		      }
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, class);
-		      add_opcode(&splev, SPO_PUSH, id);
+		      add_opvars(&splev, "iiii", current_coord.x, current_coord.y, $<i>1, token);
 		  }
 		;
 
@@ -1034,65 +807,27 @@ monster_infos	: /* nothing */
 
 monster_info	: ',' string
 		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *monname = New(struct opvar);
-
-		      set_opvar_str(monname, $2);
-		      set_opvar_int(info, SP_M_V_NAME);
-
-		      add_opcode(&splev, SPO_PUSH, monname);
-		      add_opcode(&splev, SPO_PUSH, info);
+		      add_opvars(&splev, "si", $2, SP_M_V_NAME);
 		      $<i>$ = 0x01;
 		  }
 		| ',' MON_ATTITUDE
 		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *peaceful = New(struct opvar);
-
-		      set_opvar_int(peaceful, $<i>2);
-		      set_opvar_int(info, SP_M_V_PEACEFUL);
-
-		      add_opcode(&splev, SPO_PUSH, peaceful);
-		      add_opcode(&splev, SPO_PUSH, info);
+		      add_opvars(&splev, "ii", $<i>2, SP_M_V_PEACEFUL);
 		      $<i>$ = 0x02;
 		  }
 		| ',' MON_ALERTNESS
 		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *asleep = New(struct opvar);
-
-		      set_opvar_int(asleep, $<i>2);
-		      set_opvar_int(info, SP_M_V_ASLEEP);
-
-		      add_opcode(&splev, SPO_PUSH, asleep);
-		      add_opcode(&splev, SPO_PUSH, info);
+		      add_opvars(&splev, "ii", $<i>2, SP_M_V_ASLEEP);
 		      $<i>$ = 0x04;
 		  }
 		| ',' alignment
 		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *malign = New(struct opvar);
-
-		      set_opvar_int(malign, $<i>2);
-		      set_opvar_int(info, SP_M_V_ALIGN);
-
-		      add_opcode(&splev, SPO_PUSH, malign);
-		      add_opcode(&splev, SPO_PUSH, info);
+		      add_opvars(&splev, "ii", $<i>2, SP_M_V_ALIGN);
 		      $<i>$ = 0x08;
 		  }
 		| ',' MON_APPEARANCE string
 		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *appear = New(struct opvar);
-		      struct opvar *appearstr = New(struct opvar);
-
-		      set_opvar_int(appear, $<i>2);
-		      set_opvar_str(appearstr, $3);
-		      set_opvar_int(info, SP_M_V_APPEAR);
-
-		      add_opcode(&splev, SPO_PUSH, appearstr);
-		      add_opcode(&splev, SPO_PUSH, appear);
-		      add_opcode(&splev, SPO_PUSH, info);
+		      add_opvars(&splev, "sii", $3, $<i>2, SP_M_V_APPEAR);
 		      $<i>$ = 0x10;
 		  }
 		;
@@ -1109,10 +844,7 @@ cobj_statement  : cobj_detail
 
 cobj_detail	: OBJECT_ID chance ':' cobj_desc
 		  {
-		      struct opvar *containment = New(struct opvar);
-		      set_opvar_int(containment, SP_OBJ_CONTENT);
-		      add_opcode(&splev, SPO_PUSH, containment);
-		      add_opcode(&splev, SPO_OBJECT, NULL);
+		      add_opvars(&splev, "io", SP_OBJ_CONTENT, SPO_OBJECT);
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1123,14 +855,7 @@ cobj_detail	: OBJECT_ID chance ':' cobj_desc
 		  }
 		| COBJECT_ID chance ':' cobj_desc
 		  {
-		      struct opvar *containment = New(struct opvar);
-
-		      set_opvar_int(containment, SP_OBJ_CONTENT|SP_OBJ_CONTAINER);
-		      add_opcode(&splev, SPO_PUSH, containment);
-		      add_opcode(&splev, SPO_OBJECT, NULL);
-			/* 1: is contents of preceeding object with 2 */
-			/* 2: is a container */
-			/* 0: neither */
+		      add_opvars(&splev, "io", SP_OBJ_CONTENT|SP_OBJ_CONTAINER, SPO_OBJECT);
 		      $<i>$ = $2;
 		  }
 		'{' cobj_statements '}'
@@ -1149,12 +874,7 @@ cobj_detail	: OBJECT_ID chance ':' cobj_desc
 
 object_detail	: OBJECT_ID chance ':' object_desc
 		  {
-		      struct opvar *containment = New(struct opvar);
-
-		      set_opvar_int(containment, 0);
-		      add_opcode(&splev, SPO_PUSH, containment);
-		      add_opcode(&splev, SPO_OBJECT, NULL);
-
+		      add_opvars(&splev, "io", 0, SPO_OBJECT); /* 0 == not container, nor contents of one. */
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1165,15 +885,7 @@ object_detail	: OBJECT_ID chance ':' object_desc
 		  }
 		| COBJECT_ID chance ':' object_desc
 		  {
-		      struct opvar *containment = New(struct opvar);
-
-		      set_opvar_int(containment, SP_OBJ_CONTAINER);
-		      add_opcode(&splev, SPO_PUSH, containment);
-		      add_opcode(&splev, SPO_OBJECT, NULL);
-			/* 1: is contents of preceeding object with 2 */
-			/* 2: is a container */
-			/* 0: neither */
-
+		      add_opvars(&splev, "io", SP_OBJ_CONTAINER, SPO_OBJECT);
 		      $<i>$ = $2;
 		  }
 		'{' cobj_statements '}'
@@ -1192,54 +904,31 @@ object_detail	: OBJECT_ID chance ':' object_desc
 
 cobj_desc	: object_c ',' o_name object_infos
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *id = New(struct opvar);
-		      struct opvar *class = New(struct opvar);
-
-		      set_opvar_int(x, -1);
-		      set_opvar_int(y, -1);
-		      set_opvar_int(class, $<i>1);
-		      set_opvar_int(id, -1);
+		      int token = -1;
 		      if ($3) {
-			  int token = get_object_id($3, $<i>1);
-			  if (token == ERR)
+			  token = get_object_id($3, $<i>1);
+			  if (token == ERR) {
 			      yywarning("Illegal object name!  Making random object.");
-			  else
-			      set_opvar_int(id, token);
+			      token = -1;
+			  }
 			  Free($3);
 		      }
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, class);
-		      add_opcode(&splev, SPO_PUSH, id);
+		      add_opvars(&splev, "iiii", -1, -1, $<i>1, token);
 		  }
 		;
 
 object_desc	: object_c ',' o_name ',' coordinate object_infos
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *id = New(struct opvar);
-		      struct opvar *class = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(class, $<i>1);
-		      set_opvar_int(id, -1);
+		      int token = -1;
 		      if ($3) {
-			  int token = get_object_id($3, $<i>1);
-			  if (token == ERR)
+			  token = get_object_id($3, $<i>1);
+			  if (token == ERR) {
 			      yywarning("Illegal object name!  Making random object.");
-			  else
-			      set_opvar_int(id, token);
+			      token = -1;
+			  }
 			  Free($3);
 		      }
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, class);
-		      add_opcode(&splev, SPO_PUSH, id);
+		      add_opvars(&splev, "iiii", current_coord.x, current_coord.y, $<i>1, token);
 		}
 		;
 
@@ -1258,102 +947,38 @@ object_infos	: /* nothing */
 		  }
 		;
 
-object_info	: ',' curse_state
+object_info	: ',' CURSE_TYPE
 		  {
+		      add_opvars(&splev, "ii", $2, SP_O_V_CURSE);
 		      $<i>$ = 0x01;
 		  }
-		| ',' monster_id
+		| ',' STRING
 		  {
-		      $<i>$ = 0x02;
-		  }
-		| ',' enchantment
-		  {
-		      $<i>$ = 0x04;
-		  }
-		| ',' optional_name
-		  {
-		      $<i>$ = 0x08;
-		  }
-		;
-
-curse_state	: CURSE_TYPE
-		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *curse = New(struct opvar);
-
-		      set_opvar_int(curse, $1);
-		      set_opvar_int(info, SP_O_V_CURSE);
-
-		      add_opcode(&splev, SPO_PUSH, curse);
-		      add_opcode(&splev, SPO_PUSH, info);
-		  }
-		;
-
-monster_id	: STRING
-		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *corpsenm = New(struct opvar);
-
-		      int token = get_monster_id($1, (char)0);
-
+		      int token = get_monster_id($2, (char)0);
 		      if (token == ERR) {
 			  /* "random" */
-			  yywarning("Are you sure you didn't mean NAME:\"foo\"?");
+			  yywarning("OBJECT: Are you sure you didn't mean NAME:\"foo\"?");
 			  token = NON_PM - 1;
 		      }
-
-		      set_opvar_int(corpsenm, token);
-		      set_opvar_int(info, SP_O_V_CORPSENM);
-
-		      add_opcode(&splev, SPO_PUSH, corpsenm);
-		      add_opcode(&splev, SPO_PUSH, info);
-
-		      Free($1);
+		      add_opvars(&splev, "ii", token, SP_O_V_CORPSENM);
+		      Free($2);
+		      $<i>$ = 0x02;
 		  }
-		;
-
-enchantment	: INTEGER
+		| ',' INTEGER
 		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *spe = New(struct opvar);
-
-		      set_opvar_int(spe, $1);
-		      set_opvar_int(info, SP_O_V_SPE);
-
-		      add_opcode(&splev, SPO_PUSH, spe);
-		      add_opcode(&splev, SPO_PUSH, info);
+		      add_opvars(&splev, "ii", $2, SP_O_V_SPE);
+		      $<i>$ = 0x04;
 		  }
-		;
-
-optional_name	: NAME_ID ':' STRING
+		| ',' NAME_ID ':' STRING
 		  {
-		      struct opvar *info = New(struct opvar);
-		      struct opvar *name = New(struct opvar);
-
-		      set_opvar_str(name, $3);
-		      set_opvar_int(info, SP_O_V_NAME);
-
-		      add_opcode(&splev, SPO_PUSH, name);
-		      add_opcode(&splev, SPO_PUSH, info);
+		      add_opvars(&splev, "si", $4, SP_O_V_NAME);
+		      $<i>$ = 0x08;
 		  }
 		;
 
 trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *typ = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(typ, $<i>4);
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, typ);
-
-		      add_opcode(&splev, SPO_TRAP, NULL);
-
+		      add_opvars(&splev, "iiio", current_coord.x, current_coord.y, $<i>4, SPO_TRAP);
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1366,90 +991,40 @@ trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
 
 drawbridge_detail: DRAWBRIDGE_ID ':' coordinate ',' DIRECTION ',' door_state
 		   {
-		       struct opvar *dx = New(struct opvar);
-		       struct opvar *dy = New(struct opvar);
-		       struct opvar *dir = New(struct opvar);
-		       struct opvar *state = New(struct opvar);
-
-		       int x, y, d;
-
-		       set_opvar_int(dx, current_coord.x);
-		       set_opvar_int(dy, current_coord.y);
-
-		       x = current_coord.x;
-		       y = current_coord.y;
+		       int d, state = 0;
 		       /* convert dir from a DIRECTION to a DB_DIR */
 		       d = $5;
 		       switch(d) {
-		       case W_NORTH: d = DB_NORTH; y--; break;
-		       case W_SOUTH: d = DB_SOUTH; y++; break;
-		       case W_EAST:  d = DB_EAST;  x++; break;
-		       case W_WEST:  d = DB_WEST;  x--; break;
+		       case W_NORTH: d = DB_NORTH; break;
+		       case W_SOUTH: d = DB_SOUTH; break;
+		       case W_EAST:  d = DB_EAST;  break;
+		       case W_WEST:  d = DB_WEST;  break;
 		       default:
 			   yyerror("Invalid drawbridge direction");
 			   break;
 		       }
-		       set_opvar_int(dir, d);
 
 		       if ( $<i>7 == D_ISOPEN )
-			   set_opvar_int(state, 1);
+			   state = 1;
 		       else if ( $<i>7 == D_CLOSED )
-			   set_opvar_int(state, 0);
+			   state = 0;
 		       else
 			   yyerror("A drawbridge can only be open or closed!");
-
-		       add_opcode(&splev, SPO_PUSH, dx);
-		       add_opcode(&splev, SPO_PUSH, dy);
-		       add_opcode(&splev, SPO_PUSH, state);
-		       add_opcode(&splev, SPO_PUSH, dir);
-
-		       add_opcode(&splev, SPO_DRAWBRIDGE, NULL);
+		       add_opvars(&splev, "iiiio", current_coord.x, current_coord.y, state, d, SPO_DRAWBRIDGE);
 		   }
 		;
 
 mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION
 		  {
-		       struct opvar *x = New(struct opvar);
-		       struct opvar *y = New(struct opvar);
-		       struct opvar *dir = New(struct opvar);
-		       struct opvar *stocked = New(struct opvar);
-		       struct opvar *typ = New(struct opvar);
-
-		       set_opvar_int(x, current_coord.x);
-		       set_opvar_int(y, current_coord.y);
-		       set_opvar_int(dir, $5);
-		       set_opvar_int(stocked, 1);
-		       set_opvar_int(typ, 0);
-
-		       add_opcode(&splev, SPO_PUSH, x);
-		       add_opcode(&splev, SPO_PUSH, y);
-		       add_opcode(&splev, SPO_PUSH, dir);
-		       add_opcode(&splev, SPO_PUSH, stocked);
-		       add_opcode(&splev, SPO_PUSH, typ);
-
-		       add_opcode(&splev, SPO_MAZEWALK, NULL);
+		      add_opvars(&splev, "iiiiio",
+				 current_coord.x, current_coord.y,
+				 $5, 1, 0, SPO_MAZEWALK);
 		  }
 		| MAZEWALK_ID ':' coordinate ',' DIRECTION ',' BOOLEAN opt_fillchar
 		  {
-		       struct opvar *x = New(struct opvar);
-		       struct opvar *y = New(struct opvar);
-		       struct opvar *dir = New(struct opvar);
-		       struct opvar *stocked = New(struct opvar);
-		       struct opvar *typ = New(struct opvar);
-
-		       set_opvar_int(x, current_coord.x);
-		       set_opvar_int(y, current_coord.y);
-		       set_opvar_int(dir, $5);
-		       set_opvar_int(stocked, $<i>7);
-		       set_opvar_int(typ, $<i>8);
-
-		       add_opcode(&splev, SPO_PUSH, x);
-		       add_opcode(&splev, SPO_PUSH, y);
-		       add_opcode(&splev, SPO_PUSH, dir);
-		       add_opcode(&splev, SPO_PUSH, stocked);
-		       add_opcode(&splev, SPO_PUSH, typ);
-
-		       add_opcode(&splev, SPO_MAZEWALK, NULL);
+		      add_opvars(&splev, "iiiiio",
+				 current_coord.x, current_coord.y,
+				 $5, $<i>7, $<i>8, SPO_MAZEWALK);
 		  }
 		;
 
@@ -1461,259 +1036,93 @@ wallify_detail	: WALLIFY_ID
 
 ladder_detail	: LADDER_ID ':' coordinate ',' UP_OR_DOWN
 		  {
-		       struct opvar *x = New(struct opvar);
-		       struct opvar *y = New(struct opvar);
-		       struct opvar *up = New(struct opvar);
-
-		       set_opvar_int(x, current_coord.x);
-		       set_opvar_int(y, current_coord.y);
-		       set_opvar_int(up, $<i>5);
-
-		       add_opcode(&splev, SPO_PUSH, x);
-		       add_opcode(&splev, SPO_PUSH, y);
-		       add_opcode(&splev, SPO_PUSH, up);
-
-		       add_opcode(&splev, SPO_LADDER, NULL);
+		      add_opvars(&splev, "iiio", current_coord.x, current_coord.y, $<i>5, SPO_LADDER);
 		  }
 		;
 
 stair_detail	: STAIR_ID ':' coordinate ',' UP_OR_DOWN
 		  {
-		       struct opvar *x = New(struct opvar);
-		       struct opvar *y = New(struct opvar);
-		       struct opvar *up = New(struct opvar);
-
-		       set_opvar_int(x, current_coord.x);
-		       set_opvar_int(y, current_coord.y);
-		       set_opvar_int(up, $<i>5);
-
-		       add_opcode(&splev, SPO_PUSH, x);
-		       add_opcode(&splev, SPO_PUSH, y);
-		       add_opcode(&splev, SPO_PUSH, up);
-
-		       add_opcode(&splev, SPO_STAIR, NULL);
+		      add_opvars(&splev, "iiio", current_coord.x, current_coord.y, $<i>5, SPO_STAIR);
 		  }
 		;
 
 stair_region	: STAIR_ID ':' lev_region
 		  {
-		       struct opvar *x1 = New(struct opvar);
-		       struct opvar *y1 = New(struct opvar);
-		       struct opvar *x2 = New(struct opvar);
-		       struct opvar *y2 = New(struct opvar);
-		       struct opvar *in_islev = New(struct opvar);
-
-		       set_opvar_int(x1, current_region.x1);
-		       set_opvar_int(y1, current_region.y1);
-		       set_opvar_int(x2, current_region.x2);
-		       set_opvar_int(y2, current_region.y2);
-		       set_opvar_int(in_islev, $3);
-
-		       add_opcode(&splev, SPO_PUSH, x1);
-		       add_opcode(&splev, SPO_PUSH, y1);
-		       add_opcode(&splev, SPO_PUSH, x2);
-		       add_opcode(&splev, SPO_PUSH, y2);
-		       add_opcode(&splev, SPO_PUSH, in_islev);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $3);
 		  }
 		  ',' lev_region ',' UP_OR_DOWN
 		  {
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *del_islev = New(struct opvar);
-		      struct opvar *rtype = New(struct opvar);
-		      struct opvar *rname = New(struct opvar);
-		      struct opvar *padding = New(struct opvar);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $6);
 
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
-		      set_opvar_int(del_islev, $6);
-		      set_opvar_int(rtype, ($8) ? LR_UPSTAIR : LR_DOWNSTAIR);
-		      set_opvar_str(rname, (char *)0);
-		      set_opvar_int(padding, 0);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, del_islev);
-		      add_opcode(&splev, SPO_PUSH, rtype);
-		      add_opcode(&splev, SPO_PUSH, padding);
-		      add_opcode(&splev, SPO_PUSH, rname);
-
-		      add_opcode(&splev, SPO_LEVREGION, NULL);
+		      add_opvars(&splev, "iiso",
+				 (($8) ? LR_UPSTAIR : LR_DOWNSTAIR),
+				 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
 
 portal_region	: PORTAL_ID ':' lev_region
 		  {
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *in_islev = New(struct opvar);
-
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
-		      set_opvar_int(in_islev, $3);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, in_islev);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $3);
 		  }
 		 ',' lev_region ',' string
 		  {
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *del_islev = New(struct opvar);
-		      struct opvar *rtype = New(struct opvar);
-		      struct opvar *rname = New(struct opvar);
-		      struct opvar *padding = New(struct opvar);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $6);
 
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
-		      set_opvar_int(del_islev, $6);
-		      set_opvar_int(rtype, LR_PORTAL);
-		      set_opvar_str(rname, $8);
-		      set_opvar_int(padding, 0);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, del_islev);
-		      add_opcode(&splev, SPO_PUSH, rtype);
-		      add_opcode(&splev, SPO_PUSH, padding);
-		      add_opcode(&splev, SPO_PUSH, rname);
-
-		      add_opcode(&splev, SPO_LEVREGION, NULL);
+		      add_opvars(&splev, "iiso",
+				 LR_PORTAL,
+				 0, $8, SPO_LEVREGION);
 		  }
 		;
 
 teleprt_region	: TELEPRT_ID ':' lev_region
 		  {
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *in_islev = New(struct opvar);
-
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
-		      set_opvar_int(in_islev, $3);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, in_islev);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $3);
 		  }
 		 ',' lev_region
 		  {
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *del_islev = New(struct opvar);
-
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
-		      set_opvar_int(del_islev, $6);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, del_islev);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $6);
 		  }
 		teleprt_detail
 		  {
-		      struct opvar *rtype = New(struct opvar);
-		      struct opvar *rname = New(struct opvar);
-		      struct opvar *padding = New(struct opvar);
-
+		      int rtype;
 		      switch($<i>8) {
-		      case -1: set_opvar_int(rtype, LR_TELE); break;
-		      case  0: set_opvar_int(rtype, LR_DOWNTELE); break;
-		      case  1: set_opvar_int(rtype, LR_UPTELE); break;
+		      case -1: rtype = LR_TELE; break;
+		      case  0: rtype = LR_DOWNTELE; break;
+		      case  1: rtype = LR_UPTELE; break;
 		      }
-		      set_opvar_str(rname, (char *)0);
-		      set_opvar_int(padding, 0);
-
-		      add_opcode(&splev, SPO_PUSH, rtype);
-		      add_opcode(&splev, SPO_PUSH, padding);
-		      add_opcode(&splev, SPO_PUSH, rname);
-
-		      add_opcode(&splev, SPO_LEVREGION, NULL);
-
+		      add_opvars(&splev, "iiso",
+				 rtype,
+				 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
 
 branch_region	: BRANCH_ID ':' lev_region
 		  {
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *in_islev = New(struct opvar);
-
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
-		      set_opvar_int(in_islev, $3);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, in_islev);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $3);
 		  }
 		 ',' lev_region
 		  {
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *del_islev = New(struct opvar);
-		      struct opvar *rtype = New(struct opvar);
-		      struct opvar *rname = New(struct opvar);
-		      struct opvar *padding = New(struct opvar);
+		      add_opvars(&splev, "iiiii",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2, $6);
 
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
-		      set_opvar_int(del_islev, $6);
-		      set_opvar_int(rtype, LR_BRANCH);
-		      set_opvar_str(rname, (char *)0);
-		      set_opvar_int(padding, 0);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, del_islev);
-		      add_opcode(&splev, SPO_PUSH, rtype);
-		      add_opcode(&splev, SPO_PUSH, padding);
-		      add_opcode(&splev, SPO_PUSH, rname);
-
-		      add_opcode(&splev, SPO_LEVREGION, NULL);
+		      add_opvars(&splev, "iiso",
+				 LR_BRANCH,
+				 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
 
@@ -1729,124 +1138,53 @@ teleprt_detail	: /* empty */
 
 fountain_detail : FOUNTAIN_ID ':' coordinate
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-
-		      add_opcode(&splev, SPO_FOUNTAIN, NULL);
+		      add_opvars(&splev, "iio", current_coord.x, current_coord.y, SPO_FOUNTAIN);
 		  }
 		;
 
 sink_detail : SINK_ID ':' coordinate
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-
-		      add_opcode(&splev, SPO_SINK, NULL);
+		      add_opvars(&splev, "iio", current_coord.x, current_coord.y, SPO_SINK);
 		  }
 		;
 
 pool_detail : POOL_ID ':' coordinate
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-
-		      add_opcode(&splev, SPO_POOL, NULL);
+		      add_opvars(&splev, "iio", current_coord.x, current_coord.y, SPO_POOL);
 		  }
 		;
 
 replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' CHAR ',' light_state ',' SPERCENT
 		  {
-		      int c;
-		      struct opvar *x1 = New(struct opvar);
-		      struct opvar *y1 = New(struct opvar);
-		      struct opvar *x2 = New(struct opvar);
-		      struct opvar *y2 = New(struct opvar);
-		      struct opvar *chance = New(struct opvar);
-		      struct opvar *from_ter = New(struct opvar);
-		      struct opvar *to_ter = New(struct opvar);
-		      struct opvar *to_lit = New(struct opvar);
+		      int chance, from_ter, to_ter;
 
-		      set_opvar_int(x1, current_region.x1);
-		      set_opvar_int(y1, current_region.y1);
-		      set_opvar_int(x2, current_region.x2);
-		      set_opvar_int(y2, current_region.y2);
+		      chance = $11;
+		      if (chance < 0) chance = 0;
+		      else if (chance > 100) chance = 100;
 
-		      c = $11;
-		      if (c < 0) c = 0;
-		      else if (c > 100) c = 100;
-		      set_opvar_int(chance, c);
+		      from_ter = what_map_char((char) $5);
+		      if (from_ter >= MAX_TYPE) yyerror("Replace terrain: illegal 'from' map char");
 
-		      c = what_map_char((char) $5);
-		      set_opvar_int(from_ter, c);
-		      if (c >= MAX_TYPE) yyerror("Replace terrain: illegal 'from' map char");
+		      to_ter = what_map_char((char) $7);
+		      if (to_ter >= MAX_TYPE) yyerror("Replace terrain: illegal 'to' map char");
 
-		      c = what_map_char((char) $7);
-		      set_opvar_int(to_ter, c);
-		      if (c >= MAX_TYPE) yyerror("Replace terrain: illegal 'to' map char");
-
-		      set_opvar_int(to_lit, $9);
-
-		      add_opcode(&splev, SPO_PUSH, x1);
-		      add_opcode(&splev, SPO_PUSH, y1);
-		      add_opcode(&splev, SPO_PUSH, x2);
-		      add_opcode(&splev, SPO_PUSH, y2);
-		      add_opcode(&splev, SPO_PUSH, from_ter);
-		      add_opcode(&splev, SPO_PUSH, to_ter);
-		      add_opcode(&splev, SPO_PUSH, to_lit);
-		      add_opcode(&splev, SPO_PUSH, chance);
-
-		      add_opcode(&splev, SPO_REPLACETERRAIN, NULL);
+		      add_opvars(&splev, "iiii iiiio",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2,
+				 from_ter, to_ter, $9, chance, SPO_REPLACETERRAIN);
 		  }
 		;
 
 terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		 {
 		     int c;
-		     struct opvar *x1 = New(struct opvar);
-		     struct opvar *y1 = New(struct opvar);
-		     struct opvar *x2 = New(struct opvar);
-		     struct opvar *y2 = New(struct opvar);
-		     struct opvar *areatyp = New(struct opvar);
-		     struct opvar *ter = New(struct opvar);
-		     struct opvar *tlit = New(struct opvar);
 
-		     set_opvar_int(areatyp, 0);
-		     set_opvar_int(x1, current_coord.x);
-		     set_opvar_int(y1, current_coord.y);
-		     set_opvar_int(x2, -1);
-		     set_opvar_int(y2, -1);
 		     c = what_map_char((char) $6);
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
-		     set_opvar_int(ter, c);
-		     set_opvar_int(tlit, $8);
 
-		     add_opcode(&splev, SPO_PUSH, x1);
-		     add_opcode(&splev, SPO_PUSH, y1);
-		     add_opcode(&splev, SPO_PUSH, x2);
-		     add_opcode(&splev, SPO_PUSH, y2);
-		     add_opcode(&splev, SPO_PUSH, areatyp);
-		     add_opcode(&splev, SPO_PUSH, ter);
-		     add_opcode(&splev, SPO_PUSH, tlit);
-
-		     add_opcode(&splev, SPO_TERRAIN, NULL);
+		     add_opvars(&splev, "iiii iiio",
+				current_coord.x, current_coord.y, -1, -1,
+				0, c, $8, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
@@ -1859,41 +1197,23 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 	       |
 	         TERRAIN_ID chance ':' coordinate ',' HORIZ_OR_VERT ',' INTEGER ',' CHAR ',' light_state
 		 {
-		     int c;
-		     struct opvar *x1 = New(struct opvar);
-		     struct opvar *y1 = New(struct opvar);
-		     struct opvar *x2 = New(struct opvar);
-		     struct opvar *y2 = New(struct opvar);
-		     struct opvar *areatyp = New(struct opvar);
-		     struct opvar *ter = New(struct opvar);
-		     struct opvar *tlit = New(struct opvar);
+		     int areatyp, c, x2,y2;
 
-		     c = $<i>6;
-		     set_opvar_int(areatyp, c);
-		     set_opvar_int(x1, current_coord.x);
-		     set_opvar_int(y1, current_coord.y);
-		     if (c == 1) {
-			 set_opvar_int(x2, $8);
-			 set_opvar_int(y2, -1);
+		     areatyp = $<i>6;
+		     if (areatyp == 1) {
+			 x2 = $8;
+			 y2 = -1;
 		     } else {
-			 set_opvar_int(x2, -1);
-			 set_opvar_int(y2, $8);
+			 x2 = -1;
+			 y2 = $8;
 		     }
 
 		     c = what_map_char((char) $10);
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
-		     set_opvar_int(ter, c);
-		     set_opvar_int(tlit, $12);
 
-		     add_opcode(&splev, SPO_PUSH, x1);
-		     add_opcode(&splev, SPO_PUSH, y1);
-		     add_opcode(&splev, SPO_PUSH, x2);
-		     add_opcode(&splev, SPO_PUSH, y2);
-		     add_opcode(&splev, SPO_PUSH, areatyp);
-		     add_opcode(&splev, SPO_PUSH, ter);
-		     add_opcode(&splev, SPO_PUSH, tlit);
-
-		     add_opcode(&splev, SPO_TERRAIN, NULL);
+		     add_opvars(&splev, "iiii iiio",
+				current_coord.x, current_coord.y, x2, y2,
+				areatyp, c, $12, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
@@ -1907,34 +1227,13 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 	         TERRAIN_ID chance ':' region ',' FILLING ',' CHAR ',' light_state
 		 {
 		     int c;
-		     struct opvar *x1 = New(struct opvar);
-		     struct opvar *y1 = New(struct opvar);
-		     struct opvar *x2 = New(struct opvar);
-		     struct opvar *y2 = New(struct opvar);
-		     struct opvar *areatyp = New(struct opvar);
-		     struct opvar *ter = New(struct opvar);
-		     struct opvar *tlit = New(struct opvar);
-
-		     set_opvar_int(areatyp, 3 + $<i>6 );
-		     set_opvar_int(x1, current_region.x1);
-		     set_opvar_int(y1, current_region.y1);
-		     set_opvar_int(x2, current_region.x2);
-		     set_opvar_int(y2, current_region.y2);
 
 		     c = what_map_char((char) $8);
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
-		     set_opvar_int(ter, c);
-		     set_opvar_int(tlit, $10);
 
-		     add_opcode(&splev, SPO_PUSH, x1);
-		     add_opcode(&splev, SPO_PUSH, y1);
-		     add_opcode(&splev, SPO_PUSH, x2);
-		     add_opcode(&splev, SPO_PUSH, y2);
-		     add_opcode(&splev, SPO_PUSH, areatyp);
-		     add_opcode(&splev, SPO_PUSH, ter);
-		     add_opcode(&splev, SPO_PUSH, tlit);
-
-		     add_opcode(&splev, SPO_TERRAIN, NULL);
+		     add_opvars(&splev, "iiii iiio",
+				current_region.x1, current_region.y1, current_region.x2, current_region.y2,
+				3 + $<i>6, c, $10, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
@@ -1949,37 +1248,12 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER opt_int
 		  {
 		      int c;
-		     struct opvar *x1 = New(struct opvar);
-		     struct opvar *y1 = New(struct opvar);
-		     struct opvar *x2 = New(struct opvar);
-		     struct opvar *y2 = New(struct opvar);
-		     struct opvar *fg = New(struct opvar);
-		     struct opvar *lit = New(struct opvar);
-		     struct opvar *roughness = New(struct opvar);
-		     struct opvar *thick = New(struct opvar);
-
-		     set_opvar_int(x1, current_region.x1);
-		     set_opvar_int(y1, current_region.y1);
-		     set_opvar_int(x2, current_region.x2);
-		     set_opvar_int(y2, current_region.y2);
-
-		     c = what_map_char((char) $5);
-		     if ((c == INVALID_TYPE) || (c >= MAX_TYPE)) yyerror("Terrain: illegal map char");
-		     set_opvar_int(fg, c);
-		     set_opvar_int(lit, $7);
-		     set_opvar_int(roughness, $9);
-		     set_opvar_int(thick, $<i>10);
-
-		     add_opcode(&splev, SPO_PUSH, x1);
-		     add_opcode(&splev, SPO_PUSH, y1);
-		     add_opcode(&splev, SPO_PUSH, x2);
-		     add_opcode(&splev, SPO_PUSH, y2);
-		     add_opcode(&splev, SPO_PUSH, fg);
-		     add_opcode(&splev, SPO_PUSH, lit);
-		     add_opcode(&splev, SPO_PUSH, roughness);
-		     add_opcode(&splev, SPO_PUSH, thick);
-
-		     add_opcode(&splev, SPO_RANDLINE, NULL);
+		      c = what_map_char((char) $5);
+		      if ((c == INVALID_TYPE) || (c >= MAX_TYPE)) yyerror("Terrain: illegal map char");
+		      add_opvars(&splev, "iiii iiiio",
+				 current_region.x1, current_region.y1,
+				 current_region.x2, current_region.y2,
+				 c, $7, $9, $<i>10, SPO_RANDLINE);
 		  }
 
 opt_int		: /* empty */
@@ -1994,181 +1268,80 @@ opt_int		: /* empty */
 
 spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' light_state
 		{
-		    int c;
-		    struct opvar *x = New(struct opvar);
-		    struct opvar *y = New(struct opvar);
-		    struct opvar *typ = New(struct opvar);
-		    struct opvar *dir = New(struct opvar);
-		    struct opvar *count = New(struct opvar);
-		    struct opvar *lit = New(struct opvar);
+		    int c, typ;
 
-		    set_opvar_int(x, current_coord.x);
-		    set_opvar_int(y, current_coord.y);
-
-		    c = what_map_char((char) $5);
-		    if (c == INVALID_TYPE || c >= MAX_TYPE) {
+		    typ = what_map_char((char) $5);
+		    if (typ == INVALID_TYPE || typ >= MAX_TYPE) {
 			yyerror("SPILL: Invalid map character!");
 		    }
-		    set_opvar_int(typ, c);
-		    set_opvar_int(dir, $7);
+
 		    c = $9;
 		    if (c < 1) yyerror("SPILL: Invalid count!");
-		    set_opvar_int(count, c);
-		    set_opvar_int(lit, $11);
 
-		    add_opcode(&splev, SPO_PUSH, x);
-		    add_opcode(&splev, SPO_PUSH, y);
-		    add_opcode(&splev, SPO_PUSH, typ);
-		    add_opcode(&splev, SPO_PUSH, dir);
-		    add_opcode(&splev, SPO_PUSH, count);
-		    add_opcode(&splev, SPO_PUSH, lit);
-
-		    add_opcode(&splev, SPO_SPILL, NULL);
+		    add_opvars(&splev, "iiiiiio", current_coord.x, current_coord.y,
+			       typ, $7, c, $11, SPO_SPILL);
 		}
 		;
 
 diggable_detail : NON_DIGGABLE_ID ':' region
 		  {
-		     struct opvar *x1 = New(struct opvar);
-		     struct opvar *y1 = New(struct opvar);
-		     struct opvar *x2 = New(struct opvar);
-		     struct opvar *y2 = New(struct opvar);
-
-		     set_opvar_int(x1, current_region.x1);
-		     set_opvar_int(y1, current_region.y1);
-		     set_opvar_int(x2, current_region.x2);
-		     set_opvar_int(y2, current_region.y2);
-
-		     add_opcode(&splev, SPO_PUSH, x1);
-		     add_opcode(&splev, SPO_PUSH, y1);
-		     add_opcode(&splev, SPO_PUSH, x2);
-		     add_opcode(&splev, SPO_PUSH, y2);
-
-		     add_opcode(&splev, SPO_NON_DIGGABLE, NULL);
+		     add_opvars(&splev, "iiiio",
+				current_region.x1, current_region.y1,
+				current_region.x2, current_region.y2, SPO_NON_DIGGABLE);
 		  }
 		;
 
 passwall_detail : NON_PASSWALL_ID ':' region
 		  {
-		     struct opvar *x1 = New(struct opvar);
-		     struct opvar *y1 = New(struct opvar);
-		     struct opvar *x2 = New(struct opvar);
-		     struct opvar *y2 = New(struct opvar);
-
-		     set_opvar_int(x1, current_region.x1);
-		     set_opvar_int(y1, current_region.y1);
-		     set_opvar_int(x2, current_region.x2);
-		     set_opvar_int(y2, current_region.y2);
-
-		     add_opcode(&splev, SPO_PUSH, x1);
-		     add_opcode(&splev, SPO_PUSH, y1);
-		     add_opcode(&splev, SPO_PUSH, x2);
-		     add_opcode(&splev, SPO_PUSH, y2);
-
-		     add_opcode(&splev, SPO_NON_PASSWALL, NULL);
+		     add_opvars(&splev, "iiiio",
+				current_region.x1, current_region.y1,
+				current_region.x2, current_region.y2, SPO_NON_PASSWALL);
 		  }
 		;
 
 region_detail	: REGION_ID ':' region ',' light_state ',' room_type prefilled
 		  {
 		      int rt, irr;
-		     struct opvar *x1 = New(struct opvar);
-		     struct opvar *y1 = New(struct opvar);
-		     struct opvar *x2 = New(struct opvar);
-		     struct opvar *y2 = New(struct opvar);
-		     struct opvar *rlit = New(struct opvar);
-		     struct opvar *rtype = New(struct opvar);
-		     struct opvar *rirreg = New(struct opvar);
 
-		     set_opvar_int(x1, current_region.x1);
-		     set_opvar_int(y1, current_region.y1);
-		     set_opvar_int(x2, current_region.x2);
-		     set_opvar_int(y2, current_region.y2);
-		     set_opvar_int(rlit, $<i>5);
-		     rt = $<i>7;
-		     if (( $<i>8 ) & 1) rt += MAXRTYPE+1;
-		     set_opvar_int(rtype, rt);
-		     irr = ((( $<i>8 ) & 2) != 0);
-		     set_opvar_int(rirreg, irr);
+		      rt = $<i>7;
+		      if (( $<i>8 ) & 1) rt += MAXRTYPE+1;
 
-		     if(current_region.x1 > current_region.x2 ||
-			current_region.y1 > current_region.y2)
-		       yyerror("Region start > end!");
+		      irr = ((( $<i>8 ) & 2) != 0);
 
-		     if (rt == VAULT &&	(irr ||
+		      if(current_region.x1 > current_region.x2 ||
+			 current_region.y1 > current_region.y2)
+			  yyerror("Region start > end!");
+
+		      if (rt == VAULT && (irr ||
 					 (current_region.x2 - current_region.x1 != 1) ||
 					 (current_region.y2 - current_region.y1 != 1)))
 			 yyerror("Vaults must be exactly 2x2!");
 
-		     add_opcode(&splev, SPO_PUSH, x1);
-		     add_opcode(&splev, SPO_PUSH, y1);
-		     add_opcode(&splev, SPO_PUSH, x2);
-		     add_opcode(&splev, SPO_PUSH, y2);
-		     add_opcode(&splev, SPO_PUSH, rlit);
-		     add_opcode(&splev, SPO_PUSH, rtype);
-		     add_opcode(&splev, SPO_PUSH, rirreg);
-
-		     add_opcode(&splev, SPO_REGION, NULL);
+		     add_opvars(&splev, "iiii iiio",
+				current_region.x1, current_region.y1,
+				current_region.x2, current_region.y2,
+				$<i>5, rt, irr, SPO_REGION);
 		  }
 		;
 
 altar_detail	: ALTAR_ID ':' coordinate ',' alignment ',' altar_type
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *align = New(struct opvar);
-		      struct opvar *shrine = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(align, $<i>5);
-		      set_opvar_int(shrine, $<i>7);
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, shrine);
-		      add_opcode(&splev, SPO_PUSH, align);
-
-		      add_opcode(&splev, SPO_ALTAR, NULL);
+		      add_opvars(&splev, "iiiio", current_coord.x, current_coord.y,
+				 $<i>7, $<i>5, SPO_ALTAR);
 		  }
 		;
 
 gold_detail	: GOLD_ID ':' amount ',' coordinate
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *amount = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_int(amount, $<i>3);
-
-		      add_opcode(&splev, SPO_PUSH, amount);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, x);
-
-		      add_opcode(&splev, SPO_GOLD, NULL);
+		      add_opvars(&splev, "iiio", $<i>3, current_coord.y, current_coord.x, SPO_GOLD);
 		  }
 		;
 
 engraving_detail: ENGRAVING_ID ':' coordinate ',' engraving_type ',' string
 		  {
-		      struct opvar *x = New(struct opvar);
-		      struct opvar *y = New(struct opvar);
-		      struct opvar *estr = New(struct opvar);
-		      struct opvar *etype = New(struct opvar);
-
-		      set_opvar_int(x, current_coord.x);
-		      set_opvar_int(y, current_coord.y);
-		      set_opvar_str(estr, $7);
-		      set_opvar_int(etype, $<i>5);
-
-		      add_opcode(&splev, SPO_PUSH, x);
-		      add_opcode(&splev, SPO_PUSH, y);
-		      add_opcode(&splev, SPO_PUSH, estr);
-		      add_opcode(&splev, SPO_PUSH, etype);
-
-		      add_opcode(&splev, SPO_ENGRAVING, NULL);
+		      add_opvars(&splev, "iisio",
+				 current_coord.x, current_coord.y,
+				 $7, $<i>5, SPO_ENGRAVING);
 		  }
 		;
 

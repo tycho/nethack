@@ -9,6 +9,8 @@
 #define SPEC_LEV	/* for MPW */
 /* although, why don't we move those special defines here.. and in dgn_main? */
 
+#include <stdarg.h>
+
 #include "hack.h"
 #include "date.h"
 #include "sp_lev.h"
@@ -316,9 +318,54 @@ char *val;
 {
     if (ov) {
         ov->spovartyp = SPOVAR_STRING;
-        ov->vardata.str = val;
+	ov->vardata.str = val;
     }
     return ov;
+}
+
+#define New(type)		\
+	(type *) memset((genericptr_t)alloc(sizeof(type)), 0, sizeof(type))
+
+void
+add_opvars(sp_lev *sp, const char *fmt, ...)
+{
+    const char *p;
+    va_list argp;
+
+    va_start(argp, fmt);
+
+    for(p = fmt; *p != '\0'; p++) {
+	switch(*p) {
+	case ' ': break;
+	case 'i':
+	    {
+		struct opvar *ov = New(struct opvar);
+		set_opvar_int(ov, va_arg(argp, long));
+		add_opcode(sp, SPO_PUSH, ov);
+		break;
+	    }
+	case 's':
+	    {
+		struct opvar *ov = New(struct opvar);
+		set_opvar_str(ov, va_arg(argp, char *));
+		add_opcode(sp, SPO_PUSH, ov);
+		break;
+	    }
+	case 'o':
+	    {
+		long i = va_arg(argp, long);
+		if (i < 0 || i >= MAX_SP_OPCODES)
+		    fprintf(stderr, "add_opvars: unknown opcode '%i'.", i);
+		add_opcode(sp, i, NULL);
+		break;
+	    }
+	default:
+	    fprintf(stderr, "add_opvars: illegal format character '%c'.", *p);
+	    break;
+	}
+    }
+
+    va_end(argp);
 }
 
 
@@ -528,20 +575,14 @@ scan_map(map, sp)
 char *map;
 sp_lev *sp;
 {
-#define New(type)               \
-        (type *) memset((genericptr_t)alloc(sizeof(type)), 0, sizeof(type))
-   struct opvar *xs = New(struct opvar);
-   struct opvar *ys = New(struct opvar);
-   struct opvar *mp = New(struct opvar);
-
 	register int i, len;
 	register char *s1, *s2;
 	int max_len = 0;
 	int max_hig = 0;
 	char msg[256];
 	char *tmpmap[ROWNO];
-   int dx,dy;
-   char *mbuf;
+	int dx,dy;
+	char *mbuf;
 
 	/* First, strip out digits 0-9 (line numbering) */
 	for (s1 = s2 = map; *s1; s1++)
@@ -599,23 +640,14 @@ sp_lev *sp;
 	    yyerror(msg);
 	}
 
-   set_opvar_int(xs, max_len);
-   set_opvar_int(ys, max_hig);
+	mbuf = (char *) alloc(((max_hig-1) * max_len) + (max_len-1) + 2);
+	for (dy = 0; dy < max_hig; dy++)
+	    for (dx = 0; dx < max_len; dx++)
+		mbuf[(dy * max_len) + dx] = (tmpmap[dy][dx] + 1);
 
-   mbuf = (char *) alloc(((max_hig-1) * max_len) + (max_len-1) + 2);
-   for (dy = 0; dy < max_hig; dy++)
-     for (dx = 0; dx < max_len; dx++)
-       mbuf[(dy * max_len) + dx] = (tmpmap[dy][dx] + 1);
+	mbuf[((max_hig-1) * max_len) + (max_len-1) + 1] = '\0';
 
-   mbuf[((max_hig-1) * max_len) + (max_len-1) + 1] = '\0';
-
-   set_opvar_str(mp, mbuf);
-
-   add_opcode(sp, SPO_PUSH, mp);
-   add_opcode(sp, SPO_PUSH, ys);
-   add_opcode(sp, SPO_PUSH, xs);
-
-   add_opcode(sp, SPO_MAP, NULL);
+	add_opvars(sp, "siio", mbuf, max_hig, max_len, SPO_MAP);
 }
 
 
@@ -673,7 +705,6 @@ sp_lev *maze;
 		       Write(fd, &(ov->vardata.l), sizeof(ov->vardata.l));
 		       break;
 		   case SPOVAR_STRING:
-		       /*fprintf(stderr, "wrote push with str: %s\n", ov->vardata.str);*/
 		       if (ov->vardata.str)
 			   size = strlen(ov->vardata.str);
 		       else size = 0;
