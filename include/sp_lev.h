@@ -93,8 +93,10 @@
 #define SPO_POP			42
 
 #define SPO_RN2			43
+#define SPO_DEC			44
+#define SPO_COPY		45
 
-#define MAX_SP_OPCODES		44
+#define MAX_SP_OPCODES		46
 
 
 

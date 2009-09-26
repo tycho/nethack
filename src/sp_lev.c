@@ -3629,6 +3629,21 @@ sp_lev *lvl;
 		wallify_map(dx1, dy1, dx2, dy2);
 	    }
 	    break;
+	case SPO_COPY:
+	    {
+		struct opvar a = splev_stack_pop(&stack);
+		splev_stack_push(&stack, a);
+		splev_stack_push(&stack, a);
+	    }
+	    break;
+	case SPO_DEC:
+	    {
+		struct opvar a;
+		if (!get_opvar_dat(&stack, &a, SPOVAR_INT)) break;
+		a.vardata.l--;
+		splev_stack_push(&stack, a);
+	    }
+	    break;
         case SPO_CMP:
 	    {
 		struct opvar a = splev_stack_pop(&stack);
