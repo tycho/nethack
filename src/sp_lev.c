@@ -3734,6 +3734,34 @@ sp_lev *lvl;
                 n_opcode = a;
            }
 	   break;
+        case SPO_JE:
+           {
+	       struct opvar oa,oc;
+	       long a,c;
+               if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
+                   !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
+              a = oa.vardata.l;
+              c = oc.vardata.l;
+              if ((c = 0) && (a >= 0) &&
+                  (a < lvl->init_lev.n_opcodes) &&
+                  (a != n_opcode))
+                n_opcode = a;
+           }
+	   break;
+        case SPO_JNE:
+           {
+	       struct opvar oa,oc;
+	       long a,c;
+               if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
+                   !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
+              a = oa.vardata.l;
+              c = oc.vardata.l;
+              if ((c != 0) && (a >= 0) &&
+                  (a < lvl->init_lev.n_opcodes) &&
+                  (a != n_opcode))
+                n_opcode = a;
+           }
+	   break;
 	case SPO_RN2:
 	    {
 		struct opvar tmpv;

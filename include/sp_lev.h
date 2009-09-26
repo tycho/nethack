@@ -96,8 +96,10 @@
 #define SPO_DEC			44
 #define SPO_COPY		45
 
-#define MAX_SP_OPCODES		46
+#define SPO_JE			46
+#define SPO_JNE			47
 
+#define MAX_SP_OPCODES		48
 
 
 /* MONSTER and OBJECT can take a variable number of parameters,
