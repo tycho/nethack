@@ -116,7 +116,8 @@
 #define SP_O_V_CORPSENM         2
 #define SP_O_V_NAME             3
 #define SP_O_V_QUAN		4
-#define SP_O_V_END              5 /* end of variable parameters */
+#define SP_O_V_BURIED		5
+#define SP_O_V_END              6 /* end of variable parameters */
 
 
 /* When creating objects, we need to know whether
@@ -214,6 +215,7 @@ typedef struct {
 	xchar x, y, class, containment;
 	schar curse_state;
 	int   quan;
+	short buried;
 } object;
 
 typedef struct {

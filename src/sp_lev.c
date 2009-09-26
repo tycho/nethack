@@ -334,6 +334,14 @@ flip_level(int flp)
 	    otmp->ox = x2 - otmp->ox;
     }
 
+    /* buried objects */
+    for (otmp = level.buriedobjlist; otmp; otmp = otmp->nobj) {
+	if (flp & 1)
+	    otmp->oy = y2 - otmp->oy;
+	if (flp & 2)
+	    otmp->ox = x2 - otmp->ox;
+    }
+
     /* monsters */
     for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 	if (flp & 1) {
@@ -1584,6 +1592,10 @@ struct mkroom	*croom;
 
 	stackobj(otmp);
 
+	if (o->buried && !o->containment) {
+	    /* What if we'd want to bury a container? bury_an_obj() may dealloc obj. */
+	    (void) bury_an_obj(otmp);
+	}
 }
 
 /*
@@ -2848,6 +2860,7 @@ sp_lev *lvl;
 		tmpobj.corpsenm = NON_PM;
 		tmpobj.name.str = (char *)0;
 		tmpobj.quan = -1;
+		tmpobj.buried = 0;
 
 		if (!get_opvar_dat(&stack, &containment, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
@@ -2884,6 +2897,10 @@ sp_lev *lvl;
                     if (parm.spovartyp == SPOVAR_INT)
                        tmpobj.quan = parm.vardata.l;
                     break;
+		 case SP_O_V_BURIED:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.buried = parm.vardata.l;
+		     break;
                   case SP_O_V_END:
                     nparams = SP_O_V_END+1;
                     break;

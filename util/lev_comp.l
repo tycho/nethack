@@ -151,6 +151,7 @@ NAME		return NAME_ID;
 CHANCE		return CHANCE_ID;
 levregion	return LEV;
 quantity	return QUANTITY_ID;
+buried		return BURIED_ID;
 horizontal	{ yylval.i=1; return HORIZ_OR_VERT; }
 vertical	{ yylval.i=2; return HORIZ_OR_VERT; }
 open		{ yylval.i=D_ISOPEN; return DOOR_STATE; }
