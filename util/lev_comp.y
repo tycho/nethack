@@ -123,7 +123,7 @@ extern const char *fname;
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID ELSE_ID
 %token	<i> SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
 %token	<i> EXIT_ID
-%token	<i> QUANTITY_ID BURIED_ID
+%token	<i> QUANTITY_ID BURIED_ID LOOP_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -277,6 +277,7 @@ levstatement 	: message
 		| engraving_detail
 		| fountain_detail
 		| gold_detail
+		| loopstatement
 		| ifstatement
 		| exitstatement
 		| init_reg
@@ -319,6 +320,39 @@ comparestmt     : PERCENT
 		      add_opvars(&splev, "ioi", 100, SPO_RN2, $1);
 		      $$ = SPO_JGE; /* TODO: shouldn't this be SPO_JG? */
                   }
+		;
+
+loopstatement	: LOOP_ID '[' INTEGER ']'
+		  {
+		      struct opvar *tmppush = New(struct opvar);
+
+		      if (n_if_list >= MAX_NESTED_IFS) {
+			  yyerror("IF: Too deeply nested IFs.");
+			  n_if_list = MAX_NESTED_IFS - 1;
+		      }
+
+		      if ($3 < 1)
+			  yyerror("Loop with fewer than 1 repeats.");
+
+		      add_opvars(&splev, "i", $3);
+
+		      set_opvar_int(tmppush, splev.init_lev.n_opcodes-1);
+		      if_list[n_if_list++] = tmppush;
+
+		      add_opvars(&splev, "o", SPO_DEC);
+		  }
+		 '{' levstatements '}'
+		  {
+		      struct opvar *tmppush;
+
+		      add_opvars(&splev, "oio", SPO_COPY, 0, SPO_CMP);
+
+		      tmppush = (struct opvar *) if_list[--n_if_list];
+
+		      add_opcode(&splev, SPO_PUSH, tmppush);
+		      add_opcode(&splev, SPO_JG, NULL);
+		      add_opcode(&splev, SPO_POP, NULL); /* get rid of the count value in stack */
+		  }
 		;
 
 ifstatement 	: IF_ID comparestmt

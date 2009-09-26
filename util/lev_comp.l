@@ -149,6 +149,7 @@ GOLD		return GOLD_ID;
 ENGRAVING	return ENGRAVING_ID;
 NAME		return NAME_ID;
 CHANCE		return CHANCE_ID;
+LOOP		return LOOP_ID;
 levregion	return LEV;
 quantity	return QUANTITY_ID;
 buried		return BURIED_ID;
