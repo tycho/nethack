@@ -123,7 +123,7 @@ extern const char *fname;
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID ELSE_ID
 %token	<i> SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
 %token	<i> EXIT_ID
-%token	<i> QUANTITY_ID
+%token	<i> QUANTITY_ID BURIED_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -979,6 +979,11 @@ object_info	: ',' CURSE_TYPE
 		  {
 		      add_opvars(&splev, "ii", $4, SP_O_V_QUAN);
 		      $<i>$ = 0x10;
+		  }
+		| ',' BURIED_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_O_V_BURIED);
+		      $<i>$ = 0x20;
 		  }
 		;
 
