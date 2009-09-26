@@ -119,7 +119,8 @@
 #define SP_O_V_NAME             3
 #define SP_O_V_QUAN		4
 #define SP_O_V_BURIED		5
-#define SP_O_V_END              6 /* end of variable parameters */
+#define SP_O_V_LIT		6
+#define SP_O_V_END              7 /* end of variable parameters */
 
 
 /* When creating objects, we need to know whether
@@ -218,6 +219,7 @@ typedef struct {
 	schar curse_state;
 	int   quan;
 	short buried;
+	short lit;
 } object;
 
 typedef struct {

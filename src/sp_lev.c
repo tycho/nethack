@@ -1592,6 +1592,10 @@ struct mkroom	*croom;
 
 	stackobj(otmp);
 
+	if (o->lit) {
+	    begin_burn(otmp, FALSE);
+	}
+
 	if (o->buried && !o->containment) {
 	    /* What if we'd want to bury a container? bury_an_obj() may dealloc obj. */
 	    (void) bury_an_obj(otmp);
@@ -2861,6 +2865,7 @@ sp_lev *lvl;
 		tmpobj.name.str = (char *)0;
 		tmpobj.quan = -1;
 		tmpobj.buried = 0;
+		tmpobj.lit = 0;
 
 		if (!get_opvar_dat(&stack, &containment, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
@@ -2900,6 +2905,10 @@ sp_lev *lvl;
 		 case SP_O_V_BURIED:
 		     if (parm.spovartyp == SPOVAR_INT)
 			 tmpobj.buried = parm.vardata.l;
+		     break;
+		 case SP_O_V_LIT:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.lit = parm.vardata.l;
 		     break;
                   case SP_O_V_END:
                     nparams = SP_O_V_END+1;
