@@ -1444,6 +1444,27 @@ struct mkroom	*croom;
 		mtmp->msleeping = m->asleep;
 #endif
 	    }
+
+	    if (m->seentraps) mtmp->mtrapseen = m->seentraps;
+	    if (m->female) mtmp->female = 1;
+	    if (m->cancelled) mtmp->mcan = 1;
+	    if (m->revived) mtmp->mrevived = 1;
+	    if (m->avenge) mtmp->mavenge = 1;
+	    if (m->stunned) mtmp->mstun = 1;
+	    if (m->confused) mtmp->mconf = 1;
+	    if (m->blinded) {
+		mtmp->mcansee = 0;
+		mtmp->mblinded = (m->blinded % 127);
+	    }
+	    if (m->paralyzed) {
+		mtmp->mcanmove = 0;
+		mtmp->mfrozen = (m->paralyzed % 127);
+	    }
+	    if (m->fleeing) {
+		mtmp->mflee = 1;
+		mtmp->mfleetim = (m->fleeing % 127);
+	    }
+
 	}
 
 }
@@ -2807,6 +2828,17 @@ sp_lev *lvl;
               tmpmons.appear = 0;
               tmpmons.appear_as.str = (char *)0;
               tmpmons.align = - MAX_REGISTERS - 2;
+	      tmpmons.female = 0;
+	      tmpmons.invis = 0;
+	      tmpmons.cancelled = 0;
+	      tmpmons.revived = 0;
+	      tmpmons.avenge = 0;
+	      tmpmons.fleeing = 0;
+	      tmpmons.blinded = 0;
+	      tmpmons.paralyzed = 0;
+	      tmpmons.stunned = 0;
+	      tmpmons.confused = 0;
+	      tmpmons.seentraps = 0;
 
               if (!get_opvar_dat(&stack, &id, SPOVAR_INT) ||
                   !get_opvar_dat(&stack, &class, SPOVAR_INT) ||
@@ -2845,6 +2877,50 @@ sp_lev *lvl;
                   case SP_M_V_PEACEFUL:
 		      if (parm.spovartyp == SPOVAR_INT)
 			  tmpmons.peaceful = parm.vardata.l;
+		      break;
+                  case SP_M_V_FEMALE:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.female = parm.vardata.l;
+		      break;
+                  case SP_M_V_INVIS:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.invis = parm.vardata.l;
+		      break;
+                  case SP_M_V_CANCELLED:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.cancelled = parm.vardata.l;
+		      break;
+                  case SP_M_V_REVIVED:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.revived = parm.vardata.l;
+		      break;
+                  case SP_M_V_AVENGE:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.avenge = parm.vardata.l;
+		      break;
+                  case SP_M_V_FLEEING:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.fleeing = parm.vardata.l;
+		      break;
+                  case SP_M_V_BLINDED:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.blinded = parm.vardata.l;
+		      break;
+                  case SP_M_V_PARALYZED:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.paralyzed = parm.vardata.l;
+		      break;
+                  case SP_M_V_STUNNED:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.stunned = parm.vardata.l;
+		      break;
+                  case SP_M_V_CONFUSED:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.confused = parm.vardata.l;
+		      break;
+                  case SP_M_V_SEENTRAPS:
+		      if (parm.spovartyp == SPOVAR_INT)
+			  tmpmons.seentraps = parm.vardata.l;
 		      break;
                   case SP_M_V_END:
 		      nparams = SP_M_V_END+1;
