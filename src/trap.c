@@ -277,21 +277,25 @@ register int x, y, typ;
 	      }
 	    case MAGIC_BEAM_TRAP:
 		{
-		    int d,startdir = rn2(4);
+		    int d,startdir = rn2(8);
 		    int dist;
 		    int lx, ly;
 		    int ok = 0;
-		    for (d = 0; ((d < 4) && !ok); d++)
+		    for (d = 0; ((d < 8) && !ok); d++)
 			for (dist = 1; ((dist < 8) && !ok); dist++) {
 			    lx = x;
 			    ly = y;
-			    switch ((startdir + d) % 4) {
+			    switch ((startdir + d) % 8) {
 			    case 0: lx += dist; break;
-			    case 1: ly += dist; break;
-			    case 2: lx -= dist; break;
-			    case 3: ly -= dist; break;
+			    case 1: lx += dist; ly += dist; break;
+			    case 2: ly += dist; break;
+			    case 3: lx -= dist; ly += dist; break;
+			    case 4: lx -= dist; break;
+			    case 5: lx -= dist; ly -= dist; break;
+			    case 6: ly -= dist; break;
+			    case 7: lx += dist; ly -= dist; break;
 			    }
-			    if (isok(lx,ly) && IS_WALL(levl[lx][ly].typ)) {
+			    if (isok(lx,ly) && IS_STWALL(levl[lx][ly].typ)) {
 				ttmp->launch.x = lx;
 				ttmp->launch.y = ly;
 				/* no AD_DISN, thanks */
@@ -702,7 +706,7 @@ unsigned trflags;
 	    case MAGIC_BEAM_TRAP:
 		You_hear("a soft click.");
 		seetrap(trap);
-		if (isok(trap->launch.x,trap->launch.y) && IS_WALL(levl[trap->launch.x][trap->launch.y].typ)) {
+		if (isok(trap->launch.x,trap->launch.y) && IS_STWALL(levl[trap->launch.x][trap->launch.y].typ)) {
 		    buzz(trap->launch_otyp, 8,
 			 trap->launch.x,trap->launch.y,
 			 sgn(trap->tx - trap->launch.x),sgn(trap->ty - trap->launch.y));
@@ -2348,11 +2352,17 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			 }
 			 break;
 	    case MAGIC_BEAM_TRAP:
-		buzz(trap->launch_otyp, 8,
-		     trap->launch.x,trap->launch.y,
-		     sgn(trap->tx - trap->launch.x),sgn(trap->ty - trap->launch.y));
 		if (in_sight) {
 		    seetrap(trap);
+		}
+		if (isok(trap->launch.x,trap->launch.y) && IS_STWALL(levl[trap->launch.x][trap->launch.y].typ)) {
+		    buzz(trap->launch_otyp, 8,
+			 trap->launch.x,trap->launch.y,
+			 sgn(trap->tx - trap->launch.x),sgn(trap->ty - trap->launch.y));
+		    trap->once = 1;
+		} else {
+		    deltrap(trap);
+		    newsym(u.ux,u.uy);
 		}
 		break;
 		default:
