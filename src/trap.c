@@ -275,6 +275,44 @@ register int x, y, typ;
 		mongone(mtmp);
 		break;
 	      }
+	    case MAGIC_BEAM_TRAP:
+		{
+		    int d,startdir = rn2(4);
+		    int dist;
+		    int lx, ly;
+		    int ok = 0;
+		    for (d = 0; ((d < 4) && !ok); d++)
+			for (dist = 1; ((dist < 8) && !ok); dist++) {
+			    lx = x;
+			    ly = y;
+			    switch ((startdir + d) % 4) {
+			    case 0: lx += dist; break;
+			    case 1: ly += dist; break;
+			    case 2: lx -= dist; break;
+			    case 3: ly -= dist; break;
+			    }
+			    if (isok(lx,ly) && IS_WALL(levl[lx][ly].typ)) {
+				ttmp->launch.x = lx;
+				ttmp->launch.y = ly;
+				/* no AD_DISN, thanks */
+				ttmp->launch_otyp = -10-(AD_MAGM-1);
+				if (!rn2(15))
+				    ttmp->launch_otyp = -20-(AD_ELEC-1);
+				else if (!rn2(10))
+				    ttmp->launch_otyp = -20-(AD_FIRE-1);
+				else if (!rn2(10))
+				    ttmp->launch_otyp = -10-(AD_COLD-1);
+				else if (!rn2(7))
+				    ttmp->launch_otyp = -20-(AD_DRST-1);
+				else if (!rn2(7))
+				    ttmp->launch_otyp = -20-(AD_ACID-1);
+				else if (!rn2(5))
+				    ttmp->launch_otyp = -10-(AD_SLEE-1);
+				ok = 1;
+			    }
+			}
+		}
+		break;
 	    case ROLLING_BOULDER_TRAP:	/* boulder will roll towards trigger */
 		(void) mkroll_launch(ttmp, x, y, BOULDER, 1L);
 		break;
@@ -659,6 +697,19 @@ unsigned trflags;
 		    if (!Blind) otmp->dknown = 1;
 		    stackobj(otmp);
 		    newsym(u.ux, u.uy);
+		}
+		break;
+	    case MAGIC_BEAM_TRAP:
+		You_hear("a soft click.");
+		seetrap(trap);
+		if (isok(trap->launch.x,trap->launch.y) && IS_WALL(levl[trap->launch.x][trap->launch.y].typ)) {
+		    buzz(trap->launch_otyp, 8,
+			 trap->launch.x,trap->launch.y,
+			 sgn(trap->tx - trap->launch.x),sgn(trap->ty - trap->launch.y));
+		    trap->once = 1;
+		} else {
+		    deltrap(trap);
+		    newsym(u.ux,u.uy);
 		}
 		break;
 	    case DART_TRAP:
@@ -2296,7 +2347,14 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 				 rocks_fall(mtmp->mx,mtmp->my);
 			 }
 			 break;
-
+	    case MAGIC_BEAM_TRAP:
+		buzz(trap->launch_otyp, 8,
+		     trap->launch.x,trap->launch.y,
+		     sgn(trap->tx - trap->launch.x),sgn(trap->ty - trap->launch.y));
+		if (in_sight) {
+		    seetrap(trap);
+		}
+		break;
 		default:
 			impossible("Some monster encountered a strange trap of type %d.", tt);
 	    }

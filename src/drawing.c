@@ -273,6 +273,7 @@ const struct symdef defsyms[MAXPCHARS] = {
 	{'^', "polymorph trap",	C(CLR_BRIGHT_GREEN)},	/* trap */
 	{'^', "spear trap",	C(CLR_BROWN)},	/* trap */
 	{'^', "falling-rocks trap", C(CLR_GRAY)},	/* trap */
+	{'^', "magic beam trap", C(CLR_YELLOW)},	/* trap */
 	{'|', "wall",		C(CLR_GRAY)},	/* vbeam */
 	{'-', "wall",		C(CLR_GRAY)},	/* hbeam */
 	{'\\',"wall",		C(CLR_GRAY)},	/* lslant */
@@ -382,6 +383,7 @@ static uchar ibm_graphics[MAXPCHARS] = {
 	g_FILLER(S_polymorph_trap),
 	g_FILLER(S_spear_trap),
 	g_FILLER(S_falling_rocks_trap),
+	g_FILLER(S_magic_beam_trap),
 	0xb3,	/* S_vbeam:	meta-3, vertical rule */
 	0xc4,	/* S_hbeam:	meta-D, horizontal rule */
 	g_FILLER(S_lslant),
@@ -483,6 +485,7 @@ static uchar dec_graphics[MAXPCHARS] = {
 	g_FILLER(S_polymorph_trap),
 	g_FILLER(S_spear_trap),
 	g_FILLER(S_falling_rocks_trap),
+	g_FILLER(S_magic_beam_trap),
 	0xf8,	/* S_vbeam:	meta-x, vertical rule */
 	0xf1,	/* S_hbeam:	meta-q, horizontal rule */
 	g_FILLER(S_lslant),
@@ -874,6 +877,7 @@ boolean is_rlevel;
 	    showsyms[S_polymorph_trap] = 0x04;
 	    showsyms[S_spear_trap] = 0x04;
 	    showsyms[S_falling_rocks_trap] = 0x04;
+	    showsyms[S_magic_beam_trap] = 0x04;
 #endif
 	}
 #endif /* ASCIIGRAPH */

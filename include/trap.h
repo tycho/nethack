@@ -74,6 +74,7 @@ extern struct trap *ftrap;
 #define POLY_TRAP	22
 #define SPEAR_TRAP 23
 #define COLLAPSE_TRAP 24
-#define TRAPNUM 25
+#define MAGIC_BEAM_TRAP	25
+#define TRAPNUM 26
 
 #endif /* TRAP_H */

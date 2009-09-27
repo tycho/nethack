@@ -628,7 +628,7 @@ do_look(quick)
 	    }
 	}
 
-#define is_cmap_trap(i) ((i) >= S_arrow_trap && (i) <= S_falling_rocks_trap)
+#define is_cmap_trap(i) ((i) >= S_arrow_trap && (i) <= S_magic_beam_trap)
 #define is_cmap_drawbridge(i) ((i) >= S_vodbridge && (i) <= S_hcdbridge)
 
 	/* Now check for graphics symbols */
