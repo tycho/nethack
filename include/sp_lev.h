@@ -113,7 +113,21 @@
 #define SP_M_V_ASLEEP           2
 #define SP_M_V_APPEAR           3
 #define SP_M_V_NAME             4
-#define SP_M_V_END              5 /* end of variable parameters */
+
+#define SP_M_V_FEMALE		5
+#define SP_M_V_INVIS		6
+#define SP_M_V_CANCELLED	7
+#define SP_M_V_REVIVED		8
+#define SP_M_V_AVENGE		9
+#define SP_M_V_FLEEING		10
+#define SP_M_V_BLINDED		11
+#define SP_M_V_PARALYZED	12
+#define SP_M_V_STUNNED		13
+#define SP_M_V_CONFUSED		14
+#define SP_M_V_SEENTRAPS	15
+
+#define SP_M_V_END              16 /* end of variable parameters */
+
 /* OBJECT */
 #define SP_O_V_SPE              0
 #define SP_O_V_CURSE            1
@@ -218,6 +232,8 @@ typedef struct {
 	aligntyp align;
 	xchar x, y, class, appear;
 	schar peaceful, asleep;
+        short female, invis, cancelled, revived, avenge, fleeing, blinded, paralyzed, stunned, confused;
+        long seentraps;
 } monster;
 
 typedef struct {

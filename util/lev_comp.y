@@ -136,6 +136,8 @@ extern const char *fname;
 %token	<i> QUANTITY_ID BURIED_ID LOOP_ID
 %token	<i> SWITCH_ID CASE_ID BREAK_ID
 %token	<i> ERODED_ID TRAPPED_ID RECHARGED_ID INVIS_ID GREASED_ID
+%token	<i> FEMALE_ID CANCELLED_ID REVIVED_ID AVENGE_ID FLEEING_ID BLINDED_ID
+%token	<i> PARALYZED_ID STUNNED_ID CONFUSED_ID SEENTRAPS_ID ALL_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -145,6 +147,7 @@ extern const char *fname;
 %type	<i> engraving_type flags flag_list prefilled lev_region lev_init
 %type	<i> monster monster_c m_register object object_c o_register
 %type	<i> comparestmt
+%type	<i> seen_trap_mask
 %type	<map> string level_def m_name o_name
 %type	<corpos> corr_spec
 %start	file
@@ -956,27 +959,106 @@ monster_infos	: /* nothing */
 monster_info	: ',' string
 		  {
 		      add_opvars(&splev, "si", $2, SP_M_V_NAME);
-		      $<i>$ = 0x01;
+		      $<i>$ = 0x0001;
 		  }
 		| ',' MON_ATTITUDE
 		  {
 		      add_opvars(&splev, "ii", $<i>2, SP_M_V_PEACEFUL);
-		      $<i>$ = 0x02;
+		      $<i>$ = 0x0002;
 		  }
 		| ',' MON_ALERTNESS
 		  {
 		      add_opvars(&splev, "ii", $<i>2, SP_M_V_ASLEEP);
-		      $<i>$ = 0x04;
+		      $<i>$ = 0x0004;
 		  }
 		| ',' alignment
 		  {
 		      add_opvars(&splev, "ii", $<i>2, SP_M_V_ALIGN);
-		      $<i>$ = 0x08;
+		      $<i>$ = 0x0008;
 		  }
 		| ',' MON_APPEARANCE string
 		  {
 		      add_opvars(&splev, "sii", $3, $<i>2, SP_M_V_APPEAR);
-		      $<i>$ = 0x10;
+		      $<i>$ = 0x0010;
+		  }
+		| ',' FEMALE_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_M_V_FEMALE);
+		      $<i>$ = 0x0020;
+		  }
+		| ',' INVIS_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_M_V_INVIS);
+		      $<i>$ = 0x0040;
+		  }
+		| ',' CANCELLED_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_M_V_CANCELLED);
+		      $<i>$ = 0x0080;
+		  }
+		| ',' REVIVED_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_M_V_REVIVED);
+		      $<i>$ = 0x0100;
+		  }
+		| ',' AVENGE_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_M_V_AVENGE);
+		      $<i>$ = 0x0200;
+		  }
+		| ',' FLEEING_ID ':' INTEGER
+		  {
+		      add_opvars(&splev, "ii", $4, SP_M_V_FLEEING);
+		      $<i>$ = 0x0400;
+		  }
+		| ',' BLINDED_ID ':' INTEGER
+		  {
+		      add_opvars(&splev, "ii", $4, SP_M_V_BLINDED);
+		      $<i>$ = 0x0800;
+		  }
+		| ',' PARALYZED_ID ':' INTEGER
+		  {
+		      add_opvars(&splev, "ii", $4, SP_M_V_PARALYZED);
+		      $<i>$ = 0x1000;
+		  }
+		| ',' STUNNED_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_M_V_STUNNED);
+		      $<i>$ = 0x2000;
+		  }
+		| ',' CONFUSED_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_M_V_CONFUSED);
+		      $<i>$ = 0x4000;
+		  }
+		| ',' SEENTRAPS_ID ':' seen_trap_mask
+		  {
+		      add_opvars(&splev, "ii", $4, SP_M_V_SEENTRAPS);
+		      $<i>$ = 0x8000;
+		  }
+		;
+
+seen_trap_mask	: STRING
+		  {
+		      int token = get_trap_type($1);
+		      if (token == ERR || token == 0)
+			  yyerror("Unknown trap type!");
+		      $$ = (1L << (token - 1));
+		  }
+		| ALL_ID
+		  {
+		      $$ = (long) ~0;
+		  }
+		| STRING '|' seen_trap_mask
+		  {
+		      int token = get_trap_type($1);
+		      if (token == ERR || token == 0)
+			  yyerror("Unknown trap type!");
+
+		      if ((1L << (token - 1)) & $3)
+			  yyerror("MONSTER seen_traps, same trap listed twice.");
+
+		      $$ = ((1L << (token - 1)) | $3);
 		  }
 		;
 
