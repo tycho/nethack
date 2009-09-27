@@ -165,6 +165,7 @@ static struct {
 const char *fname = "(stdin)";
 int fatal_error = 0;
 int be_verbose = 0;
+int decompile = 0;
 
 #ifdef FLEX23_BUG
 /* Flex 2.3 bug work around; not needed for 2.3.6 or later */
@@ -235,6 +236,10 @@ char **argv;
 		    fname = argv[i];
 		    if(!strcmp(fname, "-v")) {
 			be_verbose++;
+			continue;
+		    }
+		    if(!strcmp(fname, "-d")) {
+			decompile = 1;
 			continue;
 		    }
 		    fin = freopen(fname, "r", stdin);
@@ -734,6 +739,129 @@ sp_lev *maze;
 	return TRUE;
 }
 
+
+static boolean
+decompile_maze(fd, maze)
+int fd;
+sp_lev *maze;
+{
+        int i;
+        uchar len;
+	char debuf[128];
+	const char *opcodestr[MAX_SP_OPCODES] = {
+	    "NULL",
+	    "MESSAGE",
+	    "MONSTER",
+	    "OBJECT",
+	    "ENGRAVING",
+	    "ROOM",
+	    "SUBROOM",
+	    "DOOR",
+	    "STAIR",
+	    "LADDER",
+	    "ALTAR",
+	    "FOUNTAIN",
+	    "SINK",
+	    "POOL",
+	    "TRAP",
+	    "GOLD",
+	    "CORRIDOR",
+	    "LEVREGION",
+	    "RANDOM_OBJECTS",
+	    "RANDOM_PLACES",
+	    "RANDOM_MONSTERS",
+	    "DRAWBRIDGE",
+	    "MAZEWALK",
+	    "NON_DIGGABLE",
+	    "NON_PASSWALL",
+	    "WALLIFY",
+	    "MAP",
+	    "ROOM_DOOR",
+	    "REGION",
+	    "CMP",
+	    "JMP",
+	    "JL",
+	    "JG",
+	    "JGE",
+	    "SPILL",
+	    "TERRAIN",
+	    "REPLACETERRAIN",
+	    "EXIT",
+	    "ENDROOM",
+	    "RANDLINE",
+	    "POP_CONTAINER",
+	    "PUSH",
+	    "POP",
+	    "RN2",
+	    "DEC",
+	    "COPY",
+	    "JE",
+	    "JNE"
+	};
+
+	/* don't bother with the header stuff */
+
+        for (i=0;i<maze->init_lev.n_opcodes;i++) {
+	   _opcode tmpo = maze->opcodes[i];
+
+	   if (tmpo.opcode < SPO_NULL || tmpo.opcode >= MAX_SP_OPCODES)
+	       panic("write_maze: unknown opcode (%i).", tmpo.opcode);
+
+	   if (tmpo.opcode == SPO_PUSH) {
+	       genericptr_t opdat = tmpo.opdat;
+	       if (opdat) {
+		   struct opvar *ov = (struct opvar *)opdat;
+		   int size;
+		   switch (ov->spovartyp) {
+		   case SPOVAR_NULL: break;
+		   case SPOVAR_INT:
+		       snprintf(debuf, 127, "%li:\t%s\t%li\n", i, opcodestr[tmpo.opcode], ov->vardata.l);
+		       Write(fd, debuf, strlen(debuf));
+		       break;
+		   case SPOVAR_STRING:
+		       if (ov->vardata.str)
+			   size = strlen(ov->vardata.str);
+		       else size = 0;
+		       if (size) {
+			   int x;
+			   int ok = (size > 127) ? 0 : 1;
+			   if (ok)
+			       for (x = 0; x < size; x++)
+				   if (ov->vardata.str[x] < ' ' || ov->vardata.str[x] > '~') {
+				       ok = 0;
+				       break;
+				   }
+			   if (ok) {
+			       snprintf(debuf, 127, "%li:\t%s\t\"%s\"\n", i, opcodestr[tmpo.opcode], ov->vardata.str);
+			       Write(fd, debuf, strlen(debuf));
+			   } else {
+			       snprintf(debuf, 127, "%li:\t%s\tstring:", i, opcodestr[tmpo.opcode]);
+			       Write(fd, debuf, strlen(debuf));
+			       for (x = 0; x < size; x++) {
+				   snprintf(debuf, 127, "%02x", ov->vardata.str[x]);
+				   Write(fd, debuf, strlen(debuf));
+			       }
+			       snprintf(debuf, 127, "\n");
+			       Write(fd, debuf, strlen(debuf));
+			   }
+		       }
+		       break;
+		   default: panic("write_maze: unknown data type (%i).", ov->spovartyp);
+		   }
+	       } else panic("write_maze: PUSH with no data.");
+	   } else {
+	       /* sanity check */
+	       genericptr_t opdat = tmpo.opdat;
+	       if (opdat)
+		   panic("write_maze: opcode (%i) has data.", tmpo.opcode);
+	       snprintf(debuf, 127, "%li:\t%s\n", i, opcodestr[tmpo.opcode]);
+	       Write(fd, debuf, strlen(debuf));
+	   }
+
+	}
+	return TRUE;
+}
+
 /*
  * Open and write special level file.
  * Return TRUE on success, FALSE on failure.
@@ -745,6 +873,19 @@ sp_lev *lvl;
 {
 	int fout;
 	char lbuf[60];
+
+	if (decompile) {
+	    lbuf[0] = '\0';
+#ifdef PREFIX
+	    Strcat(lbuf, PREFIX);
+#endif
+	    Strcat(lbuf, filename);
+	    Strcat(lbuf, "_lev.txt");
+	    fout = open(lbuf, O_TRUNC|O_WRONLY|O_CREAT, OMASK);
+	    if (fout < 0) return FALSE;
+	    decompile_maze(fout, lvl);
+	    (void) close(fout);
+	}
 
 	lbuf[0] = '\0';
 #ifdef PREFIX
