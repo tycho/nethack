@@ -122,7 +122,14 @@
 #define SP_O_V_QUAN		4
 #define SP_O_V_BURIED		5
 #define SP_O_V_LIT		6
-#define SP_O_V_END              7 /* end of variable parameters */
+#define SP_O_V_ERODED		7
+#define SP_O_V_LOCKED		8
+#define SP_O_V_TRAPPED		9
+#define SP_O_V_RECHARGED	10
+#define SP_O_V_INVIS		11
+#define SP_O_V_GREASED		12
+#define SP_O_V_BROKEN		13
+#define SP_O_V_END              14 /* end of variable parameters */
 
 
 /* When creating objects, we need to know whether
@@ -222,6 +229,7 @@ typedef struct {
 	int   quan;
 	short buried;
 	short lit;
+        short eroded, locked, trapped, recharged, invis, greased, broken;
 } object;
 
 typedef struct {
