@@ -1452,6 +1452,9 @@ struct mkroom	*croom;
 	    if (m->avenge) mtmp->mavenge = 1;
 	    if (m->stunned) mtmp->mstun = 1;
 	    if (m->confused) mtmp->mconf = 1;
+	    if (m->invis) {
+		mtmp->minvis = mtmp->perminvis = 1;
+	    }
 	    if (m->blinded) {
 		mtmp->mcansee = 0;
 		mtmp->mblinded = (m->blinded % 127);
