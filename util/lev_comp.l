@@ -156,6 +156,11 @@ BREAK		return BREAK_ID;
 levregion	return LEV;
 quantity	return QUANTITY_ID;
 buried		return BURIED_ID;
+eroded		return ERODED_ID;
+trapped		return TRAPPED_ID;
+recharged	return RECHARGED_ID;
+invisible	return INVIS_ID;
+greased		return GREASED_ID;
 horizontal	{ yylval.i=1; return HORIZ_OR_VERT; }
 vertical	{ yylval.i=2; return HORIZ_OR_VERT; }
 open		{ yylval.i=D_ISOPEN; return DOOR_STATE; }

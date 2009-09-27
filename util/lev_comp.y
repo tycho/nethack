@@ -135,6 +135,7 @@ extern const char *fname;
 %token	<i> EXIT_ID
 %token	<i> QUANTITY_ID BURIED_ID LOOP_ID
 %token	<i> SWITCH_ID CASE_ID BREAK_ID
+%token	<i> ERODED_ID TRAPPED_ID RECHARGED_ID INVIS_ID GREASED_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
@@ -1097,7 +1098,7 @@ object_infos	: /* nothing */
 object_info	: ',' CURSE_TYPE
 		  {
 		      add_opvars(&splev, "ii", $2, SP_O_V_CURSE);
-		      $<i>$ = 0x01;
+		      $<i>$ = 0x0001;
 		  }
 		| ',' STRING
 		  {
@@ -1109,32 +1110,68 @@ object_info	: ',' CURSE_TYPE
 		      }
 		      add_opvars(&splev, "ii", token, SP_O_V_CORPSENM);
 		      Free($2);
-		      $<i>$ = 0x02;
+		      $<i>$ = 0x0002;
 		  }
 		| ',' INTEGER
 		  {
 		      add_opvars(&splev, "ii", $2, SP_O_V_SPE);
-		      $<i>$ = 0x04;
+		      $<i>$ = 0x0004;
 		  }
 		| ',' NAME_ID ':' STRING
 		  {
 		      add_opvars(&splev, "si", $4, SP_O_V_NAME);
-		      $<i>$ = 0x08;
+		      $<i>$ = 0x0008;
 		  }
 		| ',' QUANTITY_ID ':' INTEGER
 		  {
 		      add_opvars(&splev, "ii", $4, SP_O_V_QUAN);
-		      $<i>$ = 0x10;
+		      $<i>$ = 0x0010;
 		  }
 		| ',' BURIED_ID
 		  {
 		      add_opvars(&splev, "ii", 1, SP_O_V_BURIED);
-		      $<i>$ = 0x20;
+		      $<i>$ = 0x0020;
 		  }
 		| ',' LIGHT_STATE
 		  {
 		      add_opvars(&splev, "ii", $2, SP_O_V_LIT);
-		      $<i>$ = 0x40;
+		      $<i>$ = 0x0040;
+		  }
+		| ',' ERODED_ID ':' INTEGER
+		  {
+		      add_opvars(&splev, "ii", $4, SP_O_V_ERODED);
+		      $<i>$ = 0x0080;
+		  }
+		| ',' DOOR_STATE
+		  {
+		      if ($2 == D_LOCKED) {
+			  add_opvars(&splev, "ii", 1, SP_O_V_LOCKED);
+			  $<i>$ = 0x0100;
+		      } else if ($2 == D_BROKEN) {
+			  add_opvars(&splev, "ii", 1, SP_O_V_BROKEN);
+			  $<i>$ = 0x0200;
+		      } else
+			  yyerror("OBJECT state can only be locked or broken.");
+		  }
+		| ',' TRAPPED_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_O_V_TRAPPED);
+		      $<i>$ = 0x0400;
+		  }
+		| ',' RECHARGED_ID ':' INTEGER
+		  {
+		      add_opvars(&splev, "ii", $4, SP_O_V_RECHARGED);
+		      $<i>$ = 0x0800;
+		  }
+		| ',' INVIS_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_O_V_INVIS);
+		      $<i>$ = 0x1000;
+		  }
+		| ',' GREASED_ID
+		  {
+		      add_opvars(&splev, "ii", 1, SP_O_V_GREASED);
+		      $<i>$ = 0x2000;
 		  }
 		;
 

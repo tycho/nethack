@@ -1522,6 +1522,25 @@ struct mkroom	*croom;
 	if (named)
 	    otmp = oname(otmp, o->name.str);
 
+	if (o->eroded) {
+	    if (o->eroded < 0) otmp->oerodeproof = 1;
+	    else {
+		otmp->oeroded = (o->eroded % 4);
+		otmp->oeroded2 = ((o->eroded >> 2) % 4);
+	    }
+	}
+	if (o->recharged) otmp->recharged = (o->recharged % 8);
+	if (o->locked) otmp->olocked = 1;
+	else if (o->broken) {
+	    otmp->obroken = 1;
+	    otmp->olocked = 0; /* obj generation may set */
+	}
+	if (o->trapped) otmp->otrapped = 1;
+	if (o->greased) otmp->greased = 1;
+#ifdef INVISIBLE_OBJECTS
+	if (o->invis) otmp->oinvis = 1;
+#endif
+
 	if ((o->quan > 0) && objects[otmp->otyp].oc_merge) {
 	    otmp->quan = o->quan;
 	    otmp->owt = weight(otmp);
@@ -2866,6 +2885,13 @@ sp_lev *lvl;
 		tmpobj.quan = -1;
 		tmpobj.buried = 0;
 		tmpobj.lit = 0;
+		tmpobj.eroded = 0;
+		tmpobj.locked = 0;
+		tmpobj.trapped = 0;
+		tmpobj.recharged = 0;
+		tmpobj.invis = 0;
+		tmpobj.greased = 0;
+		tmpobj.broken = 0;
 
 		if (!get_opvar_dat(&stack, &containment, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
@@ -2909,6 +2935,34 @@ sp_lev *lvl;
 		 case SP_O_V_LIT:
 		     if (parm.spovartyp == SPOVAR_INT)
 			 tmpobj.lit = parm.vardata.l;
+		     break;
+		 case SP_O_V_ERODED:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.eroded = parm.vardata.l;
+		     break;
+		 case SP_O_V_LOCKED:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.locked = parm.vardata.l;
+		     break;
+		 case SP_O_V_TRAPPED:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.trapped = parm.vardata.l;
+		     break;
+		 case SP_O_V_RECHARGED:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.recharged = parm.vardata.l;
+		     break;
+		 case SP_O_V_INVIS:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.invis = parm.vardata.l;
+		     break;
+		 case SP_O_V_GREASED:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.greased = parm.vardata.l;
+		     break;
+		 case SP_O_V_BROKEN:
+		     if (parm.spovartyp == SPOVAR_INT)
+			 tmpobj.broken = parm.vardata.l;
 		     break;
                   case SP_O_V_END:
                     nparams = SP_O_V_END+1;
