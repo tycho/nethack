@@ -361,12 +361,12 @@ add_opvars(sp_lev *sp, const char *fmt, ...)
 	    {
 		long i = va_arg(argp, int);
 		if (i < 0 || i >= MAX_SP_OPCODES)
-		    fprintf(stderr, "add_opvars: unknown opcode '%i'.", i);
+		    fprintf(stderr, "add_opvars: unknown opcode '%i'.\n", i);
 		add_opcode(sp, i, NULL);
 		break;
 	    }
 	default:
-	    fprintf(stderr, "add_opvars: illegal format character '%c'.", *p);
+	    fprintf(stderr, "add_opvars: illegal format character '%c'.\n", *p);
 	    break;
 	}
     }
@@ -750,54 +750,54 @@ sp_lev *maze;
         uchar len;
 	char debuf[128];
 	const char *opcodestr[MAX_SP_OPCODES] = {
-	    "NULL",
-	    "MESSAGE",
-	    "MONSTER",
-	    "OBJECT",
-	    "ENGRAVING",
-	    "ROOM",
-	    "SUBROOM",
-	    "DOOR",
-	    "STAIR",
-	    "LADDER",
-	    "ALTAR",
-	    "FOUNTAIN",
-	    "SINK",
-	    "POOL",
-	    "TRAP",
-	    "GOLD",
-	    "CORRIDOR",
-	    "LEVREGION",
-	    "RANDOM_OBJECTS",
-	    "RANDOM_PLACES",
-	    "RANDOM_MONSTERS",
-	    "DRAWBRIDGE",
-	    "MAZEWALK",
-	    "NON_DIGGABLE",
-	    "NON_PASSWALL",
-	    "WALLIFY",
-	    "MAP",
-	    "ROOM_DOOR",
-	    "REGION",
-	    "CMP",
-	    "JMP",
-	    "JL",
-	    "JG",
-	    "JGE",
-	    "SPILL",
-	    "TERRAIN",
-	    "REPLACETERRAIN",
-	    "EXIT",
-	    "ENDROOM",
-	    "RANDLINE",
-	    "POP_CONTAINER",
-	    "PUSH",
-	    "POP",
-	    "RN2",
-	    "DEC",
-	    "COPY",
-	    "JE",
-	    "JNE"
+	    "null",
+	    "message",
+	    "monster",
+	    "object",
+	    "engraving",
+	    "room",
+	    "subroom",
+	    "door",
+	    "stair",
+	    "ladder",
+	    "altar",
+	    "fountain",
+	    "sink",
+	    "pool",
+	    "trap",
+	    "gold",
+	    "corridor",
+	    "levregion",
+	    "random_objects",
+	    "random_places",
+	    "random_monsters",
+	    "drawbridge",
+	    "mazewalk",
+	    "non_diggable",
+	    "non_passwall",
+	    "wallify",
+	    "map",
+	    "room_door",
+	    "region",
+	    "cmp",
+	    "jmp",
+	    "jl",
+	    "jg",
+	    "jge",
+	    "spill",
+	    "terrain",
+	    "replaceterrain",
+	    "exit",
+	    "endroom",
+	    "randline",
+	    "pop_container",
+	    "push",
+	    "pop",
+	    "rn2",
+	    "dec",
+	    "copy",
+	    "je",
+	    "jne"
 	};
 
 	/* don't bother with the header stuff */
