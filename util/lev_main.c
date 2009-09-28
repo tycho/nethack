@@ -359,7 +359,7 @@ add_opvars(sp_lev *sp, const char *fmt, ...)
 	    }
 	case 'o':
 	    {
-		long i = va_arg(argp, long);
+		long i = va_arg(argp, int);
 		if (i < 0 || i >= MAX_SP_OPCODES)
 		    fprintf(stderr, "add_opvars: unknown opcode '%i'.", i);
 		add_opcode(sp, i, NULL);
