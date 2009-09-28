@@ -35,6 +35,7 @@ MAP
 ....................................PP....PP................................
 ENDMAP
 # Dungeon Description
+MON_GENERATION:7, (64, "ogre"), (16,'O'), (16,"troll"), (4,'T')
 REGION:(00,00,75,19),lit,"ordinary"
 REGION:(09,05,11,05),unlit,"ordinary"
 REGION:(09,07,11,07),lit,"ordinary"
