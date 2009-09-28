@@ -11,6 +11,7 @@
 LEVEL: "Arc-strt"
 FLAGS: noteleport,hardfloor,mazelevel
 INIT_MAP:solidfill,' '
+MON_GENERATION:7, (80,'S'), (16,"human mummy"), (4,'M')
 GEOMETRY:center,center
 MAP
 ............................................................................
@@ -35,7 +36,6 @@ MAP
 ............................................................................
 ENDMAP
 # Dungeon Description
-MON_GENERATION:7, (80,'S'), (16,"human mummy"), (4,'M')
 REGION:(00,00,75,19),lit,"ordinary"
 REGION: (22,06,23,06),unlit,"ordinary"
 REGION: (25,06,30,06),unlit,"ordinary"
@@ -122,6 +122,7 @@ MONSTER: 'S',random,(10,19)
 LEVEL: "Arc-loca"
 FLAGS: hardfloor,mazelevel
 INIT_MAP:solidfill,' '
+MON_GENERATION:7, (80,'S'), (16,"human mummy"), (4,'M')
 GEOMETRY:center,center
 MAP
 ............................................................................
@@ -271,6 +272,7 @@ MONSTER:'M',random,random
 LEVEL: "Arc-goal"
 FLAGS:mazelevel
 INIT_MAP:solidfill,' '
+MON_GENERATION:7, (80,'S'), (16,"human mummy"), (4,'M')
 GEOMETRY:center,center
 MAP
                                                                             
@@ -389,6 +391,7 @@ MONSTER:'M',random,random
 #
 
 LEVEL: "Arc-fila"
+MON_GENERATION:7, (80,'S'), (16,"human mummy"), (4,'M')
 #
 ROOM: "ordinary" , random, random, random, random
 {
@@ -439,6 +442,7 @@ MONSTER: 'S', random, random
 RANDOM_CORRIDORS
 
 LEVEL: "Arc-filb"
+MON_GENERATION:7, (80,'S'), (16,"human mummy"), (4,'M')
 #
 ROOM: "ordinary" , random, random, random, random
 {
