@@ -1166,15 +1166,6 @@ register int	mmflags;
 		flags.ghost_count++;
 		if (!(mmflags & MM_NONAME))
 			mtmp = christen_monst(mtmp, rndghostname());
-	} else if (mndx == PM_VLAD_THE_IMPALER) {
-		mitem = CANDELABRUM_OF_INVOCATION;
-		/* give him Lifestealer so he has teeth, ha ha */
-		otmp = mksobj(TWO_HANDED_SWORD,FALSE,FALSE);
-		otmp = oname(otmp, artiname(ART_LIFESTEALER));
-		curse(otmp);	 /* this shouldn't be much fun for players at all */
-		otmp->oerodeproof = TRUE;
-		otmp->spe = rn2(3);
-		(void) mpickobj(mtmp, otmp);
 	} else if (mndx == PM_CROESUS) {
 		mitem = TWO_HANDED_SWORD;
 	} else if (ptr->msound == MS_NEMESIS) {

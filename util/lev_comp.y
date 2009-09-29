@@ -956,7 +956,7 @@ mon_gen_part	: '(' INTEGER ',' monster ')'
 
 monster_detail	: MONSTER_ID chance ':' monster_desc
 		  {
-		      add_opcode(&splev, SPO_MONSTER, NULL);
+		      add_opvars(&splev, "io", 0, SPO_MONSTER);
 
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
@@ -966,6 +966,22 @@ monster_detail	: MONSTER_ID chance ':' monster_desc
 			  } else yyerror("conditional creation of monster, but no jump point marker.");
 		      }
 		  }
+		| MONSTER_ID chance ':' monster_desc
+		  {
+		      add_opvars(&splev, "io", 1, SPO_MONSTER);
+		      $<i>$ = $2;
+		  }
+		'{' cobj_statements '}'
+		 {
+		     add_opvars(&splev, "o", SPO_END_MONINVENT);
+		     if ( 1 == $<i>5 ) {
+			 if (n_if_list > 0) {
+			     struct opvar *tmpjmp;
+			     tmpjmp = (struct opvar *) if_list[--n_if_list];
+			     set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
+			 } else yyerror("conditional creation of monster, but no jump point marker.");
+		     }
+		 }
 		;
 
 monster_desc	: monster_c ',' m_name ',' coordinate monster_infos
