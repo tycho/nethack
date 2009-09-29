@@ -954,8 +954,8 @@ mklev()
 	mineralize();
 	in_mklev = FALSE;
 	/* has_morgue gets cleared once morgue is entered; graveyard stays
-	   set (graveyard might already be set even when has_morgue is clear
-	   [see fixup_special()], so don't update it unconditionally) */
+	   set (graveyard might already be set even when has_morgue is clear,
+	   so don't update it unconditionally) */
 	if (level.flags.has_morgue)
 	    level.flags.graveyard = 1;
 	if (!level.flags.is_maze_lev) {
