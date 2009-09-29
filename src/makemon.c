@@ -1379,7 +1379,7 @@ rndmonst()
 	register int mndx, ct;
 
 	if (level.mon_gen &&
-	    rn2(level.mon_gen->override_chance) &&
+	    (rn2(100) < level.mon_gen->override_chance) &&
 	    ((ptr = get_override_mon(level.mon_gen)) != 0))
 	    return ptr;
 
