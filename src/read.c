@@ -1473,7 +1473,7 @@ do_it:
 	 *  correctly update all previously seen positions *and* correctly
 	 *  set the waslit bit [could be messed up from above].
 	 */
-	blindingflash();
+	if (on) blindingflash();
 
 	if (!Blind) {
 	    vision_recalc(2);
