@@ -2352,6 +2352,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			 }
 			 break;
 	    case MAGIC_BEAM_TRAP:
+		if (distu(trap->tx, trap->ty) < 4) You_hear("a faint click.");
 		if (in_sight) {
 		    seetrap(trap);
 		}
