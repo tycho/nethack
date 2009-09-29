@@ -11,7 +11,7 @@
 LEVEL: "Cav-strt"
 FLAGS: noteleport,hardfloor,arboreal,mazelevel
 INIT_MAP:solidfill,' '
-MON_GENERATION:7, (64, "tiger"), (16,'S'), (16,"ape"), (4,'f')
+MON_GENERATION:86%, (64,"tiger"), (16,'S'), (16,"ape"), (4,'f')
 GEOMETRY:center,center
 MAP
                                                                             
@@ -131,7 +131,7 @@ MONSTER: 'f',"panther",random,hostile
 LEVEL: "Cav-loca"
 FLAGS: noteleport,hardfloor,arboreal,mazelevel
 INIT_MAP:solidfill,' '
-MON_GENERATION:7, (64, "tiger"), (16,'S'), (16,"ape"), (4,'f')
+MON_GENERATION:86%, (64,"tiger"), (16,'S'), (16,"ape"), (4,'f')
 GEOMETRY:center,center
 MAP
                                                                             
@@ -231,7 +231,7 @@ MONSTER:'S',"python",random,hostile
 LEVEL: "Cav-goal"
 FLAGS:mazelevel
 INIT_MAP:solidfill,' '
-MON_GENERATION:7, (64, "tiger"), (16,'S'), (16,"ape"), (4,'f')
+MON_GENERATION:86%, (64,"tiger"), (16,'S'), (16,"ape"), (4,'f')
 GEOMETRY:center,center
 MAP
                                                                             
@@ -298,7 +298,7 @@ WALLIFY
 LEVEL: "Cav-fila"
 FLAGS: noteleport,hardfloor,arboreal,mazelevel
 INIT_MAP:solidfill,' '
-MON_GENERATION:7, (64, "tiger"), (16,'S'), (16,"ape"), (4,'f')
+MON_GENERATION:86%, (64,"tiger"), (16,'S'), (16,"ape"), (4,'f')
 GEOMETRY: center,center
 MAP
                                                                             
@@ -381,7 +381,7 @@ MONSTER: 'Y',"carnivorous ape",random,hostile
 LEVEL: "Cav-filb"
 FLAGS:mazelevel
 INIT_MAP: mines, '.' , ' ' , true , true , random , true
-MON_GENERATION:7, (64, "tiger"), (16,'S'), (16,"ape"), (4,'f')
+MON_GENERATION:86%, (64,"tiger"), (16,'S'), (16,"ape"), (4,'f')
 NOMAP
 #
 LADDER: random, up

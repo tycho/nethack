@@ -915,13 +915,15 @@ place_list	: place
 		 ',' place_list
 		;
 
-mon_generation	: MON_GENERATION_ID ':' INTEGER ',' mon_gen_list
+mon_generation	: MON_GENERATION_ID ':' SPERCENT ',' mon_gen_list
 		  {
-		      long freq = $3;
+		      long chance = $3;
 		      long total_mons = $5;
-		      if (freq < 2) yyerror("Monster generation: override chance must be greater than 1");
+		      if (chance < 0) chance = 0;
+		      else if (chance > 100) chance = 100;
+
 		      if (total_mons < 1) yyerror("Monster generation: zero monsters defined?");
-		      add_opvars(&splev, "iio", freq, total_mons, SPO_MON_GENERATION);
+		      add_opvars(&splev, "iio", chance, total_mons, SPO_MON_GENERATION);
 		  }
 		;
 
