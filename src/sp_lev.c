@@ -98,6 +98,8 @@ int num_lregions = 0;
 struct obj *container_obj[MAX_CONTAINMENT];
 int container_idx = 0;
 
+struct monst *invent_carrying_monster = NULL;
+
 #define SPLEV_STACK_RESERVE 128
 
 void
@@ -1468,6 +1470,10 @@ struct mkroom	*croom;
 		mtmp->mfleetim = (m->fleeing % 127);
 	    }
 
+	    if (m->has_invent) {
+		discard_minvent(mtmp);
+		invent_carrying_monster = mtmp;
+	    }
 	}
 
 }
@@ -1573,7 +1579,28 @@ struct mkroom	*croom;
 	/* contents */
 	if (o->containment & SP_OBJ_CONTENT) {
 	    if (!container_idx) {
-		impossible("create_object: no container");
+		if (!invent_carrying_monster)
+		    impossible("create_object: no container");
+		else {
+		    int c;
+		    struct obj *objcheck = otmp;
+		    int inuse = -1;
+		    for (c = 0; c < container_idx; c++)
+			if (container_obj[c] == objcheck)
+			    inuse = c;
+		    remove_object(otmp);
+		    if (mpickobj(invent_carrying_monster, otmp)) {
+			if (inuse > -1) {
+			    impossible("container given to monster was merged or deallocated.");
+			    for (c = inuse; c < container_idx-1; c++)
+				container_obj[c] = container_obj[c+1];
+			    container_obj[container_idx] = NULL;
+			    container_idx--;
+			}
+			/* we lost track of it. */
+			return;
+		    }
+		}
 	    } else {
 		remove_object(otmp);
 		(void) add_to_container(container_obj[container_idx-1], otmp);
@@ -2705,6 +2732,8 @@ sp_lev *lvl;
     for (xi = 0; xi < MAX_CONTAINMENT; xi++) container_obj[xi] = NULL;
     container_idx = 0;
 
+    invent_carrying_monster = NULL;
+
     (void) memset((genericptr_t)&SpLev_Map[0][0], 0, sizeof SpLev_Map);
 
     level.flags.is_maze_lev = 0;
@@ -2749,6 +2778,9 @@ sp_lev *lvl;
 	    break;
 	case SPO_EXIT:
 	    exit_script = TRUE;
+	    break;
+	case SPO_END_MONINVENT:
+	    invent_carrying_monster = NULL;
 	    break;
 	case SPO_POP_CONTAINER:
 	    if (container_idx > 0) {
@@ -2824,7 +2856,7 @@ sp_lev *lvl;
               int nparams = 0;
 
               struct opvar varparam;
-              struct opvar id, x, y, class;
+              struct opvar id, x, y, class, has_inv;
               monster tmpmons;
 
               tmpmons.peaceful = -1;
@@ -2844,8 +2876,10 @@ sp_lev *lvl;
 	      tmpmons.stunned = 0;
 	      tmpmons.confused = 0;
 	      tmpmons.seentraps = 0;
+	      tmpmons.has_invent = 0;
 
-              if (!get_opvar_dat(&stack, &id, SPOVAR_INT) ||
+              if (!get_opvar_dat(&stack, &has_inv, SPOVAR_INT) ||
+                  !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
                   !get_opvar_dat(&stack, &class, SPOVAR_INT) ||
                   !get_opvar_dat(&stack, &y, SPOVAR_INT) ||
                   !get_opvar_dat(&stack, &x, SPOVAR_INT)) break;
@@ -2942,6 +2976,7 @@ sp_lev *lvl;
               tmpmons.x = x.vardata.l;
               tmpmons.y = y.vardata.l;
               tmpmons.class = class.vardata.l;
+	      tmpmons.has_invent = has_inv.vardata.l;
 
               create_monster(&tmpmons, croom);
 
