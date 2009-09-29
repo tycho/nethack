@@ -2780,6 +2780,8 @@ sp_lev *lvl;
 	    exit_script = TRUE;
 	    break;
 	case SPO_END_MONINVENT:
+	    if (invent_carrying_monster)
+		m_dowear(invent_carrying_monster, TRUE);
 	    invent_carrying_monster = NULL;
 	    break;
 	case SPO_POP_CONTAINER:
