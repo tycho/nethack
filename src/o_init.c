@@ -174,6 +174,7 @@ register char oclass;
 #ifdef USE_TILES
 	shuffle_tiles();
 #endif
+	objects[WAN_NOTHING].oc_dir = rn2(2) ? IMMEDIATE : NODIR;
 }
 
 STATIC_OVL void
