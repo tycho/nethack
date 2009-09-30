@@ -243,13 +243,16 @@ lvlfill_maze_grid(x1,y1,x2,y2,filling)
 }
 
 void
-lvlfill_solid(filling)
+lvlfill_solid(filling,lit)
      schar filling;
+     schar lit;
 {
     int x,y;
     for (x = 2; x <= x_maze_max; x++)
-	for (y = 0; y <= y_maze_max; y++)
+	for (y = 0; y <= y_maze_max; y++) {
 	    levl[x][y].typ = filling;
+	    levl[x][y].lit = lit;
+	}
 }
 
 void flip_drawbridge_horizontal(lev)
@@ -2669,7 +2672,8 @@ lev_init *linit;
     default: impossible("Unrecognized level init style."); break;
     case LVLINIT_NONE: break;
     case LVLINIT_SOLIDFILL:
-	lvlfill_solid(linit->filling);
+	if (linit->lit < 0) linit->lit = rn2(2);
+	lvlfill_solid(linit->filling, linit->lit);
 	break;
     case LVLINIT_MAZEGRID:
 	lvlfill_maze_grid(2,0, x_maze_max,y_maze_max, linit->filling);
