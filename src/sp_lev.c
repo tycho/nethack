@@ -3954,7 +3954,7 @@ sp_lev *lvl;
                    !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
 	       a = (oa.vardata.l-1);
               c = oc.vardata.l;
-              if ((c = 0) && (a >= 0) &&
+              if ((c == 0) && (a >= 0) &&
                   (a < lvl->init_lev.n_opcodes) &&
                   (a != n_opcode))
                 n_opcode = a;
