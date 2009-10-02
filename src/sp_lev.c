@@ -2617,10 +2617,8 @@ dlb *fd;
 sp_lev *lvl;
 {
     long n_opcode = 0;
-    long i,j;
     struct opvar *opdat;
-    char n;
-    int size, opcode;
+    int opcode;
 
     Fread((genericptr_t)&(lvl->n_opcodes), 1, sizeof(lvl->n_opcodes), fd);
 
@@ -2758,24 +2756,13 @@ sp_lev *lvl;
     int n_subroom = 1;
 
     boolean exit_script = FALSE;
-    int  tmpidx;
-    int  cpu_flags = 0;
-    char *tmpstr;
     int  lvl_is_joined = 0;
 
-    xchar   x, y, typ;
-    boolean prefilled, room_not_needed;
-
-    char    n = '\0';
-
-    int     xi, dir;
     int     tmpi;
     int     allow_flips = 3;
-    int     room_build_fail = 0;
 
     xchar tmpxstart, tmpystart, tmpxsize, tmpysize;
 
-    struct trap *badtrap;
     boolean has_bounds = FALSE;
     boolean premapped = FALSE;
 
@@ -2790,7 +2777,7 @@ sp_lev *lvl;
 
     shuffle_alignments();
 
-    for (xi = 0; xi < MAX_CONTAINMENT; xi++) container_obj[xi] = NULL;
+    for (tmpi = 0; tmpi < MAX_CONTAINMENT; tmpi++) container_obj[tmpi] = NULL;
     container_idx = 0;
 
     invent_carrying_monster = NULL;
@@ -4387,6 +4374,7 @@ sp_lev *lvl;
 		    xsize = COLNO-1;
 		    ysize = ROWNO;
 		} else {
+		    xchar x,y;
 		    /* Load the map */
 		    for(y = ystart; y < ystart+ysize; y++)
 			for(x = xstart; x < xstart+xsize; x++) {
@@ -4465,6 +4453,7 @@ next_opcode:
      */
     /* if special boundary syms (CROSSWALL) in map, remove them now */
     if(has_bounds) {
+	xchar x,y;
 	for(x = 0; x < x_maze_max; x++)
 	    for(y = 0; y < y_maze_max; y++)
 		if ((levl[x][y].typ == CROSSWALL) && !SpLev_Map[x][y]) 
