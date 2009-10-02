@@ -604,7 +604,7 @@ sp_lev *sp;
 int opc;
 genericptr_t dat;
 {
-   long nop = sp->init_lev.n_opcodes;
+   long nop = sp->n_opcodes;
    _opcode *tmp;
 
    if ((opc < 0) || (opc >= MAX_SP_OPCODES))
@@ -622,7 +622,7 @@ genericptr_t dat;
    sp->opcodes[nop].opcode = opc;
    sp->opcodes[nop].opdat = dat;
 
-   sp->init_lev.n_opcodes++;
+   sp->n_opcodes++;
 }
 
 /*
@@ -724,7 +724,7 @@ sp_lev *lvl;
 	};
 
 	Write(fd, &version_data, sizeof version_data);
-	Write(fd, &lvl->init_lev, sizeof(lev_init));
+	/*Write(fd, &lvl->init_lev, sizeof(lev_init));*/
 	return TRUE;
 }
 
@@ -744,7 +744,9 @@ sp_lev *maze;
         if (!write_common_data(fd, maze))
             return FALSE;
 
-        for (i=0;i<maze->init_lev.n_opcodes;i++) {
+	Write(fd, &(maze->n_opcodes), sizeof(maze->n_opcodes));
+
+        for (i = 0; i < maze->n_opcodes; i++) {
 	   _opcode tmpo = maze->opcodes[i];
 
 	   Write(fd, &(tmpo.opcode), sizeof(tmpo.opcode));
@@ -770,7 +772,7 @@ sp_lev *maze;
 		       Write(fd, &size, sizeof(size));
 		       if (size) {
 			   Write(fd, ov->vardata.str, size);
-			   free(ov->vardata.str);
+			   Free(ov->vardata.str);
 		       }
 		       break;
 		   default: panic("write_maze: unknown data type (%i).", ov->spovartyp);
@@ -788,7 +790,8 @@ sp_lev *maze;
 	}
         /* clear the struct for next user */
 	Free(maze->opcodes);
-        (void) memset((genericptr_t) &maze->init_lev, 0, sizeof maze->init_lev);
+	maze->opcodes = NULL;
+        /*(void) memset((genericptr_t) &maze->init_lev, 0, sizeof maze->init_lev);*/
 
 	return TRUE;
 }
@@ -857,16 +860,18 @@ sp_lev *maze;
 	    "frame_push",
 	    "frame_pop",
 	    "call",
-	    "return"
+	    "return",
+	    "init_map",
+	    "flags"
 	};
 
 	/* don't bother with the header stuff */
 
-        for (i=0;i<maze->init_lev.n_opcodes;i++) {
+        for (i=0;i<maze->n_opcodes;i++) {
 	   _opcode tmpo = maze->opcodes[i];
 
 	   if (tmpo.opcode < SPO_NULL || tmpo.opcode >= MAX_SP_OPCODES)
-	       panic("write_maze: unknown opcode (%i).", tmpo.opcode);
+	       panic("decompile_maze: unknown opcode (%i).", tmpo.opcode);
 
 	   if (tmpo.opcode == SPO_PUSH) {
 	       genericptr_t opdat = tmpo.opdat;
@@ -876,7 +881,10 @@ sp_lev *maze;
 		   switch (ov->spovartyp) {
 		   case SPOVAR_NULL: break;
 		   case SPOVAR_INT:
-		       snprintf(debuf, 127, "%li:\t%s\t%li\n", i, opcodestr[tmpo.opcode], ov->vardata.l);
+		       if (ov->vardata.l >= ' ' && ov->vardata.l <= '~')
+			   snprintf(debuf, 127, "%li:\t%s\tint:%li\t# '%c'\n", i, opcodestr[tmpo.opcode], ov->vardata.l, (char)ov->vardata.l);
+		       else
+			   snprintf(debuf, 127, "%li:\t%s\tint:%li\n", i, opcodestr[tmpo.opcode], ov->vardata.l);
 		       Write(fd, debuf, strlen(debuf));
 		       break;
 		   case SPOVAR_STRING:
@@ -893,13 +901,13 @@ sp_lev *maze;
 				       break;
 				   }
 			   if (ok) {
-			       snprintf(debuf, 127, "%li:\t%s\t\"%s\"\n", i, opcodestr[tmpo.opcode], ov->vardata.str);
+			       snprintf(debuf, 127, "%li:\t%s\tstr:\"%s\"\n", i, opcodestr[tmpo.opcode], ov->vardata.str);
 			       Write(fd, debuf, strlen(debuf));
 			   } else {
-			       snprintf(debuf, 127, "%li:\t%s\tstring:", i, opcodestr[tmpo.opcode]);
+			       snprintf(debuf, 127, "%li:\t%s\tstr:", i, opcodestr[tmpo.opcode]);
 			       Write(fd, debuf, strlen(debuf));
 			       for (x = 0; x < size; x++) {
-				   snprintf(debuf, 127, "%02x", ov->vardata.str[x]);
+				   snprintf(debuf, 127, "%02x ", ov->vardata.str[x]);
 				   Write(fd, debuf, strlen(debuf));
 			       }
 			       snprintf(debuf, 127, "\n");
@@ -907,14 +915,14 @@ sp_lev *maze;
 			   }
 		       }
 		       break;
-		   default: panic("write_maze: unknown data type (%i).", ov->spovartyp);
+		   default: panic("decompile_maze: unknown data type (%i).", ov->spovartyp);
 		   }
-	       } else panic("write_maze: PUSH with no data.");
+	       } else panic("decompile_maze: PUSH with no data.");
 	   } else {
 	       /* sanity check */
 	       genericptr_t opdat = tmpo.opdat;
 	       if (opdat)
-		   panic("write_maze: opcode (%i) has data.", tmpo.opcode);
+		   panic("decompile_maze: opcode (%i) has data.", tmpo.opcode);
 	       snprintf(debuf, 127, "%li:\t%s\n", i, opcodestr[tmpo.opcode]);
 	       Write(fd, debuf, strlen(debuf));
 	   }
@@ -961,7 +969,7 @@ sp_lev *lvl;
         if (!lvl) panic("write_level_file");
 
 	if (be_verbose)
-	    fprintf(stdout, "File: '%s', opcodes: %li\n", lbuf, lvl->init_lev.n_opcodes);
+	    fprintf(stdout, "File: '%s', opcodes: %li\n", lbuf, lvl->n_opcodes);
 
         if (!write_maze(fout, lvl))
           return FALSE;

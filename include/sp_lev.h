@@ -110,8 +110,10 @@
 #define SPO_FRAME_POP		52
 #define SPO_CALL		53
 #define SPO_RETURN		54
+#define SPO_INITLEVEL		55
+#define SPO_LEVEL_FLAGS		56
 
-#define MAX_SP_OPCODES		55
+#define MAX_SP_OPCODES		57
 
 
 /* MONSTER and OBJECT can take a variable number of parameters,
@@ -232,7 +234,6 @@ typedef struct {
 	xchar	lit, walled;
 	long	flags;
 	schar	filling;
-	long	n_opcodes;
 } lev_init;
 
 typedef struct {
@@ -375,8 +376,8 @@ typedef struct {
 } _opcode;
 
 typedef struct {
-	lev_init init_lev;
-	_opcode	 *opcodes;
+    _opcode  *opcodes;
+    long     n_opcodes;
 } sp_lev;
 
 typedef struct {
