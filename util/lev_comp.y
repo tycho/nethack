@@ -63,6 +63,10 @@ extern struct opvar *FDECL(set_opvar_int, (struct opvar *, long));
 extern struct opvar *FDECL(set_opvar_str, (struct opvar *, char *));
 extern void VDECL(add_opvars, (sp_lev *, const char *, ...));
 
+extern struct lc_funcdefs *FDECL(funcdef_new,(long,char *));
+extern void FDECL(funcdef_free_all,(struct lc_funcdefs *));
+extern struct lc_funcdefs *FDECL(funcdef_defined,(struct lc_funcdefs *,char *, int));
+
 static struct reg {
 	int x1, y1;
 	int x2, y2;
@@ -104,6 +108,7 @@ int n_switch_break_list = 0;
 
 
 static struct lc_funcdefs *function_definitions = NULL;
+int in_function_definition = 0;
 
 
 extern int fatal_error;
@@ -198,6 +203,7 @@ level_def	: LEVEL_ID ':' string
 			if ((int) strlen($3) > 8)
 			    yyerror("Level names limited to 8 characters.");
 			n_plist = n_mlist = n_olist = 0;
+			funcdef_free_all(function_definitions); function_definitions = NULL;
 			$$ = $3;
 		  }
 		;
@@ -343,49 +349,40 @@ levstatement 	: message
 function_define	: FUNCTION_ID NQSTRING '(' ')'
 		  {
 		      struct opvar *jmp = New(struct opvar);
-		      struct lc_funcdefs *tmpfunc = New(struct lc_funcdefs);
-		      struct lc_funcdefs *iterf;
-		      int already_defined = 0;
+		      struct lc_funcdefs *funcdef;
+
+		      if (in_function_definition)
+			  yyerror("Recursively defined functions not allowed.");
+
+		      in_function_definition++;
+
 		      set_opvar_int(jmp, -1);
 		      if_list[n_if_list++] = jmp;
 		      add_opcode(&splev, SPO_PUSH, jmp);
 		      add_opcode(&splev, SPO_JMP, NULL);
 
-		      iterf = function_definitions;
-		      while (iterf) {
-			  if (!strcmp((char *)$3, iterf->name)) {
-			      yyerror("Function already defined once.");
-			      break;
-			  }
-			  iterf = iterf->next;
-		      }
+		      if (funcdef_defined(function_definitions, $2, 1))
+			  yyerror("Function already defined once.");
 
-		      tmpfunc->next = function_definitions;
-		      tmpfunc->addr = splev.init_lev.n_opcodes;
-		      tmpfunc->name = $2;
-		      function_definitions = tmpfunc;
+		      funcdef = funcdef_new(splev.init_lev.n_opcodes, $2);
+		      funcdef->next = function_definitions;
+		      function_definitions = funcdef;
 		  }
 		'{' levstatements '}'
 		  {
 		      struct opvar *jmp = if_list[--n_if_list];
 		      add_opvars(&splev, "io", 0, SPO_RETURN);
 		      set_opvar_int(jmp, splev.init_lev.n_opcodes);
+
+		      in_function_definition--;
 		  }
 		;
 
 function_call	: NQSTRING '(' ')'
 		  {
-		      struct lc_funcdefs *tmpfunc = function_definitions;
-		      int found = 0;
-
-		      while (tmpfunc) {
-			  if (!strcmp($1, tmpfunc->name)) {
-			      found = 1;
-			      break;
-			  }
-			  tmpfunc = tmpfunc->next;
-		      }
-		      if (found) {
+		      struct lc_funcdefs *tmpfunc;
+		      tmpfunc = funcdef_defined(function_definitions, $1, 1);
+		      if (tmpfunc) {
 			  add_opvars(&splev, "iio", 0, tmpfunc->addr, SPO_CALL);
 		      } else {
 			  yyerror("No such function defined.");

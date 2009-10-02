@@ -385,6 +385,8 @@ typedef struct {
 } spill;
 
 
+/* only used by lev_comp */
+
 struct lc_funcdefs {
     struct lc_funcdefs *next;
     char *name;

@@ -89,6 +89,10 @@ void FDECL(scan_map, (char *, sp_lev *));
 boolean FDECL(check_subrooms, (sp_lev *));
 boolean FDECL(write_level_file, (char *,sp_lev *));
 
+struct lc_funcdefs *FDECL(funcdef_new,(long,char *));
+void FDECL(funcdef_free_all,(struct lc_funcdefs *));
+struct lc_funcdefs *FDECL(funcdef_defined,(struct lc_funcdefs *,char *, int));
+
 extern void NDECL(monst_init);
 extern void NDECL(objects_init);
 extern void NDECL(decl_init);
@@ -373,6 +377,55 @@ add_opvars(sp_lev *sp, const char *fmt, ...)
 
     va_end(argp);
 }
+
+
+struct lc_funcdefs *
+funcdef_new(addr, name)
+     long addr;
+     char *name;
+{
+    struct lc_funcdefs *f = New(struct lc_funcdefs);
+    if (!f) {
+	yyerror("Could not alloc funcdefs");
+	return NULL;
+    }
+    f->next = NULL;
+    f->addr = addr;
+    f->name = name;
+    return f;
+}
+
+void
+funcdef_free_all(fchain)
+     struct lc_funcdefs *fchain;
+{
+    struct lc_funcdefs *tmp = fchain;
+    struct lc_funcdefs *nxt;
+    while (tmp) {
+	nxt = tmp->next;
+	Free(tmp->name);
+	Free(tmp);
+	tmp = nxt;
+    }
+}
+
+struct lc_funcdefs *
+funcdef_defined(f, name, casesense)
+     struct lc_funcdefs *f;
+     char *name;
+     int casesense;
+{
+    while (f) {
+	if (casesense) {
+	    if (!strcmp(name, f->name)) return f;
+	} else {
+	    if (!strcasecmp(name, f->name)) return f;
+	}
+	f = f->next;
+    }
+    return NULL;
+}
+
 
 
 /*
