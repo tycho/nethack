@@ -109,7 +109,7 @@ splev_stack_init(st)
     if (st) {
 	st->depth = 0;
 	st->depth_alloc = SPLEV_STACK_RESERVE;
-	st->stackdata = (struct opvar *)alloc(st->depth_alloc * sizeof(struct opvar));
+	st->stackdata = (struct opvar **)alloc(st->depth_alloc * sizeof(struct opvar *));
     }
 }
 
@@ -122,60 +122,39 @@ splev_stack_done(st)
 
 	if (st->stackdata && st->depth)
 	    for (i = 0; i < st->depth; i++) {
-		switch (st->stackdata[i].spovartyp) {
+		switch (st->stackdata[i]->spovartyp) {
 		default:
 		case SPOVAR_NULL:
 		case SPOVAR_INT:
 		    break;
 		case SPOVAR_STRING:
-		    if (st->stackdata[i].vardata.str) free(st->stackdata[i].vardata.str);
+		    if (st->stackdata[i]->vardata.str) Free(st->stackdata[i]->vardata.str);
+		    st->stackdata[i]->vardata.str = NULL;
 		    break;
 		}
+		Free(st->stackdata[i]);
+		st->stackdata[i] = NULL;
 	    }
 
 	if (st->stackdata) free(st->stackdata);
 	st->stackdata = NULL;
 	st->depth = st->depth_alloc = 0;
-    }
-}
-
-void
-splev_stack_dump(st)
-     struct splevstack *st;
-{
-    if (st) {
-	int i;
-
-	pline("stack dump: depth:%i, allocated:%i\n", st->depth, st->depth_alloc);
-
-	if (st->stackdata && st->depth)
-	    for (i = 0; i < st->depth; i++) {
-		switch (st->stackdata[i].spovartyp) {
-		default:
-		case SPOVAR_NULL: break;
-		case SPOVAR_INT:
-		    pline("INT:%li%s", st->stackdata[i].vardata.l, ((i < st->depth-1) ? ", " : ""));
-		    break;
-		case SPOVAR_STRING:
-		    pline("STR:'%s'%s", st->stackdata[i].vardata.str, ((i < st->depth-1) ? ", " : ""));
-		    break;
-		}
-	    }
+	Free(st);
     }
 }
 
 void
 splev_stack_push(st, v)
      struct splevstack *st;
-     struct opvar v;
+     struct opvar *v;
 {
     if (!st) return;
     if (!st->stackdata) panic("splev_stack_push: no stackdata allocated?");
 
     if (st->depth >= st->depth_alloc) {
-	struct opvar *tmp = (struct opvar *)alloc((st->depth_alloc + SPLEV_STACK_RESERVE) * sizeof(struct opvar));
-	(void)memcpy(tmp, st->stackdata, st->depth_alloc * sizeof(struct opvar));
-	free(st->stackdata);
+	struct opvar **tmp = (struct opvar **)alloc((st->depth_alloc + SPLEV_STACK_RESERVE) * sizeof(struct opvar *));
+	(void)memcpy(tmp, st->stackdata, st->depth_alloc * sizeof(struct opvar *));
+	Free(st->stackdata);
 	st->stackdata = tmp;
 	st->depth_alloc += SPLEV_STACK_RESERVE;
     }
@@ -184,45 +163,120 @@ splev_stack_push(st, v)
     st->depth++;
 }
 
-struct opvar
+struct opvar *
 splev_stack_pop(st)
      struct splevstack *st;
 {
-    if (!st) return;
+    struct opvar *ret = NULL;
+    if (!st) return ret;
     if (!st->stackdata) panic("splev_stack_push: no stackdata allocated?");
 
     if (st->depth) {
 	st->depth--;
-	return st->stackdata[st->depth];
+	ret = st->stackdata[st->depth];
+	st->stackdata[st->depth] = NULL;
+	return ret;
     } else impossible("splev_stack_pop: empty stack?");
-    return st->stackdata[0];
+    return ret;
 }
 
-boolean
-splev_stack_getdat(st, ov, typ)
+struct opvar *
+splev_stack_getdat(st, typ)
      struct splevstack *st;
-     struct opvar *ov;
      xchar typ;
 {
-    if (st && ov) {
-	struct opvar tmp = splev_stack_pop(st);
-	if (tmp.spovartyp == typ) {
-	    *ov = tmp;
-	    return TRUE;
-	}
+    if (st) {
+	struct opvar *tmp = splev_stack_pop(st);
+	if (tmp->spovartyp == typ)
+	    return tmp;
     }
-    return FALSE;
+    return NULL;
 }
 
-boolean
-get_opvar_dat(st, ov, typ)
-     struct splevstack *st;
-     struct opvar *ov;
-     xchar typ;
+
+#define OV_typ(o) (o->spovartyp)
+#define OV_i(o) (o->vardata.l)
+#define OV_s(o) (o->vardata.str)
+
+#define OV_pop_i(x) (x = splev_stack_getdat(stack, SPOVAR_INT))
+#define OV_pop_s(x) (x = splev_stack_getdat(stack, SPOVAR_STRING))
+
+
+struct opvar *
+opvar_new_str(s)
+     char *s;
 {
-    return splev_stack_getdat(st, ov, typ);
+    struct opvar *tmpov = (struct opvar *)alloc(sizeof(struct opvar));
+    if (!tmpov) panic("could not alloc opvar struct");
+    tmpov->spovartyp = SPOVAR_STRING;
+    if (s) {
+	int len = strlen(s);
+	tmpov->vardata.str = (char *)alloc(len + 1);
+	(void)memcpy((genericptr_t)tmpov->vardata.str,
+		     (genericptr_t)s, len);
+	tmpov->vardata.str[len] = '\0';
+    } else
+	tmpov->vardata.str = NULL;
+    return tmpov;
 }
 
+struct opvar *
+opvar_new_int(i)
+     long i;
+{
+    struct opvar *tmpov = (struct opvar *)alloc(sizeof(struct opvar));
+    if (!tmpov) panic("could not alloc opvar struct");
+    tmpov->spovartyp = SPOVAR_INT;
+    tmpov->vardata.l = i;
+    return tmpov;
+}
+
+void
+opvar_free_x(ov)
+     struct opvar *ov;
+{
+    if (!ov) return;
+    switch (ov->spovartyp) {
+    case SPOVAR_INT:
+	break;
+    case SPOVAR_STRING:
+	if (ov->vardata.str)
+	    Free(ov->vardata.str);
+	break;
+    default: impossible("Unknown opvar value type (%i)!", ov->spovartyp);
+    }
+    Free(ov);
+}
+
+#define opvar_free(ov) { opvar_free_x(ov); ov = NULL; }
+
+struct opvar *
+opvar_clone(ov)
+     struct opvar *ov;
+{
+    struct opvar *tmpov = (struct opvar *)alloc(sizeof(struct opvar));
+    if (!tmpov) panic("could not alloc opvar struct");
+    switch (ov->spovartyp) {
+    case SPOVAR_INT:
+	{
+	    tmpov->spovartyp = ov->spovartyp;
+	    tmpov->vardata.l = ov->vardata.l;
+	}
+	break;
+    case SPOVAR_STRING:
+	{
+	    int len = strlen(ov->vardata.str);
+	    tmpov->spovartyp = ov->spovartyp;
+	    tmpov->vardata.str = (char *)alloc(len+1);
+	    (void)memcpy((genericptr_t)tmpov->vardata.str,
+			 (genericptr_t)ov->vardata.str, len);
+	    tmpov->vardata.str[len] = '\0';
+	}
+	break;
+    default: impossible("Unknown push value type (%i)!", ov->spovartyp);
+    }
+    return tmpov;
+}
 
 void
 lvlfill_maze_grid(x1,y1,x2,y2,filling)
@@ -667,7 +721,7 @@ struct mkroom *croom;
 			*y = my + yy;
 			if (is_ok_location(*x,*y,humidity)) goto found_it;
 		    }
-		panic("get_location:  can't find a place!");
+		impossible("get_location:  can't find a place!");
 	    }
 	}
 found_it:;
@@ -2564,7 +2618,7 @@ sp_lev *lvl;
 {
     long n_opcode = 0;
     long i,j;
-    genericptr_t opdat;
+    struct opvar *opdat;
     char n;
     int size, opcode;
 
@@ -2585,7 +2639,7 @@ sp_lev *lvl;
 	    panic("sp_level_loader: impossible opcode %i.", opcode);
 
 	if (opcode == SPO_PUSH) {
-	    struct opvar *ov = (opdat = alloc(sizeof(struct opvar)));
+	    struct opvar *ov = (opdat = (struct opvar *)alloc(sizeof(struct opvar)));
 	    int nsize;
 
 	    ov->spovartyp = SPO_NULL;
@@ -2626,41 +2680,18 @@ sp_level_free(lvl)
 sp_lev *lvl;
 {
     long n_opcode = 0;
-    monster *tmpmons;
-    object *tmpobj;
-    engraving *tmpengraving;
-    room *tmproom;
-    mazepart *mpart;
 
     while (n_opcode < lvl->init_lev.n_opcodes) {
 	int opcode = lvl->opcodes[n_opcode].opcode;
-	genericptr_t opdat = lvl->opcodes[n_opcode].opdat;
+	struct opvar *opdat = lvl->opcodes[n_opcode].opdat;
 
 	if (opcode < SPO_NULL || opcode >= MAX_SP_OPCODES)
 	    panic("sp_level_free: unknown opcode %i", opcode);
 
-	if (opcode == SPO_PUSH) {
-	    if (opdat) {
-		struct opvar *push = (struct opvar *)opdat;
-		switch (push->spovartyp) {
-		case SPOVAR_NULL:
-		case SPOVAR_INT:
-		    break;
-		case SPOVAR_STRING:
-		    Free(push->vardata.str);
-		    break;
-		default:
-		    panic("sp_level_free: unknown opvar type %i", push->spovartyp);
-		}
-	    }
-	}
-
-	Free(opdat);
+	if (opdat) opvar_free(opdat);
 	n_opcode++;
-    } /*while*/
-
+    }
     free(lvl->opcodes);
-
     return TRUE;
 }
 
@@ -2686,6 +2717,33 @@ lev_init *linit;
     }
 }
 
+struct sp_frame *
+frame_new(execptr)
+     long execptr;
+{
+    struct sp_frame *frame = (struct sp_frame *)alloc(sizeof(struct sp_frame));
+    if (!frame) panic("could not create execution frame.");
+    frame->next = NULL;
+    frame->n_opcode = execptr;
+    frame->stack = (struct splevstack *)alloc(sizeof(struct splevstack));
+    if (!frame->stack) panic("could not create execution frame stack.");
+    splev_stack_init(frame->stack);
+    return frame;
+}
+
+void
+frame_del(frame)
+     struct sp_frame *frame;
+{
+    if (!frame) return;
+    if (frame->stack) {
+	splev_stack_done(frame->stack);
+	frame->stack = NULL;
+    }
+    Free(frame);
+}
+
+
 /* Special level coder, creates the special level from the sp_lev codes.
  * Does not free the allocated memory.
  */
@@ -2693,7 +2751,6 @@ STATIC_OVL boolean
 sp_level_coder(lvl)
 sp_lev *lvl;
 {
-    long n_opcode = 0;
     long exec_opcodes = 0;
 
     struct mkroom *croom;
@@ -2722,9 +2779,9 @@ sp_lev *lvl;
     boolean has_bounds = FALSE;
     boolean premapped = FALSE;
 
-    struct splevstack stack;
+    struct splevstack *stack = NULL;
 
-    splev_stack_init(&stack);
+    struct sp_frame *frame = frame_new(0);
 
     for (tmpi = 0; tmpi <= MAX_NESTED_ROOMS; tmpi++) {
 	tmproomlist[tmpi] = (struct mkroom *)0;
@@ -2761,9 +2818,11 @@ sp_lev *lvl;
     if (lvl->init_lev.flags & STORMY)       level.flags.stormy = 1;
     if (lvl->init_lev.flags & GRAVEYARD)    level.flags.graveyard = 1;
 
-    while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
-	int opcode = lvl->opcodes[n_opcode].opcode;
-	genericptr_t opdat = lvl->opcodes[n_opcode].opdat;
+    while (frame->n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
+	int opcode = lvl->opcodes[frame->n_opcode].opcode;
+	struct opvar *opdat = lvl->opcodes[frame->n_opcode].opdat;
+
+	stack = frame->stack;
 
 	if (exec_opcodes++ > SPCODER_MAX_RUNTIME) {
 	    impossible("Level script is taking too much time, stopping.");
@@ -2783,6 +2842,65 @@ sp_lev *lvl;
 	case SPO_EXIT:
 	    exit_script = TRUE;
 	    break;
+	case SPO_FRAME_PUSH:
+	    {
+		struct sp_frame *tmpframe = frame_new(frame->n_opcode);
+		tmpframe->next = frame;
+		frame = tmpframe;
+	    }
+	    break;
+	case SPO_FRAME_POP:
+	    {
+		if (frame->next) {
+		    struct sp_frame *tmpframe = frame->next;
+		    frame_del(frame);
+		    frame = tmpframe;
+		}
+	    }
+	    break;
+	case SPO_CALL:
+	    {
+		struct opvar *addr;
+		struct opvar *params;
+		struct sp_frame *tmpframe;
+
+		if (!OV_pop_i(addr) || !OV_pop_i(params)) break;
+		if (OV_i(params) < 0) break;
+
+		/* push a frame */
+		tmpframe = frame_new(OV_i(addr)-1);
+		tmpframe->next = frame;
+		frame = tmpframe;
+
+		while (OV_i(params)-- > 0) {
+		    splev_stack_push(tmpframe->stack, splev_stack_pop(stack));
+		}
+		opvar_free(addr);
+		opvar_free(params);
+	    }
+	    break;
+	case SPO_RETURN:
+	    {
+		struct opvar *params;
+		if (!frame->next) break; /* something is seriously wrong */
+		if (!OV_pop_i(params)) break;
+		if (OV_i(params) < 0) break;
+
+		while (OV_i(params)-- > 0) {
+		    splev_stack_push(frame->next->stack, splev_stack_pop(stack));
+		}
+
+		/* pop the frame */
+		if (frame->next) {
+		    struct sp_frame *tmpframe = frame->next;
+		    frame_del(frame);
+		    frame = tmpframe;
+		    stack = frame->stack;
+		}
+
+		opvar_free(params);
+	    }
+	    break;
 	case SPO_END_MONINVENT:
 	    if (invent_carrying_monster)
 		m_dowear(invent_carrying_monster, TRUE);
@@ -2796,52 +2914,20 @@ sp_lev *lvl;
 	    break;
 	case SPO_POP:
 	    {
-	       struct opvar op = splev_stack_pop(&stack);
-	       switch (op.spovartyp) {
-               case SPOVAR_INT:
-		   break;
-               case SPOVAR_STRING:
-		   Free(op.vardata.str);
-		   break;
-               default: break;
-	       }
+		struct opvar *ov = splev_stack_pop(stack);
+		opvar_free(ov);
 	    }
 	    break;
 	case SPO_PUSH:
-	    {
-		struct opvar *tmppush = (struct opvar *)opdat;
-		switch (tmppush->spovartyp) {
-		case SPOVAR_INT:
-		    {
-			struct opvar p;
-			p.spovartyp = tmppush->spovartyp;
-			p.vardata.l = tmppush->vardata.l;
-			splev_stack_push(&stack, p);
-		    }
-		    break;
-		case SPOVAR_STRING:
-		    {
-			struct opvar p;
-			int len = strlen(tmppush->vardata.str);
-			p.spovartyp = tmppush->spovartyp;
-			p.vardata.str = (char *)alloc(len+1);
-			(void)memcpy((genericptr_t)p.vardata.str,
-				     (genericptr_t)tmppush->vardata.str, len);
-			p.vardata.str[len] = '\0';
-			splev_stack_push(&stack, p);
-		    }
-		    break;
-		default: impossible("Unknown push value type (%i)!", tmppush->spovartyp);
-		}
-	    }
+	    splev_stack_push(stack, opvar_clone(opdat));
 	    break;
 	case SPO_MESSAGE:
 	    {
-	       struct opvar op;
+	       struct opvar *op;
 	       char *msg, *levmsg;
 	       int old_n, n;
-	       if (!get_opvar_dat(&stack, &op, SPOVAR_STRING)) break;
-	       msg = op.vardata.str;
+	       if (!OV_pop_s(op)) break;
+	       msg = OV_s(op);
 
 	       old_n = lev_message ? (strlen(lev_message)+1) : 0;
 	       n = strlen(msg);
@@ -2855,14 +2941,15 @@ sp_lev *lvl;
 	       levmsg[old_n+n] = '\0';
 	       Free(lev_message);
 	       lev_message = levmsg;
+	       opvar_free(op);
 	   }
 	   break;
 	case SPO_MONSTER:
 	    {
               int nparams = 0;
 
-              struct opvar varparam;
-              struct opvar id, x, y, class, has_inv;
+              struct opvar *varparam;
+              struct opvar *id, *x, *y, *class, *has_inv;
               monster tmpmons;
 
               tmpmons.peaceful = -1;
@@ -2884,88 +2971,90 @@ sp_lev *lvl;
 	      tmpmons.seentraps = 0;
 	      tmpmons.has_invent = 0;
 
-              if (!get_opvar_dat(&stack, &has_inv, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &class, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &y, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &x, SPOVAR_INT)) break;
+              if (!OV_pop_i(has_inv) ||
+                  !OV_pop_i(id) ||
+                  !OV_pop_i(class) ||
+                  !OV_pop_i(y) ||
+                  !OV_pop_i(x)) break;
 
-	      varparam = splev_stack_pop(&stack);
+	      if (!OV_pop_i(varparam)) break;
 
               while ((nparams++ < (SP_M_V_END+1)) &&
-                     (varparam.spovartyp == SPOVAR_INT) &&
-                     (varparam.vardata.l >= 0) &&
-                     (varparam.vardata.l < SP_M_V_END)) {
-                 struct opvar parm = splev_stack_pop(&stack);
-                 switch (varparam.vardata.l) {
+                     (OV_typ(varparam) == SPOVAR_INT) &&
+                     (OV_i(varparam) >= 0) &&
+                     (OV_i(varparam) < SP_M_V_END)) {
+		  struct opvar *parm = splev_stack_pop(stack);
+		  switch (OV_i(varparam)) {
                   case SP_M_V_NAME:
-		      if ((parm.spovartyp == SPOVAR_STRING) &&
+		      if ((OV_typ(parm) == SPOVAR_STRING) &&
 			  !tmpmons.name.str)
-			  tmpmons.name.str = parm.vardata.str;
+			  tmpmons.name.str = strdup(OV_s(parm));
+		      opvar_free(parm);
 		      break;
                   case SP_M_V_APPEAR:
-		      if ((parm.spovartyp == SPOVAR_INT) &&
+		      if ((OV_typ(parm) == SPOVAR_INT) &&
 			  !tmpmons.appear_as.str) {
-			  tmpmons.appear = parm.vardata.l;
-			  parm = splev_stack_pop(&stack);
-			  tmpmons.appear_as.str = parm.vardata.str;
+			  tmpmons.appear = OV_i(parm);
+			  opvar_free(parm);
+			  parm = splev_stack_pop(stack);
+			  tmpmons.appear_as.str = strdup(OV_s(parm));
 		      }
 		      break;
                   case SP_M_V_ASLEEP:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.asleep = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.asleep = OV_i(parm);
 		      break;
                   case SP_M_V_ALIGN:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.align = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.align = OV_i(parm);
 		      break;
                   case SP_M_V_PEACEFUL:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.peaceful = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.peaceful = OV_i(parm);
 		      break;
                   case SP_M_V_FEMALE:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.female = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.female = OV_i(parm);
 		      break;
                   case SP_M_V_INVIS:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.invis = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.invis = OV_i(parm);
 		      break;
                   case SP_M_V_CANCELLED:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.cancelled = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.cancelled = OV_i(parm);
 		      break;
                   case SP_M_V_REVIVED:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.revived = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.revived = OV_i(parm);
 		      break;
                   case SP_M_V_AVENGE:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.avenge = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.avenge = OV_i(parm);
 		      break;
                   case SP_M_V_FLEEING:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.fleeing = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.fleeing = OV_i(parm);
 		      break;
                   case SP_M_V_BLINDED:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.blinded = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.blinded = OV_i(parm);
 		      break;
                   case SP_M_V_PARALYZED:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.paralyzed = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.paralyzed = OV_i(parm);
 		      break;
                   case SP_M_V_STUNNED:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.stunned = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.stunned = OV_i(parm);
 		      break;
                   case SP_M_V_CONFUSED:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.confused = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.confused = OV_i(parm);
 		      break;
                   case SP_M_V_SEENTRAPS:
-		      if (parm.spovartyp == SPOVAR_INT)
-			  tmpmons.seentraps = parm.vardata.l;
+		      if (OV_typ(parm) == SPOVAR_INT)
+			  tmpmons.seentraps = OV_i(parm);
 		      break;
                   case SP_M_V_END:
 		      nparams = SP_M_V_END+1;
@@ -2973,30 +3062,39 @@ sp_lev *lvl;
                   default:
 		      impossible("MONSTER with unknown variable param type!");
 		      break;
-                 }
-                 if (varparam.vardata.l != SP_M_V_END)
-		     varparam = splev_stack_pop(&stack);
+		  }
+		  opvar_free(parm);
+		  if (OV_i(varparam) != SP_M_V_END) {
+		      opvar_free(varparam);
+		      varparam = splev_stack_pop(stack);
+		  }
               }
 
-              tmpmons.id = id.vardata.l;
-              tmpmons.x = x.vardata.l;
-              tmpmons.y = y.vardata.l;
-              tmpmons.class = class.vardata.l;
-	      tmpmons.has_invent = has_inv.vardata.l;
+              tmpmons.id = OV_i(id);
+              tmpmons.x = OV_i(x);
+              tmpmons.y = OV_i(y);
+              tmpmons.class = OV_i(class);
+	      tmpmons.has_invent = OV_i(has_inv);
 
               create_monster(&tmpmons, croom);
 
               free(tmpmons.name.str);
               free(tmpmons.appear_as.str);
 
+	      opvar_free(id);
+	      opvar_free(x);
+	      opvar_free(y);
+	      opvar_free(class);
+	      opvar_free(has_inv);
+	      opvar_free(varparam);
 	    }
 	    break;
 	case SPO_OBJECT:
 	    {
 		int nparams = 0;
 
-		struct opvar varparam;
-		struct opvar id, x, y, class, containment;
+		struct opvar *varparam;
+		struct opvar *id, *x, *y, *class, *containment;
 
 		object tmpobj;
 
@@ -3015,76 +3113,76 @@ sp_lev *lvl;
 		tmpobj.greased = 0;
 		tmpobj.broken = 0;
 
-		if (!get_opvar_dat(&stack, &containment, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &class, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x, SPOVAR_INT)) break;
+		if (!OV_pop_i(containment) ||
+		    !OV_pop_i(id) ||
+		    !OV_pop_i(class) ||
+		    !OV_pop_i(y) ||
+		    !OV_pop_i(x)) break;
 
-		varparam = splev_stack_pop(&stack);
+		if (!OV_pop_i(varparam)) break;
 
 		while ((nparams++ < (SP_O_V_END+1)) &&
-                     (varparam.spovartyp == SPOVAR_INT) &&
-                     (varparam.vardata.l >= 0) &&
-                     (varparam.vardata.l < SP_O_V_END)) {
-                 struct opvar parm = splev_stack_pop(&stack);
-                 switch (varparam.vardata.l) {
+		       (OV_typ(varparam) == SPOVAR_INT) &&
+		       (OV_i(varparam) >= 0) &&
+		       (OV_i(varparam) < SP_O_V_END)) {
+                 struct opvar *parm = splev_stack_pop(stack);
+                 switch (OV_i(varparam)) {
                   case SP_O_V_NAME:
-                    if ((parm.spovartyp == SPOVAR_STRING) &&
+		      if ((OV_typ(parm) == SPOVAR_STRING) &&
                         !tmpobj.name.str)
-                      tmpobj.name.str = parm.vardata.str;
+			  tmpobj.name.str = strdup(OV_s(parm));
                     break;
                   case SP_O_V_CORPSENM:
-                    if ((parm.spovartyp == SPOVAR_INT))
-                      tmpobj.corpsenm = parm.vardata.l;
+                    if ((OV_typ(parm) == SPOVAR_INT))
+                      tmpobj.corpsenm = OV_i(parm);
                     break;
                   case SP_O_V_CURSE:
-                    if (parm.spovartyp == SPOVAR_INT)
-                      tmpobj.curse_state = parm.vardata.l;
+                    if (OV_typ(parm) == SPOVAR_INT)
+                      tmpobj.curse_state = OV_i(parm);
                     break;
                   case SP_O_V_SPE:
-                    if (parm.spovartyp == SPOVAR_INT)
-                       tmpobj.spe = parm.vardata.l;
+                    if (OV_typ(parm) == SPOVAR_INT)
+                       tmpobj.spe = OV_i(parm);
                     break;
 		 case SP_O_V_QUAN:
-                    if (parm.spovartyp == SPOVAR_INT)
-                       tmpobj.quan = parm.vardata.l;
+                    if (OV_typ(parm) == SPOVAR_INT)
+                       tmpobj.quan = OV_i(parm);
                     break;
 		 case SP_O_V_BURIED:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.buried = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.buried = OV_i(parm);
 		     break;
 		 case SP_O_V_LIT:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.lit = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.lit = OV_i(parm);
 		     break;
 		 case SP_O_V_ERODED:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.eroded = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.eroded = OV_i(parm);
 		     break;
 		 case SP_O_V_LOCKED:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.locked = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.locked = OV_i(parm);
 		     break;
 		 case SP_O_V_TRAPPED:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.trapped = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.trapped = OV_i(parm);
 		     break;
 		 case SP_O_V_RECHARGED:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.recharged = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.recharged = OV_i(parm);
 		     break;
 		 case SP_O_V_INVIS:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.invis = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.invis = OV_i(parm);
 		     break;
 		 case SP_O_V_GREASED:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.greased = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.greased = OV_i(parm);
 		     break;
 		 case SP_O_V_BROKEN:
-		     if (parm.spovartyp == SPOVAR_INT)
-			 tmpobj.broken = parm.vardata.l;
+		     if (OV_typ(parm) == SPOVAR_INT)
+			 tmpobj.broken = OV_i(parm);
 		     break;
                   case SP_O_V_END:
                     nparams = SP_O_V_END+1;
@@ -3093,24 +3191,34 @@ sp_lev *lvl;
                     impossible("OBJECT with unknown variable param type!");
                     break;
                  }
-                 if (varparam.vardata.l != SP_O_V_END)
-                   varparam = splev_stack_pop(&stack);
+		 opvar_free(parm);
+                 if (OV_i(varparam) != SP_O_V_END) {
+		     opvar_free(varparam);
+		     varparam = splev_stack_pop(stack);
+		 }
 		}
 
-              tmpobj.id = id.vardata.l;
-              tmpobj.x = x.vardata.l;
-              tmpobj.y = y.vardata.l;
-              tmpobj.class = class.vardata.l;
-              tmpobj.containment = containment.vardata.l;
+		tmpobj.id = OV_i(id);
+		tmpobj.x = OV_i(x);
+		tmpobj.y = OV_i(y);
+		tmpobj.class = OV_i(class);
+		tmpobj.containment = OV_i(containment);
 
-              create_object(&tmpobj, croom);
+		create_object(&tmpobj, croom);
 
-              free(tmpobj.name.str);
+		Free(tmpobj.name.str);
+
+		opvar_free(varparam);
+		opvar_free(id);
+		opvar_free(x);
+		opvar_free(y);
+		opvar_free(class);
+		opvar_free(containment);
 	    }
 	    break;
 	case SPO_MON_GENERATION:
 	    {
-		struct opvar freq, n_tuples;
+		struct opvar *freq, *n_tuples;
 		struct mon_gen_override *mg;
 		struct mon_gen_tuple *mgtuple;
 
@@ -3119,51 +3227,61 @@ sp_lev *lvl;
 		    break;
 		}
 
-		if (!get_opvar_dat(&stack, &n_tuples, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &freq, SPOVAR_INT)) break;
+		if (!OV_pop_i(n_tuples) ||
+		    !OV_pop_i(freq)) break;
 
 		mg = (struct mon_gen_override *)alloc(sizeof(struct mon_gen_override));
-		mg->override_chance = freq.vardata.l;
+		mg->override_chance = OV_i(freq);
 		mg->total_mon_freq = 0;
 		mg->gen_chances = NULL;
-		while (n_tuples.vardata.l-- > 0) {
-		    struct opvar mfreq, is_sym, mon;
+		while (OV_i(n_tuples)-- > 0) {
+		    struct opvar *mfreq, *is_sym, *mon;
 		    mgtuple = (struct mon_gen_tuple *)alloc(sizeof(struct mon_gen_tuple));
 
-		    if (!get_opvar_dat(&stack, &mfreq, SPOVAR_INT) ||
-			!get_opvar_dat(&stack, &is_sym, SPOVAR_INT) ||
-			!get_opvar_dat(&stack, &mon, SPOVAR_INT)) {
+		    if (!OV_pop_i(mfreq) ||
+			!OV_pop_i(is_sym) ||
+			!OV_pop_i(mon)) {
 			panic("oopsie when loading mon_gen chances.");
 		    }
 
-		    mgtuple->freq = mfreq.vardata.l;
-		    mgtuple->is_sym = is_sym.vardata.l;
-		    if (is_sym.vardata.l)
-			mgtuple->monid = def_char_to_monclass(mon.vardata.l);
-		    else mgtuple->monid = mon.vardata.l;
+		    mgtuple->freq = OV_i(mfreq);
+		    mgtuple->is_sym = OV_i(is_sym);
+		    if (OV_i(is_sym))
+			mgtuple->monid = def_char_to_monclass(OV_i(mon));
+		    else mgtuple->monid = OV_i(mon);
 		    mgtuple->next = mg->gen_chances;
 		    mg->gen_chances = mgtuple;
-		    mg->total_mon_freq += mfreq.vardata.l;
+		    mg->total_mon_freq += OV_i(mfreq);
+		    opvar_free(mfreq);
+		    opvar_free(is_sym);
+		    opvar_free(mon);
 		}
 		level.mon_gen = mg;
+		opvar_free(freq);
+		opvar_free(n_tuples);
 	    }
 	    break;
 	case SPO_ENGRAVING:
            {
-               struct opvar etyp, txt, fy, fx;
+               struct opvar *etyp, *txt, *fy, *fx;
 	       engraving tmpe;
 
-               if (!get_opvar_dat(&stack, &etyp, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &txt, SPOVAR_STRING) ||
-                   !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+               if (!OV_pop_i(etyp) ||
+                   !OV_pop_s(txt) ||
+                   !OV_pop_i(fy) ||
+                   !OV_pop_i(fx)) break;
 
-	       tmpe.x = fx.vardata.l;
-	       tmpe.y = fy.vardata.l;
-	       tmpe.engr.str = txt.vardata.str;
-	       tmpe.etype = etyp.vardata.l;
+	       tmpe.x = OV_i(fx);
+	       tmpe.y = OV_i(fy);
+	       tmpe.engr.str = OV_s(txt);
+	       tmpe.etype = OV_i(etyp);
 
 	       create_engraving(&tmpe, croom);
+
+	       opvar_free(etyp);
+	       opvar_free(txt);
+	       opvar_free(fx);
+	       opvar_free(fy);
            }
 	    break;
 	case SPO_SUBROOM:
@@ -3171,36 +3289,47 @@ sp_lev *lvl;
            if (n_subroom > MAX_NESTED_ROOMS)
 	       panic("Too deeply nested rooms?!");
            else {
-              struct opvar filled, h, w, yalign, xalign,
-                    y, x, rlit, chance, rtype;
+              struct opvar *filled, *h, *w, *yalign, *xalign,
+                    *y, *x, *rlit, *chance, *rtype;
 
               room tmproom;
               struct mkroom *tmpcr;
 
-              if (!get_opvar_dat(&stack, &h, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &w, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &y, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &x, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &yalign, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &xalign, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &filled, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &rlit, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &chance, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &rtype, SPOVAR_INT)) break;
+              if (!OV_pop_i(h) ||
+                  !OV_pop_i(w) ||
+                  !OV_pop_i(y) ||
+                  !OV_pop_i(x) ||
+                  !OV_pop_i(yalign) ||
+                  !OV_pop_i(xalign) ||
+                  !OV_pop_i(filled) ||
+                  !OV_pop_i(rlit) ||
+                  !OV_pop_i(chance) ||
+                  !OV_pop_i(rtype)) break;
+
+
+		  tmproom.x = OV_i(x);
+		  tmproom.y = OV_i(y);
+		  tmproom.w = OV_i(w);
+		  tmproom.h = OV_i(h);
+		  tmproom.xalign = OV_i(xalign);
+		  tmproom.yalign = OV_i(yalign);
+		  tmproom.rtype = OV_i(rtype);
+		  tmproom.chance = OV_i(chance);
+		  tmproom.rlit = OV_i(rlit);
+		  tmproom.filled = OV_i(filled);
+
+		  opvar_free(x);
+		  opvar_free(y);
+		  opvar_free(w);
+		  opvar_free(h);
+		  opvar_free(xalign);
+		  opvar_free(yalign);
+		  opvar_free(rtype);
+		  opvar_free(chance);
+		  opvar_free(rlit);
+		  opvar_free(filled);
 
               if (!failed_room[n_subroom-1]) {
-
-                 tmproom.x = x.vardata.l;
-                 tmproom.y = y.vardata.l;
-                 tmproom.w = w.vardata.l;
-                 tmproom.h = h.vardata.l;
-                 tmproom.xalign = xalign.vardata.l;
-                 tmproom.yalign = yalign.vardata.l;
-                 tmproom.rtype = rtype.vardata.l;
-                 tmproom.chance = chance.vardata.l;
-                 tmproom.rlit = rlit.vardata.l;
-                 tmproom.filled = filled.vardata.l;
-
                  tmpcr = build_room(&tmproom, croom);
                  if (tmpcr) {
                     tmproomlist[n_subroom] = tmpcr;
@@ -3208,7 +3337,7 @@ sp_lev *lvl;
                     n_subroom++;
                     break;
                  }
-              } /* failed to create parent room, so fail this too */
+	      } /* failed to create parent room, so fail this too */
            }
            tmproomlist[n_subroom] = (struct mkroom *)0;
            failed_room[n_subroom] = TRUE;
@@ -3234,18 +3363,18 @@ sp_lev *lvl;
 	case SPO_DOOR:
 	    {
               schar x,y;
-              struct opvar msk, fy, fx;
+              struct opvar *msk, *fy, *fx;
 	      struct mkroom *droom;
               xchar typ;
 
-              if (!get_opvar_dat(&stack, &msk, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+              if (!OV_pop_i(msk) ||
+                  !OV_pop_i(fy) ||
+                  !OV_pop_i(fx)) break;
 
               droom = &rooms[0];
 
-              x = fx.vardata.l; y = fy.vardata.l;
-              typ = msk.vardata.l == -1 ? rnddoor() : (xchar)msk.vardata.l;
+              x = OV_i(fx); y = OV_i(fy);
+              typ = OV_i(msk) == -1 ? rnddoor() : (xchar)OV_i(msk);
 
               get_location(&x, &y, DRY, (struct mkroom *)0);
               if (levl[x][y].typ != SDOOR)
@@ -3267,313 +3396,385 @@ sp_lev *lvl;
                  }
                  droom++;
               }
+
+	      opvar_free(fx);
+	      opvar_free(fy);
+	      opvar_free(msk);
 	    }
 	    break;
 	case SPO_STAIR:
 	    {
 		xchar x,y;
-		struct opvar up, fy, fx;
+		struct opvar *up, *fy, *fx;
 		struct trap *badtrap;
 
-		if (!get_opvar_dat(&stack, &up, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+		if (!OV_pop_i(up) ||
+		    !OV_pop_i(fy) ||
+		    !OV_pop_i(fx)) break;
 
 		if (croom) {
-		    x = fx.vardata.l;
-		    y = fy.vardata.l;
+		    x = OV_i(fx);
+		    y = OV_i(fy);
 		    get_location(&x, &y, DRY, croom);
-		    mkstairs(x,y,(char)up.vardata.l, croom);
+		    mkstairs(x,y,(char)OV_i(up), croom);
 		    SpLev_Map[x][y] = 1;
 		} else {
-		    x = fx.vardata.l;
-		    y = fy.vardata.l;
+		    x = OV_i(fx);
+		    y = OV_i(fy);
 		    get_location(&x, &y, DRY, croom);
 		    if ((badtrap = t_at(x,y)) != 0) deltrap(badtrap);
-		    mkstairs(x, y, (char)up.vardata.l, croom);
+		    mkstairs(x, y, (char)OV_i(up), croom);
 		    SpLev_Map[x][y] = 1;
 		}
+
+		opvar_free(fx);
+		opvar_free(fy);
+		opvar_free(up);
 	    }
 	    break;
 	case SPO_LADDER:
 	    {
               xchar x,y;
-              struct opvar up, fy, fx;
+              struct opvar *up, *fy, *fx;
 
-              if (!get_opvar_dat(&stack, &up, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+              if (!OV_pop_i(up) ||
+                  !OV_pop_i(fy) ||
+                  !OV_pop_i(fx)) break;
 
-              x = fx.vardata.l;
-              y = fy.vardata.l;
+              x = OV_i(fx);
+              y = OV_i(fy);
 
               get_location(&x, &y, DRY, croom);
 
               levl[x][y].typ = LADDER;
               SpLev_Map[x][y] = 1;
-              if (up.vardata.l) {
+              if (OV_i(up)) {
 		  xupladder = x; yupladder = y;
 		  levl[x][y].ladder = LA_UP;
               } else {
 		  xdnladder = x; ydnladder = y;
 		  levl[x][y].ladder = LA_DOWN;
               }
+	      opvar_free(fx);
+	      opvar_free(fy);
+	      opvar_free(up);
 	    }
 	    break;
 	case SPO_GRAVE:
 	    {
-		struct opvar gx,gy, typ, txt;
+		struct opvar *gx,*gy, *typ, *txt;
 		schar x,y;
-		if (!get_opvar_dat(&stack, &typ, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &txt, SPOVAR_STRING) ||
-		    !get_opvar_dat(&stack, &gy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &gx, SPOVAR_INT)) break;
+		if (!OV_pop_i(typ) ||
+		    !OV_pop_s(txt) ||
+		    !OV_pop_i(gy) ||
+		    !OV_pop_i(gx)) break;
 
-		x = gx.vardata.l; y = gy.vardata.l;
+		x = OV_i(gx); y = OV_i(gy);
 		get_location(&x, &y, DRY, croom);
 
 		if (isok(x, y) && !t_at(x, y)) {
 		    levl[x][y].typ = GRAVE;
-		    switch (typ.vardata.l) {
-		    case 2: make_grave(x, y, txt.vardata.str); break;
+		    switch (OV_i(typ)) {
+		    case 2: make_grave(x, y, OV_s(txt)); break;
 		    case 1: make_grave(x, y, NULL); break;
 		    default: del_engr_at(x, y); break;
 		    }
 		}
+
+		opvar_free(gx);
+		opvar_free(gy);
+		opvar_free(typ);
+		opvar_free(txt);
 	    }
 	    break;
 	case SPO_ALTAR:
 	    {
-	       struct opvar al, shrine, fy, fx;
+	       struct opvar *al, *shrine, *fy, *fx;
 	       altar tmpaltar;
 
-              if (!get_opvar_dat(&stack, &al, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &shrine, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+              if (!OV_pop_i(al) ||
+                  !OV_pop_i(shrine) ||
+                  !OV_pop_i(fy) ||
+                  !OV_pop_i(fx)) break;
 
-	      tmpaltar.x = fx.vardata.l;
-	      tmpaltar.y = fy.vardata.l;
-	      tmpaltar.align = al.vardata.l;
-	      tmpaltar.shrine = shrine.vardata.l;
+	      tmpaltar.x = OV_i(fx);
+	      tmpaltar.y = OV_i(fy);
+	      tmpaltar.align = OV_i(al);
+	      tmpaltar.shrine = OV_i(shrine);
 
               create_altar(&tmpaltar, croom);
+
+	      opvar_free(fx);
+	      opvar_free(fy);
+	      opvar_free(shrine);
+	      opvar_free(al);
 	    }
 	    break;
 	case SPO_FOUNTAIN:
 	    {
-		struct opvar fy, fx;
+		struct opvar *fy, *fx;
 
-		if (!get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+		if (!OV_pop_i(fy) ||
+		    !OV_pop_i(fx)) break;
 
-		create_feature(fx.vardata.l, fy.vardata.l, croom, FOUNTAIN);
+		create_feature(OV_i(fx), OV_i(fy), croom, FOUNTAIN);
+		opvar_free(fx);
+		opvar_free(fy);
 	    }
 	    break;
 	case SPO_SINK:
 	    {
-		struct opvar fy, fx;
-		if (!get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
-		create_feature(fx.vardata.l, fy.vardata.l, croom, SINK);
+		struct opvar *fy, *fx;
+		if (!OV_pop_i(fy) ||
+		    !OV_pop_i(fx)) break;
+		create_feature(OV_i(fx), OV_i(fy), croom, SINK);
+		opvar_free(fx);
+		opvar_free(fy);
 	    }
 	    break;
 	case SPO_POOL:
 	    {
-		struct opvar fy, fx;
-		if (!get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
-		create_feature(fx.vardata.l, fy.vardata.l, croom, POOL);
+		struct opvar *fy, *fx;
+		if (!OV_pop_i(fy) ||
+		    !OV_pop_i(fx)) break;
+		create_feature(OV_i(fx), OV_i(fy), croom, POOL);
+		opvar_free(fx);
+		opvar_free(fy);
 	    }
 	    break;
 	case SPO_TRAP:
 	    {
-		struct opvar chance, type, fy, fx;
+		struct opvar *type, *fy, *fx;
 		trap tmptrap;
 
-		if (!get_opvar_dat(&stack, &type, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+		if (!OV_pop_i(type) ||
+		    !OV_pop_i(fy) ||
+		    !OV_pop_i(fx)) break;
 
-		tmptrap.x = fx.vardata.l;
-		tmptrap.y = fy.vardata.l;
-		tmptrap.type = type.vardata.l;
+		tmptrap.x = OV_i(fx);
+		tmptrap.y = OV_i(fy);
+		tmptrap.type = OV_i(type);
 
 		create_trap(&tmptrap, croom);
+		opvar_free(fx);
+		opvar_free(fy);
+		opvar_free(type);
 	    }
 	    break;
 	case SPO_GOLD:
 	    {
-		struct opvar fy, fx, amt;
+		struct opvar *fy, *fx, *amt;
 		gold tmpgold;
-		if (!get_opvar_dat(&stack, &fx, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &amt, SPOVAR_INT)) break;
-		tmpgold.x = fx.vardata.l;
-		tmpgold.y = fy.vardata.l;
-		tmpgold.amount = amt.vardata.l;
+		if (!OV_pop_i(fx) ||
+		    !OV_pop_i(fy) ||
+		    !OV_pop_i(amt)) break;
+		tmpgold.x = OV_i(fx);
+		tmpgold.y = OV_i(fy);
+		tmpgold.amount = OV_i(amt);
 		create_gold(&tmpgold, croom);
+		opvar_free(fx);
+		opvar_free(fy);
+		opvar_free(amt);
 	    }
 	    break;
 	case SPO_CORRIDOR:
 	    {
-		struct opvar deswall, desdoor, desroom,
-		    srcwall, srcdoor, srcroom;
+		struct opvar *deswall, *desdoor, *desroom,
+		    *srcwall, *srcdoor, *srcroom;
 		corridor tc;
 
-		if (!get_opvar_dat(&stack, &deswall, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &desdoor, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &desroom, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &srcwall, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &srcdoor, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &srcroom, SPOVAR_INT)) break;
+		if (!OV_pop_i(deswall) ||
+		    !OV_pop_i(desdoor) ||
+		    !OV_pop_i(desroom) ||
+		    !OV_pop_i(srcwall) ||
+		    !OV_pop_i(srcdoor) ||
+		    !OV_pop_i(srcroom)) break;
 
-		tc.src.room = srcroom.vardata.l;
-		tc.src.door = srcdoor.vardata.l;
-		tc.src.wall = srcwall.vardata.l;
-		tc.dest.room = desroom.vardata.l;
-		tc.dest.door = desdoor.vardata.l;
-		tc.dest.wall = deswall.vardata.l;
+		tc.src.room = OV_i(srcroom);
+		tc.src.door = OV_i(srcdoor);
+		tc.src.wall = OV_i(srcwall);
+		tc.dest.room = OV_i(desroom);
+		tc.dest.door = OV_i(desdoor);
+		tc.dest.wall = OV_i(deswall);
 
 		create_corridor(&tc);
+
+		opvar_free(deswall);
+		opvar_free(desdoor);
+		opvar_free(desroom);
+		opvar_free(srcwall);
+		opvar_free(srcdoor);
+		opvar_free(srcroom);
 	    }
 	    break;
 	case SPO_TERRAIN:
 	    {
 		terrain tmpterrain;
-		struct opvar x1,y1,x2,y2,areatyp,ter,tlit;
+		struct opvar *x1,*y1,*x2,*y2,*areatyp,*ter,*tlit;
 
-		if (!get_opvar_dat(&stack, &tlit, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &ter, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &areatyp, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y1, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x1, SPOVAR_INT)) break;
+		if (!OV_pop_i(tlit) ||
+		    !OV_pop_i(ter) ||
+		    !OV_pop_i(areatyp) ||
+		    !OV_pop_i(y2) ||
+		    !OV_pop_i(x2) ||
+		    !OV_pop_i(y1) ||
+		    !OV_pop_i(x1)) break;
 
-		tmpterrain.x1 = x1.vardata.l;
-		tmpterrain.y1 = y1.vardata.l;
-		tmpterrain.x2 = x2.vardata.l;
-		tmpterrain.y2 = y2.vardata.l;
-		tmpterrain.areatyp = areatyp.vardata.l;
-		tmpterrain.ter = ter.vardata.l;
-		tmpterrain.tlit = tlit.vardata.l;
+		tmpterrain.x1 = OV_i(x1);
+		tmpterrain.y1 = OV_i(y1);
+		tmpterrain.x2 = OV_i(x2);
+		tmpterrain.y2 = OV_i(y2);
+		tmpterrain.areatyp = OV_i(areatyp);
+		tmpterrain.ter = OV_i(ter);
+		tmpterrain.tlit = OV_i(tlit);
 
 		set_terrain(&tmpterrain, croom);
+		opvar_free(x1);
+		opvar_free(y1);
+		opvar_free(x2);
+		opvar_free(y2);
+		opvar_free(areatyp);
+		opvar_free(ter);
+		opvar_free(tlit);
 	    }
 	    break;
 	case SPO_REPLACETERRAIN:
 	    {
 		replaceterrain rt;
-		struct opvar x1,y1,x2,y2,from_ter,to_ter,to_lit,chance;
+		struct opvar *x1,*y1,*x2,*y2,*from_ter,*to_ter,*to_lit,*chance;
 
-		if (!get_opvar_dat(&stack, &chance, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &to_lit, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &to_ter, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &from_ter, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y1, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x1, SPOVAR_INT)) break;
+		if (!OV_pop_i(chance) ||
+		    !OV_pop_i(to_lit) ||
+		    !OV_pop_i(to_ter) ||
+		    !OV_pop_i(from_ter) ||
+		    !OV_pop_i(y2) ||
+		    !OV_pop_i(x2) ||
+		    !OV_pop_i(y1) ||
+		    !OV_pop_i(x1)) break;
 
-		rt.chance = chance.vardata.l;
-		rt.tolit = to_lit.vardata.l;
-		rt.toter = to_ter.vardata.l;
-		rt.fromter = from_ter.vardata.l;
-		rt.x1 = x1.vardata.l;
-		rt.y1 = y1.vardata.l;
-		rt.x2 = x2.vardata.l;
-		rt.y2 = y2.vardata.l;
+		rt.chance = OV_i(chance);
+		rt.tolit = OV_i(to_lit);
+		rt.toter = OV_i(to_ter);
+		rt.fromter = OV_i(from_ter);
+		rt.x1 = OV_i(x1);
+		rt.y1 = OV_i(y1);
+		rt.x2 = OV_i(x2);
+		rt.y2 = OV_i(y2);
 
 		replace_terrain(&rt, croom);
+
+		opvar_free(x1);
+		opvar_free(y1);
+		opvar_free(x2);
+		opvar_free(y2);
+		opvar_free(from_ter);
+		opvar_free(to_ter);
+		opvar_free(to_lit);
+		opvar_free(chance);
 	    }
 	    break;
 	case SPO_RANDLINE:
 	    {
 		randline rl;
-		struct opvar x1,y1,x2,y2,fg,lit,roughness,thick;
-		if (!get_opvar_dat(&stack, &thick, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &roughness, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &lit, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fg, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y1, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x1, SPOVAR_INT)) break;
+		struct opvar *x1,*y1,*x2,*y2,*fg,*lit,*roughness,*thick;
+		if (!OV_pop_i(thick) ||
+		    !OV_pop_i(roughness) ||
+		    !OV_pop_i(lit) ||
+		    !OV_pop_i(fg) ||
+		    !OV_pop_i(y2) ||
+		    !OV_pop_i(x2) ||
+		    !OV_pop_i(y1) ||
+		    !OV_pop_i(x1)) break;
 
-		rl.thick = thick.vardata.l;
-		rl.roughness = roughness.vardata.l;
-		rl.lit = lit.vardata.l;
-		rl.fg = fg.vardata.l;
-		rl.x1 = x1.vardata.l;
-		rl.y1 = y1.vardata.l;
-		rl.x2 = x2.vardata.l;
-		rl.y2 = y2.vardata.l;
+		rl.thick = OV_i(thick);
+		rl.roughness = OV_i(roughness);
+		rl.lit = OV_i(lit);
+		rl.fg = OV_i(fg);
+		rl.x1 = OV_i(x1);
+		rl.y1 = OV_i(y1);
+		rl.x2 = OV_i(x2);
+		rl.y2 = OV_i(y2);
 
 		line_midpoint(&rl, croom);
+
+		opvar_free(x1);
+		opvar_free(y1);
+		opvar_free(x2);
+		opvar_free(y2);
+		opvar_free(fg);
+		opvar_free(lit);
+		opvar_free(roughness);
+		opvar_free(thick);
 	    }
 	    break;
 	case SPO_SPILL:
 	    {
 		spill sp;
-		struct opvar x,y,typ,dir,count,lit;
-		if (!get_opvar_dat(&stack, &lit, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &count, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &dir, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &typ, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x, SPOVAR_INT)) break;
+		struct opvar *x,*y,*typ,*dir,*count,*lit;
+		if (!OV_pop_i(lit) ||
+		    !OV_pop_i(count) ||
+		    !OV_pop_i(dir) ||
+		    !OV_pop_i(typ) ||
+		    !OV_pop_i(y) ||
+		    !OV_pop_i(x)) break;
 
-		sp.x = x.vardata.l;
-		sp.y = y.vardata.l;
+		sp.x = OV_i(x);
+		sp.y = OV_i(y);
 
-		sp.lit = lit.vardata.l;
-		sp.count = count.vardata.l;
-		sp.direction = dir.vardata.l;
-		sp.typ = typ.vardata.l;
+		sp.lit = OV_i(lit);
+		sp.count = OV_i(count);
+		sp.direction = OV_i(dir);
+		sp.typ = OV_i(typ);
 
 		spill_terrain(&sp, croom);
+
+		opvar_free(x);
+		opvar_free(y);
+		opvar_free(typ);
+		opvar_free(dir);
+		opvar_free(count);
+		opvar_free(lit);
 	    }
 	    break;
 	case SPO_LEVREGION:
 	    {
-		struct opvar rname, padding, rtype, del_islev,
-                    dy2, dx2, dy1, dx1, in_islev,
-                    iy2, ix2, iy1, ix1;
+		struct opvar *rname, *padding, *rtype,
+		    *del_islev, *dy2, *dx2, *dy1, *dx1,
+		    *in_islev,  *iy2, *ix2, *iy1, *ix1;
 
 		lev_region *tmplregion;
 
-		if (!get_opvar_dat(&stack, &rname, SPOVAR_STRING) ||
-		    !get_opvar_dat(&stack, &padding, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &rtype, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &del_islev, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &dy2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &dx2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &dy1, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &dx1, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &in_islev, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &iy2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &ix2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &iy1, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &ix1, SPOVAR_INT)) break;
+		if (!OV_pop_s(rname) ||
+		    !OV_pop_i(padding) ||
+		    !OV_pop_i(rtype) ||
+		    !OV_pop_i(del_islev) ||
+		    !OV_pop_i(dy2) ||
+		    !OV_pop_i(dx2) ||
+		    !OV_pop_i(dy1) ||
+		    !OV_pop_i(dx1) ||
+		    !OV_pop_i(in_islev) ||
+		    !OV_pop_i(iy2) ||
+		    !OV_pop_i(ix2) ||
+		    !OV_pop_i(iy1) ||
+		    !OV_pop_i(ix1)) break;
 
 		tmplregion = (lev_region *)alloc(sizeof(lev_region));
 
-		tmplregion->inarea.x1 = ix1.vardata.l;
-		tmplregion->inarea.y1 = iy1.vardata.l;
-		tmplregion->inarea.x2 = ix2.vardata.l;
-		tmplregion->inarea.y2 = iy2.vardata.l;
+		tmplregion->inarea.x1 = OV_i(ix1);
+		tmplregion->inarea.y1 = OV_i(iy1);
+		tmplregion->inarea.x2 = OV_i(ix2);
+		tmplregion->inarea.y2 = OV_i(iy2);
 
-		tmplregion->delarea.x1 = dx1.vardata.l;
-		tmplregion->delarea.y1 = dy1.vardata.l;
-		tmplregion->delarea.x2 = dx2.vardata.l;
-		tmplregion->delarea.y2 = dy2.vardata.l;
+		tmplregion->delarea.x1 = OV_i(dx1);
+		tmplregion->delarea.y1 = OV_i(dy1);
+		tmplregion->delarea.x2 = OV_i(dx2);
+		tmplregion->delarea.y2 = OV_i(dy2);
 
-		tmplregion->in_islev = in_islev.vardata.l;
-		tmplregion->del_islev = del_islev.vardata.l;
-		tmplregion->rtype = rtype.vardata.l;
-		tmplregion->padding = padding.vardata.l;
-		tmplregion->rname.str = rname.vardata.str;
+		tmplregion->in_islev = OV_i(in_islev);
+		tmplregion->del_islev = OV_i(del_islev);
+		tmplregion->rtype = OV_i(rtype);
+		tmplregion->padding = OV_i(padding);
+		tmplregion->rname.str = strdup(OV_s(rname));
 
 		if(!tmplregion->in_islev) {
 		    get_location(&tmplregion->inarea.x1, &tmplregion->inarea.y1,
@@ -3602,37 +3803,54 @@ sp_lev *lvl;
 		    lregions = (lev_region *) alloc(sizeof(lev_region));
 		}
 		(void) memcpy(&lregions[num_lregions-1], tmplregion, sizeof(lev_region));
+
+		opvar_free(dx1);
+		opvar_free(dy1);
+		opvar_free(dx2);
+		opvar_free(dy2);
+
+		opvar_free(ix1);
+		opvar_free(iy1);
+		opvar_free(ix2);
+		opvar_free(iy2);
+
+		opvar_free(del_islev);
+		opvar_free(in_islev);
+		opvar_free(rname);
+		opvar_free(rtype);
+		opvar_free(padding);
+
 	    }
 	    break;
 	case SPO_REGION:
            {
-               struct opvar rtype, rlit, rirreg, y2,x2,y1,x1;
+               struct opvar *rtype, *rlit, *rirreg, *y2,*x2,*y1,*x1;
                xchar dx1,dy1,dx2,dy2;
                register struct mkroom *troom;
                boolean prefilled, room_not_needed;
 
-               if (!get_opvar_dat(&stack, &rirreg, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &rtype, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &rlit, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &y2, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &x2, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &y1, SPOVAR_INT) ||
-                  !get_opvar_dat(&stack, &x1, SPOVAR_INT)) break;
+               if (!OV_pop_i(rirreg) ||
+                  !OV_pop_i(rtype) ||
+                  !OV_pop_i(rlit) ||
+                  !OV_pop_i(y2) ||
+                  !OV_pop_i(x2) ||
+                  !OV_pop_i(y1) ||
+                  !OV_pop_i(x1)) break;
 
-              if(rtype.vardata.l > MAXRTYPE) {
-                 rtype.vardata.l -= MAXRTYPE+1;
+	       if(OV_i(rtype) > MAXRTYPE) {
+		   OV_i(rtype) -= MAXRTYPE+1;
                  prefilled = TRUE;
               } else
                 prefilled = FALSE;
 
-              if(rlit.vardata.l < 0)
-		  rlit.vardata.l = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77))
+	       if(OV_i(rlit) < 0)
+		   OV_i(rlit) = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77))
 		      ? TRUE : FALSE;
 
-              dx1 = x1.vardata.l;
-              dy1 = y1.vardata.l;
-              dx2 = x2.vardata.l;
-              dy2 = y2.vardata.l;
+	       dx1 = OV_i(x1);
+	       dy1 = OV_i(y1);
+	       dx2 = OV_i(x2);
+	       dy2 = OV_i(y2);
 
               get_location(&dx1, &dy1, DRY|WET, (struct mkroom *)0);
               get_location(&dx2, &dy2, DRY|WET, (struct mkroom *)0);
@@ -3640,13 +3858,13 @@ sp_lev *lvl;
               /* for an ordinary room, `prefilled' is a flag to force
                an actual room to be created (such rooms are used to
                control placement of migrating monster arrivals) */
-              room_not_needed = (rtype.vardata.l == OROOM &&
-                                 !rirreg.vardata.l && !prefilled);
+              room_not_needed = (OV_i(rtype) == OROOM &&
+                                 !OV_i(rirreg) && !prefilled);
               if (room_not_needed || nroom >= MAXNROFROOMS) {
 		  region tmpregion;
                  if (!room_not_needed)
                    impossible("Too many rooms on new level!");
-		 tmpregion.rlit = rlit.vardata.l;
+		 tmpregion.rlit = OV_i(rlit);
 		 tmpregion.x1 = dx1;
 		 tmpregion.y1 = dy1;
 		 tmpregion.x2 = dx2;
@@ -3658,121 +3876,134 @@ sp_lev *lvl;
               troom = &rooms[nroom];
 
               /* mark rooms that must be filled, but do it later */
-              if (rtype.vardata.l != OROOM)
+              if (OV_i(rtype) != OROOM)
                 troom->needfill = (prefilled ? 2 : 1);
 
-              if(rirreg.vardata.l) {
+              if (OV_i(rirreg)) {
                  min_rx = max_rx = dx1;
                  min_ry = max_ry = dy1;
                  flood_fill_rm(dx1, dy1, nroom+ROOMOFFSET,
-                               rlit.vardata.l, TRUE);
+                               OV_i(rlit), TRUE);
                  add_room(min_rx, min_ry, max_rx, max_ry,
-                          FALSE, rtype.vardata.l, TRUE);
-                 troom->rlit = rlit.vardata.l;
+                          FALSE, OV_i(rtype), TRUE);
+                 troom->rlit = OV_i(rlit);
                  troom->irregular = TRUE;
               } else {
                  add_room(dx1, dy1, dx2, dy2,
-                          rlit.vardata.l, rtype.vardata.l, TRUE);
+                          OV_i(rlit), OV_i(rtype), TRUE);
 #ifdef SPECIALIZATION
                   topologize(troom,FALSE);              /* set roomno */
 #else
                   topologize(troom);                    /* set roomno */
 #endif
               }
+
+	      opvar_free(x1);
+	      opvar_free(y1);
+	      opvar_free(x2);
+	      opvar_free(y2);
+	      opvar_free(rirreg);
+	      opvar_free(rlit);
+	      opvar_free(rtype);
            }
 	   break;
 	case SPO_RANDOM_OBJECTS:
 	    {
-               struct opvar robj;
-	       if (!get_opvar_dat(&stack, &robj, SPOVAR_STRING)) break;
-	       n_robj = strlen(robj.vardata.str);
+               struct opvar *robj;
+	       if (!OV_pop_s(robj)) break;
+	       n_robj = strlen(OV_s(robj));
 	       if ((n_robj <= 0) || (n_robj > MAX_REGISTERS)) {
 		   impossible("sp_level_coder: rnd_objs idx out-of-bounds");
 		   break;
 	       } else
-		   (void) memcpy(robjects, robj.vardata.str, n_robj);
-	       free(robj.vardata.str);
+		   (void) memcpy(robjects, OV_s(robj), n_robj);
+	       opvar_free(robj);
 	    }
 	    sp_lev_shuffle(robjects, (char *)0, n_robj);
 	    break;
 	case SPO_RANDOM_PLACES:
 	    {
-               struct opvar places;
+               struct opvar *places;
                int tmpidx;
 
-               if (!get_opvar_dat(&stack, &places, SPOVAR_STRING)) break;
-	       if (strlen(places.vardata.str) % 2) impossible("sp_level_codes: rnd_places?");
-	       n_rloc = (strlen(places.vardata.str) / 2);
+               if (!OV_pop_s(places)) break;
+	       if (strlen(OV_s(places)) % 2) impossible("sp_level_codes: rnd_places?");
+	       n_rloc = (strlen(OV_s(places)) / 2);
 	       if ((n_rloc <= 0) || (n_rloc > 2*MAX_REGISTERS)) {
 		   impossible("sp_level_coder: rnd_places idx out-of-bounds");
 		   break;
 	       } else {
 		   for (tmpidx = 0; tmpidx < n_rloc; tmpidx++) {
-		       rloc_x[tmpidx] = (places.vardata.str[tmpidx*2] - 1);
-		       rloc_y[tmpidx] = (places.vardata.str[tmpidx*2+1] - 1);
+		       rloc_x[tmpidx] = (places->vardata.str[tmpidx*2] - 1);
+		       rloc_y[tmpidx] = (places->vardata.str[tmpidx*2+1] - 1);
 		   }
 	       }
-	       free(places.vardata.str);
+	       opvar_free(places);
 	    }
 	    sp_lev_shuffle(rloc_x, rloc_y, n_rloc);
 	    break;
 	case SPO_RANDOM_MONSTERS:
 	    {
-		struct opvar rmon;
+		struct opvar *rmon;
 
-		if (!get_opvar_dat(&stack, &rmon, SPOVAR_STRING)) break;
+		if (!OV_pop_s(rmon)) break;
 
-		n_rmon = strlen(rmon.vardata.str);
+		n_rmon = strlen(OV_s(rmon));
 		if ((n_rmon <= 0) || (n_rmon > MAX_REGISTERS)) {
 		    impossible("sp_level_coder: rnd_mons idx out-of-bounds");
 		    break;
 		} else
-		    (void) memcpy(rmonst, rmon.vardata.str, n_rmon);
-		free(rmon.vardata.str);
+		    (void) memcpy(rmonst, OV_s(rmon), n_rmon);
+		opvar_free(rmon);
 	    }
 	    sp_lev_shuffle(rmonst, (char *)0, n_rmon);
 	    break;
 	case SPO_DRAWBRIDGE:
 	    {
 		xchar x,y;
-		struct opvar dir, db_open, fy, fx;
+		struct opvar *dir, *db_open, *fy, *fx;
 
-		if (!get_opvar_dat(&stack, &dir, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &db_open, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+		if (!OV_pop_i(dir) ||
+		    !OV_pop_i(db_open) ||
+		    !OV_pop_i(fy) ||
+		    !OV_pop_i(fx)) break;
 
-		x = fx.vardata.l;
-		y = fy.vardata.l;
+		x = OV_i(fx);
+		y = OV_i(fy);
 		get_location(&x, &y, DRY|WET, croom);
-		if (!create_drawbridge(x, y, dir.vardata.l, db_open.vardata.l))
+		if (!create_drawbridge(x, y, OV_i(dir), OV_i(db_open)))
 		    impossible("Cannot create drawbridge.");
 		SpLev_Map[x][y] = 1;
+
+		opvar_free(fx);
+		opvar_free(fy);
+		opvar_free(db_open);
+		opvar_free(dir);
 	    }
 	    break;
 	case SPO_MAZEWALK:
 	    {
                xchar x,y;
-               struct opvar ftyp, fstocked,fdir, fy, fx;
+               struct opvar *ftyp, *fstocked,*fdir, *fy, *fx;
                int dir;
 
-               if (!get_opvar_dat(&stack, &ftyp, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &fstocked, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &fdir, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &fy, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &fx, SPOVAR_INT)) break;
+               if (!OV_pop_i(ftyp) ||
+                   !OV_pop_i(fstocked) ||
+                   !OV_pop_i(fdir) ||
+                   !OV_pop_i(fy) ||
+                   !OV_pop_i(fx)) break;
 
-              dir = fdir.vardata.l;
-              x = fx.vardata.l;
-              y = fy.vardata.l;
+	       dir = OV_i(fdir);
+	       x = OV_i(fx);
+	       y = OV_i(fy);
 
               get_location(&x, &y, DRY|WET, croom);
 
-	      if (ftyp.vardata.l < 1) {
+	      if (OV_i(ftyp) < 1) {
 #ifndef WALLIFIED_MAZE
-		  ftyp.vardata.l = CORR;
+		  OV_i(ftyp) = CORR;
 #else
-		  ftyp.vardata.l = ROOM;
+		  OV_i(ftyp) = ROOM;
 #endif
 	      }
 
@@ -3788,8 +4019,8 @@ sp_lev *lvl;
               }
 
               if(!IS_DOOR(levl[x][y].typ)) {
-                 levl[x][y].typ = ftyp.vardata.l;
-                 levl[x][y].flags = 0;
+		  levl[x][y].typ = OV_i(ftyp);
+		  levl[x][y].flags = 0;
               }
 
               /*
@@ -3804,7 +4035,7 @@ sp_lev *lvl;
                    x--;
 
                  /* no need for IS_DOOR check; out of map bounds */
-                 levl[x][y].typ = ftyp.vardata.l;
+                 levl[x][y].typ = OV_i(ftyp);
                  levl[x][y].flags = 0;
               }
 
@@ -3815,220 +4046,253 @@ sp_lev *lvl;
                    y--;
               }
 
-              walkfrom(x, y, ftyp.vardata.l);
-              if (fstocked.vardata.l) fill_empty_maze();
+              walkfrom(x, y, OV_i(ftyp));
+              if (OV_i(fstocked)) fill_empty_maze();
+
+	      opvar_free(fx);
+	      opvar_free(fy);
+	      opvar_free(fdir);
+	      opvar_free(fstocked);
+	      opvar_free(ftyp);
 	    }
 	    break;
 	case SPO_NON_PASSWALL:
 	case SPO_NON_DIGGABLE:
            {
-               struct opvar x1,y1,x2,y2;
+               struct opvar *x1,*y1,*x2,*y2;
                xchar dx1,dy1,dx2,dy2;
                int wprop = (opcode == SPO_NON_DIGGABLE) ? W_NONDIGGABLE : W_NONPASSWALL;
 
-               if (!get_opvar_dat(&stack, &y2, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &x2, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &y1, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &x1, SPOVAR_INT)) break;
+               if (!OV_pop_i(y2) ||
+                   !OV_pop_i(x2) ||
+                   !OV_pop_i(y1) ||
+                   !OV_pop_i(x1)) break;
 
-	       dx1 = x1.vardata.l;
-	       dy1 = y1.vardata.l;
-	       dx2 = x2.vardata.l;
-	       dy2 = y2.vardata.l;
+	       dx1 = OV_i(x1);
+	       dy1 = OV_i(y1);
+	       dx2 = OV_i(x2);
+	       dy2 = OV_i(y2);
 
 	       get_location(&dx1, &dy1, DRY|WET, (struct mkroom *)0);
 	       get_location(&dx2, &dy2, DRY|WET, (struct mkroom *)0);
 
 	       set_wall_property(dx1, dy1, dx2, dy2, wprop);
+
+	       opvar_free(x1);
+	       opvar_free(y1);
+	       opvar_free(x2);
+	       opvar_free(y2);
            }
 	    break;
 	case SPO_ROOM_DOOR:
 	    {
-               struct opvar wall, secret, mask, pos;
+               struct opvar *wall, *secret, *mask, *pos;
 	       room_door tmpd;
 
-               if (!get_opvar_dat(&stack, &wall, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &secret, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &mask, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &pos, SPOVAR_INT) ||
+               if (!OV_pop_i(wall) ||
+                   !OV_pop_i(secret) ||
+                   !OV_pop_i(mask) ||
+                   !OV_pop_i(pos) ||
                    !croom) break;
 
-	       tmpd.secret = secret.vardata.l;
-	       tmpd.mask = mask.vardata.l;
-	       tmpd.pos = pos.vardata.l;
-	       tmpd.wall = wall.vardata.l;
+	       tmpd.secret = OV_i(secret);
+	       tmpd.mask = OV_i(mask);
+	       tmpd.pos = OV_i(pos);
+	       tmpd.wall = OV_i(wall);
 
 	       create_door(&tmpd, croom);
+
+	       opvar_free(wall);
+	       opvar_free(secret);
+	       opvar_free(mask);
+	       opvar_free(pos);
 	    }
 	    break;
 	case SPO_WALLIFY:
 	    {
-		struct opvar x1,y1,x2,y2;
+		struct opvar *x1,*y1,*x2,*y2;
 		int dx1,dy1,dx2,dy2;
-		if (!get_opvar_dat(&stack, &y2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x2, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &y1, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &x1, SPOVAR_INT)) break;
-		dx1 = (x1.vardata.l < 0) ? xstart : x1.vardata.l;
-		dy1 = (y1.vardata.l < 0) ? ystart : y1.vardata.l;
-		dx2 = (x2.vardata.l < 0) ? xstart+xsize : x2.vardata.l;
-		dy2 = (y2.vardata.l < 0) ? ystart+ysize : y2.vardata.l;
+		if (!OV_pop_i(y2) ||
+		    !OV_pop_i(x2) ||
+		    !OV_pop_i(y1) ||
+		    !OV_pop_i(x1)) break;
+		dx1 = (OV_i(x1) < 0) ? xstart : OV_i(x1);
+		dy1 = (OV_i(y1) < 0) ? ystart : OV_i(y1);
+		dx2 = (OV_i(x2) < 0) ? xstart+xsize : OV_i(x2);
+		dy2 = (OV_i(y2) < 0) ? ystart+ysize : OV_i(y2);
 		wallify_map(dx1, dy1, dx2, dy2);
+		opvar_free(x1);
+		opvar_free(y1);
+		opvar_free(x2);
+		opvar_free(y2);
 	    }
 	    break;
 	case SPO_COPY:
 	    {
-		struct opvar a = splev_stack_pop(&stack);
-		splev_stack_push(&stack, a);
-		splev_stack_push(&stack, a);
+		struct opvar *a = splev_stack_pop(stack);
+		splev_stack_push(stack, opvar_clone(a));
+		splev_stack_push(stack, opvar_clone(a));
+		opvar_free(a);
 	    }
 	    break;
 	case SPO_DEC:
 	    {
-		struct opvar a;
-		if (!get_opvar_dat(&stack, &a, SPOVAR_INT)) break;
-		a.vardata.l--;
-		splev_stack_push(&stack, a);
+		struct opvar *a;
+		if (!OV_pop_i(a)) break;
+		OV_i(a)--;
+		splev_stack_push(stack, a);
 	    }
 	    break;
         case SPO_CMP:
 	    {
-		struct opvar a = splev_stack_pop(&stack);
-		struct opvar b = splev_stack_pop(&stack);
-		struct opvar c;
+		struct opvar *a = splev_stack_pop(stack);
+		struct opvar *b = splev_stack_pop(stack);
+		struct opvar *c;
 
-		if (a.spovartyp != b.spovartyp) {
+		if (OV_typ(a) != OV_typ(b)) {
 		    impossible("spo_cmp: trying to compare differing datatypes");
 		    break;
 		}
 
-		c.spovartyp = SPOVAR_INT;
-
-		switch (a.spovartyp) {
+		switch (OV_typ(a)) {
 		case SPOVAR_INT:
-		    c.vardata.l = (b.vardata.l - a.vardata.l);
+		    c = opvar_new_int((OV_i(b) - OV_i(a)));
 		    break;
 		case SPOVAR_STRING:
-		    c.vardata.l = (long) strcmp(b.vardata.str, a.vardata.str);
+		    c = opvar_new_int(strcmp(OV_s(b), OV_s(a)));
 		    break;
 		default:
-		    c.vardata.l = 0;
+		    c = opvar_new_int(0);
 		    break;
 		}
-		splev_stack_push(&stack, c);
+		splev_stack_push(stack, c);
+		opvar_free(a);
+		opvar_free(b);
 	    }
 	    break;
         case SPO_JMP:
 	    {
-		struct opvar tmpa;
+		struct opvar *tmpa;
 		long a;
-		if (!get_opvar_dat(&stack, &tmpa, SPOVAR_INT)) break;
-		a = (tmpa.vardata.l-1);
+		if (!OV_pop_i(tmpa)) break;
+		a = (OV_i(tmpa) - 1);
 		if ((a >= 0) && (a < lvl->init_lev.n_opcodes) &&
-		    (a != n_opcode))
-		    n_opcode = a;
+		    (a != frame->n_opcode))
+		    frame->n_opcode = a;
+		opvar_free(tmpa);
 	    }
 	    break;
         case SPO_JL:
            {
-               struct opvar oa, oc;
+               struct opvar *oa, *oc;
                long a,c;
-               if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
+               if (!OV_pop_i(oa) ||
+                   !OV_pop_i(oc)) break;
 
-	       a = (oa.vardata.l-1);
-	       c = oc.vardata.l;
+	       a = (OV_i(oa) - 1);
+	       c = OV_i(oc);
 	       if ((c < 0) && (a >= 0) &&
 		   (a < lvl->init_lev.n_opcodes) &&
-		   (a != n_opcode))
-		   n_opcode = a;
+		   (a != frame->n_opcode))
+		   frame->n_opcode = a;
+
+	       opvar_free(oa);
+	       opvar_free(oc);
            }
 	   break;
         case SPO_JG:
            {
-	       struct opvar oa,oc;
+	       struct opvar *oa,*oc;
 	       long a,c;
-               if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
-	       a = (oa.vardata.l-1);
-              c = oc.vardata.l;
+               if (!OV_pop_i(oa) ||
+                   !OV_pop_i(oc)) break;
+	       a = (OV_i(oa) - 1);
+	       c = OV_i(oc);
               if ((c > 0) && (a >= 0) &&
                   (a < lvl->init_lev.n_opcodes) &&
-                  (a != n_opcode))
-                n_opcode = a;
+                  (a != frame->n_opcode))
+                frame->n_opcode = a;
+	      opvar_free(oa);
+	      opvar_free(oc);
            }
 	   break;
         case SPO_JGE:
            {
-	       struct opvar oa,oc;
+	       struct opvar *oa,*oc;
 	       long a,c;
-               if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
-	       a = (oa.vardata.l-1);
-              c = oc.vardata.l;
+               if (!OV_pop_i(oa) ||
+                   !OV_pop_i(oc)) break;
+	       a = (OV_i(oa) - 1);
+	       c = OV_i(oc);
               if ((c >= 0) && (a >= 0) &&
                   (a < lvl->init_lev.n_opcodes) &&
-                  (a != n_opcode))
-                n_opcode = a;
+                  (a != frame->n_opcode))
+		  frame->n_opcode = a;
+	      opvar_free(oa);
+	      opvar_free(oc);
            }
 	   break;
         case SPO_JE:
            {
-	       struct opvar oa,oc;
+	       struct opvar *oa,*oc;
 	       long a,c;
-               if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
-	       a = (oa.vardata.l-1);
-              c = oc.vardata.l;
+               if (!OV_pop_i(oa) ||
+                   !OV_pop_i(oc)) break;
+	       a = (OV_i(oa) - 1);
+	       c = OV_i(oc);
               if ((c == 0) && (a >= 0) &&
                   (a < lvl->init_lev.n_opcodes) &&
-                  (a != n_opcode))
-                n_opcode = a;
+                  (a != frame->n_opcode))
+		  frame->n_opcode = a;
+	      opvar_free(oa);
+	      opvar_free(oc);
            }
 	   break;
         case SPO_JNE:
            {
-	       struct opvar oa,oc;
+	       struct opvar *oa,*oc;
 	       long a,c;
-               if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
-                   !get_opvar_dat(&stack, &oc, SPOVAR_INT)) break;
-	       a = (oa.vardata.l-1);
-              c = oc.vardata.l;
+               if (!OV_pop_i(oa) ||
+                   !OV_pop_i(oc)) break;
+	       a = (OV_i(oa) - 1);
+	       c = OV_i(oc);
               if ((c != 0) && (a >= 0) &&
                   (a < lvl->init_lev.n_opcodes) &&
-                  (a != n_opcode))
-                n_opcode = a;
+                  (a != frame->n_opcode))
+		  frame->n_opcode = a;
+	      opvar_free(oa);
+	      opvar_free(oc);
            }
 	   break;
 	case SPO_RN2:
 	    {
-		struct opvar tmpv;
-		struct opvar t;
-		if (!get_opvar_dat(&stack, &tmpv, SPOVAR_INT)) break;
-		t.spovartyp = tmpv.spovartyp;
-		t.vardata.l = (tmpv.vardata.l > 0) ? rn2(tmpv.vardata.l) : 0;
-		splev_stack_push(&stack, t);
+		struct opvar *tmpv;
+		struct opvar *t;
+		if (!OV_pop_i(tmpv)) break;
+		t = opvar_new_int((OV_i(tmpv) > 0) ? rn2(OV_i(tmpv)) : 0);
+		splev_stack_push(stack, t);
+		opvar_free(tmpv);
 	    }
          break;
 	case SPO_MAP:
 	    {
 		mazepart tmpmazepart;
-		struct opvar mpxs, mpys, mpmap, mpva, mpha, mpkeepr, mpzalign;
+		struct opvar *mpxs, *mpys, *mpmap, *mpva, *mpha, *mpkeepr, *mpzalign;
 		xchar halign, valign;
 
-		if (!get_opvar_dat(&stack, &mpxs, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &mpys, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &mpmap, SPOVAR_STRING) ||
-		    !get_opvar_dat(&stack, &mpva, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &mpha, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &mpkeepr, SPOVAR_INT) ||
-		    !get_opvar_dat(&stack, &mpzalign, SPOVAR_INT)) break;
+		if (!OV_pop_i(mpxs) ||
+		    !OV_pop_i(mpys) ||
+		    !OV_pop_s(mpmap) ||
+		    !OV_pop_i(mpva) ||
+		    !OV_pop_i(mpha) ||
+		    !OV_pop_i(mpkeepr) ||
+		    !OV_pop_i(mpzalign)) break;
 
-		tmpmazepart.xsize = mpxs.vardata.l;
-		tmpmazepart.ysize = mpys.vardata.l;
-		tmpmazepart.zaligntyp = mpzalign.vardata.l;
-		tmpmazepart.halign = mpha.vardata.l;
-		tmpmazepart.valign = mpva.vardata.l;
+		tmpmazepart.xsize = OV_i(mpxs);
+		tmpmazepart.ysize = OV_i(mpys);
+		tmpmazepart.zaligntyp = OV_i(mpzalign);
+		tmpmazepart.halign = OV_i(mpha);
+		tmpmazepart.valign = OV_i(mpva);
 
 		tmpxsize = xsize; tmpysize = ysize;
 		tmpxstart = xstart; tmpystart = ystart;
@@ -4079,7 +4343,7 @@ sp_lev *lvl;
 		    /* Load the map */
 		    for(y = ystart; y < ystart+ysize; y++)
 			for(x = xstart; x < xstart+xsize; x++) {
-			    xchar mptyp = (mpmap.vardata.str[(y-ystart) * xsize + (x-xstart)] - 1);
+			    xchar mptyp = (mpmap->vardata.str[(y-ystart) * xsize + (x-xstart)] - 1);
 			    if (mptyp >= MAX_TYPE) continue;
 			    levl[x][y].typ = mptyp;
 			    levl[x][y].lit = FALSE;
@@ -4114,11 +4378,19 @@ sp_lev *lvl;
 		    if (lvl->init_lev.joined)
 			remove_rooms(xstart, ystart, xstart+xsize, ystart+ysize);
 		}
-		if (!mpkeepr.vardata.l) {
+		if (!OV_i(mpkeepr)) {
 		    /* FIXME: should use a stack for this stuff... */
 		    xstart = tmpxstart; ystart = tmpystart;
 		    xsize = tmpxsize; ysize = tmpysize;
 		}
+
+		opvar_free(mpxs);
+		opvar_free(mpys);
+		opvar_free(mpmap);
+		opvar_free(mpva);
+		opvar_free(mpha);
+		opvar_free(mpkeepr);
+		opvar_free(mpzalign);
 	    }
 	    break;
 	default:
@@ -4126,7 +4398,7 @@ sp_lev *lvl;
 	}
 
 next_opcode:
-	n_opcode++;
+	frame->n_opcode++;
     } /*while*/
 
     /* now that we have rooms _and_ associated doors, fill the rooms */
@@ -4160,12 +4432,14 @@ next_opcode:
 
     if (premapped) sokoban_detect();
 
-    if (stack.depth) {
-	impossible("sp_level_coder: stack has unused data left.");
-	splev_stack_dump(&stack);
+    if (frame) {
+	struct sp_frame *tmpframe;
+	do {
+	    tmpframe = frame->next;
+	    frame_del(frame);
+	    frame = tmpframe;
+	} while (frame);
     }
-
-    splev_stack_done(&stack);
 
     return TRUE;
 }

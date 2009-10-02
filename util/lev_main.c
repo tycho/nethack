@@ -797,7 +797,14 @@ sp_lev *maze;
 	    "dec",
 	    "copy",
 	    "je",
-	    "jne"
+	    "jne",
+	    "mon_generation",
+	    "end_moninvent",
+	    "grave",
+	    "frame_push",
+	    "frame_pop",
+	    "call",
+	    "return"
 	};
 
 	/* don't bother with the header stuff */
