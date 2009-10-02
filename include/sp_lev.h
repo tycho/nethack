@@ -106,8 +106,12 @@
 #define SPO_MON_GENERATION	48
 #define SPO_END_MONINVENT	49
 #define SPO_GRAVE		50
+#define SPO_FRAME_PUSH		51
+#define SPO_FRAME_POP		52
+#define SPO_CALL		53
+#define SPO_RETURN		54
 
-#define MAX_SP_OPCODES		51
+#define MAX_SP_OPCODES		55
 
 
 /* MONSTER and OBJECT can take a variable number of parameters,
@@ -177,8 +181,17 @@ struct opvar {
 struct splevstack {
     long depth;
     long depth_alloc;
-    struct opvar *stackdata;
+    struct opvar **stackdata;
 };
+
+
+struct sp_frame {
+    struct sp_frame *next;
+    struct splevstack *stack;
+    long n_opcode;
+};
+
+
 
 
 /* special level coder CPU flags */
@@ -357,8 +370,8 @@ typedef struct {
 } corridor;
 
 typedef struct {
-	int opcode;
-	genericptr_t opdat;
+    int opcode;
+    struct opvar *opdat;
 } _opcode;
 
 typedef struct {
@@ -370,5 +383,12 @@ typedef struct {
 	xchar x, y, direction, count, lit;
 	char typ;
 } spill;
+
+
+struct lc_funcdefs {
+    struct lc_funcdefs *next;
+    char *name;
+    long addr;
+};
 
 #endif /* SP_LEV_H */

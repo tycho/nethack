@@ -102,6 +102,10 @@ static struct opvar *switch_break_list[MAX_SWITCH_BREAKS];
 int n_switch_break_list = 0;
 
 
+
+static struct lc_funcdefs *function_definitions = NULL;
+
+
 extern int fatal_error;
 extern const char *fname;
 
@@ -142,8 +146,10 @@ extern const char *fname;
 %token	<i> PARALYZED_ID STUNNED_ID CONFUSED_ID SEENTRAPS_ID ALL_ID
 %token	<i> MON_GENERATION_ID
 %token	<i> GRAVE_ID
+%token	<i> FUNCTION_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
+%token	<map> NQSTRING
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> door_wall walled secret amount chance
@@ -305,6 +311,8 @@ levstatement 	: message
 		| loopstatement
 		| ifstatement
 		| exitstatement
+		| function_define
+		| function_call
 		| init_reg
 		| ladder_detail
 		| map_definition
@@ -330,6 +338,59 @@ levstatement 	: message
 		| teleprt_region
 		| trap_detail
 		| wallify_detail
+		;
+
+function_define	: FUNCTION_ID NQSTRING '(' ')'
+		  {
+		      struct opvar *jmp = New(struct opvar);
+		      struct lc_funcdefs *tmpfunc = New(struct lc_funcdefs);
+		      struct lc_funcdefs *iterf;
+		      int already_defined = 0;
+		      set_opvar_int(jmp, -1);
+		      if_list[n_if_list++] = jmp;
+		      add_opcode(&splev, SPO_PUSH, jmp);
+		      add_opcode(&splev, SPO_JMP, NULL);
+
+		      iterf = function_definitions;
+		      while (iterf) {
+			  if (!strcmp((char *)$3, iterf->name)) {
+			      yyerror("Function already defined once.");
+			      break;
+			  }
+			  iterf = iterf->next;
+		      }
+
+		      tmpfunc->next = function_definitions;
+		      tmpfunc->addr = splev.init_lev.n_opcodes;
+		      tmpfunc->name = $2;
+		      function_definitions = tmpfunc;
+		  }
+		'{' levstatements '}'
+		  {
+		      struct opvar *jmp = if_list[--n_if_list];
+		      add_opvars(&splev, "io", 0, SPO_RETURN);
+		      set_opvar_int(jmp, splev.init_lev.n_opcodes);
+		  }
+		;
+
+function_call	: NQSTRING '(' ')'
+		  {
+		      struct lc_funcdefs *tmpfunc = function_definitions;
+		      int found = 0;
+
+		      while (tmpfunc) {
+			  if (!strcmp($1, tmpfunc->name)) {
+			      found = 1;
+			      break;
+			  }
+			  tmpfunc = tmpfunc->next;
+		      }
+		      if (found) {
+			  add_opvars(&splev, "iio", 0, tmpfunc->addr, SPO_CALL);
+		      } else {
+			  yyerror("No such function defined.");
+		      }
+		  }
 		;
 
 exitstatement	: EXIT_ID
