@@ -2622,12 +2622,11 @@ sp_lev *lvl;
     char n;
     int size, opcode;
 
-    /* Read the level initialization data */
-    Fread((genericptr_t) &lvl->init_lev, 1, sizeof(lev_init), fd);
+    Fread((genericptr_t)&(lvl->n_opcodes), 1, sizeof(lvl->n_opcodes), fd);
 
-    lvl->opcodes = (_opcode *)alloc(sizeof(_opcode) * (lvl->init_lev.n_opcodes));
+    lvl->opcodes = (_opcode *)alloc(sizeof(_opcode) * (lvl->n_opcodes));
 
-    while (n_opcode < lvl->init_lev.n_opcodes) {
+    while (n_opcode < lvl->n_opcodes) {
 
 	Fread((genericptr_t) &lvl->opcodes[n_opcode].opcode, 1,
 	      sizeof(lvl->opcodes[n_opcode].opcode), fd);
@@ -2681,7 +2680,7 @@ sp_lev *lvl;
 {
     long n_opcode = 0;
 
-    while (n_opcode < lvl->init_lev.n_opcodes) {
+    while (n_opcode < lvl->n_opcodes) {
 	int opcode = lvl->opcodes[n_opcode].opcode;
 	struct opvar *opdat = lvl->opcodes[n_opcode].opdat;
 
@@ -2762,6 +2761,7 @@ sp_lev *lvl;
     int  tmpidx;
     int  cpu_flags = 0;
     char *tmpstr;
+    int  lvl_is_joined = 0;
 
     xchar   x, y, typ;
     boolean prefilled, room_not_needed;
@@ -2799,26 +2799,12 @@ sp_lev *lvl;
 
     level.flags.is_maze_lev = 0;
 
-    splev_initlev(&(lvl->init_lev));
     xstart = 1;
     ystart = 0;
     xsize = COLNO-1;
     ysize = ROWNO;
 
-    if (lvl->init_lev.flags & NOTELEPORT)   level.flags.noteleport = 1;
-    if (lvl->init_lev.flags & HARDFLOOR)    level.flags.hardfloor = 1;
-    if (lvl->init_lev.flags & NOMMAP)       level.flags.nommap = 1;
-    if (lvl->init_lev.flags & SHORTSIGHTED) level.flags.shortsighted = 1;
-    if (lvl->init_lev.flags & ARBOREAL)     level.flags.arboreal = 1;
-    if (lvl->init_lev.flags & NOFLIPX)      allow_flips &= ~1;
-    if (lvl->init_lev.flags & NOFLIPY)      allow_flips &= ~2;
-    if (lvl->init_lev.flags & MAZELEVEL)    level.flags.is_maze_lev = 1;
-    if (lvl->init_lev.flags & PREMAPPED)    premapped = TRUE;
-    if (lvl->init_lev.flags & SHROUD)       level.flags.hero_memory = 0;
-    if (lvl->init_lev.flags & STORMY)       level.flags.stormy = 1;
-    if (lvl->init_lev.flags & GRAVEYARD)    level.flags.graveyard = 1;
-
-    while (frame->n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
+    while (frame->n_opcode < lvl->n_opcodes && !exit_script) {
 	int opcode = lvl->opcodes[frame->n_opcode].opcode;
 	struct opvar *opdat = lvl->opcodes[frame->n_opcode].opdat;
 
@@ -3214,6 +3200,67 @@ sp_lev *lvl;
 		opvar_free(y);
 		opvar_free(class);
 		opvar_free(containment);
+	    }
+	    break;
+	case SPO_LEVEL_FLAGS:
+	    {
+		struct opvar *flagdata;
+		long flags;
+
+		if (!OV_pop_i(flagdata)) break;
+		flags = OV_i(flagdata);
+
+		if (flags & NOTELEPORT)   level.flags.noteleport = 1;
+		if (flags & HARDFLOOR)    level.flags.hardfloor = 1;
+		if (flags & NOMMAP)       level.flags.nommap = 1;
+		if (flags & SHORTSIGHTED) level.flags.shortsighted = 1;
+		if (flags & ARBOREAL)     level.flags.arboreal = 1;
+		if (flags & NOFLIPX)      allow_flips &= ~1;
+		if (flags & NOFLIPY)      allow_flips &= ~2;
+		if (flags & MAZELEVEL)    level.flags.is_maze_lev = 1;
+		if (flags & PREMAPPED)    premapped = TRUE;
+		if (flags & SHROUD)       level.flags.hero_memory = 0;
+		if (flags & STORMY)       level.flags.stormy = 1;
+		if (flags & GRAVEYARD)    level.flags.graveyard = 1;
+
+		opvar_free(flagdata);
+	    }
+	    break;
+	case SPO_INITLEVEL:
+	    {
+		lev_init init_lev;
+		struct opvar *init_style, *fg, *bg, *smoothed, *joined, *lit, *walled, *filling;
+
+		if (!OV_pop_i(fg) ||
+		    !OV_pop_i(bg) ||
+		    !OV_pop_i(smoothed) ||
+		    !OV_pop_i(joined) ||
+		    !OV_pop_i(lit) ||
+		    !OV_pop_i(walled) ||
+		    !OV_pop_i(filling) ||
+		    !OV_pop_i(init_style)) break;
+
+		init_lev.init_style = OV_i(init_style);
+		init_lev.fg = OV_i(fg);
+		init_lev.bg = OV_i(bg);
+		init_lev.smoothed = OV_i(smoothed);
+		init_lev.joined = OV_i(joined);
+		init_lev.lit = OV_i(lit);
+		init_lev.walled = OV_i(walled);
+		init_lev.filling = OV_i(filling);
+
+		lvl_is_joined = OV_i(joined);
+
+		splev_initlev(&init_lev);
+
+		opvar_free(init_style);
+		opvar_free(fg);
+		opvar_free(bg);
+		opvar_free(smoothed);
+		opvar_free(joined);
+		opvar_free(lit);
+		opvar_free(walled);
+		opvar_free(filling);
 	    }
 	    break;
 	case SPO_MON_GENERATION:
@@ -4176,7 +4223,7 @@ sp_lev *lvl;
 		long a;
 		if (!OV_pop_i(tmpa)) break;
 		a = (OV_i(tmpa) - 1);
-		if ((a >= 0) && (a < lvl->init_lev.n_opcodes) &&
+		if ((a >= 0) && (a < lvl->n_opcodes) &&
 		    (a != frame->n_opcode))
 		    frame->n_opcode = a;
 		opvar_free(tmpa);
@@ -4192,7 +4239,7 @@ sp_lev *lvl;
 	       a = (OV_i(oa) - 1);
 	       c = OV_i(oc);
 	       if ((c < 0) && (a >= 0) &&
-		   (a < lvl->init_lev.n_opcodes) &&
+		   (a < lvl->n_opcodes) &&
 		   (a != frame->n_opcode))
 		   frame->n_opcode = a;
 
@@ -4209,7 +4256,7 @@ sp_lev *lvl;
 	       a = (OV_i(oa) - 1);
 	       c = OV_i(oc);
               if ((c > 0) && (a >= 0) &&
-                  (a < lvl->init_lev.n_opcodes) &&
+                  (a < lvl->n_opcodes) &&
                   (a != frame->n_opcode))
                 frame->n_opcode = a;
 	      opvar_free(oa);
@@ -4225,7 +4272,7 @@ sp_lev *lvl;
 	       a = (OV_i(oa) - 1);
 	       c = OV_i(oc);
               if ((c >= 0) && (a >= 0) &&
-                  (a < lvl->init_lev.n_opcodes) &&
+                  (a < lvl->n_opcodes) &&
                   (a != frame->n_opcode))
 		  frame->n_opcode = a;
 	      opvar_free(oa);
@@ -4241,7 +4288,7 @@ sp_lev *lvl;
 	       a = (OV_i(oa) - 1);
 	       c = OV_i(oc);
               if ((c == 0) && (a >= 0) &&
-                  (a < lvl->init_lev.n_opcodes) &&
+                  (a < lvl->n_opcodes) &&
                   (a != frame->n_opcode))
 		  frame->n_opcode = a;
 	      opvar_free(oa);
@@ -4257,7 +4304,7 @@ sp_lev *lvl;
 	       a = (OV_i(oa) - 1);
 	       c = OV_i(oc);
               if ((c != 0) && (a >= 0) &&
-                  (a < lvl->init_lev.n_opcodes) &&
+                  (a < lvl->n_opcodes) &&
                   (a != frame->n_opcode))
 		  frame->n_opcode = a;
 	      opvar_free(oa);
@@ -4375,7 +4422,7 @@ sp_lev *lvl;
 			    else if(levl[x][y].typ == CROSSWALL)
 				has_bounds = TRUE;
 			}
-		    if (lvl->init_lev.joined)
+		    if (lvl_is_joined)
 			remove_rooms(xstart, ystart, xstart+xsize, ystart+ysize);
 		}
 		if (!OV_i(mpkeepr)) {
