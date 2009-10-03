@@ -2910,7 +2910,6 @@ sp_lev *lvl;
 	       if (lev_message)
 		   (void) memcpy((genericptr_t)levmsg, (genericptr_t)lev_message, old_n-1);
 	       (void) memcpy((genericptr_t)&levmsg[old_n], msg, n);
-	       Free(msg);
 	       levmsg[old_n+n] = '\0';
 	       Free(lev_message);
 	       lev_message = levmsg;
