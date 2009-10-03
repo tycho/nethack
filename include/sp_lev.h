@@ -194,7 +194,21 @@ struct sp_frame {
 };
 
 
+struct sp_coder {
+    struct splevstack *stack;
+    struct sp_frame *frame;
+    int allow_flips;
+    int premapped;
+    struct mkroom *croom;
+    struct mkroom *tmproomlist[MAX_NESTED_ROOMS+1];
+    boolean failed_room[MAX_NESTED_ROOMS+1];
+    int n_subroom;
+    boolean exit_script;
+    int  lvl_is_joined;
 
+    int opcode;  /* current opcode */
+    struct opvar *opdat; /* current push data (req. opcode == SPO_PUSH) */
+};
 
 /* special level coder CPU flags */
 #define SP_CPUFLAG_LT	1
