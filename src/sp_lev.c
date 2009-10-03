@@ -3564,7 +3564,7 @@ spo_feature(coder)
     case SPO_POOL:     typ = POOL;     break;
     } 
  
-    create_feature(OV_i(fx), OV_i(fy), coder->croom, FOUNTAIN);
+    create_feature(OV_i(fx), OV_i(fy), coder->croom, typ);
     opvar_free(fx);
     opvar_free(fy);
 }
