@@ -2874,7 +2874,7 @@ spo_message(coder)
     char *msg, *levmsg;
     int old_n, n;
     if (!OV_pop_s(op)) return;
-    msg = OV_s(op);
+    msg = string_subst(OV_s(op));
     if (!msg) return;
 
     old_n = lev_message ? (strlen(lev_message)+1) : 0;
