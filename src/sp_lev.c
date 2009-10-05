@@ -4385,6 +4385,7 @@ spo_conditional_jump(coder,lvl)
     switch (coder->opcode) {
     default: impossible("spo_conditional_jump: illegal opcode"); break;
     case SPO_JL:  test = (c < 0); break;
+    case SPO_JLE: test = (c <= 0); break;
     case SPO_JG:  test = (c > 0); break;
     case SPO_JGE: test = (c >= 0); break;
     case SPO_JE:  test = (c == 0); break;
@@ -4558,6 +4559,7 @@ sp_lev *lvl;
         case SPO_JMP:
 	    spo_jmp(coder, lvl); break;
         case SPO_JL:
+        case SPO_JLE:
         case SPO_JG:
         case SPO_JGE:
         case SPO_JE:
