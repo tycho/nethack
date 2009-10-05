@@ -477,6 +477,18 @@ boolean ignore_oquan;
 		}
 		break;
 	    }
+	case FURNITURE_CLASS:
+		if (!obj->dknown)
+			Strcat(buf, dn ? dn : actualn);
+		else if (nn)
+			Strcat(buf, actualn);
+		else if (un) {
+			Strcat(buf, dn ? dn : actualn);
+			Strcat(buf, " called ");
+			Strcat(buf, un);
+		} else
+			Strcat(buf, dn ? dn : actualn);
+		break;
 	default:
 		Sprintf(buf,"glorkum %d %d %d", obj->oclass, typ, obj->spe);
 	}
@@ -2359,12 +2371,6 @@ srch:
 				levl[u.ux][u.uy].blessedftn = 1;
 			pline("A %sfountain.",
 			      levl[u.ux][u.uy].blessedftn ? "magic " : "");
-			newsym(u.ux, u.uy);
-			return(&zeroobj);
-		}
-		if(!BSTRCMP(bp, p-6, "throne")) {
-			levl[u.ux][u.uy].typ = THRONE;
-			pline("A throne.");
 			newsym(u.ux, u.uy);
 			return(&zeroobj);
 		}

@@ -1634,7 +1634,7 @@ lootcont:
 		goldob = splitobj(goldob, contribution);
 	    freeinv(goldob);
 #endif
-	    if (IS_THRONE(levl[u.ux][u.uy].typ)){
+	    if (sobj_at(FUR_THRONE,u.ux,u.uy)){
 		struct obj *coffers;
 		int pass;
 		/* find the original coffers chest, or any chest */

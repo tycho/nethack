@@ -243,7 +243,7 @@ struct mkroom *sroom;
 		if(level.flags.is_maze_lev) {
 		    for(tx = sroom->lx; tx <= sroom->hx; tx++)
 			for(ty = sroom->ly; ty <= sroom->hy; ty++)
-			    if(IS_THRONE(levl[tx][ty].typ))
+			    if(sobj_at(FUR_THRONE,tx,ty))
 				goto throne_placed;
 		}
 		i = 100;
@@ -287,7 +287,7 @@ struct mkroom *sroom;
 			    (sy == sroom->hy && doors[sh].y == sy+1))))
 		    continue;
 		/* don't place monster on explicitly placed throne */
-		if(type == COURT && IS_THRONE(levl[sx][sy].typ))
+		if(type == COURT && sobj_at(FUR_THRONE,sx,sy))
 		    continue;
 		mon = makemon(
 		    (type == COURT) ? courtmon() :
@@ -363,7 +363,7 @@ struct mkroom *sroom;
 	      case COURT:
 		{
 		  struct obj *chest;
-		  levl[tx][ty].typ = THRONE;
+		  mksobj_at(FUR_THRONE, tx,ty, TRUE, FALSE);
 		  (void) somexy(sroom, &mm);
 		  (void) mkgold((long) rn1(50 * level_difficulty(),10), mm.x, mm.y);
 		  /* the royal coffers */

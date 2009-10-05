@@ -578,7 +578,9 @@ char c;
 		  case 'S'  : return(SDOOR);
 		  case 'H'  : return(SCORR);
 		  case '{'  : return(FOUNTAIN);
-		  case '\\' : return(THRONE);
+		  case '\\' :
+		      yywarning("Use OBJECT:'\\',\"throne\",(x,y) instead of \\ mapchar.");
+			return(ROOM);
 		  case 'K'  :
 #ifdef SINKS
 		      return(SINK);
