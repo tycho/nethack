@@ -60,7 +60,7 @@ dosit()
 	    goto in_water;
 	}
 
-	if(OBJ_AT(u.ux, u.uy)) {
+	if(OBJ_AT(u.ux, u.uy) && (objects[level.objects[u.ux][u.uy]->otyp].oc_class != FURNITURE_CLASS)) {
 	    register struct obj *obj;
 
 	    obj = level.objects[u.ux][u.uy];
@@ -156,9 +156,9 @@ dosit()
 
 	    You(sit_message, "drawbridge");
 
-	} else if(IS_THRONE(typ)) {
+	} else if(sobj_at(FUR_THRONE, u.ux,u.uy)) {
 
-	    You(sit_message, defsyms[S_throne].explanation);
+	    You(sit_message, OBJ_NAME(objects[FUR_THRONE]));
 	    if (rnd(6) > 4)  {
 		switch (rnd(13))  {
 		    case 1:
@@ -267,9 +267,11 @@ dosit()
 		    You_feel("somehow out of place...");
 	    }
 
-	    if (!rn2(3) && IS_THRONE(levl[u.ux][u.uy].typ)) {
+	    if (!rn2(3) && sobj_at(FUR_THRONE,u.ux,u.uy)) {
 		/* may have teleported */
-		levl[u.ux][u.uy].typ = ROOM;
+		struct obj *tmpobj = sobj_at(FUR_THRONE, u.ux, u.uy);
+		obj_extract_self(tmpobj);
+		dealloc_obj(tmpobj);
 		pline_The("throne vanishes in a puff of logic.");
 		newsym(u.ux,u.uy);
 	    }

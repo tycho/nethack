@@ -43,7 +43,8 @@ const char def_oc_syms[MAXOCLASSES] = {
 	ROCK_SYM,
 /*15*/	BALL_SYM,
 	CHAIN_SYM,
-	VENOM_SYM
+	VENOM_SYM,
+	FURNITURE_SYM
 };
 
 const char invisexplain[] = "remembered, unseen, creature";
@@ -67,7 +68,8 @@ const char * const objexplain[] = {	/* these match def_oc_syms, above */
 	"boulder or statue",
 /*15*/	"iron ball",
 	"iron chain",
-	"splash of venom"
+	"splash of venom",
+	"piece of furniture"
 };
 
 /* Object class names.  Used in object_detect(). */
@@ -89,7 +91,8 @@ const char * const oclass_names[] = {
 	"large stones",
 /*15*/	"iron balls",
 	"chains",
-	"venoms"
+	"venoms",
+	"furniture"
 };
 
 /* Default monster class symbols.  See monsym.h. */
@@ -232,7 +235,6 @@ const struct symdef defsyms[MAXPCHARS] = {
 	{'>', "ladder down",	C(CLR_BROWN)},	/* dnladder */
 	{'_', "altar",		C(CLR_GRAY)},	/* altar */
 	{'|', "grave",      C(CLR_GRAY)},   /* grave */
-	{'\\', "opulent throne",C(HI_GOLD)},	/* throne */
 #ifdef SINKS
 	{'#', "sink",		C(CLR_GRAY)},	/* sink */
 #else
@@ -346,7 +348,6 @@ static uchar ibm_graphics[MAXPCHARS] = {
 	g_FILLER(S_dnladder),
 	g_FILLER(S_altar),
 	g_FILLER(S_grave),
-	g_FILLER(S_throne),
 	g_FILLER(S_sink),
 /*30*/	0xf4,	/* S_fountain:	meta-t, integral top half */
 	0xf7,	/* S_pool:	meta-w, approx. equals */
@@ -448,7 +449,6 @@ static uchar dec_graphics[MAXPCHARS] = {
 	0xfa,	/* S_dnladder:	meta-z, less-than-or-equals */
 	g_FILLER(S_altar),	/* 0xc3, \E)3: meta-C, dagger */
 	g_FILLER(S_grave),
-	g_FILLER(S_throne),
 	g_FILLER(S_sink),
 /*30*/	g_FILLER(S_fountain),	/* 0xdb, \E)3: meta-[, integral top half */
 	0xe0,	/* S_pool:	meta-\, diamond */
@@ -548,7 +548,6 @@ static uchar mac_graphics[MAXPCHARS] = {
 	g_FILLER(S_dnladder),
 	g_FILLER(S_altar),
 	0xef,	/* S_grave:	same as open door */
-	g_FILLER(S_throne),
 	g_FILLER(S_sink),
 /*30*/	g_FILLER(S_fountain),
 	0xe0,	/* S_pool */
@@ -738,7 +737,8 @@ static const uchar r_oc_syms[MAXOCLASSES] = {
 	ROCK_SYM,
 /*15*/	BALL_SYM,
 	CHAIN_SYM,
-	VENOM_SYM
+	VENOM_SYM,
+	FURNITURE_SYM
 };
 
 # ifdef ASCIIGRAPH
@@ -781,7 +781,8 @@ static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 	ROCK_SYM,
 /*15*/	BALL_SYM,
 	CHAIN_SYM,
-	VENOM_SYM
+	VENOM_SYM,
+	FURNITURE_SYM
 };
 # endif /* ASCIIGRAPH */
 

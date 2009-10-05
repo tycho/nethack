@@ -1015,6 +1015,19 @@ OBJECT(OBJ("acid venom", "splash of venom"),
 		VENOM_CLASS,  500, 0,	 1,  0,  6,  6, 0, 0,	 0, HI_ORGANIC),
 		/* +d6 small or large */
 
+
+#define FURN(name,desc,wt,material,chr,color) OBJECT(	\
+	    OBJ(name,desc), \
+	    BITS(0,1,0,0,0,0,0,1,1,0,0,0,material), 0, \
+	    FURNITURE_CLASS, 0, 0, wt, 0, 3, 3, chr, 0, 0, color )
+	/* oc_oc1 == map symbol */
+	FURN("throne", (char *)0, 5000, MINERAL, '\\', CLR_YELLOW),
+	FURN("gravestone", (char *)0, 3500, MINERAL, '|', CLR_GRAY),
+#ifdef SINKS
+	FURN("kitchen sink", (char *)0, 1000, METAL, '#', CLR_GRAY),
+#endif
+#undef FURN
+
 /* fencepost, the deadly Array Terminator -- name [1st arg] *must* be NULL */
 	OBJECT(OBJ((char *)0,(char *)0), BITS(0,0,0,0,0,0,0,0,0,0,0,P_NONE,0), 0,
 		ILLOBJ_CLASS, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)

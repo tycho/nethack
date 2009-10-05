@@ -1768,6 +1768,8 @@ do_objs()
 		    else if (*c < 'A' || *c > 'Z') *c = '_';
 
 		switch (class) {
+		    case FURNITURE_CLASS:
+			Fprintf(ofp,"#define\tFUR_"); prefix = 1; break;
 		    case WAND_CLASS:
 			Fprintf(ofp,"#define\tWAN_"); prefix = 1; break;
 		    case RING_CLASS:

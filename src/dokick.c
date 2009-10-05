@@ -17,7 +17,7 @@ extern boolean notonhead;	/* for long worms */
 STATIC_DCL void FDECL(kickdmg, (struct monst *, BOOLEAN_P));
 STATIC_DCL void FDECL(kick_monster, (XCHAR_P, XCHAR_P));
 STATIC_DCL int FDECL(kick_object, (XCHAR_P, XCHAR_P));
-STATIC_DCL char *FDECL(kickstr, (char *));
+STATIC_DCL char *FDECL(kickstr, (int,int,char *));
 STATIC_DCL void FDECL(otransit_msg, (struct obj *, BOOLEAN_P, long));
 STATIC_DCL void FDECL(drop_to, (coord *,SCHAR_P));
 
@@ -624,7 +624,8 @@ xchar x, y;
 }
 
 STATIC_OVL char *
-kickstr(buf)
+kickstr(x,y,buf)
+int x,y;
 char *buf;
 {
 	const char *what;
@@ -634,7 +635,7 @@ char *buf;
 	else if (IS_TREE(maploc->typ)) what = christmas() ? "a christmas tree" : "a tree";
 	else if (IS_STWALL(maploc->typ)) what = "a wall";
 	else if (IS_ROCK(maploc->typ)) what = "a rock";
-	else if (IS_THRONE(maploc->typ)) what = "a throne";
+	else if (sobj_at(FUR_THRONE, x,y)) what = "a throne";
 	else if (IS_FOUNTAIN(maploc->typ)) what = "a fountain";
 	else if (IS_GRAVE(maploc->typ)) what = "a headstone";
 #ifdef SINKS
@@ -807,6 +808,7 @@ dokick()
 
 	kickobj = (struct obj *)0;
 	if (OBJ_AT(x, y) &&
+	    (objects[level.objects[x][y]->otyp].oc_class != FURNITURE_CLASS) &&
 	    (!Levitation || Is_airlevel(&u.uz) || Is_waterlevel(&u.uz)
 	     || sobj_at(BOULDER,x,y))) {
 		if(kick_object(x, y)) {
@@ -856,12 +858,14 @@ dokick()
 			return(1);
 		    } else goto ouch;
 		}
-		if(IS_THRONE(maploc->typ)) {
+		if(sobj_at(FUR_THRONE,x,y)) {
 		    register int i;
+		    struct obj *tmpobj = sobj_at(FUR_THRONE, x,y);
 		    if(Levitation) goto dumb;
-		    if((Luck < 0 || maploc->doormask) && !rn2(3)) {
-			maploc->typ = ROOM;
-			maploc->doormask = 0; /* don't leave loose ends.. */
+		    if((Luck < 0) && !rn2(3)) {
+			obj_extract_self(tmpobj);
+			dealloc_obj(tmpobj);
+			tmpobj = NULL;
 			(void) mkgold((long)rnd(200), x, y);
 			if (Blind)
 			    pline("CRASH!  You destroy it.");
@@ -871,7 +875,7 @@ dokick()
 			}
 			exercise(A_DEX, TRUE);
 			return(1);
-		    } else if(Luck > 0 && !rn2(3) && !maploc->looted) {
+		    } else if(Luck > 0 && !rn2(3) && !tmpobj->obroken) {
 			(void) mkgold((long) rn1(201, 300), x, y);
 			i = Luck + 1;
 			if(i > 6) i = 6;
@@ -885,7 +889,7 @@ dokick()
 			    newsym(x, y);
 			}
 			/* prevent endless milking */
-			maploc->looted = T_LOOTED;
+			tmpobj->obroken = 1;
 			return(1);
 		    } else if (!rn2(4)) {
 			if(dunlev(&u.uz) < dunlevs_in_dungeon(&u.uz)) {
@@ -1058,7 +1062,7 @@ ouch:
 			maploc = &levl[x][y];
 		    }
 		    if(!rn2(3)) set_wounded_legs(RIGHT_SIDE, 5 + rnd(5));
-		    losehp(rnd(ACURR(A_CON) > 15 ? 3 : 5), kickstr(buf),
+		    losehp(rnd(ACURR(A_CON) > 15 ? 3 : 5), kickstr(x,y,buf),
 			KILLED_BY);
 		    if(Is_airlevel(&u.uz) || Levitation)
 			hurtle(-u.dx, -u.dy, rn1(2,4), TRUE); /* assume it's heavy */

@@ -267,10 +267,6 @@ int force;
 			if (cansee(x,y))
 				pline_The("headstone topples into a chasm.");
 			goto do_pit;
-		  case THRONE :
-			if (cansee(x,y))
-				pline_The("throne falls into a chasm.");
-			/* Falls into next case */
 		  case ROOM :
 		  case CORR : /* Try to make a pit */
 do_pit:		    chasm = maketrap(x,y,PIT);
@@ -280,6 +276,12 @@ do_pit:		    chasm = maketrap(x,y,PIT);
 		    levl[x][y].doormask = 0;
 
 		    mtmp = m_at(x,y);
+
+		    if (cansee(x,y)) {
+			if (sobj_at(FUR_THRONE, x, y))
+			    pline_The("throne falls into a chasm.");
+		    }
+			/* Falls into next case */
 
 		    if ((otmp = sobj_at(BOULDER, x, y)) != 0) {
 			if (cansee(x, y))

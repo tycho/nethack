@@ -173,9 +173,6 @@ dig_check(madeby, verbose, x, y)
 		if(verbose) pline_The("ladder resists your effort.");
 	    } else if(verbose) pline_The("stairs are too hard to %s.", verb);
 	    return(FALSE);
-	} else if (IS_THRONE(levl[x][y].typ) && madeby != BY_OBJECT) {
-	    if(verbose) pline_The("throne is too hard to break apart.");
-	    return(FALSE);
 	} else if (IS_ALTAR(levl[x][y].typ) && (madeby != BY_OBJECT ||
 				Is_astralevel(&u.uz) || Is_sanctum(&u.uz))) {
 	    if(verbose) pline_The("altar is too hard to break apart.");
@@ -744,9 +741,7 @@ boolean pit_only;
 		}
 		return TRUE;
 
-	/* the following two are here for the wand of digging */
-	} else if (IS_THRONE(lev->typ)) {
-		pline_The("throne is too hard to break apart.");
+	/* the following is here for the wand of digging */
 
 	} else if (IS_ALTAR(lev->typ)) {
 		pline_The("altar is too hard to break apart.");

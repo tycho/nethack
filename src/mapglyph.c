@@ -132,7 +132,9 @@ unsigned *ospecial;
 #endif
 	    cmap_color(offset);
     } else if ((offset = (glyph - GLYPH_OBJ_OFF)) >= 0) {	/* object */
-	if (offset == BOULDER && iflags.bouldersym) ch = iflags.bouldersym;
+	if (objects[offset].oc_class == FURNITURE_CLASS) {
+	    ch = objects[offset].oc_oc1;
+	} else if (offset == BOULDER && iflags.bouldersym) ch = iflags.bouldersym;
 	else ch = oc_syms[(int)objects[offset].oc_class];
 #ifdef ROGUE_COLOR
 	if (HAS_ROGUE_IBM_GRAPHICS && iflags.use_color) {

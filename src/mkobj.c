@@ -644,6 +644,8 @@ boolean artif;
 		break;
 	case COIN_CLASS:
 		break;	/* do nothing */
+	case FURNITURE_CLASS:
+		break;	/* do nothing */
 	default:
 		impossible("impossible mkobj %d, sym '%c'.", otmp->otyp,
 						objects[otmp->otyp].oc_class);
