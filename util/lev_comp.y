@@ -1939,34 +1939,37 @@ altar_type	: ALTAR_TYPE
 
 p_register	: P_REGISTER '[' INTEGER ']'
 		  {
-		        if (on_plist == 0)
+		      if (!in_function_definition) {
+			  if (on_plist == 0)
 		                yyerror("No random places defined!");
-			else if ( $3 >= on_plist )
+			  else if ( $3 >= on_plist )
 				yyerror("Register Index overflow!");
-			else
-				current_coord.x = current_coord.y = - $3 - 1;
+		      }
+		      current_coord.x = current_coord.y = - $3 - 1;
 		  }
 		;
 
 o_register	: O_REGISTER '[' INTEGER ']'
 		  {
-		        if (on_olist == 0)
+		      if (!in_function_definition) {
+			  if (on_olist == 0)
 		                yyerror("No random objects defined!");
-			else if ( $3 >= on_olist )
+			  else if ( $3 >= on_olist )
 				yyerror("Register Index overflow!");
-			else
-				$<i>$ = - $3 - 1;
+		      }
+		      $<i>$ = - $3 - 1;
 		  }
 		;
 
 m_register	: M_REGISTER '[' INTEGER ']'
 		  {
-		        if (on_mlist == 0)
+		      if (!in_function_definition) {
+			  if (on_mlist == 0)
 		                yyerror("No random monsters defined!");
-			if ( $3 >= on_mlist )
+			  if ( $3 >= on_mlist )
 				yyerror("Register Index overflow!");
-			else
-				$<i>$ = - $3 - 1;
+		      }
+		      $<i>$ = - $3 - 1;
 		  }
 		;
 
