@@ -175,7 +175,14 @@ extern const char *fname;
 
 %%
 file		: /* nothing */
-		| levels
+		| header_stmts levels
+		;
+
+header_stmts	: /* nothing */
+		| header_stmt header_stmts
+		;
+
+header_stmt	: function_define
 		;
 
 levels		: level
@@ -202,12 +209,17 @@ level		: level_def flags lev_init levstatements
 
 level_def	: LEVEL_ID ':' string
 		  {
+		      struct lc_funcdefs *f;
 			if (index($3, '.'))
 			    yyerror("Invalid dot ('.') in level name.");
 			if ((int) strlen($3) > 8)
 			    yyerror("Level names limited to 8 characters.");
 			n_plist = n_mlist = n_olist = 0;
-			funcdef_free_all(function_definitions); function_definitions = NULL;
+			f = function_definitions;
+			while (f) {
+			    f->n_called = 0;
+			    f = f->next;
+			}
 			splev = (sp_lev *)alloc(sizeof(sp_lev));
 			splev->n_opcodes = 0;
 			splev->opcodes = NULL;
