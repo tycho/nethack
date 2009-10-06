@@ -432,15 +432,53 @@ funcdef_defined(f, name, casesense)
     return NULL;
 }
 
+/* basically copied from src/sp_lev.c */
+struct opvar *
+opvar_clone(ov)
+     struct opvar *ov;
+{
+    if (ov) {
+	struct opvar *tmpov = (struct opvar *)alloc(sizeof(struct opvar));
+	if (!tmpov) panic("could not alloc opvar struct");
+	switch (ov->spovartyp) {
+	case SPOVAR_INT:
+	    {
+		tmpov->spovartyp = ov->spovartyp;
+		tmpov->vardata.l = ov->vardata.l;
+	    }
+	    break;
+	case SPOVAR_STRING:
+	    {
+		int len = strlen(ov->vardata.str);
+		tmpov->spovartyp = ov->spovartyp;
+		tmpov->vardata.str = (char *)alloc(len+1);
+		(void)memcpy((genericptr_t)tmpov->vardata.str,
+			     (genericptr_t)ov->vardata.str, len);
+		tmpov->vardata.str[len] = '\0';
+	    }
+	    break;
+	default:
+	    {
+		char buf[BUFSZ];
+		sprintf(buf, "Unknown push value type (%i)!", ov->spovartyp);
+		yyerror(buf);
+	    }
+	}
+	return tmpov;
+    }
+    return NULL;
+}
+
+
 void
 splev_add_from(splev, from_splev)
      sp_lev *splev;
      sp_lev *from_splev;
 {
     int i;
-    for (i = 0; i < from_splev->n_opcodes; i++) {
-	add_opcode(splev, from_splev->opcodes[i].opcode, from_splev->opcodes[i].opdat);
-    }
+    if (splev && from_splev)
+	for (i = 0; i < from_splev->n_opcodes; i++)
+	    add_opcode(splev, from_splev->opcodes[i].opcode, opvar_clone(from_splev->opcodes[i].opdat));
 }
 
 
