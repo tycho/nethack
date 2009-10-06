@@ -2799,6 +2799,13 @@ spo_frame_pop(coder)
     }
 }
 
+long
+sp_code_jmpaddr(curpos, jmpaddr)
+     long curpos, jmpaddr;
+{
+    return (curpos + jmpaddr);
+}
+
 void
 spo_call(coder)
      struct sp_coder *coder;
@@ -2811,7 +2818,7 @@ spo_call(coder)
     if (OV_i(params) < 0) return;
 
     /* push a frame */
-    tmpframe = frame_new(OV_i(addr)-1);
+    tmpframe = frame_new(sp_code_jmpaddr(coder->frame->n_opcode, OV_i(addr)-1));
     tmpframe->next = coder->frame;
     coder->frame = tmpframe;
 
@@ -4356,7 +4363,7 @@ spo_jmp(coder, lvl)
     struct opvar *tmpa;
     long a;
     if (!OV_pop_i(tmpa)) return;
-    a = (OV_i(tmpa) - 1);
+    a = sp_code_jmpaddr(coder->frame->n_opcode, (OV_i(tmpa) - 1));
     if ((a >= 0) && (a < lvl->n_opcodes) &&
 	(a != coder->frame->n_opcode))
 	coder->frame->n_opcode = a;
@@ -4373,7 +4380,7 @@ spo_conditional_jump(coder,lvl)
     int test;
     if (!OV_pop_i(oa) || !OV_pop_i(oc)) return;
 
-    a = (OV_i(oa) - 1);
+    a = sp_code_jmpaddr(coder->frame->n_opcode, (OV_i(oa) - 1));
     c = OV_i(oc);
 
     switch (coder->opcode) {

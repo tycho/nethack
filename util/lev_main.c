@@ -93,6 +93,8 @@ struct lc_funcdefs *FDECL(funcdef_new,(long,char *));
 void FDECL(funcdef_free_all,(struct lc_funcdefs *));
 struct lc_funcdefs *FDECL(funcdef_defined,(struct lc_funcdefs *,char *, int));
 
+void FDECL(splev_add_from, (sp_lev *, sp_lev *));
+
 extern void NDECL(monst_init);
 extern void NDECL(objects_init);
 extern void NDECL(decl_init);
@@ -392,6 +394,9 @@ funcdef_new(addr, name)
     f->next = NULL;
     f->addr = addr;
     f->name = name;
+    f->n_called = 0;
+    f->code.opcodes = NULL;
+    f->code.n_opcodes = 0;
     return f;
 }
 
@@ -404,6 +409,7 @@ funcdef_free_all(fchain)
     while (tmp) {
 	nxt = tmp->next;
 	Free(tmp->name);
+	/* FIXME: free tmp->code */
 	Free(tmp);
 	tmp = nxt;
     }
@@ -426,6 +432,16 @@ funcdef_defined(f, name, casesense)
     return NULL;
 }
 
+void
+splev_add_from(splev, from_splev)
+     sp_lev *splev;
+     sp_lev *from_splev;
+{
+    int i;
+    for (i = 0; i < from_splev->n_opcodes; i++) {
+	add_opcode(splev, from_splev->opcodes[i].opcode, from_splev->opcodes[i].opdat);
+    }
+}
 
 
 /*
@@ -840,8 +856,11 @@ sp_lev *maze;
 	    "cmp",
 	    "jmp",
 	    "jl",
+	    "jle",
 	    "jg",
 	    "jge",
+	    "je",
+	    "jne",
 	    "spill",
 	    "terrain",
 	    "replaceterrain",
@@ -854,8 +873,6 @@ sp_lev *maze;
 	    "rn2",
 	    "dec",
 	    "copy",
-	    "je",
-	    "jne",
 	    "mon_generation",
 	    "end_moninvent",
 	    "grave",
@@ -864,7 +881,8 @@ sp_lev *maze;
 	    "call",
 	    "return",
 	    "init_map",
-	    "flags"
+	    "flags",
+	    "sounds"
 	};
 
 	/* don't bother with the header stuff */
