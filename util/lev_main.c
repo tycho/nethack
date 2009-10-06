@@ -302,15 +302,6 @@ const char *s;
 				fname, colon_line_number, s);
 }
 
-/*
- * Stub needed for lex interface.
- */
-int
-yywrap()
-{
-	return 1;
-}
-
 struct opvar *
 set_opvar_int(ov, val)
 struct opvar *ov;
