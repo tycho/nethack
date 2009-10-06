@@ -14,7 +14,7 @@
 # MAKE = make
 
 # make NetHack
-PREFIX	 = /usr
+PREFIX	 = /home/paxed/hacking/coding/nethacksource/sporkhack
 GAME     = nethack
 # GAME     = nethack.prg
 GAMEUID  = games
@@ -64,8 +64,8 @@ VARDAT = $(VARDATD) $(VARDATND)
 # other permission-related reasons.  If that happens, you may want to set the
 # command to "true", which is a no-op. Note that disabling chown or chgrp
 # will only work if setuid (or setgid) behavior is not desired or required.
-CHOWN = chown
-CHGRP = chgrp
+CHOWN = true
+CHGRP = true
 
 #
 # end of configuration
