@@ -1,0 +1,21 @@
+
+FUNCTION soko_loot()
+{
+  # Random objects
+  OBJECT:'%',random,random
+  OBJECT:'%',random,random
+  OBJECT:'%',random,random
+  OBJECT:'%',random,random
+  OBJECT:'=',random,random
+  OBJECT:'/',random,random
+}
+
+FUNCTION soko_prize()
+{
+  IF [50%] {
+    OBJECT:'"',"amulet of reflection",place[0]
+  } ELSE {
+    OBJECT:'(',"bag of holding",place[0]
+  }
+  ENGRAVING:place[0],burn,"Elbereth"
+}

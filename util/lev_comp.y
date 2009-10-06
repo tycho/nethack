@@ -44,6 +44,8 @@ extern void FDECL(yyerror, (const char *));
 extern void FDECL(yywarning, (const char *));
 extern int NDECL(yylex);
 int NDECL(yyparse);
+ extern void FDECL(include_push, (const char *));
+extern int NDECL(include_pop);
 
 extern int FDECL(get_floor_type, (CHAR_P));
 extern int FDECL(get_room_type, (char *));
@@ -112,8 +114,8 @@ static struct lc_funcdefs *function_definitions = NULL;
 int in_function_definition = 0;
 sp_lev *function_splev_backup = NULL;
 
-
 extern int fatal_error;
+extern int line_number;
 extern const char *fname;
 
 %}
@@ -154,6 +156,7 @@ extern const char *fname;
 %token	<i> MON_GENERATION_ID
 %token	<i> GRAVE_ID
 %token	<i> FUNCTION_ID
+%token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
@@ -174,7 +177,7 @@ extern const char *fname;
 %start	file
 
 %%
-file		: /* nothing */
+file		: header_stmts
 		| header_stmts levels
 		;
 
@@ -183,6 +186,15 @@ header_stmts	: /* nothing */
 		;
 
 header_stmt	: function_define
+		| include_def
+		;
+
+
+include_def	: INCLUDE_ID STRING
+		  {
+		      include_push( $2 );
+		      Free($2);
+		  }
 		;
 
 levels		: level
