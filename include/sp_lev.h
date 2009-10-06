@@ -405,6 +405,8 @@ struct lc_funcdefs {
     struct lc_funcdefs *next;
     char *name;
     long addr;
+    sp_lev code;
+    long n_called;
 };
 
 #endif /* SP_LEV_H */
