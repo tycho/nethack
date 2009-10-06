@@ -3303,12 +3303,8 @@ spo_level_sounds(coder)
     mg->n_sounds = OV_i(n_tuples);
     mg->sounds = (struct lvl_sound_bite *)alloc(sizeof(struct lvl_sound_bite) * mg->n_sounds);
 
-    pline("freq=%i, n_sounds=%i", mg->freq, mg->n_sounds);
-
     while (OV_i(n_tuples)-- > 0) {
 	struct opvar *flags, *msg;
-
-	pline("sndbite %i", OV_i(n_tuples));
 
 	if (!OV_pop_s(msg) || !OV_pop_i(flags)) {
 	    panic("oopsie when loading lvl_sound_bite.");
@@ -3316,8 +3312,6 @@ spo_level_sounds(coder)
 
 	mg->sounds[OV_i(n_tuples)].flags = OV_i(flags);
 	mg->sounds[OV_i(n_tuples)].msg = strdup(OV_s(msg));
-
-	pline("(%i,\"%s\")", OV_i(flags), OV_s(msg));
 
 	opvar_free(flags);
 	opvar_free(msg);
