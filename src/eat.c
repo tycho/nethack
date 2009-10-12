@@ -692,7 +692,7 @@ register struct permonst *ptr;
 		debugpline("Trying to give fire resistance");
 #endif
 		if((HFire_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
-			You(Hallucination ? "be chillin'." : "feel a momentary chill.");
+			You(Hallucination ? "be chillin'." : "feel slightly more chill.");
 			incr_resistance(&HFire_resistance,percentincrease);
 		}
 		break;
@@ -701,7 +701,7 @@ register struct permonst *ptr;
 		debugpline("Trying to give sleep resistance");
 #endif
 		if((HSleep_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
-			You_feel("wide awake.");
+			You_feel("a bit perkier.");
 			incr_resistance(&HSleep_resistance,percentincrease);
 		}
 		break;
@@ -710,7 +710,7 @@ register struct permonst *ptr;
 		debugpline("Trying to give cold resistance");
 #endif
 		if((HCold_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
-			You_feel("full of hot air.");
+			You_feel("a little bit warmer.");
 			incr_resistance(&HCold_resistance,percentincrease);
 		}
 		break;
@@ -719,7 +719,7 @@ register struct permonst *ptr;
 		debugpline("Trying to give disintegration resistance");
 #endif
 		if((HDisint_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
-			You_feel(Hallucination ? "totally together, man." : "very firm.");
+			You_feel(Hallucination ? "totally together, man." : "a touch more firm.");
 			incr_resistance(&HDisint_resistance,percentincrease);
 		}
 		break;
@@ -731,7 +731,7 @@ register struct permonst *ptr;
 			if (Hallucination)
 				You_feel("grounded in reality.");
 			else
-				Your("health currently feels amplified!");
+				Your("health is slightly more amplified!");
 			incr_resistance(&HShock_resistance,percentincrease);
 		}
 		break;
@@ -740,7 +740,7 @@ register struct permonst *ptr;
 		debugpline("Trying to give poison resistance");
 #endif
 		if((HPoison_resistance & (TIMEOUT|FROMRACE|FROMEXPER)) < 100) {
-			You_feel(how_resistant(POISON_RES) == 100 ? "especially healthy." : "healthy.");
+			You_feel(how_resistant(POISON_RES) == 100 ? "noticeably healthier." : "healthier.");
 			incr_resistance(&HPoison_resistance,percentincrease);
 		}
 		break;
