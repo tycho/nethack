@@ -294,6 +294,12 @@ struct obj *obj;
 #endif /* OVL0 */
 #ifdef OVLB
 
+/*
+ * ...Side effect of allowing Sting produces the famous artinaming bug.
+ * We can fix this; naming something an artifact name for an artifact that is
+ * SPFX_RESTR should produce an outright failure.
+ */
+
 boolean
 restrict_name(otmp, name)  /* returns 1 if name is restricted for otmp->otyp */
 register struct obj *otmp;
@@ -310,12 +316,11 @@ register const char *name;
 		   Bug fix:  don't name multiple elven daggers "Sting".
 		 */
 	for (a = artilist+1; a->otyp; a++) {
-	    if (a->otyp != otmp->otyp) continue;
 	    aname = a->name;
 	    if (!strncmpi(aname, "the ", 4)) aname += 4;
-	    if (!strcmp(aname, name))
-		return ((boolean)((a->spfx & (SPFX_NOGEN|SPFX_RESTR)) != 0 ||
-			otmp->quan > 1L));
+	    if (!strcmp(aname, name)) {
+			return ((boolean)((a->spfx & (SPFX_NOGEN|SPFX_RESTR)) != 0 || otmp->quan > 1L));
+		 }
 	}
 
 	return FALSE;
