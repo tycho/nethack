@@ -311,15 +311,9 @@ register struct obj *obj;
 		pline_The("artifact seems to resist the attempt.");
 		return;
 	} else if (restrict_name(obj, buf) || exist_artifact(obj->otyp, buf)) {
-		int n = rn2((int)strlen(buf));
-		register char c1, c2;
-
-		c1 = lowc(buf[n]);
-		do c2 = 'a' + rn2('z'-'a'); while (c1 == c2);
-		buf[n] = (buf[n] == c1) ? c2 : highc(c2);  /* keep same case */
-		pline("While engraving your %s slips.", body_part(HAND));
+		pline("You realize there can only ever be one %s, and decide against it.",buf);
 		display_nhwindow(WIN_MESSAGE, FALSE);
-		You("engrave: \"%s\".",buf);
+		return;
 	}
 	obj = oname(obj, buf);
 }
