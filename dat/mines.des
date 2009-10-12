@@ -805,7 +805,7 @@ GEOMETRY:center,top
 MAP
 .-----...................-------------.-
 .|...|...................|...|...|...|..
-.|...+..--+--...-FFFF+...|...|...|...|..
+.|...+..--+--...-FFF+F...|...|...|...|..
 .|...|..|...|...|....F...|...|-+---+--..
 .-----..|...|...|....F...---+-.........|
 ........|...|...|....F...........-----..
@@ -840,7 +840,7 @@ DOOR:locked,(4,8)
 DOOR:closed,(10,2)
 DOOR:closed,(10,10)
 DOOR:locked,(13,12)
-DOOR:locked,(21,2)
+DOOR:locked,(20,2)
 DOOR:closed,(24,4)
 DOOR:closed,(24,9)
 DOOR:closed,(25,12)
@@ -882,6 +882,7 @@ MONSTER: 'o', "Mordor orc", (20,3), hostile
 # and a couple shiny prizes as temptation (for the handlers to use, possibly?)
 OBJECT: '/', random, (18,4)
 OBJECT: '/', random, (19,4)
+OBJECT: '=', random, (17,4)
 
 # "Bazaar Town" by Kelly Bailey
 #
