@@ -365,6 +365,9 @@ int expltype;
 			    if (str != killer_buf && !generic)
 				Strcpy(killer_buf, str);
 			    killer_format = KILLED_BY_AN;
+			} else if (olet == MON_CASTBALL) {
+				killer_format = KILLED_BY_AN;
+				Strcpy(killer_buf, str);
 			} else if (type >= 0 && olet != SCROLL_CLASS) {
 			    killer_format = NO_KILLER_PREFIX;
 			    Sprintf(killer_buf, "caught %sself in %s own %s",
