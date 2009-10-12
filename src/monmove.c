@@ -385,6 +385,7 @@ register struct monst *mtmp;
 				if (canseemon(mtmp)) {
 					pline("Oh, no, this Snark is a Boojum!");
 				}
+				mtmp->msleeping = 0;
 			} else {
 				return(0);	// mtmp just went away, we'd better bail out
 			}
