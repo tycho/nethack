@@ -171,7 +171,7 @@ extern const char *fname;
 %type	<i> seen_trap_mask
 %type	<i> mon_gen_list
 %type	<i> sounds_list
-%type	<i> opt_lit_state
+%type	<i> opt_lit_state opt_percent
 %type	<map> string level_def m_name o_name
 %type	<corpos> corr_spec
 %start	file
@@ -430,6 +430,16 @@ exitstatement	: EXIT_ID
 		  }
 		;
 
+opt_percent	: /* nothing */
+		  {
+		      $$ = 100;
+		  }
+		| PERCENT
+		  {
+		      if ($1 < 0 || $1 > 100) yyerror("unexpected percentile chance");
+		      $$ = $1;
+		  }
+		;
 
 comparestmt     : PERCENT
                   {
@@ -746,9 +756,9 @@ corr_spec	: '(' INTEGER ',' DIRECTION ',' door_pos ')'
 		  }
 		;
 
-room_begin      : room_type chance ',' light_state
+room_begin      : room_type opt_percent ',' light_state
                   {
-		      if (($2 == 1) && ($1 == OROOM))
+		      if (($2 < 100) && ($1 == OROOM))
 			  yyerror("Only typed rooms can have a chance.");
 		      else {
 			  add_opvars(splev, "iii", $1, $2, $4);
