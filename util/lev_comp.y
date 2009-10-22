@@ -71,20 +71,11 @@ extern struct lc_funcdefs *FDECL(funcdef_defined,(struct lc_funcdefs *,char *, i
 
 extern void FDECL(splev_add_from, (sp_lev *, sp_lev *));
 
-static struct reg {
-	long x1, y1;
-	long x2, y2;
-}		current_region;
 
-static struct coord {
+struct coord {
 	long x;
 	long y;
-}		current_coord, current_align;
-
-static struct size {
-	long height;
-	long width;
-}		current_size;
+};
 
 sp_lev *splev = NULL;
 
@@ -129,6 +120,21 @@ extern const char *fname;
 		long wall;
 		long door;
 	} corpos;
+    struct {
+	long area;
+	long x1;
+	long y1;
+	long x2;
+	long y2;
+    } lregn;
+    struct {
+	long x;
+	long y;
+    } crd;
+    struct {
+	long height;
+	long width;
+    } sze;
 }
 
 
@@ -165,7 +171,7 @@ extern const char *fname;
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> door_wall walled secret amount chance
 %type	<i> dir_list
-%type	<i> engraving_type flag_list prefilled lev_region
+%type	<i> engraving_type flag_list prefilled
 %type	<i> monster monster_c m_register object object_c o_register
 %type	<i> comparestmt
 %type	<i> seen_trap_mask
@@ -174,6 +180,9 @@ extern const char *fname;
 %type	<i> opt_lit_state opt_percent
 %type	<map> string level_def m_name o_name
 %type	<corpos> corr_spec
+%type	<lregn> region lev_region lineends
+%type	<crd> coord coordinate p_register room_pos subroom_pos room_align place
+%type	<sze> room_size
 %start	file
 
 %%
@@ -769,9 +778,7 @@ room_begin      : room_type opt_percent ',' light_state
 subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
 		  {
 		      add_opvars(splev, "iiiiiiio", (long)$8, ERR, ERR,
-				 current_coord.x, current_coord.y,
-				 current_size.width, current_size.height,
-				 SPO_SUBROOM);
+				 $5.x, $5.y, $7.width, $7.height, SPO_SUBROOM);
 		  }
 		  '{' levstatements '}'
 		  {
@@ -782,10 +789,8 @@ subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
 room_def	: ROOM_ID ':' room_begin ',' room_pos ',' room_align ',' room_size roomfill
 		  {
 		      add_opvars(splev, "iiiiiiio", (long)$10,
-				 current_align.x, current_align.y,
-				 current_coord.x, current_coord.y,
-				 current_size.width, current_size.height,
-				 SPO_ROOM);
+				 $7.x, $7.y, $5.x, $5.y,
+				 $9.width, $9.height, SPO_ROOM);
 		  }
 		  '{' levstatements '}'
 		  {
@@ -809,13 +814,13 @@ room_pos	: '(' INTEGER ',' INTEGER ')'
 			    $4 < 1 || $4 > 5 ) {
 			    yyerror("Room position should be between 1 & 5!");
 			} else {
-			    current_coord.x = $2;
-			    current_coord.y = $4;
+			    $$.x = $2;
+			    $$.y = $4;
 			}
 		  }
 		| RANDOM_TYPE
 		  {
-			current_coord.x = current_coord.y = ERR;
+			$$.x = $$.y = ERR;
 		  }
 		;
 
@@ -824,35 +829,35 @@ subroom_pos	: '(' INTEGER ',' INTEGER ')'
 			if ( $2 < 0 || $4 < 0) {
 			    yyerror("Invalid subroom position !");
 			} else {
-			    current_coord.x = $2;
-			    current_coord.y = $4;
+			    $$.x = $2;
+			    $$.y = $4;
 			}
 		  }
 		| RANDOM_TYPE
 		  {
-			current_coord.x = current_coord.y = ERR;
+			$$.x = $$.y = ERR;
 		  }
 		;
 
 room_align	: '(' h_justif ',' v_justif ')'
 		  {
-			current_align.x = $2;
-			current_align.y = $4;
+		      $$.x = $2;
+		      $$.y = $4;
 		  }
 		| RANDOM_TYPE
 		  {
-			current_align.x = current_align.y = ERR;
+		      $$.x = $$.y = ERR;
 		  }
 		;
 
 room_size	: '(' INTEGER ',' INTEGER ')'
 		  {
-			current_size.width = $2;
-			current_size.height = $4;
+			$$.width = $2;
+			$$.height = $4;
 		  }
 		| RANDOM_TYPE
 		  {
-			current_size.height = current_size.width = ERR;
+			$$.height = $$.width = ERR;
 		  }
 		;
 
@@ -881,8 +886,7 @@ door_detail	: ROOMDOOR_ID ':' secret ',' door_state ',' door_wall ',' door_pos
 		| DOOR_ID ':' door_state ',' coordinate
 		  {
 		      add_opvars(splev, "iiio",
-				 current_coord.x, current_coord.y,
-				 (long)$<i>3, SPO_DOOR);
+				 $5.x, $5.y, (long)$<i>3, SPO_DOOR);
 		  }
 		;
 
@@ -922,7 +926,7 @@ map_definition	: NOMAP_ID
 		  }
 		| GEOMETRY_ID ':' coordinate roomfill MAP_ID
 		  {
-		      add_opvars(splev, "iiii", 2, (long)$4, current_coord.x, current_coord.y);
+		      add_opvars(splev, "iiii", 2, (long)$4, $3.x, $3.y);
 		      scan_map($5, splev);
 		      Free($5);
 		  }
@@ -1020,16 +1024,20 @@ monster_list	: monster
 
 place_list	: place
 		  {
-			if (n_plist < MAX_REGISTERS)
-			    plist[n_plist++] = current_coord;
-			else
+		      if (n_plist < MAX_REGISTERS) {
+			    plist[n_plist].x = $1.x;
+			    plist[n_plist].y = $1.y;
+			    n_plist++;
+		      } else
 			    yyerror("Location list too long!");
 		  }
 		| place
 		  {
-			if (n_plist < MAX_REGISTERS)
-			    plist[n_plist++] = current_coord;
-			else
+		      if (n_plist < MAX_REGISTERS) {
+			    plist[n_plist].x = $1.x;
+			    plist[n_plist].y = $1.y;
+			    n_plist++;
+		      } else
 			    yyerror("Location list too long!");
 		  }
 		 ',' place_list
@@ -1140,7 +1148,7 @@ monster_desc	: monster_c ',' m_name ',' coordinate monster_infos
 			  }
 			  Free($3);
 		      }
-		      add_opvars(splev, "iiii", current_coord.x, current_coord.y, (long)$<i>1, token);
+		      add_opvars(splev, "iiii", $5.x, $5.y, (long)$<i>1, token);
 		  }
 		;
 
@@ -1361,7 +1369,7 @@ object_desc	: object_c ',' o_name ',' coordinate object_infos
 			  }
 			  Free($3);
 		      }
-		      add_opvars(splev, "iiii", current_coord.x, current_coord.y, (long)$<i>1, token);
+		      add_opvars(splev, "iiii", $5.x, $5.y, (long)$<i>1, token);
 		}
 		;
 
@@ -1462,7 +1470,7 @@ object_info	: ',' CURSE_TYPE
 
 trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
 		  {
-		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, (long)$<i>4, SPO_TRAP);
+		      add_opvars(splev, "iiio", $6.x, $6.y, (long)$<i>4, SPO_TRAP);
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1494,20 +1502,19 @@ drawbridge_detail: DRAWBRIDGE_ID ':' coordinate ',' DIRECTION ',' door_state
 			   state = 0;
 		       else
 			   yyerror("A drawbridge can only be open or closed!");
-		       add_opvars(splev, "iiiio", current_coord.x, current_coord.y, state, d, SPO_DRAWBRIDGE);
+		       add_opvars(splev, "iiiio", $3.x, $3.y, state, d, SPO_DRAWBRIDGE);
 		   }
 		;
 
 mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION
 		  {
 		      add_opvars(splev, "iiiiio",
-				 current_coord.x, current_coord.y,
-				 (long)$5, 1, 0, SPO_MAZEWALK);
+				 $3.x, $3.y, (long)$5, 1, 0, SPO_MAZEWALK);
 		  }
 		| MAZEWALK_ID ':' coordinate ',' DIRECTION ',' BOOLEAN opt_fillchar
 		  {
 		      add_opvars(splev, "iiiiio",
-				 current_coord.x, current_coord.y,
+				 $3.x, $3.y,
 				 (long)$5, (long)$<i>7, (long)$<i>8, SPO_MAZEWALK);
 		  }
 		;
@@ -1519,101 +1526,62 @@ wallify_detail	: WALLIFY_ID
 		| WALLIFY_ID ':' lev_region
 		  {
 		      add_opvars(splev, "iiiio",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2,
-				 SPO_WALLIFY);
+				 $3.x1, $3.y1, $3.x2, $3.y2, SPO_WALLIFY);
 		  }
 		;
 
 ladder_detail	: LADDER_ID ':' coordinate ',' UP_OR_DOWN
 		  {
-		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, (long)$<i>5, SPO_LADDER);
+		      add_opvars(splev, "iiio", $3.x, $3.y, (long)$<i>5, SPO_LADDER);
 		  }
 		;
 
 stair_detail	: STAIR_ID ':' coordinate ',' UP_OR_DOWN
 		  {
-		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, (long)$<i>5, SPO_STAIR);
+		      add_opvars(splev, "iiio", $3.x, $3.y, (long)$<i>5, SPO_STAIR);
 		  }
 		;
 
-stair_region	: STAIR_ID ':' lev_region
+stair_region	: STAIR_ID ':' lev_region ',' lev_region ',' UP_OR_DOWN
 		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$3);
-		  }
-		  ',' lev_region ',' UP_OR_DOWN
-		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$6);
-
-		      add_opvars(splev, "iiso",
-				 (long)(($8) ? LR_UPSTAIR : LR_DOWNSTAIR),
+		      add_opvars(splev, "iiiii iiiii iiso",
+				 $3.x1, $3.y1, $3.x2, $3.y2, $3.area,
+				 $5.x1, $5.y1, $5.x2, $5.y2, $5.area,
+				 (long)(($7) ? LR_UPSTAIR : LR_DOWNSTAIR),
 				 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
 
-portal_region	: PORTAL_ID ':' lev_region
+portal_region	: PORTAL_ID ':' lev_region ',' lev_region ',' string
 		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$3);
-		  }
-		 ',' lev_region ',' string
-		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$6);
-
-		      add_opvars(splev, "iiso",
-				 LR_PORTAL,
-				 0, $8, SPO_LEVREGION);
+		      add_opvars(splev, "iiiii iiiii iiso",
+				 $3.x1, $3.y1, $3.x2, $3.y2, $3.area,
+				 $5.x1, $5.y1, $5.x2, $5.y2, $5.area,
+				 LR_PORTAL, 0, $7, SPO_LEVREGION);
 		  }
 		;
 
-teleprt_region	: TELEPRT_ID ':' lev_region
-		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$3);
-		  }
-		 ',' lev_region
-		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$6);
-		  }
-		teleprt_detail
+teleprt_region	: TELEPRT_ID ':' lev_region ',' lev_region teleprt_detail
 		  {
 		      long rtype;
-		      switch($<i>8) {
+		      switch($<i>6) {
 		      case -1: rtype = LR_TELE; break;
 		      case  0: rtype = LR_DOWNTELE; break;
 		      case  1: rtype = LR_UPTELE; break;
 		      }
-		      add_opvars(splev, "iiso",
-				 rtype,
-				 0, (char *)0, SPO_LEVREGION);
+		      add_opvars(splev, "iiiii iiiii iiso",
+				 $3.x1, $3.y1, $3.x2, $3.y2, $3.area,
+				 $5.x1, $5.y1, $5.x2, $5.y2, $5.area,
+				 rtype, 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
 
-branch_region	: BRANCH_ID ':' lev_region
+branch_region	: BRANCH_ID ':' lev_region ',' lev_region
 		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$3);
-		  }
-		 ',' lev_region
-		  {
-		      add_opvars(splev, "iiiii",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, (long)$6);
-
-		      add_opvars(splev, "iiso",
-				 (long)LR_BRANCH,
-				 0, (char *)0, SPO_LEVREGION);
+		      add_opvars(splev, "iiiii iiiii iiso",
+				 $3.x1, $3.y1, $3.x2, $3.y2, $3.area,
+				 $5.x1, $5.y1, $5.x2, $5.y2, $5.area,
+				 (long)LR_BRANCH, 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
 
@@ -1629,19 +1597,19 @@ teleprt_detail	: /* empty */
 
 fountain_detail : FOUNTAIN_ID ':' coordinate
 		  {
-		      add_opvars(splev, "iio", current_coord.x, current_coord.y, SPO_FOUNTAIN);
+		      add_opvars(splev, "iio", $3.x, $3.y, SPO_FOUNTAIN);
 		  }
 		;
 
 sink_detail : SINK_ID ':' coordinate
 		  {
-		      add_opvars(splev, "iio", current_coord.x, current_coord.y, SPO_SINK);
+		      add_opvars(splev, "iio", $3.x, $3.y, SPO_SINK);
 		  }
 		;
 
 pool_detail : POOL_ID ':' coordinate
 		  {
-		      add_opvars(splev, "iio", current_coord.x, current_coord.y, SPO_POOL);
+		      add_opvars(splev, "iio", $3.x, $3.y, SPO_POOL);
 		  }
 		;
 
@@ -1660,8 +1628,7 @@ replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' CHAR ',' lig
 		      if (to_ter >= MAX_TYPE) yyerror("Replace terrain: illegal 'to' map char");
 
 		      add_opvars(splev, "iiii iiiio",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2,
+				 $3.x1, $3.y1, $3.x2, $3.y2,
 				 from_ter, to_ter, (long)$9, chance, SPO_REPLACETERRAIN);
 		  }
 		;
@@ -1674,7 +1641,7 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
 
 		     add_opvars(splev, "iiii iiio",
-				current_coord.x, current_coord.y, -1, -1,
+				$4.x, $4.y, -1, -1,
 				0, c, $8, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
@@ -1703,7 +1670,7 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
 
 		     add_opvars(splev, "iiii iiio",
-				current_coord.x, current_coord.y, x2, y2,
+				$4.x, $4.y, x2, y2,
 				areatyp, c, (long)$12, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
@@ -1723,7 +1690,7 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
 
 		     add_opvars(splev, "iiii iiio",
-				current_region.x1, current_region.y1, current_region.x2, current_region.y2,
+				$4.x1, $4.y1, $4.x2, $4.y2,
 				(long)(3 + $<i>6), c, (long)$10, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
@@ -1742,8 +1709,7 @@ randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER 
 		      c = what_map_char((char) $5);
 		      if ((c == INVALID_TYPE) || (c >= MAX_TYPE)) yyerror("Terrain: illegal map char");
 		      add_opvars(splev, "iiii iiiio",
-				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2,
+				 $3.x1, $3.y1, $3.x2, $3.y2,
 				 c, (long)$7, (long)$9, (long)$<i>10, SPO_RANDLINE);
 		  }
 
@@ -1769,7 +1735,7 @@ spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' li
 		    c = $9;
 		    if (c < 1) yyerror("SPILL: Invalid count!");
 
-		    add_opvars(splev, "iiiiiio", current_coord.x, current_coord.y,
+		    add_opvars(splev, "iiiiiio", $3.x, $3.y,
 			       typ, (long)$7, c, (long)$11, SPO_SPILL);
 		}
 		;
@@ -1777,16 +1743,14 @@ spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' li
 diggable_detail : NON_DIGGABLE_ID ':' region
 		  {
 		     add_opvars(splev, "iiiio",
-				current_region.x1, current_region.y1,
-				current_region.x2, current_region.y2, SPO_NON_DIGGABLE);
+				$3.x1, $3.y1, $3.x2, $3.y2, SPO_NON_DIGGABLE);
 		  }
 		;
 
 passwall_detail : NON_PASSWALL_ID ':' region
 		  {
 		     add_opvars(splev, "iiiio",
-				current_region.x1, current_region.y1,
-				current_region.x2, current_region.y2, SPO_NON_PASSWALL);
+				$3.x1, $3.y1, $3.x2, $3.y2, SPO_NON_PASSWALL);
 		  }
 		;
 
@@ -1799,57 +1763,54 @@ region_detail	: REGION_ID ':' region ',' light_state ',' room_type prefilled
 
 		      irr = ((( $<i>8 ) & 2) != 0);
 
-		      if(current_region.x1 > current_region.x2 ||
-			 current_region.y1 > current_region.y2)
+		      if ( $3.x1 > $3.x2 || $3.y1 > $3.y2 )
 			  yyerror("Region start > end!");
 
 		      if (rt == VAULT && (irr ||
-					 (current_region.x2 - current_region.x1 != 1) ||
-					 (current_region.y2 - current_region.y1 != 1)))
+					 ( $3.x2 - $3.x1 != 1) ||
+					 ( $3.y2 - $3.y1 != 1)))
 			 yyerror("Vaults must be exactly 2x2!");
 
 		     add_opvars(splev, "iiii iiio",
-				current_region.x1, current_region.y1,
-				current_region.x2, current_region.y2,
+				$3.x1, $3.y1, $3.x2, $3.y2,
 				(long)$<i>5, rt, irr, SPO_REGION);
 		  }
 		;
 
 altar_detail	: ALTAR_ID ':' coordinate ',' alignment ',' altar_type
 		  {
-		      add_opvars(splev, "iiiio", current_coord.x, current_coord.y,
+		      add_opvars(splev, "iiiio", $3.x, $3.y,
 				 (long)$<i>7, (long)$<i>5, SPO_ALTAR);
 		  }
 		;
 
 grave_detail	: GRAVE_ID ':' coordinate ',' string
 		  {
-		      add_opvars(splev, "iisio", current_coord.x, current_coord.y,
-				 $5, 2, SPO_GRAVE);
+		      add_opvars(splev, "iisio",
+				 $3.x, $3.y, $5, 2, SPO_GRAVE);
 		  }
 		| GRAVE_ID ':' coordinate ',' RANDOM_TYPE
 		  {
-		      add_opvars(splev, "iisio", current_coord.x, current_coord.y,
-				 (char *)0, 1, SPO_GRAVE);
+		      add_opvars(splev, "iisio",
+				 $3.x, $3.y, (char *)0, 1, SPO_GRAVE);
 		  }
 		| GRAVE_ID ':' coordinate
 		  {
-		      add_opvars(splev, "iisio", current_coord.x, current_coord.y,
-				 (char *)0, 0, SPO_GRAVE);
+		      add_opvars(splev, "iisio",
+				 $3.x, $3.y, (char *)0, 0, SPO_GRAVE);
 		  }
 		;
 
 gold_detail	: GOLD_ID ':' amount ',' coordinate
 		  {
-		      add_opvars(splev, "iiio", (long)$<i>3, current_coord.y, current_coord.x, SPO_GOLD);
+		      add_opvars(splev, "iiio", (long)$<i>3, $5.y, $5.x, SPO_GOLD);
 		  }
 		;
 
 engraving_detail: ENGRAVING_ID ':' coordinate ',' engraving_type ',' string
 		  {
 		      add_opvars(splev, "iisio",
-				 current_coord.x, current_coord.y,
-				 $7, (long)$<i>5, SPO_ENGRAVING);
+				 $3.x, $3.y, $7, (long)$<i>5, SPO_ENGRAVING);
 		  }
 		;
 
@@ -1925,7 +1886,7 @@ coordinate	: coord
 		| p_register
 		| RANDOM_TYPE
 		  {
-			current_coord.x = current_coord.y = -MAX_REGISTERS-1;
+			$$.x = $$.y = -MAX_REGISTERS-1;
 		  }
 		;
 
@@ -1967,7 +1928,7 @@ p_register	: P_REGISTER '[' INTEGER ']'
 			  else if ( $3 >= on_plist )
 				yyerror("Register Index overflow!");
 		      }
-		      current_coord.x = current_coord.y = - $3 - 1;
+		      $$.x = $$.y = - $3 - 1;
 		  }
 		;
 
@@ -2005,6 +1966,9 @@ a_register	: A_REGISTER '[' INTEGER ']'
 		;
 
 place		: coord
+		  {
+		      $$ = $1;
+		  }
 		;
 
 monster		: CHAR
@@ -2067,26 +2031,24 @@ coord		: '(' INTEGER ',' INTEGER ')'
 		  {
 		        if ($2 < 0 || $4 < 0 || $2 >= COLNO || $4 >= ROWNO)
 		           yyerror("Coordinates out of map range!");
-			current_coord.x = $2;
-			current_coord.y = $4;
+			$$.x = $2;
+			$$.y = $4;
 		  }
 		;
 
-lineends	: coordinate ','
+lineends	: coordinate ',' coordinate
 		  {
-			current_region.x1 = current_coord.x;
-			current_region.y1 = current_coord.y;
-		  }
-		  coordinate
-		  {
-			current_region.x2 = current_coord.x;
-			current_region.y2 = current_coord.y;
+		      $$.x1 = $1.x;
+		      $$.y1 = $1.y;
+		      $$.x2 = $3.x;
+		      $$.y2 = $3.y;
+		      $$.area = 1;
 		  }
 		;
 
 lev_region	: region
 		  {
-			$$ = 0;
+			$$ = $1;
 		  }
 		| LEV '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
 		  {
@@ -2100,11 +2062,11 @@ lev_region	: region
 				yyerror("Region out of level range (x2)!");
 			else if ($9 < 0 || $9 >= ROWNO)
 				yyerror("Region out of level range (y2)!");
-			current_region.x1 = $3;
-			current_region.y1 = $5;
-			current_region.x2 = $7;
-			current_region.y2 = $9;
-			$$ = 1;
+			$$.x1 = $3;
+			$$.y1 = $5;
+			$$.x2 = $7;
+			$$.y2 = $9;
+			$$.area = 1;
 		  }
 		;
 
@@ -2120,10 +2082,11 @@ region		: '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
 			  yyerror("Region out of map range (x2)!");
 			else if ($8 < 0 || $8 > (int)max_y_map)
 			  yyerror("Region out of map range (y2)!");
-			current_region.x1 = $2;
-			current_region.y1 = $4;
-			current_region.x2 = $6;
-			current_region.y2 = $8;
+			$$.area = 0;
+			$$.x1 = $2;
+			$$.y1 = $4;
+			$$.x2 = $6;
+			$$.y2 = $8;
 		  }
 		;
 
