@@ -72,18 +72,18 @@ extern struct lc_funcdefs *FDECL(funcdef_defined,(struct lc_funcdefs *,char *, i
 extern void FDECL(splev_add_from, (sp_lev *, sp_lev *));
 
 static struct reg {
-	int x1, y1;
-	int x2, y2;
+	long x1, y1;
+	long x2, y2;
 }		current_region;
 
 static struct coord {
-	int x;
-	int y;
+	long x;
+	long y;
 }		current_coord, current_align;
 
 static struct size {
-	int height;
-	int width;
+	long height;
+	long width;
 }		current_size;
 
 sp_lev *splev = NULL;
@@ -103,7 +103,7 @@ int in_switch_statement = 0;
 static struct opvar *switch_check_jump = NULL;
 static struct opvar *switch_default_case = NULL;
 static struct opvar *switch_case_list[MAX_SWITCH_CASES];
-static int switch_case_value[MAX_SWITCH_CASES];
+static long switch_case_value[MAX_SWITCH_CASES];
 int n_switch_case_list = 0;
 static struct opvar *switch_break_list[MAX_SWITCH_BREAKS];
 int n_switch_break_list = 0;
@@ -122,12 +122,12 @@ extern const char *fname;
 
 %union
 {
-	int	i;
+	long	i;
 	char*	map;
 	struct {
-		xchar room;
-		xchar wall;
-		xchar door;
+		long room;
+		long wall;
+		long door;
 	} corpos;
 }
 
@@ -245,16 +245,16 @@ lev_init	: /* nothing */
 		  }
 		| LEV_INIT_ID ':' SOLID_FILL_ID ',' CHAR opt_lit_state
 		  {
-		      char filling = what_map_char((char) $5);
+		      long filling = what_map_char((char) $5);
 		      if (filling == INVALID_TYPE || filling >= MAX_TYPE)
 			  yyerror("INIT_MAP: Invalid fill char type.");
-		      add_opvars(splev, "iiiiiiiio", LVLINIT_SOLIDFILL,filling,0,$6, 0,0,0,0, SPO_INITLEVEL);
+		      add_opvars(splev, "iiiiiiiio", LVLINIT_SOLIDFILL,filling,0,(long)$6, 0,0,0,0, SPO_INITLEVEL);
 		      max_x_map = COLNO-1;
 		      max_y_map = ROWNO;
 		  }
 		| LEV_INIT_ID ':' MAZE_GRID_ID ',' CHAR
 		  {
-		      char filling = what_map_char((char) $5);
+		      long filling = what_map_char((char) $5);
 		      if (filling == INVALID_TYPE || filling >= MAX_TYPE)
 			  yyerror("INIT_MAP: Invalid fill char type.");
 		      add_opvars(splev, "iiiiiiiio", LVLINIT_MAZEGRID,filling,0,0, 0,0,0,0, SPO_INITLEVEL);
@@ -263,13 +263,13 @@ lev_init	: /* nothing */
 		  }
 		| LEV_INIT_ID ':' MINES_ID ',' CHAR ',' CHAR ',' BOOLEAN ',' BOOLEAN ',' light_state ',' walled opt_fillchar
 		  {
-		      char fg = what_map_char((char) $5);
-		      char bg = what_map_char((char) $7);
-		      int smoothed = $9;
-		      int joined = $11;
-		      int lit = $13;
-		      int walled = $15;
-		      char filling = $<i>16;
+		      long fg = what_map_char((char) $5);
+		      long bg = what_map_char((char) $7);
+		      long smoothed = $9;
+		      long joined = $11;
+		      long lit = $13;
+		      long walled = $15;
+		      long filling = $<i>16;
 		      if (fg == INVALID_TYPE || fg >= MAX_TYPE)
 			  yyerror("INIT_MAP: Invalid foreground type.");
 		      if (bg == INVALID_TYPE || bg >= MAX_TYPE)
@@ -444,7 +444,7 @@ opt_percent	: /* nothing */
 comparestmt     : PERCENT
                   {
 		      /* val > rn2(100) */
-		      add_opvars(splev, "ioi", 100, SPO_RN2, $1);
+		      add_opvars(splev, "ioi", 100, SPO_RN2, (long)$1);
 		      $$ = SPO_JGE; /* TODO: shouldn't this be SPO_JG? */
                   }
 		;
@@ -464,7 +464,7 @@ switchstatement	: SWITCH_ID '[' INTEGER ']'
 		      n_switch_break_list = 0;
 		      switch_default_case = NULL;
 
-		      add_opvars(splev, "io", $3, SPO_RN2);
+		      add_opvars(splev, "io", (long)$3, SPO_RN2);
 
 		      chkjmp = New(struct opvar);
 		      set_opvar_int(chkjmp, splev->n_opcodes+1);
@@ -573,7 +573,7 @@ loopstatement	: LOOP_ID '[' INTEGER ']'
 		      if ($3 < 1)
 			  yyerror("Loop with fewer than 1 repeats.");
 
-		      add_opvars(splev, "i", $3);
+		      add_opvars(splev, "i", (long)$3);
 
 		      set_opvar_int(tmppush, splev->n_opcodes);
 		      if_list[n_if_list++] = tmppush;
@@ -743,7 +743,7 @@ corridor	: CORRIDOR_ID ':' corr_spec ',' corr_spec
 		  {
 		      add_opvars(splev, "iiiiiio",
 				 $3.room, $3.door, $3.wall,
-				 -1, -1, $5,
+				 -1, -1, (long)$5,
 				 SPO_CORRIDOR);
 		  }
 		;
@@ -761,14 +761,14 @@ room_begin      : room_type opt_percent ',' light_state
 		      if (($2 < 100) && ($1 == OROOM))
 			  yyerror("Only typed rooms can have a chance.");
 		      else {
-			  add_opvars(splev, "iii", $1, $2, $4);
+			  add_opvars(splev, "iii", (long)$1, (long)$2, (long)$4);
 		      }
                   }
                 ;
 
 subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
 		  {
-		      add_opvars(splev, "iiiiiiio", $8, ERR, ERR,
+		      add_opvars(splev, "iiiiiiio", (long)$8, ERR, ERR,
 				 current_coord.x, current_coord.y,
 				 current_size.width, current_size.height,
 				 SPO_SUBROOM);
@@ -781,7 +781,7 @@ subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
 
 room_def	: ROOM_ID ':' room_begin ',' room_pos ',' room_align ',' room_size roomfill
 		  {
-		      add_opvars(splev, "iiiiiiio", $10,
+		      add_opvars(splev, "iiiiiiio", (long)$10,
 				 current_align.x, current_align.y,
 				 current_coord.x, current_coord.y,
 				 current_size.width, current_size.height,
@@ -875,14 +875,14 @@ door_detail	: ROOMDOOR_ID ':' secret ',' door_state ',' door_wall ',' door_pos
 			if ($7 == ERR && $9 != ERR) {
 		     yyerror("If the door wall is random, so must be its pos!");
 			} else {
-			    add_opvars(splev, "iiiio", $9, $5, $3, $7, SPO_ROOM_DOOR);
+			    add_opvars(splev, "iiiio", (long)$9, (long)$5, (long)$3, (long)$7, SPO_ROOM_DOOR);
 			}
 		  }
 		| DOOR_ID ':' door_state ',' coordinate
 		  {
 		      add_opvars(splev, "iiio",
 				 current_coord.x, current_coord.y,
-				 $<i>3, SPO_DOOR);
+				 (long)$<i>3, SPO_DOOR);
 		  }
 		;
 
@@ -916,13 +916,13 @@ map_definition	: NOMAP_ID
 		  }
 		| map_geometry roomfill MAP_ID
 		  {
-		      add_opvars(splev, "iiii", 1, $2, ($<i>1 % 10), ($<i>1 / 10));
+		      add_opvars(splev, "iiii", 1, (long)$2, (long)($<i>1 % 10), (long)($<i>1 / 10));
 		      scan_map($3, splev);
 		      Free($3);
 		  }
 		| GEOMETRY_ID ':' coordinate roomfill MAP_ID
 		  {
-		      add_opvars(splev, "iiii", 2, $4, current_coord.x, current_coord.y);
+		      add_opvars(splev, "iiii", 2, (long)$4, current_coord.x, current_coord.y);
 		      scan_map($5, splev);
 		      Free($5);
 		  }
@@ -1056,7 +1056,7 @@ sounds_list	: lvl_sound_part
 
 lvl_sound_part	: '(' MSG_OUTPUT_TYPE ',' STRING ')'
 		  {
-		      add_opvars(splev, "is", $2, $4);
+		      add_opvars(splev, "is", (long)$2, $4);
 		  }
 		;
 
@@ -1084,18 +1084,18 @@ mon_gen_list	: mon_gen_part
 
 mon_gen_part	: '(' INTEGER ',' monster ')'
 		  {
-		      int token = $4;
+		      long token = $4;
 		      if ($2 < 1) yyerror("Monster generation chances are zero?");
 		      if (token == ERR) yyerror("Monster generation: Invalid monster symbol");
-		      add_opvars(splev, "iii", token, 1, $2);
+		      add_opvars(splev, "iii", token, 1, (long)$2);
 		  }
 		| '(' INTEGER ',' string ')'
 		  {
-		      int token;
+		      long token;
 		      if ($2 < 1) yyerror("Monster generation chances are zero?");
 		      token = get_monster_id($4, (char)0);
 		      if (token == ERR) yyerror("Monster generation: Invalid monster name");
-		      add_opvars(splev, "iii", token, 0, $2);
+		      add_opvars(splev, "iii", token, 0, (long)$2);
 		  }
 		;
 
@@ -1131,7 +1131,7 @@ monster_detail	: MONSTER_ID chance ':' monster_desc
 
 monster_desc	: monster_c ',' m_name ',' coordinate monster_infos
 		  {
-		      int token = NON_PM;
+		      long token = NON_PM;
 		      if ($3) {
 			  token = get_monster_id($3, (char) $<i>1);
 			  if (token == ERR) {
@@ -1140,7 +1140,7 @@ monster_desc	: monster_c ',' m_name ',' coordinate monster_infos
 			  }
 			  Free($3);
 		      }
-		      add_opvars(splev, "iiii", current_coord.x, current_coord.y, $<i>1, token);
+		      add_opvars(splev, "iiii", current_coord.x, current_coord.y, (long)$<i>1, token);
 		  }
 		;
 
@@ -1166,22 +1166,22 @@ monster_info	: ',' string
 		  }
 		| ',' MON_ATTITUDE
 		  {
-		      add_opvars(splev, "ii", $<i>2, SP_M_V_PEACEFUL);
+		      add_opvars(splev, "ii", (long)$<i>2, SP_M_V_PEACEFUL);
 		      $<i>$ = 0x0002;
 		  }
 		| ',' MON_ALERTNESS
 		  {
-		      add_opvars(splev, "ii", $<i>2, SP_M_V_ASLEEP);
+		      add_opvars(splev, "ii", (long)$<i>2, SP_M_V_ASLEEP);
 		      $<i>$ = 0x0004;
 		  }
 		| ',' alignment
 		  {
-		      add_opvars(splev, "ii", $<i>2, SP_M_V_ALIGN);
+		      add_opvars(splev, "ii", (long)$<i>2, SP_M_V_ALIGN);
 		      $<i>$ = 0x0008;
 		  }
 		| ',' MON_APPEARANCE string
 		  {
-		      add_opvars(splev, "sii", $3, $<i>2, SP_M_V_APPEAR);
+		      add_opvars(splev, "sii", $3, (long)$<i>2, SP_M_V_APPEAR);
 		      $<i>$ = 0x0010;
 		  }
 		| ',' FEMALE_ID
@@ -1211,17 +1211,17 @@ monster_info	: ',' string
 		  }
 		| ',' FLEEING_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", $4, SP_M_V_FLEEING);
+		      add_opvars(splev, "ii", (long)$4, SP_M_V_FLEEING);
 		      $<i>$ = 0x0400;
 		  }
 		| ',' BLINDED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", $4, SP_M_V_BLINDED);
+		      add_opvars(splev, "ii", (long)$4, SP_M_V_BLINDED);
 		      $<i>$ = 0x0800;
 		  }
 		| ',' PARALYZED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", $4, SP_M_V_PARALYZED);
+		      add_opvars(splev, "ii", (long)$4, SP_M_V_PARALYZED);
 		      $<i>$ = 0x1000;
 		  }
 		| ',' STUNNED_ID
@@ -1236,7 +1236,7 @@ monster_info	: ',' string
 		  }
 		| ',' SEENTRAPS_ID ':' seen_trap_mask
 		  {
-		      add_opvars(splev, "ii", $4, SP_M_V_SEENTRAPS);
+		      add_opvars(splev, "ii", (long)$4, SP_M_V_SEENTRAPS);
 		      $<i>$ = 0x8000;
 		  }
 		;
@@ -1277,7 +1277,7 @@ cobj_statement  : cobj_detail
 
 cobj_detail	: OBJECT_ID chance ':' cobj_desc
 		  {
-		      add_opvars(splev, "io", SP_OBJ_CONTENT, SPO_OBJECT);
+		      add_opvars(splev, "io", (long)SP_OBJ_CONTENT, SPO_OBJECT);
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1288,7 +1288,7 @@ cobj_detail	: OBJECT_ID chance ':' cobj_desc
 		  }
 		| COBJECT_ID chance ':' cobj_desc
 		  {
-		      add_opvars(splev, "io", SP_OBJ_CONTENT|SP_OBJ_CONTAINER, SPO_OBJECT);
+		      add_opvars(splev, "io", (long)(SP_OBJ_CONTENT|SP_OBJ_CONTAINER), SPO_OBJECT);
 		      $<i>$ = $2;
 		  }
 		'{' cobj_statements '}'
@@ -1318,7 +1318,7 @@ object_detail	: OBJECT_ID chance ':' object_desc
 		  }
 		| COBJECT_ID chance ':' object_desc
 		  {
-		      add_opvars(splev, "io", SP_OBJ_CONTAINER, SPO_OBJECT);
+		      add_opvars(splev, "io", (long)SP_OBJ_CONTAINER, SPO_OBJECT);
 		      $<i>$ = $2;
 		  }
 		'{' cobj_statements '}'
@@ -1337,7 +1337,7 @@ object_detail	: OBJECT_ID chance ':' object_desc
 
 cobj_desc	: object_c ',' o_name object_infos
 		  {
-		      int token = -1;
+		      long token = -1;
 		      if ($3) {
 			  token = get_object_id($3, $<i>1);
 			  if (token == ERR) {
@@ -1346,13 +1346,13 @@ cobj_desc	: object_c ',' o_name object_infos
 			  }
 			  Free($3);
 		      }
-		      add_opvars(splev, "iiii", -1, -1, $<i>1, token);
+		      add_opvars(splev, "iiii", -1, -1, (long)$<i>1, token);
 		  }
 		;
 
 object_desc	: object_c ',' o_name ',' coordinate object_infos
 		  {
-		      int token = -1;
+		      long token = -1;
 		      if ($3) {
 			  token = get_object_id($3, $<i>1);
 			  if (token == ERR) {
@@ -1361,7 +1361,7 @@ object_desc	: object_c ',' o_name ',' coordinate object_infos
 			  }
 			  Free($3);
 		      }
-		      add_opvars(splev, "iiii", current_coord.x, current_coord.y, $<i>1, token);
+		      add_opvars(splev, "iiii", current_coord.x, current_coord.y, (long)$<i>1, token);
 		}
 		;
 
@@ -1382,12 +1382,12 @@ object_infos	: /* nothing */
 
 object_info	: ',' CURSE_TYPE
 		  {
-		      add_opvars(splev, "ii", $2, SP_O_V_CURSE);
+		      add_opvars(splev, "ii", (long)$2, SP_O_V_CURSE);
 		      $<i>$ = 0x0001;
 		  }
 		| ',' STRING
 		  {
-		      int token = get_monster_id($2, (char)0);
+		      long token = get_monster_id($2, (char)0);
 		      if (token == ERR) {
 			  /* "random" */
 			  yywarning("OBJECT: Are you sure you didn't mean NAME:\"foo\"?");
@@ -1399,7 +1399,7 @@ object_info	: ',' CURSE_TYPE
 		  }
 		| ',' INTEGER
 		  {
-		      add_opvars(splev, "ii", $2, SP_O_V_SPE);
+		      add_opvars(splev, "ii", (long)$2, SP_O_V_SPE);
 		      $<i>$ = 0x0004;
 		  }
 		| ',' NAME_ID ':' STRING
@@ -1409,7 +1409,7 @@ object_info	: ',' CURSE_TYPE
 		  }
 		| ',' QUANTITY_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", $4, SP_O_V_QUAN);
+		      add_opvars(splev, "ii", (long)$4, SP_O_V_QUAN);
 		      $<i>$ = 0x0010;
 		  }
 		| ',' BURIED_ID
@@ -1419,12 +1419,12 @@ object_info	: ',' CURSE_TYPE
 		  }
 		| ',' LIGHT_STATE
 		  {
-		      add_opvars(splev, "ii", $2, SP_O_V_LIT);
+		      add_opvars(splev, "ii", (long)$2, SP_O_V_LIT);
 		      $<i>$ = 0x0040;
 		  }
 		| ',' ERODED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", $4, SP_O_V_ERODED);
+		      add_opvars(splev, "ii", (long)$4, SP_O_V_ERODED);
 		      $<i>$ = 0x0080;
 		  }
 		| ',' DOOR_STATE
@@ -1445,7 +1445,7 @@ object_info	: ',' CURSE_TYPE
 		  }
 		| ',' RECHARGED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", $4, SP_O_V_RECHARGED);
+		      add_opvars(splev, "ii", (long)$4, SP_O_V_RECHARGED);
 		      $<i>$ = 0x0800;
 		  }
 		| ',' INVIS_ID
@@ -1462,7 +1462,7 @@ object_info	: ',' CURSE_TYPE
 
 trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
 		  {
-		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, $<i>4, SPO_TRAP);
+		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, (long)$<i>4, SPO_TRAP);
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1475,7 +1475,7 @@ trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
 
 drawbridge_detail: DRAWBRIDGE_ID ':' coordinate ',' DIRECTION ',' door_state
 		   {
-		       int d, state = 0;
+		       long d, state = 0;
 		       /* convert dir from a DIRECTION to a DB_DIR */
 		       d = $5;
 		       switch(d) {
@@ -1502,13 +1502,13 @@ mazewalk_detail : MAZEWALK_ID ':' coordinate ',' DIRECTION
 		  {
 		      add_opvars(splev, "iiiiio",
 				 current_coord.x, current_coord.y,
-				 $5, 1, 0, SPO_MAZEWALK);
+				 (long)$5, 1, 0, SPO_MAZEWALK);
 		  }
 		| MAZEWALK_ID ':' coordinate ',' DIRECTION ',' BOOLEAN opt_fillchar
 		  {
 		      add_opvars(splev, "iiiiio",
 				 current_coord.x, current_coord.y,
-				 $5, $<i>7, $<i>8, SPO_MAZEWALK);
+				 (long)$5, (long)$<i>7, (long)$<i>8, SPO_MAZEWALK);
 		  }
 		;
 
@@ -1527,13 +1527,13 @@ wallify_detail	: WALLIFY_ID
 
 ladder_detail	: LADDER_ID ':' coordinate ',' UP_OR_DOWN
 		  {
-		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, $<i>5, SPO_LADDER);
+		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, (long)$<i>5, SPO_LADDER);
 		  }
 		;
 
 stair_detail	: STAIR_ID ':' coordinate ',' UP_OR_DOWN
 		  {
-		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, $<i>5, SPO_STAIR);
+		      add_opvars(splev, "iiio", current_coord.x, current_coord.y, (long)$<i>5, SPO_STAIR);
 		  }
 		;
 
@@ -1541,16 +1541,16 @@ stair_region	: STAIR_ID ':' lev_region
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $3);
+				 current_region.x2, current_region.y2, (long)$3);
 		  }
 		  ',' lev_region ',' UP_OR_DOWN
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $6);
+				 current_region.x2, current_region.y2, (long)$6);
 
 		      add_opvars(splev, "iiso",
-				 (($8) ? LR_UPSTAIR : LR_DOWNSTAIR),
+				 (long)(($8) ? LR_UPSTAIR : LR_DOWNSTAIR),
 				 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
@@ -1559,13 +1559,13 @@ portal_region	: PORTAL_ID ':' lev_region
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $3);
+				 current_region.x2, current_region.y2, (long)$3);
 		  }
 		 ',' lev_region ',' string
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $6);
+				 current_region.x2, current_region.y2, (long)$6);
 
 		      add_opvars(splev, "iiso",
 				 LR_PORTAL,
@@ -1577,17 +1577,17 @@ teleprt_region	: TELEPRT_ID ':' lev_region
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $3);
+				 current_region.x2, current_region.y2, (long)$3);
 		  }
 		 ',' lev_region
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $6);
+				 current_region.x2, current_region.y2, (long)$6);
 		  }
 		teleprt_detail
 		  {
-		      int rtype;
+		      long rtype;
 		      switch($<i>8) {
 		      case -1: rtype = LR_TELE; break;
 		      case  0: rtype = LR_DOWNTELE; break;
@@ -1603,16 +1603,16 @@ branch_region	: BRANCH_ID ':' lev_region
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $3);
+				 current_region.x2, current_region.y2, (long)$3);
 		  }
 		 ',' lev_region
 		  {
 		      add_opvars(splev, "iiiii",
 				 current_region.x1, current_region.y1,
-				 current_region.x2, current_region.y2, $6);
+				 current_region.x2, current_region.y2, (long)$6);
 
 		      add_opvars(splev, "iiso",
-				 LR_BRANCH,
+				 (long)LR_BRANCH,
 				 0, (char *)0, SPO_LEVREGION);
 		  }
 		;
@@ -1647,7 +1647,7 @@ pool_detail : POOL_ID ':' coordinate
 
 replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' CHAR ',' light_state ',' SPERCENT
 		  {
-		      int chance, from_ter, to_ter;
+		      long chance, from_ter, to_ter;
 
 		      chance = $11;
 		      if (chance < 0) chance = 0;
@@ -1662,13 +1662,13 @@ replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' CHAR ',' lig
 		      add_opvars(splev, "iiii iiiio",
 				 current_region.x1, current_region.y1,
 				 current_region.x2, current_region.y2,
-				 from_ter, to_ter, $9, chance, SPO_REPLACETERRAIN);
+				 from_ter, to_ter, (long)$9, chance, SPO_REPLACETERRAIN);
 		  }
 		;
 
 terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 		 {
-		     int c;
+		     long c;
 
 		     c = what_map_char((char) $6);
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
@@ -1688,7 +1688,7 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 	       |
 	         TERRAIN_ID chance ':' coordinate ',' HORIZ_OR_VERT ',' INTEGER ',' CHAR ',' light_state
 		 {
-		     int areatyp, c, x2,y2;
+		     long areatyp, c, x2,y2;
 
 		     areatyp = $<i>6;
 		     if (areatyp == 1) {
@@ -1704,7 +1704,7 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 
 		     add_opvars(splev, "iiii iiio",
 				current_coord.x, current_coord.y, x2, y2,
-				areatyp, c, $12, SPO_TERRAIN);
+				areatyp, c, (long)$12, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
@@ -1717,14 +1717,14 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 	       |
 	         TERRAIN_ID chance ':' region ',' FILLING ',' CHAR ',' light_state
 		 {
-		     int c;
+		     long c;
 
 		     c = what_map_char((char) $8);
 		     if (c >= MAX_TYPE) yyerror("Terrain: illegal map char");
 
 		     add_opvars(splev, "iiii iiio",
 				current_region.x1, current_region.y1, current_region.x2, current_region.y2,
-				3 + $<i>6, c, $10, SPO_TERRAIN);
+				(long)(3 + $<i>6), c, (long)$10, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
@@ -1738,13 +1738,13 @@ terrain_detail : TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 
 randline_detail : RANDLINE_ID ':' lineends ',' CHAR ',' light_state ',' INTEGER opt_int
 		  {
-		      int c;
+		      long c;
 		      c = what_map_char((char) $5);
 		      if ((c == INVALID_TYPE) || (c >= MAX_TYPE)) yyerror("Terrain: illegal map char");
 		      add_opvars(splev, "iiii iiiio",
 				 current_region.x1, current_region.y1,
 				 current_region.x2, current_region.y2,
-				 c, $7, $9, $<i>10, SPO_RANDLINE);
+				 c, (long)$7, (long)$9, (long)$<i>10, SPO_RANDLINE);
 		  }
 
 opt_int		: /* empty */
@@ -1759,7 +1759,7 @@ opt_int		: /* empty */
 
 spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' light_state
 		{
-		    int c, typ;
+		    long c, typ;
 
 		    typ = what_map_char((char) $5);
 		    if (typ == INVALID_TYPE || typ >= MAX_TYPE) {
@@ -1770,7 +1770,7 @@ spill_detail : SPILL_ID ':' coordinate ',' CHAR ',' DIRECTION ',' INTEGER ',' li
 		    if (c < 1) yyerror("SPILL: Invalid count!");
 
 		    add_opvars(splev, "iiiiiio", current_coord.x, current_coord.y,
-			       typ, $7, c, $11, SPO_SPILL);
+			       typ, (long)$7, c, (long)$11, SPO_SPILL);
 		}
 		;
 
@@ -1811,14 +1811,14 @@ region_detail	: REGION_ID ':' region ',' light_state ',' room_type prefilled
 		     add_opvars(splev, "iiii iiio",
 				current_region.x1, current_region.y1,
 				current_region.x2, current_region.y2,
-				$<i>5, rt, irr, SPO_REGION);
+				(long)$<i>5, rt, irr, SPO_REGION);
 		  }
 		;
 
 altar_detail	: ALTAR_ID ':' coordinate ',' alignment ',' altar_type
 		  {
 		      add_opvars(splev, "iiiio", current_coord.x, current_coord.y,
-				 $<i>7, $<i>5, SPO_ALTAR);
+				 (long)$<i>7, (long)$<i>5, SPO_ALTAR);
 		  }
 		;
 
@@ -1841,7 +1841,7 @@ grave_detail	: GRAVE_ID ':' coordinate ',' string
 
 gold_detail	: GOLD_ID ':' amount ',' coordinate
 		  {
-		      add_opvars(splev, "iiio", $<i>3, current_coord.y, current_coord.x, SPO_GOLD);
+		      add_opvars(splev, "iiio", (long)$<i>3, current_coord.y, current_coord.x, SPO_GOLD);
 		  }
 		;
 
@@ -1849,7 +1849,7 @@ engraving_detail: ENGRAVING_ID ':' coordinate ',' engraving_type ',' string
 		  {
 		      add_opvars(splev, "iisio",
 				 current_coord.x, current_coord.y,
-				 $7, $<i>5, SPO_ENGRAVING);
+				 $7, (long)$<i>5, SPO_ENGRAVING);
 		  }
 		;
 
