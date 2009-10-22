@@ -1144,24 +1144,7 @@ boolean at_stairs, falling, portal;
 		if (at_ladder) {
 		    u_on_newpos(xdnladder, ydnladder);
 		} else {
-		    if (newdungeon) {
-			if (Is_stronghold(&u.uz)) {
-			    register xchar x, y;
-			    int trycnt = 0;
-
-			    do {
-				do {
-				    x = rn1((updest.hx - updest.lx)+1, updest.lx);
-				    y = rn1((updest.hy - updest.ly)+1, updest.ly);
-				} while ((x < updest.nlx ||
-					  x > updest.nhx) &&
-					 (y < updest.nly ||
-					  y > updest.nhy));
-			    } while ((occupied(x, y) ||
-				      IS_WALL(levl[x][y].typ)) && (trycnt++ < 300));
-			    u_on_newpos(x, y);
-			} else u_on_sstairs();
-		    } else u_on_dnstairs();
+			u_on_sstairs();
 		}
 		/* Remove bug which crashes with levitation/punishment  KAA */
 		if (Punished && !Levitation) {
