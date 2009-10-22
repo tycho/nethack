@@ -1792,7 +1792,7 @@ passwall_detail : NON_PASSWALL_ID ':' region
 
 region_detail	: REGION_ID ':' region ',' light_state ',' room_type prefilled
 		  {
-		      int rt, irr;
+		      long rt, irr;
 
 		      rt = $<i>7;
 		      if (( $<i>8 ) & 1) rt += MAXRTYPE+1;
