@@ -295,6 +295,7 @@ struct obj {
 				|| (otmp)->otyp == TALLOW_CANDLE\
 				|| (otmp)->otyp == WAX_CANDLE\
 				|| (otmp)->otyp == POT_OIL\
+				|| (otmp)->otyp == FUR_BRAZIER\
 				|| (otmp)->otyp == BAG_OF_POO)
 
 /* special stones */

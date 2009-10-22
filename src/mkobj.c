@@ -502,6 +502,10 @@ boolean artif;
 					otmp->lamplit = 0;
 					blessorcurse(otmp, 2);
 					break;
+		case FUR_BRAZIER:
+					otmp->spe = 1;
+					otmp->lamplit = 0;
+					break;
 		case IRON_SAFE:
 					otmp->olocked = 1;
 		case CHEST:

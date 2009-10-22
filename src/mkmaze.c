@@ -500,6 +500,7 @@ register const char *s;
 {
 	int x,y;
 	char protofile[20];
+	struct obj* otmp;
 	s_level	*sp = Is_special(&u.uz);
 	coord mm;
 
@@ -620,6 +621,8 @@ register const char *s;
 		     !SPACE_POS(levl[x][y].typ) || occupied(x, y));
 	    inv_pos.x = x;
 	    inv_pos.y = y;
+		 otmp = mksobj_at(FUR_BRAZIER,(int)inv_pos.x,(int)inv_pos.y,TRUE,FALSE);
+		 begin_burn(otmp,FALSE);
 #undef INVPOS_X_MARGIN
 #undef INVPOS_Y_MARGIN
 #undef INVPOS_DISTANCE

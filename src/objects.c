@@ -1023,6 +1023,7 @@ OBJECT(OBJ("acid venom", "splash of venom"),
 	/* oc_oc1 == map symbol */
 	FURN("throne", (char *)0, 5000, MINERAL, '\\', CLR_YELLOW),
 	FURN("gravestone", (char *)0, 3500, MINERAL, '|', CLR_GRAY),
+	FURN("brazier", (char *)0, 5000, MINERAL, '(', CLR_YELLOW),
 #ifdef SINKS
 	FURN("kitchen sink", (char *)0, 1000, METAL, '#', CLR_GRAY),
 #endif

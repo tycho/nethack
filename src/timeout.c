@@ -1097,10 +1097,15 @@ begin_burn(obj, already_lit)
 	long turns = 0;
 	boolean do_timer = TRUE;
 
-	if (obj->age == 0 && obj->otyp != MAGIC_LAMP && !artifact_light(obj))
+	if (obj->age == 0 && obj->otyp != MAGIC_LAMP && obj->otyp != FUR_BRAZIER && !artifact_light(obj))
 	    return;
 
 	switch (obj->otyp) {
+		case FUR_BRAZIER:
+			radius = 4;	 /* very efficient */
+			obj->lamplit = 1;
+			do_timer = FALSE;
+			break;
 		case SHIELD_OF_LIGHT:
 			radius = 2;	 /* not quite as good as the others */
 		case GOLD_DRAGON_SCALE_MAIL:
