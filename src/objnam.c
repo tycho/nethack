@@ -711,6 +711,12 @@ plus:
 		if(objects[obj->otyp].oc_charged)
 		    goto charges;
 		break;
+	case FURNITURE_CLASS:
+		if (obj->otyp == FUR_BRAZIER && obj->lamplit)
+		{
+			Strcat(bp, " (lit)");
+		}
+		break;
 	case WAND_CLASS:
 		add_erosion_words(obj, prefix);
 charges:
