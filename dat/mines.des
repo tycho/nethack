@@ -724,14 +724,14 @@ FOUNTAIN:(50,09)
 FOUNTAIN:(10,15)
 FOUNTAIN:(66,18)
 
+OBJECT:'\\',"brazier",(08,15)
+OBJECT:'\\',"brazier",(12,15)
+OBJECT:'\\',"brazier",(51,09)
+OBJECT:'\\',"brazier",(65,18)
+OBJECT:'\\',"brazier",(36,15)
+OBJECT:'\\',"brazier",(40,15)
+
 REGION:(00,00,74,20),unlit,"ordinary"
-REGION:(09,13,11,17),lit,"ordinary"
-REGION:(08,14,12,16),lit,"ordinary"
-REGION:(49,07,51,11),lit,"ordinary"
-REGION:(48,08,52,10),lit,"ordinary"
-REGION:(64,17,68,19),lit,"ordinary"
-REGION:(37,13,39,17),lit,"ordinary"
-REGION:(36,14,40,17),lit,"ordinary"
 REGION:(59,02,72,10),lit,"ordinary"
 
 MONSTER: '@', "watchman", random, peaceful
