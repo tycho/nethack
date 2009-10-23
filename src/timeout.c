@@ -1102,7 +1102,6 @@ begin_burn(obj, already_lit)
 
 	switch (obj->otyp) {
 		case FUR_BRAZIER:
-			radius = 4;	 /* very efficient */
 			obj->lamplit = 1;
 			do_timer = FALSE;
 			break;
