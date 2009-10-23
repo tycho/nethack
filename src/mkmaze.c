@@ -622,7 +622,6 @@ register const char *s;
 	    inv_pos.x = x;
 	    inv_pos.y = y;
 		 otmp = mksobj_at(FUR_BRAZIER,(int)inv_pos.x,(int)inv_pos.y,TRUE,FALSE);
-		 begin_burn(otmp,FALSE);
 #undef INVPOS_X_MARGIN
 #undef INVPOS_Y_MARGIN
 #undef INVPOS_DISTANCE

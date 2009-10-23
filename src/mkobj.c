@@ -100,6 +100,7 @@ boolean init, artif;
 
 	otmp = mksobj(otyp, init, artif);
 	place_object(otmp, x, y);
+
 	return(otmp);
 }
 
@@ -659,8 +660,8 @@ boolean artif;
 	/* Some things must get done (timers) even if init = 0 */
 	switch (otmp->otyp) {
 	    case CORPSE:
-		start_corpse_timeout(otmp);
-		break;
+			start_corpse_timeout(otmp);
+			break;
 	}
 
 	/* unique objects may have an associated artifact entry */
@@ -1167,6 +1168,20 @@ int x, y;
     otmp->nobj = fobj;
     fobj = otmp;
     if (otmp->timed) obj_timer_checks(otmp, x, y, 0);
+
+	 /* very ugly special case here: braziers will always be on the ground
+	  * and can't be picked up, so the act of placing them on the ground 
+	  * lights them for the first (and only) time.
+	  *
+	  * this would normally go in mksobj, but begin_burn requires a location
+	  * for an object prior to being willing to start it burning...
+	  */
+
+	if (otmp->otyp == FUR_BRAZIER)
+	{
+		begin_burn(otmp,FALSE);
+	}
+
 }
 
 #define ON_ICE(a) ((a)->recharged)
