@@ -613,6 +613,8 @@ LEVEL:"sanctum"
 FLAGS: noteleport,hardfloor,nommap,mazelevel
 INIT_MAP:solidfill,' '
 GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#123456789012345678901234567890123456789012345678901234567890123456789012345
 MAP
 ----------------------------------------------------------------------------
 |             --------------                                               |
@@ -647,6 +649,11 @@ DOOR:closed,(40,06)
 DOOR:locked,(62,06)
 DOOR:closed,(46,12)
 DOOR:closed,(53,10)
+# Some mood lighting
+OBJECT:'\\',"brazier",(08,09)
+OBJECT:'\\',"brazier",(18,15)
+OBJECT:'\\',"brazier",(28,05)
+OBJECT:'\\',"brazier",(28,13)
 # Surround the temple with fire
 TRAP:"fire",(13,05)
 TRAP:"fire",(14,05)
