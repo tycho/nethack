@@ -1144,7 +1144,11 @@ boolean at_stairs, falling, portal;
 		if (at_ladder) {
 		    u_on_newpos(xdnladder, ydnladder);
 		} else {
-			u_on_sstairs();
+		    if (newdungeon) {
+				u_on_sstairs();
+			} else {
+				u_on_dnstairs();
+			}
 		}
 		/* Remove bug which crashes with levitation/punishment  KAA */
 		if (Punished && !Levitation) {
