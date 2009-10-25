@@ -1179,6 +1179,8 @@ LEVEL: "minend-2"
 FLAGS:mazelevel
 INIT_MAP:solidfill,' '
 GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#1234567890123456789012345678901234567890123456789012345678901234567890
 MAP
 ---------------------------------------------------------------------------
 |...................................................|                     |
@@ -1299,6 +1301,8 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
+MONSTER:'G',"gnome king",(10,09),hostile
+MONSTER:'G',"gnomish wizard",(11,09),hostile
 MONSTER:'G',"gnome king",random
 MONSTER:'G',"gnome lord",random
 MONSTER:'G',"gnome lord",random
