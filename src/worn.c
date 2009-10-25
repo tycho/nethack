@@ -381,7 +381,7 @@ register struct monst *mon;
 	div = (mon->m_lev > 20) ? 6 : 5;
 	bonus = (float)(mon->m_lev/2);
 	bonus *= bonus/div;
-	if (bonus > 16) { bonus = 16; }
+	if (bonus > 12) { bonus = 12; }
 	if (bonus < 0) { bonus = 0; }
 	base -= (int)bonus;
 
