@@ -340,6 +340,7 @@ struct you {
 	long	uexp, urexp;
 	long	ucleansed;	/* to record moves when player was cleansed */
 	long	usleep;		/* sleeping; monstermove you last started */
+	long  udiseased;  /* diseased: are you diseased, and how badly? */
 	int uinvault;
 	struct monst *ustuck;
 #ifdef STEED
