@@ -1070,12 +1070,14 @@ mfndpos(mon, poss, info, flag)
 	boolean wantpool,poolok,lavaok,nodiag;
 	boolean rockok = FALSE, treeok = FALSE, thrudoor;
 	int maxx, maxy;
+	boolean treewalk;
 
 	x = mon->mx;
 	y = mon->my;
 	nowtyp = levl[x][y].typ;
 
 	nodiag = (mdat == &mons[PM_GRID_BUG]);
+	treewalk = (mdat == &mons[PM_WOOD_NYMPH]);
 	wantpool = mdat->mlet == S_EEL;
 	poolok = is_flyer(mdat) || is_clinger(mdat) || is_flying(mon) ||
 				(is_swimmer(mdat) && !wantpool);
@@ -1118,7 +1120,7 @@ nexttry:	/* eels prefer the water, but if there is no water nearby,
 	    if(nx == x && ny == y) continue;
 	    if(IS_ROCK(ntyp = levl[nx][ny].typ) &&
 	       !((flag & ALLOW_WALL) && may_passwall(nx,ny)) &&
-	       !((IS_TREE(ntyp) ? treeok : rockok) && may_dig(nx,ny))) continue;
+	       !((IS_TREE(ntyp) ? (treeok|treewalk) : rockok) && may_dig(nx,ny))) continue;
 	    /* KMH -- Added iron bars */
 	    if (ntyp == IRONBARS && !(flag & ALLOW_BARS)) continue;
 	    if(IS_DOOR(ntyp) && !amorphous(mdat) &&
