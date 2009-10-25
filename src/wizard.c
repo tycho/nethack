@@ -54,28 +54,37 @@ amulet()
 {
 	struct monst *mtmp;
 	struct trap *ttmp;
-	struct obj *amu;
+	struct obj *amu = 0;
+	struct obj* otmp;
 
 #if 0		/* caller takes care of this check */
 	if (!u.uhave.amulet)
 		return;
 #endif
-	if ((((amu = uamul) != 0 && amu->otyp == AMULET_OF_YENDOR) ||
-	     ((amu = uwep) != 0 && amu->otyp == AMULET_OF_YENDOR))
-	    && !rn2(15)) {
-	    for(ttmp = ftrap; ttmp; ttmp = ttmp->ntrap) {
-		if(ttmp->ttyp == MAGIC_PORTAL) {
-		    int du = distu(ttmp->tx, ttmp->ty);
-		    if (du <= 9)
-			pline("%s hot!", Tobjnam(amu, "feel"));
-		    else if (du <= 64)
-			pline("%s very warm.", Tobjnam(amu, "feel"));
-		    else if (du <= 144)
-			pline("%s warm.", Tobjnam(amu, "feel"));
-		    /* else, the amulet feels normal */
-		    break;
+
+	/* have to do this to pick up the amulet object itself */
+	for (otmp = invent; otmp; otmp = otmp->nobj)
+	{
+		if (otmp->otyp == AMULET_OF_YENDOR)
+		{
+			amu = otmp;
 		}
-	    }
+	}
+
+	if (amu && !rn2(15)) {
+		for(ttmp = ftrap; ttmp; ttmp = ttmp->ntrap) {
+			if(ttmp->ttyp == MAGIC_PORTAL) {
+				int du = distu(ttmp->tx, ttmp->ty);
+				if (du <= 9)
+					pline("%s hot!", Tobjnam(amu, "feel"));
+				else if (du <= 64)
+					pline("%s very warm.", Tobjnam(amu, "feel"));
+				else if (du <= 144)
+					pline("%s warm.", Tobjnam(amu, "feel"));
+				/* else, the amulet feels normal */
+				break;
+			}
+		}
 	}
 
 	if (!flags.no_of_wizards)
