@@ -1324,6 +1324,40 @@ int spell;
 	 */
 	chance = chance * (20-splcaster) / 15 - splcaster;
 
+	/* Wielding one of the special staves will help enormously.
+	 * It won't fix the Wizard's body armor restriction, but for all other
+	 * classes it should be a significant help.
+	 */
+	if (uwep && uwep->otyp >= STAFF_OF_DIVINATION && uwep->otyp <= STAFF_OF_BATTLE)
+	{
+#define STAFFBONUS 50
+		if (spell_skilltype(spellid(spell)) == P_CLERIC_SPELL && uwep->otyp == STAFF_OF_HOLINESS)
+		{
+			chance += STAFFBONUS;
+		}
+		if (spell_skilltype(spellid(spell)) == P_HEALING_SPELL && uwep->otyp == STAFF_OF_HEALING)
+		{
+			chance += STAFFBONUS;
+		}
+		if (spell_skilltype(spellid(spell)) == P_DIVINATION_SPELL && uwep->otyp == STAFF_OF_DIVINATION)
+		{
+			chance += STAFFBONUS;
+		}
+		if (spell_skilltype(spellid(spell)) == P_MATTER_SPELL && uwep->otyp == STAFF_OF_MATTER)
+		{
+			chance += STAFFBONUS;
+		}
+		if (spell_skilltype(spellid(spell)) == P_ESCAPE_SPELL && uwep->otyp == STAFF_OF_ESCAPE)
+		{
+			chance += STAFFBONUS;
+		}
+		if (spell_skilltype(spellid(spell)) == P_ATTACK_SPELL && uwep->otyp == STAFF_OF_BATTLE)
+		{
+			chance += STAFFBONUS;
+		}
+#undef STAFFBONUS
+	}
+
 	/* Oh, wait... and there's one more.  Wizards are casters,
 	 * not combat monkeys.  Bolting body armor onto a Wizard is
 	 * very similar to bolting body armor onto a Monk.  It just isn't

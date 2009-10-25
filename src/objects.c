@@ -251,13 +251,17 @@ WEAPON("club", (char *)0,
 WEAPON("rubber hose", (char *)0,
 	1, 0, 0,  0, 20,  3,  4,  3, 0, B,   P_WHIP, PLASTIC, CLR_BROWN),
 #endif
-WEAPON("quarterstaff", "staff",
-	0, 0, 1, 15, 40,  5,  6,  6, 0, B,   P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("quarterstaff", "staff", 0, 0, 1, 15, 40,  5,  6,  6, 0, B,   P_QUARTERSTAFF, WOOD, HI_WOOD),
+/* spell school staves */
+WEAPON("staff of divination", "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of healing",    "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of holiness",   "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of matter",     "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of escape",     "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of battle",     "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* two-piece */
-WEAPON("aklys", "thonged club",
-	0, 0, 0,  8, 15,  4,  6,  3, 0, B,   P_CLUB, IRON, HI_METAL),
-WEAPON("flail", (char *)0,
-	1, 0, 0, 40, 15,  4,  6,  4, 0, B,   P_FLAIL, IRON, HI_METAL),
+WEAPON("aklys", "thonged club", 0, 0, 0,  3, 15,  4,  6,  3, 0, B,   P_CLUB, IRON, HI_METAL),
+WEAPON("flail", (char *)0, 1, 0, 0, 20, 15,  4,  6,  4, 0, B,   P_FLAIL, IRON, HI_METAL),
 						/* +1 small, +1d4 large */
 /* misc */
 WEAPON("bullwhip", (char *)0,
@@ -265,7 +269,7 @@ WEAPON("bullwhip", (char *)0,
 
 /* bows */
 BOW("bow", (char *)0,			  1, 32, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
-BOW("elven bow", "runed bow",	  0, 20, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
+BOW("elven bow", "runed bow",	  0, 15, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
 BOW("orcish bow", "crude bow",  0, 20, 30, 60, 0, WOOD, P_BOW, CLR_BLACK),
 BOW("yumi", "long bow",			  0,  0, 30, 60, 0, WOOD, P_BOW, HI_WOOD),
 BOW("sling", (char *)0,			  1, 16,  3, 20, 0, LEATHER, P_SLING, HI_LEATHER),
