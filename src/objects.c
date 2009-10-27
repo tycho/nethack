@@ -253,12 +253,12 @@ WEAPON("rubber hose", (char *)0,
 #endif
 WEAPON("quarterstaff", "staff", 0, 0, 1, 15, 40,  5,  6,  6, 0, B,   P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* spell school staves */
-WEAPON("staff of divination", "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
-WEAPON("staff of healing",    "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
-WEAPON("staff of holiness",   "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
-WEAPON("staff of matter",     "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
-WEAPON("staff of escape",     "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
-WEAPON("staff of battle",     "staff", 0, 0, 1, 5, 40,  5,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of divination", "staff", 0, 0, 1, 5, 40, 400,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of healing",    "staff", 0, 0, 1, 5, 40, 400,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of holiness",   "staff", 0, 0, 1, 5, 40, 400,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of matter",     "staff", 0, 0, 1, 5, 40, 400,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of escape",     "staff", 0, 0, 1, 5, 40, 400,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+WEAPON("staff of battle",     "staff", 0, 0, 1, 5, 40, 400,  6,  6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* two-piece */
 WEAPON("aklys", "thonged club", 0, 0, 0,  3, 15,  4,  6,  3, 0, B,   P_CLUB, IRON, HI_METAL),
 WEAPON("flail", (char *)0, 1, 0, 0, 20, 15,  4,  6,  4, 0, B,   P_FLAIL, IRON, HI_METAL),
