@@ -241,7 +241,8 @@ target_on(mask, mtmp)
 	    else if((otmp = on_ground(otyp)))
 		return(STRAT(STRAT_GROUND, otmp->ox, otmp->oy, mask));
 	    else if((mtmp2 = other_mon_has_arti(mtmp, otyp)))
-		return(STRAT(STRAT_MONSTR, mtmp2->mx, mtmp2->my, mask));
+		return(STRAT(STRAT_PLAYER, u.ux, u.uy, mask));
+		 /* Don't fight over the Amulet, mostly */
 	}
 	return(STRAT_NONE);
 }
@@ -324,7 +325,7 @@ tactics(mtmp)
 
 	/* this should be in strategy() but the STRAT_ flags are
 	 * overloaded and i'm in no mood to fix them right now;
-	 * if monster is magically scared, don't 'flee' right next
+	 * if monster is scared, don't 'flee' right next
 	 * to the player */
 	if (mtmp->mflee) {
 		mtmp->mavenge = 1;
@@ -333,6 +334,12 @@ tactics(mtmp)
 			ny = rn2(ROWNO);
 			if (rloc_pos_ok(nx,ny,mtmp) && distu(nx,ny) > 64) {
 				rloc_to(mtmp,nx,ny);
+				/* this was the part that was missing before -- faster heals
+				 * this should solve the problem of scared covetous running
+				 * all over the damn place for 2k+ turns */
+				if(mtmp->mhp <= mtmp->mhpmax - 8) {
+					mtmp->mhp += rnd(8);
+				}
 				return 1;
 			}
 		}
