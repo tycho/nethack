@@ -1010,8 +1010,10 @@ register int	mmflags;
 	if (is_golem(ptr)) {
 	    mtmp->mhpmax = mtmp->mhp = golemhp(mndx);
 	} else if (is_rider(ptr)) {
-	    /* We want low HP, but a high mlevel so they can attack well */
-	    mtmp->mhpmax = mtmp->mhp = d(10,8);
+	    /* We want low HP, but a high mlevel so they can attack well
+		  *
+		  * DSR 10/31/09: What, are you nuts?  They're way too crunchy. */
+	    mtmp->mhpmax = mtmp->mhp = 100 + d(8,8);
 	} else if (ptr->mlevel > 49) {
 	    /* "special" fixed hp monster
 	     * the hit points are encoded in the mlevel in a somewhat strange
