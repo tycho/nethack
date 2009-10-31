@@ -62,7 +62,7 @@ STATIC_DCL int FDECL(isqrt, (int));
  *
  *  spelspec, spelsbon:
  *	Arc map masters (SPE_MAGIC_MAPPING)
- *	Bar fugue/berserker (SPE_HASTE_SELF)
+ *	Bar to frighten enemies (SPE_CAUSE_FEAR)
  *	Cav born to dig (SPE_DIG)
  *	Hea to heal (SPE_CURE_SICKNESS)
  *	Kni to lay on hands (SPE_EXTRA_HEALING)
@@ -72,7 +72,7 @@ STATIC_DCL int FDECL(isqrt, (int));
  *	Rog to find loot (SPE_DETECT_TREASURE)
  *	Sam to be At One (SPE_CLAIRVOYANCE)
  *	Tou to smile (SPE_CHARM_MONSTER)
- *	Val control the cold (SPE_CONE_OF_COLD)
+ *	Val to maintain their armor (SPE_REPAIR_ARMOR)
  *	Wiz all really, but SPE_MAGIC_MISSILE is their party trick
  *
  *	See percent_success() below for more comments.
