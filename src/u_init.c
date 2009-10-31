@@ -204,6 +204,10 @@ static struct trobj Poison[] = {
 	{ POT_SICKNESS, 0, POTION_CLASS, 2, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
+static struct trobj Pickaxe[] = {
+	{ PICK_AXE, 0, TOOL_CLASS, 1, 0 },
+	{ 0, 0, 0, 0, 0 }
+};
 #ifdef TOURIST
 static struct trobj Leash[] = {
 	{ LEASH, 0, TOOL_CLASS, 1, 0 },
@@ -631,7 +635,7 @@ u_init()
 		skill_init(Skill_B);
 		break;
 	case PM_CAVEMAN:
-		Cave_man[C_AMMO].trquan = rn1(11, 10);	/* 10..20 */
+		Cave_man[C_AMMO].trquan = rn1(11, 20);	/* 20..30 */
 		ini_inv(Cave_man);
 		skill_init(Skill_C);
 		break;
@@ -786,6 +790,11 @@ u_init()
 	    knows_object(DWARVISH_MITHRIL_COAT);
 	    knows_object(DWARVISH_CLOAK);
 	    knows_object(DWARVISH_ROUNDSHIELD);
+		 if (!rn2(4))
+		 {
+			 /* Wise dwarves bring their toy to the dungeons. */
+			 ini_inv(Pickaxe);
+		 }
 	    break;
 
 	case PM_GNOME:
