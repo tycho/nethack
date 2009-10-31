@@ -1173,7 +1173,8 @@ struct obj *obj;
 	if(poly_zapped < 0) {
 	    /* some may metamorphosize */
 	    for (i = obj->quan; i; i--)
-		if (! rn2(Luck + 45)) {
+			 /* increase chances of Happy Golem Time */
+		if (!rn2(Luck/5 + 2)) {
 		    poly_zapped = objects[obj->otyp].oc_material;
 		    break;
 		}
@@ -1763,9 +1764,9 @@ bhitpile(obj,fhito,tx,ty)
 
     poly_zapped = -1;
     for(otmp = level.objects[tx][ty]; otmp; otmp = next_obj) {
-	/* Fix for polymorph bug, Tim Wright */
-	next_obj = otmp->nexthere;
-	hitanything += (*fhito)(otmp, obj);
+		/* Fix for polymorph bug, Tim Wright */
+		next_obj = otmp->nexthere;
+		hitanything += (*fhito)(otmp, obj);
     }
     if(poly_zapped >= 0)
 	create_polymon(level.objects[tx][ty], poly_zapped);
