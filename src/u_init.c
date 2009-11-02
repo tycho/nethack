@@ -790,7 +790,7 @@ u_init()
 	    knows_object(DWARVISH_MITHRIL_COAT);
 	    knows_object(DWARVISH_CLOAK);
 	    knows_object(DWARVISH_ROUNDSHIELD);
-		 if (!rn2(4))
+		 if (!rn2(4) && !Role_if(PM_ARCHEOLOGIST))
 		 {
 			 /* Wise dwarves bring their toy to the dungeons. */
 			 ini_inv(Pickaxe);
