@@ -928,6 +928,7 @@ u_init()
 	}
 	shambler->mflags2 &= ~M2_MERC;					/* no guards */
 	shambler->mflags2 &= ~M2_PEACEFUL;				/* no peacefuls */
+	shambler->mflags2 &= ~M2_WERE;					/* no lycanthropes */
 	for (i = 0; i < rnd(5); i++) {
 		shambler->mflags3 |= (0x100 << rn2(6));	/* no covetous, but any of the middle M3_ flags are OK */
 	}
