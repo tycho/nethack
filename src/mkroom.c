@@ -232,6 +232,7 @@ struct mkroom *sroom;
 	int sh, tx, ty, goldlim, type = sroom->rtype;
 	int rmno = (sroom - rooms) + ROOMOFFSET;
 	coord mm;
+	int has_throne = 0;
 
 #ifdef GCC_WARN
 	tx = ty = goldlim = 0;
@@ -243,8 +244,10 @@ struct mkroom *sroom;
 		if(level.flags.is_maze_lev) {
 		    for(tx = sroom->lx; tx <= sroom->hx; tx++)
 			for(ty = sroom->ly; ty <= sroom->hy; ty++)
-			    if(sobj_at(FUR_THRONE,tx,ty))
+			    if(sobj_at(FUR_THRONE,tx,ty)) {
+				has_throne = 1;
 				goto throne_placed;
+			    }
 		}
 		i = 100;
 		do {	/* don't place throne on top of stairs */
@@ -363,7 +366,8 @@ struct mkroom *sroom;
 	      case COURT:
 		{
 		  struct obj *chest;
-		  mksobj_at(FUR_THRONE, tx,ty, TRUE, FALSE);
+		  if (!has_throne)
+		      mksobj_at(FUR_THRONE, tx,ty, TRUE, FALSE);
 		  (void) somexy(sroom, &mm);
 		  (void) mkgold((long) rn1(50 * level_difficulty(),10), mm.x, mm.y);
 		  /* the royal coffers */
