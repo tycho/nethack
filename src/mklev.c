@@ -23,6 +23,7 @@ STATIC_DCL void FDECL(mkfount,(int,struct mkroom *));
 STATIC_DCL void FDECL(mksink,(struct mkroom *));
 #endif
 STATIC_DCL void FDECL(mktree,(struct mkroom*));
+STATIC_DCL void FDECL(mkbrazier,(struct mkroom*));
 STATIC_DCL void FDECL(mkaltar,(struct mkroom *));
 STATIC_DCL void FDECL(mkgrave,(struct mkroom *));
 STATIC_DCL void NDECL(makevtele);
@@ -805,6 +806,8 @@ skip0:
 		if (x < 2) x = 2;
 		if(!rn2(x)) mkgrave(croom);
 
+		if (!croom->rlit && !rn2(15)) mkbrazier(croom);
+
 		/* put statues inside */
 		if(!rn2(20))
 		    (void) mkcorpstat(STATUE, (struct monst *)0,
@@ -1399,6 +1402,21 @@ struct mkroom* croom;
 	if (level.objects[loc.x][loc.y]) {  /* "under" the tree */
 		bury_objs(loc.x,loc.y);
 	}
+}
+
+STATIC_OVL void
+mkbrazier(croom)
+struct mkroom* croom;
+{
+	coord loc;
+	int count = 0;
+
+	do {
+		if (!somexy(croom,&loc)) return;
+		count++;
+	} while (count < 200 && (occupied(loc.x,loc.y) || bydoor(loc.x,loc.y)));
+
+	(void) mksobj_at(FUR_BRAZIER, loc.x, loc.y, TRUE, FALSE);
 }
 
 
