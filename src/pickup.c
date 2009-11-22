@@ -2163,7 +2163,7 @@ register int held;
 	    (void) chest_trap(obj, HAND, FALSE);
 	    /* even if the trap fails, you've used up this turn */
 	    if (multi >= 0) {	/* in case we didn't become paralyzed */
-		nomul(-1, "opening FIXME!");
+		nomul(-1, "opening a container");
 		nomovemsg = "";
 	    }
 	    return 1;
