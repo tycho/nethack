@@ -20,6 +20,7 @@ STATIC_DCL boolean FDECL(isbig, (struct mkroom *));
 STATIC_DCL struct mkroom * FDECL(pick_room,(BOOLEAN_P));
 STATIC_DCL void NDECL(mkshop), FDECL(mkzoo,(int)), NDECL(mkswamp);
 STATIC_DCL void NDECL(mktemple);
+STATIC_DCL void NDECL(mktraproom);
 STATIC_DCL coord * FDECL(shrine_pos, (int));
 STATIC_DCL struct permonst * NDECL(morguemon);
 STATIC_DCL struct permonst * NDECL(antholemon);
@@ -61,6 +62,7 @@ int	roomtype;
 	case LEPREHALL:	mkzoo(LEPREHALL); break;
 	case COCKNEST:	mkzoo(COCKNEST); break;
 	case ANTHOLE:	mkzoo(ANTHOLE); break;
+	case TRAPROOM:  mktraproom(); break;
 	default:	impossible("Tried to make a room of type %d.", roomtype);
     }
 }
@@ -498,6 +500,36 @@ int roomno;
 	buf.x = troom->lx + ((troom->hx - troom->lx) / 2);
 	buf.y = troom->ly + ((troom->hy - troom->ly) / 2);
 	return(&buf);
+}
+
+void
+mktraproom()
+{
+    struct mkroom *sroom;
+    struct rm *lev;
+    int area;
+    int ttyp;
+    int idx = (level_difficulty() + ((long)u.ubirthday)) % 9;
+
+    if(!(sroom = pick_room(TRUE))) return;
+
+    area = ((sroom->hx - sroom->lx + 1) * (sroom->hy - sroom->ly + 1)) / 2;
+
+    while (area-- > 0) {
+	switch (idx) {
+	default: ttyp = LANDMINE; break;
+	case 0:  ttyp = ROLLING_BOULDER_TRAP; break;
+	case 1:  ttyp = rn2(2) ? PIT : SPIKED_PIT; break;
+	case 2:  ttyp = WEB; break;
+	case 3:  ttyp = rn2(3) ? ROCKTRAP : COLLAPSE_TRAP; break;
+	case 4:  ttyp = FIRE_TRAP; break;
+	case 5:  ttyp = rn2(5) ? TRAPDOOR : HOLE; break;
+	case 6:  ttyp = STATUE_TRAP; break;
+	case 7:  ttyp = rn2(2) ? DART_TRAP : ARROW_TRAP; break;
+	}
+	mktrap(ttyp, 0, sroom, NULL);
+    }
+
 }
 
 STATIC_OVL void

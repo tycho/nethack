@@ -154,6 +154,7 @@ static struct {
 	{ "temple",	 TEMPLE },
 	{ "anthole",	 ANTHOLE },
 	{ "cocknest",	 COCKNEST },
+	{ "traproom",	 TRAPROOM },
 	{ "leprehall",	 LEPREHALL },
 	{ "shop",	 SHOPBASE },
 	{ "armor shop",	 ARMORSHOP },
