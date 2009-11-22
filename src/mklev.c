@@ -52,7 +52,6 @@ STATIC_DCL void FDECL(mk_knox_portal, (XCHAR_P,XCHAR_P));
 #define init_vault()	vault_x = -1
 #define do_vault()	(vault_x != -1)
 static xchar		vault_x, vault_y;
-boolean goldseen;
 static boolean made_branch;	/* used only during level creation */
 
 /* Args must be (const genericptr) so that qsort will always be happy. */
@@ -788,6 +787,7 @@ skip0:
 
 	/* for each room: put things inside */
 	for(croom = rooms; croom->hx > 0; croom++) {
+	    int extra_traps = 0;
 		if(croom->rtype != OROOM) continue;
 
 		/* put a sleeping monster inside */
@@ -804,12 +804,11 @@ skip0:
 			(void) maketrap(x, y, WEB);
 		}
 		/* put traps and mimics inside */
-		goldseen = FALSE;
 		x = 8 - (level_difficulty()/6);
 		if (x <= 1) x = 2;
 		while (!rn2(x))
 		    mktrap(0,0,croom,(coord*)0);
-		if (!goldseen && !rn2(3))
+		if (!rn2(3))
 		    (void) mkgold(0L, somex(croom), somey(croom));
 #ifdef REINCARNATION
 		if(Is_rogue_level(&u.uz)) goto skip_nonrogue;
