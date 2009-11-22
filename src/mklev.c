@@ -787,7 +787,6 @@ skip0:
 
 	/* for each room: put things inside */
 	for(croom = rooms; croom->hx > 0; croom++) {
-	    int extra_traps = 0;
 		if(croom->rtype != OROOM) continue;
 
 		/* put a sleeping monster inside */
