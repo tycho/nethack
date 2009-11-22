@@ -741,7 +741,7 @@ makelevel()
 	   with the same probabilities as vanilla code.
          */
 	do {
-	    switch (rn2(15)) {
+	    switch (rn2(16)) {
 	    default:
 #ifdef WIZARD
 	if(wizard && nh_getenv("SHOPTYPE")) mkroom(SHOPBASE); else
@@ -774,6 +774,8 @@ makelevel()
 	    case 9:
 		if (u_depth > 16 && !rn2(94) &&
 		    !(mvitals[PM_COCKATRICE].mvflags & G_GONE)) { mkroom(COCKNEST); break; }
+	    case 10:
+		if (u_depth > 4 && (rn2(u_depth) < 2)) { mkroom(TRAPROOM); break; }
 
 	    }
 	} while (--tmpi >= 0);
