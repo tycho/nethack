@@ -1816,6 +1816,7 @@ register struct monst *mtmp;
 	boolean trapkilled = FALSE;
 	struct permonst *mptr = mtmp->data;
 	struct obj *otmp;
+	struct monst* mtmp2;
 
 	if (!trap) {
 	    mtmp->mtrapped = 0;	/* perhaps teleported? */
@@ -1874,7 +1875,7 @@ register struct monst *mtmp;
 		/* it has been in such a trap - perhaps it escapes */
 		if(rn2(4)) return(0);
 	    } else {
-		mtmp->mtrapseen |= (1 << (tt-1));
+			mtmp->mtrapseen |= (1 << (tt-1));
 	    }
 	    /* Monster is aggravated by being trapped by you.
 	       Recognizing who made the trap isn't completely
@@ -1883,6 +1884,15 @@ register struct monst *mtmp;
 
 	    in_sight = canseemon(mtmp);
 	    see_it = cansee(mtmp->mx, mtmp->my);
+
+		 /* some monsters may learn from others' errors */
+		 for (mtmp2 = fmon; mtmp2; mtmp2 = mtmp2->nmon)
+		 {
+			 if (m_cansee(mtmp2,mtmp->mx,mtmp->my) && !mindless(mtmp2->data))
+			 {
+				 mtmp2->mtrapseen |= (1 << (tt-1));
+			 }
+		 }
 #ifdef STEED
 	    /* assume hero can tell what's going on for the steed */
 	    if (mtmp == u.usteed) in_sight = TRUE;
