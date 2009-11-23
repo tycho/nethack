@@ -507,18 +507,21 @@ mktraproom()
 {
     struct mkroom *sroom;
     struct rm *lev;
-    int area;
-    int ttyp;
+    int area, ttyp, ntraps;
     int idx = (level_difficulty() + ((long)u.ubirthday)) % 9;
 
     if(!(sroom = pick_room(TRUE))) return;
 
-    area = ((sroom->hx - sroom->lx + 1) * (sroom->hy - sroom->ly + 1)) / 2;
+    sroom->rtype = TRAPROOM;
+    if (!rn2(10)) idx = rn2(10); /* occasionally give anything if called twice on same level */
 
-    while (area-- > 0) {
+    area = ((sroom->hx - sroom->lx + 1) * (sroom->hy - sroom->ly + 1));
+    ntraps = rn2(area/3) + (area/4);
+
+    while (ntraps-- > 0) {
 	switch (idx) {
 	default: ttyp = LANDMINE; break;
-	case 0:  ttyp = ROLLING_BOULDER_TRAP; break;
+	case 0:  ttyp = ROLLING_BOULDER_TRAP; ntraps--; break;
 	case 1:  ttyp = rn2(2) ? PIT : SPIKED_PIT; break;
 	case 2:  ttyp = WEB; break;
 	case 3:  ttyp = rn2(3) ? ROCKTRAP : COLLAPSE_TRAP; break;
