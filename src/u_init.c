@@ -180,10 +180,6 @@ static struct trobj Tinopener[] = {
 	{ TIN_OPENER, 0, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
-static struct trobj Magicmarker[] = {
-	{ MAGIC_MARKER, UNDEF_SPE, TOOL_CLASS, 1, 0 },
-	{ 0, 0, 0, 0, 0 }
-};
 static struct trobj Lamp[] = {
 	{ OIL_LAMP, 1, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
@@ -618,7 +614,6 @@ u_init()
 		ini_inv(Archeologist);
 		if(!rn2(10)) ini_inv(Tinopener);
 		else if(!rn2(4)) ini_inv(Lamp);
-		else if(!rn2(10)) ini_inv(Magicmarker);
 		knows_object(SACK);
 		knows_object(TOUCHSTONE);
 		skill_init(Skill_A);
@@ -666,15 +661,13 @@ u_init()
 		case 2: Monk[M_BOOK].trotyp = SPE_SLEEP; break;
 		}
 		ini_inv(Monk);
-		if(!rn2(5)) ini_inv(Magicmarker);
-		else if(!rn2(10)) ini_inv(Lamp);
+		if(!rn2(10)) ini_inv(Lamp);
 		knows_class(ARMOR_CLASS);
 		skill_init(Skill_Mon);
 		break;
 	case PM_PRIEST:
 		ini_inv(Priest);
-		if(!rn2(10)) ini_inv(Magicmarker);
-		else if(!rn2(10)) ini_inv(Lamp);
+		if(!rn2(10)) ini_inv(Lamp);
 		knows_object(POT_WATER);
 		skill_init(Skill_P);
 		/* KMH, conduct --
@@ -723,7 +716,6 @@ u_init()
 		if(!rn2(25)) ini_inv(Tinopener);
 		else if(!rn2(25)) ini_inv(Leash);
 		else if(!rn2(25)) ini_inv(Towel);
-		else if(!rn2(25)) ini_inv(Magicmarker);
 		skill_init(Skill_T);
 		break;
 #endif
@@ -736,7 +728,6 @@ u_init()
 		break;
 	case PM_WIZARD:
 		ini_inv(Wizard);
-		if(!rn2(5)) ini_inv(Magicmarker);
 		if(!rn2(5)) ini_inv(Blindfold);
 		skill_init(Skill_W);
 		break;
