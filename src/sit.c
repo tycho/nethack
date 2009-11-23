@@ -384,9 +384,10 @@ rndcurse()			/* curse a few inventory items at random! */
 void
 attrcurse()			/* remove a random INTRINSIC ability */
 {
-	switch(rnd(11)) {
+	switch(rnd(14)) {
 	case 1 : if (HFire_resistance) {
-			HFire_resistance = 0;
+			HFire_resistance = HFire_resistance & (TIMEOUT|FROMOUTSIDE|HAVEPARTIAL);
+			decr_resistance(&HFire_resistance,rnd(50)+50);
 			You_feel("warmer.");
 			break;
 		}
@@ -396,7 +397,8 @@ attrcurse()			/* remove a random INTRINSIC ability */
 			break;
 		}
 	case 3 : if (HPoison_resistance) {
-			HPoison_resistance = 0;
+			HPoison_resistance = HPoison_resistance & (TIMEOUT|FROMOUTSIDE|HAVEPARTIAL);
+			decr_resistance(&HPoison_resistance,rnd(50)+50);
 			You_feel("a little sick!");
 			break;
 		}
@@ -408,7 +410,8 @@ attrcurse()			/* remove a random INTRINSIC ability */
 			break;
 		}
 	case 5 : if (HCold_resistance) {
-			HCold_resistance = 0;
+			HCold_resistance = HCold_resistance & (TIMEOUT|FROMOUTSIDE|HAVEPARTIAL);
+			decr_resistance(&HCold_resistance,rnd(50)+50);
 			You_feel("cooler.");
 			break;
 		}
@@ -443,6 +446,24 @@ attrcurse()			/* remove a random INTRINSIC ability */
 	case 11: if (HAggravate_monster & INTRINSIC) {
 			HAggravate_monster &= ~INTRINSIC;
 			You_feel("less attractive.");
+			break;
+		}
+	case 12 : if (HSleep_resistance) {
+			HSleep_resistance = HSleep_resistance & (TIMEOUT|FROMOUTSIDE|HAVEPARTIAL);
+			decr_resistance(&HSleep_resistance,rnd(50)+50);
+			You_feel("a little tired.");
+			break;
+		}
+	case 13 : if (HDisint_resistance) {
+			HDisint_resistance = HDisint_resistance & (TIMEOUT|FROMOUTSIDE|HAVEPARTIAL);
+			decr_resistance(&HDisint_resistance,rnd(50)+50);
+			You_feel("less firm.");
+			break;
+		}
+	case 14 : if (HShock_resistance) {
+			HShock_resistance = HShock_resistance & (TIMEOUT|FROMOUTSIDE|HAVEPARTIAL);
+			decr_resistance(&HShock_resistance,rnd(50)+50);
+			You_feel("more conductive.");
 			break;
 		}
 	default: break;
