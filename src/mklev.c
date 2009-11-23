@@ -736,7 +736,7 @@ makelevel()
 
     {
 	register int u_depth = depth(&u.uz);
-	int tmpi = rn2(nroom)-room_threshold+1;
+	int tmpi = rn2((nroom*2)/3)-room_threshold+1;
 	/* the following code creates approximately the same number of special rooms
 	   with the same probabilities as vanilla code.
          */
