@@ -735,51 +735,47 @@ makelevel()
 	}
 
     {
-	register int u_depth = depth(&u.uz);
-	int tmpi = rn2((nroom*2)/3)-room_threshold+1;
-	/* the following code creates approximately the same number of special rooms
-	   with the same probabilities as vanilla code.
-         */
-	do {
-	    switch (rn2(16)) {
-	    default:
+		register int u_depth = depth(&u.uz);
+		int tmpi = rn2((nroom*2)/3)-room_threshold+1;
+		/* the following code creates approximately the same number of special rooms
+			with the same probabilities as vanilla code.  */
+		do {
+			switch (rn2(25)) {
+				default:
 #ifdef WIZARD
-	if(wizard && nh_getenv("SHOPTYPE")) mkroom(SHOPBASE); else
+					if(wizard && nh_getenv("SHOPTYPE")) mkroom(SHOPBASE); else
 #endif
-	if (u_depth > 1 &&
-	    u_depth < depth(&medusa_level) &&
-	    nroom >= room_threshold &&
-	    rn2(u_depth) < 3) { mkroom(SHOPBASE); break; }
-	    case 0:
-		if (u_depth > 4 && !rn2(6)) { mkroom(COURT); break; }
-	    case 1:
-		if (u_depth > 5 && !rn2(11) &&
-		    !(mvitals[PM_LEPRECHAUN].mvflags & G_GONE)) { mkroom(LEPREHALL); break; }
-	    case 2:
-		if (u_depth > 6 && !rn2(12)) { mkroom(ZOO); break; }
-	    case 3:
-		if (u_depth > 8 && !rn2(11)) { mkroom(TEMPLE); break; }
-	    case 4:
-		if (u_depth > 9 && !rn2(15) &&
-		    !(mvitals[PM_KILLER_BEE].mvflags & G_GONE)) { mkroom(BEEHIVE); break; }
-	    case 5:
-		if (u_depth > 11 && !rn2(25)) { mkroom(MORGUE); break; }
-	    case 6:
-		if (u_depth > 12 && !rn2(27)) { mkroom(ANTHOLE); break; }
-	    case 7:
-		if (u_depth > 14 && !rn2(18) &&
-		    !(mvitals[PM_SOLDIER].mvflags & G_GONE)) { mkroom(BARRACKS); break; }
-	    case 8:
-		if (u_depth > 15 && !rn2(39)) { mkroom(SWAMP); break; }
-	    case 9:
-		if (u_depth > 16 && !rn2(94) &&
-		    !(mvitals[PM_COCKATRICE].mvflags & G_GONE)) { mkroom(COCKNEST); break; }
-	    case 10:
-		if (u_depth > 4 && (rn2(u_depth) < 2)) { mkroom(TRAPROOM); break; }
-
-	    }
-	} while (--tmpi >= 0);
-    }
+					if (u_depth > 1 && u_depth < depth(&medusa_level) &&
+						nroom >= room_threshold && rn2(u_depth) < 5) { mkroom(SHOPBASE); break; }
+				case 0:
+					if (u_depth > 4 && !rn2(6)) { mkroom(COURT); break; }
+				case 1:
+					if (u_depth > 5 && !rn2(11) &&
+					!(mvitals[PM_LEPRECHAUN].mvflags & G_GONE)) { mkroom(LEPREHALL); break; }
+				case 2:
+					if (u_depth > 6 && !rn2(12)) { mkroom(ZOO); break; }
+				case 3:
+					if (u_depth > 8 && !rn2(11)) { mkroom(TEMPLE); break; }
+				case 4:
+					if (u_depth > 9 && !rn2(15) &&
+					!(mvitals[PM_KILLER_BEE].mvflags & G_GONE)) { mkroom(BEEHIVE); break; }
+				case 5:
+					if (u_depth > 11 && !rn2(25)) { mkroom(MORGUE); break; }
+				case 6:
+					if (u_depth > 12 && !rn2(27)) { mkroom(ANTHOLE); break; }
+				case 7:
+					if (u_depth > 14 && !rn2(18) &&
+					!(mvitals[PM_SOLDIER].mvflags & G_GONE)) { mkroom(BARRACKS); break; }
+				case 8:
+					if (u_depth > 15 && !rn2(39)) { mkroom(SWAMP); break; }
+				case 9:
+					if (u_depth > 16 && !rn2(94) &&
+					!(mvitals[PM_COCKATRICE].mvflags & G_GONE)) { mkroom(COCKNEST); break; }
+				case 10:
+					if (u_depth > 4 && (rn2(u_depth) < 2)) { mkroom(TRAPROOM); break; }
+			}
+		} while (--tmpi >= 0);
+	}
 
 #ifdef REINCARNATION
 skip0:
