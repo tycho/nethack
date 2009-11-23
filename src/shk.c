@@ -1923,10 +1923,19 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 		switch (shkp->mnum) {
 			default:
 			case PM_HUMAN:
+			case PM_SERGEANT:
+			case PM_LIEUTENANT:
+			case PM_CAPTAIN:
+			case PM_KOP_SERGEANT:
+			case PM_KOP_LIEUTENANT:
+			case PM_KOP_KAPTAIN:
 				/* nasty, brutish, and short */
 				if (Race_if(PM_ORC) || Race_if(PM_GNOME)) { tmp += tmp / 3L; }	  
 				break;
+			case PM_WOODLAND_ELF:
 			case PM_GREEN_ELF:
+			case PM_GREY_ELF:
+			case PM_ELF_LORD:
 				if (Race_if(PM_ORC)) { tmp *= 2L; }
 				if (Race_if(PM_DWARF)) { tmp += tmp / 3L; }	/* "lawn ornament." */
 				break;
@@ -1942,11 +1951,51 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 				/* big discount on top of professional courtesy */
 				break;
 			case PM_GNOME:
+			case PM_GNOME_LORD:
+			case PM_GNOME_KING:
 				/* Gnomes are crafty.  They don't really have racial animosities, but
 				* it's going to be a lot harder to get a good deal out of a gnome unless
 				* you're remarkably shrewd yourself. */
 				if (ACURR(A_INT) < 15) { tmp += tmp / 2L; }
 				else if (ACURR(A_INT) < 18) { tmp += tmp / 3L; }
+			case PM_LICH:
+			case PM_DEMILICH:
+			case PM_MASTER_LICH:
+			case PM_ARCH_LICH:
+				/* They'd prefer not to sell their libraries. */
+				tmp *= (shkp->mnum - PM_LICH + 2);
+				break;
+			case PM_OGRE:
+			case PM_OGRE_LORD:
+			case PM_OGRE_KING:
+				/* Will tolerate orcs, but no discount. */
+				if (!Race_if(PM_ORC)) {
+					tmp += tmp / 2L;
+				}
+				break;
+			case PM_WOOD_NYMPH:
+			case PM_MOUNTAIN_NYMPH:
+			case PM_WATER_NYMPH:
+				if (ACURR(A_CHA) > 14)
+				{
+					/* Pretty people don't get gouged TOO badly... */
+					tmp += (shkp->mnum - PM_WOOD_NYMPH + 2) * (tmp / 6L);
+				} else {
+					/* ... but if you don't measure up... */
+					tmp += (shkp->mnum - PM_WOOD_NYMPH + 2) * (tmp / 3L);
+				}
+				break;
+			case PM_STONE_GIANT:
+			case PM_HILL_GIANT_SHAMAN:
+			case PM_HILL_GIANT:
+			case PM_FIRE_GIANT:
+			case PM_FROST_GIANT:
+			case PM_STORM_GIANT:
+				/* Non-Elder-Race humanoids are not thought of highly. */
+				if (Race_if(PM_HUMAN) || Race_if(PM_GNOME))
+				{
+					tmp += tmp / 2L;
+				}
 				break;
 		}
 	}
@@ -2093,9 +2142,18 @@ register struct monst *shkp;
 	switch (shkp->mnum) {
 		default:
 		case PM_HUMAN:
+		case PM_SERGEANT:
+		case PM_LIEUTENANT:
+		case PM_CAPTAIN:
+		case PM_KOP_SERGEANT:
+		case PM_KOP_LIEUTENANT:
+		case PM_KOP_KAPTAIN:
 			if (Race_if(PM_ORC) || Race_if(PM_GNOME)) { tmp -= tmp / 3L; }	  /* nasty, brutish, and short */
 			break;
+		case PM_WOODLAND_ELF:
 		case PM_GREEN_ELF:
+		case PM_GREY_ELF:
+		case PM_ELF_LORD:
 			if (Race_if(PM_ORC)) { tmp /= 2L; }
 			if (Race_if(PM_DWARF)) { tmp -= tmp / 3L; }	/* "lawn ornament." */
 			break;
@@ -2110,12 +2168,56 @@ register struct monst *shkp;
 			if (Race_if(PM_ORC)) { tmp += tmp / 3L; }	 /* on top of prof. courtesy */
 			break;
 		case PM_GNOME:
+		case PM_GNOME_LORD:
+		case PM_GNOME_KING:
 			/* Gnomes are crafty.  They don't really have racial animosities, but
 			 * it's going to be a lot harder to get a good deal out of a gnome unless
 			 * you're remarkably shrewd yourself. */
 			if (ACURR(A_INT) < 15) { tmp -= tmp / 2L; }
 			else if (ACURR(A_INT) < 18) { tmp -= tmp / 3L; }
 			break;
+		case PM_LICH:
+		case PM_DEMILICH:
+		case PM_MASTER_LICH:
+		case PM_ARCH_LICH:
+			/* They don't mind acquiring more books...
+			 * ...and yes, this is correct, older liches would value the books 
+			 * more than younger ones */
+			tmp -= tmp / (shkp->mnum - PM_LICH + 2);
+			break;
+		case PM_OGRE:
+		case PM_OGRE_LORD:
+		case PM_OGRE_KING:
+			/* Will tolerate orcs, but no discount. */
+			if (!Race_if(PM_ORC)) {
+				tmp -= tmp / 2L;
+			}
+			break;
+		case PM_WOOD_NYMPH:
+		case PM_MOUNTAIN_NYMPH:
+		case PM_WATER_NYMPH:
+			if (ACURR(A_CHA) > 14)
+			{
+				/* Pretty people don't get gouged TOO badly... */
+				tmp -= (shkp->mnum - PM_WOOD_NYMPH + 2) * (tmp / 6L);
+			} else {
+				/* ... but if you don't measure up... */
+				tmp -= (shkp->mnum - PM_WOOD_NYMPH + 2) * (tmp / 4L);
+			}
+			break;
+		case PM_STONE_GIANT:
+		case PM_HILL_GIANT_SHAMAN:
+		case PM_HILL_GIANT:
+		case PM_FIRE_GIANT:
+		case PM_FROST_GIANT:
+		case PM_STORM_GIANT:
+			/* Non-Elder-Race humanoids are not thought of highly. */
+			if (Race_if(PM_HUMAN) || Race_if(PM_GNOME))
+			{
+				tmp -= tmp / 2L;
+			}
+			break;
+
 	}
 
 	/* professional courtesy if nonhuman, but not _that_ much */
