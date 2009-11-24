@@ -736,7 +736,8 @@ makelevel()
 
     {
 		register int u_depth = depth(&u.uz);
-		int tmpi = rn2((nroom*2)/3)-room_threshold+1;
+		int tmpi = 1;
+		while (tmpi < 4 && !rn2(6)) tmpi++;
 		/* the following code creates approximately the same number of special rooms
 			with the same probabilities as vanilla code.  */
 		do {
@@ -772,7 +773,7 @@ makelevel()
 					if (u_depth > 16 && !rn2(94) &&
 					!(mvitals[PM_COCKATRICE].mvflags & G_GONE)) { mkroom(COCKNEST); break; }
 				case 10:
-					if (u_depth > 4 && (rn2(u_depth) < 2)) { mkroom(TRAPROOM); break; }
+					if (u_depth > 4 && !rn2(24)) { mkroom(TRAPROOM); break; }
 			}
 		} while (--tmpi >= 0);
 	}
