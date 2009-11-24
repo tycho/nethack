@@ -744,7 +744,7 @@ makelevel()
 #ifdef REINCARNATION
 	if (Is_rogue_level(&u.uz)) goto skip0;
 #endif
-	makecorridors(0);
+	makecorridors(rn2(10) ? 0 : -1);
 	make_niches();
 
 	/* make a secret treasure vault, not connected to the rest */
