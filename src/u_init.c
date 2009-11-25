@@ -1058,7 +1058,7 @@ register struct trobj *trop;
 				break;
 			    case RIN_POLYMORPH_CONTROL:
 				nocreate = RIN_POLYMORPH;
-				nocreate2 = SPE_POLYMORPH;
+				nocreate2 = SPE_POLYMORPH_CREATURE;
 				nocreate3 = POT_POLYMORPH;
 			}
 			/* Don't have 2 of the same ring or spellbook */
