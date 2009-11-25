@@ -857,7 +857,7 @@ SPELL("drain life",      "velvet",      P_ATTACK_SPELL,		  10,  2, 2, 1, IMMEDIA
 SPELL("slow monster",    "light green", P_ENCHANTMENT_SPELL,  30,  2, 2, 1, IMMEDIATE, CLR_BRIGHT_GREEN),
 SPELL("wizard lock",     "dark green",  P_MATTER_SPELL,		  30,  3, 2, 1, IMMEDIATE, CLR_GREEN),
 SPELL("create monster",  "turquoise",   P_CLERIC_SPELL,		  35,  3, 2, 1, NODIR,     CLR_BRIGHT_CYAN),
-SPELL("detect food",     "cyan",        P_DIVINATION_SPELL,	  30,  3, 1, 1, NODIR,     CLR_CYAN),
+SPELL("obtain food",     "cyan",        P_MATTER_SPELL,  	  30,  3, 1, 1, NODIR,     CLR_CYAN),
 SPELL("cause fear",      "light blue",  P_ENCHANTMENT_SPELL,  25,  3, 3, 1, NODIR,     CLR_BRIGHT_BLUE),
 SPELL("clairvoyance",    "dark blue",   P_DIVINATION_SPELL,	  15,  3, 3, 1, NODIR,     CLR_BLUE),
 SPELL("cure sickness",   "indigo",      P_HEALING_SPELL,		  32,  3, 3, 1, NODIR,     CLR_BLUE),

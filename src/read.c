@@ -1086,8 +1086,13 @@ register struct obj	*sobj;
 	case SCR_GOLD_DETECTION:
 		if (confused || sobj->cursed) return(trap_detect(sobj));
 		else return(gold_detect(sobj));
+	case SPE_OBTAIN_FOOD:
+		/* even basic skill creates food as well as detect it */
+		if (!sobj->cursed) {
+			pline("A food ration appears at your feet!");
+			mksobj_at(FOOD_RATION,u.ux,u.uy,TRUE,FALSE);
+		}
 	case SCR_FOOD_DETECTION:
-	case SPE_DETECT_FOOD:
 		if (food_detect(sobj))
 			return(1);	/* nothing detected */
 		break;
