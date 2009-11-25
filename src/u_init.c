@@ -321,7 +321,7 @@ static const struct def_skill Skill_H[] = {
     { P_JAVELIN, P_BASIC },		{ P_TRIDENT, P_BASIC },
     { P_SLING, P_SKILLED },		{ P_DART, P_EXPERT },
     { P_SHURIKEN, P_SKILLED },		{ P_UNICORN_HORN, P_EXPERT },
-    { P_HEALING_SPELL, P_EXPERT },
+    { P_HEALING_SPELL, P_EXPERT }, { P_MATTER_SPELL, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_BASIC },
     { P_NONE, 0 }
 };
@@ -370,7 +370,7 @@ static const struct def_skill Skill_P[] = {
     { P_DART, P_BASIC },		{ P_SHURIKEN, P_BASIC },
     { P_BOOMERANG, P_BASIC },		{ P_UNICORN_HORN, P_SKILLED },
     { P_HEALING_SPELL, P_EXPERT },	{ P_DIVINATION_SPELL, P_EXPERT },
-    { P_CLERIC_SPELL, P_EXPERT },
+    { P_CLERIC_SPELL, P_EXPERT }, { P_MATTER_SPELL, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_BASIC },
     { P_NONE, 0 }
 };
@@ -406,7 +406,7 @@ static const struct def_skill Skill_Ran[] = {
     { P_SLING, P_EXPERT },	 { P_CROSSBOW, P_EXPERT },
     { P_DART, P_EXPERT },	 { P_SHURIKEN, P_SKILLED },
     { P_BOOMERANG, P_EXPERT },	 { P_WHIP, P_BASIC },
-    { P_HEALING_SPELL, P_BASIC },
+    { P_HEALING_SPELL, P_BASIC }, { P_MATTER_SPELL, P_BASIC },
     { P_DIVINATION_SPELL, P_EXPERT },
     { P_ESCAPE_SPELL, P_BASIC },
 #ifdef STEED
@@ -452,7 +452,7 @@ static const struct def_skill Skill_T[] = {
     { P_SHURIKEN, P_BASIC },		{ P_BOOMERANG, P_BASIC },
     { P_WHIP, P_BASIC },		{ P_UNICORN_HORN, P_SKILLED },
     { P_DIVINATION_SPELL, P_BASIC },	{ P_ENCHANTMENT_SPELL, P_BASIC },
-    { P_ESCAPE_SPELL, P_SKILLED },
+    { P_ESCAPE_SPELL, P_SKILLED }, { P_MATTER_SPELL, P_BASIC },
 #ifdef STEED
     { P_RIDING, P_BASIC },
 #endif

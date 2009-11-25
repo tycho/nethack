@@ -766,7 +766,7 @@ boolean atme;
 	}
 	energy = (spellev(spell) * 5);    /* 5 <= energy <= 35 */
 
-	if (u.uhunger <= 10 && spellid(spell) != SPE_DETECT_FOOD) {
+	if (u.uhunger <= 10 && spellid(spell) != SPE_OBTAIN_FOOD) {
 		You("are too hungry to cast that spell.");
 		return(0);
 	} else if (ACURR(A_STR) < 4)  {
@@ -788,7 +788,7 @@ boolean atme;
 		You("don't have enough energy to cast that spell.");
 		return(0);
 	} else {
-		if (spellid(spell) != SPE_DETECT_FOOD) {
+		if (spellid(spell) != SPE_OBTAIN_FOOD) {
 			int hungr = energy * 2;
 
 			/* If hero is a wizard, their current intelligence
@@ -924,9 +924,11 @@ boolean atme;
 		break;
 
 	/* these are all duplicates of scroll effects */
+	case SPE_OBTAIN_FOOD:
+		/* for this case only, unskilled is cursed scroll */
+		if (role_skill < P_BASIC) pseudo->cursed = 1;
 	case SPE_REMOVE_CURSE:
 	case SPE_CONFUSE_MONSTER:
-	case SPE_DETECT_FOOD:
 	case SPE_CAUSE_FEAR:
 		/* high skill yields effect equivalent to blessed scroll */
 		if (role_skill >= P_SKILLED) pseudo->blessed = 1;

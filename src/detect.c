@@ -297,7 +297,7 @@ register struct obj	*sobj;
     register struct obj *obj;
     register struct monst *mtmp;
     register int ct = 0, ctu = 0;
-    boolean confused = (Confusion || (sobj && sobj->cursed)), stale;
+    boolean confused = Confusion, stale;
     char oclass = confused ? POTION_CLASS : FOOD_CLASS;
     const char *what = confused ? something : "food";
     int uw = u.uinwater;

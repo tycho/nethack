@@ -1768,6 +1768,7 @@ struct alt_spellings {
 	{ "studded leather armour", STUDDED_LEATHER_ARMOR },
 	{ "spellbook of repair armour", SPE_REPAIR_ARMOR },
 	{ "spellbook of polymorph", SPE_POLYMORPH_CREATURE },
+	{ "spellbook of detect food", SPE_OBTAIN_FOOD },
 	{ "iron ball", HEAVY_IRON_BALL },
 	{ "lantern", BRASS_LANTERN },
 	{ "bag of poop", BAG_OF_POO },
