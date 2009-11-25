@@ -174,7 +174,7 @@ struct obj *otmp;
 		}
 		break;
 	case WAN_POLYMORPH:
-	case SPE_POLYMORPH:
+	case SPE_POLYMORPH_CREATURE:
 	case POT_POLYMORPH:
 		if (resists_magm(mtmp)) {
 		    /* magic resistance protects from polymorph traps, so make
@@ -1360,8 +1360,6 @@ poly_obj(obj, id)
 	    break;
 
 	case SPBOOK_CLASS:
-	    while (otmp->otyp == SPE_POLYMORPH)
-		otmp->otyp = rnd_class(SPE_DIG, SPE_BLANK_PAPER);
 	    /* reduce spellbook abuse */
 	    otmp->spestudied = obj->spestudied + 1;
 	    break;
@@ -1521,9 +1519,7 @@ struct obj *obj, *otmp;
 	} else
 	switch(otmp->otyp) {
 	case WAN_POLYMORPH:
-	case SPE_POLYMORPH:
 		if (obj->otyp == WAN_POLYMORPH ||
-			obj->otyp == SPE_POLYMORPH ||
 			obj->otyp == POT_POLYMORPH ||
 			obj_resists(obj, 5, 95)) {
 		    res = 0;
@@ -1625,6 +1621,7 @@ struct obj *obj, *otmp;
 	case WAN_NOTHING:
 	case SPE_HEALING:
 	case SPE_EXTRA_HEALING:
+	case SPE_POLYMORPH_CREATURE:
 		res = 0;
 		break;
 	case SPE_STONE_TO_FLESH:
@@ -2012,7 +2009,7 @@ boolean ordinary;
 		case WAN_POLYMORPH:
 		    if (!Unchanging)
 		    	makeknown(WAN_POLYMORPH);
-		case SPE_POLYMORPH:
+		case SPE_POLYMORPH_CREATURE:
 		    if (!Unchanging)
 		    	polyself(FALSE);
 		    break;
@@ -2231,7 +2228,7 @@ struct obj *obj;	/* wand or spell */
 		case WAN_CANCELLATION:
 		case SPE_CANCELLATION:
 		case WAN_POLYMORPH:
-		case SPE_POLYMORPH:
+		case SPE_POLYMORPH_CREATURE:
 		case WAN_STRIKING:
 		case SPE_FORCE_BOLT:
 		case WAN_SLOW_MONSTER:
@@ -2448,7 +2445,6 @@ struct obj *obj;	/* wand or spell */
 	    if ((e = engr_at(x, y)) != 0 && e->engr_type != HEADSTONE) {
 		switch (obj->otyp) {
 		case WAN_POLYMORPH:
-		case SPE_POLYMORPH:
 		    del_engr(e);
 		    make_engr_at(x, y, random_engraving(buf), moves, (xchar)0);
 		    break;
