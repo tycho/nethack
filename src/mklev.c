@@ -781,7 +781,7 @@ makelevel()
 		/* the following code creates approximately the same number of special rooms
 			with the same probabilities as vanilla code.  */
 		do {
-			switch (rn2(25)) {
+			switch (rn2(26)) {
 				default:
 #ifdef WIZARD
 					if(wizard && nh_getenv("SHOPTYPE")) mkroom(SHOPBASE); else
@@ -814,6 +814,8 @@ makelevel()
 					!(mvitals[PM_COCKATRICE].mvflags & G_GONE)) { mkroom(COCKNEST); break; }
 				case 10:
 					if (u_depth > 4 && !rn2(24)) { mkroom(TRAPROOM); break; }
+				case 11:
+					if (u_depth > 4 && !rn2(24)) { mkroom(POOLROOM); break; }
 			}
 		} while (--tmpi >= 0);
 	}
@@ -1004,6 +1006,70 @@ mineralize()
 		}
 	    }
 }
+
+
+void
+wallwalk_right(x,y,fgtyp,bgtyp,chance)
+     xchar x,y;
+     schar fgtyp,bgtyp;
+     int chance;
+{
+    int sx,sy, nx,ny, dir, cnt;
+    schar tmptyp;
+    struct rm *lev;
+    sx = x;
+    sy = y;
+    dir = 1;
+
+    if (!isok(x,y)) return;
+    if (levl[x][y].typ != bgtyp) return;
+
+    do {
+	if (!t_at(x,y) && !bydoor(x,y) && levl[x][y].typ == bgtyp && (chance >= rn2(100))) {
+	    levl[x][y].typ = fgtyp;
+	    if (fgtyp == LAVAPOOL) levl[x][y].lit = 1;
+	}
+	cnt = 0;
+	do {
+	    nx = x;
+	    ny = y;
+	    switch (dir % 4) {
+	    case 0: y--; break;
+	    case 1: x++; break;
+	    case 2: y++; break;
+	    case 3: x--; break;
+	    }
+	    if (isok(x,y)) {
+		tmptyp = levl[x][y].typ;
+		if (tmptyp != bgtyp && tmptyp != fgtyp) {
+		    dir++; x = nx; y = ny; cnt++;
+		} else {
+		    dir = (dir + 3) % 4;
+		}
+	    } else {
+		dir++; x = nx; y = ny; cnt++;
+	    }
+	} while ((nx == x && ny == y) && (cnt < 5));
+    } while ((x != sx) || (y != sy));
+}
+
+
+void
+mkpoolroom()
+{
+    struct mkroom *sroom;
+    schar typ;
+
+    if (!(sroom = pick_room(TRUE))) return;
+
+    if (sroom->hx - sroom->lx < 3 || sroom->hy - sroom->ly < 3) return;
+
+    sroom->rtype = POOLROOM;
+    typ = !rn2(5) ? POOL : LAVAPOOL;
+
+    wallwalk_right(sroom->lx, sroom->ly, typ, ROOM, 96);
+}
+
 
 void
 mklev()
