@@ -181,6 +181,7 @@ do_room_or_subroom(croom, lowx, lowy, hix, hiy, lit, rtype, special, is_room)
 		levl[hix+1][lowy-1].typ = TRCORNER;
 		levl[lowx-1][hiy+1].typ = BLCORNER;
 		levl[hix+1][hiy+1].typ = BRCORNER;
+		wallification(lowx-1, lowy-1, hix+1, hiy+1);
 	    } else {	/* a subroom */
 		wallification(lowx-1, lowy-1, hix+1, hiy+1);
 	    }
@@ -224,6 +225,63 @@ boolean special;
 	nsubroom++;
 }
 
+void
+mk_split_room()
+{
+    NhRect *r1 = rnd_rect();
+    NhRect r2;
+    int area;
+    xchar hx, hy, lx, ly, wid, hei;
+    xchar rlit;
+    struct mkroom *troom;
+
+    if (!r1) return;
+
+    lx = r1->lx;
+    ly = r1->ly;
+
+    wid = rn1(12, 5);
+    hei = rn1(3, 5);
+
+    area = wid*hei;
+    if (!check_room(&lx, &wid, &ly, &hei, FALSE)) return;
+    if (wid < 5 || hei < 5) return;
+
+    r2.lx = lx;
+    r2.ly = ly;
+    r2.hx = lx + wid;
+    r2.hy = ly + hei;
+    split_rects(r1, &r2);
+    smeq[nroom] = nroom;
+    if ((wid > hei) || (wid == hei && rn2(2))) {
+	int adj = (wid/2);
+	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
+	add_room(lx,     ly, lx+adj-1,     ly+hei, rlit, OROOM, FALSE);
+	smeq[nroom] = nroom;
+	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
+	troom = &rooms[nroom];
+	add_room(lx+adj+1, ly, lx+adj+adj, ly+hei, rlit, OROOM, FALSE);
+#ifdef SPECIALIZATION
+	topologize(troom,FALSE);              /* set roomno */
+#else
+	topologize(troom);                    /* set roomno */
+#endif
+    } else {
+	int adj = (hei/2);
+	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
+	add_room(lx, ly,     lx+wid, ly+adj-1,     rlit, OROOM, FALSE);
+	smeq[nroom] = nroom;
+	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
+	troom = &rooms[nroom];
+	add_room(lx, ly+adj+1, lx+wid, ly+adj+adj, rlit, OROOM, FALSE);
+#ifdef SPECIALIZATION
+	topologize(troom,FALSE);              /* set roomno */
+#else
+	topologize(troom);                    /* set roomno */
+#endif
+    }
+}
+
 STATIC_OVL void
 makerooms()
 {
@@ -239,9 +297,15 @@ makerooms()
 				vault_y = rooms[nroom].ly;
 				rooms[nroom].hx = -1;
 			}
-		} else
-		    if (!create_room(-1, -1, -1, -1, -1, -1, OROOM, -1))
-			return;
+		} else {
+		    switch (rn2(8)) {
+		    default:
+			if (!create_room(-1, -1, -1, -1, -1, -1, OROOM, -1))
+			    return;
+			break;
+		    case 0: mk_split_room(); break;
+		    }
+		}
 	}
 	return;
 }
