@@ -607,8 +607,14 @@ int trap_type;
 		if(rn2(7))
 		    dosdoor(xx, yy, aroom, rn2(5) ? SDOOR : DOOR);
 		else {
-		    if (!rn2(2) && IS_WALL(levl[xx][yy].typ))
+		    if (!rn2(2) && IS_WALL(levl[xx][yy].typ)) {
 			levl[xx][yy].typ = IRONBARS;
+			if (rn2(3))
+			    (void) mkcorpstat(rn2(2) ? CORPSE : SKULL,
+					      (struct monst *)0,
+					      mkclass(S_HUMAN, 0),
+					      xx, yy+dy, TRUE);
+		    }
 		    if (!level.flags.noteleport)
 			(void) mksobj_at(SCR_TELEPORTATION,
 					 xx, yy+dy, TRUE, FALSE);
