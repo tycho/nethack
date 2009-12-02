@@ -1958,6 +1958,7 @@ register struct monst *shkp;	/* if angry, impose a surcharge */
 				* you're remarkably shrewd yourself. */
 				if (ACURR(A_INT) < 15) { tmp += tmp / 2L; }
 				else if (ACURR(A_INT) < 18) { tmp += tmp / 3L; }
+				break;
 			case PM_LICH:
 			case PM_DEMILICH:
 			case PM_MASTER_LICH:
