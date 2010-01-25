@@ -168,11 +168,11 @@
 
 #ifdef UNIX
 /* path and file name extension for compression program */
-#define COMPRESS "/usr/bin/compress"	/* Lempel-Ziv compression */
-#define COMPRESS_EXTENSION ".Z"		/* compress's extension */
+/*#define COMPRESS "/usr/bin/compress"	*/	/* Lempel-Ziv compression */
+/*#define COMPRESS_EXTENSION ".Z"	*/	/* compress's extension */
 /* An example of one alternative you might want to use: */
-/* #define COMPRESS "/usr/local/bin/gzip" */	/* FSF gzip compression */
-/* #define COMPRESS_EXTENSION ".gz" */		/* normal gzip extension */
+/* #define COMPRESS "/bin/gzip"		*/	/* FSF gzip compression */
+/* #define COMPRESS_EXTENSION ".gz"	*/	/* normal gzip extension */
 #endif
 
 #ifndef COMPRESS
