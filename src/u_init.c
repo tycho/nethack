@@ -915,6 +915,9 @@ u_init()
 	for (i = 0; i < rnd(17); i++) {
 		shambler->mflags1 |= (1 << rn2(33));		/* trainwreck this way :D */
 	}
+	shambler->mflags1 &= ~M1_UNSOLID;				/* no ghosts */
+	shambler->mflags1 &= ~M1_WALLWALK;				/* no wall-walkers */
+
 	shambler->mflags2 = M2_NOPOLY | M2_HOSTILE;	/* Don't let the player be one of these yet. */
 	for (i = 0; i < rnd(17); i++) {
 		shambler->mflags2 |= (1 << rn2(33));
@@ -922,6 +925,8 @@ u_init()
 	shambler->mflags2 &= ~M2_MERC;					/* no guards */
 	shambler->mflags2 &= ~M2_PEACEFUL;				/* no peacefuls */
 	shambler->mflags2 &= ~M2_WERE;					/* no lycanthropes */
+	shambler->mflags2 &= ~M2_PNAME;					/* not a proper name */
+
 	for (i = 0; i < rnd(5); i++) {
 		shambler->mflags3 |= (0x100 << rn2(6));	/* no covetous, but any of the middle M3_ flags are OK */
 	}
