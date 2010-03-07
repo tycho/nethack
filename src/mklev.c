@@ -849,7 +849,7 @@ makelevel()
 	makecorridors(rn2(10) ? 0 : -1);
 	make_niches();
 
-	make_ironbarwalls(rn2(20) ? rn2(20) : rn2(100));
+	if (!rn2(5)) make_ironbarwalls(rn2(20) ? rn2(20) : rn2(50));
 
 	/* make a secret treasure vault, not connected to the rest */
 	if(do_vault()) {
