@@ -259,6 +259,8 @@ struct you {
 
 	struct prop uprops[LAST_PROP+1];
 
+    int u_telepathy_dist;
+
 	unsigned umconf;
 	char usick_cause[PL_PSIZ+20]; /* sizeof "unicorn horn named "+1 */
 	Bitfield(usick_type,2);
