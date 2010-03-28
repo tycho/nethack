@@ -1189,8 +1189,8 @@ struct mkroom *broom;
 
 		dpos = dd->pos;
 		if (dpos == -1)	/* The position is RANDOM */
-		    dpos = rn2(((dwall & (W_WEST|W_EAST)) ? 2 : 1) ?
-			    (broom->hy - broom->ly) : (broom->hx - broom->lx));
+		    dpos = rn2(1+(((dwall & (W_WEST|W_EAST)) ? 2 : 1) ?
+				  (broom->hy - broom->ly) : (broom->hx - broom->lx)));
 
 		/* Convert wall and pos into an absolute coordinate! */
 		wtry = rn2(4);
@@ -4012,6 +4012,16 @@ spo_region(coder)
 #else
 	topologize(troom);                    /* set roomno */
 #endif
+    }
+
+    if (!room_not_needed) {
+	if (coder->n_subroom > 1)
+	    impossible("region as subroom");
+	else {
+	    coder->tmproomlist[coder->n_subroom] = troom;
+	    coder->failed_room[coder->n_subroom] = FALSE;
+	    coder->n_subroom++;
+	}
     }
 
     opvar_free(x1);
