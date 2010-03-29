@@ -637,7 +637,9 @@ MAP
 |             -------------                  -----          -------        |
 ----------------------------------------------------------------------------
 ENDMAP
-REGION:(15,07,21,10),lit,"temple"
+REGION:(15,07,21,10),lit,"temple" {
+  ROOMDOOR:true, locked, north|south|east|west, random
+}
 ALTAR:(18,08),noalign,sanctum
 REGION:(41,06,48,11),unlit,"morgue",filled,true
 # Non diggable walls
