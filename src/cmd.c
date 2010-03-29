@@ -574,6 +574,16 @@ wiz_map()
 		map_trap(t, TRUE);
 	    }
 	    do_mapping();
+	    if (yn("show secret doors") == 'y') {
+		int x,y;
+		for (x = 0; x < COLNO; x++)
+		    for (y = 0; y < ROWNO; y++)
+			if (levl[x][y].typ == SDOOR) {
+			    cvt_sdoor_to_door(&levl[x][y]);
+			    magic_map_background(x, y, 0);
+			    newsym(x, y);
+			}
+	    }
 	    HConfusion = save_Hconf;
 	    HHallucination = save_Hhallu;
 	} else
