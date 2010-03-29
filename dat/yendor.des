@@ -6,8 +6,7 @@
 # The top (real) wizard level.
 # Keeping the Moat for old-time's sake
 LEVEL:"wizard1"
-# Must have noflipx, due to the morgue-hack (see below).
-FLAGS:noteleport,hardfloor,mazelevel,noflipx
+FLAGS:noteleport,hardfloor,mazelevel
 INIT_MAP:mazegrid,'-'
 GEOMETRY:center,center
 MAP
@@ -29,9 +28,10 @@ STAIR:levregion(01,00,79,20),(0,0,28,12),up
 STAIR:levregion(01,00,79,20),(0,0,28,12),down
 BRANCH:levregion(01,00,79,20),(0,0,28,12)
 TELEPORT_REGION:levregion(01,00,79,20),(0,0,27,12)
-# Make it a morgue for rm id in mkmaze.c
-# for the purpose of random sdoor placement
-REGION:(12,01,20,09),unlit,"morgue",unfilled
+
+REGION:(12,01,20,09),unlit,"morgue",unfilled {
+  ROOMDOOR:true, locked, south|east|west, random
+}
 MAZEWALK:(28,05),east
 LADDER:(06,05),down
 # Non diggable walls
