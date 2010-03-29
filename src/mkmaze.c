@@ -459,10 +459,6 @@ fixup_special()
 		if (!rn2(3) && !is_pool(x,y))
 		    (void)maketrap(x, y, rn2(3) ? LANDMINE : SPIKED_PIT);
 	    }
-    } else if(Is_sanctum(&u.uz)) {
-	croom = search_special(TEMPLE);
-
-	create_secret_door(croom, W_ANY);
     } else if(on_level(&u.uz, &orcus_level)) {
 	   register struct monst *mtmp, *mtmp2;
 
