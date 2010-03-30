@@ -90,6 +90,8 @@ static short on_olist = 0, on_mlist = 0, on_plist = 0;
 unsigned int max_x_map, max_y_map;
 int obj_containment = 0;
 
+int in_container_obj = 0;
+
 int in_switch_statement = 0;
 static struct opvar *switch_check_jump = NULL;
 static struct opvar *switch_default_case = NULL;
@@ -172,6 +174,7 @@ extern const char *fname;
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> door_wall walled secret amount chance
 %type	<i> dir_list
+%type	<i> object_infos
 %type	<i> levstatements region_detail_end
 %type	<i> engraving_type flag_list prefilled
 %type	<i> monster monster_c m_register object object_c o_register
@@ -693,67 +696,6 @@ message		: MESSAGE_ID ':' STRING
 		  }
 		;
 
-cobj_ifstatement : IF_ID comparestmt
-		  {
-		      struct opvar *tmppush2 = New(struct opvar);
-
-		      if (n_if_list >= MAX_NESTED_IFS) {
-			  yyerror("IF: Too deeply nested IFs.");
-			  n_if_list = MAX_NESTED_IFS - 1;
-		      }
-
-		      add_opcode(splev, SPO_CMP, NULL);
-
-		      set_opvar_int(tmppush2, splev->n_opcodes+1);
-
-		      if_list[n_if_list++] = tmppush2;
-
-		      add_opcode(splev, SPO_PUSH, tmppush2);
-
-		      add_opcode(splev, $2, NULL);
-		  }
-		 cobj_if_ending
-		  {
-		     /* do nothing */
-		  }
-		;
-
-cobj_if_ending	: '{' cobj_statements '}'
-		  {
-		      if (n_if_list > 0) {
-			  struct opvar *tmppush;
-			  tmppush = (struct opvar *) if_list[--n_if_list];
-			  set_opvar_int(tmppush, splev->n_opcodes - tmppush->vardata.l);
-		      } else yyerror("IF: Huh?!  No start address?");
-		  }
-		| '{' cobj_statements '}'
-		  {
-		      if (n_if_list > 0) {
-			  struct opvar *tmppush = New(struct opvar);
-			  struct opvar *tmppush2;
-
-			  set_opvar_int(tmppush, splev->n_opcodes+1);
-			  add_opcode(splev, SPO_PUSH, tmppush);
-
-			  add_opcode(splev, SPO_JMP, NULL);
-
-			  tmppush2 = (struct opvar *) if_list[--n_if_list];
-
-			  set_opvar_int(tmppush2, splev->n_opcodes - tmppush2->vardata.l);
-			  if_list[n_if_list++] = tmppush;
-		      } else yyerror("IF: Huh?!  No else-part address?");
-		  }
-		 ELSE_ID '{' cobj_statements '}'
-		  {
-		      if (n_if_list > 0) {
-			  struct opvar *tmppush;
-			  tmppush = (struct opvar *) if_list[--n_if_list];
-			  set_opvar_int(tmppush, splev->n_opcodes - tmppush->vardata.l);
-		      } else yyerror("IF: Huh?! No end address?");
-		  }
-		;
-
-
 wallwalk_detail	: WALLWALK_ID ':' coordinate ',' CHAR opt_spercent
 		  {
 		      long fgtyp = what_map_char((char) $5);
@@ -1166,9 +1108,11 @@ monster_detail	: MONSTER_ID chance ':' monster_desc
 		  {
 		      add_opvars(splev, "io", 1, SPO_MONSTER);
 		      $<i>$ = $2;
+		      in_container_obj++;
 		  }
-		'{' cobj_statements '}'
+		'{' levstatements '}'
 		 {
+		     in_container_obj--;
 		     add_opvars(splev, "o", SPO_END_MONINVENT);
 		     if ( 1 == $<i>5 ) {
 			 if (n_if_list > 0) {
@@ -1316,49 +1260,11 @@ seen_trap_mask	: STRING
 		  }
 		;
 
-cobj_statements	: /* nothing */
-		  {
-		  }
-		| cobj_statement cobj_statements
-		;
-
-cobj_statement  : cobj_detail
-		| cobj_ifstatement
-		;
-
-cobj_detail	: OBJECT_ID chance ':' cobj_desc
-		  {
-		      add_opvars(splev, "io", (long)SP_OBJ_CONTENT, SPO_OBJECT);
-		      if ( 1 == $2 ) {
-			  if (n_if_list > 0) {
-			      struct opvar *tmpjmp;
-			      tmpjmp = (struct opvar *) if_list[--n_if_list];
-			      set_opvar_int(tmpjmp, splev->n_opcodes - tmpjmp->vardata.l);
-			  } else yyerror("conditional creation of obj, but no jump point marker.");
-		      }
-		  }
-		| COBJECT_ID chance ':' cobj_desc
-		  {
-		      add_opvars(splev, "io", (long)(SP_OBJ_CONTENT|SP_OBJ_CONTAINER), SPO_OBJECT);
-		      $<i>$ = $2;
-		  }
-		'{' cobj_statements '}'
-		  {
-		      add_opcode(splev, SPO_POP_CONTAINER, NULL);
-
-		      if ( 1 == $<i>5 ) {
-			  if (n_if_list > 0) {
-			      struct opvar *tmpjmp;
-			      tmpjmp = (struct opvar *) if_list[--n_if_list];
-			      set_opvar_int(tmpjmp, splev->n_opcodes - tmpjmp->vardata.l);
-			  } else yyerror("conditional creation of obj, but no jump point marker.");
-		      }
-		  }
-		;
-
 object_detail	: OBJECT_ID chance ':' object_desc
 		  {
-		      add_opvars(splev, "io", 0, SPO_OBJECT); /* 0 == not container, nor contents of one. */
+		      long cnt = 0;
+		      if (in_container_obj) cnt |= SP_OBJ_CONTENT;
+		      add_opvars(splev, "io", cnt, SPO_OBJECT); /* 0 == not container, nor contents of one. */
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1369,11 +1275,15 @@ object_detail	: OBJECT_ID chance ':' object_desc
 		  }
 		| COBJECT_ID chance ':' object_desc
 		  {
-		      add_opvars(splev, "io", (long)SP_OBJ_CONTAINER, SPO_OBJECT);
+		      long cnt = SP_OBJ_CONTAINER;
+		      if (in_container_obj) cnt |= SP_OBJ_CONTENT;
+		      add_opvars(splev, "io", cnt, SPO_OBJECT);
 		      $<i>$ = $2;
+		      in_container_obj++;
 		  }
-		'{' cobj_statements '}'
+		'{' levstatements '}'
 		 {
+		     in_container_obj--;
 		     add_opcode(splev, SPO_POP_CONTAINER, NULL);
 
 		     if ( 1 == $<i>5 ) {
@@ -1386,9 +1296,11 @@ object_detail	: OBJECT_ID chance ':' object_desc
 		 }
 		;
 
-cobj_desc	: object_c ',' o_name object_infos
+object_desc	: object_c ',' o_name object_infos
 		  {
 		      long token = -1;
+		      if (( $4 & 0x4000) && in_container_obj) yyerror("object cannot have a coordinate when contained.");
+		      else if (!( $4 & 0x4000) && !in_container_obj) yyerror("object needs a coordinate when not contained.");
 		      if ($3) {
 			  token = get_object_id($3, $<i>1);
 			  if (token == ERR) {
@@ -1397,23 +1309,8 @@ cobj_desc	: object_c ',' o_name object_infos
 			  }
 			  Free($3);
 		      }
-		      add_opvars(splev, "iiii", -1, -1, (long)$<i>1, token);
+		      add_opvars(splev, "ii", (long)$<i>1, token);
 		  }
-		;
-
-object_desc	: object_c ',' o_name ',' coordinate object_infos
-		  {
-		      long token = -1;
-		      if ($3) {
-			  token = get_object_id($3, $<i>1);
-			  if (token == ERR) {
-			      yywarning("Illegal object name!  Making random object.");
-			      token = -1;
-			  }
-			  Free($3);
-		      }
-		      add_opvars(splev, "iiii", $5.x, $5.y, (long)$<i>1, token);
-		}
 		;
 
 object_infos	: /* nothing */
@@ -1508,6 +1405,11 @@ object_info	: ',' CURSE_TYPE
 		  {
 		      add_opvars(splev, "ii", 1, SP_O_V_GREASED);
 		      $<i>$ = 0x2000;
+		  }
+		| ',' coordinate
+		  {
+		      add_opvars(splev, "iii", $2.x, $2.y, SP_O_V_COORD);
+		      $<i>$ = 0x4000;
 		  }
 		;
 
