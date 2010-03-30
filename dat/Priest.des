@@ -13,7 +13,7 @@
 #
 LEVEL: "Pri-strt"
 FLAGS: noteleport,hardfloor,mazelevel,graveyard
-INIT_MAP:solidfill,' '
+INIT_MAP:solidfill,'.',lit
 MON_GENERATION:86%, (64,"human zombie"), (16,'Z'), (16,"wraith"), (4,'W')
 GEOMETRY:center,center
 MAP
@@ -24,12 +24,12 @@ MAP
 ....................|................|.....|.....|.....|....................
 ....................|..------------..|--+-----+-----+--|....................
 ....................|..|..........|..|.................|....................
-....................|..|..........|..|+---+---+-----+--|....................
+....................|..|..........|..|+----------------|....................
 ..................---..|..........|......|...|...|.....|....................
 ..................+....|..........+......|...|...|.....|....................
 ..................+....|..........+......|...|...|.....|....................
 ..................---..|..........|......|...|...|.....|....................
-....................|..|..........|..|+-----+---+---+--|....................
+....................|..|..........|..|+----------------|....................
 ....................|..|..........|..|.................|....................
 ....................|..------------..|--+-----+-----+--|....................
 ....................|................|.....|.....|.....|....................
@@ -41,6 +41,22 @@ ENDMAP
 # Dungeon Description
 REGION:(00,00,75,19),lit,"ordinary"
 REGION:(24,06,33,13),lit,"temple"
+REGION:(42,08,44,11),lit,"ordinary",unfilled,true {
+  ROOMDOOR:false, closed, north|south|west|east, random
+  ROOMDOOR:false, locked, north|south|west|east, random
+}
+REGION:(46,08,48,11),lit,"ordinary",unfilled,true {
+  ROOMDOOR:false, closed, north|south|west|east, random
+  ROOMDOOR:false, locked, north|south|west|east, random
+}
+REGION:(50,08,54,11),lit,"ordinary",unfilled,true {
+  ROOMDOOR:false, closed, north|south|west, random
+  ROOMDOOR:false, locked, north|south|west, random
+}
+
+REPLACE_TERRAIN:(0,0,10,19),'.','T',lit,10%
+REPLACE_TERRAIN:(65,0,75,19),'.','T',lit,10%
+
 # Portal arrival point
 BRANCH:(05,04,05,04),(0,0,0,0)
 # Stairs
@@ -54,13 +70,7 @@ DOOR:closed,(40,05)
 DOOR:closed,(46,05)
 DOOR:closed,(52,05)
 DOOR:locked,(38,07)
-DOOR:closed,(42,07)
-DOOR:closed,(46,07)
-DOOR:closed,(52,07)
 DOOR:locked,(38,12)
-DOOR:closed,(44,12)
-DOOR:closed,(48,12)
-DOOR:closed,(52,12)
 DOOR:closed,(40,14)
 DOOR:closed,(46,14)
 DOOR:closed,(52,14)
