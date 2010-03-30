@@ -10,7 +10,7 @@
 #
 LEVEL: "Val-strt"
 FLAGS: noteleport,hardfloor,mazelevel
-INIT_MAP:solidfill,' '
+INIT_MAP:solidfill,'I'
 MON_GENERATION:86%, (64,"fire ant"), (16,'a'), (16,"fire giant"), (4,'H')
 GEOMETRY:center,center
 MAP
