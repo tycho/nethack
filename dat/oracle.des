@@ -15,7 +15,10 @@ FOUNTAIN: (0, 1)
 FOUNTAIN: (1, 0)
 FOUNTAIN: (1, 2)
 FOUNTAIN: (2, 1)
-MONSTER: '@', "Oracle", (1,1)
+MONSTER: '@', "Oracle", (1,1) {
+  OBJECT:'!',random
+  OBJECT:'?',random
+}
 ROOMDOOR: false , nodoor , random, random
 }
 

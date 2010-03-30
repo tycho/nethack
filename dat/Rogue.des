@@ -98,21 +98,55 @@ DOOR: closed, ( 6,18)
 DOOR: closed, (65,18)
 DOOR: closed, (68,18)
 # Master of Thieves
-MONSTER:'@',"Master of Thieves",(36,11)
+MONSTER:'@',"Master of Thieves",(36,11) {
+  OBJECT:'[',random
+  OBJECT:')',random
+  OBJECT:'!',random
+  OBJECT:'!',random
+  OBJECT:'!',random
+  OBJECT:'!',random
+}
 # The treasure of Master of Thieves
 OBJECT:'(',"chest",(36,11)
 # thug guards, room #1
-MONSTER:'@',"thug",(28,10)
-MONSTER:'@',"thug",(29,11)
-MONSTER:'@',"thug",(30,09)
-MONSTER:'@',"thug",(31,07)
+MONSTER:'@',"thug",(28,10) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
+MONSTER:'@',"thug",(29,11) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
+MONSTER:'@',"thug",(30,09) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
+MONSTER:'@',"thug",(31,07) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
 # thug guards, room #2
-MONSTER:'@',"thug",(31,13)
-MONSTER:'@',"thug",(33,14)
-MONSTER:'@',"thug",(30,15)
+MONSTER:'@',"thug",(31,13) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
+MONSTER:'@',"thug",(33,14) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
+MONSTER:'@',"thug",(30,15) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
 #thug guards, room #3
-MONSTER:'@',"thug",(35,09)
-MONSTER:'@',"thug",(36,13)
+MONSTER:'@',"thug",(35,09) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
+MONSTER:'@',"thug",(36,13) {
+  OBJECT[15%]:'[',random
+  OBJECT[15%]:')',random
+}
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
 # Random traps
@@ -348,7 +382,12 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',"Master Assassin",(38,10),hostile
+MONSTER:'@',"Master Assassin",(38,10),hostile {
+  OBJECT:'[',random
+  OBJECT:')',random
+  OBJECT:'?',random
+  OBJECT:'!',random
+}
 MONSTER:'l',"leprechaun",random,hostile
 MONSTER:'l',"leprechaun",random,hostile
 MONSTER:'l',"leprechaun",random,hostile

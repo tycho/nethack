@@ -50,18 +50,47 @@ FOUNTAIN:(53,02)
 DOOR:locked,(26,10)
 DOOR:locked,(43,10)
 # Norn
-MONSTER:'@',"Norn",(35,10)
+MONSTER:'@',"Norn",(35,10) {
+  OBJECT:'[',random
+  OBJECT:')',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+}
 # The treasure of the Norn
 OBJECT:'(',"chest",(36,10)
 # valkyrie guards for the audience chamber
-MONSTER:'@',"warrior",(27,08)
-MONSTER:'@',"warrior",(27,09)
-MONSTER:'@',"warrior",(27,11)
-MONSTER:'@',"warrior",(27,12)
-MONSTER:'@',"warrior",(42,08)
-MONSTER:'@',"warrior",(42,09)
-MONSTER:'@',"warrior",(42,11)
-MONSTER:'@',"warrior",(42,12)
+MONSTER:'@',"warrior",(27,08) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
+MONSTER:'@',"warrior",(27,09) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
+MONSTER:'@',"warrior",(27,11) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
+MONSTER:'@',"warrior",(27,12) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
+MONSTER:'@',"warrior",(42,08) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
+MONSTER:'@',"warrior",(42,09) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
+MONSTER:'@',"warrior",(42,11) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
+MONSTER:'@',"warrior",(42,12) {
+  OBJECT[75%]:'[',random
+  OBJECT[75%]:')',random
+}
 # Non diggable walls
 NON_DIGGABLE:(26,07,43,13)
 # Random traps
@@ -241,7 +270,12 @@ TRAP:"board",random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'H',"Lord Surtur",(17,08)
+MONSTER:'H',"Lord Surtur",(17,08) {
+  OBJECT:'[',random
+  OBJECT:')',random
+  OBJECT:random,random
+  OBJECT:random,random
+}
 MONSTER:'a',"fire ant",random
 MONSTER:'a',"fire ant",random
 MONSTER:'a',"fire ant",random

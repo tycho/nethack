@@ -61,18 +61,42 @@ DOOR:closed,(48,12)
 DOOR:locked,(50,10)
 # Hippocrates
 OBJECT:'\',"throne",(37,10)
-MONSTER:'@',"Hippocrates",(37,10)
+MONSTER:'@',"Hippocrates",(37,10) {
+  OBJECT:'/',random
+  OBJECT:'/',random
+  OBJECT:'/',random
+  OBJECT:'/',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:')',"silver dagger",+4
+}
 # The treasure of Hippocrates
 OBJECT:'(',"chest",(37,10)
 # intern guards for the audience chamber
-MONSTER:'@',"attendant",(29,08)
-MONSTER:'@',"attendant",(29,09)
-MONSTER:'@',"attendant",(29,10)
-MONSTER:'@',"attendant",(29,11)
-MONSTER:'@',"attendant",(40,09)
-MONSTER:'@',"attendant",(40,10)
-MONSTER:'@',"attendant",(40,11)
-MONSTER:'@',"attendant",(40,13)
+MONSTER:'@',"attendant",(29,08) {
+  OBJECT[50%]:random,random
+}
+MONSTER:'@',"attendant",(29,09) {
+  OBJECT[50%]:random,random
+}
+MONSTER:'@',"attendant",(29,10) {
+  OBJECT[50%]:random,random
+}
+MONSTER:'@',"attendant",(29,11) {
+  OBJECT[50%]:random,random
+}
+MONSTER:'@',"attendant",(40,09) {
+  OBJECT[50%]:random,random
+}
+MONSTER:'@',"attendant",(40,10) {
+  OBJECT[50%]:random,random
+}
+MONSTER:'@',"attendant",(40,11) {
+  OBJECT[50%]:random,random
+}
+MONSTER:'@',"attendant",(40,13) {
+  OBJECT[50%]:random,random
+}
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
@@ -265,7 +289,9 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'H',"Cyclops",(20,06),hostile
+MONSTER:'H',"Cyclops",(20,06),hostile {
+  OBJECT:'[',random,+3
+}
 MONSTER:'r',"rabid rat",random
 MONSTER:'r',"rabid rat",random
 MONSTER:'r',"rabid rat",random

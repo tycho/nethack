@@ -97,24 +97,70 @@ MONSTER: 'C',"forest centaur",random
 MONSTER: 'C',random,random
 # Twoflower
 OBJECT:'\',"throne",(64,03)
-MONSTER:'@',"Twoflower",(64,03)
+MONSTER:'@',"Twoflower",(64,03) {
+  OBJECT:random,random
+  OBJECT:random,random
+  OBJECT:random,random
+  OBJECT:random,random
+  OBJECT:random,random
+  OBJECT:random,random
+}
 # The treasure of Twoflower
 OBJECT:'(',"chest",(64,03)
 # guides for the audience chamber
-MONSTER:'@',"guide",(29,03)
-MONSTER:'@',"guide",(32,04)
-MONSTER:'@',"guide",(35,02)
-MONSTER:'@',"guide",(38,03)
-MONSTER:'@',"guide",(45,03)
-MONSTER:'@',"guide",(48,02)
-MONSTER:'@',"guide",(49,04)
-MONSTER:'@',"guide",(51,03)
-MONSTER:'@',"guide",(57,03)
-MONSTER:'@',"guide",(62,04)
-MONSTER:'@',"guide",(66,04)
+MONSTER:'@',"guide",(29,03) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(32,04) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(35,02) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(38,03) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(45,03) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(48,02) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(49,04) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(51,03) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(57,03) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(62,04) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
+MONSTER:'@',"guide",(66,04) {
+  OBJECT:random,random
+  OBJECT[25%]:random,random
+}
 # path guards
-MONSTER:'@',"watchman",(35,08)
-MONSTER:'@',"watchman",(36,08)
+MONSTER:'@',"watchman",(35,08) {
+  OBJECT:'[',random
+  OBJECT:')',random
+}
+MONSTER:'@',"watchman",(36,08) {
+  OBJECT:'[',random
+  OBJECT:')',random
+}
 # river monsters
 MONSTER:';',"giant eel",(62,12)
 MONSTER:';',"piranha",(47,10)
@@ -416,7 +462,14 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',"Master of Thieves",(04,01),hostile
+MONSTER:'@',"Master of Thieves",(04,01),hostile {
+  OBJECT:'[',random
+  OBJECT:')',random
+  OBJECT:'!',random
+  OBJECT:'!',random
+  OBJECT:'!',random
+  OBJECT:'!',random
+}
 MONSTER:'s',"giant spider",random
 MONSTER:'s',"giant spider",random
 MONSTER:'s',"giant spider",random

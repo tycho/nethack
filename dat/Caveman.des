@@ -61,18 +61,37 @@ BRANCH:(71,09,71,09),(0,0,0,0)
 # The temple altar (this will force a priest(ess) to be created)
 ALTAR:(36,02),coaligned,shrine
 # Shaman Karnov
-MONSTER:'@',"Shaman Karnov",(35,02)
+MONSTER:'@',"Shaman Karnov",(35,02) {
+  OBJECT:'[',random,+6
+  OBJECT:')',random,+6
+}
 # The treasure of Shaman Karnov
 OBJECT:'(',"chest",(34,02)
 # neanderthal guards for the audience chamber
-MONSTER:'@',"neanderthal",(20,03)
-MONSTER:'@',"neanderthal",(20,02)
-MONSTER:'@',"neanderthal",(20,01)
-MONSTER:'@',"neanderthal",(21,03)
-MONSTER:'@',"neanderthal",(21,02)
-MONSTER:'@',"neanderthal",(21,01)
-MONSTER:'@',"neanderthal",(22,01)
-MONSTER:'@',"neanderthal",(24,08)
+MONSTER:'@',"neanderthal",(20,03) {
+  OBJECT:')',random
+}
+MONSTER:'@',"neanderthal",(20,02) {
+  OBJECT:')',random
+}
+MONSTER:'@',"neanderthal",(20,01) {
+  OBJECT:')',random
+}
+MONSTER:'@',"neanderthal",(21,03) {
+  OBJECT:')',random
+}
+MONSTER:'@',"neanderthal",(21,02) {
+  OBJECT:')',random
+}
+MONSTER:'@',"neanderthal",(21,01) {
+  OBJECT:')',random
+}
+MONSTER:'@',"neanderthal",(22,01) {
+  OBJECT:')',random
+}
+MONSTER:'@',"neanderthal",(24,08) {
+  OBJECT:')',random
+}
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
@@ -278,7 +297,13 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 # monsters.
-MONSTER:'D',"Chromatic Dragon",(23,10),asleep
+MONSTER:'D',"Chromatic Dragon",(23,10),asleep {
+  OBJECT:random,random
+  OBJECT:random,random
+  OBJECT:random,random
+  OBJECT:random,random
+  OBJECT:random,random
+}
 MONSTER:'F',"shrieker",(26,13)
 MONSTER:'F',"shrieker",(25,8)
 MONSTER:'F',"shrieker",(45,11)

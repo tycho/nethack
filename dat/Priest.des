@@ -67,18 +67,42 @@ DOOR:closed,(52,14)
 # Unattended Altar - unaligned due to conflict - player must align it.
 ALTAR:(28,09),noalign,altar
 # High Priest
-MONSTER:'@',"Arch Priest",(28,10)
+MONSTER:'@',"Arch Priest",(28,10) {
+  OBJECT:'[',"robe",+4
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'+',random
+  OBJECT:'+',random
+}
 # The treasure of High Priest
 OBJECT:'(',"chest",(27,10)
 # knight guards for the audience chamber
-MONSTER:'@',"acolyte",(32,07)
-MONSTER:'@',"acolyte",(32,08)
-MONSTER:'@',"acolyte",(32,11)
-MONSTER:'@',"acolyte",(32,12)
-MONSTER:'@',"acolyte",(33,07)
-MONSTER:'@',"acolyte",(33,08)
-MONSTER:'@',"acolyte",(33,11)
-MONSTER:'@',"acolyte",(33,12)
+MONSTER:'@',"acolyte",(32,07) {
+  OBJECT:'?',random
+}
+MONSTER:'@',"acolyte",(32,08) {
+  OBJECT:'?',random
+}
+MONSTER:'@',"acolyte",(32,11) {
+  OBJECT:'?',random
+}
+MONSTER:'@',"acolyte",(32,12) {
+  OBJECT:'?',random
+}
+MONSTER:'@',"acolyte",(33,07) {
+  OBJECT:'?',random
+}
+MONSTER:'@',"acolyte",(33,08) {
+  OBJECT:'?',random
+}
+MONSTER:'@',"acolyte",(33,11) {
+  OBJECT:'?',random
+}
+MONSTER:'@',"acolyte",(33,12) {
+  OBJECT:'?',random
+}
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
@@ -233,7 +257,10 @@ TRAP:"fire",random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'&',"Nalzok",place[0]
+MONSTER:'&',"Nalzok",place[0] {
+  OBJECT:')',random,+6
+  OBJECT:'[',random,+3
+}
 MONSTER:'Z',"human zombie",random
 MONSTER:'Z',"human zombie",random
 MONSTER:'Z',"human zombie",random

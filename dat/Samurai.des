@@ -54,18 +54,46 @@ DOOR:locked,(39,08)
 DOOR:closed,(50,04)
 DOOR:closed,(50,06)
 # Lord Sato
-MONSTER:'@',"Lord Sato",(20,04)
+MONSTER:'@',"Lord Sato",(20,04) {
+  OBJECT:'[',"splint mail",+4
+  OBJECT:')',"katana",+4
+  OBJECT:'?',random
+}
 # The treasure of Lord Sato
 OBJECT:'(',"chest",(20,04)
 # roshi guards for the audience chamber
-MONSTER:'@',"roshi",(18,04)
-MONSTER:'@',"roshi",(18,05)
-MONSTER:'@',"roshi",(18,06)
-MONSTER:'@',"roshi",(18,07)
-MONSTER:'@',"roshi",(26,04)
-MONSTER:'@',"roshi",(26,05)
-MONSTER:'@',"roshi",(26,06)
-MONSTER:'@',"roshi",(26,07)
+MONSTER:'@',"roshi",(18,04) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
+MONSTER:'@',"roshi",(18,05) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
+MONSTER:'@',"roshi",(18,06) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
+MONSTER:'@',"roshi",(18,07) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
+MONSTER:'@',"roshi",(26,04) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
+MONSTER:'@',"roshi",(26,05) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
+MONSTER:'@',"roshi",(26,06) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
+MONSTER:'@',"roshi",(26,07) {
+  OBJECT[25%]:'[',"splint mail"
+  OBJECT[25%]:')',"katana"
+}
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
@@ -310,7 +338,9 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',"Ashikaga Takauji",(22,10)
+MONSTER:'@',"Ashikaga Takauji",(22,10) {
+  OBJECT:'[',"splint mail"
+}
 MONSTER:'@',"samurai",random,hostile
 MONSTER:'@',"samurai",random,hostile
 MONSTER:'@',"samurai",random,hostile
