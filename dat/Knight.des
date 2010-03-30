@@ -62,21 +62,54 @@ DOOR:closed,(04,12)
 DOOR:closed,(45,12)
 # King Arthur
 OBJECT:'\',"throne",(09,07)
-MONSTER:'@',"King Arthur",(09,07)
+MONSTER:'@',"King Arthur",(09,07) {
+  OBJECT:')',"silver long sword",+4
+  OBJECT:'[',random,+3
+}
 # The treasure of King Arthur
 OBJECT:'(',"chest",(09,07)
 # knight guards for the watchrooms
-MONSTER:'@',"knight",(04,02),peaceful
-MONSTER:'@',"knight",(04,13),peaceful
-MONSTER:'@',"knight",(45,02),peaceful
-MONSTER:'@',"knight",(45,13),peaceful
+MONSTER:'@',"knight",(04,02),peaceful {
+  OBJECT:')',random
+  OBJECT:'[',random
+}
+MONSTER:'@',"knight",(04,13),peaceful {
+  OBJECT:')',random
+  OBJECT:'[',random
+}
+MONSTER:'@',"knight",(45,02),peaceful {
+  OBJECT:')',random
+  OBJECT:'[',random
+}
+MONSTER:'@',"knight",(45,13),peaceful {
+  OBJECT:')',random
+  OBJECT:'[',random
+}
 # page guards for the audience chamber
-MONSTER:'@',"page",(16,06)
-MONSTER:'@',"page",(18,06)
-MONSTER:'@',"page",(20,06)
-MONSTER:'@',"page",(16,09)
-MONSTER:'@',"page",(18,09)
-MONSTER:'@',"page",(20,09)
+MONSTER:'@',"page",(16,06) {
+  OBJECT:')',random
+  OBJECT:'?',random
+}
+MONSTER:'@',"page",(18,06) {
+  OBJECT:'?',random
+  OBJECT:'[',random
+}
+MONSTER:'@',"page",(20,06) {
+  OBJECT:'?',random
+  OBJECT:'[',random
+}
+MONSTER:'@',"page",(16,09) {
+  OBJECT:'?',random
+  OBJECT:'?',random
+}
+MONSTER:'@',"page",(18,09) {
+  OBJECT:'?',random
+  OBJECT:'?',random
+}
+MONSTER:'@',"page",(20,09) {
+  OBJECT:'?',random
+  OBJECT:'[',random
+}
 # Non diggable walls
 NON_DIGGABLE:(00,00,49,15)
 # Random traps
@@ -317,7 +350,10 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'D',"Ixoth",(50,06),hostile
+MONSTER:'D',"Ixoth",(50,06),hostile {
+  OBJECT:'?',random
+  OBJECT:'?',random
+}
 MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',"quasit",random,hostile

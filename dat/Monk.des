@@ -64,17 +64,40 @@ DOOR:closed,(52,14)
 # Unattended Altar - unaligned due to conflict - player must align it.
 ALTAR:(28,09),noalign,altar
 # The Grand Master
-MONSTER:'@',"Grand Master",(28,10)
+MONSTER:'@',"Grand Master",(28,10) {
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+}
 # No treasure chest!
 # guards for the audience chamber
-MONSTER:'@',"abbot",(32,07)
-MONSTER:'@',"abbot",(32,08)
-MONSTER:'@',"abbot",(32,11)
-MONSTER:'@',"abbot",(32,12)
-MONSTER:'@',"abbot",(33,07)
-MONSTER:'@',"abbot",(33,08)
-MONSTER:'@',"abbot",(33,11)
-MONSTER:'@',"abbot",(33,12)
+MONSTER:'@',"abbot",(32,07) {
+  OBJECT[50%]:'?',random
+}
+MONSTER:'@',"abbot",(32,08) {
+  OBJECT[50%]:'?',random
+}
+MONSTER:'@',"abbot",(32,11) {
+  OBJECT[50%]:'?',random
+}
+MONSTER:'@',"abbot",(32,12) {
+  OBJECT[50%]:'?',random
+}
+MONSTER:'@',"abbot",(33,07) {
+  OBJECT[50%]:'?',random
+}
+MONSTER:'@',"abbot",(33,08) {
+  OBJECT[50%]:'?',random
+}
+MONSTER:'@',"abbot",(33,11) {
+  OBJECT[50%]:'?',random
+}
+MONSTER:'@',"abbot",(33,12) {
+  OBJECT[50%]:'?',random
+}
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
@@ -247,7 +270,12 @@ TRAP:"fire",random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',"Master Kaen",place[0]
+MONSTER:'@',"Master Kaen",place[0] {
+  OBJECT:')',random,+4
+  OBJECT:'?',random
+  OBJECT:'?',random
+  OBJECT:'?',random
+}
 ALTAR:place[0],noalign,altar
 MONSTER: 'E',"earth elemental",random
 MONSTER: 'E',"earth elemental",random
