@@ -1320,95 +1320,95 @@ object_infos	: /* nothing */
 		      add_opcode(splev, SPO_PUSH, stopit);
 		      $<i>$ = 0x00;
 		  }
-		| object_infos object_info
+		| object_infos ',' object_info
 		  {
-		      if (( $<i>1 & $<i>2 ))
+		      if (( $<i>1 & $<i>3 ))
 			  yyerror("OBJECT extra info already used.");
-		      $<i>$ = ( $<i>1 | $<i>2 );
+		      $<i>$ = ( $<i>1 | $<i>3 );
 		  }
 		;
 
-object_info	: ',' CURSE_TYPE
+object_info	: CURSE_TYPE
 		  {
-		      add_opvars(splev, "ii", (long)$2, SP_O_V_CURSE);
+		      add_opvars(splev, "ii", (long)$1, SP_O_V_CURSE);
 		      $<i>$ = 0x0001;
 		  }
-		| ',' STRING
+		| STRING
 		  {
-		      long token = get_monster_id($2, (char)0);
+		      long token = get_monster_id($1, (char)0);
 		      if (token == ERR) {
 			  /* "random" */
 			  yywarning("OBJECT: Are you sure you didn't mean NAME:\"foo\"?");
 			  token = NON_PM - 1;
 		      }
 		      add_opvars(splev, "ii", token, SP_O_V_CORPSENM);
-		      Free($2);
+		      Free($1);
 		      $<i>$ = 0x0002;
 		  }
-		| ',' INTEGER
+		| INTEGER
 		  {
-		      add_opvars(splev, "ii", (long)$2, SP_O_V_SPE);
+		      add_opvars(splev, "ii", (long)$1, SP_O_V_SPE);
 		      $<i>$ = 0x0004;
 		  }
-		| ',' NAME_ID ':' STRING
+		| NAME_ID ':' STRING
 		  {
-		      add_opvars(splev, "si", $4, SP_O_V_NAME);
+		      add_opvars(splev, "si", $3, SP_O_V_NAME);
 		      $<i>$ = 0x0008;
 		  }
-		| ',' QUANTITY_ID ':' INTEGER
+		| QUANTITY_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", (long)$4, SP_O_V_QUAN);
+		      add_opvars(splev, "ii", (long)$3, SP_O_V_QUAN);
 		      $<i>$ = 0x0010;
 		  }
-		| ',' BURIED_ID
+		| BURIED_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_O_V_BURIED);
 		      $<i>$ = 0x0020;
 		  }
-		| ',' LIGHT_STATE
+		| LIGHT_STATE
 		  {
-		      add_opvars(splev, "ii", (long)$2, SP_O_V_LIT);
+		      add_opvars(splev, "ii", (long)$1, SP_O_V_LIT);
 		      $<i>$ = 0x0040;
 		  }
-		| ',' ERODED_ID ':' INTEGER
+		| ERODED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", (long)$4, SP_O_V_ERODED);
+		      add_opvars(splev, "ii", (long)$3, SP_O_V_ERODED);
 		      $<i>$ = 0x0080;
 		  }
-		| ',' DOOR_STATE
+		| DOOR_STATE
 		  {
-		      if ($2 == D_LOCKED) {
+		      if ($1 == D_LOCKED) {
 			  add_opvars(splev, "ii", 1, SP_O_V_LOCKED);
 			  $<i>$ = 0x0100;
-		      } else if ($2 == D_BROKEN) {
+		      } else if ($1 == D_BROKEN) {
 			  add_opvars(splev, "ii", 1, SP_O_V_BROKEN);
 			  $<i>$ = 0x0200;
 		      } else
 			  yyerror("OBJECT state can only be locked or broken.");
 		  }
-		| ',' TRAPPED_ID
+		| TRAPPED_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_O_V_TRAPPED);
 		      $<i>$ = 0x0400;
 		  }
-		| ',' RECHARGED_ID ':' INTEGER
+		| RECHARGED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", (long)$4, SP_O_V_RECHARGED);
+		      add_opvars(splev, "ii", (long)$3, SP_O_V_RECHARGED);
 		      $<i>$ = 0x0800;
 		  }
-		| ',' INVIS_ID
+		| INVIS_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_O_V_INVIS);
 		      $<i>$ = 0x1000;
 		  }
-		| ',' GREASED_ID
+		| GREASED_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_O_V_GREASED);
 		      $<i>$ = 0x2000;
 		  }
-		| ',' coordinate
+		| coordinate
 		  {
-		      add_opvars(splev, "iii", $2.x, $2.y, SP_O_V_COORD);
+		      add_opvars(splev, "iii", $1.x, $1.y, SP_O_V_COORD);
 		      $<i>$ = 0x4000;
 		  }
 		;
