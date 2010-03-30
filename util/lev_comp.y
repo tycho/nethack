@@ -1146,92 +1146,92 @@ monster_infos	: /* nothing */
 		      add_opcode(splev, SPO_PUSH, stopit);
 		      $<i>$ = 0x00;
 		  }
-		| monster_infos monster_info
+		| monster_infos ',' monster_info
 		  {
-		      if (( $<i>1 & $<i>2 ))
+		      if (( $<i>1 & $<i>3 ))
 			  yyerror("MONSTER extra info already used.");
-		      $<i>$ = ( $<i>1 | $<i>2 );
+		      $<i>$ = ( $<i>1 | $<i>3 );
 		  }
 		;
 
-monster_info	: ',' string
+monster_info	: string
 		  {
-		      add_opvars(splev, "si", $2, SP_M_V_NAME);
+		      add_opvars(splev, "si", $1, SP_M_V_NAME);
 		      $<i>$ = 0x0001;
 		  }
-		| ',' MON_ATTITUDE
+		| MON_ATTITUDE
 		  {
-		      add_opvars(splev, "ii", (long)$<i>2, SP_M_V_PEACEFUL);
+		      add_opvars(splev, "ii", (long)$<i>1, SP_M_V_PEACEFUL);
 		      $<i>$ = 0x0002;
 		  }
-		| ',' MON_ALERTNESS
+		| MON_ALERTNESS
 		  {
-		      add_opvars(splev, "ii", (long)$<i>2, SP_M_V_ASLEEP);
+		      add_opvars(splev, "ii", (long)$<i>1, SP_M_V_ASLEEP);
 		      $<i>$ = 0x0004;
 		  }
-		| ',' alignment
+		| alignment
 		  {
-		      add_opvars(splev, "ii", (long)$<i>2, SP_M_V_ALIGN);
+		      add_opvars(splev, "ii", (long)$<i>1, SP_M_V_ALIGN);
 		      $<i>$ = 0x0008;
 		  }
-		| ',' MON_APPEARANCE string
+		| MON_APPEARANCE string
 		  {
-		      add_opvars(splev, "sii", $3, (long)$<i>2, SP_M_V_APPEAR);
+		      add_opvars(splev, "sii", $2, (long)$<i>1, SP_M_V_APPEAR);
 		      $<i>$ = 0x0010;
 		  }
-		| ',' FEMALE_ID
+		| FEMALE_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_M_V_FEMALE);
 		      $<i>$ = 0x0020;
 		  }
-		| ',' INVIS_ID
+		| INVIS_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_M_V_INVIS);
 		      $<i>$ = 0x0040;
 		  }
-		| ',' CANCELLED_ID
+		| CANCELLED_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_M_V_CANCELLED);
 		      $<i>$ = 0x0080;
 		  }
-		| ',' REVIVED_ID
+		| REVIVED_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_M_V_REVIVED);
 		      $<i>$ = 0x0100;
 		  }
-		| ',' AVENGE_ID
+		| AVENGE_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_M_V_AVENGE);
 		      $<i>$ = 0x0200;
 		  }
-		| ',' FLEEING_ID ':' INTEGER
+		| FLEEING_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", (long)$4, SP_M_V_FLEEING);
+		      add_opvars(splev, "ii", (long)$3, SP_M_V_FLEEING);
 		      $<i>$ = 0x0400;
 		  }
-		| ',' BLINDED_ID ':' INTEGER
+		| BLINDED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", (long)$4, SP_M_V_BLINDED);
+		      add_opvars(splev, "ii", (long)$3, SP_M_V_BLINDED);
 		      $<i>$ = 0x0800;
 		  }
-		| ',' PARALYZED_ID ':' INTEGER
+		| PARALYZED_ID ':' INTEGER
 		  {
-		      add_opvars(splev, "ii", (long)$4, SP_M_V_PARALYZED);
+		      add_opvars(splev, "ii", (long)$3, SP_M_V_PARALYZED);
 		      $<i>$ = 0x1000;
 		  }
-		| ',' STUNNED_ID
+		| STUNNED_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_M_V_STUNNED);
 		      $<i>$ = 0x2000;
 		  }
-		| ',' CONFUSED_ID
+		| CONFUSED_ID
 		  {
 		      add_opvars(splev, "ii", 1, SP_M_V_CONFUSED);
 		      $<i>$ = 0x4000;
 		  }
-		| ',' SEENTRAPS_ID ':' seen_trap_mask
+		| SEENTRAPS_ID ':' seen_trap_mask
 		  {
-		      add_opvars(splev, "ii", (long)$4, SP_M_V_SEENTRAPS);
+		      add_opvars(splev, "ii", (long)$3, SP_M_V_SEENTRAPS);
 		      $<i>$ = 0x8000;
 		  }
 		;
