@@ -10,8 +10,7 @@
 #
 LEVEL: "Kni-strt"
 FLAGS: noteleport,hardfloor,mazelevel
-# This is a kludge to init the level as a lit field.
-INIT_MAP: mines, '.' , '.' , false , false , lit , false
+INIT_MAP: solidfill, '.', lit
 MON_GENERATION:86%, (64,"quasit"), (16,'i'), (16,"ochre jelly"), (4,'j')
 GEOMETRY:center,center
 MAP
