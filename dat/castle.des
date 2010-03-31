@@ -45,16 +45,16 @@ ENDMAP
 
 # Treasure room 1
 RANDOM_PLACES:(46,05),(44,07),(38,06),(40,04)
-TERRAIN:place[0],'S',lit
+TERRAIN:place[0],'S'
 # Treasure room 2
 RANDOM_PLACES:(48,05),(54,07),(51,04)
-TERRAIN:place[0],'S',lit
+TERRAIN:place[0],'S'
 # Treasure room 3
 RANDOM_PLACES:(46,11),(44,12),(38,11),(40,09)
-TERRAIN:place[0],'S',lit
+TERRAIN:place[0],'S'
 # Treasure room 4
 RANDOM_PLACES:(48,11),(54,09),(51,12)
-TERRAIN:place[0],'S',lit
+TERRAIN:place[0],'S'
 
 # Random registers initialisation
 RANDOM_OBJECTS:'[',')','*','%'

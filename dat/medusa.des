@@ -33,7 +33,7 @@ MAP
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 ENDMAP
 
-REPLACE_TERRAIN:(01,01,73,18), '}', '.', lit, 5%
+REPLACE_TERRAIN:(01,01,73,18), '}', '.', 5%
 
 # Dungeon Description
 # (must maintain one room definition; `unfilled' forces its room to be kept)
@@ -138,7 +138,7 @@ MAP
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 ENDMAP
 
-REPLACE_TERRAIN:(01,01,73,18), '}', '.', lit, 5%
+REPLACE_TERRAIN:(01,01,73,18), '}', '.', 5%
 
 # Dungeon Description
 REGION:(00,00,74,19),lit,"ordinary"
@@ -254,7 +254,7 @@ MAP
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 ENDMAP
 
-REPLACE_TERRAIN:(01,01,73,18), '}', '.', lit, 5%
+REPLACE_TERRAIN:(01,01,73,18), '}', '.', 5%
 
 RANDOM_PLACES:(08,06),(66,05),(46,15)
 REGION:(00,00,74,19),lit,"ordinary"
@@ -378,7 +378,7 @@ MAP
 }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 ENDMAP
 
-REPLACE_TERRAIN:(01,01,73,18), '}', '.', lit, 5%
+REPLACE_TERRAIN:(01,01,73,18), '}', '.', 5%
 
 #
 RANDOM_PLACES:(04,08),(10,04),(10,08),(10,12)
