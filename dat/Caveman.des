@@ -36,12 +36,12 @@ P .PP..B..........PPP...   P  PPP   ... P P PPP  P  P PP     P  PPP   ...
                                                                             
 ENDMAP
 
-REPLACE_TERRAIN:(40,1, 74,18), 'P', ' ', unlit, 25%
-REPLACE_TERRAIN:(40,1, 74,18), 'P', '.', unlit, 5%
+REPLACE_TERRAIN:(40,1, 74,18), 'P', ' ', 25%
+REPLACE_TERRAIN:(40,1, 74,18), 'P', '.', 5%
 
 IF [90%] {
-   TERRAIN:(43,11),' ',unlit
-   TERRAIN:(40,10),'.',unlit
+   TERRAIN:(43,11),' '
+   TERRAIN:(40,10),'.'
 }
 
 # Dungeon Description
@@ -175,7 +175,7 @@ MAP
                                                                             
 ENDMAP
 
-REPLACE_TERRAIN:(00,00,25,19), ' ', 'P', unlit, 10%
+REPLACE_TERRAIN:(00,00,25,19), ' ', 'P', 10%
 
 # Dungeon Description
 REGION:(00,00,75,19),unlit,"ordinary"

@@ -34,28 +34,28 @@ ENDMAP
 
 IF [75%] {
    IF [50%] {
-      TERRAIN[75%]:(10,8),horizontal,28, '-', lit
-      TERRAIN[75%]:(37,8),horizontal,28, '-', lit
-      TERRAIN[75%]:(37,3),vertical,6, '|', lit
-      TERRAIN[75%]:(37,9),vertical,6, '|', lit
+      TERRAIN[75%]:(10,8),horizontal,28, '-'
+      TERRAIN[75%]:(37,8),horizontal,28, '-'
+      TERRAIN[75%]:(37,3),vertical,6, '|'
+      TERRAIN[75%]:(37,9),vertical,6, '|'
    } ELSE {
       IF [50%] {
-      	 TERRAIN[75%]:(10,8),horizontal,28, 'F', lit
-      	 TERRAIN[75%]:(37,8),horizontal,28, 'F', lit
-      	 TERRAIN[75%]:(37,3),vertical,6, 'F', lit
-      	 TERRAIN[75%]:(37,9),vertical,6, 'F', lit
+      	 TERRAIN[75%]:(10,8),horizontal,28, 'F'
+      	 TERRAIN[75%]:(37,8),horizontal,28, 'F'
+      	 TERRAIN[75%]:(37,3),vertical,6, 'F'
+      	 TERRAIN[75%]:(37,9),vertical,6, 'F'
       } ELSE {
-      	 TERRAIN[75%]:(10,8),horizontal,28, 'L', lit
-      	 TERRAIN[75%]:(37,8),horizontal,28, 'L', lit
-      	 TERRAIN[75%]:(37,3),vertical,6, 'L', lit
-      	 TERRAIN[75%]:(37,9),vertical,6, 'L', lit
+      	 TERRAIN[75%]:(10,8),horizontal,28, 'L'
+      	 TERRAIN[75%]:(37,8),horizontal,28, 'L'
+      	 TERRAIN[75%]:(37,3),vertical,6, 'L'
+      	 TERRAIN[75%]:(37,9),vertical,6, 'L'
       }
    }
 } ELSE {
    IF [25%] {
-      TERRAIN:(4,4,70,13),unfilled, '-',lit
-      TERRAIN:(25, 4),horizontal,25, '.',lit
-      TERRAIN:(25,13),horizontal,25, '.',lit
+      TERRAIN:(4,4,70,13),unfilled, '-'
+      TERRAIN:(25, 4),horizontal,25, '.'
+      TERRAIN:(25,13),horizontal,25, '.'
    }
 }
 
@@ -119,15 +119,15 @@ REGION:(51,11,73,16),lit,"ordinary"
 
 
 IF [40%] {
-   RANDLINE:random,random,'L',lit,20
+   RANDLINE:random,random,'L',20
    IF [50%] {
-      RANDLINE:random,random,'L',lit,25
+      RANDLINE:random,random,'L',25
    }
    IF [50%] {
-      RANDLINE:random,random,'L',lit,25,2
+      RANDLINE:random,random,'L',25,2
    }
    IF [25%] {
-      RANDLINE:random,random,'L',lit,25,3
+      RANDLINE:random,random,'L',25,3
    }
 }
 
@@ -301,9 +301,9 @@ REGION:(00,00,72,18),lit,"ordinary"
 
 IF [33%] {
    IF [50%] {
-      RANDLINE:(37,0),(37,18),'P',lit,20,2
+      RANDLINE:(37,0),(37,18),'P',20,2
    } ELSE {
-      RANDLINE:(0,10),(73,10),'P',lit,20,2
+      RANDLINE:(0,10),(73,10),'P',20,2
    }
 }
 

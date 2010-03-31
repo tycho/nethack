@@ -310,13 +310,13 @@ RANDOM_PLACES:(02,11),(42,09)
 STAIR:place[0],up
 
 RANDOM_PLACES:(22,14),(30,10),(22, 6),(14,10)
-TERRAIN:place[0],'.',unlit
+TERRAIN:place[0],'.'
 
 RANDOM_PLACES:(22, 4),(35,10),(22,16),( 9,10)
-TERRAIN:place[0],'.',unlit
+TERRAIN:place[0],'.'
 
 RANDOM_PLACES:(22, 2),(22,18)
-TERRAIN:place[0],'.',unlit
+TERRAIN:place[0],'.'
 
 # Non diggable walls
 NON_DIGGABLE:(00,00,44,19)

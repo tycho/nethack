@@ -34,25 +34,25 @@ MAP
 ENDMAP
 
 IF [50%] {
-   TERRAIN:(50,8),horizontal,4, '-',unlit
-   TERRAIN:(40,8),horizontal,4, 'B',unlit
+   TERRAIN:(50,8),horizontal,4, '-'
+   TERRAIN:(40,8),horizontal,4, 'B'
 }
 
 IF [50%] {
-   TERRAIN:(27,12),'|',unlit
-   TERRAIN:(27,3),horizontal,3, 'B',unlit
-   TERRAIN:(28,2), '-',unlit
+   TERRAIN:(27,12),'|'
+   TERRAIN:(27,3),horizontal,3, 'B'
+   TERRAIN:(28,2), '-'
 }
 
 IF [50%] {
-	TERRAIN:(60,5),'|',unlit
+	TERRAIN:(60,5),'|'
 } ELSE {
-	TERRAIN:(68,8),vertical,2,'|',unlit
+	TERRAIN:(68,8),vertical,2,'|'
 }
 
 IF [50%] {
-   TERRAIN:(16,10),vertical,2,'|',unlit
-   TERRAIN:(9,13),horizontal,6, 'B',unlit
+   TERRAIN:(16,10),vertical,2,'|'
+   TERRAIN:(9,13),horizontal,6, 'B'
 }
 
 # Dungeon Description
@@ -809,22 +809,22 @@ IF [66%] {
 # chance of lava spillage, or maybe lava river?
 IF [50%] {
 	IF [60%] {
-	SPILL: random, 'L', north, 20, lit
+	SPILL: random, 'L', north, 20
 	}
 	IF [60%] {
-	SPILL: random, 'L', south, 20, lit
+	SPILL: random, 'L', south, 20
 	}
 	IF [60%] {
-	SPILL: random, 'L', east, 20, lit
+	SPILL: random, 'L', east, 20
 	}
 	IF [60%] {
-	SPILL: random, 'L', west, 20, lit
+	SPILL: random, 'L', west, 20
 	}
 } ELSE {
 	IF [50%] {
-		RANDLINE: (30,00),(50,19), 'L', lit, 10, 2
+		RANDLINE: (30,00),(50,19), 'L', 10, 2
 	} ELSE {
-		RANDLINE: (50,00),(30,19), 'L', lit, 10, 2
+		RANDLINE: (50,00),(30,19), 'L', 10, 2
 	}
 }
 

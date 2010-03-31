@@ -13,7 +13,7 @@
 #
 LEVEL: "Pri-strt"
 FLAGS: noteleport,hardfloor,mazelevel,graveyard
-INIT_MAP:solidfill,'.',lit
+INIT_MAP:solidfill,('.',lit)
 MON_GENERATION:86%, (64,"human zombie"), (16,'Z'), (16,"wraith"), (4,'W')
 GEOMETRY:center,center
 MAP
@@ -54,8 +54,8 @@ REGION:(50,08,54,11),lit,"ordinary",unfilled,true {
   ROOMDOOR:false, locked, north|south|west, random
 }
 
-REPLACE_TERRAIN:(0,0,10,19),'.','T',lit,10%
-REPLACE_TERRAIN:(65,0,75,19),'.','T',lit,10%
+REPLACE_TERRAIN:(0,0,10,19),'.','T',10%
+REPLACE_TERRAIN:(65,0,75,19),'.','T',10%
 
 # Portal arrival point
 BRANCH:(05,04,05,04),(0,0,0,0)
@@ -145,7 +145,7 @@ MONSTER: 'Z',"human zombie",(01,17)
 
 LEVEL: "Pri-loca"
 FLAGS: hardfloor,mazelevel,graveyard
-INIT_MAP: solidfill, '.', lit
+INIT_MAP: solidfill, ('.', lit)
 MON_GENERATION:86%, (64,"human zombie"), (16,'Z'), (16,"wraith"), (4,'W')
 GEOMETRY:center,center
 MAP
