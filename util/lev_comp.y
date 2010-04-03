@@ -436,6 +436,25 @@ variable_define	: VARSTRING '=' INTEGER
 		      }
 		      add_opvars(splev, "sso", $3, $1, SPO_VAR_INIT);
 		  }
+		| VARSTRING '=' VARSTRING
+		  {
+		      struct lc_vardefs *vd1, *vd2;
+		      if (!strcmp($1, $3)) yyerror("Trying to set variable to value of itself");
+		      vd2 = vardef_defined(variable_definitions, $3, 1);
+		      if (!vd2) {
+			  yyerror("Trying to use an undefined variable");
+		      } else {
+			  if ((vd1 = vardef_defined(variable_definitions, $1, 1))) {
+			      if (vd1->var_type != vd2->var_type)
+				  yyerror("Trying to redefine non-string variable as string");
+			  } else {
+			      vd1 = vardef_new(vd2->var_type, $1);
+			      vd1->next = variable_definitions;
+			      variable_definitions = vd1;
+			  }
+		      }
+		      add_opvars(splev, "vso", $3, $1, SPO_VAR_INIT);
+		  }
 		;
 
 function_define	: FUNCTION_ID NQSTRING '(' ')'

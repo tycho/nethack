@@ -2814,6 +2814,7 @@ frame_new(execptr)
     struct sp_frame *frame = (struct sp_frame *)alloc(sizeof(struct sp_frame));
     if (!frame) panic("could not create execution frame.");
     frame->next = NULL;
+    frame->variables = NULL;
     frame->n_opcode = execptr;
     frame->stack = (struct splevstack *)alloc(sizeof(struct splevstack));
     if (!frame->stack) panic("could not create execution frame stack.");
@@ -2844,7 +2845,6 @@ spo_frame_push(coder)
 {
     struct sp_frame *tmpframe = frame_new(coder->frame->n_opcode);
     tmpframe->next = coder->frame;
-    tmpframe->variables = NULL;
     coder->frame = tmpframe;
 }
 
@@ -4696,15 +4696,16 @@ sp_lev *lvl;
 		    else {
 			struct splev_var *tmpvar;
 			if ((tmpvar = opvar_var_defined(coder, OV_s(vname))) != NULL) {
+			    struct opvar *tmpvalue = opvar_var_conversion(coder, vvalue);
 			    opvar_free(tmpvar->value);
-			    tmpvar->value = vvalue;
+			    tmpvar->value = tmpvalue;
 			} else {
 			    tmpvar = (struct splev_var *)malloc(sizeof(struct splev_var));
 			    if (!tmpvar) break;
 			    tmpvar->next = coder->frame->variables;
 			    tmpvar->name = strdup(OV_s(vname));
 			    opvar_free(vname);
-			    tmpvar->value = vvalue;
+			    tmpvar->value = opvar_var_conversion(coder, vvalue);
 			    coder->frame->variables = tmpvar;
 			}
 		    }
