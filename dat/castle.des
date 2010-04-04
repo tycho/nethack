@@ -44,21 +44,26 @@ MAP
 ENDMAP
 
 # Treasure room 1
-RANDOM_PLACES:(46,05),(44,07),(38,06),(40,04)
-TERRAIN:place[0],'S'
+$place = { (46,05),(44,07),(38,06),(40,04) }
+SHUFFLE: $place
+TERRAIN:$place[0],'S'
 # Treasure room 2
-RANDOM_PLACES:(48,05),(54,07),(51,04)
-TERRAIN:place[0],'S'
+$place = { (48,05),(54,07),(51,04) }
+SHUFFLE: $place
+TERRAIN:$place[0],'S'
 # Treasure room 3
-RANDOM_PLACES:(46,11),(44,12),(38,11),(40,09)
-TERRAIN:place[0],'S'
+$place = { (46,11),(44,12),(38,11),(40,09) }
+SHUFFLE: $place
+TERRAIN:$place[0],'S'
 # Treasure room 4
-RANDOM_PLACES:(48,11),(54,09),(51,12)
-TERRAIN:place[0],'S'
+$place = { (48,11),(54,09),(51,12) }
+SHUFFLE: $place
+TERRAIN:$place[0],'S'
 
 # Random registers initialisation
 RANDOM_OBJECTS:'[',')','*','%'
-RANDOM_PLACES:(04,02),(58,02),(04,14),(58,14)
+$place = { (04,02),(58,02),(04,14),(58,14) }
+SHUFFLE: $place
 RANDOM_MONSTERS:'L','N','E','H','M','O','R','T','X','Z'
 
 TELEPORT_REGION:levregion(01,00,10,20),(1,1,61,15),down
@@ -148,26 +153,26 @@ OBJECT:object[3],random,(53,11)
 OBJECT:object[3],random,(54,11)
 OBJECT:object[3],random,(55,11)
 # THE WAND OF WISHING in 1 of the 4 towers
-CONTAINER:'(',"chest",place[0] {
+CONTAINER:'(',"chest",$place[0] {
   OBJECT:'/',"wishing"
 }
 # THE NOT QUITE WANDS OF WISHING
 # ...since you can see the chest now through the bars,
 # we have to find a better way to disguise where the wand is
-CONTAINER:'(',"chest",place[1] {
+CONTAINER:'(',"chest",$place[1] {
   OBJECT:'/',"secret door detection"
 }
-CONTAINER:'(',"chest",place[2] {
+CONTAINER:'(',"chest",$place[2] {
   OBJECT:'/',random
 }
-CONTAINER:'(',"chest",place[3] {
+CONTAINER:'(',"chest",$place[3] {
   OBJECT:'/',random
 }
 # Prevent monsters from eating them.  (@'s never eat objects)
-ENGRAVING:place[0],burn,"Elbereth"
-ENGRAVING:place[1],burn,"Elbereth"
-ENGRAVING:place[2],burn,"Elbereth"
-ENGRAVING:place[3],burn,"Elbereth"
+ENGRAVING:$place[0],burn,"Elbereth"
+ENGRAVING:$place[1],burn,"Elbereth"
+ENGRAVING:$place[2],burn,"Elbereth"
+ENGRAVING:$place[3],burn,"Elbereth"
 # The treasure of the lord
 OBJECT:'(',"chest",(37,08)
 OBJECT:'\',"throne",(36,08)
