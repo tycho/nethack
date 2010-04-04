@@ -242,12 +242,13 @@ LL........................
 .........LLL.........L....
 ENDMAP
 # Dungeon Description
-RANDOM_PLACES:(14,04),(13,07)
+$place = { (14,04),(13,07) }
+SHUFFLE:$place
 REGION:(00,00,25,10),unlit,"ordinary"
 # Stairs
 STAIR:(20,05),up
 # Objects
-OBJECT:'(',"lenses",place[0],blessed,0,NAME:"The Eyes of the Overworld"
+OBJECT:'(',"lenses",$place[0],blessed,0,NAME:"The Eyes of the Overworld"
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
@@ -270,13 +271,13 @@ TRAP:"fire",random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',"Master Kaen",place[0] {
+MONSTER:'@',"Master Kaen",$place[0] {
   OBJECT:')',random,+4
   OBJECT:'?',random
   OBJECT:'?',random
   OBJECT:'?',random
 }
-ALTAR:place[0],noalign,altar
+ALTAR:$place[0],noalign,altar
 MONSTER: 'E',"earth elemental",random
 MONSTER: 'E',"earth elemental",random
 MONSTER: 'E',"earth elemental",random
