@@ -215,34 +215,6 @@ MONSTER:';',"shark",(05,00)
 MONSTER:';',"shark",(05,16)
 MONSTER:';',"shark",(57,00)
 MONSTER:';',"shark",(57,16)
-# The throne room and the court monsters
-MONSTER:monster[0],random,(27,05)
-MONSTER:monster[1],random,(30,05)
-MONSTER:monster[2],random,(33,05)
-MONSTER:monster[3],random,(36,05)
-MONSTER:monster[4],random,(28,06)
-MONSTER:monster[5],random,(31,06)
-MONSTER:monster[6],random,(34,06)
-MONSTER:monster[7],random,(37,06)
-MONSTER:monster[8],random,(27,07)
-MONSTER:monster[9],random,(30,07)
-MONSTER:monster[0],random,(33,07)
-MONSTER:monster[1],random,(36,07)
-MONSTER:monster[2],random,(28,08)
-MONSTER:monster[3],random,(31,08)
-MONSTER:monster[4],random,(34,08)
-MONSTER:monster[5],random,(27,09)
-MONSTER:monster[6],random,(30,09)
-MONSTER:monster[7],random,(33,09)
-MONSTER:monster[8],random,(36,09)
-MONSTER:monster[9],random,(28,10)
-MONSTER:monster[0],random,(31,10)
-MONSTER:monster[1],random,(34,10)
-MONSTER:monster[2],random,(37,10)
-MONSTER:monster[3],random,(27,11)
-MONSTER:monster[4],random,(30,11)
-MONSTER:monster[5],random,(33,11)
-MONSTER:monster[6],random,(36,11)
 # MazeWalks
 MAZEWALK:(00,10),west
 MAZEWALK:(62,06),east
@@ -255,7 +227,36 @@ REGION:(00,00,62,16),unlit,"ordinary"
 REGION:(00,05,05,11),lit,"ordinary"
 REGION:(57,05,62,11),lit,"ordinary"
 #   Throne room
-REGION:(27,05,37,11),lit,"throne",unfilled
+REGION:(27,05,37,11),lit,"throne",unfilled {
+  # the court monsters
+  MONSTER:monster[0],random,random
+  MONSTER:monster[1],random,random
+  MONSTER:monster[2],random,random
+  MONSTER:monster[3],random,random
+  MONSTER:monster[4],random,random
+  MONSTER:monster[5],random,random
+  MONSTER:monster[6],random,random
+  MONSTER:monster[7],random,random
+  MONSTER:monster[8],random,random
+  MONSTER:monster[9],random,random
+  MONSTER:monster[0],random,random
+  MONSTER:monster[1],random,random
+  MONSTER:monster[2],random,random
+  MONSTER:monster[3],random,random
+  MONSTER:monster[4],random,random
+  MONSTER:monster[5],random,random
+  MONSTER:monster[6],random,random
+  MONSTER:monster[7],random,random
+  MONSTER:monster[8],random,random
+  MONSTER:monster[9],random,random
+  MONSTER:monster[0],random,random
+  MONSTER:monster[1],random,random
+  MONSTER:monster[2],random,random
+  MONSTER:monster[3],random,random
+  MONSTER:monster[4],random,random
+  MONSTER:monster[5],random,random
+  MONSTER:monster[6],random,random
+}
 #   Antechamber
 REGION:(07,05,14,11),lit,"ordinary"
 #   Storerooms
