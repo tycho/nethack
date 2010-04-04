@@ -209,8 +209,6 @@ south		{ yylval.i=W_SOUTH; return DIRECTION; }
 west		{ yylval.i=W_WEST; return DIRECTION; }
 random		{ yylval.i = -1; return RANDOM_TYPE; }
 none		{ yylval.i = -2; return NONE; }
-object		return O_REGISTER;
-monster		return M_REGISTER;
 place		return P_REGISTER;
 align		return A_REGISTER;
 left		{ yylval.i=1; return LEFT_OR_RIGHT; }

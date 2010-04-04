@@ -162,7 +162,7 @@ extern const char *fname;
 %token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID RANDLINE_ID
 %token	<i> CORRIDOR_ID GOLD_ID ENGRAVING_ID FOUNTAIN_ID POOL_ID SINK_ID NONE
 %token	<i> RAND_CORRIDOR_ID DOOR_STATE LIGHT_STATE CURSE_TYPE ENGRAVING_TYPE
-%token	<i> DIRECTION RANDOM_TYPE O_REGISTER M_REGISTER P_REGISTER A_REGISTER
+%token	<i> DIRECTION RANDOM_TYPE P_REGISTER A_REGISTER
 %token	<i> ALIGNMENT LEFT_OR_RIGHT CENTER TOP_OR_BOT ALTAR_TYPE UP_OR_DOWN
 %token	<i> SUBROOM_ID NAME_ID FLAGS_ID FLAG_TYPE MON_ATTITUDE MON_ALERTNESS
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID ELSE_ID
@@ -189,13 +189,13 @@ extern const char *fname;
 %type	<i> object_infos object_info monster_infos monster_info
 %type	<i> levstatements region_detail_end
 %type	<i> engraving_type flag_list prefilled
-%type	<i> monster monster_c m_register object object_c o_register
+%type	<i> monster object
 %type	<i> comparestmt encodecoord encoderegion mapchar
 %type	<i> seen_trap_mask
 %type	<i> mon_gen_list encodemonster encodeobj encodeobj_list
 %type	<i> sounds_list integer_list string_list encodecoord_list encoderegion_list mapchar_list encodemonster_list
 %type	<i> opt_percent opt_spercent opt_int opt_fillchar
-%type	<map> string level_def m_name o_name
+%type	<map> string level_def
 %type	<corpos> corr_spec
 %type	<lregn> region lev_region lineends
 %type	<crd> coord coordinate p_register room_pos subroom_pos room_align place
@@ -2085,36 +2085,6 @@ engraving_detail: ENGRAVING_ID ':' coord_or_var ',' engraving_type ',' string_or
 		  }
 		;
 
-monster_c	: monster
-		| RANDOM_TYPE
-		  {
-			$$ = - MAX_REGISTERS - 1;
-		  }
-		| m_register
-		;
-
-object_c	: object
-		| RANDOM_TYPE
-		  {
-			$$ = - MAX_REGISTERS - 1;
-		  }
-		| o_register
-		;
-
-m_name		: string
-		| RANDOM_TYPE
-		  {
-			$$ = (char *) 0;
-		  }
-		;
-
-o_name		: string
-		| RANDOM_TYPE
-		  {
-			$$ = (char *) 0;
-		  }
-		;
-
 trap_name	: string
 		  {
 			int token = get_trap_type($1);
@@ -2190,30 +2160,6 @@ p_register	: P_REGISTER '[' INTEGER ']'
 				lc_error("Register Index overflow!");
 		      }
 		      $$.x = $$.y = - $3 - 1;
-		  }
-		;
-
-o_register	: O_REGISTER '[' INTEGER ']'
-		  {
-		      if (!in_function_definition) {
-			  if (on_olist == 0)
-		                lc_error("No random objects defined!");
-			  else if ( $3 >= on_olist )
-				lc_error("Register Index overflow!");
-		      }
-		      $$ = - $3 - 1;
-		  }
-		;
-
-m_register	: M_REGISTER '[' INTEGER ']'
-		  {
-		      if (!in_function_definition) {
-			  if (on_mlist == 0)
-		                lc_error("No random monsters defined!");
-			  if ( $3 >= on_mlist )
-				lc_error("Register Index overflow!");
-		      }
-		      $$ = - $3 - 1;
 		  }
 		;
 
