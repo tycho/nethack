@@ -62,35 +62,35 @@ BRANCH:(71,09,71,09),(0,0,0,0)
 ALTAR:(36,02),coaligned,shrine
 # Shaman Karnov
 MONSTER:'@',"Shaman Karnov",(35,02) {
-  OBJECT:'[',random,+6
-  OBJECT:')',random,+6
+  OBJECT:'[',+6
+  OBJECT:')',+6
 }
 # The treasure of Shaman Karnov
-OBJECT:'(',"chest",(34,02)
+OBJECT:('(',"chest"),(34,02)
 # neanderthal guards for the audience chamber
 MONSTER:'@',"neanderthal",(20,03) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 MONSTER:'@',"neanderthal",(20,02) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 MONSTER:'@',"neanderthal",(20,01) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 MONSTER:'@',"neanderthal",(21,03) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 MONSTER:'@',"neanderthal",(21,02) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 MONSTER:'@',"neanderthal",(21,01) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 MONSTER:'@',"neanderthal",(22,01) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 MONSTER:'@',"neanderthal",(24,08) {
-  OBJECT:')',random
+  OBJECT:')'
 }
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
@@ -186,21 +186,21 @@ LADDER:(73,10),down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
 # Random traps
 TRAP:"spiked pit",random
 TRAP:"spiked pit",random
@@ -281,28 +281,28 @@ LADDER:random,up
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT:')',"mace",(23,10),blessed,0,NAME:"The Sceptre of Might"
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT:(')',"mace"),(23,10),blessed,0,NAME:"The Sceptre of Might"
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
 # monsters.
 MONSTER:'D',"Chromatic Dragon",(23,10),asleep {
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
 }
 MONSTER:'F',"shrieker",(26,13)
 MONSTER:'F',"shrieker",(25,8)
@@ -355,13 +355,13 @@ REGION:(00,00,75,19),unlit,"ordinary"
 #
 NON_DIGGABLE:(00,00,75,19)
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
 #
 TRAP: "pit", random
 TRAP: "pit", random
@@ -412,18 +412,18 @@ NOMAP
 LADDER: random, up
 LADDER: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
 #
 TRAP: "pit", random
 TRAP: "pit", random

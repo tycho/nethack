@@ -100,53 +100,53 @@ DOOR: closed, (65,18)
 DOOR: closed, (68,18)
 # Master of Thieves
 MONSTER:'@',"Master of Thieves",(36,11) {
-  OBJECT:'[',random
-  OBJECT:')',random
-  OBJECT:'!',random
-  OBJECT:'!',random
-  OBJECT:'!',random
-  OBJECT:'!',random
+  OBJECT:'['
+  OBJECT:')'
+  OBJECT:'!'
+  OBJECT:'!'
+  OBJECT:'!'
+  OBJECT:'!'
 }
 # The treasure of Master of Thieves
-OBJECT:'(',"chest",(36,11)
+OBJECT:('(',"chest"),(36,11)
 # thug guards, room #1
 MONSTER:'@',"thug",(28,10) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"thug",(29,11) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"thug",(30,09) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"thug",(31,07) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 # thug guards, room #2
 MONSTER:'@',"thug",(31,13) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"thug",(33,14) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"thug",(30,15) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 #thug guards, room #3
 MONSTER:'@',"thug",(35,09) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"thug",(36,13) {
-  OBJECT[15%]:'[',random
-  OBJECT[15%]:')',random
+  OBJECT[15%]:'['
+  OBJECT[15%]:')'
 }
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
@@ -250,21 +250,21 @@ STAIR:random,down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
 # Objects
-OBJECT:'?',"teleportation",(11,18),cursed,0
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT:('?',"teleportation"),(11,18),cursed,0
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -355,21 +355,21 @@ NON_DIGGABLE:(00,00,75,20)
 # One trap to keep the gnomes at bay.
 TRAP:"spiked pit",(37,07)
 # Objects
-OBJECT:'(',"skeleton key",(38,10),blessed,0,NAME:"The Master Key of Thievery"
-OBJECT:'%',"tin",(26,12),"chameleon",0
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT:('(',"skeleton key"),(38,10),blessed,0,NAME:"The Master Key of Thievery"
+OBJECT:('%',"tin"),(26,12),"chameleon",0
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -384,10 +384,10 @@ TRAP:random,random
 TRAP:random,random
 # Random monsters.
 MONSTER:'@',"Master Assassin",(38,10),hostile {
-  OBJECT:'[',random
-  OBJECT:')',random
-  OBJECT:'?',random
-  OBJECT:'!',random
+  OBJECT:'['
+  OBJECT:')'
+  OBJECT:'?'
+  OBJECT:'!'
 }
 MONSTER:'l',"leprechaun",random,hostile
 MONSTER:'l',"leprechaun",random,hostile
@@ -440,31 +440,31 @@ MON_GENERATION:86%, (64,"leprechaun"), (16,'n'), (16,"guardian naga"), (4,'N')
 ROOM: "ordinary" , random, random, random, random
 {
 STAIR: random, up
-OBJECT: random,random,random
+OBJECT: random,random
 MONSTER: 'l', "leprechaun", random, hostile
 }
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
-OBJECT: random,random,random
+OBJECT: random, random
+OBJECT: random,random
 MONSTER: 'l', "leprechaun", random, hostile
 MONSTER: 'N', "guardian naga", random, hostile
 }
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
-OBJECT: random,random,random
+OBJECT: random,random
 MONSTER: 'n', "water nymph", random, hostile
 }
 
 ROOM: "ordinary" , random, random, random, random
 {
 STAIR: random, down
-OBJECT: random, random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', random, random, hostile
@@ -473,8 +473,8 @@ MONSTER: 'N', "guardian naga", random, hostile
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile
@@ -482,7 +482,7 @@ MONSTER: 'l', "leprechaun", random, hostile
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile
@@ -500,31 +500,31 @@ MON_GENERATION:86%, (64,"leprechaun"), (16,'n'), (16,"guardian naga"), (4,'N')
 ROOM: "ordinary" , random, random, random, random
 {
 STAIR: random, up
-OBJECT: random,random,random
+OBJECT: random,random
 MONSTER: 'l', "leprechaun", random, hostile
 }
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
-OBJECT: random,random,random
+OBJECT: random, random
+OBJECT: random,random
 MONSTER: 'l', "leprechaun", random, hostile
 MONSTER: 'N', "guardian naga", random, hostile
 }
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
-OBJECT: random,random,random
+OBJECT: random,random
 MONSTER: 'n', "water nymph", random, hostile
 }
 
 ROOM: "ordinary" , random, random, random, random
 {
 STAIR: random, down
-OBJECT: random, random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', random, random, hostile
@@ -533,8 +533,8 @@ MONSTER: 'N', "guardian naga", random, hostile
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile
@@ -542,7 +542,7 @@ MONSTER: 'l', "leprechaun", random, hostile
 
 ROOM: "ordinary" , random, random, random, random
 {
-OBJECT: random, random, random
+OBJECT: random, random
 TRAP: random, random
 TRAP: random, random
 MONSTER: 'l', "leprechaun", random, hostile

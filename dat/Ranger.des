@@ -45,56 +45,56 @@ STAIR:(10,10),down
 BRANCH:levregion(51,2,77,18),(0,0,40,20)
 # Orion
 MONSTER:'@',"Orion",(20,10) {
-  OBJECT:'[',"leather armor",+4
-  OBJECT:')',"yumi",+4
-  OBJECT:')',"arrow",+4,quantity:50
+  OBJECT:('[',"leather armor"),+4
+  OBJECT:(')',"yumi"),+4
+  OBJECT:(')',"arrow"),+4,quantity:50
 }
 # The treasure of Orion
-OBJECT:'(',"chest",(20,10)
+OBJECT:('(',"chest"),(20,10)
 # Guards for the audience chamber
 MONSTER:'@',"hunter",(19,09) {
-  OBJECT[25%]:'[',"leather armor"
+  OBJECT[25%]:('[',"leather armor")
   IF [50%] {
-    OBJECT:')',"bow"
-    OBJECT:')',"arrow"
+    OBJECT:(')',"bow")
+    OBJECT:(')',"arrow")
   }
-  OBJECT[15%]:')',random
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"hunter",(20,09) {
-  OBJECT[25%]:'[',"leather armor"
+  OBJECT[25%]:('[',"leather armor")
   IF [50%] {
-    OBJECT:')',"bow"
-    OBJECT:')',"arrow"
+    OBJECT:(')',"bow")
+    OBJECT:(')',"arrow")
   }
-  OBJECT[15%]:')',random
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"hunter",(21,09) {
-  OBJECT[25%]:'[',"leather armor"
+  OBJECT[25%]:('[',"leather armor")
   IF [50%] {
-    OBJECT:')',"bow"
-    OBJECT:')',"arrow"
+    OBJECT:(')',"bow")
+    OBJECT:(')',"arrow")
   }
-  OBJECT[15%]:')',random
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"hunter",(19,10) {
-  OBJECT[25%]:'[',"leather armor"
-  OBJECT[15%]:')',random
+  OBJECT[25%]:('[',"leather armor")
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"hunter",(21,10) {
-  OBJECT[25%]:'[',"leather armor"
-  OBJECT[15%]:')',random
+  OBJECT[25%]:('[',"leather armor")
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"hunter",(19,11) {
-  OBJECT[25%]:'[',"leather armor"
-  OBJECT[15%]:')',random
+  OBJECT[25%]:('[',"leather armor")
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"hunter",(20,11) {
-  OBJECT[25%]:'[',"leather armor"
-  OBJECT[15%]:')',random
+  OBJECT[25%]:('[',"leather armor")
+  OBJECT[15%]:')'
 }
 MONSTER:'@',"hunter",(21,11) {
-  OBJECT[25%]:'[',"leather armor"
-  OBJECT[15%]:')',random
+  OBJECT[25%]:('[',"leather armor")
+  OBJECT[15%]:')'
 }
 # Non diggable walls
 NON_DIGGABLE:(00,00,40,20)
@@ -178,14 +178,14 @@ STAIR:(27,18),down
 # Non diggable walls
 NON_DIGGABLE:(00,00,54,19)
 # Objects
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
 # Random traps
 TRAP:"spiked pit",random
 TRAP:"spiked pit",random
@@ -261,22 +261,22 @@ STAIR:(19,10),up
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT:'\',"throne",(37,10)
-OBJECT:')',"bow",(37,10),blessed,0,NAME:"The Longbow of Diana"
-OBJECT:'(',"chest",(37,10)
-OBJECT:random,random,(36,09)
-OBJECT:random,random,(36,10)
-OBJECT:random,random,(36,11)
-OBJECT:random,random,(37,09)
-OBJECT:random,random,(37,11)
-OBJECT:random,random,(38,09)
-OBJECT:random,random,(38,10)
-OBJECT:random,random,(38,11)
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT:('\',"throne"),(37,10)
+OBJECT:(')',"bow"),(37,10),blessed,0,NAME:"The Longbow of Diana"
+OBJECT:('(',"chest"),(37,10)
+OBJECT:random,(36,09)
+OBJECT:random,(36,10)
+OBJECT:random,(36,11)
+OBJECT:random,(37,09)
+OBJECT:random,(37,11)
+OBJECT:random,(38,09)
+OBJECT:random,(38,10)
+OBJECT:random,(38,11)
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -301,12 +301,12 @@ DOOR:locked,(53,08)
 DOOR:closed,(65,05)
 # Random monsters.
 MONSTER:'s',"Scorpius",(37,10),hostile {
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
 }
 MONSTER:'C',"forest centaur",(36,09),hostile
 MONSTER:'C',"forest centaur",(36,10),hostile
@@ -356,13 +356,13 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
 #
 TRAP: random, random
 TRAP: random, random
@@ -386,17 +386,17 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
 #
 TRAP: random, random
 TRAP: random, random

@@ -60,45 +60,45 @@ DOOR:open,(23,13)
 DOOR:open,(25,10)
 DOOR:open,(28,05)
 # Elder
-OBJECT:'\',"throne",(10,07)
+OBJECT:('\',"throne"),(10,07)
 MONSTER:'@',"Pelias",(10,07) {
-  OBJECT:')',"runesword",+5
-  OBJECT:'[',random,+5
+  OBJECT:(')',"runesword"),+5
+  OBJECT:'[',+5
 }
 # The treasure of Pelias
-OBJECT:'(',"chest",(09,05)
+OBJECT:('(',"chest"),(09,05)
 # chieftain guards for the audience chamber
 MONSTER:'@',"chieftain",(10,05) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 MONSTER:'@',"chieftain",(10,09) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 MONSTER:'@',"chieftain",(11,05) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 MONSTER:'@',"chieftain",(11,09) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 MONSTER:'@',"chieftain",(14,05) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 MONSTER:'@',"chieftain",(14,09) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 MONSTER:'@',"chieftain",(16,05) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 MONSTER:'@',"chieftain",(16,09) {
-  OBJECT:')',random
-  OBJECT:'[',random
+  OBJECT:')'
+  OBJECT:'['
 }
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
@@ -178,21 +178,21 @@ DOOR:locked,(55,06)
 STAIR:(05,02),up
 STAIR:(70,13),down
 # Objects
-OBJECT:random,random,(42,03)
-OBJECT:random,random,(42,03)
-OBJECT:random,random,(42,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,08)
-OBJECT:random,random,(41,08)
-OBJECT:random,random,(42,08)
-OBJECT:random,random,(42,08)
-OBJECT:random,random,(42,08)
-OBJECT:random,random,(71,13)
-OBJECT:random,random,(71,13)
-OBJECT:random,random,(71,13)
+OBJECT:random,(42,03)
+OBJECT:random,(42,03)
+OBJECT:random,(42,03)
+OBJECT:random,(41,03)
+OBJECT:random,(41,03)
+OBJECT:random,(41,03)
+OBJECT:random,(41,03)
+OBJECT:random,(41,08)
+OBJECT:random,(41,08)
+OBJECT:random,(42,08)
+OBJECT:random,(42,08)
+OBJECT:random,(42,08)
+OBJECT:random,(71,13)
+OBJECT:random,(71,13)
+OBJECT:random,(71,13)
 # Random traps
 TRAP:"spiked pit",(10,13)
 TRAP:"spiked pit",(21,07)
@@ -277,21 +277,21 @@ STAIR:(36,05),up
 ALTAR:(63,04),noncoaligned,altar
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT:'*',"luckstone",(63,04),blessed,0,NAME:"The Heart of Ahriman"
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT:('*',"luckstone"),(63,04),blessed,0,NAME:"The Heart of Ahriman"
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
+OBJECT:random,random
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -301,11 +301,11 @@ TRAP:random,random
 TRAP:random,random
 # Random monsters.
 MONSTER:'@',"Thoth Amon",(63,04),hostile {
-  OBJECT:')',random,+2
-  OBJECT:'[',random
-  OBJECT:random,random
-  OBJECT:random,random
-  OBJECT:random,random
+  OBJECT:')',+2
+  OBJECT:'['
+  OBJECT:random
+  OBJECT:random
+  OBJECT:random
 }
 MONSTER:'O',"ogre",random,hostile
 MONSTER:'O',"ogre",random,hostile
@@ -354,14 +354,14 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
 #
 TRAP: random, random
 TRAP: random, random
@@ -382,17 +382,17 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
+OBJECT: random, random
 #
 TRAP: random, random
 TRAP: random, random
