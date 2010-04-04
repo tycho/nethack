@@ -85,13 +85,9 @@ struct coord {
 
 sp_lev *splev = NULL;
 
-static char olist[MAX_REGISTERS], mlist[MAX_REGISTERS];
-static struct coord plist[MAX_REGISTERS];
 static struct opvar *if_list[MAX_NESTED_IFS];
 
-static short n_olist = 0, n_mlist = 0, n_plist = 0, n_if_list = 0;
-static short on_olist = 0, on_mlist = 0, on_plist = 0;
-
+static short n_if_list = 0;
 
 unsigned int max_x_map, max_y_map;
 int obj_containment = 0;
@@ -157,12 +153,11 @@ extern const char *fname;
 %token	<i> MESSAGE_ID LEVEL_ID LEV_INIT_ID GEOMETRY_ID NOMAP_ID
 %token	<i> OBJECT_ID COBJECT_ID MONSTER_ID TRAP_ID DOOR_ID DRAWBRIDGE_ID
 %token	<i> MAZEWALK_ID WALLIFY_ID REGION_ID FILLING
-%token	<i> RANDOM_OBJECTS_ID RANDOM_MONSTERS_ID RANDOM_PLACES_ID
 %token	<i> ALTAR_ID LADDER_ID STAIR_ID NON_DIGGABLE_ID NON_PASSWALL_ID ROOM_ID
 %token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID RANDLINE_ID
 %token	<i> CORRIDOR_ID GOLD_ID ENGRAVING_ID FOUNTAIN_ID POOL_ID SINK_ID NONE
 %token	<i> RAND_CORRIDOR_ID DOOR_STATE LIGHT_STATE CURSE_TYPE ENGRAVING_TYPE
-%token	<i> DIRECTION RANDOM_TYPE P_REGISTER A_REGISTER
+%token	<i> DIRECTION RANDOM_TYPE A_REGISTER
 %token	<i> ALIGNMENT LEFT_OR_RIGHT CENTER TOP_OR_BOT ALTAR_TYPE UP_OR_DOWN
 %token	<i> SUBROOM_ID NAME_ID FLAGS_ID FLAG_TYPE MON_ATTITUDE MON_ALERTNESS
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID ELSE_ID
@@ -189,7 +184,7 @@ extern const char *fname;
 %type	<i> object_infos object_info monster_infos monster_info
 %type	<i> levstatements region_detail_end
 %type	<i> engraving_type flag_list prefilled
-%type	<i> monster object
+%type	<i> monster
 %type	<i> comparestmt encodecoord encoderegion mapchar
 %type	<i> seen_trap_mask
 %type	<i> mon_gen_list encodemonster encodeobj encodeobj_list
@@ -197,8 +192,8 @@ extern const char *fname;
 %type	<i> opt_percent opt_spercent opt_int opt_fillchar
 %type	<map> string level_def
 %type	<corpos> corr_spec
-%type	<lregn> region lev_region lineends
-%type	<crd> coord coordinate p_register room_pos subroom_pos room_align place
+%type	<lregn> region lev_region
+%type	<crd> room_pos subroom_pos room_align
 %type	<sze> room_size
 %type	<terr> terrain_type
 %start	file
@@ -255,7 +250,6 @@ level_def	: LEVEL_ID ':' string
 			    lc_error("Invalid dot ('.') in level name '%s'.", $3);
 			if ((int) strlen($3) > 8)
 			    lc_error("Level names limited to 8 characters ('%s').", $3);
-			n_plist = n_mlist = n_olist = 0;
 			f = function_definitions;
 			while (f) {
 			    f->n_called = 0;
@@ -386,7 +380,6 @@ levstatement 	: message
 		| exitstatement
 		| function_define
 		| function_call
-		| init_reg
 		| ladder_detail
 		| map_definition
 		| mazewalk_detail
@@ -1223,103 +1216,6 @@ v_justif	: TOP_OR_BOT
 		| CENTER
 		;
 
-init_reg	: RANDOM_OBJECTS_ID ':' object_list
-		  {
-		     char *tmp_olist;
-
-		     tmp_olist = (char *) alloc(n_olist+1);
-		     (void) memcpy((genericptr_t)tmp_olist,
-				   (genericptr_t)olist, n_olist);
-		     tmp_olist[n_olist] = 0;
-		     add_opvars(splev, "so", tmp_olist, SPO_RANDOM_OBJECTS);
-
-		     on_olist = n_olist;
-		     n_olist = 0;
-		  }
-		| RANDOM_PLACES_ID ':' place_list
-		  {
-		     char *tmp_plist;
-		     int i;
-
-		     tmp_plist = (char *) alloc(n_plist*2+1);
-
-		     for (i=0; i<n_plist; i++) {
-			tmp_plist[i*2] = plist[i].x+1;
-			tmp_plist[i*2+1] = plist[i].y+1;
-		     }
-		     tmp_plist[n_plist*2] = 0;
-		     add_opvars(splev, "so", tmp_plist, SPO_RANDOM_PLACES);
-
-		     on_plist = n_plist;
-		     n_plist = 0;
-		  }
-		| RANDOM_MONSTERS_ID ':' monster_list
-		  {
-		     char *tmp_mlist;
-
-		     tmp_mlist = (char *) alloc(n_mlist+1);
-		     (void) memcpy((genericptr_t)tmp_mlist,
-				   (genericptr_t)mlist, n_mlist);
-		     tmp_mlist[n_mlist] = 0;
-		     add_opvars(splev, "so", tmp_mlist, SPO_RANDOM_MONSTERS);
-		     on_mlist = n_mlist;
-		     n_mlist = 0;
-		  }
-		;
-
-object_list	: object
-		  {
-			if (n_olist < MAX_REGISTERS)
-			    olist[n_olist++] = $1;
-			else
-			    lc_error("Object list too long!");
-		  }
-		| object ',' object_list
-		  {
-			if (n_olist < MAX_REGISTERS)
-			    olist[n_olist++] = $1;
-			else
-			    lc_error("Object list too long!");
-		  }
-		;
-
-monster_list	: monster
-		  {
-			if (n_mlist < MAX_REGISTERS)
-			    mlist[n_mlist++] = $1;
-			else
-			    lc_error("Monster list too long!");
-		  }
-		| monster ',' monster_list
-		  {
-			if (n_mlist < MAX_REGISTERS)
-			    mlist[n_mlist++] = $1;
-			else
-			    lc_error("Monster list too long!");
-		  }
-		;
-
-place_list	: place
-		  {
-		      if (n_plist < MAX_REGISTERS) {
-			    plist[n_plist].x = $1.x;
-			    plist[n_plist].y = $1.y;
-			    n_plist++;
-		      } else
-			    lc_error("Location list too long!");
-		  }
-		| place
-		  {
-		      if (n_plist < MAX_REGISTERS) {
-			    plist[n_plist].x = $1.x;
-			    plist[n_plist].y = $1.y;
-			    n_plist++;
-		      } else
-			    lc_error("Location list too long!");
-		  }
-		 ',' place_list
-		;
-
 sounds_detail	: SOUNDS_ID ':' integer_or_var ',' sounds_list
 		  {
 		      long n_sounds = $5;
@@ -2122,14 +2018,6 @@ prefilled	: /* empty */
 		  }
 		;
 
-coordinate	: coord
-		| p_register
-		| RANDOM_TYPE
-		  {
-			$$.x = $$.y = -MAX_REGISTERS-1;
-		  }
-		;
-
 door_state	: DOOR_STATE
 		| RANDOM_TYPE
 		;
@@ -2150,18 +2038,6 @@ altar_type	: ALTAR_TYPE
 		| RANDOM_TYPE
 		;
 
-p_register	: P_REGISTER '[' INTEGER ']'
-		  {
-		      if (!in_function_definition) {
-			  if (on_plist == 0)
-		                lc_error("No random places defined!");
-			  else if ( $3 >= on_plist )
-				lc_error("Register Index overflow!");
-		      }
-		      $$.x = $$.y = - $3 - 1;
-		  }
-		;
-
 a_register	: A_REGISTER '[' INTEGER ']'
 		  {
 			if ( $3 >= 3 )
@@ -2171,30 +2047,12 @@ a_register	: A_REGISTER '[' INTEGER ']'
 		  }
 		;
 
-place		: coord
-		  {
-		      $$ = $1;
-		  }
-		;
-
 monster		: CHAR
 		  {
 			if (check_monster_char((char) $1))
 				$$ = $1 ;
 			else {
 			    lc_error("Unknown monster class '%c'!", $1);
-			    $$ = ERR;
-			}
-		  }
-		;
-
-object		: CHAR
-		  {
-			char c = $1;
-			if (check_object_char(c))
-				$$ = c;
-			else {
-			    lc_error("Unknown object class '%c'!", $1);
 			    $$ = ERR;
 			}
 		  }
@@ -2256,7 +2114,7 @@ encodecoord	: '(' INTEGER ',' INTEGER ')'
 		  }
 		| RANDOM_TYPE
 		  {
-		      $$ = ((char)(-MAX_REGISTERS-1) & 0xff) + (((char)(-MAX_REGISTERS-1) & 0xff) << 16);
+		      $$ = ((char)(-1) & 0xff) + (((char)(-1) & 0xff) << 16);
 		  }
 		;
 
@@ -2334,7 +2192,7 @@ encodemonster	: STRING
 		      long m = get_monster_id($1, (char)0);
 		      if (m == ERR) {
 			  lc_error("Unknown monster \"%s\"!", $1);
-			  $$ == -MAX_REGISTERS-1;
+			  $$ == -1;
 		      } else
 			  $$ = (m << 8) + (def_monsyms[(int)mons[m].mlet]);
 		  }
@@ -2344,7 +2202,7 @@ encodemonster	: STRING
 			    $$ = ( $1 ) + ((-1) << 8);
 			else {
 			    lc_error("Unknown monster class '%c'!", $1);
-			    $$ = -MAX_REGISTERS-1;
+			    $$ = -1;
 			}
 		  }
 		| '(' CHAR ',' STRING ')'
@@ -2352,13 +2210,13 @@ encodemonster	: STRING
 		      long m = get_monster_id($4, (char) $2);
 		      if (m == ERR) {
 			  lc_error("Unknown monster ('%c', \"%s\")!", $2, $4);
-			  $$ == -MAX_REGISTERS-1;
+			  $$ == -1;
 		      } else
 			  $$ = (m << 8) + ((char) $2);
 		  }
 		| RANDOM_TYPE
 		  {
-		      $$ = -MAX_REGISTERS-1;
+		      $$ = -1;
 		  }
 		;
 
@@ -2383,7 +2241,7 @@ encodeobj	: STRING
 		      long m = get_object_id($1, (char)0);
 		      if (m == ERR) {
 			  lc_error("Unknown object \"%s\"!", $1);
-			  $$ == -MAX_REGISTERS-1;
+			  $$ == -1;
 		      } else
 			  $$ = (m << 8) + 1; /* obj class != 0 to force generation of a specific item */
 
@@ -2394,7 +2252,7 @@ encodeobj	: STRING
 			    $$ = ( $1 ) + ((-1) << 8) ;
 			else {
 			    lc_error("Unknown object class '%c'!", $1);
-			    $$ = -MAX_REGISTERS-1;
+			    $$ = -1;
 			}
 		  }
 		| '(' CHAR ',' STRING ')'
@@ -2402,13 +2260,13 @@ encodeobj	: STRING
 		      long m = get_object_id($4, (char) $2);
 		      if (m == ERR) {
 			  lc_error("Unknown object ('%c', \"%s\")!", $2, $4);
-			  $$ == -MAX_REGISTERS-1;
+			  $$ == -1;
 		      } else
 			  $$ = (m << 8) + ((char) $2);
 		  }
 		| RANDOM_TYPE
 		  {
-		      $$ = -MAX_REGISTERS-1;
+		      $$ = -1;
 		  }
 		;
 
@@ -2443,25 +2301,6 @@ chance		: /* empty */
 
 engraving_type	: ENGRAVING_TYPE
 		| RANDOM_TYPE
-		;
-
-coord		: '(' INTEGER ',' INTEGER ')'
-		  {
-		        if ($2 < 0 || $4 < 0 || $2 >= COLNO || $4 >= ROWNO)
-			    lc_error("Coordinates (%li,%li) out of map range!", $2, $4);
-			$$.x = $2;
-			$$.y = $4;
-		  }
-		;
-
-lineends	: coordinate ',' coordinate
-		  {
-		      $$.x1 = $1.x;
-		      $$.y1 = $1.y;
-		      $$.x2 = $3.x;
-		      $$.y2 = $3.y;
-		      $$.area = 1;
-		  }
 		;
 
 lev_region	: region
