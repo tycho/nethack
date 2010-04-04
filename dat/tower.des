@@ -22,10 +22,10 @@ MAP
 ENDMAP
 LADDER:(11,05),down
 # The lord and his court
-OBJECT:'\',"throne",(06,05)
+OBJECT:('\',"throne"),(06,05)
 MONSTER:'V',"Vlad the Impaler",(06,05) {
-  OBJECT:')',"two-handed sword",+1,NAME:"Lifestealer",cursed,eroded:-1
-  OBJECT:'(',"Candelabrum of Invocation"
+  OBJECT:(')',"two-handed sword"),+1,NAME:"Lifestealer",cursed,eroded:-1
+  OBJECT:('(',"Candelabrum of Invocation")
 }
 MONSTER:'V',random,(03,09)
 MONSTER:'V',random,(07,09)
@@ -42,13 +42,13 @@ DOOR:locked,(08,07)
 DOOR:locked,(10,07)
 DOOR:closed,(03,06)
 # treasures
-OBJECT:'(',"chest",(07,05)
-OBJECT:'(',"chest",(03,09)
-OBJECT:'(',"chest",(07,09)
-OBJECT:'(',"chest",(11,09)
-OBJECT:'(',"chest",(03,01)
-OBJECT:'(',"chest",(07,01)
-OBJECT:'(',"chest",(11,01)
+OBJECT:('(',"chest"),(07,05)
+OBJECT:('(',"chest"),(03,09)
+OBJECT:('(',"chest"),(07,09)
+OBJECT:('(',"chest"),(11,09)
+OBJECT:('(',"chest"),(03,01)
+OBJECT:('(',"chest"),(07,01)
+OBJECT:('(',"chest"),(11,01)
 # We have to protect the tower against outside attacks
 NON_DIGGABLE:(00,00,14,10)
 
@@ -84,15 +84,15 @@ MONSTER:'&',random,$place[1]
 MONSTER:'d',"hell hound pup",$place[2]
 MONSTER:'d',"hell hound pup",$place[3]
 MONSTER:'d',"winter wolf",$place[4]
-CONTAINER:'(',"chest",$place[5] {
-  OBJECT:'"',"amulet of life saving"
+CONTAINER:('(',"chest"),$place[5] {
+  OBJECT:('"',"amulet of life saving")
 }
-CONTAINER:'(',"chest",$place[6] {
-  OBJECT:'"',"amulet of strangulation"
+CONTAINER:('(',"chest"),$place[6] {
+  OBJECT:('"',"amulet of strangulation")
 }
-OBJECT:'[',"water walking boots",$place[7]
-OBJECT:'[',"crystal plate mail",$place[8]
-OBJECT:'+',"invisibility",$place[9]
+OBJECT:('[',"water walking boots"),$place[7]
+OBJECT:('[',"crystal plate mail"),$place[8]
+OBJECT:('+',"invisibility"),$place[9]
 # Walls in the tower are non diggable
 NON_DIGGABLE:(00,00,14,10)
 
@@ -135,13 +135,13 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
-OBJECT:')',"long sword",$place[0]
+OBJECT:(')',"long sword"),$place[0]
 TRAP:random,$place[0]
-OBJECT:'(',"lock pick",$place[1]
+OBJECT:('(',"lock pick"),$place[1]
 TRAP:random,$place[1]
-OBJECT:'[',"elven cloak",$place[2]
+OBJECT:('[',"elven cloak"),$place[2]
 TRAP:random,$place[2]
-OBJECT:'(',"blindfold",$place[3]
+OBJECT:('(',"blindfold"),$place[3]
 TRAP:random,$place[3]
 # Walls in the tower are non diggable
 NON_DIGGABLE:(00,00,18,12)

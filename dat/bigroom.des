@@ -69,7 +69,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 # Objects
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 # Random traps
 LOOP [6] {
@@ -138,7 +138,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 # Objects
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 # Random traps
 LOOP [6] {
@@ -184,7 +184,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 # Objects
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 # Random traps
 LOOP [6] {
@@ -258,7 +258,7 @@ FOUNTAIN:(69,02)
 FOUNTAIN:(69,15)
 # Objects
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 # Random traps
 LOOP [6] {
@@ -315,7 +315,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,72,18)
 
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 
 LOOP [6] {
@@ -363,7 +363,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,72,18)
 
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 
 LOOP [6] {
@@ -411,7 +411,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,18)
 
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 
 LOOP [6] {
@@ -460,7 +460,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,72,18)
 
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 
 LOOP [6] {
@@ -507,7 +507,7 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 
 LOOP [15] {
-  OBJECT:random,random,random
+  OBJECT:random,random
 }
 
 LOOP [6] {
