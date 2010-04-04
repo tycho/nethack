@@ -61,51 +61,51 @@ DOOR:closed,(04,12)
 DOOR:closed,(45,12)
 # King Arthur
 OBJECT:('\',"throne"),(09,07)
-MONSTER:'@',"King Arthur",(09,07) {
+MONSTER:('@',"King Arthur"),(09,07) {
   OBJECT:(')',"silver long sword"),+4
   OBJECT:'[',+3
 }
 # The treasure of King Arthur
 OBJECT:('(',"chest"),(09,07)
 # knight guards for the watchrooms
-MONSTER:'@',"knight",(04,02),peaceful {
+MONSTER:('@',"knight"),(04,02),peaceful {
   OBJECT:')'
   OBJECT:'['
 }
-MONSTER:'@',"knight",(04,13),peaceful {
+MONSTER:('@',"knight"),(04,13),peaceful {
   OBJECT:')'
   OBJECT:'['
 }
-MONSTER:'@',"knight",(45,02),peaceful {
+MONSTER:('@',"knight"),(45,02),peaceful {
   OBJECT:')'
   OBJECT:'['
 }
-MONSTER:'@',"knight",(45,13),peaceful {
+MONSTER:('@',"knight"),(45,13),peaceful {
   OBJECT:')'
   OBJECT:'['
 }
 # page guards for the audience chamber
-MONSTER:'@',"page",(16,06) {
+MONSTER:('@',"page"),(16,06) {
   OBJECT:')'
   OBJECT:'?'
 }
-MONSTER:'@',"page",(18,06) {
+MONSTER:('@',"page"),(18,06) {
   OBJECT:'?'
   OBJECT:'['
 }
-MONSTER:'@',"page",(20,06) {
+MONSTER:('@',"page"),(20,06) {
   OBJECT:'?'
   OBJECT:'['
 }
-MONSTER:'@',"page",(16,09) {
+MONSTER:('@',"page"),(16,09) {
   OBJECT:'?'
   OBJECT:'?'
 }
-MONSTER:'@',"page",(18,09) {
+MONSTER:('@',"page"),(18,09) {
   OBJECT:'?'
   OBJECT:'?'
 }
-MONSTER:'@',"page",(20,09) {
+MONSTER:('@',"page"),(20,09) {
   OBJECT:'?'
   OBJECT:'['
 }
@@ -119,18 +119,18 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Monsters on siege duty.
-MONSTER: 'i',"quasit",(14,00),hostile
-MONSTER: 'i',"quasit",(16,00),hostile
-MONSTER: 'i',"quasit",(18,00),hostile
-MONSTER: 'i',"quasit",(20,00),hostile
-MONSTER: 'i',"quasit",(22,00),hostile
-MONSTER: 'i',"quasit",(24,00),hostile
-MONSTER: 'i',"quasit",(26,00),hostile
-MONSTER: 'i',"quasit",(28,00),hostile
-MONSTER: 'i',"quasit",(30,00),hostile
-MONSTER: 'i',"quasit",(32,00),hostile
-MONSTER: 'i',"quasit",(34,00),hostile
-MONSTER: 'i',"quasit",(36,00),hostile
+MONSTER: ('i',"quasit"),(14,00),hostile
+MONSTER: ('i',"quasit"),(16,00),hostile
+MONSTER: ('i',"quasit"),(18,00),hostile
+MONSTER: ('i',"quasit"),(20,00),hostile
+MONSTER: ('i',"quasit"),(22,00),hostile
+MONSTER: ('i',"quasit"),(24,00),hostile
+MONSTER: ('i',"quasit"),(26,00),hostile
+MONSTER: ('i',"quasit"),(28,00),hostile
+MONSTER: ('i',"quasit"),(30,00),hostile
+MONSTER: ('i',"quasit"),(32,00),hostile
+MONSTER: ('i',"quasit"),(34,00),hostile
+MONSTER: ('i',"quasit"),(36,00),hostile
 
 #
 #	The "locate" level for the quest.
@@ -243,33 +243,33 @@ TRAP:"anti magic",random
 TRAP:"anti magic",random
 TRAP:"anti magic",random
 # Random monsters.
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',random,random,hostile
-MONSTER:'j',random,random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',random,random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:'i',random,hostile
+MONSTER:'j',random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:'j',random,hostile
 
 #
 #	The "goal" level for the quest.
@@ -349,37 +349,37 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'D',"Ixoth",(50,06),hostile {
+MONSTER:('D',"Ixoth"),(50,06),hostile {
   OBJECT:'?'
   OBJECT:'?'
 }
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',random,random,hostile
-MONSTER:'i',random,random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',"ochre jelly",random,hostile
-MONSTER:'j',random,random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:('i',"quasit"),random,hostile
+MONSTER:'i',random,hostile
+MONSTER:'i',random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:('j',"ochre jelly"),random,hostile
+MONSTER:'j',random,hostile
 
 #
 #	The "fill" levels for the quest.
@@ -408,12 +408,12 @@ OBJECT: random, random
 OBJECT: random, random
 OBJECT: random, random
 #
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', random, random, hostile
-MONSTER: 'j', "ochre jelly", random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: 'i', random, hostile
+MONSTER: ('j', "ochre jelly"), random, hostile
 #
 TRAP: random, random
 TRAP: random, random
@@ -441,14 +441,14 @@ OBJECT: random, random
 OBJECT: random, random
 OBJECT: random, random
 #
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', "quasit", random, hostile
-MONSTER: 'i', random, random, hostile
-MONSTER: 'j', "ochre jelly", random, hostile
-MONSTER: 'j', "ochre jelly", random, hostile
-MONSTER: 'j', "ochre jelly", random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: ('i', "quasit"), random, hostile
+MONSTER: 'i', random, hostile
+MONSTER: ('j', "ochre jelly"), random, hostile
+MONSTER: ('j', "ochre jelly"), random, hostile
+MONSTER: ('j', "ochre jelly"), random, hostile
 #
 TRAP: random, random
 TRAP: random, random
