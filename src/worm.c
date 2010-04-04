@@ -385,12 +385,6 @@ cutworm(worm, x, y, weap)
 
     /* Sometimes the tail end dies. */
     if (!rn2(3) || !(new_wnum = get_wormno())) {
-		if (flags.mon_moving)
-			pline("Part of the tail of %s is cut off.", mon_nam(worm));
-		else
-			You("cut part of the tail off of %s.", mon_nam(worm));
-		toss_wsegs(new_tail, TRUE);
-		if (worm->mhp > 1) worm->mhp /= 2;	/* no need to call damage_mon */
 		cutoff(worm, new_tail);
 		return;
     }
