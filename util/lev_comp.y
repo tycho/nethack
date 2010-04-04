@@ -400,8 +400,6 @@ levstatement 	: message
 		| region_detail_TEST
 		| room_def
 		| subroom_def
-		| room_chance
-		| room_name
 		| sink_detail
 		| terrain_detail
 		| replace_terrain_detail
@@ -1152,19 +1150,6 @@ room_size	: '(' INTEGER ',' INTEGER ')'
 		  {
 			$$.height = $$.width = ERR;
 		  }
-		;
-
-room_name	: NAME_ID ':' string
-		  {
-		      lc_error("NAME for rooms is not used anymore.");
-		      Free($3);
-		  }
-		;
-
-room_chance	: CHANCE_ID ':' INTEGER
-		   {
-		       lc_error("CHANCE for rooms is not used anymore.");
-		   }
 		;
 
 door_detail	: ROOMDOOR_ID ':' secret ',' door_state ',' door_wall ',' door_pos
