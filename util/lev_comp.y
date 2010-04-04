@@ -1928,14 +1928,13 @@ terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' terrain_type
 		 }
 	       ;
 
-randline_detail : RANDLINE_ID ':' lineends ',' terrain_type ',' INTEGER opt_int
+randline_detail : RANDLINE_ID ':' coord_or_var ',' coord_or_var ',' terrain_type ',' INTEGER opt_int
 		  {
 		      long c;
-		      c = $5.ter;
-		      if ((c == INVALID_TYPE) || (c >= MAX_TYPE)) lc_error("Terrain: illegal map char");
-		      add_opvars(splev, "iiii iiiio",
-				 $3.x1, $3.y1, $3.x2, $3.y2,
-				 c, (long)$5.lit, (long)$7, (long)$8, SPO_RANDLINE);
+		      c = $7.ter;
+		      if ((c == INVALID_TYPE) || (c >= MAX_TYPE)) lc_error("Randline: illegal map char");
+		      add_opvars(splev, "iiiio",
+				 c, (long)$7.lit, (long)$9, (long)$10, SPO_RANDLINE);
 		  }
 
 opt_int		: /* empty */
