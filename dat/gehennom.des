@@ -176,30 +176,30 @@ TRAP:"magic", random
 
 # Random monsters.
 # The ghosts.
-MONSTER:' ',"ghost",random
-MONSTER:' ',"ghost",random
-MONSTER:' ',"ghost",random
-MONSTER:' ',"ghost",random
-MONSTER:' ',"ghost",random
-MONSTER:' ',"ghost",random
+MONSTER:(' ',"ghost"),random
+MONSTER:(' ',"ghost"),random
+MONSTER:(' ',"ghost"),random
+MONSTER:(' ',"ghost"),random
+MONSTER:(' ',"ghost"),random
+MONSTER:(' ',"ghost"),random
 # Add a few bats for atmosphere.
-MONSTER:'B',"vampire bat",random
-MONSTER:'B',"vampire bat",random
-MONSTER:'B',"vampire bat",random
+MONSTER:('B',"vampire bat"),random
+MONSTER:('B',"vampire bat"),random
+MONSTER:('B',"vampire bat"),random
 # And a lich for good measure.
-MONSTER:'L',random,random
+MONSTER:'L',random
 # Some undead nasties for good measure
-MONSTER:'V',random,random
-MONSTER:'V',random,random
-MONSTER:'V',random,random
-MONSTER:'Z',random,random
-MONSTER:'Z',random,random
-MONSTER:'Z',random,random
-MONSTER:'Z',random,random
-MONSTER:'M',random,random
-MONSTER:'M',random,random
-MONSTER:'M',random,random
-MONSTER:'M',random,random
+MONSTER:'V',random
+MONSTER:'V',random
+MONSTER:'V',random
+MONSTER:'Z',random
+MONSTER:'Z',random
+MONSTER:'Z',random
+MONSTER:'Z',random
+MONSTER:'M',random
+MONSTER:'M',random
+MONSTER:'M',random
+MONSTER:'M',random
 #
 # The Juiblex level
 #
@@ -248,7 +248,7 @@ MAP
 ..}}}}}.}}}}}.}}}}}.}}}}}.}}}}}.}}}}}.}}}}}.}}}}}..
 ENDMAP
 # Random registers
-RANDOM_MONSTERS:'j','b','P','F'
+$monster = MONSTER:{'j','b','P','F'}
 $place = { (04,02),(46,02),(04,15),(46,15) }
 SHUFFLE:$place
 # Dungeon description
@@ -261,15 +261,15 @@ BRANCH:levregion(01,00,11,20),(0,0,50,17)
 TELEPORT_REGION:levregion(01,00,11,20),(0,0,50,17),up
 TELEPORT_REGION:levregion(69,00,79,20),(0,0,50,17),down
 FOUNTAIN:$place[0]
-MONSTER:'m',"giant mimic",$place[1],m_feature "fountain"
-MONSTER:'m',"giant mimic",$place[2],m_feature "fountain"
-MONSTER:'m',"giant mimic",$place[3],m_feature "fountain"
+MONSTER:('m',"giant mimic"),$place[1],m_feature "fountain"
+MONSTER:('m',"giant mimic"),$place[2],m_feature "fountain"
+MONSTER:('m',"giant mimic"),$place[3],m_feature "fountain"
 # The demon of the swamp
-MONSTER:'&',"Juiblex",(25,08)
+MONSTER:('&',"Juiblex"),(25,08)
 # And a couple demons
-MONSTER:'i',"lemure",(43,08)
-MONSTER:'i',"lemure",(44,08)
-MONSTER:'i',"lemure",(45,08)
+MONSTER:('i',"lemure"),(43,08)
+MONSTER:('i',"lemure"),(44,08)
+MONSTER:('i',"lemure"),(45,08)
 # Some liquids and gems
 OBJECT:'*',(43,06)
 OBJECT:'*',(45,06)
@@ -277,32 +277,32 @@ OBJECT:'!',(43,09)
 OBJECT:'!',(44,09)
 OBJECT:'!',(45,09)
 # And lots of blobby monsters
-MONSTER:monster[0],random,(25,06)
-MONSTER:monster[1],random,(24,07)
-MONSTER:monster[2],random,(26,07)
-MONSTER:monster[3],random,(23,08)
-MONSTER:monster[3],random,(27,08)
-MONSTER:monster[2],random,(24,09)
-MONSTER:monster[1],random,(26,09)
-MONSTER:monster[0],random,(25,10)
-MONSTER:'j',random,random
-MONSTER:'j',random,random
-MONSTER:'j',random,random
-MONSTER:'j',random,random
-MONSTER:'P',random,random
-MONSTER:'P',random,random
-MONSTER:'P',random,random
-MONSTER:'P',random,random
-MONSTER:'b',random,random
-MONSTER:'b',random,random
-MONSTER:'b',random,random
-MONSTER:'F',random,random
-MONSTER:'F',random,random
-MONSTER:'F',random,random
-MONSTER:'m',random,random
-MONSTER:'m',random,random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
+MONSTER:$monster[0],(25,06)
+MONSTER:$monster[1],(24,07)
+MONSTER:$monster[2],(26,07)
+MONSTER:$monster[3],(23,08)
+MONSTER:$monster[3],(27,08)
+MONSTER:$monster[2],(24,09)
+MONSTER:$monster[1],(26,09)
+MONSTER:$monster[0],(25,10)
+MONSTER:'j',random
+MONSTER:'j',random
+MONSTER:'j',random
+MONSTER:'j',random
+MONSTER:'P',random
+MONSTER:'P',random
+MONSTER:'P',random
+MONSTER:'P',random
+MONSTER:'b',random
+MONSTER:'b',random
+MONSTER:'b',random
+MONSTER:'F',random
+MONSTER:'F',random
+MONSTER:'F',random
+MONSTER:'m',random
+MONSTER:'m',random
+MONSTER:(';',"jellyfish"),random
+MONSTER:(';',"jellyfish"),random
 # Some random objects
 OBJECT:'!',random
 OBJECT:'!',random
@@ -420,47 +420,47 @@ OBJECT:random,random
 OBJECT:random,random
 OBJECT:random,random
 # The resident nasty
-MONSTER:'&',"Orcus",(33,15) {
+MONSTER:('&',"Orcus"),(33,15) {
   OBJECT:('/',"death")
 }
 # And its preferred companions
-MONSTER:'Z',"human zombie",(32,15)
-MONSTER:' ',"shade",(32,14)
-MONSTER:' ',"shade",(32,16)
-MONSTER:'V',"vampire",(35,16)
-MONSTER:'V',"vampire",(35,14)
-MONSTER:'V',"vampire lord",(36,14)
-MONSTER:'V',"vampire lord",(36,15)
+MONSTER:('Z',"human zombie"),(32,15)
+MONSTER:(' ',"shade"),(32,14)
+MONSTER:(' ',"shade"),(32,16)
+MONSTER:('V',"vampire"),(35,16)
+MONSTER:('V',"vampire"),(35,14)
+MONSTER:('V',"vampire lord"),(36,14)
+MONSTER:('V',"vampire lord"),(36,15)
 # Randomly placed companions
-MONSTER:'Z',"skeleton",random
-MONSTER:'Z',"skeleton",random
-MONSTER:'Z',"skeleton",random
-MONSTER:'Z',"skeleton",random
-MONSTER:'Z',"skeleton",random
-MONSTER:' ',"shade",random
-MONSTER:' ',"shade",random
-MONSTER:' ',"shade",random
-MONSTER:' ',"shade",random
-MONSTER:'Z',"giant zombie",random
-MONSTER:'Z',"giant zombie",random
-MONSTER:'Z',"giant zombie",random
-MONSTER:'Z',"ettin zombie",random
-MONSTER:'Z',"ettin zombie",random
-MONSTER:'Z',"ettin zombie",random
-MONSTER:'Z',"human zombie",random
-MONSTER:'Z',"human zombie",random
-MONSTER:'Z',"human zombie",random
-MONSTER:'V',"vampire",random
-MONSTER:'V',"vampire",random
-MONSTER:'V',"vampire",random
-MONSTER:'V',"vampire lord",random
-MONSTER:'V',"vampire lord",random
+MONSTER:('Z',"skeleton"),random
+MONSTER:('Z',"skeleton"),random
+MONSTER:('Z',"skeleton"),random
+MONSTER:('Z',"skeleton"),random
+MONSTER:('Z',"skeleton"),random
+MONSTER:(' ',"shade"),random
+MONSTER:(' ',"shade"),random
+MONSTER:(' ',"shade"),random
+MONSTER:(' ',"shade"),random
+MONSTER:('Z',"giant zombie"),random
+MONSTER:('Z',"giant zombie"),random
+MONSTER:('Z',"giant zombie"),random
+MONSTER:('Z',"ettin zombie"),random
+MONSTER:('Z',"ettin zombie"),random
+MONSTER:('Z',"ettin zombie"),random
+MONSTER:('Z',"human zombie"),random
+MONSTER:('Z',"human zombie"),random
+MONSTER:('Z',"human zombie"),random
+MONSTER:('V',"vampire"),random
+MONSTER:('V',"vampire"),random
+MONSTER:('V',"vampire"),random
+MONSTER:('V',"vampire lord"),random
+MONSTER:('V',"vampire lord"),random
 # A few more for the party
-MONSTER:random,random,random
-MONSTER:random,random,random
-MONSTER:random,random,random
-MONSTER:random,random,random
-MONSTER:random,random,random
+MONSTER:random,random
+MONSTER:random,random
+MONSTER:random,random
+MONSTER:random,random
+MONSTER:random,random
 #
 # The Asmodeus Level
 #
@@ -498,7 +498,7 @@ NON_DIGGABLE:(00,00,20,11)
 # Entire main area
 REGION:(01,01,20,10),unlit,"ordinary"
 # The fellow in residence
-MONSTER:'&',"Asmodeus",(12,07) {
+MONSTER:('&',"Asmodeus"),(12,07) {
   OBJECT:('/',"cold")
   OBJECT:('/',"fire")
 }
@@ -522,13 +522,13 @@ TRAP:"fire", random
 TRAP:"magic", random
 TRAP:"magic", random
 # Random monsters.
-MONSTER:' ',"ghost",(11,07)
-MONSTER:'&',"horned devil",(10,05)
-MONSTER:'L',random,random
+MONSTER:(' ',"ghost"),(11,07)
+MONSTER:('&',"horned devil"),(10,05)
+MONSTER:'L',random
 # Some Vampires for good measure
-MONSTER:'V',random,random
-MONSTER:'V',random,random
-MONSTER:'V',random,random
+MONSTER:'V',random
+MONSTER:'V',random
+MONSTER:'V',random
 # Second part
 GEOMETRY:half-right,center
 MAP
@@ -542,9 +542,9 @@ MAZEWALK:(32,02),east
 # Non diggable walls
 NON_DIGGABLE:(00,00,32,04)
 DOOR:closed,(32,02)
-MONSTER:'&',random,random
-MONSTER:'&',random,random
-MONSTER:'&',random,random
+MONSTER:'&',random
+MONSTER:'&',random
+MONSTER:'&',random
 TRAP:"anti magic", random
 TRAP:"fire", random
 TRAP:"magic", random
@@ -578,7 +578,7 @@ NON_DIGGABLE:(00,00,46,12)
 MAZEWALK:(00,06),west
 STAIR:(44,06),down
 # The fellow in residence
-MONSTER:'&',"Baalzebub",(35,06)
+MONSTER:('&',"Baalzebub"),(35,06)
 # Some random weapons and armor.
 OBJECT:'[',random
 OBJECT:'[',random
@@ -599,14 +599,14 @@ TRAP:"fire", random
 TRAP:"magic", random
 TRAP:"magic", random
 # Random monsters.
-MONSTER:' ',"ghost",(37,07)
-MONSTER:'&',"horned devil",(32,05)
-MONSTER:'&',"barbed devil",(38,07)
-MONSTER:'L',random,random
+MONSTER:(' ',"ghost"),(37,07)
+MONSTER:('&',"horned devil"),(32,05)
+MONSTER:('&',"barbed devil"),(38,07)
+MONSTER:'L',random
 # Some Vampires for good measure
-MONSTER:'V',random,random
-MONSTER:'V',random,random
-MONSTER:'V',random,random
+MONSTER:'V',random
+MONSTER:'V',random
+MONSTER:'V',random
 #
 # The Sanctum Level
 #
@@ -717,27 +717,27 @@ OBJECT:'?',random
 OBJECT:'?',random
 OBJECT:'?',random
 # Some monsters.
-MONSTER:'&',"horned devil",(14,12),hostile
-MONSTER:'&',"barbed devil",(18,08),hostile
-MONSTER:'&',"erinys",(10,04),hostile
-MONSTER:'&',"marilith",(07,09),hostile
-MONSTER:'&',"nalfeshnee",(27,08),hostile
+MONSTER:('&',"horned devil"),(14,12),hostile
+MONSTER:('&',"barbed devil"),(18,08),hostile
+MONSTER:('&',"erinys"),(10,04),hostile
+MONSTER:('&',"marilith"),(07,09),hostile
+MONSTER:('&',"nalfeshnee"),(27,08),hostile
 # Moloch's horde
-MONSTER:'@',"aligned priest",(20,03),noalign,hostile
-MONSTER:'@',"aligned priest",(15,04),noalign,hostile
-MONSTER:'@',"aligned priest",(11,05),noalign,hostile
-MONSTER:'@',"aligned priest",(11,07),noalign,hostile
-MONSTER:'@',"aligned priest",(11,09),noalign,hostile
-MONSTER:'@',"aligned priest",(11,12),noalign,hostile
-MONSTER:'@',"aligned priest",(15,13),noalign,hostile
-MONSTER:'@',"aligned priest",(17,13),noalign,hostile
-MONSTER:'@',"aligned priest",(21,13),noalign,hostile
+MONSTER:('@',"aligned priest"),(20,03),noalign,hostile
+MONSTER:('@',"aligned priest"),(15,04),noalign,hostile
+MONSTER:('@',"aligned priest"),(11,05),noalign,hostile
+MONSTER:('@',"aligned priest"),(11,07),noalign,hostile
+MONSTER:('@',"aligned priest"),(11,09),noalign,hostile
+MONSTER:('@',"aligned priest"),(11,12),noalign,hostile
+MONSTER:('@',"aligned priest"),(15,13),noalign,hostile
+MONSTER:('@',"aligned priest"),(17,13),noalign,hostile
+MONSTER:('@',"aligned priest"),(21,13),noalign,hostile
 # A few nasties
-MONSTER:'L',random,random
-MONSTER:'L',random,random
-MONSTER:'V',random,random
-MONSTER:'V',random,random
-MONSTER:'V',random,random
+MONSTER:'L',random
+MONSTER:'L',random
+MONSTER:'V',random
+MONSTER:'V',random
+MONSTER:'V',random
 STAIR:(63,15),up
 
 
@@ -786,26 +786,26 @@ OBJECT: $object[4], random
 OBJECT: random, random
 OBJECT: random, random
 #
-RANDOM_MONSTERS:'V','D',' ','&','Z'
-MONSTER:monster[0],random,random,hostile
-MONSTER:monster[0],random,random,hostile
-MONSTER:monster[1],random,random,hostile
-MONSTER:monster[1],random,random,hostile
-MONSTER:monster[2],random,random,hostile
-MONSTER:monster[3],random,random,hostile
-MONSTER:random,random,random,hostile
-MONSTER:'H',random,random,hostile
+$monster = MONSTER:{ 'V','D',' ','&','Z' }
+MONSTER:$monster[0],random,hostile
+MONSTER:$monster[0],random,hostile
+MONSTER:$monster[1],random,hostile
+MONSTER:$monster[1],random,hostile
+MONSTER:$monster[2],random,hostile
+MONSTER:$monster[3],random,hostile
+MONSTER:random,random,hostile
+MONSTER:'H',random,hostile
 # chance of evil critters
 IF [50%] {
-  MONSTER:'L',random,random,hostile
+  MONSTER:'L',random,hostile
 } ELSE {
-  MONSTER:random,random,random,hostile
+  MONSTER:random,random,hostile
 }
 IF [66%] {
 # could be a snark now, so up the percentage a bit
-  MONSTER:'J',random,random,hostile
+  MONSTER:'J',random,hostile
 } ELSE {
-  MONSTER:random,random,random,hostile
+  MONSTER:random,random,hostile
 }
 # chance of lava spillage, or maybe lava river?
 IF [50%] {

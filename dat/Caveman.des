@@ -61,35 +61,35 @@ BRANCH:(71,09,71,09),(0,0,0,0)
 # The temple altar (this will force a priest(ess) to be created)
 ALTAR:(36,02),coaligned,shrine
 # Shaman Karnov
-MONSTER:'@',"Shaman Karnov",(35,02) {
+MONSTER:('@',"Shaman Karnov"),(35,02) {
   OBJECT:'[',+6
   OBJECT:')',+6
 }
 # The treasure of Shaman Karnov
 OBJECT:('(',"chest"),(34,02)
 # neanderthal guards for the audience chamber
-MONSTER:'@',"neanderthal",(20,03) {
+MONSTER:('@',"neanderthal"),(20,03) {
   OBJECT:')'
 }
-MONSTER:'@',"neanderthal",(20,02) {
+MONSTER:('@',"neanderthal"),(20,02) {
   OBJECT:')'
 }
-MONSTER:'@',"neanderthal",(20,01) {
+MONSTER:('@',"neanderthal"),(20,01) {
   OBJECT:')'
 }
-MONSTER:'@',"neanderthal",(21,03) {
+MONSTER:('@',"neanderthal"),(21,03) {
   OBJECT:')'
 }
-MONSTER:'@',"neanderthal",(21,02) {
+MONSTER:('@',"neanderthal"),(21,02) {
   OBJECT:')'
 }
-MONSTER:'@',"neanderthal",(21,01) {
+MONSTER:('@',"neanderthal"),(21,01) {
   OBJECT:')'
 }
-MONSTER:'@',"neanderthal",(22,01) {
+MONSTER:('@',"neanderthal"),(22,01) {
   OBJECT:')'
 }
-MONSTER:'@',"neanderthal",(24,08) {
+MONSTER:('@',"neanderthal"),(24,08) {
   OBJECT:')'
 }
 # Non diggable walls
@@ -108,37 +108,37 @@ TRAP:"bear",random
 TRAP:"bear",random
 TRAP:"bear",random
 # Random jungle stuff
-MONSTER: ';',"giant eel",random,hostile
-MONSTER: ';',"giant eel",random,hostile
-MONSTER: ';',"giant eel",random,hostile
-MONSTER: ';',"giant eel",random,hostile
-MONSTER: ';',"giant eel",random,hostile
-MONSTER: ';',"giant eel",random,hostile
-MONSTER: ';',"giant eel",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"monkey",random,hostile
-MONSTER: 'Y',"ape",random,hostile
-MONSTER: 'Y',"ape",random,hostile
-MONSTER: 'Y',"ape",random,hostile
-MONSTER: 'Y',"ape",random,hostile
-MONSTER: 'Y',"ape",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'f',"panther",random,hostile
-MONSTER: 'f',"panther",random,hostile
-MONSTER: 'f',"panther",random,hostile
-MONSTER: 'f',"panther",random,hostile
+MONSTER: (';',"giant eel"),random,hostile
+MONSTER: (';',"giant eel"),random,hostile
+MONSTER: (';',"giant eel"),random,hostile
+MONSTER: (';',"giant eel"),random,hostile
+MONSTER: (';',"giant eel"),random,hostile
+MONSTER: (';',"giant eel"),random,hostile
+MONSTER: (';',"giant eel"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"monkey"),random,hostile
+MONSTER: ('Y',"ape"),random,hostile
+MONSTER: ('Y',"ape"),random,hostile
+MONSTER: ('Y',"ape"),random,hostile
+MONSTER: ('Y',"ape"),random,hostile
+MONSTER: ('Y',"ape"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('f',"panther"),random,hostile
+MONSTER: ('f',"panther"),random,hostile
+MONSTER: ('f',"panther"),random,hostile
+MONSTER: ('f',"panther"),random,hostile
 
 #
 #	The "locate" level for the quest.
@@ -213,30 +213,30 @@ TRAP:"bear",random
 TRAP:"bear",random
 TRAP:"bear",random
 # Monsters...
-MONSTER:';',"electric eel",(28,11),hostile
-MONSTER:';',"electric eel",(46,09),hostile
-MONSTER:';',"electric eel",(46,10),hostile
-MONSTER:';',"electric eel",(63,16),hostile
-MONSTER:';',"giant eel",random,hostile
-MONSTER:';',"giant eel",random,hostile
-MONSTER:';',"giant eel",random,hostile
-MONSTER:';',"giant eel",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"monkey",random,hostile
-MONSTER:'Y',"monkey",random,hostile
-MONSTER:'Y',"monkey",random,hostile
-MONSTER:'Y',"monkey",random,hostile
-MONSTER:'S',"python",random,hostile
-MONSTER:'S',"python",random,hostile
-MONSTER:'S',"python",random,hostile
-MONSTER:'S',"python",random,hostile
+MONSTER:(';',"electric eel"),(28,11),hostile
+MONSTER:(';',"electric eel"),(46,09),hostile
+MONSTER:(';',"electric eel"),(46,10),hostile
+MONSTER:(';',"electric eel"),(63,16),hostile
+MONSTER:(';',"giant eel"),random,hostile
+MONSTER:(';',"giant eel"),random,hostile
+MONSTER:(';',"giant eel"),random,hostile
+MONSTER:(';',"giant eel"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"monkey"),random,hostile
+MONSTER:('Y',"monkey"),random,hostile
+MONSTER:('Y',"monkey"),random,hostile
+MONSTER:('Y',"monkey"),random,hostile
+MONSTER:('S',"python"),random,hostile
+MONSTER:('S',"python"),random,hostile
+MONSTER:('S',"python"),random,hostile
+MONSTER:('S',"python"),random,hostile
 # WALLIFY
 
 #
@@ -297,22 +297,22 @@ OBJECT:random,random
 OBJECT:random,random
 OBJECT:random,random
 # monsters.
-MONSTER:'D',"Chromatic Dragon",(23,10),asleep {
+MONSTER:('D',"Chromatic Dragon"),(23,10),asleep {
   OBJECT:random
   OBJECT:random
   OBJECT:random
   OBJECT:random
   OBJECT:random
 }
-MONSTER:'F',"shrieker",(26,13)
-MONSTER:'F',"shrieker",(25,8)
-MONSTER:'F',"shrieker",(45,11)
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'Y',"carnivorous ape",random,hostile
-MONSTER:'f',"tiger",random,hostile
-MONSTER:'f',"tiger",random,hostile
-MONSTER:'f',"tiger",random,hostile
+MONSTER:('F',"shrieker"),(26,13)
+MONSTER:('F',"shrieker"),(25,8)
+MONSTER:('F',"shrieker"),(45,11)
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('Y',"carnivorous ape"),random,hostile
+MONSTER:('f',"tiger"),random,hostile
+MONSTER:('f',"tiger"),random,hostile
+MONSTER:('f',"tiger"),random,hostile
 WALLIFY
 
 #
@@ -374,23 +374,23 @@ TRAP: "bear", random
 TRAP: "bear", random
 TRAP: "bear", random
 #
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
 
 #
 #	The "fill" levels for the quest.
@@ -436,21 +436,21 @@ TRAP: "bear", random
 TRAP: "bear", random
 TRAP: "bear", random
 #
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'f',"tiger",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'S',"python",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
-MONSTER: 'Y',"carnivorous ape",random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('f',"tiger"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('S',"python"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
+MONSTER: ('Y',"carnivorous ape"),random,hostile
 

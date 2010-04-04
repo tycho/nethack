@@ -63,9 +63,10 @@ TERRAIN:$place[0],'S'
 # Random registers initialisation
 $object = OBJECT: { '[',')','*','%' }
 $place = { (04,02),(58,02),(04,14),(58,14) }
+$monster = MONSTER:{ 'L','N','E','H','M','O','R','T','X','Z' }
 SHUFFLE: $place
 SHUFFLE: $object
-RANDOM_MONSTERS:'L','N','E','H','M','O','R','T','X','Z'
+SHUFFLE: $monster
 
 TELEPORT_REGION:levregion(01,00,10,20),(1,1,61,15),down
 TELEPORT_REGION:levregion(69,00,77,20),(1,1,61,15),up
@@ -184,38 +185,38 @@ TRAP:"trap door",(48,08)
 TRAP:"trap door",(52,08)
 TRAP:"trap door",(55,08)
 # Soldiers guarding the entry hall
-MONSTER:'@',"soldier",(08,06)
-MONSTER:'@',"soldier",(09,05)
-MONSTER:'@',"soldier",(11,05)
-MONSTER:'@',"soldier",(12,06)
-MONSTER:'@',"soldier",(08,10)
-MONSTER:'@',"soldier",(09,11)
-MONSTER:'@',"soldier",(11,11)
-MONSTER:'@',"soldier",(12,10)
-MONSTER:'@',"lieutenant",(09,08)
+MONSTER:('@',"soldier"),(08,06)
+MONSTER:('@',"soldier"),(09,05)
+MONSTER:('@',"soldier"),(11,05)
+MONSTER:('@',"soldier"),(12,06)
+MONSTER:('@',"soldier"),(08,10)
+MONSTER:('@',"soldier"),(09,11)
+MONSTER:('@',"soldier"),(11,11)
+MONSTER:('@',"soldier"),(12,10)
+MONSTER:('@',"lieutenant"),(09,08)
 # Soldiers guarding the towers
-MONSTER:'@',"sergeant",(03,02)
-MONSTER:'@',"sergeant",(05,02)
-MONSTER:'@',"sergeant",(57,02)
-MONSTER:'@',"sergeant",(59,02)
-MONSTER:'@',"sergeant",(03,14)
-MONSTER:'@',"sergeant",(05,14)
-MONSTER:'@',"sergeant",(57,14)
-MONSTER:'@',"sergeant",(59,14)
+MONSTER:('@',"sergeant"),(03,02)
+MONSTER:('@',"sergeant"),(05,02)
+MONSTER:('@',"sergeant"),(57,02)
+MONSTER:('@',"sergeant"),(59,02)
+MONSTER:('@',"sergeant"),(03,14)
+MONSTER:('@',"sergeant"),(05,14)
+MONSTER:('@',"sergeant"),(57,14)
+MONSTER:('@',"sergeant"),(59,14)
 # The four dragons that are guarding the storerooms
-MONSTER:'D',random,(47,05)
-MONSTER:'D',random,(47,06)
-MONSTER:'D',random,(47,10)
-MONSTER:'D',random,(47,11)
+MONSTER:'D',(47,05)
+MONSTER:'D',(47,06)
+MONSTER:'D',(47,10)
+MONSTER:'D',(47,11)
 # Sea monsters in the moat
-MONSTER:';',"giant eel",(05,07)
-MONSTER:';',"giant eel",(05,09)
-MONSTER:';',"giant eel",(57,07)
-MONSTER:';',"giant eel",(57,09)
-MONSTER:';',"shark",(05,00)
-MONSTER:';',"shark",(05,16)
-MONSTER:';',"shark",(57,00)
-MONSTER:';',"shark",(57,16)
+MONSTER:(';',"giant eel"),(05,07)
+MONSTER:(';',"giant eel"),(05,09)
+MONSTER:(';',"giant eel"),(57,07)
+MONSTER:(';',"giant eel"),(57,09)
+MONSTER:(';',"shark"),(05,00)
+MONSTER:(';',"shark"),(05,16)
+MONSTER:(';',"shark"),(57,00)
+MONSTER:(';',"shark"),(57,16)
 # MazeWalks
 MAZEWALK:(00,10),west
 MAZEWALK:(62,06),east
@@ -230,33 +231,33 @@ REGION:(57,05,62,11),lit,"ordinary"
 #   Throne room
 REGION:(27,05,37,11),lit,"throne",unfilled {
   # the court monsters
-  MONSTER:monster[0],random,random
-  MONSTER:monster[1],random,random
-  MONSTER:monster[2],random,random
-  MONSTER:monster[3],random,random
-  MONSTER:monster[4],random,random
-  MONSTER:monster[5],random,random
-  MONSTER:monster[6],random,random
-  MONSTER:monster[7],random,random
-  MONSTER:monster[8],random,random
-  MONSTER:monster[9],random,random
-  MONSTER:monster[0],random,random
-  MONSTER:monster[1],random,random
-  MONSTER:monster[2],random,random
-  MONSTER:monster[3],random,random
-  MONSTER:monster[4],random,random
-  MONSTER:monster[5],random,random
-  MONSTER:monster[6],random,random
-  MONSTER:monster[7],random,random
-  MONSTER:monster[8],random,random
-  MONSTER:monster[9],random,random
-  MONSTER:monster[0],random,random
-  MONSTER:monster[1],random,random
-  MONSTER:monster[2],random,random
-  MONSTER:monster[3],random,random
-  MONSTER:monster[4],random,random
-  MONSTER:monster[5],random,random
-  MONSTER:monster[6],random,random
+  MONSTER:$monster[0],random
+  MONSTER:$monster[1],random
+  MONSTER:$monster[2],random
+  MONSTER:$monster[3],random
+  MONSTER:$monster[4],random
+  MONSTER:$monster[5],random
+  MONSTER:$monster[6],random
+  MONSTER:$monster[7],random
+  MONSTER:$monster[8],random
+  MONSTER:$monster[9],random
+  MONSTER:$monster[0],random
+  MONSTER:$monster[1],random
+  MONSTER:$monster[2],random
+  MONSTER:$monster[3],random
+  MONSTER:$monster[4],random
+  MONSTER:$monster[5],random
+  MONSTER:$monster[6],random
+  MONSTER:$monster[7],random
+  MONSTER:$monster[8],random
+  MONSTER:$monster[9],random
+  MONSTER:$monster[0],random
+  MONSTER:$monster[1],random
+  MONSTER:$monster[2],random
+  MONSTER:$monster[3],random
+  MONSTER:$monster[4],random
+  MONSTER:$monster[5],random
+  MONSTER:$monster[6],random
 }
 #   Antechamber
 REGION:(07,05,14,11),lit,"ordinary"
