@@ -565,25 +565,77 @@ wiz_map()
 {
 	if (wizard) {
 	    struct trap *t;
+	    winid win;
+	    menu_item *pick_list = (menu_item *)0;
+	    anything any;
+	    int n;
 	    long save_Hconf = HConfusion,
 		 save_Hhallu = HHallucination;
 
 	    HConfusion = HHallucination = 0L;
-	    for (t = ftrap; t != 0; t = t->ntrap) {
-		t->tseen = 1;
-		map_trap(t, TRUE);
-	    }
-	    do_mapping();
-	    if (yn("show secret doors") == 'y') {
-		int x,y;
-		for (x = 0; x < COLNO; x++)
-		    for (y = 0; y < ROWNO; y++)
-			if (levl[x][y].typ == SDOOR) {
-			    cvt_sdoor_to_door(&levl[x][y]);
-			    magic_map_background(x, y, 0);
-			    newsym(x, y);
+
+	    win = create_nhwindow(NHW_MENU);
+	    start_menu(win);
+
+	    any.a_void = 0;
+	    any.a_int = 'm'; add_menu(win, NO_GLYPH, &any, 'm', 0, ATR_NONE, "Show map", MENU_UNSELECTED);
+	    any.a_int = 's'; add_menu(win, NO_GLYPH, &any, 's', 0, ATR_NONE, "Show secret doors", MENU_UNSELECTED);
+	    any.a_int = 't'; add_menu(win, NO_GLYPH, &any, 't', 0, ATR_NONE, "Show traps", MENU_UNSELECTED);
+	    any.a_int = 'i'; add_menu(win, NO_GLYPH, &any, 'i', 0, ATR_NONE, "Show items", MENU_UNSELECTED);
+	    any.a_int = 'M'; add_menu(win, NO_GLYPH, &any, 'M', 0, ATR_NONE, "Show monsters", MENU_UNSELECTED);
+	    any.a_int = 'A'; add_menu(win, NO_GLYPH, &any, 'A', 0, ATR_NONE, "All of the above", MENU_UNSELECTED);
+
+	    end_menu(win, "Reveal what");
+
+	    n = select_menu(win, PICK_ANY, &pick_list);
+	    destroy_nhwindow(win);
+	    if (n > 0) {
+		int idx;
+		for (idx = 0; idx < n; idx++) {
+		    if (pick_list[idx].item.a_int == 'm') {
+			do_mapping();
+		    } else if (pick_list[idx].item.a_int == 's') {
+			int x,y;
+			for (x = 0; x < COLNO; x++)
+			    for (y = 0; y < ROWNO; y++)
+				if (levl[x][y].typ == SDOOR) {
+				    cvt_sdoor_to_door(&levl[x][y]);
+				    magic_map_background(x, y, 0);
+				    newsym(x, y);
+				}
+		    } else if (pick_list[idx].item.a_int == 't') {
+			for (t = ftrap; t != 0; t = t->ntrap) {
+			    t->tseen = 1;
+			    map_trap(t, TRUE);
 			}
+		    } else if (pick_list[idx].item.a_int == 'i') {
+			object_detect(NULL, 0);
+		    } else if (pick_list[idx].item.a_int == 'M') {
+			if (HDetect_monsters < 1) incr_itimeout(&HDetect_monsters, 10);
+			see_monsters();
+		    } else if (pick_list[idx].item.a_int == 'A') {
+			int x,y;
+			do_mapping();
+			for (x = 0; x < COLNO; x++)
+			    for (y = 0; y < ROWNO; y++)
+				if (levl[x][y].typ == SDOOR) {
+				    cvt_sdoor_to_door(&levl[x][y]);
+				    magic_map_background(x, y, 0);
+				    newsym(x, y);
+				}
+			for (t = ftrap; t != 0; t = t->ntrap) {
+			    t->tseen = 1;
+			    map_trap(t, TRUE);
+			}
+			object_detect(NULL, 0);
+			if (HDetect_monsters < 1) incr_itimeout(&HDetect_monsters, 10);
+			see_monsters();
+		    }
+		}
 	    }
+
+            free((genericptr_t)pick_list);
+
 	    HConfusion = save_Hconf;
 	    HHallucination = save_Hhallu;
 	} else
