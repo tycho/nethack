@@ -170,7 +170,7 @@ extern const char *fname;
 %token	<i> ERODED_ID TRAPPED_ID RECHARGED_ID INVIS_ID GREASED_ID
 %token	<i> FEMALE_ID CANCELLED_ID REVIVED_ID AVENGE_ID FLEEING_ID BLINDED_ID
 %token	<i> PARALYZED_ID STUNNED_ID CONFUSED_ID SEENTRAPS_ID ALL_ID
-%token	<i> MON_GENERATION_ID
+%token	<i> MON_GENERATION_ID MONTYPE_ID
 %token	<i> GRAVE_ID
 %token	<i> FUNCTION_ID
 %token	<i> INCLUDE_ID
@@ -1389,15 +1389,9 @@ object_info	: CURSE_TYPE
 		      add_opvars(splev, "ii", (long)$1, SP_O_V_CURSE);
 		      $$ = 0x0001;
 		  }
-		| STRING
+		| MONTYPE_ID ':' monster_or_var
 		  {
-		      long token = get_monster_id($1, (char)0);
-		      if (token == ERR) {
-			  lc_warning("OBJECT: Unknown monster type \"%s\", maybe you meant NAME:\"%s\"?", $1, $1);
-			  token = NON_PM - 1;
-		      }
-		      add_opvars(splev, "ii", token, SP_O_V_CORPSENM);
-		      Free($1);
+		      add_opvars(splev, "i", SP_O_V_CORPSENM);
 		      $$ = 0x0002;
 		  }
 		| INTEGER
@@ -1405,14 +1399,14 @@ object_info	: CURSE_TYPE
 		      add_opvars(splev, "ii", (long)$1, SP_O_V_SPE);
 		      $$ = 0x0004;
 		  }
-		| NAME_ID ':' STRING
+		| NAME_ID ':' string_or_var
 		  {
-		      add_opvars(splev, "si", $3, SP_O_V_NAME);
+		      add_opvars(splev, "i", SP_O_V_NAME);
 		      $$ = 0x0008;
 		  }
-		| QUANTITY_ID ':' INTEGER
+		| QUANTITY_ID ':' integer_or_var
 		  {
-		      add_opvars(splev, "ii", (long)$3, SP_O_V_QUAN);
+		      add_opvars(splev, "i", SP_O_V_QUAN);
 		      $$ = 0x0010;
 		  }
 		| BURIED_ID
@@ -1425,9 +1419,9 @@ object_info	: CURSE_TYPE
 		      add_opvars(splev, "ii", (long)$1, SP_O_V_LIT);
 		      $$ = 0x0040;
 		  }
-		| ERODED_ID ':' INTEGER
+		| ERODED_ID ':' integer_or_var
 		  {
-		      add_opvars(splev, "ii", (long)$3, SP_O_V_ERODED);
+		      add_opvars(splev, "i", SP_O_V_ERODED);
 		      $$ = 0x0080;
 		  }
 		| DOOR_STATE
@@ -1446,9 +1440,9 @@ object_info	: CURSE_TYPE
 		      add_opvars(splev, "ii", 1, SP_O_V_TRAPPED);
 		      $$ = 0x0400;
 		  }
-		| RECHARGED_ID ':' INTEGER
+		| RECHARGED_ID ':' integer_or_var
 		  {
-		      add_opvars(splev, "ii", (long)$3, SP_O_V_RECHARGED);
+		      add_opvars(splev, "i", SP_O_V_RECHARGED);
 		      $$ = 0x0800;
 		  }
 		| INVIS_ID
