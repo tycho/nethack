@@ -41,6 +41,7 @@
 #define Free(ptr)		free((genericptr_t)ptr)
 
 extern void VDECL(lc_error, (const char *, ...));
+extern void VDECL(lc_warning, (const char *, ...));
 extern void FDECL(yyerror, (const char *));
 extern void FDECL(yywarning, (const char *));
 extern int NDECL(yylex);
@@ -1392,8 +1393,7 @@ object_info	: CURSE_TYPE
 		  {
 		      long token = get_monster_id($1, (char)0);
 		      if (token == ERR) {
-			  /* "random" */
-			  yywarning("OBJECT: Are you sure you didn't mean NAME:\"foo\"?");
+			  lc_warning("OBJECT: Unknown monster type \"%s\", maybe you meant NAME:\"%s\"?", $1, $1);
 			  token = NON_PM - 1;
 		      }
 		      add_opvars(splev, "ii", token, SP_O_V_CORPSENM);
@@ -1885,7 +1885,7 @@ room_type	: string
 		  {
 			int token = get_room_type($1);
 			if (token == ERR) {
-				yywarning("Unknown room type!  Making ordinary room...");
+			    lc_warning("Unknown room type \"%s\"!  Making ordinary room...", $1);
 				$$ = OROOM;
 			} else
 				$$ = token;
