@@ -270,7 +270,7 @@ level_def	: LEVEL_ID ':' string
 
 lev_init	: /* nothing */
 		  {
-		      add_opvars(splev, "iiiiiiiio", LVLINIT_NONE,0,0,0, 0,0,0,0, SPO_INITLEVEL);
+		      /* nothing */
 		  }
 		| LEV_INIT_ID ':' SOLID_FILL_ID ',' terrain_type
 		  {
