@@ -77,6 +77,7 @@ extern struct lc_vardefs *FDECL(vardef_defined,(struct lc_vardefs *,char *, int)
 extern void FDECL(splev_add_from, (sp_lev *, sp_lev *));
 
 extern void FDECL(check_vardef_type, (struct lc_vardefs *, char *, long, char *));
+extern struct lc_vardefs *FDECL(add_vardef_type, (struct lc_vardefs *, char *, long, char *));
 
 struct coord {
 	long x;
@@ -418,28 +419,12 @@ shuffle_detail	: SHUFFLE_ID ':' VARSTRING
 
 variable_define	: VARSTRING '=' INTEGER
 		  {
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != SPOVAR_INT)
-			      lc_error("Trying to redefine non-integer variable '%s' as integer", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_INT, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_INT, "integer");
 		      add_opvars(splev, "iiso", (long)$3, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' STRING
 		  {
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != SPOVAR_STRING)
-			      lc_error("Trying to redefine non-string variable '%s' as string", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_STRING, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_STRING, "string");
 		      add_opvars(splev, "siso", $3, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' VARSTRING
@@ -463,165 +448,69 @@ variable_define	: VARSTRING '=' INTEGER
 		  }
 		| VARSTRING '=' TERRAIN_ID ':' mapchar
 		  {
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != SPOVAR_MAPCHAR)
-			      lc_error("Trying to redefine non-mapchar variable '%s' as mapchar", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_MAPCHAR, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR, "mapchar");
 		      add_opvars(splev, "miso", (long)$5, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' MONSTER_ID ':' encodemonster
 		  {
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != SPOVAR_MONST)
-			      lc_error("Trying to redefine non-monst variable '%s' as monst", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_MONST, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MONST, "monster");
 		      add_opvars(splev, "Miso", (long)$5, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' OBJECT_ID ':' encodeobj
 		  {
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != SPOVAR_OBJ)
-			      lc_error("Trying to redefine non-obj variable '%s' as obj", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_OBJ, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_OBJ, "object");
 		      add_opvars(splev, "Oiso", (long)$5, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' encodecoord
 		  {
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != SPOVAR_COORD)
-			      lc_error("Trying to redefine non-coord variable '%s' as coord", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_COORD, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_COORD, "coordinate");
 		      add_opvars(splev, "ciso", (long)$3, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' encoderegion
 		  {
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != SPOVAR_REGION)
-			      lc_error("Trying to redefine non-region variable '%s' as region", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_REGION, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_REGION, "region");
 		      add_opvars(splev, "riso", (long)$3, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' '{' integer_list '}'
 		  {
 		      long n_items = $4;
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != (SPOVAR_INT|SPOVAR_ARRAY))
-			      lc_error("Trying to redefine variable '%s' as integer array", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_INT|SPOVAR_ARRAY, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_INT|SPOVAR_ARRAY, "integer");
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' '{' encodecoord_list '}'
 		  {
 		      long n_items = $4;
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != (SPOVAR_COORD|SPOVAR_ARRAY))
-			      lc_error("Trying to redefine variable '%s' as coord array", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_COORD|SPOVAR_ARRAY, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_COORD|SPOVAR_ARRAY, "coordinate");
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' '{' encoderegion_list '}'
 		  {
 		      long n_items = $4;
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != (SPOVAR_REGION|SPOVAR_ARRAY))
-			      lc_error("Trying to redefine variable '%s' as region array", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_REGION|SPOVAR_ARRAY, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_REGION|SPOVAR_ARRAY, "region");
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' TERRAIN_ID ':' '{' mapchar_list '}'
 		  {
 		      long n_items = $6;
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != (SPOVAR_MAPCHAR|SPOVAR_ARRAY))
-			      lc_error("Trying to redefine variable '%s' as mapchar array", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_MAPCHAR|SPOVAR_ARRAY, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR|SPOVAR_ARRAY, "mapchar");
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' MONSTER_ID ':' '{' encodemonster_list '}'
 		  {
 		      long n_items = $6;
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != (SPOVAR_MONST|SPOVAR_ARRAY))
-			      lc_error("Trying to redefine variable '%s' as monst array", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_MONST|SPOVAR_ARRAY, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MONST|SPOVAR_ARRAY, "monster");
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' OBJECT_ID ':' '{' encodeobj_list '}'
 		  {
 		      long n_items = $6;
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != (SPOVAR_OBJ|SPOVAR_ARRAY))
-			      lc_error("Trying to redefine variable '%s' as obj array", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_OBJ|SPOVAR_ARRAY, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_OBJ|SPOVAR_ARRAY, "object");
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' '{' string_list '}'
 		  {
 		      long n_items = $4;
-		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, $1, 1))) {
-			  if (vd->var_type != (SPOVAR_STRING|SPOVAR_ARRAY))
-			      lc_error("Trying to redefine variable '%s' as string array", $1);
-		      } else {
-			  vd = vardef_new(SPOVAR_STRING|SPOVAR_ARRAY, $1);
-			  vd->next = variable_definitions;
-			  variable_definitions = vd;
-		      }
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_STRING|SPOVAR_ARRAY, "string");
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
 		;
