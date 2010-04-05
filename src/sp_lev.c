@@ -3017,7 +3017,6 @@ spo_monster(coder)
 	    if ((OV_typ(parm) == SPOVAR_STRING) &&
 		!tmpmons.name.str)
 		tmpmons.name.str = strdup(OV_s(parm));
-	    opvar_free(parm);
 	    break;
 	case SP_M_V_APPEAR:
 	    if ((OV_typ(parm) == SPOVAR_INT) &&
