@@ -4262,21 +4262,18 @@ void
 spo_wallify(coder)
      struct sp_coder *coder;
 {
-    struct opvar *x1,*y1,*x2,*y2;
+    struct opvar *r;
     int dx1,dy1,dx2,dy2;
-    if (!OV_pop_i(y2) ||
-	!OV_pop_i(x2) ||
-	!OV_pop_i(y1) ||
-	!OV_pop_i(x1)) return;
-    dx1 = (OV_i(x1) < 0) ? xstart : OV_i(x1);
-    dy1 = (OV_i(y1) < 0) ? ystart : OV_i(y1);
-    dx2 = (OV_i(x2) < 0) ? xstart+xsize : OV_i(x2);
-    dy2 = (OV_i(y2) < 0) ? ystart+ysize : OV_i(y2);
-    wallify_map(dx1, dy1, dx2, dy2);
-    opvar_free(x1);
-    opvar_free(y1);
-    opvar_free(x2);
-    opvar_free(y2);
+    if (!OV_pop_r(r)) return;
+    dx1 = (xchar)SP_REGION_X1(OV_i(r));
+    dy1 = (xchar)SP_REGION_Y1(OV_i(r));
+    dx2 = (xchar)SP_REGION_X2(OV_i(r));
+    dy2 = (xchar)SP_REGION_Y2(OV_i(r));
+    wallify_map(dx1 < 0 ? xstart : dx1,
+		dy1 < 0 ? ystart : dy1,
+		dx2 < 0 ? xstart+xsize : dx2,
+		dy2 < 0 ? ystart+ysize : dy2);
+    opvar_free(r);
 }
 
 void
