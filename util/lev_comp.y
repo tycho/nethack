@@ -1617,7 +1617,7 @@ terrain_type	: CHAR
 		  }
 		;
 
-replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' terrain_type ',' SPERCENT
+replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var ',' terrain_type ',' SPERCENT
 		  {
 		      long chance, from_ter, to_ter;
 
@@ -1625,15 +1625,11 @@ replace_terrain_detail : REPLACE_TERRAIN_ID ':' region ',' CHAR ',' terrain_type
 		      if (chance < 0) chance = 0;
 		      else if (chance > 100) chance = 100;
 
-		      from_ter = what_map_char((char) $5);
-		      if (from_ter >= MAX_TYPE) lc_error("Replace terrain: illegal map char '%c'", $5);
-
 		      to_ter = $7.ter;
 		      if (to_ter >= MAX_TYPE) lc_error("Replace terrain: illegal map char");
 
-		      add_opvars(splev, "iiii iiiio",
-				 $3.x1, $3.y1, $3.x2, $3.y2,
-				 from_ter, to_ter, (long)$7.lit, chance, SPO_REPLACETERRAIN);
+		      add_opvars(splev, "iiio",
+				 to_ter, (long)$7.lit, chance, SPO_REPLACETERRAIN);
 		  }
 		;
 

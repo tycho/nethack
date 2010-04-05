@@ -3829,32 +3829,26 @@ spo_replace_terrain(coder)
      struct sp_coder *coder;
 {
     replaceterrain rt;
-    struct opvar *x1,*y1,*x2,*y2,*from_ter,*to_ter,*to_lit,*chance;
+    struct opvar *reg,*from_ter,*to_ter,*to_lit,*chance;
 
     if (!OV_pop_i(chance) ||
 	!OV_pop_i(to_lit) ||
 	!OV_pop_i(to_ter) ||
-	!OV_pop_i(from_ter) ||
-	!OV_pop_i(y2) ||
-	!OV_pop_i(x2) ||
-	!OV_pop_i(y1) ||
-	!OV_pop_i(x1)) return;
+	!OV_pop_typ(from_ter, SPOVAR_MAPCHAR) ||
+	!OV_pop_r(reg)) return;
 
     rt.chance = OV_i(chance);
     rt.tolit = OV_i(to_lit);
     rt.toter = OV_i(to_ter);
     rt.fromter = OV_i(from_ter);
-    rt.x1 = OV_i(x1);
-    rt.y1 = OV_i(y1);
-    rt.x2 = OV_i(x2);
-    rt.y2 = OV_i(y2);
+    rt.x1 = SP_REGION_X1(OV_i(reg));
+    rt.y1 = SP_REGION_Y1(OV_i(reg));
+    rt.x2 = SP_REGION_X2(OV_i(reg));
+    rt.y2 = SP_REGION_Y2(OV_i(reg));
 
     replace_terrain(&rt, coder->croom);
 
-    opvar_free(x1);
-    opvar_free(y1);
-    opvar_free(x2);
-    opvar_free(y2);
+    opvar_free(reg);
     opvar_free(from_ter);
     opvar_free(to_ter);
     opvar_free(to_lit);
