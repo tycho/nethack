@@ -513,7 +513,7 @@ funcdef_new(addr, name)
 {
     struct lc_funcdefs *f = New(struct lc_funcdefs);
     if (!f) {
-	yyerror("Could not alloc funcdefs");
+	lc_error("Could not alloc function definition for '%s'.", name);
 	return NULL;
     }
     f->next = NULL;
@@ -565,7 +565,7 @@ vardef_new(typ, name)
 {
     struct lc_vardefs *f = New(struct lc_vardefs);
     if (!f) {
-	yyerror("Could not alloc vardefs");
+	lc_error("Could not alloc variable definition for '%s'.", name);
 	return NULL;
     }
     f->next = NULL;
@@ -699,9 +699,7 @@ opvar_clone(ov)
 	    break;
 	default:
 	    {
-		char buf[BUFSZ];
-		sprintf(buf, "Unknown push value type (%i)!", ov->spovartyp);
-		yyerror(buf);
+		lc_error("Unknown opvar_clone value type (%i)!", ov->spovartyp);
 	    }
 	}
 	return tmpov;
@@ -908,14 +906,14 @@ genericptr_t dat;
    _opcode *tmp;
 
    if ((opc < 0) || (opc >= MAX_SP_OPCODES))
-     yyerror("Unknown opcode");
+       lc_error("Unknown opcode '%i'", opc);
 
    tmp = (_opcode *)alloc(sizeof(_opcode)*(nop+1));
    if (sp->opcodes && nop) {
        (void) memcpy(tmp, sp->opcodes, sizeof(_opcode)*nop);
        free(sp->opcodes);
    } else if (!tmp)
-       yyerror("Couldn't alloc opcode space");
+       lc_error("Could not alloc opcode space");
 
    sp->opcodes = tmp;
 
@@ -995,8 +993,7 @@ sp_lev *sp;
 
 
 	if(max_len > MAP_X_LIM || max_hig > MAP_Y_LIM) {
-	    Sprintf(msg, "Map too large! (max %d x %d)", MAP_X_LIM, MAP_Y_LIM);
-	    yyerror(msg);
+	    lc_error("Map too large at (%d x %d), max is (%d x %d)", max_len, max_hig, MAP_X_LIM, MAP_Y_LIM);
 	}
 
 	mbuf = (char *) alloc(((max_hig-1) * max_len) + (max_len-1) + 2);
