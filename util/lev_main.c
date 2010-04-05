@@ -322,6 +322,20 @@ const char *s;
 				fname, colon_line_number, s);
 }
 
+void
+lc_warning(const char *fmt, ...)
+{
+    char buf[512];
+    va_list argp;
+
+    va_start(argp, fmt);
+    (void) vsnprintf(buf, 511, fmt, argp);
+    va_end(argp);
+
+    yywarning(buf);
+}
+
+
 struct opvar *
 set_opvar_int(ov, val)
 struct opvar *ov;
@@ -733,7 +747,7 @@ char c;
 	val = what_map_char(c);
 	if(val == INVALID_TYPE) {
 	    val = ERR;
-	    yywarning("Invalid fill character in MAZE declaration");
+	    lc_warning("Invalid fill character '%c' in MAZE declaration", c);
 	}
 	return val;
 }
@@ -875,13 +889,13 @@ char c;
 		  case 'H'  : return(SCORR);
 		  case '{'  : return(FOUNTAIN);
 		  case '\\' :
-		      yywarning("Use OBJECT:'\\',\"throne\",(x,y) instead of \\ mapchar.");
+		      lc_warning("Mapchar \\ is deprecated, use OBJECT:('\\',\"throne\"),(x,y) instead.");
 			return(ROOM);
 		  case 'K'  :
 #ifdef SINKS
 		      return(SINK);
 #else
-		      yywarning("Sinks are not allowed in this version!  Ignoring...");
+		      lc_warning("Sinks ('K') are not allowed in this version!  Ignoring...");
 		      return(ROOM);
 #endif
 		  case '}'  : return(MOAT);
@@ -974,10 +988,7 @@ sp_lev *sp;
 		}
 		for(i=0; i<len; i++)
 		  if((tmpmap[max_hig][i] = what_map_char(map[i])) == INVALID_TYPE) {
-		      Sprintf(msg,
-			 "Invalid character @ (%d, %d) - replacing with stone",
-			      max_hig, i);
-		      yywarning(msg);
+		      lc_warning("Invalid character '%c' @ (%d, %d) - replacing with stone", map[i], max_hig, i);
 		      tmpmap[max_hig][i] = STONE;
 		    }
 		while(i < max_len)
