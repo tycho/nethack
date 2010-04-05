@@ -1514,12 +1514,11 @@ mazewalk_detail : MAZEWALK_ID ':' coord_or_var ',' DIRECTION
 
 wallify_detail	: WALLIFY_ID
 		  {
-		      add_opvars(splev, "iiiio", -1,-1,-1,-1, SPO_WALLIFY);
+		      add_opvars(splev, "ro", SP_REGION_PACK(-1,-1,-1,-1), SPO_WALLIFY);
 		  }
-		| WALLIFY_ID ':' lev_region
+		| WALLIFY_ID ':' region_or_var
 		  {
-		      add_opvars(splev, "iiiio",
-				 $3.x1, $3.y1, $3.x2, $3.y2, SPO_WALLIFY);
+		      add_opvars(splev, "o", SPO_WALLIFY);
 		  }
 		;
 
@@ -2002,11 +2001,11 @@ encodecoord	: '(' INTEGER ',' INTEGER ')'
 		  {
 		      if ($2 < 0 || $4 < 0 || $2 >= COLNO || $4 >= ROWNO)
 			  lc_error("Coordinates (%li,%li) out of map range!", $2, $4);
-		      $$ = ($2 & 0xff) + (($4 & 0xff) << 16);
+		      $$ = SP_COORD_PACK($2, $4);
 		  }
 		| RANDOM_TYPE
 		  {
-		      $$ = ((char)(-1) & 0xff) + (((char)(-1) & 0xff) << 16);
+		      $$ = SP_COORD_PACK(-1,-1);
 		  }
 		;
 
@@ -2031,8 +2030,7 @@ encoderegion	: '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
 		      if ( $2 > $6 || $4 > $8 )
 			  lc_error("Region start > end: (%li,%li,%li,%li)!", $2, $4, $6, $8);
 
-		      $$ = ( $2 & 0xff) + (( $4 & 0xff) << 8) +
-			  (( $6 & 0xff) << 16) + (( $8 & 0xff) << 24);
+		      $$ = SP_REGION_PACK($2, $4, $6, $8);
 		  }
 		;
 
@@ -2086,12 +2084,12 @@ encodemonster	: STRING
 			  lc_error("Unknown monster \"%s\"!", $1);
 			  $$ == -1;
 		      } else
-			  $$ = (m << 8) + (def_monsyms[(int)mons[m].mlet]);
+			  $$ = SP_MONST_PACK(m, def_monsyms[(int)mons[m].mlet]);
 		  }
 		| CHAR
 		  {
 			if (check_monster_char((char) $1))
-			    $$ = ( $1 ) + ((-1) << 8);
+			    $$ = SP_MONST_PACK(-1, $1);
 			else {
 			    lc_error("Unknown monster class '%c'!", $1);
 			    $$ = -1;
@@ -2104,7 +2102,7 @@ encodemonster	: STRING
 			  lc_error("Unknown monster ('%c', \"%s\")!", $2, $4);
 			  $$ == -1;
 		      } else
-			  $$ = (m << 8) + ((char) $2);
+			  $$ = SP_MONST_PACK(m, $2);
 		  }
 		| RANDOM_TYPE
 		  {
@@ -2135,13 +2133,13 @@ encodeobj	: STRING
 			  lc_error("Unknown object \"%s\"!", $1);
 			  $$ == -1;
 		      } else
-			  $$ = (m << 8) + 1; /* obj class != 0 to force generation of a specific item */
+			  $$ = SP_OBJ_PACK(m, 1); /* obj class != 0 to force generation of a specific item */
 
 		  }
 		| CHAR
 		  {
 			if (check_object_char((char) $1))
-			    $$ = ( $1 ) + ((-1) << 8) ;
+			    $$ = SP_OBJ_PACK(-1, $1);
 			else {
 			    lc_error("Unknown object class '%c'!", $1);
 			    $$ = -1;
@@ -2154,7 +2152,7 @@ encodeobj	: STRING
 			  lc_error("Unknown object ('%c', \"%s\")!", $2, $4);
 			  $$ == -1;
 		      } else
-			  $$ = (m << 8) + ((char) $2);
+			  $$ = SP_OBJ_PACK(m, $2);
 		  }
 		| RANDOM_TYPE
 		  {
