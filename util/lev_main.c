@@ -605,33 +605,59 @@ vardef_defined(f, name, casesense)
     return NULL;
 }
 
+const char *
+spovar2str(spovar)
+     long spovar;
+{
+    static togl = 0;
+    static char buf[2][128];
+    char *n;
+    int is_array = (spovar & SPOVAR_ARRAY);
+    spovar &= ~SPOVAR_ARRAY;
+
+    switch (spovar) {
+    default:		  lc_error("spovar2str(%li)", spovar); break;
+    case SPOVAR_INT:	  n = "integer"; break;
+    case SPOVAR_STRING:   n = "string"; break;
+    case SPOVAR_VARIABLE: n = "variable"; break;
+    case SPOVAR_COORD:	  n = "coordinate"; break;
+    case SPOVAR_REGION:	  n = "region"; break;
+    case SPOVAR_MAPCHAR:  n = "mapchar"; break;
+    case SPOVAR_MONST:	  n = "monster"; break;
+    case SPOVAR_OBJ:	  n = "object"; break;
+    }
+
+    togl = ((togl + 1) % 2);
+
+    snprintf(buf[togl], 127, "%s%s", n, (is_array ? " array" : ""));
+    return buf[togl];
+}
+
 void
-check_vardef_type(vd, varname, vartype, vartypestr)
+check_vardef_type(vd, varname, vartype)
      struct lc_vardefs *vd;
      char *varname;
      long vartype;
-     char *vartypestr;
 {
     struct lc_vardefs *tmp;
     if ((tmp = vardef_defined(vd, varname, 1))) {
 	if (tmp->var_type != vartype)
-	    lc_error("Trying to use a non-%s%s variable '%s' as %s",
-		     vartypestr, ((vartype & SPOVAR_ARRAY) ? " array" : ""), varname, vartypestr);
-    } else lc_error("Variable '%s' not defined", varname);
+	    lc_error("Trying to use variable '%s' as %s, when it is %s.",
+		     varname, spovar2str(vartype), spovar2str(tmp->var_type));
+    } else lc_error("Variable '%s' not defined.", varname);
 }
 
 struct lc_vardefs *
-add_vardef_type(vd, varname, vartype, vartypestr)
+add_vardef_type(vd, varname, vartype)
      struct lc_vardefs *vd;
      char *varname;
      long vartype;
-     char *vartypestr;
 {
     struct lc_vardefs *tmp;
     if ((tmp = vardef_defined(vd, varname, 1))) {
 	if (tmp->var_type != vartype)
-	    lc_error("Trying to redefine variable '%s' as %s%s",
-		     varname, vartypestr, ((vartype & SPOVAR_ARRAY) ? " array" : ""));
+	    lc_error("Trying to redefine variable '%s' as %s, when it is %s.",
+		     varname, spovar2str(vartype), spovar2str(tmp->var_type));
     } else {
 	tmp = vardef_new(vartype, varname);
 	tmp->next = vd;
