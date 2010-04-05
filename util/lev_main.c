@@ -620,6 +620,25 @@ check_vardef_type(vd, varname, vartype, vartypestr)
     } else lc_error("Variable '%s' not defined", varname);
 }
 
+struct lc_vardefs *
+add_vardef_type(vd, varname, vartype, vartypestr)
+     struct lc_vardefs *vd;
+     char *varname;
+     long vartype;
+     char *vartypestr;
+{
+    struct lc_vardefs *tmp;
+    if ((tmp = vardef_defined(vd, varname, 1))) {
+	if (tmp->var_type != vartype)
+	    lc_error("Trying to redefine variable '%s' as %s%s",
+		     varname, vartypestr, ((vartype & SPOVAR_ARRAY) ? " array" : ""));
+    } else {
+	tmp = vardef_new(vartype, varname);
+	tmp->next = vd;
+	return tmp;
+    }
+    return vd;
+}
 
 /* basically copied from src/sp_lev.c */
 struct opvar *
