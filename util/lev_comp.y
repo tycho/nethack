@@ -1220,9 +1220,9 @@ monster_infos	: /* nothing */
 		  }
 		;
 
-monster_info	: string
+monster_info	: string_or_var
 		  {
-		      add_opvars(splev, "si", $1, SP_M_V_NAME);
+		      add_opvars(splev, "i", SP_M_V_NAME);
 		      $$ = 0x0001;
 		  }
 		| MON_ATTITUDE
@@ -1240,9 +1240,9 @@ monster_info	: string
 		      add_opvars(splev, "ii", (long)$1, SP_M_V_ALIGN);
 		      $$ = 0x0008;
 		  }
-		| MON_APPEARANCE string
+		| MON_APPEARANCE string_or_var
 		  {
-		      add_opvars(splev, "sii", $2, (long)$<i>1, SP_M_V_APPEAR);
+		      add_opvars(splev, "ii", (long)$<i>1, SP_M_V_APPEAR);
 		      $$ = 0x0010;
 		  }
 		| FEMALE_ID
@@ -1270,19 +1270,19 @@ monster_info	: string
 		      add_opvars(splev, "ii", 1, SP_M_V_AVENGE);
 		      $$ = 0x0200;
 		  }
-		| FLEEING_ID ':' INTEGER
+		| FLEEING_ID ':' integer_or_var
 		  {
-		      add_opvars(splev, "ii", (long)$3, SP_M_V_FLEEING);
+		      add_opvars(splev, "i", SP_M_V_FLEEING);
 		      $$ = 0x0400;
 		  }
-		| BLINDED_ID ':' INTEGER
+		| BLINDED_ID ':' integer_or_var
 		  {
-		      add_opvars(splev, "ii", (long)$3, SP_M_V_BLINDED);
+		      add_opvars(splev, "i", SP_M_V_BLINDED);
 		      $$ = 0x0800;
 		  }
-		| PARALYZED_ID ':' INTEGER
+		| PARALYZED_ID ':' integer_or_var
 		  {
-		      add_opvars(splev, "ii", (long)$3, SP_M_V_PARALYZED);
+		      add_opvars(splev, "i", SP_M_V_PARALYZED);
 		      $$ = 0x1000;
 		  }
 		| STUNNED_ID
