@@ -180,6 +180,7 @@ extern const char *fname;
 %token	<map> NQSTRING VARSTRING
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
+%type	<i> alignment_prfx
 %type	<i> door_wall walled secret amount chance
 %type	<i> dir_list map_geometry teleprt_detail
 %type	<i> object_infos object_info monster_infos monster_info
@@ -1233,7 +1234,7 @@ monster_info	: string
 		      add_opvars(splev, "ii", (long)$<i>1, SP_M_V_ASLEEP);
 		      $$ = 0x0004;
 		  }
-		| alignment
+		| alignment_prfx
 		  {
 		      add_opvars(splev, "ii", (long)$1, SP_M_V_ALIGN);
 		      $$ = 0x0008;
@@ -1918,6 +1919,14 @@ light_state	: LIGHT_STATE
 alignment	: ALIGNMENT
 		| a_register
 		| RANDOM_TYPE
+		  {
+			$$ = - MAX_REGISTERS - 1;
+		  }
+		;
+
+alignment_prfx	: ALIGNMENT
+		| a_register
+		| A_REGISTER ':' RANDOM_TYPE
 		  {
 			$$ = - MAX_REGISTERS - 1;
 		  }
