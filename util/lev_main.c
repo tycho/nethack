@@ -1214,7 +1214,8 @@ sp_lev *maze;
 		       Write(fd, debuf, strlen(debuf));
 		       break;
 		   case SPOVAR_MONST:
-		       snprintf(debuf, 127, "%li:\t%s\tmonster:%i\n", i, opcodestr[tmpo.opcode], ov->vardata.l);
+		       snprintf(debuf, 127, "%li:\t%s\tmonster:(pm=%i, class='%c')\n", i, opcodestr[tmpo.opcode],
+				SP_MONST_PM(ov->vardata.l), SP_MONST_CLASS(ov->vardata.l));
 		       Write(fd, debuf, strlen(debuf));
 		       break;
 		   case SPOVAR_MAPCHAR:
