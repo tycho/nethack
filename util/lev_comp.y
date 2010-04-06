@@ -151,6 +151,7 @@ extern const char *fname;
 
 
 %token	<i> CHAR INTEGER BOOLEAN PERCENT SPERCENT
+%token	<i> MINUS_INTEGER PLUS_INTEGER
 %token	<i> MAZE_GRID_ID SOLID_FILL_ID MINES_ID
 %token	<i> MESSAGE_ID LEVEL_ID LEV_INIT_ID GEOMETRY_ID NOMAP_ID
 %token	<i> OBJECT_ID COBJECT_ID MONSTER_ID TRAP_ID DOOR_ID DRAWBRIDGE_ID
@@ -171,7 +172,7 @@ extern const char *fname;
 %token	<i> FEMALE_ID CANCELLED_ID REVIVED_ID AVENGE_ID FLEEING_ID BLINDED_ID
 %token	<i> PARALYZED_ID STUNNED_ID CONFUSED_ID SEENTRAPS_ID ALL_ID
 %token	<i> MON_GENERATION_ID MONTYPE_ID
-%token	<i> GRAVE_ID
+%token	<i> GRAVE_ID ERODEPROOF_ID
 %token	<i> FUNCTION_ID
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
@@ -193,12 +194,15 @@ extern const char *fname;
 %type	<i> mon_gen_list encodemonster encodeobj encodeobj_list
 %type	<i> sounds_list integer_list string_list encodecoord_list encoderegion_list mapchar_list encodemonster_list
 %type	<i> opt_percent opt_spercent opt_int opt_fillchar
+%type	<i> all_integers
 %type	<map> string level_def
 %type	<corpos> corr_spec
 %type	<lregn> region lev_region
 %type	<crd> room_pos subroom_pos room_align
 %type	<sze> room_size
 %type	<terr> terrain_type
+%left  '+' '-'
+%left  '*' '/' '%'
 %start	file
 
 %%
@@ -419,10 +423,10 @@ shuffle_detail	: SHUFFLE_ID ':' VARSTRING
 		  }
 		;
 
-variable_define	: VARSTRING '=' INTEGER
+variable_define	: VARSTRING '=' math_expr
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_INT);
-		      add_opvars(splev, "iiso", (long)$3, 0, $1, SPO_VAR_INIT);
+		      add_opvars(splev, "iso", 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' STRING
 		  {
@@ -577,14 +581,12 @@ encodecoord_list	: encodecoord
 		  }
 		;
 
-integer_list	: INTEGER
+integer_list	: math_expr
 		  {
-		      add_opvars(splev, "i", $1);
 		      $$ = 1;
 		  }
-		| integer_list ',' INTEGER
+		| integer_list ',' math_expr
 		  {
-		      add_opvars(splev, "i", $3);
 		      $$ = 1 + $1;
 		  }
 		;
@@ -752,7 +754,7 @@ switchcases	: /* nothing */
 		| switchcase switchcases
 		;
 
-switchcase	: CASE_ID INTEGER ':'
+switchcase	: CASE_ID all_integers ':'
 		  {
 		      if (n_switch_case_list < MAX_SWITCH_CASES) {
 			  struct opvar *tmppush = New(struct opvar);
@@ -906,7 +908,7 @@ random_corridors: RAND_CORRIDOR_ID
 		  {
 		      add_opvars(splev, "iiiiiio", -1,  0, -1, -1, -1, -1, SPO_CORRIDOR);
 		  }
-		| RAND_CORRIDOR_ID ':' INTEGER
+		| RAND_CORRIDOR_ID ':' all_integers
 		  {
 		      add_opvars(splev, "iiiiiio", -1, $3, -1, -1, -1, -1, SPO_CORRIDOR);
 		  }
@@ -923,7 +925,7 @@ corridor	: CORRIDOR_ID ':' corr_spec ',' corr_spec
 				 $5.room, $5.door, $5.wall,
 				 SPO_CORRIDOR);
 		  }
-		| CORRIDOR_ID ':' corr_spec ',' INTEGER
+		| CORRIDOR_ID ':' corr_spec ',' all_integers
 		  {
 		      add_opvars(splev, "iiiiiio",
 				 $3.room, $3.door, $3.wall,
@@ -1394,9 +1396,9 @@ object_info	: CURSE_TYPE
 		      add_opvars(splev, "i", SP_O_V_CORPSENM);
 		      $$ = 0x0002;
 		  }
-		| INTEGER
+		| all_ints_push
 		  {
-		      add_opvars(splev, "ii", (long)$1, SP_O_V_SPE);
+		      add_opvars(splev, "i", SP_O_V_SPE);
 		      $$ = 0x0004;
 		  }
 		| NAME_ID ':' string_or_var
@@ -1422,6 +1424,11 @@ object_info	: CURSE_TYPE
 		| ERODED_ID ':' integer_or_var
 		  {
 		      add_opvars(splev, "i", SP_O_V_ERODED);
+		      $$ = 0x0080;
+		  }
+		| ERODEPROOF_ID
+		  {
+		      add_opvars(splev, "ii", -1, SP_O_V_ERODED);
 		      $$ = 0x0080;
 		  }
 		| DOOR_STATE
@@ -1954,26 +1961,17 @@ string_or_var	: STRING
 		      check_vardef_type(variable_definitions, $1, SPOVAR_STRING);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' INTEGER ']'
+		| VARSTRING '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_STRING|SPOVAR_ARRAY);
-		      add_opvars(splev, "iv", $3, $1);
+		      add_opvars(splev, "v", $1);
 		  }
 		;
 
-integer_or_var	: INTEGER
+
+integer_or_var	: math_expr_var
 		  {
-		      add_opvars(splev, "i", $1);
-		  }
-		| VARSTRING
-		  {
-		      check_vardef_type(variable_definitions, $1, SPOVAR_INT);
-		      add_opvars(splev, "v", $1);
-		  }
-		| VARSTRING '[' INTEGER ']'
-		  {
-		      check_vardef_type(variable_definitions, $1, SPOVAR_INT|SPOVAR_ARRAY);
-		      add_opvars(splev, "iv", $3, $1);
+		      /* nothing */
 		  }
 		;
 
@@ -1986,10 +1984,10 @@ coord_or_var	: encodecoord
 		      check_vardef_type(variable_definitions, $1, SPOVAR_COORD);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' INTEGER ']'
+		| VARSTRING '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_COORD|SPOVAR_ARRAY);
-		      add_opvars(splev, "iv", $3, $1);
+		      add_opvars(splev, "v", $1);
 		  }
 		;
 
@@ -2014,10 +2012,10 @@ region_or_var	: encoderegion
 		      check_vardef_type(variable_definitions, $1, SPOVAR_REGION);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' INTEGER ']'
+		| VARSTRING '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_REGION|SPOVAR_ARRAY);
-		      add_opvars(splev, "iv", $3, $1);
+		      add_opvars(splev, "v", $1);
 		  }
 		;
 
@@ -2039,10 +2037,10 @@ mapchar_or_var	: mapchar
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' INTEGER ']'
+		| VARSTRING '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR|SPOVAR_ARRAY);
-		      add_opvars(splev, "iv", $3, $1);
+		      add_opvars(splev, "v", $1);
 		  }
 		;
 
@@ -2066,10 +2064,10 @@ monster_or_var	: encodemonster
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MONST);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' INTEGER ']'
+		| VARSTRING '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MONST|SPOVAR_ARRAY);
-		      add_opvars(splev, "iv", $3, $1);
+		      add_opvars(splev, "v", $1);
 		  }
 		;
 
@@ -2115,10 +2113,10 @@ object_or_var	: encodeobj
 		      check_vardef_type(variable_definitions, $1, SPOVAR_OBJ);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' INTEGER ']'
+		| VARSTRING '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_OBJ|SPOVAR_ARRAY);
-		      add_opvars(splev, "iv", $3, $1);
+		      add_opvars(splev, "v", $1);
 		  }
 		;
 
@@ -2153,6 +2151,57 @@ encodeobj	: STRING
 		| RANDOM_TYPE
 		  {
 		      $$ = -1;
+		  }
+		;
+
+
+math_expr_var	: INTEGER                       { add_opvars(splev, "i", $1 ); }
+		| '(' MINUS_INTEGER ')'         { add_opvars(splev, "i", $2 ); }
+		| VARSTRING
+		  {
+		      check_vardef_type(variable_definitions, $1, SPOVAR_INT);
+		      add_opvars(splev, "v", $1);
+		  }
+		| VARSTRING '[' math_expr ']'
+		  {
+		      check_vardef_type(variable_definitions, $1, SPOVAR_INT|SPOVAR_ARRAY);
+		      add_opvars(splev, "v", $1);
+		  }
+		| math_expr_var '+' math_expr_var       { add_opvars(splev, "o", SPO_MATH_ADD); }
+		| math_expr_var '-' math_expr_var       { add_opvars(splev, "o", SPO_MATH_SUB); }
+		| math_expr_var '*' math_expr_var       { add_opvars(splev, "o", SPO_MATH_MUL); }
+		| math_expr_var '/' math_expr_var       { add_opvars(splev, "o", SPO_MATH_DIV); }
+		| math_expr_var '%' math_expr_var       { add_opvars(splev, "o", SPO_MATH_MOD); }
+		| '(' math_expr ')'             { }
+		;
+
+math_expr	: INTEGER                       { add_opvars(splev, "i", $1 ); }
+		| '(' MINUS_INTEGER ')'         { add_opvars(splev, "i", $2 ); }
+		| math_expr '+' math_expr       { add_opvars(splev, "o", SPO_MATH_ADD); }
+		| math_expr '-' math_expr       { add_opvars(splev, "o", SPO_MATH_SUB); }
+		| math_expr '*' math_expr       { add_opvars(splev, "o", SPO_MATH_MUL); }
+		| math_expr '/' math_expr       { add_opvars(splev, "o", SPO_MATH_DIV); }
+		| math_expr '%' math_expr       { add_opvars(splev, "o", SPO_MATH_MOD); }
+		| '(' math_expr ')'             { }
+		;
+
+
+all_integers	: MINUS_INTEGER
+		| PLUS_INTEGER
+		| INTEGER
+		;
+
+all_ints_push	: MINUS_INTEGER
+		  {
+		      add_opvars(splev, "i", $1 );
+		  }
+		| PLUS_INTEGER
+		  {
+		      add_opvars(splev, "i", $1 );
+		  }
+		| INTEGER
+		  {
+		      add_opvars(splev, "i", $1 );
 		  }
 		;
 

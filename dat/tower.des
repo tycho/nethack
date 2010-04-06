@@ -24,7 +24,7 @@ LADDER:(11,05),down
 # The lord and his court
 OBJECT:('\',"throne"),(06,05)
 MONSTER:('V',"Vlad the Impaler"),(06,05) {
-  OBJECT:(')',"two-handed sword"),+1,NAME:"Lifestealer",cursed,eroded:-1
+  OBJECT:(')',"two-handed sword"),+1,NAME:"Lifestealer",cursed,erodeproof
   OBJECT:('(',"Candelabrum of Invocation")
 }
 MONSTER:'V',(03,09)
