@@ -834,6 +834,17 @@ char c;		/* class */
 	    if (objname && !strcmp(s, objname))
 		return i;
 	}
+
+	for (i = class ? bases[class] : 0; i < NUM_OBJECTS; i++) {
+	    if (class && objects[i].oc_class != class) break;
+	    objname = obj_descr[i].oc_name;
+	    if (objname && !strcasecmp(s, objname)) {
+		if (be_verbose)
+		    lc_warning("Object type \"%s\" matches \"%s\".", s, objname);
+		return i;
+	    }
+	}
+
 	return ERR;
 }
 
