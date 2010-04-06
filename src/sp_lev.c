@@ -4692,6 +4692,67 @@ sp_lev *lvl;
 		splev_stack_push(coder->stack, a);
 	    }
 	    break;
+	case SPO_INC:
+	    {
+		struct opvar *a;
+		if (!OV_pop_i(a)) break;
+		OV_i(a)++;
+		splev_stack_push(coder->stack, a);
+	    }
+	    break;
+	case SPO_MATH_ADD:
+	    {
+		struct opvar *a, *b;
+		if (!OV_pop_i(b) || !OV_pop_i(a)) break;
+		OV_i(a) = OV_i(a) + OV_i(b);
+		splev_stack_push(coder->stack, a);
+		opvar_free(b);
+	    }
+	    break;
+	case SPO_MATH_SUB:
+	    {
+		struct opvar *a, *b;
+		if (!OV_pop_i(b) || !OV_pop_i(a)) break;
+		OV_i(a) = OV_i(a) - OV_i(b);
+		splev_stack_push(coder->stack, a);
+		opvar_free(b);
+	    }
+	    break;
+	case SPO_MATH_MUL:
+	    {
+		struct opvar *a, *b;
+		if (!OV_pop_i(b) || !OV_pop_i(a)) break;
+		OV_i(a) = OV_i(a) * OV_i(b);
+		splev_stack_push(coder->stack, a);
+		opvar_free(b);
+	    }
+	    break;
+	case SPO_MATH_DIV:
+	    {
+		struct opvar *a, *b;
+		if (!OV_pop_i(b) || !OV_pop_i(a)) break;
+		if (OV_i(b) >= 1) {
+		    OV_i(a) = OV_i(a) / OV_i(b);
+		} else {
+		    OV_i(a) = 0;
+		}
+		splev_stack_push(coder->stack, a);
+		opvar_free(b);
+	    }
+	    break;
+	case SPO_MATH_MOD:
+	    {
+		struct opvar *a, *b;
+		if (!OV_pop_i(b) || !OV_pop_i(a)) break;
+		if (OV_i(b) > 0) {
+		    OV_i(a) = OV_i(a) % OV_i(b);
+		} else {
+		    OV_i(a) = 0;
+		}
+		splev_stack_push(coder->stack, a);
+		opvar_free(b);
+	    }
+	    break;
         case SPO_CMP:
 	    {
 		struct opvar *a;
