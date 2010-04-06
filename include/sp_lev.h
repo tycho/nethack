@@ -117,6 +117,7 @@ enum opcode_defs {
     SPO_WALLWALK,
     SPO_VAR_INIT, /* variable_name data */
     SPO_SHUFFLE_ARRAY,
+    SPO_DICE,
 
     MAX_SP_OPCODES
 };

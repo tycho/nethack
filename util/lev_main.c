@@ -1188,7 +1188,8 @@ sp_lev *maze;
 	    "sounds",
 	    "wallwalk",
 	    "var_init",
-	    "shuffle_array"
+	    "shuffle_array",
+	    "dice"
 	};
 
 	/* don't bother with the header stuff */
