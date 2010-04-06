@@ -114,6 +114,7 @@ int in_function_definition = 0;
 sp_lev *function_splev_backup = NULL;
 
 extern int fatal_error;
+extern int got_errors;
 extern int line_number;
 extern const char *fname;
 
@@ -239,9 +240,11 @@ level		: level_def flags lev_init levstatements
 		  {
 			if (fatal_error > 0) {
 				(void) fprintf(stderr,
-				"%s : %d errors detected. No output created!\n",
-					fname, fatal_error);
-			} else {
+				"%s: %d errors detected for level \"%s\". No output created!\n",
+					       fname, fatal_error, $1);
+				fatal_error = 0;
+				got_errors++;
+			} else if (!got_errors) {
 				if (!write_level_file($1, splev)) {
 				    lc_error("Can't write output file for '%s'!", $1);
 				    exit(EXIT_FAILURE);

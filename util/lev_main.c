@@ -176,6 +176,7 @@ static struct {
 
 const char *fname = "(stdin)";
 int fatal_error = 0;
+int got_errors = 0;
 int be_verbose = 0;
 int decompile = 0;
 
@@ -240,7 +241,7 @@ char **argv;
 	if (argc == 1) {		/* Read standard input */
 	    init_yyin(stdin);
 	    (void) yyparse();
-	    if (fatal_error > 0) {
+	    if (fatal_error > 0 || got_errors > 0) {
 		    errors_encountered = TRUE;
 	    }
 	} else {			/* Otherwise every argument is a filename */
@@ -264,7 +265,7 @@ char **argv;
 			init_yyin(fin);
 			(void) yyparse();
 			line_number = 1;
-			if (fatal_error > 0) {
+			if (fatal_error > 0 || got_errors > 0) {
 				errors_encountered = TRUE;
 				fatal_error = 0;
 			}
