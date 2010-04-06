@@ -147,6 +147,10 @@ extern const char *fname;
 	long height;
 	long width;
     } sze;
+    struct {
+	long die;
+	long num;
+    } dice;
 }
 
 
@@ -180,6 +184,7 @@ extern const char *fname;
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
+%token	<dice> DICE;
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> alignment_prfx
@@ -2156,6 +2161,7 @@ encodeobj	: STRING
 
 
 math_expr_var	: INTEGER                       { add_opvars(splev, "i", $1 ); }
+		| dice				{ }
 		| '(' MINUS_INTEGER ')'         { add_opvars(splev, "i", $2 ); }
 		| VARSTRING
 		  {
@@ -2176,6 +2182,7 @@ math_expr_var	: INTEGER                       { add_opvars(splev, "i", $1 ); }
 		;
 
 math_expr	: INTEGER                       { add_opvars(splev, "i", $1 ); }
+		| dice				{ }
 		| '(' MINUS_INTEGER ')'         { add_opvars(splev, "i", $2 ); }
 		| math_expr '+' math_expr       { add_opvars(splev, "o", SPO_MATH_ADD); }
 		| math_expr '-' math_expr       { add_opvars(splev, "o", SPO_MATH_SUB); }
@@ -2185,6 +2192,11 @@ math_expr	: INTEGER                       { add_opvars(splev, "i", $1 ); }
 		| '(' math_expr ')'             { }
 		;
 
+dice		: DICE
+		  {
+		      add_opvars(splev, "iio", $1.num, $1.die, SPO_DICE);
+		  }
+		;
 
 all_integers	: MINUS_INTEGER
 		| PLUS_INTEGER
@@ -2202,6 +2214,10 @@ all_ints_push	: MINUS_INTEGER
 		| INTEGER
 		  {
 		      add_opvars(splev, "i", $1 );
+		  }
+		| dice
+		  {
+		      /* nothing */
 		  }
 		;
 

@@ -4812,6 +4812,18 @@ sp_lev *lvl;
 		opvar_free(tmpv);
 	    }
          break;
+	case SPO_DICE:
+	    {
+		struct opvar *a, *b, *t;
+		if (!OV_pop_i(b) || !OV_pop_i(a)) break;
+		if (OV_i(b) < 1) OV_i(b) = 1;
+		if (OV_i(a) < 1) OV_i(a) = 1;
+		t = opvar_new_int(d(OV_i(a), OV_i(b)));
+		splev_stack_push(coder->stack, t);
+		opvar_free(a);
+		opvar_free(b);
+	    }
+	    break;
 	case SPO_MAP:
 	    spo_map(coder); break;
 	case SPO_VAR_INIT:

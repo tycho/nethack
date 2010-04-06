@@ -261,6 +261,15 @@ premapped	{ yylval.i=PREMAPPED; return FLAG_TYPE; }
 shroud		{ yylval.i=SHROUD; return FLAG_TYPE; }
 stormy		{ yylval.i=STORMY; return FLAG_TYPE; }
 graveyard	{ yylval.i=GRAVEYARD; return FLAG_TYPE; }
+[0-9]+d[0-9]+	{ char *p = strchr(yytext, 'd');
+		  if (p) {
+			*p = '\0';
+			p++;
+			yylval.dice.num=atoi(yytext);
+			yylval.dice.die=atoi(p);
+		  } else { yylval.dice.num = yylval.dice.die = 1; }
+		  return DICE;
+		}
 \[\ *[0-9]+\%\ *\] { yylval.i = atoi(yytext + 1); return PERCENT; }
 -[0-9]+		{ yylval.i=atoi(yytext); return MINUS_INTEGER; }
 \+[0-9]+	{ yylval.i=atoi(yytext); return PLUS_INTEGER; }
