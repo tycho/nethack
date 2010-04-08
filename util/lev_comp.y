@@ -911,7 +911,7 @@ message		: MESSAGE_ID ':' string_or_var
 
 wallwalk_detail	: WALLWALK_ID ':' coord_or_var ',' mapchar_or_var opt_spercent
 		  {
-		      add_opvars(splev, "mio", ROOM, $6, SPO_WALLWALK);
+		      add_opvars(splev, "mio", SP_MAPCHAR_PACK(ROOM,-2), $6, SPO_WALLWALK);
 		  }
 		| WALLWALK_ID ':' coord_or_var ',' mapchar_or_var ',' mapchar_or_var opt_spercent
 		  {
@@ -1639,19 +1639,14 @@ terrain_type	: CHAR
 		  }
 		;
 
-replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var ',' terrain_type ',' SPERCENT
+replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var ',' mapchar_or_var ',' SPERCENT
 		  {
 		      long chance, from_ter, to_ter;
 
 		      chance = $9;
 		      if (chance < 0) chance = 0;
 		      else if (chance > 100) chance = 100;
-
-		      to_ter = $7.ter;
-		      if (to_ter >= MAX_TYPE) lc_error("Replace terrain: illegal map char");
-
-		      add_opvars(splev, "iiio",
-				 to_ter, (long)$7.lit, chance, SPO_REPLACETERRAIN);
+		      add_opvars(splev, "io", chance, SPO_REPLACETERRAIN);
 		  }
 		;
 
@@ -2062,10 +2057,19 @@ mapchar_or_var	: mapchar
 mapchar		: CHAR
 		  {
 		      if (what_map_char((char) $1) != INVALID_TYPE)
-			  $$ = what_map_char((char) $1);
+			  $$ = SP_MAPCHAR_PACK(what_map_char((char) $1), -2);
 		      else {
 			  lc_error("Unknown map char type '%c'!", $1);
-			  $$ = STONE;
+			  $$ = SP_MAPCHAR_PACK(STONE, -2);
+		      }
+		  }
+		| '(' CHAR ',' light_state ')'
+		  {
+		      if (what_map_char((char) $2) != INVALID_TYPE)
+			  $$ = SP_MAPCHAR_PACK(what_map_char((char) $2), $4);
+		      else {
+			  lc_error("Unknown map char type '%c'!", $2);
+			  $$ = SP_MAPCHAR_PACK(STONE, $4);
 		      }
 		  }
 		;
