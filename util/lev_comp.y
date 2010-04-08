@@ -699,7 +699,7 @@ comparestmt     : PERCENT
                   {
 		      /* val > rn2(100) */
 		      add_opvars(splev, "iio", (long)$1, 100, SPO_RN2);
-		      $$ = SPO_JLE;
+		      $$ = SPO_JG;
                   }
 		| '[' math_expr_var COMPARE_TYPE math_expr_var ']'
                   {
