@@ -706,7 +706,7 @@ IF [75%] {
 }
 
 IF [50%] {
-   TERRAIN:(21,4, 22,5),filled, '.'
+   TERRAIN:rect(21,4,22,5),filled, '.'
    TERRAIN:(14,9),vertical,2, '|'
 }
 
@@ -717,7 +717,7 @@ IF [50%] {
    TERRAIN:(47,7), '.'
 }
 
-TERRAIN[50%]:(69,11, 71,11), filled, '-'
+TERRAIN[50%]:rect(69,11,71,11), filled, '-'
 
 STAIR:(01,01),up
 STAIR:(46,03),down
@@ -1214,7 +1214,7 @@ IF [50%] {
 
 IF [50%] {
    TERRAIN:(18,1), '|'
-   TERRAIN:(7,12, 8,13), unfilled, '.'
+   TERRAIN:rect(7,12, 8,13), unfilled, '.'
 }
 
 IF [50%] {

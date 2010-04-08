@@ -31,34 +31,21 @@ MAP
 ---------------------------------------------------------------------------
 ENDMAP
 
+$terrains = TERRAIN:{'-', 'F', 'L', 'T', 'C'}
+SHUFFLE:$terrains
 
 IF [75%] {
-   IF [50%] {
-      TERRAIN[75%]:(10,8),horizontal,28, '-'
-      TERRAIN[75%]:(37,8),horizontal,28, '-'
-      TERRAIN[75%]:(37,3),vertical,6, '|'
-      TERRAIN[75%]:(37,9),vertical,6, '|'
-   } ELSE {
-      IF [50%] {
-      	 TERRAIN[75%]:(10,8),horizontal,28, 'F'
-      	 TERRAIN[75%]:(37,8),horizontal,28, 'F'
-      	 TERRAIN[75%]:(37,3),vertical,6, 'F'
-      	 TERRAIN[75%]:(37,9),vertical,6, 'F'
-      } ELSE {
-      	 TERRAIN[75%]:(10,8),horizontal,28, 'L'
-      	 TERRAIN[75%]:(37,8),horizontal,28, 'L'
-      	 TERRAIN[75%]:(37,3),vertical,6, 'L'
-      	 TERRAIN[75%]:(37,9),vertical,6, 'L'
-      }
-   }
+   TERRAIN[75%]:(10,8),horizontal,28, $terrains[0]
+   TERRAIN[75%]:(37,8),horizontal,28, $terrains[0]
+   TERRAIN[75%]:(37,3),vertical,6, $terrains[0]
+   TERRAIN[75%]:(37,9),vertical,6, $terrains[0]
 } ELSE {
    IF [25%] {
-      TERRAIN:(4,4,70,13),unfilled, '-'
+      TERRAIN:rect(4,4,70,13),unfilled, $terrains[0]
       TERRAIN:(25, 4),horizontal,25, '.'
       TERRAIN:(25,13),horizontal,25, '.'
    }
 }
-
 
 # Dungeon Description
 REGION:(01,01,73,16),lit,"ordinary"

@@ -185,6 +185,7 @@ extern const char *fname;
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
 %token	<i> WALLWALK_ID COMPARE_TYPE
+%token	<i> rect_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
@@ -1641,7 +1642,7 @@ terrain_type	: CHAR
 
 replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var ',' mapchar_or_var ',' SPERCENT
 		  {
-		      long chance, from_ter, to_ter;
+		      long chance;
 
 		      chance = $9;
 		      if (chance < 0) chance = 0;
@@ -1650,16 +1651,9 @@ replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var
 		  }
 		;
 
-terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' terrain_type
+terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' mapchar_or_var
 		 {
-		     long c;
-
-		     c = $6.ter;
-		     if (c >= MAX_TYPE) lc_error("Terrain: illegal map char");
-
-		     add_opvars(splev, "ii iiio",
-				-1, -1,
-				0, c, $6.lit, SPO_TERRAIN);
+		     add_opvars(splev, "io", 0, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
@@ -1670,11 +1664,11 @@ terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' terrain_type
 		     }
 		 }
 	       |
-	         TERRAIN_ID chance ':' coord_or_var ',' HORIZ_OR_VERT ',' INTEGER ',' terrain_type
+	         TERRAIN_ID chance ':' coord_or_var ',' HORIZ_OR_VERT ',' INTEGER ',' mapchar_or_var
 		 {
-		     long areatyp, c, x2,y2;
+		     long areatyp, x2,y2;
 
-		     areatyp = $<i>6;
+		     areatyp = $<i>6; /* 1 or 2 */
 		     if (areatyp == 1) {
 			 x2 = $8;
 			 y2 = -1;
@@ -1683,12 +1677,8 @@ terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' terrain_type
 			 y2 = $8;
 		     }
 
-		     c = $10.ter;
-		     if (c >= MAX_TYPE) lc_error("Terrain: illegal map char");
-
-		     add_opvars(splev, "ii iiio",
-				x2, y2,
-				areatyp, c, (long)$10.lit, SPO_TERRAIN);
+		     add_opvars(splev, "ii io",	x2, y2,
+				areatyp, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
@@ -1699,16 +1689,10 @@ terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' terrain_type
 		     }
 		 }
 	       |
-	         TERRAIN_ID chance ':' region ',' FILLING ',' terrain_type
+	         TERRAIN_ID chance ':' rect_ID region_or_var ',' FILLING ',' mapchar_or_var
 		 {
-		     long c;
-
-		     c = $8.ter;
-		     if (c >= MAX_TYPE) lc_error("Terrain: illegal map char");
-
-		     add_opvars(splev, "iii iiio",
-				(($4.x1 & 0xff) + (($4.y1 << 16) & 0xff)), $4.x2, $4.y2,
-				(long)(3 + $<i>6), c, (long)$8.lit, SPO_TERRAIN);
+		     long areatyp = (3 + $<i>7); /* 3 or 4*/
+		     add_opvars(splev, "io", areatyp, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
 			 if (n_if_list > 0) {
