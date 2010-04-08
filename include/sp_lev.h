@@ -204,6 +204,10 @@ enum opcode_defs {
 #define SP_OBJ_TYP(l)	  ((l >> 8) & 0xffff)
 #define SP_OBJ_PACK(o,c)  ((( o ) << 8) + ((char)( c )))
 
+#define SP_MAPCHAR_TYP(l) (l & 0xff)
+#define SP_MAPCHAR_LIT(l) ((l >> 8) & 0xff)
+#define SP_MAPCHAR_PACK(typ,lit) ((( lit ) << 8) + ((char)( typ )))
+
 struct opvar {
     xchar spovartyp; /* one of SPOVAR_foo */
     union {

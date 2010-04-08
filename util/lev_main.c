@@ -1257,7 +1257,8 @@ sp_lev *maze;
 		       Write(fd, debuf, strlen(debuf));
 		       break;
 		   case SPOVAR_MAPCHAR:
-		       snprintf(debuf, 127, "%li:\t%s\tmapchar:%li\n", i, opcodestr[tmpo.opcode], ov->vardata.l);
+		       snprintf(debuf, 127, "%li:\t%s\tmapchar:(%li,%i)\n", i, opcodestr[tmpo.opcode],
+				(int)SP_MAPCHAR_TYP(ov->vardata.l), (schar)SP_MAPCHAR_LIT(ov->vardata.l));
 		       Write(fd, debuf, strlen(debuf));
 		       break;
 		   case SPOVAR_INT:

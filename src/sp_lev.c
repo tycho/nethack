@@ -384,17 +384,6 @@ variable_list_del(varlist)
 }
 
 
-
-#define SET_TYPLIT(x,y,ttyp,llit)			\
-{							\
-    levl[(x)][(y)].typ = ttyp;				\
-    if (ttyp == LAVAPOOL) levl[(x)][(y)].lit = 1;	\
-    else if (llit != -2) {				\
-	if (llit == -1) levl[(x)][(y)].lit = rn2(2);	\
-	else levl[(x)][(y)].lit = llit;			\
-    }							\
-}
-
 void
 lvlfill_maze_grid(x1,y1,x2,y2,filling)
      int x1,y1,x2,y2;
@@ -2002,7 +1991,7 @@ struct mkroom *croom;
 	for (y = y1; y <= y2; y++)
 	    if ((levl[x][y].typ == terr->fromter) && (rn2(100) < terr->chance)) {
 		SET_TYPLIT(x,y, terr->toter, terr->tolit);
-	}
+	    }
 }
 
 
@@ -3695,10 +3684,10 @@ spo_wallwalk(coder)
     y = SP_COORD_Y(OV_i(coord));
     get_location(&x, &y, DRY|WET, coder->croom);
 
-    if (OV_i(fgtyp) >= MAX_TYPE) return;
-    if (OV_i(bgtyp) >= MAX_TYPE) return;
+    if (SP_MAPCHAR_TYP(OV_i(fgtyp)) >= MAX_TYPE) return;
+    if (SP_MAPCHAR_TYP(OV_i(bgtyp)) >= MAX_TYPE) return;
 
-    wallwalk_right(x, y, OV_i(fgtyp), OV_i(bgtyp), OV_i(chance));
+    wallwalk_right(x, y, SP_MAPCHAR_TYP(OV_i(fgtyp)), SP_MAPCHAR_LIT(OV_i(fgtyp)), SP_MAPCHAR_TYP(OV_i(bgtyp)), OV_i(chance));
 
     opvar_free(coord);
     opvar_free(chance);
@@ -3829,18 +3818,18 @@ spo_replace_terrain(coder)
      struct sp_coder *coder;
 {
     replaceterrain rt;
-    struct opvar *reg,*from_ter,*to_ter,*to_lit,*chance;
+    struct opvar *reg,*from_ter,*to_ter,*chance;
 
     if (!OV_pop_i(chance) ||
-	!OV_pop_i(to_lit) ||
-	!OV_pop_i(to_ter) ||
+	!OV_pop_typ(to_ter, SPOVAR_MAPCHAR) ||
 	!OV_pop_typ(from_ter, SPOVAR_MAPCHAR) ||
 	!OV_pop_r(reg)) return;
 
     rt.chance = OV_i(chance);
-    rt.tolit = OV_i(to_lit);
-    rt.toter = OV_i(to_ter);
-    rt.fromter = OV_i(from_ter);
+    rt.tolit = SP_MAPCHAR_LIT(OV_i(to_ter));
+    rt.toter = SP_MAPCHAR_TYP(OV_i(to_ter));
+    rt.fromter = SP_MAPCHAR_TYP(OV_i(from_ter));
+    /* TODO: use SP_MAPCHAR_LIT(OV_i(from_ter)) too */
     rt.x1 = SP_REGION_X1(OV_i(reg));
     rt.y1 = SP_REGION_Y1(OV_i(reg));
     rt.x2 = SP_REGION_X2(OV_i(reg));
@@ -3851,7 +3840,6 @@ spo_replace_terrain(coder)
     opvar_free(reg);
     opvar_free(from_ter);
     opvar_free(to_ter);
-    opvar_free(to_lit);
     opvar_free(chance);
 }
 
