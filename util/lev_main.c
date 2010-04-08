@@ -681,6 +681,21 @@ add_vardef_type(vd, varname, vartype)
     return vd;
 }
 
+int
+reverse_jmp_opcode(opcode)
+     int opcode;
+{
+    switch (opcode) {
+    case SPO_JE:  return SPO_JNE;
+    case SPO_JNE: return SPO_JE;
+    case SPO_JL:  return SPO_JGE;
+    case SPO_JG:  return SPO_JLE;
+    case SPO_JLE: return SPO_JG;
+    case SPO_JGE: return SPO_JL;
+    default: lc_error("Cannot reverse comparison jmp opcode %i.", opcode); return SPO_NULL;
+    }
+}
+
 /* basically copied from src/sp_lev.c */
 struct opvar *
 opvar_clone(ov)
