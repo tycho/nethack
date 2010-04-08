@@ -285,6 +285,13 @@ graveyard	{ yylval.i=GRAVEYARD; return FLAG_TYPE; }
 [a-zA-Z_][a-zA-Z_0-9]*	{ yylval.map = (char *) alloc(strlen(yytext)+1);
 		  Strcpy(yylval.map, yytext);
 		  return NQSTRING; }
+"=="		{ yylval.i = SPO_JE; return COMPARE_TYPE; }
+"!="		{ yylval.i = SPO_JNE; return COMPARE_TYPE; }
+"<>"		{ yylval.i = SPO_JNE; return COMPARE_TYPE; }
+"<="		{ yylval.i = SPO_JLE; return COMPARE_TYPE; }
+">="		{ yylval.i = SPO_JGE; return COMPARE_TYPE; }
+"<"		{ yylval.i = SPO_JL; return COMPARE_TYPE; }
+">"		{ yylval.i = SPO_JG; return COMPARE_TYPE; }
 \r?\n		{ line_number++; }
 [ \t]+		;
 '\\.'		{ yylval.i = yytext[2]; return CHAR; }

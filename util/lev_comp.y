@@ -80,6 +80,9 @@ extern void FDECL(splev_add_from, (sp_lev *, sp_lev *));
 extern void FDECL(check_vardef_type, (struct lc_vardefs *, char *, long));
 extern struct lc_vardefs *FDECL(add_vardef_type, (struct lc_vardefs *, char *, long));
 
+extern int FDECL(reverse_jmp_opcode, (int));
+
+
 struct coord {
 	long x;
 	long y;
@@ -181,7 +184,7 @@ extern const char *fname;
 %token	<i> FUNCTION_ID
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
-%token	<i> WALLWALK_ID
+%token	<i> WALLWALK_ID COMPARE_TYPE
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
@@ -695,8 +698,12 @@ opt_spercent	: /* nothing */
 comparestmt     : PERCENT
                   {
 		      /* val > rn2(100) */
-		      add_opvars(splev, "ioi", 100, SPO_RN2, (long)$1);
-		      $$ = SPO_JGE; /* TODO: shouldn't this be SPO_JG? */
+		      add_opvars(splev, "iio", (long)$1, 100, SPO_RN2);
+		      $$ = SPO_JLE;
+                  }
+		| '[' math_expr_var COMPARE_TYPE math_expr_var ']'
+                  {
+		      $$ = $3;
                   }
 		;
 
@@ -853,7 +860,7 @@ ifstatement 	: IF_ID comparestmt
 
 		      add_opcode(splev, SPO_PUSH, tmppush2);
 
-		      add_opcode(splev, $2, NULL);
+		      add_opcode(splev, reverse_jmp_opcode( $2 ), NULL);
 		  }
 		 if_ending
 		  {
@@ -2248,7 +2255,7 @@ chance		: /* empty */
 		      set_opvar_int(tmppush2, splev->n_opcodes+1);
 		      if_list[n_if_list++] = tmppush2;
 		      add_opcode(splev, SPO_PUSH, tmppush2);
-		      add_opcode(splev, $1, NULL);
+		      add_opcode(splev, reverse_jmp_opcode( $1 ), NULL);
 		      $$ = 1;
 		  }
 		;
