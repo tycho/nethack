@@ -938,7 +938,7 @@ if_ending	: '{' levstatements '}'
 		  }
 		;
 
-message		: MESSAGE_ID ':' string_or_var
+message		: MESSAGE_ID ':' string_expr
 		  {
 		      add_opvars(splev, "o", SPO_MESSAGE);
 		  }
@@ -1176,7 +1176,7 @@ sounds_list	: lvl_sound_part
 		  }
 		;
 
-lvl_sound_part	: '(' MSG_OUTPUT_TYPE ',' string_or_var ')'
+lvl_sound_part	: '(' MSG_OUTPUT_TYPE ',' string_expr ')'
 		  {
 		      add_opvars(splev, "i", (long)$2);
 		  }
@@ -1272,7 +1272,7 @@ monster_infos	: /* nothing */
 		  }
 		;
 
-monster_info	: string_or_var
+monster_info	: string_expr
 		  {
 		      add_opvars(splev, "i", SP_M_V_NAME);
 		      $$ = 0x0001;
@@ -1292,7 +1292,7 @@ monster_info	: string_or_var
 		      add_opvars(splev, "ii", (long)$1, SP_M_V_ALIGN);
 		      $$ = 0x0008;
 		  }
-		| MON_APPEARANCE string_or_var
+		| MON_APPEARANCE string_expr
 		  {
 		      add_opvars(splev, "ii", (long)$<i>1, SP_M_V_APPEAR);
 		      $$ = 0x0010;
@@ -1451,7 +1451,7 @@ object_info	: CURSE_TYPE
 		      add_opvars(splev, "i", SP_O_V_SPE);
 		      $$ = 0x0004;
 		  }
-		| NAME_ID ':' string_or_var
+		| NAME_ID ':' string_expr
 		  {
 		      add_opvars(splev, "i", SP_O_V_NAME);
 		      $$ = 0x0008;
@@ -1887,7 +1887,7 @@ gold_detail	: GOLD_ID ':' amount ',' coord_or_var
 		  }
 		;
 
-engraving_detail: ENGRAVING_ID ':' coord_or_var ',' engraving_type ',' string_or_var
+engraving_detail: ENGRAVING_ID ':' coord_or_var ',' engraving_type ',' string_expr
 		  {
 		      add_opvars(splev, "io",
 				 (long)$5, SPO_ENGRAVING);
@@ -2191,6 +2191,13 @@ encodeobj	: STRING
 		  }
 		;
 
+
+string_expr	: string_or_var                 { }
+		| string_expr '.' string_or_var
+		  {
+		      add_opvars(splev, "o", SPO_MATH_ADD);
+		  }
+		;
 
 math_expr_var	: INTEGER                       { add_opvars(splev, "i", $1 ); }
 		| dice				{ }

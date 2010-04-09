@@ -4709,10 +4709,37 @@ sp_lev *lvl;
 	case SPO_MATH_ADD:
 	    {
 		struct opvar *a, *b;
-		if (!OV_pop_i(b) || !OV_pop_i(a)) break;
-		OV_i(a) = OV_i(a) + OV_i(b);
-		splev_stack_push(coder->stack, a);
-		opvar_free(b);
+		if (!OV_pop(b) || !OV_pop(a)) break;
+		if (OV_typ(b) == OV_typ(a)) {
+		    if (OV_typ(a) == SPOVAR_INT) {
+			OV_i(a) = OV_i(a) + OV_i(b);
+			splev_stack_push(coder->stack, a);
+			opvar_free(b);
+		    } else if (OV_typ(a) == SPOVAR_STRING) {
+			char *tmpbuf = (char *)alloc(strlen(OV_s(a)) + strlen(OV_s(b)) + 1);
+			if (tmpbuf) {
+			    struct opvar *c;
+			    (void) sprintf(tmpbuf, "%s%s", OV_s(a), OV_s(b));
+			    c = opvar_new_str(tmpbuf);
+			    splev_stack_push(coder->stack, c);
+			    opvar_free(a);
+			    opvar_free(b);
+			    free(tmpbuf);
+			} else {
+			    splev_stack_push(coder->stack, a);
+			    opvar_free(b);
+			    impossible("malloc at str concat");
+			}
+		    } else {
+			splev_stack_push(coder->stack, a);
+			opvar_free(b);
+			impossible("comparing weird type");
+		    }
+		} else {
+		    splev_stack_push(coder->stack, a);
+		    opvar_free(b);
+		    impossible("comparing different types");
+		}
 	    }
 	    break;
 	case SPO_MATH_SUB:
