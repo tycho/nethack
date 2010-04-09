@@ -109,7 +109,7 @@ static struct opvar *switch_break_list[MAX_SWITCH_BREAKS];
 int n_switch_break_list = 0;
 
 
-static struct lc_vardefs *variable_definitions = NULL;
+extern struct lc_vardefs *variable_definitions;
 
 
 static struct lc_funcdefs *function_definitions = NULL;
@@ -189,6 +189,14 @@ extern const char *fname;
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
+%token	<map> VARSTRING_INT VARSTRING_INT_ARRAY
+%token	<map> VARSTRING_STRING VARSTRING_STRING_ARRAY
+%token	<map> VARSTRING_VAR VARSTRING_VAR_ARRAY
+%token	<map> VARSTRING_COORD VARSTRING_COORD_ARRAY
+%token	<map> VARSTRING_REGION VARSTRING_REGION_ARRAY
+%token	<map> VARSTRING_MAPCHAR VARSTRING_MAPCHAR_ARRAY
+%token	<map> VARSTRING_MONST VARSTRING_MONST_ARRAY
+%token	<map> VARSTRING_OBJ VARSTRING_OBJ_ARRAY
 %token	<dice> DICE;
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
@@ -206,6 +214,7 @@ extern const char *fname;
 %type	<i> opt_percent opt_spercent opt_int opt_fillchar
 %type	<i> all_integers
 %type	<map> string level_def
+%type	<map> any_var any_var_array any_var_or_arr
 %type	<corpos> corr_spec
 %type	<lregn> region lev_region
 %type	<crd> room_pos subroom_pos room_align
@@ -424,7 +433,32 @@ levstatement 	: message
 		| wallify_detail
 		;
 
-shuffle_detail	: SHUFFLE_ID ':' VARSTRING
+any_var_array	: VARSTRING_INT_ARRAY
+		| VARSTRING_STRING_ARRAY
+		| VARSTRING_VAR_ARRAY
+		| VARSTRING_COORD_ARRAY
+		| VARSTRING_REGION_ARRAY
+		| VARSTRING_MAPCHAR_ARRAY
+		| VARSTRING_MONST_ARRAY
+		| VARSTRING_OBJ_ARRAY
+		;
+
+any_var		: VARSTRING_INT
+		| VARSTRING_STRING
+		| VARSTRING_VAR
+		| VARSTRING_COORD
+		| VARSTRING_REGION
+		| VARSTRING_MAPCHAR
+		| VARSTRING_MONST
+		| VARSTRING_OBJ
+		;
+
+any_var_or_arr	: any_var_array
+		| any_var
+		| VARSTRING
+		;
+
+shuffle_detail	: SHUFFLE_ID ':' any_var_array
 		  {
 		      struct lc_vardefs *vd;
 		      if ((vd = vardef_defined(variable_definitions, $3, 1))) {
@@ -435,17 +469,17 @@ shuffle_detail	: SHUFFLE_ID ':' VARSTRING
 		  }
 		;
 
-variable_define	: VARSTRING '=' math_expr
+variable_define	: any_var_or_arr '=' math_expr
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_INT);
 		      add_opvars(splev, "iso", 0, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' STRING
+		| any_var_or_arr '=' STRING
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_STRING);
 		      add_opvars(splev, "siso", $3, 0, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' VARSTRING
+		| any_var_or_arr '=' any_var_or_arr
 		  {
 		      struct lc_vardefs *vd1, *vd2;
 		      if (!strcmp($1, $3)) lc_error("Trying to set variable '%s' to value of itself", $1);
@@ -464,68 +498,68 @@ variable_define	: VARSTRING '=' math_expr
 		      }
 		      add_opvars(splev, "siso", $3, -1, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' TERRAIN_ID ':' mapchar
+		| any_var_or_arr '=' TERRAIN_ID ':' mapchar
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR);
 		      add_opvars(splev, "miso", (long)$5, 0, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' MONSTER_ID ':' encodemonster
+		| any_var_or_arr '=' MONSTER_ID ':' encodemonster
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MONST);
 		      add_opvars(splev, "Miso", (long)$5, 0, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' OBJECT_ID ':' encodeobj
+		| any_var_or_arr '=' OBJECT_ID ':' encodeobj
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_OBJ);
 		      add_opvars(splev, "Oiso", (long)$5, 0, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' encodecoord
+		| any_var_or_arr '=' encodecoord
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_COORD);
 		      add_opvars(splev, "ciso", (long)$3, 0, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' encoderegion
+		| any_var_or_arr '=' encoderegion
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_REGION);
 		      add_opvars(splev, "riso", (long)$3, 0, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' '{' integer_list '}'
+		| any_var_or_arr '=' '{' integer_list '}'
 		  {
 		      long n_items = $4;
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_INT|SPOVAR_ARRAY);
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' '{' encodecoord_list '}'
+		| any_var_or_arr '=' '{' encodecoord_list '}'
 		  {
 		      long n_items = $4;
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_COORD|SPOVAR_ARRAY);
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' '{' encoderegion_list '}'
+		| any_var_or_arr '=' '{' encoderegion_list '}'
 		  {
 		      long n_items = $4;
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_REGION|SPOVAR_ARRAY);
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' TERRAIN_ID ':' '{' mapchar_list '}'
+		| any_var_or_arr '=' TERRAIN_ID ':' '{' mapchar_list '}'
 		  {
 		      long n_items = $6;
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR|SPOVAR_ARRAY);
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' MONSTER_ID ':' '{' encodemonster_list '}'
+		| any_var_or_arr '=' MONSTER_ID ':' '{' encodemonster_list '}'
 		  {
 		      long n_items = $6;
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_MONST|SPOVAR_ARRAY);
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' OBJECT_ID ':' '{' encodeobj_list '}'
+		| any_var_or_arr '=' OBJECT_ID ':' '{' encodeobj_list '}'
 		  {
 		      long n_items = $6;
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_OBJ|SPOVAR_ARRAY);
 		      add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' '{' string_list '}'
+		| any_var_or_arr '=' '{' string_list '}'
 		  {
 		      long n_items = $4;
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_STRING|SPOVAR_ARRAY);
@@ -1677,7 +1711,7 @@ terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' mapchar_or_var
 			 y2 = $8;
 		     }
 
-		     add_opvars(splev, "ii io",	x2, y2,
+		     add_opvars(splev, "cio",	SP_COORD_PACK(x2,y2),
 				areatyp, SPO_TERRAIN);
 
 		     if ( 1 == $2 ) {
@@ -1950,12 +1984,12 @@ string_or_var	: STRING
 		  {
 		      add_opvars(splev, "s", $1);
 		  }
-		| VARSTRING
+		| VARSTRING_STRING
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_STRING);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' math_expr ']'
+		| VARSTRING_STRING_ARRAY '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_STRING|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -1973,12 +2007,12 @@ coord_or_var	: encodecoord
 		  {
 		      add_opvars(splev, "c", $1);
 		  }
-		| VARSTRING
+		| VARSTRING_COORD
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_COORD);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' math_expr ']'
+		| VARSTRING_COORD_ARRAY '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_COORD|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2001,12 +2035,12 @@ region_or_var	: encoderegion
 		  {
 		      add_opvars(splev, "r", $1);
 		  }
-		| VARSTRING
+		| VARSTRING_REGION
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_REGION);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' math_expr ']'
+		| VARSTRING_REGION_ARRAY '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_REGION|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2026,12 +2060,12 @@ mapchar_or_var	: mapchar
 		  {
 		      add_opvars(splev, "m", $1);
 		  }
-		| VARSTRING
+		| VARSTRING_MAPCHAR
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' math_expr ']'
+		| VARSTRING_MAPCHAR_ARRAY '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2062,12 +2096,12 @@ monster_or_var	: encodemonster
 		  {
 		      add_opvars(splev, "M", $1);
 		  }
-		| VARSTRING
+		| VARSTRING_MONST
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MONST);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' math_expr ']'
+		| VARSTRING_MONST_ARRAY '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MONST|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2111,12 +2145,12 @@ object_or_var	: encodeobj
 		  {
 		      add_opvars(splev, "O", $1);
 		  }
-		| VARSTRING
+		| VARSTRING_OBJ
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_OBJ);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' math_expr ']'
+		| VARSTRING_OBJ_ARRAY '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_OBJ|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2161,12 +2195,12 @@ encodeobj	: STRING
 math_expr_var	: INTEGER                       { add_opvars(splev, "i", $1 ); }
 		| dice				{ }
 		| '(' MINUS_INTEGER ')'         { add_opvars(splev, "i", $2 ); }
-		| VARSTRING
+		| VARSTRING_INT
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_INT);
 		      add_opvars(splev, "v", $1);
 		  }
-		| VARSTRING '[' math_expr ']'
+		| VARSTRING_INT_ARRAY '[' math_expr ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_INT|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);

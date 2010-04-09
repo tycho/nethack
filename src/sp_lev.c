@@ -3787,7 +3787,7 @@ spo_terrain(coder)
      struct sp_coder *coder;
 {
     terrain tmpterrain;
-    struct opvar *coord1,*x2,*y2,*areatyp,*ter;
+    struct opvar *coord1,*coord2 = NULL,*areatyp,*ter;
 
     if (!OV_pop_i(areatyp)) return;
 
@@ -3801,14 +3801,13 @@ spo_terrain(coder)
 	break;
     case 1:
     case 2:
-	if (!OV_pop_i(y2) ||
-	    !OV_pop_i(x2) ||
+	if (!OV_pop_c(coord2) ||
 	    !OV_pop_typ(ter, SPOVAR_MAPCHAR) ||
 	    !OV_pop_c(coord1)) return;
 	tmpterrain.x1 = SP_COORD_X(OV_i(coord1));
 	tmpterrain.y1 = SP_COORD_Y(OV_i(coord1));
-	tmpterrain.x2 = OV_i(x2);
-	tmpterrain.y2 = OV_i(y2);
+	tmpterrain.x2 = SP_COORD_X(OV_i(coord2));
+	tmpterrain.y2 = SP_COORD_Y(OV_i(coord2));
 	break;
     case 3:
     case 4:
@@ -3827,10 +3826,7 @@ spo_terrain(coder)
 
     set_terrain(&tmpterrain, coder->croom);
     opvar_free(coord1);
-    if (x2) {
-	opvar_free(x2);
-	opvar_free(y2);
-    }
+    if (coord2) opvar_free(coord2);
     opvar_free(areatyp);
     opvar_free(ter);
 }
