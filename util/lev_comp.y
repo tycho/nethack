@@ -725,8 +725,8 @@ opt_spercent	: /* nothing */
 		  }
 		| ',' SPERCENT
 		  {
-		      if ($1 < 0 || $1 > 100) lc_error("Unexpected percentile chance '%li%%'", $1);
-		      $$ = $1;
+		      if ($2 < 0 || $2 > 100) lc_error("Unexpected percentile chance '%li%%'", $2);
+		      $$ = $2;
 		  }
 		;
 
