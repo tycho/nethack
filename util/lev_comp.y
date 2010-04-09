@@ -249,7 +249,7 @@ levels		: level
 		| level levels
 		;
 
-level		: level_def flags lev_init levstatements
+level		: level_def flags levstatements
 		  {
 			if (fatal_error > 0) {
 				(void) fprintf(stderr,
@@ -294,11 +294,7 @@ level_def	: LEVEL_ID ':' string
 		  }
 		;
 
-lev_init	: /* nothing */
-		  {
-		      /* nothing */
-		  }
-		| LEV_INIT_ID ':' SOLID_FILL_ID ',' terrain_type
+lev_init	: LEV_INIT_ID ':' SOLID_FILL_ID ',' terrain_type
 		  {
 		      long filling = $5.ter;
 		      if (filling == INVALID_TYPE || filling >= MAX_TYPE)
@@ -387,6 +383,7 @@ levstatements	: /* nothing */
 		;
 
 levstatement 	: message
+		| lev_init
 		| altar_detail
 		| grave_detail
 		| mon_generation
