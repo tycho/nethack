@@ -3112,6 +3112,7 @@ spo_object(coder)
      struct sp_coder *coder;
 {
     int nparams = 0;
+    long quancnt;
 
     struct opvar *varparam;
     struct opvar *id, *containment;
@@ -3243,7 +3244,14 @@ spo_object(coder)
     tmpobj.class = SP_OBJ_CLASS(OV_i(id));
     tmpobj.containment = OV_i(containment);
 
-    create_object(&tmpobj, coder->croom);
+    quancnt = (tmpobj.id > STRANGE_OBJECT) ? tmpobj.quan : 0;
+
+    do {
+	create_object(&tmpobj, coder->croom);
+	quancnt--;
+    } while ((quancnt > 0) &&
+	     ((tmpobj.id > STRANGE_OBJECT) &&
+	      !objects[tmpobj.id].oc_merge));
 
     Free(tmpobj.name.str);
 
