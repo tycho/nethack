@@ -75,6 +75,7 @@ static struct Bool_Opt
 	{"color",         &iflags.wc_color, FALSE, SET_IN_GAME},	/*WC*/
 # endif
 	{"confirm",&flags.confirm, TRUE, SET_IN_GAME},
+	{"dark_room", &iflags.dark_room, TRUE, SET_IN_GAME},
 #if defined(TERMLIB) && !defined(MAC_GRAPHICS_ENV)
 	{"DECgraphics", &iflags.DECgraphics, FALSE, SET_IN_GAME},
 #else
@@ -639,6 +640,12 @@ initoptions()
 	/* as a named (or default) fruit.  Wishing for "fruit" will	*/
 	/* result in the player's preferred fruit [better than "\033"].	*/
 	obj_descr[SLIME_MOLD].oc_name = "fruit";
+
+	if (iflags.dark_room && iflags.use_color) {
+	    showsyms[S_darkroom] = showsyms[S_room];
+	} else {
+	    showsyms[S_darkroom] = showsyms[S_stone];
+	}
 
 	return;
 }
@@ -2587,7 +2594,8 @@ goodfruit:
 			    else lan_mail_finish();
 			}
 #endif
-			else if ((boolopt[i].addr) == &flags.lit_corridor) {
+			else if (((boolopt[i].addr) == &flags.lit_corridor) ||
+			         ((boolopt[i].addr) == &iflags.dark_room)) {
 			    /*
 			     * All corridor squares seen via night vision or
 			     * candles & lamps change.  Update them by calling
@@ -2597,6 +2605,7 @@ goodfruit:
 			     */
 			    vision_recalc(2);		/* shut down vision */
 			    vision_full_recalc = 1;	/* delayed recalc */
+			    if (iflags.use_color) need_redraw = TRUE;  /* darkroom refresh */
 			}
 			else if ((boolopt[i].addr) == &iflags.use_inverse ||
 					(boolopt[i].addr) == &iflags.showrace ||
@@ -2906,8 +2915,14 @@ doset()
 	}
 
 	destroy_nhwindow(tmpwin);
-	if (need_redraw)
-	    (void) doredraw();
+	if (need_redraw) {
+	    if (iflags.dark_room && iflags.use_color) {
+		showsyms[S_darkroom]=showsyms[S_room];
+	    } else {
+		showsyms[S_darkroom]=showsyms[S_stone];
+	    }
+ 	    (void) doredraw();
+	}
 	return 0;
 }
 

@@ -295,6 +295,7 @@ struct instance_flags {
 #ifdef REALTIME_ON_BOTL
   boolean  showrealtime; /* show actual elapsed time */
 #endif
+    boolean  dark_room;	/* show shadows in lit rooms */
 };
 
 /*
