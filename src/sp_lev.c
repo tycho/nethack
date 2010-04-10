@@ -3874,18 +3874,17 @@ spo_randline(coder)
      struct sp_coder *coder;
 {
     randline rl;
-    struct opvar *coord1,*coord2,*fg,*lit,*roughness,*thick;
+    struct opvar *coord1,*coord2,*fg,*roughness,*thick;
     if (!OV_pop_i(thick) ||
 	!OV_pop_i(roughness) ||
-	!OV_pop_i(lit) ||
-	!OV_pop_i(fg) ||
+	!OV_pop_typ(fg, SPOVAR_MAPCHAR) ||
 	!OV_pop_c(coord2) ||
 	!OV_pop_c(coord1)) return;
 
     rl.thick = OV_i(thick);
     rl.roughness = OV_i(roughness);
-    rl.lit = OV_i(lit);
-    rl.fg = OV_i(fg);
+    rl.lit = SP_MAPCHAR_LIT(OV_i(fg));
+    rl.fg = SP_MAPCHAR_TYP(OV_i(fg));
     rl.x1 = SP_COORD_X(OV_i(coord1));
     rl.y1 = SP_COORD_Y(OV_i(coord1));
     rl.x2 = SP_COORD_X(OV_i(coord2));
@@ -3896,7 +3895,6 @@ spo_randline(coder)
     opvar_free(coord1);
     opvar_free(coord2);
     opvar_free(fg);
-    opvar_free(lit);
     opvar_free(roughness);
     opvar_free(thick);
 }
