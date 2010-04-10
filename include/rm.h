@@ -123,6 +123,7 @@ enum {
     S_bars,		/* KMH -- iron bars */
     S_tree,		/* KMH */
     S_room,
+    S_darkroom,
     S_corr,
     S_litcorr,
     S_upstair,
@@ -212,7 +213,7 @@ enum {
 
     MAXPCHARS		/* maximum number of mapped characters */
 };
-#define MAXDCHARS	40	/* maximum of mapped dungeon characters */
+#define MAXDCHARS	41	/* maximum of mapped dungeon characters */
 #define MAXTCHARS	25	/* maximum of mapped trap characters */
 #define MAXECHARS	29	/* maximum of mapped effects characters */
 #define MAXEXPCHARS	9	/* number of explosion characters */
