@@ -106,15 +106,17 @@ REGION:(51,11,73,16),lit,"ordinary"
 
 
 IF [40%] {
-   RANDLINE:random,random,'L',20
+   $terrain = TERRAIN:{ 'L', '}' }
+   SHUFFLE:$terrain
+   RANDLINE:random,random,$terrain[0],20
    IF [50%] {
-      RANDLINE:random,random,'L',25
+      RANDLINE:random,random,$terrain[0],25
    }
    IF [50%] {
-      RANDLINE:random,random,'L',25,2
+      RANDLINE:random,random,$terrain[0],25,2
    }
    IF [25%] {
-      RANDLINE:random,random,'L',25,3
+      RANDLINE:random,random,$terrain[0],25,3
    }
 }
 
@@ -287,10 +289,12 @@ ENDMAP
 REGION:(00,00,72,18),lit,"ordinary"
 
 IF [33%] {
+   $terrain = TERRAIN:{ 'L', '}' }
+   SHUFFLE:$terrain
    IF [50%] {
-      RANDLINE:(37,0),(37,18),'P',20,2
+      RANDLINE:(37,0),(37,18),$terrain[0],20,2
    } ELSE {
-      RANDLINE:(0,10),(73,10),'P',20,2
+      RANDLINE:(0,10),(73,10),$terrain[0],20,2
    }
 }
 
@@ -341,6 +345,12 @@ MAP
    ---.......---     ---.......---     ---.......---     ---.......---   
      ---------         ---------         ---------         ---------     
 ENDMAP
+
+IF [20%] {
+  REPLACE_TERRAIN:(00,00,73,18),'-','T',100%
+  REPLACE_TERRAIN:(00,00,73,18),'|','T',100%
+}
+
 # Dungeon Description
 REGION:(01,01,72,17),lit,"ordinary"
 # Stairs
@@ -437,6 +447,18 @@ MAP
         |.......................|       |.......................|        
         -------------------------       -------------------------        
 ENDMAP
+
+IF [40%] {
+   $terrain_from = TERRAIN:{ 'L', '}', 'I' }
+   $terrain_to   = TERRAIN:{ 'L', '}', 'I', '.' }
+   SHUFFLE:$terrain_from
+   SHUFFLE:$terrain_to
+   REPLACE_TERRAIN:(0,0,75,18),$terrain_from[0], $terrain_to[0], 100%
+   IF [50%] {
+      REPLACE_TERRAIN:(0,0,75,18),$terrain_from[1], $terrain_to[1], 100%
+   }
+}
+
 # Dungeon Description
 REGION:(01,01,72,17),lit,"ordinary"
 # Stairs
@@ -485,6 +507,13 @@ MAP
                            ---............................................|
                              ----------------------------------------------
 ENDMAP
+
+IF [40%] {
+   $terrain = TERRAIN:{ 'L', '}', 'T', '.', '-', 'C' }
+   SHUFFLE:$terrain
+   REPLACE_TERRAIN:(0,0,75,18),'F', $terrain[0], 100%
+}
+
 # Dungeon Description
 REGION:(01,01,73,16),lit,"ordinary"
 # Stairs

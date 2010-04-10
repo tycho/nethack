@@ -1755,13 +1755,9 @@ terrain_detail : TERRAIN_ID chance ':' coord_or_var ',' mapchar_or_var
 		 }
 	       ;
 
-randline_detail : RANDLINE_ID ':' coord_or_var ',' coord_or_var ',' terrain_type ',' INTEGER opt_int
+randline_detail : RANDLINE_ID ':' coord_or_var ',' coord_or_var ',' mapchar_or_var ',' INTEGER opt_int
 		  {
-		      long c;
-		      c = $7.ter;
-		      if ((c == INVALID_TYPE) || (c >= MAX_TYPE)) lc_error("Randline: illegal map char");
-		      add_opvars(splev, "iiiio",
-				 c, (long)$7.lit, (long)$9, (long)$10, SPO_RANDLINE);
+		      add_opvars(splev, "iio", (long)$9, (long)$10, SPO_RANDLINE);
 		  }
 
 opt_int		: /* empty */
