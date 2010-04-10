@@ -414,7 +414,6 @@ levstatement 	: message
 		| portal_region
 		| random_corridors
 		| region_detail
-		| region_detail_TEST
 		| room_def
 		| subroom_def
 		| sink_detail
@@ -1803,57 +1802,15 @@ passwall_detail : NON_PASSWALL_ID ':' region_or_var
 		  }
 		;
 
-region_detail	: REGION_ID ':' region ',' light_state ',' room_type prefilled
+region_detail	: REGION_ID ':' region_or_var ',' light_state ',' room_type prefilled
 		  {
 		      long rt, irr;
-
 		      rt = $7;
 		      if (( $8 ) & 1) rt += MAXRTYPE+1;
-
 		      irr = ((( $8 ) & 2) != 0);
-
-		      if ( $3.x1 > $3.x2 || $3.y1 > $3.y2 )
-			  lc_error("Region start > end '(%li,%li,%li,%li)'!", $3.x1, $3.y1, $3.x2, $3.y2);
-
-		      if (rt == VAULT && (irr ||
-					 ( $3.x2 - $3.x1 != 1) ||
-					 ( $3.y2 - $3.y1 != 1)))
-			  lc_error("Vaults must be exactly 2x2!");
-
-		     add_opvars(splev, "riiio",
-				(( $3.x1 & 0xff) + (( $3.y1 & 0xff) << 8) +
-				(( $3.x2 & 0xff) << 16) + (( $3.y2 & 0xff) << 24)),
-				(long)$5, rt, irr, SPO_REGION);
-
-		     $<i>$ = (irr || ($8 & 1) || rt != OROOM);
-		  }
-		  region_detail_end
-		  {
-		      if ( $<i>9 ) {
-			  add_opcode(splev, SPO_ENDROOM, NULL);
-		      } else if ( $<i>10 )
-			  lc_error("Cannot use lev statements in non-permanent REGION");
-		  }
-		;
-
-region_detail_TEST	: REGION_ID '-' region_or_var ',' light_state ',' room_type prefilled
-		  {
-		      long rt, irr;
-
-		      rt = $7;
-		      if (( $8 ) & 1) rt += MAXRTYPE+1;
-
-		      irr = ((( $8 ) & 2) != 0);
-		      /*
-		      if (rt == VAULT && (irr ||
-					 ( $3.x2 - $3.x1 != 1) ||
-					 ( $3.y2 - $3.y1 != 1)))
-			 yyerror("Vaults must be exactly 2x2!");
-		      */
-		     add_opvars(splev, "iiio",
-				(long)$5, rt, irr, SPO_REGION);
-
-		     $<i>$ = (irr || ($8 & 1) || rt != OROOM);
+		      add_opvars(splev, "iiio",
+				 (long)$5, rt, irr, SPO_REGION);
+		      $<i>$ = (irr || ($8 & 1) || rt != OROOM);
 		  }
 		  region_detail_end
 		  {
