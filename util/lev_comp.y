@@ -200,7 +200,7 @@ extern const char *fname;
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> alignment_prfx
-%type	<i> door_wall walled secret amount chance
+%type	<i> door_wall walled secret chance
 %type	<i> dir_list map_geometry teleprt_detail
 %type	<i> object_infos object_info monster_infos monster_info
 %type	<i> levstatements region_detail_end
@@ -1399,7 +1399,7 @@ object_detail	: OBJECT_ID chance ':' object_desc
 		  {
 		      long cnt = 0;
 		      if (in_container_obj) cnt |= SP_OBJ_CONTENT;
-		      add_opvars(splev, "io", cnt, SPO_OBJECT); /* 0 == not container, nor contents of one. */
+		      add_opvars(splev, "io", cnt, SPO_OBJECT);
 		      if ( 1 == $2 ) {
 			  if (n_if_list > 0) {
 			      struct opvar *tmpjmp;
@@ -1791,17 +1791,15 @@ spill_detail : SPILL_ID ':' coord_or_var ',' terrain_type ',' DIRECTION ',' INTE
 		}
 		;
 
-diggable_detail : NON_DIGGABLE_ID ':' region
+diggable_detail : NON_DIGGABLE_ID ':' region_or_var
 		  {
-		     add_opvars(splev, "iiiio",
-				$3.x1, $3.y1, $3.x2, $3.y2, SPO_NON_DIGGABLE);
+		     add_opvars(splev, "o", SPO_NON_DIGGABLE);
 		  }
 		;
 
-passwall_detail : NON_PASSWALL_ID ':' region
+passwall_detail : NON_PASSWALL_ID ':' region_or_var
 		  {
-		     add_opvars(splev, "iiiio",
-				$3.x1, $3.y1, $3.x2, $3.y2, SPO_NON_PASSWALL);
+		     add_opvars(splev, "o", SPO_NON_PASSWALL);
 		  }
 		;
 
@@ -1882,11 +1880,9 @@ altar_detail	: ALTAR_ID ':' coord_or_var ',' alignment ',' altar_type
 		  }
 		;
 
-grave_detail	: GRAVE_ID ':' coord_or_var ',' string
+grave_detail	: GRAVE_ID ':' coord_or_var ',' string_expr
 		  {
-		      add_opvars(splev, "sio",
-				 $5, 2, SPO_GRAVE);
-		      Free($5);
+		      add_opvars(splev, "io", 2, SPO_GRAVE);
 		  }
 		| GRAVE_ID ':' coord_or_var ',' RANDOM_TYPE
 		  {
@@ -1900,9 +1896,9 @@ grave_detail	: GRAVE_ID ':' coord_or_var ',' string
 		  }
 		;
 
-gold_detail	: GOLD_ID ':' amount ',' coord_or_var
+gold_detail	: GOLD_ID ':' math_expr ',' coord_or_var
 		  {
-		      add_opvars(splev, "io", (long)$3, SPO_GOLD);
+		      add_opvars(splev, "o", SPO_GOLD);
 		  }
 		;
 
@@ -2295,10 +2291,6 @@ all_ints_push	: MINUS_INTEGER
 		;
 
 string		: STRING
-		;
-
-amount		: INTEGER
-		| RANDOM_TYPE
 		;
 
 chance		: /* empty */
