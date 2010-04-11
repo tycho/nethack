@@ -180,23 +180,23 @@ INIT_MAP: mines, '.' , 'L' , true , true , lit , false
 MON_GENERATION:86%, (64,"fire ant"), (16,'a'), (16,"fire giant"), (4,'H')
 GEOMETRY:center,center
 MAP
-.L............................LLLLL
-LLL.........LLLLL.LLLLL.........LLL
-.LLL......LLLLLLLLLLLLLLL.......LL.
-.LLL.....LLL|---------|LLL.....L...
-..LL....LL|--.........--|LL.....LLL
-.......LL|-...LLLLLLL...-|LL.....L.
+xLxxxx......................xxLLLLL
+LLLx........LLLLL.LLLLL.......xxLLL
+xLLL......LLLLLLLLLLLLLLL......xLLx
+xLLL.....LLL|---------|LLL.....Lxxx
+xxLL....LL|--.........--|LL.....LLL
+x......LL|-...LLLLLLL...-|LL.....Lx
 .......LL|...LL.....LL...|LL.......
 ......LL|-..LL.......LL..-|LL......
 ......LL|.................|LL......
 ......LL|-..LL.......LL..-|LL......
 .......LL|...LL.....LL...|LL.......
-.......LL|-...LLLLLLL...-|LL.......
-..L.....LL|--.........--|LL.....LL.
-..LL.....LLL|---------|LLL....LLLL.
-..LLL.....LLLLLLLLLLLLLLL...LLLLL..
-.LLLL.......LLLLL.LLLLL.....LLLL...
-..LL...............................
+.......LL|-...LLLLLLL...-|LL......x
+x.L.....LL|--.........--|LL.....LLx
+xxLL.....LLL|---------|LLL....LLLLx
+xxLLL.....LLLLLLLLLLLLLLL...LLLLLxx
+xLLLL.......LLLLL.LLLLL.....LLLLxxx
+xxLLxxx....................xxxxxxxx
 ENDMAP
 # Dungeon Description
 REGION:(00,00,34,16),lit,"ordinary"
@@ -235,8 +235,10 @@ LOOP [2 + 2d3] {
 }
 MONSTER:'a',random
 MONSTER:'a',random
-LOOP [5 + 4d3] {
-  MONSTER:('H',"fire giant"),(10,06),hostile
+REGION:(10,6,10,6),lit,"ordinary",filled, true {
+  LOOP [5 + 4d3] {
+    MONSTER:('H',"fire giant"),random,hostile
+  }
 }
 MONSTER:('H',"fire giant"),random,hostile
 MONSTER:('H',"fire giant"),random,hostile
