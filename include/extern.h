@@ -448,6 +448,7 @@ E void FDECL(impact_drop, (struct obj *,XCHAR_P,XCHAR_P,XCHAR_P));
 
 /* ### dothrow.c ### */
 
+E struct monst * FDECL(camera_demon, (struct obj *,SCHAR_P, SCHAR_P));
 E int NDECL(dothrow);
 E int NDECL(dofire);
 E void FDECL(hitfloor, (struct obj *));
