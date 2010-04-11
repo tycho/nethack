@@ -1648,6 +1648,11 @@ boolean from_invent;
 			}
 			/* monster breathing isn't handled... [yet?] */
 			break;
+#ifdef TOURIST
+	case EXPENSIVE_CAMERA:
+	    (void) camera_demon(obj, x,y);
+	    break;
+#endif
 		case EGG:
 			/* breaking your own eggs is bad luck */
 			if (hero_caused && obj->spe && obj->corpsenm >= LOW_PM)
@@ -1680,6 +1685,22 @@ boolean from_invent;
 	    }
 	}
 	delobj(obj);
+}
+
+struct monst *
+camera_demon(obj, x,y)
+struct obj *obj;
+schar x,y;
+{
+    struct monst *mtmp = NULL;
+    if (!rn2(3) && (mtmp = makemon(&mons[(rn2(2) ? PM_HOMUNCULUS : PM_IMP)],x,y, NO_MM_FLAGS)) != 0) {
+	pline("%s is released!", !canspotmon(mtmp) ?
+	      Something : Hallucination ?
+	      An(rndmonnam()) : "The picture-painting demon");
+	mtmp->mpeaceful = ((obj) ? !obj->cursed : 0);
+	set_malign(mtmp);
+    }
+    return mtmp;
 }
 
 /*

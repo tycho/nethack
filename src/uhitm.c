@@ -758,6 +758,7 @@ int thrown;
 		    case EXPENSIVE_CAMERA:
 			You("succeed in destroying %s camera.  Congratulations!",
 			        shk_your(yourbuf, obj));
+			(void) camera_demon(obj, u.ux,u.uy);
 			useup(obj);
 			return(TRUE);
 			/*NOTREACHED*/
