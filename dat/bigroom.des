@@ -511,7 +511,7 @@ ENDMAP
 IF [40%] {
    $terrain = TERRAIN:{ 'L', '}', 'T', '.', '-', 'C' }
    SHUFFLE:$terrain
-   REPLACE_TERRAIN:(0,0,75,18),'F', $terrain[0], 100%
+   REPLACE_TERRAIN:(0,0,74,17),'F', $terrain[0], 100%
 }
 
 # Dungeon Description
