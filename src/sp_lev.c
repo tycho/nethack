@@ -4740,12 +4740,12 @@ sp_lev *lvl;
 		    } else {
 			splev_stack_push(coder->stack, a);
 			opvar_free(b);
-			impossible("comparing weird type");
+			impossible("adding weird types");
 		    }
 		} else {
 		    splev_stack_push(coder->stack, a);
 		    opvar_free(b);
-		    impossible("comparing different types");
+		    impossible("adding different types");
 		}
 	    }
 	    break;
