@@ -134,12 +134,9 @@ MONSTER:(';',"giant eel"),(67,17)
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [3 + 3d3] {
+  TRAP:random,random
+}
 # Monsters on siege duty.
 MONSTER: 'B',(60,09),hostile
 MONSTER: 'W',(60,10),hostile
@@ -233,21 +230,9 @@ STAIR:(51,10),down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
 # Objects
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
+LOOP [10 + 1d6] {
+  OBJECT:random,random
+}
 # Random traps
 TRAP:"spiked pit",(24,02)
 TRAP:"spiked pit",(07,10)
@@ -271,33 +256,11 @@ TRAP:"dart",random
 TRAP:"dart",random
 TRAP:"dart",random
 # Random monsters.
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:'i',random,hostile
+LOOP [10 + 1d10] {
+  MONSTER:'B',random,hostile
+  MONSTER[80%]:'i',random,hostile
+  MONSTER[90%]:('B',"vampire bat"),random
+}
 
 #
 #	The "goal" level for the quest.
@@ -381,31 +344,17 @@ NON_DIGGABLE:(00,00,75,19)
 ALTAR:(16,11),noncoaligned,altar
 # Objects
 OBJECT:('"',"amulet of power"),(16,11),blessed,0,NAME:"The Eye of the Aethiopica"
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
+LOOP [9 + 2d5] {
+  OBJECT:random,random
+}
 OBJECT:('+',"knock"),(13,14)
 OBJECT:'+',(18,14)
 OBJECT:'+',(13,04)
 OBJECT:('+',"wizard lock"),(18,04)
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [2 + 2d8] {
+  TRAP:random,random
+}
 TRAP:random,(16,14)
 TRAP:random,(15,04)
 # Random monsters.
@@ -415,33 +364,11 @@ MONSTER:('@',"Dark One"),(16,11) {
   OBJECT:'+'
   OBJECT:'['
 }
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'B',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:'i',random,hostile
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:('B',"vampire bat"),random
-MONSTER:'i',random,hostile
+LOOP [8 + 3d8] {
+  MONSTER:'B',random,hostile
+  MONSTER:'i',random,hostile
+  MONSTER:('B',"vampire bat"),random
+}
 # Captive Monsters in the dungeon
 MONSTER:('@',"rogue"),(35,06),peaceful,"Pug"
 MONSTER:('Y',"owlbear"),(47,06),peaceful,asleep

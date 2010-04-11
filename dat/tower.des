@@ -129,12 +129,9 @@ DOOR:locked,(14,05)
 MONSTER:'D',(13,05)
 MONSTER:random,(12,04)
 MONSTER:random,(12,06)
-MONSTER:random,random
-MONSTER:random,random
-MONSTER:random,random
-MONSTER:random,random
-MONSTER:random,random
-MONSTER:random,random
+LOOP [4 + 3d4] {
+  MONSTER:random,random
+}
 OBJECT:(')',"long sword"),$place[0]
 TRAP:random,$place[0]
 OBJECT:('(',"lock pick"),$place[1]
