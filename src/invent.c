@@ -955,9 +955,15 @@ register const char *let,*word;
 		/* "ugly check" for reading fortune cookies, part 2 */
 		if ((!strcmp(word, "read") &&
 		    (otmp->otyp == FORTUNE_COOKIE
+		     || otmp->otyp == TIN
+		     || otmp->otyp == CAN_OF_GREASE
+		     || otmp->otyp == CANDY_BAR
 #ifdef TOURIST
 			|| otmp->otyp == T_SHIRT
+		     || otmp->otyp == CREDIT_CARD
 #endif
+		     || (OBJ_DESCR(objects[otmp->otyp]) &&
+			 !strncmp(OBJ_DESCR(objects[otmp->otyp]), "runed", 5))
 		    )))
 			allowall = TRUE;
 	    }
