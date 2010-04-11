@@ -844,8 +844,15 @@ struct mkroom *croom;
 		*y += my;
 	} else {			/* random location */
 	    do {
-		*x = mx + rn2((int)sx);
-		*y = my + rn2((int)sy);
+		if (croom) { /* handle irregular areas */
+		    coord tmpc;
+		    somexy(croom, &tmpc);
+		    *x = tmpc.x;
+		    *y = tmpc.y;
+		} else {
+		    *x = mx + rn2((int)sx);
+		    *y = my + rn2((int)sy);
+		}
 		if (is_ok_location(*x,*y,humidity)) break;
 	    } while (++cpt < 100);
 	    if (cpt >= 100) {
