@@ -62,8 +62,8 @@ BRANCH:(71,09,71,09),(0,0,0,0)
 ALTAR:(36,02),coaligned,shrine
 # Shaman Karnov
 MONSTER:('@',"Shaman Karnov"),(35,02) {
-  OBJECT:'[',+6
-  OBJECT:')',+6
+  OBJECT:'[',1d6
+  OBJECT:')',1d6
 }
 # The treasure of Shaman Karnov
 OBJECT:('(',"chest"),(34,02)
@@ -108,37 +108,21 @@ TRAP:"bear",random
 TRAP:"bear",random
 TRAP:"bear",random
 # Random jungle stuff
-MONSTER: (';',"giant eel"),random,hostile
-MONSTER: (';',"giant eel"),random,hostile
-MONSTER: (';',"giant eel"),random,hostile
-MONSTER: (';',"giant eel"),random,hostile
-MONSTER: (';',"giant eel"),random,hostile
-MONSTER: (';',"giant eel"),random,hostile
-MONSTER: (';',"giant eel"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"monkey"),random,hostile
-MONSTER: ('Y',"ape"),random,hostile
-MONSTER: ('Y',"ape"),random,hostile
-MONSTER: ('Y',"ape"),random,hostile
-MONSTER: ('Y',"ape"),random,hostile
-MONSTER: ('Y',"ape"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('f',"panther"),random,hostile
-MONSTER: ('f',"panther"),random,hostile
-MONSTER: ('f',"panther"),random,hostile
-MONSTER: ('f',"panther"),random,hostile
+LOOP [5 + 1d10] {
+  MONSTER: (';',"giant eel"),random,hostile
+}
+LOOP [10 + 1d5] {
+  MONSTER: ('Y',"monkey"),random,hostile
+}
+LOOP [4 + 1d3] {
+  MONSTER: ('Y',"ape"),random,hostile
+}
+LOOP [3 + 1d3] {
+  MONSTER: ('S',"python"),random,hostile
+}
+LOOP [3 + 1d3] {
+  MONSTER: ('f',"panther"),random,hostile
+}
 
 #
 #	The "locate" level for the quest.
@@ -186,57 +170,33 @@ LADDER:(73,10),down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
+LOOP [10 + 2d5] {
+  OBJECT:random,random
+}
 # Random traps
-TRAP:"spiked pit",random
-TRAP:"spiked pit",random
-TRAP:"spiked pit",random
-TRAP:"spiked pit",random
-TRAP:"bear",random
-TRAP:"bear",random
-TRAP:"bear",random
-TRAP:"bear",random
-TRAP:"bear",random
-TRAP:"bear",random
+LOOP [3 + 1d5] {
+  TRAP:"spiked pit",random
+}
+LOOP [4 + 1d5] {
+  TRAP:"bear",random
+}
 # Monsters...
 MONSTER:(';',"electric eel"),(28,11),hostile
 MONSTER:(';',"electric eel"),(46,09),hostile
 MONSTER:(';',"electric eel"),(46,10),hostile
 MONSTER:(';',"electric eel"),(63,16),hostile
-MONSTER:(';',"giant eel"),random,hostile
-MONSTER:(';',"giant eel"),random,hostile
-MONSTER:(';',"giant eel"),random,hostile
-MONSTER:(';',"giant eel"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"monkey"),random,hostile
-MONSTER:('Y',"monkey"),random,hostile
-MONSTER:('Y',"monkey"),random,hostile
-MONSTER:('Y',"monkey"),random,hostile
-MONSTER:('S',"python"),random,hostile
-MONSTER:('S',"python"),random,hostile
-MONSTER:('S',"python"),random,hostile
-MONSTER:('S',"python"),random,hostile
+LOOP [3 + 1d6] {
+  MONSTER:(';',"giant eel"),random,hostile
+}
+LOOP [7 + 1d6] {
+  MONSTER:('Y',"carnivorous ape"),random,hostile
+}
+LOOP [3 + 1d5] {
+  MONSTER:('Y',"monkey"),random,hostile
+}
+LOOP [3 + 1d3] {
+  MONSTER:('S',"python"),random,hostile
+}
 # WALLIFY
 
 #
@@ -282,20 +242,9 @@ LADDER:random,up
 NON_DIGGABLE:(00,00,75,19)
 # Objects
 OBJECT:(')',"mace"),(23,10),blessed,0,NAME:"The Sceptre of Might"
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
+LOOP [10 + 2d8] {
+  OBJECT:random,random
+}
 # monsters.
 MONSTER:('D',"Chromatic Dragon"),(23,10),asleep {
   OBJECT:random
@@ -307,12 +256,10 @@ MONSTER:('D',"Chromatic Dragon"),(23,10),asleep {
 MONSTER:('F',"shrieker"),(26,13)
 MONSTER:('F',"shrieker"),(25,8)
 MONSTER:('F',"shrieker"),(45,11)
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('Y',"carnivorous ape"),random,hostile
-MONSTER:('f',"tiger"),random,hostile
-MONSTER:('f',"tiger"),random,hostile
-MONSTER:('f',"tiger"),random,hostile
+LOOP [2 + 1d4] {
+  MONSTER:('Y',"carnivorous ape"),random,hostile
+  MONSTER[90%]:('f',"tiger"),random,hostile
+}
 WALLIFY
 
 #
@@ -355,42 +302,22 @@ REGION:(00,00,75,19),unlit,"ordinary"
 #
 NON_DIGGABLE:(00,00,75,19)
 #
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
+LOOP [5 + 1d5] {
+  OBJECT: random, random
+}
 #
-TRAP: "pit", random
-TRAP: "pit", random
-TRAP: "pit", random
-TRAP: "spiked pit", random
-TRAP: "spiked pit", random
-TRAP: "spiked pit", random
+LOOP [2 + 1d3] {
+  TRAP[90%]: "pit", random
+  TRAP[90%]: "spiked pit", random
+  TRAP[90%]: "bear", random
+}
 TRAP: "bear", (37,15)
-TRAP: "bear", random
-TRAP: "bear", random
-TRAP: "bear", random
 #
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
+LOOP [5 + 1d10] {
+  MONSTER[90%]: ('f',"tiger"),random,hostile
+  MONSTER[90%]: ('S',"python"),random,hostile
+  MONSTER[90%]: ('Y',"carnivorous ape"),random,hostile
+}
 
 #
 #	The "fill" levels for the quest.
@@ -412,45 +339,18 @@ NOMAP
 LADDER: random, up
 LADDER: random, down
 #
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
+LOOP [5 + 1d5] {
+  OBJECT: random, random
+}
 #
-TRAP: "pit", random
-TRAP: "pit", random
-TRAP: "pit", random
-TRAP: "spiked pit", random
-TRAP: "spiked pit", random
-TRAP: "spiked pit", random
-TRAP: "bear", random
-TRAP: "bear", random
-TRAP: "bear", random
-TRAP: "bear", random
+LOOP [2 + 1d3] {
+  TRAP[90%]: "pit", random
+  TRAP[90%]: "spiked pit", random
+  TRAP[90%]: "bear", random
+}
 #
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('f',"tiger"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('S',"python"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-MONSTER: ('Y',"carnivorous ape"),random,hostile
-
+LOOP [5 + 1d10] {
+  MONSTER[90%]: ('f',"tiger"),random,hostile
+  MONSTER[90%]: ('S',"python"),random,hostile
+  MONSTER[90%]: ('Y',"carnivorous ape"),random,hostile
+}

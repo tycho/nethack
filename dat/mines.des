@@ -21,17 +21,13 @@ OBJECT: '*', random
 OBJECT: '*', random
 OBJECT: '*', random
 OBJECT: '(', random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
+LOOP [2d2] {
+  OBJECT: random, random
+}
 #
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
+LOOP [4 + 2d5] {
+  MONSTER: ('G', "gnome"), random
+}
 MONSTER: ('G', "gnome lord"), random
 MONSTER: ('h', "dwarf"), random
 MONSTER: ('h', "dwarf"), random
@@ -39,12 +35,9 @@ MONSTER: 'G', random
 MONSTER: 'G', random
 MONSTER: 'h', random
 #
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
+LOOP [4 + 1d5] {
+  TRAP: random, random
+}
 
 # Minetown variant 1
 # "Frontier Town"
@@ -130,30 +123,10 @@ OBJECT:('%',"corpse"),random,montype:"watchman"
 OBJECT:('%',"corpse"),random,montype:"watch captain"
 
 # Rubble!
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('`',"boulder"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
-OBJECT:('*',"rock"),random
+LOOP [9 + 2d5] {
+  OBJECT[90%]:('`',"boulder"),random
+  OBJECT:('*',"rock"),random
+}
 
 # Guarantee 7 candles since we won't have Izchak available
 OBJECT:('(',"wax candle"),$place[0],quantity:1d2
@@ -199,27 +172,10 @@ MONSTER: ('o', "orc shaman"), (16,12), hostile
 MONSTER: ('o', "orc shaman"), (24,12), hostile
 # these are not such a big deal
 # to run into outside the bars
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "hill orc"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
-MONSTER: ('o', "goblin"), random, hostile
+LOOP [9 + 2d5] {
+  MONSTER[90%]: ('o', "hill orc"), random, hostile
+  MONSTER: ('o', "goblin"), random, hostile
+}
 
 WALLIFY:(1,0, 70,20)
 
@@ -350,10 +306,9 @@ FOUNTAIN: (17, 5)
 FOUNTAIN: (13, 8)
 
 # The Town Watch
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
+LOOP [2 + 1d7] {
+  MONSTER: ('@', "watchman"), random, peaceful
+}
 MONSTER: ('@', "watch captain"), random, peaceful
 
 }
@@ -498,10 +453,9 @@ ROOMDOOR:false,closed,north|south|east|west,random
 
 FOUNTAIN:(01,06)
 FOUNTAIN:(29,13)
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
+LOOP [2 + 1d7] {
+  MONSTER: ('@', "watchman"), random, peaceful
+}
 MONSTER: ('@', "watch captain"), random, peaceful
 
 }
@@ -624,10 +578,9 @@ ROOMDOOR:false,closed,north|south|east,random
 
 FOUNTAIN:(08,07)
 FOUNTAIN:(18,07)
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
+LOOP [2 + 1d7] {
+  MONSTER: ('@', "watchman"), random, peaceful
+}
 MONSTER: ('@', "watch captain"), random, peaceful
 
 }
@@ -735,17 +688,13 @@ OBJECT:('\\',"brazier"),(40,15)
 REGION:(00,00,74,20),unlit,"ordinary"
 REGION:(59,02,72,10),lit,"ordinary"
 
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
+LOOP [2 + 1d7] {
+  MONSTER: ('@', "watchman"), random, peaceful
+}
 MONSTER: ('@', "watch captain"), random, peaceful
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
+LOOP [4 + 1d8] {
+  MONSTER: ('G', "gnome"), random
+}
 MONSTER: ('G', "gnome lord"), random
 MONSTER: ('G', "gnome lord"), random
 MONSTER: ('h', "dwarf"), random
@@ -852,12 +801,9 @@ DOOR:closed,(31,3)
 DOOR:closed,(35,3)
 DOOR:closed,(33,7)
 
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
-MONSTER: ('G', "gnome"), random
+LOOP [4 + 1d8] {
+  MONSTER: ('G', "gnome"), random
+}
 MONSTER: ('G', "gnome"), (14,6)
 MONSTER: ('G', "gnome lord"), (14,5)
 MONSTER: ('G', "gnome"), (27,8)
@@ -1017,14 +963,13 @@ MONSTER: ('G', "gnomish wizard"), random
 FOUNTAIN: (12, 07)
 FOUNTAIN: (11, 13)
 
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
-MONSTER: ('@', "watchman"), random, peaceful
+LOOP [2 + 1d7] {
+  MONSTER: ('@', "watchman"), random, peaceful
+}
 MONSTER: ('@', "watch captain"), random, peaceful
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
+LOOP [2 + 1d3] {
+  MONSTER:('G',"gnome"),random
+}
 MONSTER:('G',"gnome lord"),random
 MONSTER:('Y',"monkey"),random
 MONSTER:('Y',"monkey"),random
@@ -1152,20 +1097,15 @@ TRAP:random,random
 TRAP:random,random
 # Random monsters
 MONSTER:('G',"gnome king"),random
-MONSTER:('G',"gnome lord"),random
-MONSTER:('G',"gnome lord"),random
-MONSTER:('G',"gnome lord"),random
-MONSTER:('G',"gnomish wizard"),random
-MONSTER:('G',"gnomish wizard"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
+LOOP [2 + 1d4] {
+  MONSTER:('G',"gnome lord"),random
+}
+LOOP [1d4] {
+  MONSTER:('G',"gnomish wizard"),random
+}
+LOOP [5 + 1d8] {
+  MONSTER:('G',"gnome"),random
+}
 MONSTER:('h',"hobbit"),random
 MONSTER:('h',"hobbit"),random
 MONSTER:('h',"dwarf"),random
@@ -1283,43 +1223,31 @@ OBJECT:'*',(70,05)
 OBJECT:('*',"amethyst"),(70,05)
 OBJECT:('*',"luckstone"),(70,05)
 # Scattered gems...
-OBJECT:'*',random
-OBJECT:'*',random
-OBJECT:'*',random
-OBJECT:'*',random
-OBJECT:'*',random
-OBJECT:'*',random
-OBJECT:'*',random
+LOOP [2 + 1d8] {
+  OBJECT:'*',random
+}
 OBJECT:'(',random
 OBJECT:'(',random
 OBJECT:random,random
 OBJECT:random,random
 OBJECT:random,random
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [4 + 1d8] {
+  TRAP:random,random
+}
 # Random monsters.
 MONSTER:('G',"gnome king"),(10,09),hostile
 MONSTER:('G',"gnomish wizard"),(11,09),hostile
 MONSTER:('G',"gnome king"),random
-MONSTER:('G',"gnome lord"),random
-MONSTER:('G',"gnome lord"),random
-MONSTER:('G',"gnome lord"),random
-MONSTER:('G',"gnomish wizard"),random
-MONSTER:('G',"gnomish wizard"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
-MONSTER:('G',"gnome"),random
+LOOP [1 + 1d3] {
+  MONSTER:('G',"gnome lord"),random
+}
+LOOP [1d4] {
+  MONSTER:('G',"gnomish wizard"),random
+}
+LOOP [5 + 3d4] {
+  MONSTER:('G',"gnome"),random
+}
 MONSTER:('h',"hobbit"),random
 MONSTER:('h',"hobbit"),random
 MONSTER:('h',"dwarf"),random
@@ -1389,41 +1317,30 @@ OBJECT:'*',random
 OBJECT:('*',"amethyst"),random
 OBJECT:('*',"luckstone"),$place[0]
 OBJECT:('*',"flint"),$place[1]
-OBJECT:'?',random
-OBJECT:'?',random
-OBJECT:'?',random
-OBJECT:'?',random
-OBJECT:'?',random
-OBJECT:'+',random
-OBJECT:'+',random
-OBJECT:'+',random
-OBJECT:'+',random
+LOOP [3d3] {
+  OBJECT:'?',random
+}
+LOOP [3d2] {
+  OBJECT:'+',random
+}
 OBJECT:random,random
 OBJECT:random,random
 OBJECT:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [2 + 3d3] {
+  TRAP:random,random
+}
 # One-time annoyance factor
 TRAP:"level teleport",$place[0]
 TRAP:"level teleport",$place[1]
-MONSTER:'M',random
-MONSTER:'M',random
-MONSTER:'M',random
-MONSTER:'M',random
-MONSTER:'M',random
+LOOP [2 + 3d3] {
+  MONSTER:'M',random
+}
 MONSTER:('M',"ettin mummy"),random
 MONSTER:'V',random
-MONSTER:'Z',random
-MONSTER:'Z',random
-MONSTER:'Z',random
-MONSTER:'Z',random
-MONSTER:'Z',random
 MONSTER:'V',random
+LOOP [3 + 3d3] {
+  MONSTER:'Z',random
+}
 MONSTER:'e',random
 MONSTER:'e',random
 MONSTER:'e',random
