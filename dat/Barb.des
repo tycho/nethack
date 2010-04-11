@@ -20,9 +20,9 @@ MAP
 ....................................PP......................................
 ........--------------......-----....PPP....................................
 ........|...S........|......+...|...PPP.....................................
-........|----........|......|...|....PP.....................................
-........|............+......-----...........................................
-........|----........|...............PP.....................................
+........|----........|......|...|...PPP.....................................
+........|............+......-----....PP.....................................
+........|----........|..............PPP.....................................
 ........|...S........|...-----.......PPP....................................
 ........--------------...+...|......PPPPP...................................
 .........................|...|.......PPP....................................
@@ -35,6 +35,15 @@ MAP
 ....................................PP...PP.................................
 ....................................PP....PP................................
 ENDMAP
+
+# the forest beyond the river
+REPLACE_TERRAIN:(37,0,75,19),'.','T', 10%
+REPLACE_TERRAIN:(60,0,75,19),'.','T', 20%
+REPLACE_TERRAIN:(65,0,75,19),'.','T', 40%
+REPLACE_TERRAIN:(70,0,75,19),'.','T', 80%
+RANDLINE:(37,7),(62,02),'.',7
+TERRAIN:(62,02),'.'
+
 # Dungeon Description
 REGION:(00,00,75,19),lit,"ordinary"
 REGION:(09,05,11,05),unlit,"ordinary"
@@ -62,8 +71,8 @@ DOOR:open,(28,05)
 # Elder
 OBJECT:('\',"throne"),(10,07)
 MONSTER:('@',"Pelias"),(10,07) {
-  OBJECT:(')',"runesword"),+5
-  OBJECT:'[',+5
+  OBJECT:(')',"runesword"),1d5
+  OBJECT:'[',1d5
 }
 # The treasure of Pelias
 OBJECT:('(',"chest"),(09,05)
@@ -101,7 +110,7 @@ MONSTER:('@',"chieftain"),(16,09) {
   OBJECT:'['
 }
 # Non diggable walls
-NON_DIGGABLE:(00,00,75,19)
+NON_DIGGABLE:(00,00,35,19)
 # One trap to keep the ogres at bay.
 TRAP:"spiked pit",(37,07)
 # Eels in the river
@@ -109,17 +118,14 @@ MONSTER:(';',"giant eel"),(36,01)
 MONSTER:(';',"giant eel"),(37,09)
 MONSTER:(';',"giant eel"),(39,15)
 # Monsters on siege duty.
-MONSTER:('O',"ogre"),(40,08),hostile
-MONSTER:('O',"ogre"),(41,06),hostile
-MONSTER:('O',"ogre"),(41,07),hostile
-MONSTER:('O',"ogre"),(41,08),hostile
-MONSTER:('O',"ogre"),(41,09),hostile
-MONSTER:('O',"ogre"),(41,10),hostile
-MONSTER:('O',"ogre"),(42,06),hostile
-MONSTER:('O',"ogre"),(42,07),hostile
-MONSTER:('O',"ogre"),(42,08),hostile
-MONSTER:('O',"ogre"),(42,09),hostile
-MONSTER:('O',"ogre"),(42,10),hostile
+REGION:(40,0,50,19),lit,"ordinary",unfilled {
+  LOOP [10 + 1d15] {
+    MONSTER:('O',"ogre"),random,hostile
+  }
+}
+
+# to cut down the trees
+OBJECT:"axe",random,eroded:1d3
 
 #
 #	The "locate" level for the quest.
@@ -209,26 +215,26 @@ MONSTER:('O',"ogre"),(45,05),hostile
 MONSTER:('O',"ogre"),(45,06),hostile
 MONSTER:('O',"ogre"),(47,05),hostile
 MONSTER:('O',"ogre"),(46,05),hostile
-MONSTER:('O',"ogre"),(56,03),hostile
-MONSTER:('O',"ogre"),(56,04),hostile
-MONSTER:('O',"ogre"),(56,05),hostile
-MONSTER:('O',"ogre"),(56,06),hostile
-MONSTER:('O',"ogre"),(57,03),hostile
-MONSTER:('O',"ogre"),(57,04),hostile
-MONSTER:('O',"ogre"),(57,05),hostile
-MONSTER:('O',"ogre"),(57,06),hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
+REGION:(56,03,57,04),unlit,"ordinary",unfilled,true {
+  LOOP [5 + 2d6] {
+    MONSTER:('O',"ogre"),random,hostile
+  }
+}
+
+LOOP [1d8 + 2] {
+  MONSTER:('O',"ogre"),random,hostile
+}
 MONSTER:'O',random,hostile
 MONSTER:'T',random,hostile
-MONSTER:('T',"rock troll"),(46,06),hostile
-MONSTER:('T',"rock troll"),(47,06),hostile
-MONSTER:('T',"rock troll"),(56,07),hostile
-MONSTER:('T',"rock troll"),(57,07),hostile
-MONSTER:('T',"rock troll"),(70,13),hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
+REGION:(46,06,47,07),unlit,"ordinary",unfilled,true {
+  LOOP [1d8 + 2] {
+    MONSTER:('T',"rock troll"),random,hostile
+  }
+}
+
+LOOP [2 + 1d6] {
+  MONSTER:('T',"rock troll"),random,hostile
+}
 MONSTER:'T',random,hostile
 
 #
@@ -278,61 +284,32 @@ ALTAR:(63,04),noncoaligned,altar
 NON_DIGGABLE:(00,00,75,19)
 # Objects
 OBJECT:('*',"luckstone"),(63,04),blessed,0,NAME:"The Heart of Ahriman"
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-OBJECT:random,random
-# Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+#
+LOOP [5 + 2d6] {
+  OBJECT: random, random
+}
+#
+LOOP [5 + 1d6] {
+  TRAP: random, random
+}
+#
 # Random monsters.
 MONSTER:('@',"Thoth Amon"),(63,04),hostile {
-  OBJECT:')',+2
+  OBJECT:')',1d2
   OBJECT:'['
   OBJECT:random
   OBJECT:random
   OBJECT:random
 }
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
-MONSTER:('O',"ogre"),random,hostile
+
+LOOP [15 + 2d6] {
+  MONSTER:('O',"ogre"),random,hostile
+}
 MONSTER:'O',random,hostile
 MONSTER:'O',random,hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
-MONSTER:('T',"rock troll"),random,hostile
+LOOP [7 + 1d6] {
+  MONSTER:('T',"rock troll"),random,hostile
+}
 MONSTER:'T',random,hostile
 WALLIFY
 
@@ -354,24 +331,21 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
+LOOP [5 + 2d6] {
+  OBJECT: random, random
+}
 #
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
+LOOP [2 + 1d6] {
+  TRAP: random, random
+}
 #
-MONSTER: ('O', "ogre"), random, hostile
-MONSTER: ('O', "ogre"), random, hostile
+LOOP [1d6] {
+  MONSTER: ('O', "ogre"), random, hostile
+}
 MONSTER: 'O', random, hostile
-MONSTER: ('T', "rock troll"), random, hostile
+LOOP [1d3] {
+  MONSTER: ('T', "rock troll"), random, hostile
+}
 
 LEVEL: "Bar-filb"
 FLAGS:mazelevel
@@ -382,32 +356,19 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
-OBJECT: random, random
+LOOP [5 + 2d6] {
+  OBJECT: random, random
+}
 #
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
+LOOP [2 + 1d6] {
+  TRAP: random, random
+}
 #
-MONSTER: ('O', "ogre"), random, hostile
-MONSTER: ('O', "ogre"), random, hostile
-MONSTER: ('O', "ogre"), random, hostile
-MONSTER: ('O', "ogre"), random, hostile
-MONSTER: ('O', "ogre"), random, hostile
-MONSTER: ('O', "ogre"), random, hostile
-MONSTER: ('O', "ogre"), random, hostile
+LOOP [5 + 1d6] {
+  MONSTER: ('O', "ogre"), random, hostile
+}
 MONSTER: 'O', random, hostile
-MONSTER: ('T', "rock troll"), random, hostile
-MONSTER: ('T', "rock troll"), random, hostile
-MONSTER: ('T', "rock troll"), random, hostile
+LOOP [2 + 1d3] {
+  MONSTER: ('T', "rock troll"), random, hostile
+}
 MONSTER: 'T', random, hostile
