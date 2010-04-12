@@ -146,23 +146,22 @@ static const struct { const char *txt; int nut; } tintxts[] = {
 	{"sauteed",      95},
 	{"broiled",      80},
 	{"smoked",       50},
-	/* everything below ROTTEN_TIN is special */
-#define ROTTEN_TIN 14	/* must be last */
+	/* only specials below; ROTTEN_TIN used as marker */
+#define ROTTEN_TIN 14
 	{"rotten",	-50},
 #define SPINACH_TIN 15
 	{"spinach",	  0},
 	{"", 0}
 };
-#define TTSZ	SIZE(tintxts)
 
 int
 tin_content_idx(obj)
      struct obj *obj;
 {
-    /* for tins, obj->spe == -1 means player made it, and spe==1 means spinach */
-    /* don't select "rotten" here */
+    /* for tins, spe==-1 means player made it, and spe==1 means spinach */
     if (obj->spe ==  1) return SPINACH_TIN;
     if (obj->spe == -1) return HOMEMADE_TIN;
+    /* don't select special stuff here */
     return (obj->o_id % ROTTEN_TIN);
 }
 
