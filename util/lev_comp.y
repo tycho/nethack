@@ -184,7 +184,7 @@ extern const char *fname;
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
 %token	<i> WALLWALK_ID COMPARE_TYPE
-%token	<i> rect_ID fillrect_ID line_ID randline_ID grow_ID
+%token	<i> rect_ID fillrect_ID line_ID randline_ID grow_ID selection_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
@@ -196,6 +196,7 @@ extern const char *fname;
 %token	<map> VARSTRING_MAPCHAR VARSTRING_MAPCHAR_ARRAY
 %token	<map> VARSTRING_MONST VARSTRING_MONST_ARRAY
 %token	<map> VARSTRING_OBJ VARSTRING_OBJ_ARRAY
+%token	<map> VARSTRING_SEL VARSTRING_SEL_ARRAY
 %token	<dice> DICE;
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
@@ -436,6 +437,7 @@ any_var_array	: VARSTRING_INT_ARRAY
 		| VARSTRING_MAPCHAR_ARRAY
 		| VARSTRING_MONST_ARRAY
 		| VARSTRING_OBJ_ARRAY
+		| VARSTRING_SEL_ARRAY
 		;
 
 any_var		: VARSTRING_INT
@@ -446,6 +448,7 @@ any_var		: VARSTRING_INT
 		| VARSTRING_MAPCHAR
 		| VARSTRING_MONST
 		| VARSTRING_OBJ
+		| VARSTRING_SEL
 		;
 
 any_var_or_arr	: any_var_array
@@ -468,6 +471,12 @@ shuffle_detail	: SHUFFLE_ID ':' any_var_array
 variable_define	: any_var_or_arr '=' math_expr
 		  {
 		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_INT);
+		      add_opvars(splev, "iso", 0, $1, SPO_VAR_INIT);
+		      Free($1);
+		  }
+		| any_var_or_arr '=' selection_ID ':' ter_selection
+		  {
+		      variable_definitions = add_vardef_type(variable_definitions, $1, SPOVAR_SEL);
 		      add_opvars(splev, "iso", 0, $1, SPO_VAR_INIT);
 		      Free($1);
 		  }
@@ -2163,53 +2172,51 @@ math_expr	: INTEGER                       { add_opvars(splev, "i", $1 ); }
 ter_selection_x	: coord_or_var
 		  {
 		      add_opvars(splev, "o", SPO_SEL_POINT);
-		      $$ = 1;
 		  }
 		| rect_ID region_or_var
 		  {
 		      add_opvars(splev, "o", SPO_SEL_RECT);
-		      $$ = 1;
 		  }
 		| fillrect_ID region_or_var
 		  {
 		      add_opvars(splev, "o", SPO_SEL_FILLRECT);
-		      $$ = 1;
 		  }
 		| line_ID coord_or_var '-' coord_or_var
 		  {
 		      add_opvars(splev, "o", SPO_SEL_LINE);
-		      $$ = 1;
 		  }
 		| randline_ID coord_or_var '-' coord_or_var ',' math_expr
 		  {
 		      /* randline (x1,y1),(x2,y2), roughness */
 		      add_opvars(splev, "o", SPO_SEL_RNDLINE);
-		      $$ = 1;
 		  }
 		| grow_ID '(' ter_selection ')'
 		  {
 		      add_opvars(splev, "io", W_ANY, SPO_SEL_GROW);
-		      $$ = 1 + $3;
 		  }
 		| grow_ID '(' dir_list ',' ter_selection ')'
 		  {
 		      add_opvars(splev, "io", $3, SPO_SEL_GROW);
-		      $$ = 1 + $5;
+		  }
+		| VARSTRING_SEL
+		  {
+		      check_vardef_type(variable_definitions, $1, SPOVAR_SEL);
+		      add_opvars(splev, "v", $1);
+		      Free($1);
 		  }
 		| '(' ter_selection ')'
 		  {
-		      $$ = $2;
+		      /* nothing */
 		  }
 		;
 
 ter_selection	: ter_selection_x
 		  {
-		      $$ = $1;
+		      /* nothing */
 		  }
 		| ter_selection_x '&' ter_selection
 		  {
 		      add_opvars(splev, "o", SPO_SEL_ADD);
-		      $$ = $1 + $3;
 		  }
 		;
 

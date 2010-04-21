@@ -3803,9 +3803,13 @@ selection_do_grow(ov, dir)
 	for (y = 0; y < ROWNO; y++) {
 	    c = 0;
 	    if ((dir & W_WEST) && (x > 0) && (selection_getpoint(x-1,y, ov))) c++;
+	    if ((dir & (W_WEST|W_NORTH)) && (x > 0) && (y > 0) && (selection_getpoint(x-1,y-1, ov))) c++;
 	    if ((dir & W_NORTH) && (y > 0) && (selection_getpoint(x,y-1, ov))) c++;
+	    if ((dir & (W_NORTH|W_EAST)) && (y > 0) && (x < COLNO-1) && (selection_getpoint(x+1,y-1, ov))) c++;
 	    if ((dir & W_EAST) && (x < COLNO-1) && (selection_getpoint(x+1,y, ov))) c++;
+	    if ((dir & (W_EAST|W_SOUTH)) && (x < COLNO-1) && (y < ROWNO-1) && (selection_getpoint(x+1,y+1, ov))) c++;
 	    if ((dir & W_SOUTH) && (y < ROWNO-1) && (selection_getpoint(x,y+1, ov))) c++;
+	    if ((dir & (W_SOUTH|W_WEST)) && (y < ROWNO-1) && (x > 0) && (selection_getpoint(x-1,y+1, ov))) c++;
 	    if (c) tmp[x][y] = 1;
 	}
 
