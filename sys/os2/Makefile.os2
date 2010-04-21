@@ -517,7 +517,9 @@ DATHELP = \
 
 SPEC_LEVS = \
  asmodeus.lev baalz.lev    bigrm-1.lev  hellfill.lev \
- bigrm-2.lev  bigrm-3.lev  bigrm-4.lev castle.lev   fakewiz1.lev fakewiz2.lev \
+ bigrm-2.lev  bigrm-3.lev  bigrm-4.lev  bigrm-5.lev  bigrm-6.lev  bigrm-7.lev \
+ bigrm-8.lev  bigrm-9.lev  bigrm-10.lev bigrm-11.lev \
+ castle.lev   fakewiz1.lev fakewiz2.lev \
  juiblex.lev  knox.lev     medusa-1.lev medusa-2.lev minend-1.lev minend-2.lev \
  minend-3.lev minefill.lev minetn-1.lev minetn-2.lev minetn-3.lev minetn-4.lev \
  minetn-5.lev minetn-6.lev minetn-7.lev oracle.lev   orcus.lev    sanctum.lev \
@@ -1108,7 +1110,7 @@ dlb_yup : dlb
 	-$(RM) $(GAMEDIR)\wizhelp
 	-$(RM) $(GAMEDIR)\asmodeus.lev
 	-$(RM) $(GAMEDIR)\baalz.lev
-	-$(RM) $(GAMEDIR)\bigrm-?.lev
+	-$(RM) $(GAMEDIR)\bigrm-*.lev
 	-$(RM) $(GAMEDIR)\castle.lev
 	-$(RM) $(GAMEDIR)\fakewiz?.lev
 	-$(RM) $(GAMEDIR)\juiblex.lev
@@ -1327,8 +1329,8 @@ $(GAMEDIR)\astral.lev : $(DAT)\endgame.des $(TEMP)\lev_comp.exe
 
 $(GAMEDIR)\bigrm-1.lev : $(DAT)\bigroom.des $(TEMP)\lev_comp.exe
 	$(TEMP)\lev_comp $(DAT)\bigroom.des
-	$(CP) bigrm-?.lev $(GAMEDIR)
-	$(RM) bigrm-?.lev
+	$(CP) bigrm-*.lev $(GAMEDIR)
+	$(RM) bigrm-*.lev
 
 $(GAMEDIR)\medusa-1.lev : $(DAT)\medusa.des $(TEMP)\lev_comp.exe
 	$(TEMP)\lev_comp $(DAT)\medusa.des
