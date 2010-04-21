@@ -533,3 +533,109 @@ LOOP [6] {
 LOOP [28] {
   MONSTER:random,random
 }
+
+# The Eye
+
+LEVEL:"bigrm-10"
+INIT_MAP:solidfill,'}'
+GEOMETRY:center,center
+MAP
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}................}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}................................}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}............................................}}}}}}}}}}}}}}}
+}}}}}}}}}}......................................................}}}}}}}}}}
+}}}}}}}............................................................}}}}}}}
+}}}}}.......................LLLLLLLLLLLLLLLLLL.......................}}}}}
+}}}....................LLLLLLLLLLLLLLLLLLLLLLLLLLL.....................}}}
+}....................LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL....................}
+}....................LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL....................}
+}....................LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL....................}
+}}}....................LLLLLLLLLLLLLLLLLLLLLLLLLLL.....................}}}
+}}}}}.......................LLLLLLLLLLLLLLLLLL.......................}}}}}
+}}}}}}}............................................................}}}}}}}
+}}}}}}}}}}......................................................}}}}}}}}}}
+}}}}}}}}}}}}}}}............................................}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}................................}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}................}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+ENDMAP
+
+IF [33%] {
+    REPLACE_TERRAIN:(0,0,73,18), 'L', 'T', 100%
+    REPLACE_TERRAIN:(0,0,73,18), 'T', '.', 75%
+}
+
+# Unlit, except 3 mapgrids around the "pupil"
+REGION:(00,00,73,18),unlit,"ordinary"
+REGION:(26,04,47,14),lit,"ordinary"
+REGION:(21,05,51,13),lit,"ordinary"
+REGION:(19,06,54,12),lit,"ordinary"
+# Stairs
+STAIR:random,up
+STAIR:random,down
+
+LOOP [15] {
+  OBJECT:random,random
+}
+LOOP [6] {
+  TRAP:random,random
+}
+LOOP [28] {
+  MONSTER:random,random
+}
+
+
+# Fog Maze
+
+LEVEL:"bigrm-11"
+GEOMETRY:center,center
+MAP
+.......................................................................
+.......................................................................
+.......................................................................
+.......................................................................
+...C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C...
+...CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC...
+...C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C...
+...CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC...
+...C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C...
+...CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC...
+...C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C...
+...CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC...
+...C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C...
+...CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC...
+...C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C C...
+.......................................................................
+.......................................................................
+.......................................................................
+.......................................................................
+ENDMAP
+
+IF [33%] {
+   # occasionally it's not a fog maze
+   $terrain = TERRAIN:{ 'L', '}', 'T', '-', 'F' }
+   SHUFFLE:$terrain
+   REPLACE_TERRAIN:(0,0,70,18),'C', $terrain[0], 100%
+}
+
+REGION:(00,00,70,18),lit,"ordinary"
+
+# when falling down on this level, never end up in the fog maze
+TELEPORT_REGION:(00,00,70,18),(02,03,68,15),down
+
+# Stairs up, not in the fog maze
+STAIR:(00,00,70,18),(02,03,68,15),up
+STAIR:random,down
+
+LOOP [15] {
+  OBJECT:random,random
+}
+LOOP [6] {
+  TRAP:random,random
+}
+LOOP [28] {
+  MONSTER:random,random
+}
+
+MAZEWALK:(4, 2), south
