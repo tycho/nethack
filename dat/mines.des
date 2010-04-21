@@ -644,33 +644,33 @@ ENDMAP
 
 IF [75%] {
    IF [50%] {
-      TERRAIN:(25,8),vertical,2, '|'
+      TERRAIN:line (25,8)-(25,9), '|'
    } ELSE {
-      TERRAIN:(16,13),horizontal,2, '-'
+      TERRAIN:line (16,13)-(17,13), '-'
    }
 }
 
 IF [75%] {
    IF [50%] {
-      TERRAIN:(36,10),vertical,2, '|'
+      TERRAIN:line (36,10)-(36,11), '|'
    } ELSE {
-      TERRAIN:(32,15),horizontal,2, '-'
+      TERRAIN:line (32,15)-(33,15), '-'
    }
 }
 
 IF [50%] {
-   TERRAIN:rect(21,4,22,5),filled, '.'
-   TERRAIN:(14,9),vertical,2, '|'
+   TERRAIN:fillrect (21,4,22,5), '.'
+   TERRAIN:line (14,9)-(14,10), '|'
 }
 
 IF [50%] {
    TERRAIN:(46,13), '|'
-   TERRAIN:(43,5), horizontal, 5, '-'
-   TERRAIN:(42,6), horizontal, 6, '.'
+   TERRAIN:line (43,5)-(47,5), '-'
+   TERRAIN:line (42,6)-(46,6), '.'
    TERRAIN:(47,7), '.'
 }
 
-TERRAIN[50%]:rect(69,11,71,11), filled, '-'
+TERRAIN[50%]:fillrect (69,11,71,11), '-'
 
 STAIR:(01,01),up
 STAIR:(46,03),down
@@ -1154,7 +1154,7 @@ IF [50%] {
 
 IF [50%] {
    TERRAIN:(18,1), '|'
-   TERRAIN:rect(7,12, 8,13), unfilled, '.'
+   TERRAIN:rect (7,12, 8,13), '.'
 }
 
 IF [50%] {

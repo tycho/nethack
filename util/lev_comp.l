@@ -156,7 +156,6 @@ SUBROOM		return SUBROOM_ID;
 RANDOM_CORRIDORS	return RAND_CORRIDOR_ID;
 CORRIDOR	return CORRIDOR_ID;
 SPILL	  return SPILL_ID;
-RANDLINE	return RANDLINE_ID;
 TERRAIN		return TERRAIN_ID;
 REPLACE_TERRAIN	return REPLACE_TERRAIN_ID;
 MON_GENERATION	return MON_GENERATION_ID;
@@ -176,6 +175,10 @@ SOUNDS		return SOUNDS_ID;
 SHUFFLE		return SHUFFLE_ID;
 montype		return MONTYPE_ID;
 rect		return rect_ID;
+fillrect	return fillrect_ID;
+line		return line_ID;
+randline	return randline_ID;
+grow		return grow_ID;
 hear		{ yylval.i=LVLSND_HEARD;  return MSG_OUTPUT_TYPE; }
 pline		{ yylval.i=LVLSND_PLINED; return MSG_OUTPUT_TYPE; }
 verbal		{ yylval.i=LVLSND_VERBAL; return MSG_OUTPUT_TYPE; }
