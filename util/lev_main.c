@@ -1198,7 +1198,6 @@ sp_lev *maze;
 	    "replaceterrain",
 	    "exit",
 	    "endroom",
-	    "randline",
 	    "pop_container",
 	    "push",
 	    "pop",
@@ -1224,7 +1223,14 @@ sp_lev *maze;
 	    "wallwalk",
 	    "var_init",
 	    "shuffle_array",
-	    "dice"
+	    "dice",
+	    "selection_add",
+	    "selection_point",
+	    "selection_rect",
+	    "selection_fillrect",
+	    "selection_line",
+	    "selection_rndline",
+	    "selection_grow",
 	};
 
 	/* don't bother with the header stuff */

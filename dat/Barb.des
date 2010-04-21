@@ -41,7 +41,7 @@ REPLACE_TERRAIN:(37,0,75,19),'.','T', 10%
 REPLACE_TERRAIN:(60,0,75,19),'.','T', 20%
 REPLACE_TERRAIN:(65,0,75,19),'.','T', 40%
 REPLACE_TERRAIN:(70,0,75,19),'.','T', 80%
-RANDLINE:(37,7),(62,02),'.',7
+TERRAIN: (randline (37,7)-(62,02),7), '.'
 TERRAIN:(62,02),'.'
 
 # Dungeon Description
