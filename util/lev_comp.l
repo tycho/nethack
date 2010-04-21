@@ -174,6 +174,7 @@ INCLUDE		return INCLUDE_ID;
 SOUNDS		return SOUNDS_ID;
 SHUFFLE		return SHUFFLE_ID;
 montype		return MONTYPE_ID;
+selection	return selection_ID;
 rect		return rect_ID;
 fillrect	return fillrect_ID;
 line		return line_ID;
@@ -400,6 +401,7 @@ handle_varstring_check()
      if (l == SPOVAR_MAPCHAR) return (a ? VARSTRING_MAPCHAR_ARRAY : VARSTRING_MAPCHAR);
      if (l == SPOVAR_MONST) return (a ? VARSTRING_MONST_ARRAY : VARSTRING_MONST);
      if (l == SPOVAR_OBJ) return (a ? VARSTRING_OBJ_ARRAY : VARSTRING_OBJ);
+     if (l == SPOVAR_SEL) return (a ? VARSTRING_SEL_ARRAY : VARSTRING_SEL);
   }
   return VARSTRING;
 }
