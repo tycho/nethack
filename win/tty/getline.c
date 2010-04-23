@@ -52,16 +52,16 @@ getlin_hook_proc hook;
 	struct WinDesc *cw = wins[WIN_MESSAGE];
 	boolean doprev = 0;
 
+	bufp = eos(obufp);
+
 	if(ttyDisplay->toplin == 1 && !(cw->flags & WIN_STOP)) more();
 	cw->flags &= ~WIN_STOP;
 	ttyDisplay->toplin = 3; /* special prompt state */
 	ttyDisplay->inread++;
-	pline("%s ", query);
-	*obufp = 0;
+	pline("%s %s", query, obufp);
 	for(;;) {
 		(void) fflush(stdout);
-		Sprintf(toplines, "%s ", query);
-		Strcat(toplines, obufp);
+		Sprintf(toplines, "%s %s", query, obufp);
 		if((c = Getchar()) == EOF) {
 #ifndef NEWAUTOCOMP
 			*bufp = 0;
@@ -87,7 +87,6 @@ getlin_hook_proc hook;
 			cw->maxcol = cw->maxrow;
 			addtopl(query);
 			addtopl(" ");
-			*bufp = 0;
 			addtopl(obufp);
 		    } else {
 			if (!doprev)
@@ -102,7 +101,6 @@ getlin_hook_proc hook;
 		    doprev = 0;
 		    addtopl(query);
 		    addtopl(" ");
-		    *bufp = 0;
 		    addtopl(obufp);
 		}
 		if(c == erase_char || c == '\b') {
@@ -244,7 +242,7 @@ int
 tty_get_ext_cmd()
 {
 	int i;
-	char buf[BUFSZ];
+	char buf[BUFSZ] = "";
 
 	if (iflags.extmenu) return extcmd_via_menu();
 	/* maybe a runtime option? */

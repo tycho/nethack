@@ -693,7 +693,7 @@ wiz_mon_polycontrol()
 STATIC_PTR int
 wiz_level_change()
 {
-    char buf[BUFSZ];
+    char buf[BUFSZ] = "";
     int newlevel;
     int ret;
 
@@ -2368,7 +2368,7 @@ static int
 wiz_migrate_mons()
 {
 	int mcount = 0;
-	char inbuf[BUFSZ];
+	char inbuf[BUFSZ] = "";
 	struct permonst *ptr;
 	struct monst *mtmp;
 	d_level tolevel;

@@ -2495,9 +2495,10 @@ struct monst *mon;
 #ifdef WIZARD
 	/* For debugging only: allow control of polymorphed monster; not saved */
 	if (wizard && iflags.mon_polycontrol) {
-		char pprompt[BUFSZ], buf[BUFSZ];
+		char pprompt[BUFSZ], buf[BUFSZ] = "";
 		int tries = 0;
 		do {
+		    if (buf[0] == '\033') buf[0] = '\0';
 			Sprintf(pprompt,
 				"Change %s into what kind of monster? [type the name]",
 				mon_nam(mon));

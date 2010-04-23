@@ -1239,7 +1239,7 @@ unsigned *resultflags;
 #endif
 	char sym, *ip, olets[MAXOCLASSES+5], ilets[MAXOCLASSES+5];
 	char extra_removeables[4+1];	/* uwep,uswapwep,uquiver,ulauncher */
-	char buf[BUFSZ], qbuf[QBUFSZ];
+	char buf[BUFSZ] = "", qbuf[QBUFSZ];
 
 	if (resultflags) *resultflags = 0;
 #ifndef GOLDOBJ

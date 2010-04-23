@@ -144,7 +144,7 @@ invault()
 
     guard = findgd();
     if(++u.uinvault % 30 == 0 && !guard) { /* if time ok and no guard now. */
-	char buf[BUFSZ];
+	char buf[BUFSZ] = "";
 	register int x, y, dd, gx, gy;
 	int lx = 0, ly = 0;
 #ifdef GOLDOBJ

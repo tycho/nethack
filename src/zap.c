@@ -4195,7 +4195,7 @@ int damage, tell;
 void
 makewish()
 {
-	char buf[BUFSZ];
+	static char buf[BUFSZ] = "";
 	struct obj *otmp, nothing;
 	int tries = 0;
 

@@ -1606,7 +1606,7 @@ do_class_genocide()
 {
 	int i, j, immunecnt, gonecnt, goodcnt, class, feel_dead = 0;
 	int killed, candidates;
-	char buf[BUFSZ];
+	char buf[BUFSZ] = "";
 	boolean gameover = FALSE;	/* true iff killed self */
 
 	for(j=0; ; j++) {
@@ -1615,6 +1615,7 @@ do_class_genocide()
 			return;
 		}
 		do {
+		    if (buf[0]=='\033') buf[0] = 0;
 		    getlin("What class of monsters do you wish to genocide?",
 			buf);
 		    (void)mungspaces(buf);
@@ -1772,7 +1773,7 @@ int how;
 /* 3 = forced genocide of player */
 /* 5 (4 | 1) = normal genocide from throne */
 {
-	char buf[BUFSZ];
+	char buf[BUFSZ] = "";
 	register int	i, killplayer = 0;
 	register int mndx;
 	register struct permonst *ptr;
@@ -1995,7 +1996,7 @@ boolean revival;
 boolean
 create_particular()
 {
-	char buf[BUFSZ], *bufp, monclass = MAXMCLASSES;
+	char buf[BUFSZ] = "", *bufp, monclass = MAXMCLASSES;
 	int which, tries, i;
 	struct permonst *whichpm;
 	struct monst *mtmp;
