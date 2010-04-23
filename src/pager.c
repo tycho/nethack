@@ -462,7 +462,7 @@ STATIC_OVL int
 do_look(quick)
     boolean quick;	/* use cursor && don't search for "more info" */
 {
-    char    out_str[BUFSZ], look_buf[BUFSZ];
+    char    out_str[BUFSZ] = "", look_buf[BUFSZ];
     const char *x_str, *firstmatch = 0;
     struct permonst *pm = 0;
     int     i, ans = 0;

@@ -465,7 +465,8 @@ doengrave()
 	boolean zapwand = FALSE;/* TRUE if we remove a wand charge */
 	xchar type = DUST;	/* Type of engraving made */
 	char buf[BUFSZ];	/* Buffer for final/poly engraving text */
-	char ebuf[BUFSZ];	/* Buffer for initial engraving text */
+	static char oebuf[BUFSZ] = "";
+	char ebuf[BUFSZ] = "";	/* Buffer for initial engraving text */
 	char qbuf[QBUFSZ];	/* Buffer for query text */
 	char post_engr_text[BUFSZ]; /* Text displayed after engraving prompt */
 	const char *everb;	/* Present tense of engraving type */
@@ -482,7 +483,6 @@ doengrave()
 	nomovemsg = (char *)0;	/* occupation end message */
 
 	buf[0] = (char)0;
-	ebuf[0] = (char)0;
 	post_engr_text[0] = (char)0;
 	maxelen = BUFSZ - 1;
 	if (is_demon(youmonst.data) || youmonst.data->mlet == S_VAMPIRE)
@@ -992,7 +992,9 @@ doengrave()
 
 	/* Prompt for engraving! */
 	Sprintf(qbuf,"What do you want to %s the %s here?", everb, eloc);
-	getlin(qbuf, ebuf);
+	getlin(qbuf, oebuf);
+
+	(void) strncpy(ebuf, oebuf, BUFSZ);
 
 	/* Count the actual # of chars engraved not including spaces */
 	len = strlen(ebuf);

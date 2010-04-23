@@ -2004,7 +2004,7 @@ goodfruit:
 	/* types of objects to pick up automatically */
 	if (match_optname(opts, "pickup_types", 8, TRUE)) {
 		char ocl[MAXOCLASSES + 1], tbuf[MAXOCLASSES + 1],
-		     qbuf[QBUFSZ], abuf[BUFSZ];
+		     qbuf[QBUFSZ], abuf[BUFSZ] = "";
 		int oc_sym;
 		boolean badopt = FALSE, compat = (strlen(opts) <= 6), use_menu;
 
@@ -2762,7 +2762,7 @@ doset_add_menu(win, option, indexoffset)
 int
 doset()
 {
-	char buf[BUFSZ], buf2[BUFSZ];
+	char buf[BUFSZ], buf2[BUFSZ] = "";
 	int i, pass, boolcount, pick_cnt, pick_idx, opt_indx;
 	boolean *bool_p;
 	winid tmpwin;
@@ -2899,6 +2899,7 @@ doset()
 		    if (!special_handling(compopt[opt_indx].name,
 							setinitial, fromfile)) {
 			Sprintf(buf, "Set %s to what?", compopt[opt_indx].name);
+			if (buf2[0] == '\033') buf2[0] = '\0';
 			getlin(buf, buf2);
 			if (buf2[0] == '\033')
 			    continue;
@@ -3217,7 +3218,7 @@ boolean setinitial,setfromfile;
 	int totalapes = 0, numapes[2] = {0,0};
 	menu_item *pick_list = (menu_item *)0;
 	anything any;
-	char apebuf[BUFSZ];
+	char apebuf[BUFSZ] = "";
 	struct autopickup_exception *ape;
 	static const char *action_titles[] = {
 		"a", "add new autopickup exception",

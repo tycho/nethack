@@ -553,7 +553,7 @@ struct obj *otmp;
 {
 #  ifdef SHELL	/* can't access mail reader without spawning subprocess */
     const char *txt, *cmd;
-    char *p, buf[BUFSZ], qbuf[BUFSZ];
+    char *p, buf[BUFSZ] = "", qbuf[BUFSZ];
     int len;
 
     /* there should be a command hidden beyond the object name */

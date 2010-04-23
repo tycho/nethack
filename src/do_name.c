@@ -224,7 +224,7 @@ const char *name;
 int
 do_mname()
 {
-	char buf[BUFSZ];
+	char buf[BUFSZ] = "";
 	coord cc;
 	register int cx,cy;
 	register struct monst *mtmp;
@@ -292,7 +292,7 @@ void
 do_oname(obj)
 register struct obj *obj;
 {
-	char buf[BUFSZ], qbuf[QBUFSZ];
+	char buf[BUFSZ] = "", qbuf[QBUFSZ];
 	const char *aname;
 	short objtyp;
 
@@ -486,7 +486,7 @@ void
 docall(obj)
 register struct obj *obj;
 {
-	char buf[BUFSZ], qbuf[QBUFSZ];
+	char buf[BUFSZ] = "", qbuf[QBUFSZ];
 	struct obj otemp;
 	register char **str1;
 

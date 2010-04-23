@@ -220,7 +220,7 @@ void
 polyself(forcecontrol)
 boolean forcecontrol;     
 {
-	char buf[BUFSZ];
+	static char buf[BUFSZ] = "";
 	int old_light, new_light;
 	int mntmp = NON_PM;
 	int tries=0;
@@ -243,6 +243,7 @@ boolean forcecontrol;
 
 	if (Polymorph_control || forcecontrol) {
 		do {
+		    if (buf[0] == '\033') buf[0] = 0;
 			getlin("Become what kind of monster? [type the name]",
 				buf);
 			mntmp = name_to_mon(buf);

@@ -229,7 +229,7 @@ long
 bribe(mtmp)
 struct monst *mtmp;
 {
-	char buf[BUFSZ];
+	char buf[BUFSZ] = "";
 	long offer;
 #ifdef GOLDOBJ
 	long umoney = money_cnt(invent);

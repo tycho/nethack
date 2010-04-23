@@ -160,7 +160,7 @@ boolean here;
 int *menu_on_demand;
 #endif
 {
-	char ilets[20], inbuf[BUFSZ];
+	char ilets[20], inbuf[BUFSZ] = "";
 	int iletct, oclassct;
 	boolean not_everything;
 	char qbuf[QBUFSZ];
