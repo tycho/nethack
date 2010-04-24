@@ -125,6 +125,8 @@ enum opcode_defs {
     SPO_SEL_LINE,
     SPO_SEL_RNDLINE,
     SPO_SEL_GROW,
+    SPO_SEL_FLOOD,
+    SPO_SEL_RNDCOORD,
 
     MAX_SP_OPCODES
 };

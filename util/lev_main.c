@@ -1231,6 +1231,8 @@ sp_lev *maze;
 	    "selection_line",
 	    "selection_rndline",
 	    "selection_grow",
+	    "selection_flood",
+	    "selection_rndcoord",
 	};
 
 	/* don't bother with the header stuff */

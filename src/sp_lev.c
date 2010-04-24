@@ -225,6 +225,17 @@ opvar_new_int(i)
     return tmpov;
 }
 
+struct opvar *
+opvar_new_coord(x,y)
+     int x,y;
+{
+    struct opvar *tmpov = (struct opvar *)alloc(sizeof(struct opvar));
+    if (!tmpov) panic("could not alloc opvar struct");
+    tmpov->spovartyp = SPOVAR_COORD;
+    tmpov->vardata.l = SP_COORD_PACK(x,y);
+    return tmpov;
+}
+
 void
 opvar_free_x(ov)
      struct opvar *ov;
@@ -3785,6 +3796,36 @@ selection_merge(s1, s2)
     return ov;
 }
 
+int
+selection_rndcoord(ov, x,y)
+    struct opvar *ov;
+    schar *x, *y;
+{
+    struct opvar *coord;
+    int idx = 0;
+    int c;
+    int dx,dy;
+
+    for (dx = 0; dx < COLNO; dx++)
+	for (dy = 0; dy < ROWNO; dy++)
+	    if (isok(dx,dy) && selection_getpoint(dx,dy,ov)) idx++;
+
+    if (idx) {
+	c = rn2(idx);
+	for (dx = 0; dx < COLNO; dx++)
+	    for (dy = 0; dy < ROWNO; dy++)
+		if (isok(dx,dy) && selection_getpoint(dx,dy, ov)) {
+		    if (!c) {
+			*x = dx;
+			*y = dy;
+			return 1;
+		    }
+		    c--;
+		}
+    }
+    *x = *y = -1;
+    return 0;
+}
 
 void
 selection_do_grow(ov, dir)
@@ -3816,6 +3857,37 @@ selection_do_grow(ov, dir)
     for (x = 0; x < COLNO; x++)
 	for (y = 0; y < ROWNO; y++)
 	    if (tmp[x][y]) selection_setpoint(x,y,ov,1);
+}
+
+void
+selection_floodfill(ov, x,y)
+     struct opvar *ov;
+     int x,y;
+{
+    struct opvar *tmp = selection_opvar(NULL);
+#define SEL_FLOOD_STACK (COLNO*ROWNO)
+#define SEL_FLOOD(nx,ny) {if (idx<SEL_FLOOD_STACK) { dx[idx]=(nx); dy[idx]=(ny); idx++; } else panic("floodfill stack overrun");}
+    int idx = 0;
+    xchar dx[SEL_FLOOD_STACK];
+    xchar dy[SEL_FLOOD_STACK];
+    schar under = levl[x][y].typ;
+    SEL_FLOOD(x,y);
+    do {
+	idx--;
+	x = dx[idx];
+	y = dy[idx];
+	if (isok(x,y)) {
+	    selection_setpoint(x,y, ov, 1);
+	    selection_setpoint(x,y, tmp, 1);
+	}
+	if (isok(x+1,y) && (levl[x+1][y].typ == under) && !selection_getpoint(x+1,y,tmp)) SEL_FLOOD(x+1, y);
+	if (isok(x-1,y) && (levl[x-1][y].typ == under) && !selection_getpoint(x-1,y,tmp)) SEL_FLOOD(x-1, y);
+	if (isok(x,y+1) && (levl[x][y+1].typ == under) && !selection_getpoint(x,y+1,tmp)) SEL_FLOOD(x, y+1);
+	if (isok(x,y-1) && (levl[x][y-1].typ == under) && !selection_getpoint(x,y-1,tmp)) SEL_FLOOD(x, y-1);
+    } while (idx > 0);
+#undef SEL_FLOOD
+#undef SEL_FLOOD_STACK
+    opvar_free(tmp);
 }
 
 void
@@ -5071,6 +5143,36 @@ sp_lev *lvl;
 		selection_do_grow(pt, OV_i(dirs));
 		splev_stack_push(coder->stack, pt);
 		opvar_free(dirs);
+	    }
+	    break;
+	case SPO_SEL_FLOOD:
+	    {
+		struct opvar *tmp;
+		schar x,y;
+		if (!OV_pop_c(tmp)) panic("no ter sel flood coord");
+		x = SP_COORD_X(OV_i(tmp));
+		y = SP_COORD_Y(OV_i(tmp));
+		get_location(&x, &y, DRY|WET, coder->croom);
+		if (isok(x,y)) {
+		    struct opvar *pt = selection_opvar(NULL);
+		    selection_floodfill(pt, x,y);
+		    splev_stack_push(coder->stack, pt);
+		}
+		opvar_free(tmp);
+	    }
+	    break;
+	case SPO_SEL_RNDCOORD:
+	    {
+		struct opvar *pt;
+		schar x,y;
+		if (!OV_pop_typ(pt, SPOVAR_SEL)) panic("no selection for rndcoord");
+		if (selection_rndcoord(pt, &x, &y)) {
+		    x -= xstart;
+		    y -= ystart;
+		}
+		/*get_location(&x, &y, DRY|WET, coder->croom);*/
+		splev_stack_push(coder->stack, opvar_new_coord(x,y));
+		opvar_free(pt);
 	    }
 	    break;
 	default:
