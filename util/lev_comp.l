@@ -180,6 +180,8 @@ fillrect	return fillrect_ID;
 line		return line_ID;
 randline	return randline_ID;
 grow		return grow_ID;
+floodfill	return flood_ID;
+rndcoord	return rndcoord_ID;
 hear		{ yylval.i=LVLSND_HEARD;  return MSG_OUTPUT_TYPE; }
 pline		{ yylval.i=LVLSND_PLINED; return MSG_OUTPUT_TYPE; }
 verbal		{ yylval.i=LVLSND_VERBAL; return MSG_OUTPUT_TYPE; }
