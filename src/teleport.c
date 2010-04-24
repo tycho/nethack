@@ -580,7 +580,7 @@ level_tele()
 	register int newlev;
 	d_level newlevel;
 	const char *escape_by_flying = 0;	/* when surviving dest of -N */
-	char buf[BUFSZ];
+	char buf[BUFSZ] = "";
 	boolean force_dest = FALSE;
 
 	if ((u.uhave.amulet || In_endgame(&u.uz) || In_sokoban(&u.uz))
@@ -596,7 +596,7 @@ level_tele()
 	   || wizard
 #endif
 		) {
-	    char qbuf[BUFSZ] = "";
+	    char qbuf[BUFSZ];
 	    int trycnt = 0;
 
 	    Strcpy(qbuf, "To what level do you want to teleport?");
