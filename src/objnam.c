@@ -558,11 +558,19 @@ char *prefix;
 	 * rotted food and diluted potions, which are all not is_damageable().
 	 */
 	if (obj->oeroded && !iscrys) {
+	    if (!is_rustprone(obj) && is_meltable(obj)) {
+		switch (obj->oeroded) {
+		case 1: Strcat(prefix, "partly "); break;
+		case 3:	Strcat(prefix, "thoroughly "); break;
+		}
+		Strcat(prefix, "melted ");
+	    } else {
 		switch (obj->oeroded) {
 			case 2:	Strcat(prefix, "very "); break;
 			case 3:	Strcat(prefix, "thoroughly "); break;
 		}			
 		Strcat(prefix, is_rustprone(obj) ? "rusty " : "burnt ");
+	    }
 	}
 	if (obj->oeroded2 && !iscrys) {
 		switch (obj->oeroded2) {
@@ -1947,6 +1955,7 @@ boolean from_user;
 			very = 2;
 		} else if (!strncmpi(bp, "rusty ", l=6) ||
 			   !strncmpi(bp, "rusted ", l=7) ||
+			   !strncmpi(bp, "melted ", l=7) ||
 			   !strncmpi(bp, "burnt ", l=6) ||
 			   !strncmpi(bp, "burned ", l=7)) {
 			eroded = 1 + very;
