@@ -182,6 +182,8 @@ randline	return randline_ID;
 grow		return grow_ID;
 floodfill	return flood_ID;
 rndcoord	return rndcoord_ID;
+circle		return circle_ID;
+ellipse		return ellipse_ID;
 hear		{ yylval.i=LVLSND_HEARD;  return MSG_OUTPUT_TYPE; }
 pline		{ yylval.i=LVLSND_PLINED; return MSG_OUTPUT_TYPE; }
 verbal		{ yylval.i=LVLSND_VERBAL; return MSG_OUTPUT_TYPE; }

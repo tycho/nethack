@@ -3890,6 +3890,71 @@ selection_floodfill(ov, x,y)
     opvar_free(tmp);
 }
 
+/* McIlroy's Ellipse Algorithm */
+void
+selection_do_ellipse(ov, xc,yc, a,b, filled)
+    struct opvar *ov;
+    int xc,yc,a,b,filled;
+{                       /* e(x,y) = b^2*x^2 + a^2*y^2 - a^2*b^2 */
+    int x = 0, y = b;
+    long a2 = (long)a*a, b2 = (long)b*b;
+    long crit1 = -(a2/4 + a%2 + b2);
+    long crit2 = -(b2/4 + b%2 + a2);
+    long crit3 = -(b2/4 + b%2);
+    long t = -a2*y; /* e(x+1/2,y-1/2) - (a^2+b^2)/4 */
+    long dxt = 2*b2*x, dyt = -2*a2*y;
+    long d2xt = 2*b2, d2yt = 2*a2;
+    long width = 1;
+    long i;
+
+    if (!ov) return;
+
+    filled = !filled;
+
+    if (!filled) {
+	while (y>=0 && x<=a) {
+	    selection_setpoint(xc+x, yc+y, ov, 1);
+	    if (x!=0 || y!=0)
+		selection_setpoint(xc-x, yc-y, ov, 1);
+	    if (x!=0 && y!=0) {
+		selection_setpoint(xc+x, yc-y, ov, 1);
+		selection_setpoint(xc-x, yc+y, ov, 1);
+	    }
+	    if (t + b2*x <= crit1 ||   /* e(x+1,y-1/2) <= 0 */
+		t + a2*y <= crit3) {     /* e(x+1/2,y) <= 0 */
+		x++; dxt += d2xt; t += dxt;
+	    } else if (t - a2*y > crit2) { /* e(x+1/2,y-1) > 0 */
+		y--; dyt += d2yt; t += dyt;
+	    } else {
+		x++; dxt += d2xt; t += dxt;
+		y--; dyt += d2yt; t += dyt;
+	    }
+	}
+    } else {
+	while (y>=0 && x<=a) {
+	    if (t + b2*x <= crit1 ||   /* e(x+1,y-1/2) <= 0 */
+		t + a2*y <= crit3) {     /* e(x+1/2,y) <= 0 */
+		x++; dxt += d2xt; t += dxt;
+		width += 2;
+	    } else if (t - a2*y > crit2) { /* e(x+1/2,y-1) > 0 */
+		for (i = 0; i < width; i++) selection_setpoint(xc-x+i, yc-y, ov, 1);
+		if (y!=0)
+		    for (i = 0; i < width; i++) selection_setpoint(xc-x+i, yc+y, ov, 1);
+		y--; dyt += d2yt; t += dyt;
+	    } else {
+		for (i = 0; i < width; i++) selection_setpoint(xc-x+i, yc-y, ov, 1);
+		if (y!=0)
+		    for (i = 0; i < width; i++) selection_setpoint(xc-x+i, yc+y, ov, 1);
+		x++; dxt += d2xt; t += dxt;
+		y--; dyt += d2yt; t += dyt;
+		width += 2;
+	    }
+	}
+    }
+}
+
+
+
 void
 selection_do_line(x1,y1,x2,y2, ov) /* bresenham line algo */
      schar x1,y1,x2,y2;
@@ -5172,6 +5237,28 @@ sp_lev *lvl;
 		}
 		/*get_location(&x, &y, DRY|WET, coder->croom);*/
 		splev_stack_push(coder->stack, opvar_new_coord(x,y));
+		opvar_free(pt);
+	    }
+	    break;
+	case SPO_SEL_ELLIPSE:
+	    {
+		struct opvar *filled, *xaxis, *yaxis, *pt;
+		schar x,y;
+		if (!OV_pop_i(filled)) panic("no filled for ellipse");
+		if (!OV_pop_i(yaxis)) panic("no yaxis for ellipse");
+		if (!OV_pop_i(xaxis)) panic("no xaxis for ellipse");
+		if (!OV_pop_c(pt)) panic("no pt for ellipse");
+		x = SP_COORD_X(OV_i(pt));
+		y = SP_COORD_Y(OV_i(pt));
+		get_location(&x, &y, DRY|WET, coder->croom);
+		if (isok(x,y)) {
+		    struct opvar *sel = selection_opvar(NULL);
+		    selection_do_ellipse(sel, x,y, OV_i(xaxis), OV_i(yaxis), OV_i(filled));
+		    splev_stack_push(coder->stack, sel);
+		}
+		opvar_free(filled);
+		opvar_free(yaxis);
+		opvar_free(xaxis);
 		opvar_free(pt);
 	    }
 	    break;
