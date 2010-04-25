@@ -1234,6 +1234,7 @@ sp_lev *maze;
 	    "selection_flood",
 	    "selection_rndcoord",
 	    "selection_ellipse",
+	    "selection_filter",
 	};
 
 	/* don't bother with the header stuff */
