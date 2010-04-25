@@ -185,7 +185,7 @@ extern const char *fname;
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
 %token	<i> WALLWALK_ID COMPARE_TYPE
 %token	<i> rect_ID fillrect_ID line_ID randline_ID grow_ID selection_ID flood_ID
-%token	<i> rndcoord_ID circle_ID ellipse_ID
+%token	<i> rndcoord_ID circle_ID ellipse_ID filter_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
@@ -2202,6 +2202,14 @@ ter_selection_x	: coord_or_var
 		| grow_ID '(' dir_list ',' ter_selection ')'
 		  {
 		      add_opvars(splev, "io", $3, SPO_SEL_GROW);
+		  }
+		| filter_ID '(' SPERCENT ',' ter_selection ')'
+		  {
+		      add_opvars(splev, "iio", $3, 0, SPO_SEL_FILTER);
+		  }
+		| filter_ID '(' ter_selection ',' ter_selection ')'
+		  {
+		      add_opvars(splev, "io", 1, SPO_SEL_FILTER);
 		  }
 		| flood_ID coord_or_var
 		  {

@@ -3735,8 +3735,9 @@ selection_setpoint(x,y,ov, c)
 }
 
 struct opvar *
-selection_merge(s1, s2)
+selection_logical_oper(s1, s2, oper)
      struct opvar *s1, *s2;
+     char oper;
 {
     struct opvar *ov;
     int x,y;
@@ -3746,11 +3747,35 @@ selection_merge(s1, s2)
 
     for (x = 0; x < COLNO; x++)
 	for (y = 0; y < ROWNO; y++) {
-	    if (selection_getpoint(x,y,s1) || selection_getpoint(x,y,s2))
-		selection_setpoint(x,y,ov,1);
+	    switch (oper) {
+	    default:
+	    case '|':
+		if (selection_getpoint(x,y,s1) || selection_getpoint(x,y,s2))
+		    selection_setpoint(x,y,ov,1);
+		break;
+	    case '&':
+		if (selection_getpoint(x,y,s1) && selection_getpoint(x,y,s2))
+		    selection_setpoint(x,y,ov,1);
+		break;
+	    }
 	}
 
     return ov;
+}
+
+
+
+void
+selection_filter_percent(ov, percent)
+    struct opvar *ov;
+    int percent;
+{
+    int x,y;
+    if (!ov) return;
+    for (x = 0; x < COLNO; x++)
+	for (y = 0; y < ROWNO; y++)
+	    if (selection_getpoint(x,y,ov) && (rn2(100) >= percent))
+		selection_setpoint(x,y,ov,0);
 }
 
 int
@@ -5105,15 +5130,47 @@ sp_lev *lvl;
 	    spo_var_init(coder); break;
 	case SPO_SHUFFLE_ARRAY:
 	    spo_shuffle_array(coder); break;
-	case SPO_SEL_ADD:
+	case SPO_SEL_ADD: /* actually, logical or */
 	    {
 		struct opvar *sel1, *sel2, *pt;
 		if (!OV_pop_typ(sel1, SPOVAR_SEL)) panic("no sel1 for add");
 		if (!OV_pop_typ(sel2, SPOVAR_SEL)) panic("no sel1 for add");
-		pt = selection_merge(sel1, sel2);
+		pt = selection_logical_oper(sel1, sel2, '|');
 		opvar_free(sel1);
 		opvar_free(sel2);
 		splev_stack_push(coder->stack, pt);
+	    }
+	    break;
+	case SPO_SEL_FILTER: /* sorta like logical and */
+	    {
+		struct opvar *filtertype;
+		int x,y;
+		if (!OV_pop_i(filtertype)) panic("no sel filter type");
+		switch (OV_i(filtertype)) {
+		case 0: /* percentage */
+		    {
+			struct opvar *tmp1, *sel;
+			if (!OV_pop_i(tmp1)) panic("no sel filter percent");
+			if (!OV_pop_typ(sel, SPOVAR_SEL)) panic("no sel filter");
+			selection_filter_percent(sel, OV_i(tmp1));
+			splev_stack_push(coder->stack, sel);
+			opvar_free(tmp1);
+		    }
+		    break;
+		case 1: /* logical and */
+		    {
+			struct opvar *pt, *sel1, *sel2;
+			if (!OV_pop_typ(sel1, SPOVAR_SEL)) panic("no sel filter sel1");
+			if (!OV_pop_typ(sel2, SPOVAR_SEL)) panic("no sel filter sel2");
+			pt = selection_logical_oper(sel1, sel2, '&');
+			splev_stack_push(coder->stack, pt);
+			opvar_free(sel1);
+			opvar_free(sel2);
+		    }
+		    break;
+		default: panic("unknown sel filter type");
+		}
+		opvar_free(filtertype);
 	    }
 	    break;
 	case SPO_SEL_POINT:
