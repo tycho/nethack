@@ -3472,49 +3472,6 @@ spo_endroom(coder)
 }
 
 void
-spo_door(coder)
-     struct sp_coder *coder;
-{
-    schar x,y;
-    struct opvar *msk, *coord;
-    struct mkroom *droom;
-    xchar typ;
-
-    if (!OV_pop_i(msk) ||
-	!OV_pop_c(coord)) return;
-
-    droom = &rooms[0];
-
-    x = SP_COORD_X(OV_i(coord)); y = SP_COORD_Y(OV_i(coord));
-    typ = OV_i(msk) == -1 ? rnddoor() : (xchar)OV_i(msk);
-
-    get_location(&x, &y, DRY, (struct mkroom *)0);
-    if (!IS_DOOR(levl[x][y].typ) && levl[x][y].typ != SDOOR)
-	levl[x][y].typ = (typ & D_SECRET) ? SDOOR : DOOR;
-    if (typ & D_SECRET) {
-	typ &= ~D_SECRET;
-	if (typ < D_CLOSED)
-	    typ = D_CLOSED;
-    }
-    levl[x][y].doormask = typ;
-    /*SpLev_Map[x][y] = 1;*/
-
-    /* Now the complicated part, list it with each subroom */
-    /* The dog move and mail daemon routines use this */
-    while(droom->hx >= 0 && doorindex < DOORMAX) {
-	if(droom->hx >= x-1 && droom->lx <= x+1 &&
-	   droom->hy >= y-1 && droom->ly <= y+1) {
-	    /* Found it */
-	    add_door(x, y, droom);
-	}
-	droom++;
-    }
-
-    opvar_free(coord);
-    opvar_free(msk);
-}
-
-void
 spo_stair(coder)
      struct sp_coder *coder;
 {
@@ -4079,6 +4036,58 @@ sel_set_ter(x,y,arg)
 		  levl[x-1][y].horizontal))
 	    levl[x][y].horizontal = 1;
     }
+}
+
+void
+sel_set_door(dx,dy,arg)
+     int dx,dy;
+     genericptr_t arg;
+{
+    xchar typ = (*(xchar *)arg);
+    xchar x = dx;
+    xchar y = dy;
+    struct mkroom *droom;
+    droom = &rooms[0];
+    /*get_location(&x, &y, DRY, (struct mkroom *)0);*/
+    if (!IS_DOOR(levl[x][y].typ) && levl[x][y].typ != SDOOR)
+	levl[x][y].typ = (typ & D_SECRET) ? SDOOR : DOOR;
+    if (typ & D_SECRET) {
+	typ &= ~D_SECRET;
+	if (typ < D_CLOSED)
+	    typ = D_CLOSED;
+    }
+    levl[x][y].doormask = typ;
+    /*SpLev_Map[x][y] = 1;*/
+
+    /* Now the complicated part, list it with each subroom */
+    /* The dog move and mail daemon routines use this */
+    while(droom->hx >= 0 && doorindex < DOORMAX) {
+	if(droom->hx >= x-1 && droom->lx <= x+1 &&
+	   droom->hy >= y-1 && droom->ly <= y+1) {
+	    /* Found it */
+	    add_door(x, y, droom);
+	}
+	droom++;
+    }
+
+}
+
+void
+spo_door(coder)
+     struct sp_coder *coder;
+{
+    struct opvar *msk, *sel;
+    xchar typ;
+
+    if (!OV_pop_i(msk) ||
+	!OV_pop_typ(sel, SPOVAR_SEL)) return;
+
+    typ = OV_i(msk) == -1 ? rnddoor() : (xchar)OV_i(msk);
+
+    selection_iterate(sel, sel_set_door, (genericptr_t)&typ);
+
+    opvar_free(sel);
+    opvar_free(msk);
 }
 
 void

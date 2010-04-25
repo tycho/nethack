@@ -1123,7 +1123,7 @@ door_detail	: ROOMDOOR_ID ':' secret ',' door_state ',' door_wall ',' door_pos
 			    add_opvars(splev, "iiiio", (long)$9, (long)$5, (long)$3, (long)$7, SPO_ROOM_DOOR);
 			}
 		  }
-		| DOOR_ID ':' door_state ',' coord_or_var
+		| DOOR_ID ':' door_state ',' ter_selection
 		  {
 		      add_opvars(splev, "io", (long)$3, SPO_DOOR);
 		  }
