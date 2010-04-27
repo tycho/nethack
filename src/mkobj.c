@@ -88,7 +88,7 @@ boolean artif;
 
 	otmp = mkobj(let, artif);
 	place_object(otmp, x, y);
-	if (is_damageable(otmp) && !rn2(5) &&
+	if (!artif && is_damageable(otmp) && !rn2(5) &&
 	    (let == WEAPON_CLASS ||
 	     let == ARMOR_CLASS)) otmp->oeroded = rn2(2)+1;
 	return(otmp);
@@ -102,7 +102,7 @@ boolean init, artif;
 	struct obj *otmp;
 
 	otmp = mksobj(otyp, init, artif);
-	if (init && is_damageable(otmp) && !rn2(5) &&
+	if (!artif && init && is_damageable(otmp) && !rn2(5) &&
 	    (objects[otyp].oc_class == WEAPON_CLASS ||
 	     objects[otyp].oc_class == ARMOR_CLASS))
 	    otmp->oeroded = rn2(2)+1;

@@ -738,6 +738,7 @@ gcrownu()
 	} else if (!already_exists) {
 	    obj = mksobj(LONG_SWORD, FALSE, FALSE);
 	    obj = oname(obj, artiname(ART_VORPAL_BLADE));
+	    obj->oeroded = 0;
 	    obj->spe = 1;
 	    at_your_feet("A sword");
 	    dropy(obj);
@@ -762,6 +763,7 @@ gcrownu()
 	    obj = mksobj(RUNESWORD, FALSE, FALSE);
 	    obj = oname(obj, artiname(ART_STORMBRINGER));
 	    at_your_feet(An(swordbuf));
+	    obj->oeroded = 0;
 	    obj->spe = 1;
 	    dropy(obj);
 	    u.ugifts++;
@@ -1555,7 +1557,10 @@ dosacrifice()
 					if (otmp) {
 						bless(otmp);
 						otmp->spe = rn2(3)+3; /* +3 to +5 */
-						otmp->oerodeproof = TRUE;
+						if (u_gname && strcmp(u_gname(), "Loki")) { /* Trickster */
+						    otmp->oerodeproof = TRUE;
+						    otmp->oeroded = 0;
+						}
 						dropy(otmp);
 						at_your_feet("An object");
 						godvoice(u.ualign.type, "Use this gift valorously!");
@@ -1573,6 +1578,7 @@ dosacrifice()
 				if (otmp->spe < 0) otmp->spe = 0;
 				if (otmp->cursed) uncurse(otmp);
 				otmp->oerodeproof = TRUE;
+				otmp->oeroded = 0;
 				dropy(otmp);
 				at_your_feet("An object");
 				godvoice(u.ualign.type, "Use my gift wisely!");
