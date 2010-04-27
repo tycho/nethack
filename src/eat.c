@@ -813,7 +813,10 @@ register struct permonst *ptr;
 			    "in touch with the cosmos." :
 			    "a strange mental acuity.");
 			HTelepat |= FROMOUTSIDE;
-		}
+		} else
+		    You_feel(Hallucination ?
+			     "like everyone is tad closer." :
+			     "your senses expand a bit.");
 		if (u.u_telepathy_dist < 600) u.u_telepathy_dist += 6; /* arbitrary */
 		/* If blind, make sure monsters show up at the correct range. */
 		if (Blind) see_monsters();
