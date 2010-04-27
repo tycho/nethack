@@ -146,30 +146,19 @@ OBJECT:('/',"magic missile"),$place[4],uncursed,0
 OBJECT:('/',"magic missile"),$place[0],uncursed,0
 
 # the Orcish Army
-#
-# We need to specify locations inside the walls
-# for all of these critters since 'random' could
-# put them in our empty 'corridor' around the town
-MONSTER: ('o', "orc-captain"), (07,09), hostile
-MONSTER: ('o', "orc-captain"), (19,09), hostile
-MONSTER: ('o', "orc-captain"), (30,09), hostile
-MONSTER: ('o', "Uruk-hai"), (18,04), hostile
-MONSTER: ('o', "Uruk-hai"), (19,04), hostile
-MONSTER: ('o', "Uruk-hai"), (20,05), hostile
-MONSTER: ('o', "Uruk-hai"), (14,09), hostile
-MONSTER: ('o', "Uruk-hai"), (25,09), hostile
-MONSTER: ('o', "Mordor orc"), (20,04), hostile
-MONSTER: ('o', "Mordor orc"), (18,05), hostile
-MONSTER: ('o', "Mordor orc"), (19,05), hostile
-MONSTER: ('o', "Mordor orc"), (07,02), hostile
-MONSTER: ('o', "Mordor orc"), (29,02), hostile
-MONSTER: ('o', "Mordor orc"), (07,16), hostile
-MONSTER: ('o', "Mordor orc"), (29,16), hostile
+
+$inside = selection: floodfill(18,8)
+$near_temple = selection: filter(fillrect(17,8, 23,14), $inside)
+
+LOOP [5 + 1d10] {
+  MONSTER[50%]: ('o', "orc-captain"), rndcoord($inside), hostile
+  MONSTER[80%]: ('o', "Uruk-hai"), rndcoord($inside), hostile
+  MONSTER: ('o', "Mordor orc"), rndcoord($inside), hostile
+}
 # shamans can be hanging out in/near the temple
-MONSTER: ('o', "orc shaman"), (19,11), hostile
-MONSTER: ('o', "orc shaman"), (21,11), hostile
-MONSTER: ('o', "orc shaman"), (16,12), hostile
-MONSTER: ('o', "orc shaman"), (24,12), hostile
+LOOP [2d3] {
+  MONSTER: ('o', "orc shaman"), rndcoord($near_temple), hostile
+}
 # these are not such a big deal
 # to run into outside the bars
 LOOP [9 + 2d5] {
