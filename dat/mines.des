@@ -790,35 +790,42 @@ DOOR:closed,(31,3)
 DOOR:closed,(35,3)
 DOOR:closed,(33,7)
 
+$in_zoo = selection: floodfill(18,4)
+$outside = selection: filter(floodfill(18,8), fillrect (1,0,37,15))
+
 LOOP [4 + 1d8] {
-  MONSTER: ('G', "gnome"), random
+  MONSTER: ('G', "gnome"), rndcoord($outside)
 }
-MONSTER: ('G', "gnome"), (14,6)
-MONSTER: ('G', "gnome lord"), (14,5)
-MONSTER: ('G', "gnome"), (27,8)
-MONSTER: ('G', "gnome lord"), random
-MONSTER: ('G', "gnome lord"), random
-MONSTER: ('G', "gnomish wizard"), random
-MONSTER: ('G', "gnomish wizard"), random
-MONSTER: ('h', "dwarf"), random
-# make sure none of these appear inside the zoo, especially the watch captains
-MONSTER: ('@', "watchman"), (18,8), peaceful
-MONSTER: ('@', "watchman"), (7,3), peaceful
-MONSTER: ('@', "watchman"), (31,6), peaceful
-MONSTER: ('@', "watch captain"), (28,12), peaceful
-MONSTER: ('@', "watch captain"), (8,12), peaceful
+MONSTER: ('G', "gnome"), rndcoord($outside)
+MONSTER: ('G', "gnome lord"), rndcoord($outside)
+MONSTER: ('G', "gnome"), rndcoord($outside)
+MONSTER: ('G', "gnome lord"), rndcoord($outside)
+MONSTER: ('G', "gnome lord"), rndcoord($outside)
+MONSTER: ('G', "gnomish wizard"), rndcoord($outside)
+MONSTER: ('G', "gnomish wizard"), rndcoord($outside)
+MONSTER: ('h', "dwarf"), rndcoord($outside)
+
+MONSTER: ('@', "watchman"), rndcoord($outside), peaceful
+MONSTER: ('@', "watchman"), rndcoord($outside), peaceful
+MONSTER: ('@', "watchman"), rndcoord($outside), peaceful
+MONSTER: ('@', "watch captain"), rndcoord($outside), peaceful
+MONSTER: ('@', "watch captain"), rndcoord($outside), peaceful
 # The zoo needs some stuff...
-MONSTER: ('f', "tiger"), (17,3), hostile
-MONSTER: ('f', "panther"), (20,5), hostile
-MONSTER: ('f', "jaguar"), (17,4), hostile
-MONSTER: ('q', "mastodon"), (20,4), hostile
+MONSTER: ('f', "tiger"), rndcoord($in_zoo), hostile
+MONSTER: ('f', "panther"), rndcoord($in_zoo), hostile
+MONSTER: ('f', "jaguar"), rndcoord($in_zoo), hostile
+MONSTER: ('q', "mastodon"), rndcoord($in_zoo), hostile
 # and a couple token handlers
-MONSTER: ('o', "Mordor orc"), (17,5), hostile
-MONSTER: ('o', "Mordor orc"), (20,3), hostile
+MONSTER: ('o', "Mordor orc"), rndcoord($in_zoo), hostile {
+  OBJECT:(')', "bullwhip")
+}
+MONSTER: ('o', "Mordor orc"), rndcoord($in_zoo), hostile {
+  OBJECT:(')', "bullwhip")
+}
 # and a couple shiny prizes as temptation (for the handlers to use, possibly?)
-OBJECT: '/', (18,4)
-OBJECT: '/', (19,4)
-OBJECT: '=', (17,4)
+OBJECT: '/', rndcoord($in_zoo)
+OBJECT: '/', rndcoord($in_zoo)
+OBJECT: '=', rndcoord($in_zoo)
 
 # "Bazaar Town" by Kelly Bailey
 #
