@@ -270,6 +270,14 @@ do_mname()
 	/* special case similar to the one in lookat() */
 	(void) distant_monnam(mtmp, ARTICLE_THE, buf);
 	Sprintf(qbuf, "What do you want to call %s?", buf);
+
+	if (mtmp->data->mlet == S_DOG)
+	    strncpy(buf, dogname, BUFSZ);
+	else if (mtmp->data->mlet == S_FELINE)
+	    strncpy(buf, catname, BUFSZ);
+	else if (mtmp->data->mlet == S_UNICORN)
+	    strncpy(buf, horsename, BUFSZ);
+
 	getlin(qbuf,buf);
 	if(!*buf || *buf == '\033') return(0);
 	/* strip leading and trailing spaces; unnames monster if all spaces */
