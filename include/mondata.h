@@ -71,6 +71,12 @@
 #define telepathic(ptr)		((ptr) == &mons[PM_FLOATING_EYE] || \
 				 (ptr) == &mons[PM_MIND_FLAYER] || \
 				 (ptr) == &mons[PM_MASTER_MIND_FLAYER])
+#define gives_telepathy(ptr)	(telepathic((ptr)) ||		       \
+				 ((ptr) == &mons[PM_KOBOLD_SHAMAN]) || \
+				 ((ptr) == &mons[PM_GOBLIN_SHAMAN]) || \
+				 ((ptr) == &mons[PM_ORC_SHAMAN]) || \
+				 ((ptr) == &mons[PM_HILL_GIANT_SHAMAN]) || \
+				 ((ptr) == &mons[PM_GNOMISH_WIZARD]))
 #define is_armed(ptr)		attacktype(ptr, AT_WEAP)
 #define acidic(ptr)		(((ptr)->mflags1 & M1_ACID) != 0L)
 #define poisonous(ptr)		(((ptr)->mflags1 & M1_POIS) != 0L)
