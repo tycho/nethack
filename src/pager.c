@@ -733,7 +733,7 @@ do_look(quick)
 	/* Finally, print out our explanation. */
 	if (found) {
 		/* Really lame hijack, but... */
-		if (christmas() && strstri(out_str,"a tree")) {
+		if (christmas() && strstri(out_str,"(tree)")) {
 			char temp_buf[BUFSZ];
 			Sprintf(temp_buf," (with little colored balls on it)");
 			(void)strncat(out_str, temp_buf, BUFSZ-strlen(out_str)-1);
