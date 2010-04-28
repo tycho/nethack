@@ -4203,6 +4203,7 @@ makewish()
 	if (flags.verbose) You("may wish for an object.");
 retry:
 	getlin("For what do you wish?", buf);
+	stripctrl(buf);
 	if(buf[0] == '\033') buf[0] = 0;
 	/*
 	 *  Note: if they wished for and got a non-object successfully,

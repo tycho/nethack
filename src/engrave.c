@@ -993,7 +993,7 @@ doengrave()
 	/* Prompt for engraving! */
 	Sprintf(qbuf,"What do you want to %s the %s here?", everb, eloc);
 	getlin(qbuf, oebuf);
-
+	stripctrl(oebuf);
 	(void) strncpy(ebuf, oebuf, BUFSZ);
 
 	/* Count the actual # of chars engraved not including spaces */
