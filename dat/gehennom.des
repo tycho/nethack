@@ -554,28 +554,36 @@ TRAP:"magic", random
 #
 LEVEL:"baalz"
 FLAGS: noteleport,mazelevel
-INIT_MAP:mazegrid,'-'
-GEOMETRY:right,center
+
+MON_GENERATION:80%, (5, 'a'), (1, 'P')
+
+$lvl = selection: fillrect(0,0,78,20)
+$sel = selection: filter(33%, $lvl)
+
+TERRAIN:$lvl, ('.',unlit)
+TERRAIN:$sel, ('}',unlit)
+
+
+GEOMETRY:center,center
 MAP
--------------------------------------------------
-|                    ---               ----      
-|          ----      |   ------------  |         
-| ------      |  --------|..........|---         
-| |....|  -------|...........--------------      
----....|--|..................S............|----  
-....--....S..----------------|............S...|  
----....|--|..................|............|----  
-| |....|  -------|...........-----S--------      
-| ------      |  --------|..........|---         
-|          ----     |    ------------  |         
-|                   ---                ----      
--------------------------------------------------
+xxxxxxxxxxxxxxxxxxxxxxxFxxxxxxxxxxxxxxxxxxFxxxxxx
+xxxxxxxxxxxFxxxxxxxxxFFFxxxxxxxxxxxxxxxFFFFxxxxxx
+xxxxxxxxxxxFFFFxxxxxxFxxx------------xxFxxxxxxxxx
+xxFFFFFFxxxxxxFxx--------|..........|FFFxxxxxxxxx
+xxF....Fxx-------|...........--------------xxxxxx
+---....|--|..................S............|----xx
+....--....S..----------------|............S...|xx
+---....|--|..................|............|----xx
+xxF....Fxx-------|...........-----S--------xxxxxx
+xxFFFFFFxxxxxxFxx--------|..........|FFFxxxxxxxxx
+xxxxxxxxxxxFFFFxxxxxFxxxx------------xxFxxxxxxxxx
+xxxxxxxxxxxFxxxxxxxxFFFxxxxxxxxxxxxxxxxFFFFxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxFxxxxxxxxxxxxxxxxxxFxxxxxx
 ENDMAP
 STAIR:levregion(01,00,15,20),levregion(15,1,70,16),up
 BRANCH:levregion(01,00,15,20),levregion(15,1,70,16)
 TELEPORT_REGION:levregion(01,00,15,20),levregion(15,1,70,16)
 NON_DIGGABLE:(00,00,46,12)
-MAZEWALK:(00,06),west
 STAIR:(44,06),down
 # The fellow in residence
 MONSTER:('&',"Baalzebub"),(35,06)
@@ -595,7 +603,7 @@ TRAP:"spiked pit", random
 TRAP:"fire", random
 TRAP:"sleep gas", random
 TRAP:"anti magic", random
-TRAP:"fire", random
+TRAP:"rust", random
 TRAP:"magic", random
 TRAP:"magic", random
 # Random monsters.
@@ -607,6 +615,12 @@ MONSTER:'L',random
 MONSTER:'V',random
 MONSTER:'V',random
 MONSTER:'V',random
+
+LOOP [ 10 + 4d7 ] {
+  MONSTER:'a',random
+  MONSTER[25%]:'P',random
+}
+
 #
 # The Sanctum Level
 #
