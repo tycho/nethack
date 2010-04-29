@@ -247,6 +247,7 @@ boolean forcecontrol;
 			getlin("Become what kind of monster? [type the name]",
 				buf);
 			stripctrl(buf);
+			trim(buf);
 			mntmp = name_to_mon(buf);
 			if (mntmp < LOW_PM)
 				pline("I've never heard of such monsters.");
