@@ -295,6 +295,7 @@ LOOP [5 + 1d6] {
 #
 # Random monsters.
 MONSTER:('@',"Thoth Amon"),(63,04),hostile {
+  OBJECT:('(', "Bell of Opening"),uncursed
   OBJECT:')',1d2
   OBJECT:'['
   OBJECT:random
