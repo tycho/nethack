@@ -31,6 +31,43 @@ struct obj *thrownobj = 0;	/* tracks an object until it lands */
 
 extern boolean notonhead;	/* for long worms */
 
+int
+boom_flightpath_menu()
+{
+    winid win;
+    anything any;
+    menu_item *pick_list;
+    int n;
+
+    any.a_void = 0;
+    win = create_nhwindow(NHW_MENU);
+    start_menu(win);
+
+    any.a_int = 1;
+    add_menu(win, NO_GLYPH, &any, 'r', 0, ATR_NONE, "Curve right and return", MENU_UNSELECTED);
+
+    any.a_int = 2;
+    add_menu(win, NO_GLYPH, &any, 'l', 0, ATR_NONE, "Curve left and return", MENU_UNSELECTED);
+
+    any.a_int = 3;
+    add_menu(win, NO_GLYPH, &any, 's', 0, ATR_NONE, "Short straight flight and return", MENU_UNSELECTED);
+
+    any.a_int = 4;
+    add_menu(win, NO_GLYPH, &any, 'x', 0, ATR_NONE, "Long straight flight", MENU_UNSELECTED);
+
+    any.a_int = 0;
+    add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, "", MENU_UNSELECTED);
+    any.a_int = 0;
+    add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, "To change this, change boom_flightpath in options", MENU_UNSELECTED);
+
+    end_menu(win, "How do you wish boomerangs to behave?");
+    n = select_menu(win, PICK_ONE, &pick_list);
+    destroy_nhwindow(win);
+
+    n = (pick_list[0].item.a_int - 1);
+    free((genericptr_t) pick_list);
+    return n;
+}
 
 /* Throw the selected object, asking for direction */
 STATIC_OVL int
@@ -77,6 +114,12 @@ int shotlimit;
 
 	if(!canletgo(obj,"throw"))
 		return(0);
+
+	if (obj->otyp == BOOMERANG) {
+	    if (iflags.boom_flight_path < 0)
+		iflags.boom_flight_path = boom_flightpath_menu();
+	}
+
 	if (obj->oartifact == ART_MJOLLNIR && obj != uwep) {
 	    pline("%s must be wielded before it can be thrown.",
 		The(xname(obj)));
@@ -944,9 +987,10 @@ boolean twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 	    return;
 
 	} else if(obj->otyp == BOOMERANG && !Underwater) {
+
 		if(Is_airlevel(&u.uz) || Levitation)
 		    hurtle(-u.dx, -u.dy, 1, TRUE);
-		mon = boomhit(u.dx, u.dy);
+		mon = boomhit(u.dx, u.dy, !impaired ? iflags.boom_flight_path : rn2(4));
 		if(mon == &youmonst) {		/* the thing was caught */
 			exercise(A_DEX, TRUE);
 			obj = addinv(obj);

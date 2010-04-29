@@ -2898,8 +2898,8 @@ struct obj *obj;			/* object tossed/used */
 }
 
 struct monst *
-boomhit(dx, dy)
-int dx, dy;
+boomhit(dx, dy, type)
+int dx, dy, type;
 {
 	register int i, ct;
 	int boom = S_boomleft;	/* showsym[] index  */
@@ -2914,8 +2914,24 @@ int dx, dy;
 		if(i == 8) i = 0;
 		boom = (boom == S_boomleft) ? S_boomright : S_boomleft;
 		tmp_at(DISP_CHANGE, cmap_to_glyph(boom));/* change glyph */
-		dx = xdir[i];
-		dy = ydir[i];
+		switch (type) {
+		default:
+		    dx = xdir[i];
+		    dy = ydir[i];
+		    break;
+		case 1:
+		    dx = xdir[(i+4)%8];
+		    dy = ydir[(i+4)%8];
+		    break;
+		case 2:
+		    if (ct && (ct % 5 == 0)) {
+			dx = -dx;
+			dy = -dy;
+		    }
+		    break;
+		case 3:
+		    break;
+		}
 		bhitpos.x += dx;
 		bhitpos.y += dy;
 		if(MON_AT(bhitpos.x, bhitpos.y)) {

@@ -448,6 +448,7 @@ E void FDECL(impact_drop, (struct obj *,XCHAR_P,XCHAR_P,XCHAR_P));
 
 /* ### dothrow.c ### */
 
+E int NDECL(boom_flightpath_menu);
 E struct monst * FDECL(camera_demon, (struct obj *,SCHAR_P, SCHAR_P));
 E int NDECL(dothrow);
 E int NDECL(dofire);
@@ -2438,7 +2439,7 @@ E void FDECL(hit, (const char *,struct monst *,const char *));
 E void FDECL(miss, (const char *,struct monst *));
 E struct monst *FDECL(bhit, (int,int,int,int,int (*)(MONST_P,OBJ_P),
 			     int (*)(OBJ_P,OBJ_P),struct obj *));
-E struct monst *FDECL(boomhit, (int,int));
+E struct monst *FDECL(boomhit, (int,int,int));
 E int FDECL(burn_floor_paper, (int,int,BOOLEAN_P,BOOLEAN_P));
 E void FDECL(buzz, (int,int,XCHAR_P,XCHAR_P,int,int));
 E void FDECL(melt_ice, (XCHAR_P,XCHAR_P));
