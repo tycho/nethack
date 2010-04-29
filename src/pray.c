@@ -1557,7 +1557,7 @@ dosacrifice()
 					if (otmp) {
 						bless(otmp);
 						otmp->spe = rn2(3)+3; /* +3 to +5 */
-						if (u_gname && strcmp(u_gname(), "Loki")) { /* Trickster */
+						if (u_gname() && strcmp(u_gname(), "Loki")) { /* Trickster */
 						    otmp->oerodeproof = TRUE;
 						    otmp->oeroded = 0;
 						}
