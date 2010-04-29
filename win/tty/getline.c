@@ -69,9 +69,19 @@ getlin_hook_proc hook;
 			break;
 		}
 		if(c == '\033') {
+		    if (obufp[0] != '\0') {
+			obufp[0] = 0;
+			bufp = obufp;
+			tty_clear_nhwindow(WIN_MESSAGE);
+			cw->maxcol = cw->maxrow;
+			addtopl(query);
+			addtopl(" ");
+			addtopl(obufp);
+		    } else {
 			*obufp = c;
 			obufp[1] = 0;
 			break;
+		    }
 		}
 		if (ttyDisplay->intr) {
 		    ttyDisplay->intr--;
