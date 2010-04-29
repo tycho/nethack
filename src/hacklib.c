@@ -21,6 +21,7 @@ NetHack, except that rounddiv may call panic().
 	char *		upstart		(char *)
 	char *		mungspaces	(char *)
 	char *		stripctrl	(char *)
+	char *		trim		(char *)
 	char *		eos		(char *)
 	char *		strkitten	(char *,char)
 	char *		s_suffix	(const char *)
@@ -131,6 +132,25 @@ stripctrl(bp) /* replace non-alphanum characters with spaces */
     register char *p;
     for (p = bp; *p != '\0'; p++)
 	if (iscntrl(*p)) *p = ' ';
+    return bp;
+}
+
+/* trim leading and trailing spaces, in place */
+char *
+trim(bp)
+     char *bp;
+{
+    register char c, *p, *p2;
+    boolean was_space = TRUE;
+
+    for (p = p2 = bp; (c = *p) != '\0'; p++) {
+	if (!isspace(c)) {
+	    *p2++ = c;
+	    was_space = FALSE;
+	} else if (!was_space) *p2++ = c;
+    }
+    p = eos(bp);
+    while (--p >= bp && isspace(*p)) *p = '\0';
     return bp;
 }
 

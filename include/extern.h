@@ -748,6 +748,7 @@ E char *FDECL(lcase, (char *));
 E char *FDECL(upstart, (char *));
 E char *FDECL(mungspaces, (char *));
 E char *FDECL(stripctrl, (char *));
+E char *FDECL(trim, (char *));
 E char *FDECL(eos, (char *));
 E char *FDECL(strkitten, (char *,CHAR_P));
 E char *FDECL(s_suffix, (const char *));
