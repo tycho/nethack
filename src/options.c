@@ -237,6 +237,7 @@ static struct Comp_Opt
 	{ "align_message", "message window alignment", 20, DISP_IN_GAME }, 	/*WC*/
 	{ "align_status", "status window alignment", 20, DISP_IN_GAME }, 	/*WC*/
 	{ "altkeyhandler", "alternate key handler", 20, DISP_IN_GAME },
+	{ "boom_flightpath", "the default boomerang flight path", 1, SET_IN_GAME},
 	{ "boulder",  "the symbol to use for displaying boulders",
 						1, SET_IN_GAME },
 	{ "catname",  "the name of your (first) cat (e.g., catname:Tabby)",
@@ -543,6 +544,7 @@ initoptions()
 	flags.end_around = 2;
 	iflags.runmode = RUN_LEAP;
 	iflags.msg_history = 20;
+	iflags.boom_flight_path = -1;
 #ifdef TTY_GRAPHICS
 	iflags.prevmsg_window = 's';
 #endif
@@ -1806,6 +1808,26 @@ goodfruit:
 		else warning_opts(opts, fullname);
 		return;
 	}
+
+	fullname = "boom_flightpath";
+	if (match_optname(opts, fullname, 4, TRUE)) {
+	    int val = -1;
+	    if (negated) {
+		bad_negation(fullname, FALSE);
+		return;
+	    }
+	    if (!(opts = string_for_opt(opts, FALSE)))
+		return;
+	    switch (opts[0]) {
+	    case '0': case 'r': val = 0; break;
+	    case '1': case 'l': val = 1; break;
+	    case '2': case 's': val = 2; break;
+	    case '3': case 'x': val = 3; break;
+	    default: break;
+	    }
+	    iflags.boom_flight_path = val;
+	}
+
 	/* boulder:symbol */
 	fullname = "boulder";
 	if (match_optname(opts, fullname, 7, TRUE)) {
@@ -2965,6 +2987,9 @@ boolean setinitial,setfromfile;
         }
 	destroy_nhwindow(tmpwin);
         retval = TRUE;
+    } else if (!strcmp("boom_flightpath", optname)) {
+	iflags.boom_flight_path = boom_flightpath_menu();
+	retval = TRUE;
     } else if (!strcmp("pickup_burden", optname)) {
 	const char *burden_name, *burden_letters = "ubsntl";
 	menu_item *burden_pick = (menu_item *)0;
@@ -3338,6 +3363,8 @@ char *buf;
 	else if (!strcmp(optname, "boulder"))
 		Sprintf(buf, "%c", iflags.bouldersym ?
 			iflags.bouldersym : oc_syms[(int)objects[BOULDER].oc_class]);
+	else if (!strcmp(optname, "boom_flightpath"))
+	    Sprintf(buf, "%i", iflags.boom_flight_path);
 	else if (!strcmp(optname, "catname")) 
 		Sprintf(buf, "%s", catname[0] ? catname : none );
 	else if (!strcmp(optname, "disclose")) {

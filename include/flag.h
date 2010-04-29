@@ -284,6 +284,8 @@ struct instance_flags {
 	boolean  show_dgn_name; /* show dungeon names instead of Dlvl: on bottom line
 										 probably only good for people taking advantage of 
 										 the wide terminals allowed in Spork */
+    int boom_flight_path; /* boomerang flight path */
+
 	int	 runmode;	/* update screen display during run moves */
 #ifdef AUTOPICKUP_EXCEPTIONS
 	struct autopickup_exception *autopickup_exceptions[2];
