@@ -58,7 +58,10 @@ getlin_hook_proc hook;
 	cw->flags &= ~WIN_STOP;
 	ttyDisplay->toplin = 3; /* special prompt state */
 	ttyDisplay->inread++;
-	pline("%s %s", query, obufp);
+	tty_clear_nhwindow(WIN_MESSAGE);
+	addtopl(query);
+	addtopl(" ");
+	addtopl(obufp);
 	for(;;) {
 		(void) fflush(stdout);
 		Sprintf(toplines, "%s %s", query, obufp);
