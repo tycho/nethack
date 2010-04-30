@@ -136,6 +136,7 @@ static struct {
 	{ "anti magic",	ANTI_MAGIC },
 	{ "polymorph",	POLY_TRAP },
 	{ "spear", SPEAR_TRAP },
+	{ "collapse",   COLLAPSE_TRAP },
 	{ "magic beam", MAGIC_BEAM_TRAP },
 	{ 0, 0 }
 };
