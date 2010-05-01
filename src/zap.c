@@ -3595,7 +3595,10 @@ register int dx,dy;
 	    range--;
 	    if(range && isok(lsx, lsy) && cansee(lsx,lsy))
 		pline("%s bounces!", The(fltxt));
-	    if(!dx || !dy || !rn2(20)) {
+	    if(!dx || !dy ||
+	       ((In_mines(&u.uz) && IS_WALL(levl[sx][sy].typ) && !rn2(20)) ||
+		((levl[sx][sy].typ == STONE) && !rn2(10)) ||
+		!rn2(100) )) {
 		dx = -dx;
 		dy = -dy;
 	    } else {
