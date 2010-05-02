@@ -2275,6 +2275,51 @@ register struct monst *mtmp;
 				    makeplural(q_guardian->mname),
 		      got_mad == 1 ? "s" : "");
 	}
+
+	/* make other peaceful monsters react */
+	if (!flags.mon_moving) {
+	    struct monst *mon;
+	    int got_mad = 0;
+	    for (mon = fmon; mon; mon = mon->nmon)
+		if (!DEADMONSTER(mon) && !mindless(mon->data) && mon->mpeaceful && couldsee(mon->mx, mon->my) &&
+		    !mon->msleeping && mon->mcansee && m_canseeu(mon)) {
+		    boolean exclaimed = FALSE;
+		    if (humanoid(mon->data) || mon->isshk || mon->ispriest ||
+			(mon->data == &mons[PM_WATCHMAN] || mon->data == &mons[PM_WATCH_CAPTAIN])) {
+			if (mon->data == &mons[PM_WATCHMAN] || mon->data == &mons[PM_WATCH_CAPTAIN]) {
+			    verbalize("Halt!  You're under arrest!");
+			    (void) angry_guards(!(flags.soundok));
+			} else {
+			    const char *exclam[] = {
+				"Gasp!", "Uh-oh.", "Oh my!", "What?"
+			    };
+			    if (!rn2(5)) {
+				verbalize("%s", exclam[rn2(SIZE(exclam))]);
+				exclaimed = TRUE;
+			    }
+			    if (!mon->isshk && !mon->ispriest && (mon->data->mlevel < rn2(10))) {
+				monflee(mon, rn2(50)+25, TRUE, !exclaimed);
+				exclaimed = TRUE;
+			    }
+			    if (!mon->isshk && !mon->ispriest) {
+				mon->mpeaceful = 0;
+				adjalign(-1);
+				if (!exclaimed)
+				    pline("%s gets angry!", Monnam(mon));
+			    }
+			}
+		    } else if ((mtmp->data == mon->data) && !rn2(3)) {
+			if (!rn2(4)) {
+			    growl(mon);
+			    exclaimed = TRUE;
+			}
+			if (rn2(6)) {
+			    monflee(mon, rn2(25)+15, TRUE, !exclaimed);
+			} else
+			    mon->mberserk = 1;
+		    }
+		}
+	}
 }
 
 void
