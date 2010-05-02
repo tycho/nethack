@@ -477,6 +477,7 @@ moveloop()
 		rhack(save_cm);
 	    }
 	} else if (multi == 0) {
+	    ck_server_admin_msg();
 #ifdef MAIL
 	    ckmailstatus();
 #endif
