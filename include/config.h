@@ -157,6 +157,8 @@
 #define DUMP_LOG				 /* turn on dumping */
 #define DUMP_FN "dumps/%n.lastlog"	 /* dump goes here */
 
+#define SERVER_ADMIN_MSG "admin_msg"
+
 /*
  *	If COMPRESS is defined, it should contain the full path name of your
  *	'compress' program.  Defining INTERNAL_COMP causes NetHack to do
