@@ -188,7 +188,12 @@ doread()
 		pline("This %s has no label.", singular(scroll, xname));
 		return(0);
 	    } else {
+		if (Blind) {
+		    You_cant("feel any Braille writing.");
+		    return 0;
+		}
 		pline("The label reads: \"%s\"", tin_content_text(scroll));
+		u.uconduct.literate++;
 		return 1;
 	    }
 	} else if (scroll->otyp == CAN_OF_GREASE) {
@@ -209,7 +214,12 @@ doread()
 		"Fruity Oaty",	/* Serenity */
 		"Wonka"		/* Charlie and the Chocolate Factory */
 	    };
+	    if (Blind) {
+		You_cant("feel any Braille writing.");
+		return 0;
+	    }
 	    pline("The wrapper reads: \"%s\"", wrapper_msgs[scroll->o_id % SIZE(wrapper_msgs)]);
+	    u.uconduct.literate++;
 	    return 1;
 	} else if (OBJ_DESCR(objects[scroll->otyp]) &&
 		   !strncmp(OBJ_DESCR(objects[scroll->otyp]), "runed", 5) &&
