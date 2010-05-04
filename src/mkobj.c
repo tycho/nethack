@@ -89,6 +89,7 @@ boolean artif;
 	otmp = mkobj(let, artif);
 	place_object(otmp, x, y);
 	if (!artif && is_damageable(otmp) && !rn2(5) &&
+	    (!otmp->oerodeproof) &&
 	    (let == WEAPON_CLASS ||
 	     let == ARMOR_CLASS)) otmp->oeroded = rn2(2)+1;
 	return(otmp);
@@ -103,6 +104,7 @@ boolean init, artif;
 
 	otmp = mksobj(otyp, init, artif);
 	if (!artif && init && is_damageable(otmp) && !rn2(5) &&
+	    (!otmp->oerodeproof) &&
 	    (objects[otyp].oc_class == WEAPON_CLASS ||
 	     objects[otyp].oc_class == ARMOR_CLASS))
 	    otmp->oeroded = rn2(2)+1;
@@ -606,14 +608,8 @@ boolean artif;
 		/* simulate lacquered armor for samurai */
 		if (Role_if(PM_SAMURAI) && otmp->otyp == SPLINT_MAIL &&
 		    (moves <= 1 || In_quest(&u.uz))) {
-#ifdef UNIXPC
-			/* optimizer bitfield bug */
-			otmp->oerodeproof = 1;
-			otmp->rknown = 1;
-#else
-			otmp->oerodeproof = otmp->rknown = 1;
-#endif
-			otmp->oeroded = 0;
+		    set_erodeproof(otmp);
+		    otmp->rknown = 1;
 		}
 		break;
 	case WAND_CLASS:
