@@ -518,6 +518,22 @@ MAP
                              |...............|                             
                              -----------------                             
 ENDMAP
+
+IF [75%] {
+  TERRAIN:fillrect (17,14, 30,18),'.'
+  TERRAIN:fillrect (44,14, 57,18),'.'
+  WALLIFY
+
+  $hall = selection:floodfill(37,18)
+  LOOP [6 + 3d4] {
+    MONSTER:('A',"Angel"),rndcoord($hall),noalign,hostile
+    MONSTER[50%]:random,rndcoord($hall),hostile
+  }
+
+  OBJECT:"brazier",(23,16)
+  OBJECT:"brazier",(51,16)
+}
+
 # Rider locations
 $place = { (23,9),(37,14),(51,9) }
 SHUFFLE:$place
