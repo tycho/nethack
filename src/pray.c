@@ -782,8 +782,7 @@ gcrownu()
     /* enhance weapon regardless of alignment or artifact status */
     if (ok_wep(obj)) {
 	bless(obj);
-	obj->oeroded = obj->oeroded2 = 0;
-	obj->oerodeproof = TRUE;
+	set_erodeproof(obj);
 	obj->bknown = obj->rknown = TRUE;
 	if (obj->spe < 1) obj->spe = 1;
 	/* acquire skill in this weapon */
@@ -1248,8 +1247,7 @@ dosacrifice()
 
 			 uwep = oname(uwep, artiname(ART_DIRGE));
 			 bless(uwep);
-			 uwep->oeroded = uwep->oeroded2 = 0;
-			 uwep->oerodeproof = TRUE;
+			 set_erodeproof(uwep);
 			 discover_artifact(ART_DIRGE);
 			 exercise(A_WIS,TRUE);
 			 pline("Your sword slithers in your hand and seems to change!");
@@ -1558,8 +1556,7 @@ dosacrifice()
 						bless(otmp);
 						otmp->spe = rn2(3)+3; /* +3 to +5 */
 						if (u_gname() && strcmp(u_gname(), "Loki")) { /* Trickster */
-						    otmp->oerodeproof = TRUE;
-						    otmp->oeroded = 0;
+						    set_erodeproof(otmp);
 						}
 						dropy(otmp);
 						at_your_feet("An object");
@@ -1577,8 +1574,7 @@ dosacrifice()
 			if (otmp) {
 				if (otmp->spe < 0) otmp->spe = 0;
 				if (otmp->cursed) uncurse(otmp);
-				otmp->oerodeproof = TRUE;
-				otmp->oeroded = 0;
+				set_erodeproof(otmp);
 				dropy(otmp);
 				at_your_feet("An object");
 				godvoice(u.ualign.type, "Use my gift wisely!");

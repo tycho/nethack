@@ -321,7 +321,7 @@ register struct monst *mtmp;
 				otmp = mksobj(LONG_SWORD, FALSE, FALSE);
 			 }
 		    bless(otmp);
-		    otmp->oerodeproof = TRUE;
+		    set_erodeproof(otmp);
 		    spe2 = rn2(4);
 		    otmp->spe = max(otmp->spe, spe2);
 		    (void) mpickobj(mtmp, otmp);
@@ -330,7 +330,7 @@ register struct monst *mtmp;
 				  SHIELD_OF_REFLECTION : LARGE_SHIELD,
 				  FALSE, FALSE);
 		    otmp->cursed = FALSE;
-		    otmp->oerodeproof = TRUE;
+		    set_erodeproof(otmp);
 		    otmp->spe = 0;
 		    (void) mpickobj(mtmp, otmp);
 		}
@@ -695,7 +695,7 @@ register struct	monst	*mtmp;
 			otmp = mksobj(rn2(3) ? ATHAME : QUARTERSTAFF,
 				      TRUE, rn2(13) ? FALSE : TRUE);
 			if (otmp->spe < 2) otmp->spe = rnd(3);
-			if (!rn2(4)) otmp->oerodeproof = 1;
+			if (!rn2(4)) set_erodeproof(otmp);
 			(void) mpickobj(mtmp, otmp);
 		}
 		break;
@@ -1664,7 +1664,7 @@ register int otyp;
 		/* lawful minions don't get cursed, bad, or rusting objects */
 		otmp->cursed = FALSE;
 		if(otmp->spe < 0) otmp->spe = 0;
-		otmp->oerodeproof = TRUE;
+		set_erodeproof(otmp);
 	    } else if(is_mplayer(mtmp->data) && is_sword(otmp)) {
 		otmp->spe = (3 + rn2(4));
 	    }
