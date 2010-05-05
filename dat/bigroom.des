@@ -94,19 +94,19 @@ MAP
 ---------------------------------------------------------------------------
 ENDMAP
 # Dungeon Description
-REGION:(01,01,23,06),lit,"ordinary"
-REGION:(01,07,23,10),unlit,"ordinary"
-REGION:(01,11,23,16),lit,"ordinary"
-REGION:(24,01,50,06),unlit,"ordinary"
-REGION:(24,07,50,10),lit,"ordinary"
-REGION:(24,11,50,16),unlit,"ordinary"
-REGION:(51,01,73,06),lit,"ordinary"
-REGION:(51,07,73,10),unlit,"ordinary"
-REGION:(51,11,73,16),lit,"ordinary"
+REGION:(01,01,73,16),lit,"ordinary"
 
+IF [50%] {
+  REGION:(00,07,23,10),unlit,"ordinary"
+  REGION:(24,00,50,06),unlit,"ordinary"
+  REGION:(24,11,50,17),unlit,"ordinary"
+  REGION:(51,07,74,10),unlit,"ordinary"
+} ELSE {
+  REGION:(24,00,50,17),unlit,"ordinary"
+}
 
 IF [40%] {
-   $terrain = TERRAIN:{ 'L', '}' }
+   $terrain = TERRAIN:{ 'L', '}', 'I' }
    SHUFFLE:$terrain
    TERRAIN: (randline random-random,20), $terrain[0]
    IF [50%] {
@@ -164,6 +164,20 @@ MAP
 |.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|.|
 ---------------------------------------------------------------------------
 ENDMAP
+
+IF [30%] {
+   $outside = TERRAIN:{ 'L', 'T', '}', 'C' }
+   SHUFFLE: $outside
+   REPLACE_TERRAIN:(6,5, 68,11),'-',$outside[0],100%
+   REPLACE_TERRAIN:(6,5, 68,11),'|',$outside[0],100%
+   REPLACE_TERRAIN:(6,5, 68,11),' ',$outside[0],100%
+}
+
+IF [50%] {
+   REPLACE_TERRAIN:(1, 1, 73, 1),'|','F',100%
+   REPLACE_TERRAIN:(1,16, 73,16),'|','F',100%
+}
+
 # Dungeon Description
 REGION:(01,01,73,16),lit,"ordinary"
 # Stairs
@@ -233,6 +247,20 @@ MAP
 |.........|                                                     |.........|
 -----------                                                     -----------
 ENDMAP
+
+$corners = selection: (05,02) & (05,15) & (69,02) & (69,15)
+$terrain = TERRAIN:{ 'L', 'T', '{', '.' }
+SHUFFLE:$terrain
+TERRAIN:$corners, $terrain[0]
+
+IF [30%] {
+   $outside = TERRAIN:{ 'L', 'T', '}' }
+   SHUFFLE: $outside
+   REPLACE_TERRAIN:(0,0, 74,17),'-',$outside[0],100%
+   REPLACE_TERRAIN:(0,0, 74,17),'|',$outside[0],100%
+   REPLACE_TERRAIN:(0,0, 74,17),' ',$outside[0],100%
+}
+
 # Dungeon Description
 REGION:(01,01,73,16),lit,"ordinary"
 # Stairs
@@ -240,11 +268,6 @@ STAIR:random,up
 STAIR:random,down
 # Non diggable walls
 NON_DIGGABLE:(00,00,74,17)
-# Fountains
-FOUNTAIN:(05,02)
-FOUNTAIN:(05,15)
-FOUNTAIN:(69,02)
-FOUNTAIN:(69,15)
 # Objects
 LOOP [15] {
   OBJECT:random,random
@@ -347,6 +370,10 @@ MAP
 ENDMAP
 
 IF [20%] {
+  REPLACE_TERRAIN:(00,00,73,18),'T','{',100%
+}
+
+IF [20%] {
   REPLACE_TERRAIN:(00,00,73,18),'-','T',100%
   REPLACE_TERRAIN:(00,00,73,18),'|','T',100%
 }
@@ -399,6 +426,11 @@ MAP
             ---...---------                                                
               -----                                                        
 ENDMAP
+
+$terrain = TERRAIN:{ 'L', 'T', '{', '.' }
+SHUFFLE:$terrain
+REPLACE_TERRAIN:(00,00,74,18),'L',$terrain[0],100%
+
 # Dungeon Description
 REGION:(01,01,73,17),lit,"ordinary"
 # Stairs
