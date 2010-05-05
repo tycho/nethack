@@ -3606,26 +3606,6 @@ spo_wallwalk(coder)
 }
 
 void
-spo_feature(coder)
-     struct sp_coder *coder;
-{
-    struct opvar *coord;
-    int typ;
-
-    if (!OV_pop_c(coord)) return;
-
-    switch (coder->opcode) {
-    default: impossible("spo_feature called with wrong opcode %i.", coder->opcode); break;
-    case SPO_FOUNTAIN: typ = FOUNTAIN; break;
-    case SPO_SINK:     typ = SINK;     break;
-    case SPO_POOL:     typ = POOL;     break;
-    }
-
-    create_feature(SP_COORD_X(OV_i(coord)), SP_COORD_Y(OV_i(coord)), coder->croom, typ);
-    opvar_free(coord);
-}
-
-void
 spo_trap(coder)
      struct sp_coder *coder;
 {
@@ -4064,6 +4044,15 @@ sel_set_ter(x,y,arg)
 }
 
 void
+sel_set_feature(x,y,arg)
+     int x,y;
+     genericptr_t arg;
+{
+    if (IS_FURNITURE(levl[x][y].typ)) return;
+    levl[x][y].typ = (*(int *)arg);
+}
+
+void
 sel_set_door(dx,dy,arg)
      int dx,dy;
      genericptr_t arg;
@@ -4113,6 +4102,28 @@ spo_door(coder)
 
     opvar_free(sel);
     opvar_free(msk);
+}
+
+void
+spo_feature(coder)
+     struct sp_coder *coder;
+{
+    struct opvar *coord, *sel;
+    int typ;
+
+    if (!OV_pop_typ(sel, SPOVAR_SEL)) return;
+
+    switch (coder->opcode) {
+    default: impossible("spo_feature called with wrong opcode %i.", coder->opcode); break;
+    case SPO_FOUNTAIN: typ = FOUNTAIN; break;
+    case SPO_SINK:     typ = SINK;     break;
+    case SPO_POOL:     typ = POOL;     break;
+    }
+
+    selection_iterate(sel, sel_set_feature, (genericptr_t)&typ);
+
+    opvar_free(coord);
+    opvar_free(sel);
 }
 
 void
