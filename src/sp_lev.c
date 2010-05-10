@@ -4108,7 +4108,7 @@ void
 spo_feature(coder)
      struct sp_coder *coder;
 {
-    struct opvar *coord, *sel;
+    struct opvar *sel;
     int typ;
 
     if (!OV_pop_typ(sel, SPOVAR_SEL)) return;
@@ -4119,10 +4119,7 @@ spo_feature(coder)
     case SPO_SINK:     typ = SINK;     break;
     case SPO_POOL:     typ = POOL;     break;
     }
-
     selection_iterate(sel, sel_set_feature, (genericptr_t)&typ);
-
-    opvar_free(coord);
     opvar_free(sel);
 }
 
