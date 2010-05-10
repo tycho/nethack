@@ -2122,7 +2122,7 @@ struct ext_func_tab extcmdlist[] = {
 
 #if defined(WIZARD)
 static const struct ext_func_tab debug_extcmdlist[] = {
-	{"flip_level", "flip level horizontall and/or vertically", wiz_fliplevel, TRUE},
+	{"flip_level", "flip level horizontally and/or vertically", wiz_fliplevel, TRUE},
 	{"levelchange", "change experience level", wiz_level_change, TRUE},
 	{"lightsources", "show mobile light sources", wiz_light_sources, TRUE},
 	{"mazewalkmap", "show MAZEWALK paths", wiz_mazewalkmap, TRUE},
