@@ -504,6 +504,22 @@ enter_explore_mode()
 #ifdef WIZARD
 
 int
+wiz_fliplevel()
+{
+    int f = rnd(3);
+    flip_level(f);
+    if (f & 1) u.uy = (ROWNO-1) - u.uy;
+    if (f & 2) u.ux = (COLNO-1) - u.ux;
+    clear_nhwindow(WIN_MAP);
+    vision_recalc(2);
+    vision_reset();
+    vision_full_recalc = 1;
+    vision_recalc(0);
+    docrt();
+    return 0;
+}
+
+int
 wiz_show_rooms()
 {
     winid win;
@@ -2080,6 +2096,7 @@ struct ext_func_tab extcmdlist[] = {
 	 */
 	{(char *)0, (char *)0, donull, TRUE},
 	{(char *)0, (char *)0, donull, TRUE},
+	{(char *)0, (char *)0, donull, TRUE},
 #ifdef DEBUG_MIGRATING_MONS
 	{(char *)0, (char *)0, donull, TRUE},
 #endif
@@ -2105,6 +2122,7 @@ struct ext_func_tab extcmdlist[] = {
 
 #if defined(WIZARD)
 static const struct ext_func_tab debug_extcmdlist[] = {
+	{"flip_level", "flip level horizontall and/or vertically", wiz_fliplevel, TRUE},
 	{"levelchange", "change experience level", wiz_level_change, TRUE},
 	{"lightsources", "show mobile light sources", wiz_light_sources, TRUE},
 	{"mazewalkmap", "show MAZEWALK paths", wiz_mazewalkmap, TRUE},
