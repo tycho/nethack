@@ -949,7 +949,7 @@ peffects(otmp)
 			    pline("Magical energies course through your body.");
 			num = rnd(5) + 5 * otmp->blessed + 1;
 			u.uenmax += (otmp->cursed) ? -num : num;
-			num = rnd(otmp->odiluted ? 0 : 75) + 75 * otmp->blessed + 1;  /* make this part matter */
+			num = (otmp->odiluted ? 0 : rnd(75)) + 75 * otmp->blessed + 1;  /* make this part matter */
 			u.uen += (otmp->cursed) ? -num : num;
 			if(u.uen > u.uenmax) u.uen = u.uenmax;
 			if(u.uenmax <= 0) u.uenmax = 0;
