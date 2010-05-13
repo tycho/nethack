@@ -143,10 +143,10 @@
 
 #ifndef WIZARD		/* allow for compile-time or Makefile changes */
 # ifndef KR1ED
-#  define WIZARD  "paxed" /* the person allowed to use the -D option */
+#  define WIZARD  "derek" /* the person allowed to use the -D option */
 # else
 #  define WIZARD
-#  define WIZARD_NAME "paxed"
+#  define WIZARD_NAME "derek"
 # endif
 #endif
 
