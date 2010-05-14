@@ -335,7 +335,7 @@ MONSTER:'j',random,hostile
 #
 
 LEVEL: "Kni-fila"
-FLAGS:mazelevel
+FLAGS:mazelevel,noflip
 INIT_MAP: mines, '.' , 'P' , false , true , lit , false
 MON_GENERATION:86%, (64,"quasit"), (16,'i'), (16,"ochre jelly"), (4,'j')
 NOMAP
@@ -358,7 +358,7 @@ LOOP [3 + 1d5] {
 }
 
 LEVEL: "Kni-filb"
-FLAGS:mazelevel
+FLAGS:mazelevel,noflip
 INIT_MAP: mines, '.' , 'P' , false , true , lit , false
 MON_GENERATION:86%, (64,"quasit"), (16,'i'), (16,"ochre jelly"), (4,'j')
 NOMAP
