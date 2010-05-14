@@ -332,7 +332,7 @@ LOOP [5 + 1d10] {
 #
 
 LEVEL: "Cav-filb"
-FLAGS:mazelevel
+FLAGS:mazelevel,noflip
 INIT_MAP: mines, '.' , ' ' , true , true , random , true
 MON_GENERATION:86%, (64,"tiger"), (16,'S'), (16,"ape"), (4,'f')
 NOMAP
