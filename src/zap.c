@@ -3397,6 +3397,12 @@ register int dx,dy;
     int spell_type;
 	 boolean is_wand = (type >= 0 && type <= 9);
 
+	 if (type < -39 || type > 29)
+	 {
+		 impossible("Bad attack type passed in buzz(): %d",type);
+		 abstype = type = AD_MAGM;    /* just be a magic missile */
+	 }
+
     /* if its a Hero Spell then get its SPE_TYPE */
     spell_type = is_hero_spell(type) ? SPE_MAGIC_MISSILE + abstype : 0;
 
