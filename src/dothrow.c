@@ -535,6 +535,13 @@ hurtle_step(arg, x, y)
 	    losehp(rnd(2+*range), s, KILLED_BY);
 	    return FALSE;
 	}
+	if (IS_DOOR(levl[x][y].typ) && (levl[x][y].doormask & D_ISOPEN) &&
+	    (u.ux - x) && (u.uy - y)) {
+	    /* closed door handled above */
+	    pline("You hit the door edge!");
+	    losehp(rnd(2+*range), "bumping into a door", KILLED_BY);
+	    return FALSE;
+	}
 	if (levl[x][y].typ == IRONBARS) {
 	    You("crash into some iron bars.  Ouch!");
 	    losehp(rnd(2+*range), "crashing into iron bars", KILLED_BY);
