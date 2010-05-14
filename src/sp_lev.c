@@ -490,18 +490,20 @@ flip_level(int flp)
     for (ttmp = ftrap; ttmp; ttmp = ttmp->ntrap) {
 	if (flp & 1) {
 	    ttmp->ty = y2 - ttmp->ty;
-	    if (ttmp->ttyp == ROLLING_BOULDER_TRAP ||
-		ttmp->ttyp == MAGIC_BEAM_TRAP) {
+	    if (ttmp->ttyp == ROLLING_BOULDER_TRAP) {
 		ttmp->launch.y = y2 - ttmp->launch.y;
 		ttmp->launch2.y = y2 - ttmp->launch2.y;
+	    } else if (ttmp->ttyp == MAGIC_BEAM_TRAP) {
+		ttmp->launch.y = y2 - ttmp->launch.y;
 	    }
 	}
 	if (flp & 2) {
 	    ttmp->tx = x2 - ttmp->tx;
-	    if (ttmp->ttyp == ROLLING_BOULDER_TRAP ||
-		ttmp->ttyp == MAGIC_BEAM_TRAP) {
+	    if (ttmp->ttyp == ROLLING_BOULDER_TRAP) {
 		ttmp->launch.x = x2 - ttmp->launch.x;
 		ttmp->launch2.x = x2 - ttmp->launch2.x;
+	    } else if (ttmp->ttyp == MAGIC_BEAM_TRAP) {
+		ttmp->launch.x = x2 - ttmp->launch.x;
 	    }
 	}
     }
