@@ -36,7 +36,7 @@ boom_flightpath_menu()
 {
     winid win;
     anything any;
-    menu_item *pick_list;
+    menu_item *pick_list = NULL;
     int n;
 
     any.a_void = 0;
@@ -63,9 +63,10 @@ boom_flightpath_menu()
     end_menu(win, "How do you wish boomerangs to behave?");
     n = select_menu(win, PICK_ONE, &pick_list);
     destroy_nhwindow(win);
-
-    n = (pick_list[0].item.a_int - 1);
-    free((genericptr_t) pick_list);
+    if (pick_list) {
+	n = (pick_list[0].item.a_int - 1);
+	free((genericptr_t) pick_list);
+    }
     return n;
 }
 
