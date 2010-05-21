@@ -132,7 +132,8 @@ boolean talk;
 	mon = makemon(&mons[mnum], u.ux, u.uy, NO_MM_FLAGS);
     if (mon) {
 	if (talk) {
-	    pline_The("voice of %s booms:", align_gname(alignment));
+	    if (flags.soundok)
+		pline_The("voice of %s booms:", align_gname(alignment));
 	    verbalize("Thou shalt pay for thy indiscretion!");
 	    if (!Blind)
 		pline("%s appears before you.", Amonnam(mon));
