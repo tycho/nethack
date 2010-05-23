@@ -642,6 +642,7 @@ ck_server_admin_msg()
       char curline[250];
       boolean shown_name = FALSE;
       FILE* mb = fopen(SERVER_ADMIN_MSG, "r");
+      boolean snd = flags.soundok;
 
       if (!mb) return;
 
@@ -649,11 +650,13 @@ ck_server_admin_msg()
         char *msg = strchr(curline, ':');
         if (!msg) {
           fclose(mb);
+	  flags.soundok = snd;
           return;
         }
         *msg = '\0';
         msg++;
         msg[strlen(msg) - 1] = '\0'; /* kill newline */
+	flags.soundok = TRUE;
         if (!shown_name) {
           pline("The voice of %s booms through the caverns:", curline);
           shown_name = TRUE;
@@ -662,6 +665,7 @@ ck_server_admin_msg()
       }
       ost.st_mtime = nst.st_mtime;
       fclose(mb);
+      flags.soundok = snd;
     }
   }
 #endif /* SERVER_ADMIN_MSG */
