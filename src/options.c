@@ -181,6 +181,7 @@ static struct Bool_Opt
 #else
 	{"showexp", (boolean *)0, FALSE, SET_IN_FILE},
 #endif
+	{"show_obj_sym", &iflags.showobjsym, TRUE, SET_IN_GAME},
 	{"showrace", &iflags.showrace, FALSE, SET_IN_GAME},
 #ifdef REALTIME_ON_BOTL
   {"showrealtime", &iflags.showrealtime, FALSE, SET_IN_GAME},
