@@ -280,6 +280,7 @@ struct instance_flags {
 	/* Items which belong in flags, but are here to allow save compatibility */
 	boolean  lootabc;	/* use "a/b/c" rather than "o/i/b" when looting */
 	boolean  showrace;	/* show hero glyph by race rather than by role */
+	boolean  showobjsym;	/* show object class symbol in menus where available */
 	boolean  travelcmd;	/* allow travel command */
 	boolean  show_dgn_name; /* show dungeon names instead of Dlvl: on bottom line
 										 probably only good for people taking advantage of 
