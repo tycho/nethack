@@ -25,8 +25,8 @@
 #==============================================================================
 # Do not delete the following 3 lines.
 #
-TARGETOS=BOTH
-APPVER=4.0
+TARGETOS=WINNT
+APPVER=5.0
 !include <win32.mak>
 
 # Graphical interface
@@ -117,8 +117,8 @@ RANDOM	= $(OBJ)\random.o
 #  debug capability in the object files, or in the NetHack executable.
 #  Comment them if you want debug capability.
 
-cdebug =
-linkdebug =
+#cdebug =
+#linkdebug =
 
 #
 # Compiler and Linker flags
@@ -184,8 +184,8 @@ DLBFLG =
 # macros. All builds include the base ones.
 #==========================================
 
-CFLAGSBASE  = -c $(cflags) $(cvarsmt) -I$(INCL) -nologo $(cdebug) $(WINPINC) -D_USE_32BIT_TIME_T -wd4996
-LFLAGSBASEC = $(linkdebug) /INCREMENTAL:NO /RELEASE /NOLOGO -subsystem:console,4.0 $(conlibsmt)
+CFLAGSBASE  = -c $(cflags) $(cvarsmt) -I$(INCL) -nologo $(cdebug) $(WINPINC) -D_USE_32BIT_TIME_T -wd4113 -wd4996
+LFLAGSBASEC = $(linkdebug) $(conlflags) $(conlibsmt) /INCREMENTAL:NO /RELEASE /NOLOGO
 LFLAGSBASEG = $(linkdebug) $(guiflags) $(guilibsmt) comctl32.lib
 
 #==========================================
@@ -198,7 +198,7 @@ LFLAGSU	= $(LFLAGSBASEC)
 #==========================================
 # - Game build
 #==========================================
-LFLAGSBASE = $(linkdebug) /INCREMENTAL:NO /RELEASE /NOLOGO -subsystem:console,4.0 $(conlibsmt)
+LFLAGSBASE = $(linkdebug) /INCREMENTAL:NO /RELEASE /NOLOGO -subsystem:console $(conlibsmt)
 CFLAGS	 = $(CFLAGSBASE) $(WINPFLAG) $(DLBFLG)
 NHLFLAGS1 = /INCREMENTAL:NO /PDB:"$(GAMEDIR)\$(GAME).PDB" /RELEASE /NOLOGO
 NHLFLAGS2 = /MAP:"$(GAMEDIR)\$(GAME).MAP" /MACHINE:$(CPU)
