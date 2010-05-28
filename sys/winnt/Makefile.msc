@@ -117,8 +117,8 @@ RANDOM	= $(OBJ)\random.o
 #  debug capability in the object files, or in the NetHack executable.
 #  Comment them if you want debug capability.
 
-#cdebug =
-#linkdebug =
+cdebug =
+linkdebug =
 
 #
 # Compiler and Linker flags
@@ -600,7 +600,7 @@ $(O)nhdefkey.def:
 
 $(GAMEDIR)\nhdefkey.dll : $(O)$(@B).o $(O)gamedir.tag $(O)$(@B).def
 	@echo Linking $@
-	@$(link) -debug:full -debugtype:cv /RELEASE /NOLOGO /DLL user32.lib \
+	@$(link) /DEBUG /RELEASE /NOLOGO /DLL user32.lib \
 		/PDB:"$(@B).PDB" /MAP:"$(@B).map" /DEF:$(O)$(@B).def \
 		/IMPLIB:$(O)$(@B).lib -out:$@ $(O)$(@B).o
 
@@ -615,7 +615,7 @@ $(O)nh340key.def:
 
 $(GAMEDIR)\nh340key.dll : $(O)$(@B).o $(O)gamedir.tag $(O)$(@B).def
 	@echo Linking $@
-	@$(link) -debug:full -debugtype:cv /RELEASE /NOLOGO /DLL user32.lib \
+	@$(link) /DEBUG /RELEASE /NOLOGO /DLL user32.lib \
 		/PDB:"$(@B).PDB" /MAP:"$(@B).map" /DEF:$(O)$(@B).def \
 		/IMPLIB:$(O)$(@B).lib -out:$@ $(O)$(@B).o
 
@@ -630,7 +630,7 @@ $(O)nhraykey.def:
 
 $(GAMEDIR)\nhraykey.dll : $(O)$(@B).o $(O)gamedir.tag $(O)$(@B).def
 	@echo Linking $@
-	@$(link) -debug:full -debugtype:cv /RELEASE /NOLOGO /DLL user32.lib \
+	@$(link) /DEBUG /RELEASE /NOLOGO /DLL user32.lib \
 		/PDB:"$(@B).PDB" /MAP:"$(@B).map" /DEF:$(O)$(@B).def \
 		/IMPLIB:$(O)$(@B).lib -out:$@ $(O)$(@B).o
 

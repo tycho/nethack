@@ -382,7 +382,10 @@ typedef unsigned char	uchar;
 
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # define MENU_COLOR
+#if !defined(_MSC_VER)
 # define MENU_COLOR_REGEX
+# define MENU_COLOR_REGEX_POSIX
+#endif
 /* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
  * GNU specific functions by default, POSIX functions with
  * MENU_COLOR_REGEX_POSIX).
