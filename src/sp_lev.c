@@ -1766,9 +1766,14 @@ struct mkroom	*croom;
 	/* contents */
 	if (o->containment & SP_OBJ_CONTENT) {
 	    if (!container_idx) {
-		if (!invent_carrying_monster)
-		    impossible("create_object: no container");
-		else {
+		if (!invent_carrying_monster) {
+		    /*impossible("create_object: no container");*/
+		    /* don't complain, the monster may be gone legally (eg. unique demon already generated)
+		       TODO: In the case of unique demon lords, they should get their inventories even when
+		       they get generated outside the des-file. Maybe another data file that determines what
+		       inventories monsters get by default?
+		     */
+		} else {
 		    int c;
 		    struct obj *objcheck = otmp;
 		    int inuse = -1;
