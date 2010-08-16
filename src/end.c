@@ -759,6 +759,7 @@ int how;
      */
 
 die:
+	kilbuf[BUFSZ-1] = 0;	 /* cheap hack bugfix */
 	program_state.gameover = 1;
 	/* in case of a subsequent panic(), there's no point trying to save */
 	program_state.something_worth_saving = 0;
