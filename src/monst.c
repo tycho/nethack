@@ -1010,7 +1010,7 @@ NEARDATA struct permonst mons[] = {
 /*
  * worms
  */
-    MON("baby long worm", S_WORM,
+    MON("baby sand worm", S_WORM,
 	LVL(8, 3, 5, 0, 0), G_GENO,
 	A(ATTK(AT_BITE, AD_PHYS, 1, 6),
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
@@ -1024,7 +1024,7 @@ NEARDATA struct permonst mons[] = {
 	SIZ(600, 250, 0, MS_SILENT, MZ_LARGE), 0, 0,
 	M1_ANIMAL|M1_SLITHY|M1_NOLIMBS|M1_CARNIVORE, M2_HOSTILE,
 	0, 0, CLR_MAGENTA),
-    MON("long worm", S_WORM,
+    MON("sand worm", S_WORM,
 	LVL(8, 3, 5, 10, 0), (G_GENO|2),
 	A(ATTK(AT_BITE, AD_PHYS, 1, 4),
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),

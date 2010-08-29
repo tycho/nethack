@@ -132,8 +132,8 @@
 #define webmaker(ptr)		((ptr) == &mons[PM_CAVE_SPIDER] || \
 				 (ptr) == &mons[PM_GIANT_SPIDER])
 #define is_unicorn(ptr)		((ptr)->mlet == S_UNICORN && likes_gems(ptr))
-#define is_longworm(ptr)	(((ptr) == &mons[PM_BABY_LONG_WORM]) || \
-				 ((ptr) == &mons[PM_LONG_WORM]) || \
+#define is_longworm(ptr)	(((ptr) == &mons[PM_BABY_SAND_WORM]) || \
+				 ((ptr) == &mons[PM_SAND_WORM]) || \
 				 ((ptr) == &mons[PM_LONG_WORM_TAIL]))
 #define is_covetous(ptr)	((ptr->mflags3 & M3_COVETOUS))
 #define is_skittish(ptr)   ((ptr->mflags3 & M3_SKITTISH))
