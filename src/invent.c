@@ -958,6 +958,7 @@ register const char *let,*word;
 		     || otmp->otyp == TIN
 		     || otmp->otyp == CAN_OF_GREASE
 		     || otmp->otyp == CANDY_BAR
+		     || otmp->otyp == ALCHEMY_SMOCK
 #ifdef TOURIST
 			|| otmp->otyp == T_SHIRT
 		     || otmp->otyp == CREDIT_CARD

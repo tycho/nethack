@@ -183,6 +183,36 @@ doread()
             u.uconduct.literate++;
             return 1;
 #endif	/* TOURIST */
+	} else if (scroll->otyp == ALCHEMY_SMOCK) {
+	    static const char *apron_msgs[] = {
+		"Kiss the cook",
+		"I'm making SCIENCE!",
+		"Don't mess with the chef",
+		"Don't make me poison you",
+		"Gehennom's Kitchen",
+		"Rat: The other white meat",
+		"If you can't stand the heat, get out of Gehennom!",
+		"If we weren't meant to eat animals, why are they made out of meat?",
+		"If you don't like the food, I'll stab you"
+	    };
+	    char buf[BUFSZ];
+	    int erosion;
+	    /* duplicates the t-shirt read code */
+	    if (Blind) {
+		You_cant("feel any Braille writing.");
+		return 0;
+	    }
+	    u.uconduct.literate++;
+	    if(flags.verbose)
+		pline("It reads:");
+	    Strcpy(buf, apron_msgs[scroll->o_id % SIZE(apron_msgs)]);
+	    erosion = greatest_erosion(scroll);
+	    if (erosion)
+		wipeout_text(buf,
+			(int)(strlen(buf) * erosion / (2*MAX_ERODE)),
+			     scroll->o_id ^ (unsigned)u.ubirthday);
+	    pline("\"%s\"", buf);
+	    return 1;
         } else if (scroll->otyp == TIN) {
 	    if (scroll->o_id % 3) {
 		pline("This %s has no label.", singular(scroll, xname));
