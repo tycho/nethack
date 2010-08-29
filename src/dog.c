@@ -239,7 +239,7 @@ boolean with_you;
 
 	num_segs = mtmp->wormno;
 	/* baby long worms have no tail so don't use is_longworm() */
-	if ((mtmp->data == &mons[PM_LONG_WORM]) &&
+	if ((mtmp->data == &mons[PM_SAND_WORM]) &&
 #ifdef DCC30_BUG
 	    (mtmp->wormno = get_wormno(), mtmp->wormno != 0))
 #else

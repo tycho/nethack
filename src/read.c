@@ -2000,7 +2000,7 @@ boolean revival;
 		*mtype = PM_HUMAN_ZOMBIE;
 		return TRUE;
 	} else if (*mtype==PM_LONG_WORM_TAIL) {	/* for create_particular() */
-		*mtype = PM_LONG_WORM;
+		*mtype = PM_SAND_WORM;
 		return TRUE;
 	}
 	return FALSE;

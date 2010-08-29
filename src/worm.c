@@ -85,6 +85,7 @@ long	    wgrowtime[MAX_NUM_WORMS] = DUMMY;
 int
 get_wormno()
 {
+    return (0);
     register int new_wormno = 1;
 
     while (new_wormno < MAX_NUM_WORMS) {
@@ -112,6 +113,7 @@ initworm(worm, wseg_count)
     struct monst *worm;
     int wseg_count;
 {
+    return;
     register struct wseg *seg, *new_tail = create_worm_tail(wseg_count);
     register int wnum = worm->wormno;
 
@@ -143,6 +145,7 @@ toss_wsegs(curr, display_update)
     register struct wseg *curr;
     register boolean display_update;
 {
+    return;
     register struct wseg *seg;
 
     while (curr) {
@@ -175,6 +178,7 @@ void
 shrink_worm(wnum)
     int wnum;	/* worm number */
 {
+    return;
     struct wseg *seg;
 
     if (wtails[wnum] == wheads[wnum]) return;	/* no tail */
@@ -196,6 +200,7 @@ void
 worm_move(worm)
     struct monst *worm;
 {
+    return;
     register struct wseg *seg, *new_seg;	/* new segment */
     register int	 wnum = worm->wormno;	/* worm number */
 
@@ -244,6 +249,7 @@ void
 worm_nomove(worm)
     register struct monst *worm;
 {
+    return;
     shrink_worm((int) worm->wormno);	/* shrink */
 
     if (worm->mhp > 3)
@@ -263,6 +269,7 @@ void
 wormgone(worm)
     register struct monst *worm;
 {
+    return;
     register int wnum = worm->wormno;
 
 /*  if (!wnum) return;  bullet proofing */
@@ -288,6 +295,7 @@ void
 wormhitu(worm)
     register struct monst *worm;
 {
+    return;
     register int wnum = worm->wormno;
     register struct wseg *seg;
 
@@ -312,6 +320,7 @@ cutoff(worm, tail)
     struct monst *worm;
     struct wseg *tail;
 {
+    return;
 	if (flags.mon_moving)
 	    pline("Part of the tail of %s is cut off.", mon_nam(worm));
 	else
@@ -334,6 +343,7 @@ cutworm(worm, x, y, weap)
     xchar x,y;
     struct obj *weap;
 {
+    return;
     register struct wseg  *curr, *new_tail;
     register struct monst *new_worm;
     int wnum = worm->wormno;
@@ -440,6 +450,7 @@ void
 see_wsegs(worm)
     struct monst *worm;
 {
+    return;
     struct wseg *curr = wtails[worm->wormno];
 
 /*  if (!mtmp->wormno) return;  bullet proofing */
@@ -460,6 +471,7 @@ detect_wsegs(worm, use_detection_glyph)
     struct monst *worm;
     boolean use_detection_glyph;
 {
+    return;
     int num;
     struct wseg *curr = wtails[worm->wormno];
 
@@ -485,6 +497,7 @@ void
 save_worm(fd, mode)
     int fd, mode;
 {
+    return;
     int i;
     int count;
     struct wseg *curr, *temp;
@@ -531,6 +544,7 @@ void
 rest_worm(fd)
     int fd;
 {
+    return;
     int i, j, count;
     struct wseg *curr, *temp;
 
@@ -564,6 +578,7 @@ void
 place_wsegs(worm)
     struct monst *worm;
 {
+    return;
     struct wseg *curr = wtails[worm->wormno];
 
 /*  if (!mtmp->wormno) return;  bullet proofing */
@@ -586,6 +601,7 @@ void
 remove_worm(worm)
     register struct monst *worm;
 {
+    return;
     register struct wseg *curr = wtails[worm->wormno];
 
 /*  if (!mtmp->wormno) return;  bullet proofing */
@@ -611,6 +627,7 @@ place_worm_tail_randomly(worm, x, y)
     struct monst *worm;
     xchar x, y;
 {
+    return;
     int wnum = worm->wormno;
     struct wseg *curr = wtails[wnum];
     struct wseg *new_tail;
@@ -702,6 +719,7 @@ int
 count_wsegs(mtmp)
     struct monst *mtmp;
 {
+    return 0;
     register int i=0;
     register struct wseg *curr = (wtails[mtmp->wormno])->nseg;
 
@@ -724,6 +742,7 @@ struct wseg *
 create_worm_tail(num_segs)
     int num_segs;
 {
+    return (struct wseg *)0;
     register int i=0;
     register struct wseg *new_tail, *curr;
 
@@ -756,6 +775,7 @@ boolean
 worm_known(worm)
 struct monst *worm;
 {
+    return FALSE;
     struct wseg *curr = wtails[worm->wormno];
 
     while (curr) {

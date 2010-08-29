@@ -2613,7 +2613,7 @@ typfnd:
 
 	/* set otmp->corpsenm or dragon scale [mail] */
 	if (mntmp >= LOW_PM) {
-		if (mntmp == PM_LONG_WORM_TAIL) mntmp = PM_LONG_WORM;
+		if (mntmp == PM_LONG_WORM_TAIL) mntmp = PM_SAND_WORM;
 
 		switch (typ) {
 		case TIN:

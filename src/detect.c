@@ -612,7 +612,7 @@ int mclass;			/* monster class, 0 for all */
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 	    if (DEADMONSTER(mtmp)) continue;
 	    if (!mclass || mtmp->data->mlet == mclass ||
-		(mtmp->data == &mons[PM_LONG_WORM] && mclass == S_WORM_TAIL))
+		(mtmp->data == &mons[PM_SAND_WORM] && mclass == S_WORM_TAIL))
 		    if (mtmp->mx > 0) {
 		    	if (mclass && def_monsyms[mclass] == ' ')
 				show_glyph(mtmp->mx,mtmp->my,
@@ -620,7 +620,7 @@ int mclass;			/* monster class, 0 for all */
 			else
 				show_glyph(mtmp->mx,mtmp->my,mon_to_glyph(mtmp));
 			/* don't be stingy - display entire worm */
-			if (mtmp->data == &mons[PM_LONG_WORM]) detect_wsegs(mtmp,0);
+			if (mtmp->data == &mons[PM_SAND_WORM]) detect_wsegs(mtmp,0);
 		    }
 	    if (otmp && otmp->cursed &&
 		(mtmp->msleeping || !mtmp->mcanmove)) {

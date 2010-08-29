@@ -221,7 +221,7 @@ register struct monst *mtmp;
 		} else
 			(void) mksobj_at(UNICORN_HORN, x, y, TRUE, FALSE);
 		goto default_1;
-	    case PM_LONG_WORM:
+	    case PM_SAND_WORM:
 		{
 		    struct obj *otmp = mksobj_at(WORM_TOOTH, x, y, TRUE, FALSE);
 		    otmp->oeroded = 0;
@@ -2697,12 +2697,12 @@ boolean msg;		/* "The oldmon turns into a newmon!" */
 	}
 
 #ifndef DCC30_BUG
-	if (mdat == &mons[PM_LONG_WORM] && (mtmp->wormno = get_wormno()) != 0) {
+	if (mdat == &mons[PM_SAND_WORM] && (mtmp->wormno = get_wormno()) != 0) {
 #else
 	/* DICE 3.0 doesn't like assigning and comparing mtmp->wormno in the
 	 * same expression.
 	 */
-	if (mdat == &mons[PM_LONG_WORM] &&
+	if (mdat == &mons[PM_SAND_WORM] &&
 		(mtmp->wormno = get_wormno(), mtmp->wormno != 0)) {
 #endif
 	    /* we can now create worms with tails - 11/91 */
