@@ -64,19 +64,20 @@ extern NEARDATA coord doors[DOORMAX];
 #define ANTHOLE		13	/* ants (Tom Proudfoot) */
 #define TRAPROOM	14
 #define POOLROOM	15
-#define SHOPBASE	16	/* everything above this is a shop */
-#define ARMORSHOP	17	/* specific shop defines for level compiler */
-#define SCROLLSHOP	18
-#define POTIONSHOP	19
-#define WEAPONSHOP	20
-#define FOODSHOP	21
-#define RINGSHOP	22
-#define WANDSHOP	23
-#define TOOLSHOP	24
-#define BOOKSHOP	25
-#define UNIQUESHOP	26	/* shops here & above not randomly gen'd. */
-#define CANDLESHOP	26
-#define MAXRTYPE	26	/* maximum valid room type */
+#define RNDVAULT	16	/* random vault, not to be confused with VAULT */
+#define SHOPBASE	17	/* everything above this is a shop */
+#define ARMORSHOP	18	/* specific shop defines for level compiler */
+#define SCROLLSHOP	19
+#define POTIONSHOP	20
+#define WEAPONSHOP	21
+#define FOODSHOP	22
+#define RINGSHOP	23
+#define WANDSHOP	24
+#define TOOLSHOP	25
+#define BOOKSHOP	26
+#define UNIQUESHOP	27	/* shops here & above not randomly gen'd. */
+#define CANDLESHOP	27
+#define MAXRTYPE	27	/* maximum valid room type */
 
 /* Special type for search_special() */
 #define ANY_TYPE	(-1)

@@ -103,7 +103,7 @@ options:	../util/makedefs
 
 spec_levs: ../util/lev_comp \
 	bigroom.des castle.des endgame.des gehennom.des knox.des medusa.des \
-	mines.des oracle.des sokoban.des tower.des yendor.des
+	mines.des oracle.des sokoban.des tower.des yendor.des vaults.des
 	../util/lev_comp $(LEVCOMP_FLAGS) bigroom.des
 	../util/lev_comp $(LEVCOMP_FLAGS) castle.des
 	../util/lev_comp $(LEVCOMP_FLAGS) endgame.des
@@ -115,6 +115,7 @@ spec_levs: ../util/lev_comp \
 	../util/lev_comp $(LEVCOMP_FLAGS) sokoban.des
 	../util/lev_comp $(LEVCOMP_FLAGS) tower.des
 	../util/lev_comp $(LEVCOMP_FLAGS) yendor.des
+	../util/lev_comp $(LEVCOMP_FLAGS) vaults.des
 	touch spec_levs
 
 quest_levs: ../util/lev_comp \

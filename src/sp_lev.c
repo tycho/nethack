@@ -1865,8 +1865,7 @@ struct mkroom	*croom;
 	    begin_burn(otmp, FALSE);
 	}
 
-	if (o->buried && !o->containment) {
-	    /* What if we'd want to bury a container? bury_an_obj() may dealloc obj. */
+	if (o->buried) {
 	    (void) bury_an_obj(otmp);
 	}
 }

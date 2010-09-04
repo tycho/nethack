@@ -306,7 +306,14 @@ makerooms()
 			if (!create_room(-1, -1, -1, -1, -1, -1, OROOM, -1))
 			    return;
 			break;
-		    case 0: mk_split_room(); break;
+		    case 0:
+			{
+			    char protofile[20];
+			    Sprintf(protofile, "vlt-%04i", rnd(24));
+			    Strcat(protofile, LEV_EXT);
+			    (void) load_special(protofile);
+			}
+			break;
 		    }
 		}
 	}
@@ -759,7 +766,7 @@ makelevel()
 {
 	register struct mkroom *croom, *troom;
 	register int tryct;
-	register int x, y;
+	register int x, y, i;
 	struct monst *tmonst;	/* always put a web with a spider */
 	branch *branchp;
 	int room_threshold, boxtype;
@@ -826,8 +833,13 @@ makelevel()
 
 	/* construct stairs (up and down in different rooms if possible) */
 	croom = &rooms[rn2(nroom)];
-	if (!Is_botlevel(&u.uz))
-	     mkstairs(somex(croom), somey(croom), 0, croom);	/* down */
+	if (!Is_botlevel(&u.uz)) {
+	    tryct = 0;
+	    do {
+		x = somex(croom); y = somey(croom);
+	    } while ((!SPACE_POS(levl[x][y].typ) || occupied(x,y)) && (++tryct < 100));
+	    mkstairs(x,y, 0, croom);	/* down */
+	}
 	if (nroom > 1) {
 	    troom = croom;
 	    croom = &rooms[rn2(nroom-1)];
@@ -836,10 +848,11 @@ makelevel()
 
 	if (u.uz.dlevel != 1) {
 	    xchar sx, sy;
+	    tryct = 0;
 	    do {
 		sx = somex(croom);
 		sy = somey(croom);
-	    } while(occupied(sx, sy));
+	    } while ((!SPACE_POS(levl[sx][sy].typ) || occupied(sx,sy)) && (++tryct < 100));
 	    mkstairs(sx, sy, 1, croom);	/* up */
 	}
 
@@ -935,8 +948,8 @@ skip0:
 
 	/* for each room: put things inside */
 	for(croom = rooms; croom->hx > 0; croom++) {
-		if(croom->rtype != OROOM) continue;
-
+	    if (croom->rtype != OROOM && croom->rtype != RNDVAULT) continue;
+	    if (croom->rtype == RNDVAULT && !croom->needfill) continue;
 		/* put a sleeping monster inside */
 		/* Note: monster may be on the stairs. This cannot be
 		   avoided: maybe the player fell through a trap door
@@ -944,19 +957,30 @@ skip0:
 		   we have to check for monsters on the stairs anyway. */
 
 		if(u.uhave.amulet || !rn2(3)) {
-		    x = somex(croom); y = somey(croom);
-		    tmonst = makemon((struct permonst *) 0, x,y,NO_MM_FLAGS);
-		    if (tmonst && tmonst->data == &mons[PM_GIANT_SPIDER] &&
+		    tryct = 0;
+		    do {
+			x = somex(croom); y = somey(croom);
+		    } while ((!SPACE_POS(levl[x][y].typ) || occupied(x,y)) && (++tryct < 100));
+		    if (tryct < 100) {
+			tmonst = makemon((struct permonst *) 0, x,y,NO_MM_FLAGS);
+			if (tmonst && tmonst->data == &mons[PM_GIANT_SPIDER] &&
 			    !occupied(x, y))
-			(void) maketrap(x, y, WEB);
+			    (void) maketrap(x, y, WEB);
+		    }
 		}
 		/* put traps and mimics inside */
-		x = 8 - (level_difficulty()/6);
-		if (x <= 1) x = 2;
-		while (!rn2(x))
+		i = 8 - (level_difficulty()/6);
+		if (i <= 1) i = 2;
+		while (!rn2(i))
 		    mktrap(0,0,croom,(coord*)0);
-		if (!rn2(3))
-		    (void) mkgold(0L, somex(croom), somey(croom));
+		if (!rn2(3)) {
+		    tryct = 0;
+		    do {
+			x = somex(croom); y = somey(croom);
+		    } while ((!SPACE_POS(levl[x][y].typ) || occupied(x,y)) && (++tryct < 100));
+		    if (tryct < 100)
+			(void) mkgold(0L, x, y);
+		}
 #ifdef REINCARNATION
 		if(Is_rogue_level(&u.uz)) goto skip_nonrogue;
 #endif
@@ -967,17 +991,23 @@ skip0:
 		if (christmas() && !rn2(20)) mktree(croom);
 
 		if(!rn2(60)) mkaltar(croom);
-		x = 80 - (depth(&u.uz) * 2);
-		if (x < 2) x = 2;
-		if(!rn2(x)) mkgrave(croom);
+		i = 80 - (depth(&u.uz) * 2);
+		if (i < 2) i = 2;
+		if(!rn2(i)) mkgrave(croom);
 
 		if (!croom->rlit && !rn2(15)) mkbrazier(croom);
 
 		/* put statues inside */
-		if(!rn2(20))
-		    (void) mkcorpstat(STATUE, (struct monst *)0,
-				      (struct permonst *)0,
-				      somex(croom), somey(croom), TRUE);
+		if(!rn2(20)) {
+		    tryct = 0;
+		    do {
+			x = somex(croom); y = somey(croom);
+		    } while ((!SPACE_POS(levl[x][y].typ) || occupied(x,y)) && (++tryct < 100));
+		    if (tryct < 100)
+			(void) mkcorpstat(STATUE, (struct monst *)0,
+					  (struct permonst *)0,
+					  x, y, TRUE);
+		}
 		/* put box/chest/safe inside;
 		 *  40% chance for at least 1 box, regardless of number
 		 *  of rooms; about 5 - 7.5% for 2 boxes, least likely
@@ -986,15 +1016,20 @@ skip0:
 		 *  Safes only show up below level 15 since they're not unlockable.
 		 */
 		if(!rn2(nroom * 5 / 2)) {
-			x = rn2(5);
-			if (!x && depth(&u.uz) > 15) {
+			i = rn2(5);
+			if (!i && depth(&u.uz) > 15) {
 				boxtype = IRON_SAFE;
-			} else if (x > 2) {
+			} else if (i > 2) {
 				boxtype = CHEST;
 			} else {
 				boxtype = LARGE_BOX;
 			}
-		    (void) mksobj_at(boxtype, somex(croom), somey(croom), TRUE, FALSE);
+			tryct = 0;
+			do {
+			    x = somex(croom); y = somey(croom);
+			} while ((!SPACE_POS(levl[x][y].typ) || occupied(x,y)) && (++tryct < 100));
+			if (tryct < 100)
+			    (void) mksobj_at(boxtype, x,y, TRUE, FALSE);
 		}
 
 		/* maybe make some graffiti */
@@ -1002,9 +1037,10 @@ skip0:
 		    char buf[BUFSZ];
 		    const char *mesg = random_engraving(buf);
 		    if (mesg) {
+			tryct = 0;
 			do {
 			    x = somex(croom);  y = somey(croom);
-			} while(levl[x][y].typ != ROOM && !rn2(40));
+			} while(levl[x][y].typ != ROOM && !rn2(40) && (++tryct < 100));
 			if (!(IS_POOL(levl[x][y].typ) || IS_FURNITURE(levl[x][y].typ)))
 			    make_engr_at(x, y, mesg, 0L, MARK);
 		    }
@@ -1016,14 +1052,21 @@ skip0:
 		/* Boost object generation here slightly so that later when we
 		 * start encouraging players to use resources, there _are_ some */
 		if(rn2(3)) {
-		    (void) mkobj_at(0, somex(croom), somey(croom), TRUE);
+		    tryct = 0;
+		    do {
+			x = somex(croom); y = somey(croom);
+		    } while ((!SPACE_POS(levl[x][y].typ) || occupied(x,y)) && (++tryct < 100));
+		    if (tryct < 100)
+			(void) mkobj_at(0, x,y, TRUE);
 		    tryct = 0;
 		    while(!rn2(4)) {
 			if(++tryct > 100) {
 			    impossible("tryct overflow4");
 			    break;
 			}
-			(void) mkobj_at(0, somex(croom), somey(croom), TRUE);
+			x = somex(croom); y = somey(croom);
+			if (SPACE_POS(levl[x][y].typ))
+			    (void) mkobj_at(0, x,y, TRUE);
 		    }
 		}
 	}
@@ -1281,9 +1324,9 @@ find_branch_room(mp)
     if (nroom == 0) {
 	mazexy(mp);		/* already verifies location */
     } else {
+	int tryct = 0;
 	/* not perfect - there may be only one stairway */
 	if(nroom > 2) {
-	    int tryct = 0;
 
 	    do
 		croom = &rooms[rn2(nroom)];
@@ -1291,12 +1334,20 @@ find_branch_room(mp)
 		  croom->rtype != OROOM) && (++tryct < 100));
 	} else
 	    croom = &rooms[rn2(nroom)];
-
+	tryct = 0;
 	do {
 	    if (!somexy(croom, mp))
 		impossible("Can't place branch!");
-	} while(occupied(mp->x, mp->y) ||
-	    (levl[mp->x][mp->y].typ != CORR && levl[mp->x][mp->y].typ != ROOM));
+	} while ((++tryct < 200) && (occupied(mp->x, mp->y) ||
+		  (levl[mp->x][mp->y].typ != CORR && levl[mp->x][mp->y].typ != ROOM)));
+	tryct = 0;
+	do {
+	    if (!somexy(croom, mp))
+		impossible("Can't place branch!");
+	} while ((++tryct < 200) && (occupied(mp->x, mp->y) ||
+				     (levl[mp->x][mp->y].typ != ICE && levl[mp->x][mp->y].typ != LAVAPOOL &&
+				      levl[mp->x][mp->y].typ != POOL && levl[mp->x][mp->y].typ != MOAT &&
+				      levl[mp->x][mp->y].typ != CLOUD)));
     }
     return croom;
 }
@@ -1523,7 +1574,7 @@ coord *tm;
 		    mazexy(&m);
 		else if (!somexy(croom,&m))
 		    return;
-	    } while (occupied(m.x, m.y) ||
+	    } while (!SPACE_POS(levl[m.x][m.y].typ) || occupied(m.x, m.y) ||
 			(avoid_boulder && sobj_at(BOULDER, m.x, m.y)));
 	}
 
@@ -1582,7 +1633,7 @@ register struct mkroom *croom;
 	    else
 		if (!somexy(croom, &m))
 		    return;
-	} while(occupied(m.x, m.y) || bydoor(m.x, m.y));
+	} while(!SPACE_POS(levl[m.x][m.y].typ) || occupied(m.x, m.y) || bydoor(m.x, m.y));
 
 	/* Put a fountain at m.x, m.y */
 	levl[m.x][m.y].typ = FOUNTAIN;
@@ -1604,7 +1655,7 @@ register struct mkroom *croom;
 	    if(++tryct > 200) return;
 	    if (!somexy(croom, &m))
 		return;
-	} while(occupied(m.x, m.y) || bydoor(m.x, m.y));
+	} while(!SPACE_POS(levl[m.x][m.y].typ) || occupied(m.x, m.y) || bydoor(m.x, m.y));
 
 	/* Put a sink at m.x, m.y */
 	levl[m.x][m.y].typ = SINK;
@@ -1623,7 +1674,7 @@ struct mkroom* croom;
 	do { 
 		if (!somexy(croom,&loc)) return;
 		count++;
-	} while (count < 200 && (occupied(loc.x,loc.y) || bydoor(loc.x,loc.y)));
+	} while (count < 200 && (!SPACE_POS(levl[loc.x][loc.y].typ) || occupied(loc.x,loc.y) || bydoor(loc.x,loc.y)));
 
 	/* ho, ho, ho */
 	levl[loc.x][loc.y].typ = TREE;
@@ -1642,7 +1693,7 @@ struct mkroom* croom;
 	do {
 		if (!somexy(croom,&loc)) return;
 		count++;
-	} while (count < 200 && (occupied(loc.x,loc.y) || bydoor(loc.x,loc.y)));
+	} while (count < 200 && (!SPACE_POS(levl[loc.x][loc.y].typ) || occupied(loc.x,loc.y) || bydoor(loc.x,loc.y)));
 
 	(void) mksobj_at(FUR_BRAZIER, loc.x, loc.y, TRUE, FALSE);
 }
@@ -1662,7 +1713,7 @@ register struct mkroom *croom;
 	    if(++tryct > 200) return;
 	    if (!somexy(croom, &m))
 		return;
-	} while (occupied(m.x, m.y) || bydoor(m.x, m.y));
+	} while (!SPACE_POS(levl[m.x][m.y].typ) || occupied(m.x, m.y) || bydoor(m.x, m.y));
 
 	/* Put an altar at m.x, m.y */
 	levl[m.x][m.y].typ = ALTAR;
@@ -1688,7 +1739,7 @@ struct mkroom *croom;
 	    if(++tryct > 200) return;
 	    if (!somexy(croom, &m))
 		return;
-	} while (occupied(m.x, m.y) || bydoor(m.x, m.y));
+	} while (!SPACE_POS(levl[m.x][m.y].typ) || occupied(m.x, m.y) || bydoor(m.x, m.y));
 
 	/* Put a grave at m.x, m.y */
 	make_grave(m.x, m.y, dobell ? "Saved by the bell!" : (char *) 0);
