@@ -148,6 +148,7 @@ static struct {
 	/* for historical reasons, room types are not contiguous numbers */
 	/* (type 1 is skipped) */
 	{ "ordinary",	 OROOM },
+	{ "rndvault",	 RNDVAULT },
 	{ "throne",	 COURT },
 	{ "swamp",	 SWAMP },
 	{ "vault",	 VAULT },
