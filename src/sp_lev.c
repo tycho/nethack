@@ -980,6 +980,11 @@ boolean vault;
 	register struct rm *lev;
 	int xlim, ylim, ymax;
 
+	xchar s_lowx, s_ddx, s_lowy, s_ddy;
+
+	s_lowx = *lowx; s_ddx = *ddx;
+	s_lowy = *lowy; s_ddy = *ddy;
+
 	xlim = XLIM + (vault ? 1 : 0);
 	ylim = YLIM + (vault ? 1 : 0);
 
@@ -1018,6 +1023,11 @@ chk:
 	}
 	*ddx = hix - *lowx;
 	*ddy = hiy - *lowy;
+
+	if (in_mk_rndvault &&
+	    (s_lowx != *lowx) && (s_ddx != *ddx)
+	    && (s_lowy != *lowy) && (s_ddy != *ddy)) return FALSE;
+
 	return TRUE;
 }
 
