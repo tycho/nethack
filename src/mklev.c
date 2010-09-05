@@ -308,9 +308,11 @@ makerooms()
 		    case 0:
 			{
 			    char protofile[20];
-			    Sprintf(protofile, "vlt-%04i", rnd(24));
+			    Sprintf(protofile, "vlt-%04i", rnd(34));
 			    Strcat(protofile, LEV_EXT);
+			    in_mk_rndvault = TRUE;
 			    (void) load_special(protofile);
+			    in_mk_rndvault = FALSE;
 			}
 			break;
 		    }
@@ -829,12 +831,19 @@ makelevel()
 	} else
 #endif
 		makerooms();
+	/* FIXME? or Remove?
 	sort_rooms();
+	*/
 
 	/* construct stairs (up and down in different rooms if possible) */
 	croom = &rooms[rn2(nroom)];
 	if (!Is_botlevel(&u.uz)) {
-	    somexyspace(croom, &pos, 0);
+	    if (!somexyspace(croom, &pos, 0)) {
+		if (!somexy(croom, &pos)) {
+		    pos.x = somex(croom);
+		    pos.y = somey(croom);
+		}
+	    }
 	    mkstairs(pos.x,pos.y, 0, croom);	/* down */
 	}
 	if (nroom > 1) {
@@ -844,7 +853,12 @@ makelevel()
 	}
 
 	if (u.uz.dlevel != 1) {
-	    somexyspace(croom, &pos, 0);
+	    if (!somexyspace(croom, &pos, 0)) {
+		if (!somexy(croom, &pos)) {
+		    pos.x = somex(croom);
+		    pos.y = somey(croom);
+		}
+	    }
 	    mkstairs(pos.x, pos.y, 1, croom);	/* up */
 	}
 
@@ -1303,8 +1317,10 @@ find_branch_room(mp)
 	    croom = &rooms[rn2(nroom)];
 
 	if (!somexyspace(croom, mp, 2)) {
-	    if (!somexyspace(croom, mp, 0))
-		impossible("can't place branch!");
+	    if (!somexyspace(croom, mp, 0)) {
+		if (!somexy(croom, mp))
+		    impossible("can't place branch!");
+	    }
 	}
     }
     return croom;

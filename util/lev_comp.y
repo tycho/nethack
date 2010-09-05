@@ -1196,7 +1196,7 @@ map_definition	: NOMAP_ID
 		  }
 		| map_geometry roomfill MAP_ID
 		  {
-		      add_opvars(splev, "cii", ((long)($1 % 10) & 0xff) + (((long)($1 / 10) & 0xff) << 16), 1, (long)$2);
+		      add_opvars(splev, "cii", SP_COORD_PACK(($1 % 10),($1 / 10)), 1, (long)$2);
 		      scan_map($3, splev);
 		      Free($3);
 		  }

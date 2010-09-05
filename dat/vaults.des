@@ -17,8 +17,9 @@
 #  - ROOMDOOR cannot be used, as corridors haven't been created yet.
 #    (create_door() in sp_lev.c, "if (IS_ROCK(levl[x][y-1].typ)) goto redoloop;" etc
 #    is a check whether there's actual free space behind the door, outside the room)
-#  - SUBROOM does not work.
-#  - cannot do split rooms.
+#  - SUBROOM does not work. (causes a crash occasionally. try with fake delphi)
+#  - cannot do split rooms.  (can do, with MAP-ENDMAP & REGIONs)
+#  - Player is occasionally put into a corner of the map. Why?
 #
 # TODO:
 #  - save how many vaults are available somewhere, so nethack can look it up.
@@ -30,6 +31,7 @@
 #  - force random corridors to join in certain place?
 #  - variable sized rooms?
 #  - should be able to mark rooms irregular.
+#  - maybe vault-specific level sounds?
 #
 #
 #
@@ -310,29 +312,234 @@ FLAGS:noflip
 ROOM:"rndvault", random, random, random, (70,3) {
 }
 
-
-
-
-# THE VAULTS BELOW CAUSE PROBLEMS:
-
-
-# Occasionally player is placed on top-left corner of the map?!
 # L-shaped
-# must be rndvault, not everything supports non-rectangular rooms.
+LEVEL:"vlt-0025"
+GEOMETRY:random
+MAP
+-----xxx
+|...|xxx
+|...|xxx
+|...----
+|......|
+|......|
+|......|
+--------
+ENDMAP
+REGION:(1,1,3,3),random,"rndvault",irregular { }
+
+
+# Split horizontally
+LEVEL:"vlt-0026"
+GEOMETRY:random
+MAP
+--------
+|......|
+|......|
+|LLLLLL|
+|......|
+|......|
+|......|
+--------
+ENDMAP
+IF [75%] {
+  $terr = TERRAIN:{ '-', 'F' }
+  SHUFFLE: $terr
+  REPLACE_TERRAIN:(1,1,6,6),'L', $terr[0],100%
+}
+REGION:(1,1,6,2),random,"ordinary",unfilled { }
+REGION:(1,4,6,6),random,"ordinary",unfilled { }
+
+
+# Split vertically
+LEVEL:"vlt-0027"
+GEOMETRY:random
+MAP
+---------
+|...L...|
+|...L...|
+|...L...|
+|...L...|
+|...L...|
+|...L...|
+---------
+ENDMAP
+IF [75%] {
+  $terr = TERRAIN:{ '|', 'F' }
+  SHUFFLE: $terr
+  REPLACE_TERRAIN:(1,1,7,6),'L', $terr[0],100%
+}
+REGION:(1,1,3,6),random,"ordinary",unfilled { }
+REGION:(5,1,7,6),random,"ordinary",unfilled { }
+
+
+# Blocked center
+LEVEL:"vlt-0028"
+GEOMETRY:random
+MAP
+-----------
+|.........|
+|.........|
+|.........|
+|...LLL...|
+|...LLL...|
+|...LLL...|
+|.........|
+|.........|
+|.........|
+-----------
+ENDMAP
+IF [75%] {
+  $terr = TERRAIN:{ '-', 'P' }
+  SHUFFLE: $terr
+  REPLACE_TERRAIN:(1,1,9,9),'L', $terr[0],100%
+}
+IF [80%] {
+  REGION:(1,1,1,1),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(1,1,1,1),random,"ordinary",irregular { }
+}
+
+
+
+# Circular
+LEVEL:"vlt-0029"
+GEOMETRY:random
+MAP
+xx-----xx
+x--...--x
+|-.....-|
+|.......|
+|.......|
+|.......|
+|-.....-|
+x--...--x
+xx-----xx
+ENDMAP
+IF [80%] {
+  REGION:(4,4,4,4),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(4,4,4,4),random,"ordinary",irregular { }
+}
+
+
+# Circular, small
+LEVEL:"vlt-0030"
+GEOMETRY:random
+MAP
+xx---xx
+x--.--x
+|-...-|
+|.....|
+|-...-|
+x--.--x
+xx---xx
+ENDMAP
+IF [80%] {
+  REGION:(3,3,3,3),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(3,3,3,3),random,"ordinary",irregular { }
+}
+
+
+# T-shaped
+LEVEL:"vlt-0031"
+GEOMETRY:random
+MAP
+xxx-----xxx
+xxx|...|xxx
+xxx|...|xxx
+----...----
+|.........|
+|.........|
+|.........|
+-----------
+ENDMAP
+IF [80%] {
+  REGION:(5,5,5,5),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(5,5,5,5),random,"ordinary",irregular { }
+}
+
+
+# S-shaped
+LEVEL:"vlt-0032"
+GEOMETRY:random
+MAP
+-----xxx
+|...|xxx
+|...|xxx
+|...----
+|......|
+|......|
+|......|
+----...|
+xxx|...|
+xxx|...|
+xxx-----
+ENDMAP
+IF [80%] {
+  REGION:(5,5,5,5),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(5,5,5,5),random,"ordinary",irregular { }
+}
+
+
+# U-shaped
+LEVEL:"vlt-0033"
+GEOMETRY:random
+MAP
+-----xxx-----
+|...|xxx|...|
+|...|xxx|...|
+|...-----...|
+|...........|
+|...........|
+|...........|
+-------------
+ENDMAP
+IF [80%] {
+  REGION:(5,5,5,5),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(5,5,5,5),random,"ordinary",irregular { }
+}
+
+
+# C-shaped
+LEVEL:"vlt-0034"
+GEOMETRY:random
+MAP
+--------
+|......|
+|......|
+|...----
+|...|xxx
+|...|xxx
+|...----
+|......|
+|......|
+--------
+ENDMAP
+IF [80%] {
+  REGION:(1,1,1,1),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(1,1,1,1),random,"ordinary",irregular { }
+}
+
+
+
+
+
+
+
+
+##### The vaults below cause problems
+
+
+
+# Fake Delphi, stripped down.
 #LEVEL:"vlt-xxxx"
-#ROOM:"rndvault", random, random, random, (5,5) {
-#  TERRAIN:(0,0), '-'
-#  IF [75%] {
-#    TERRAIN:(1,0) & (0,1) & (1,1), '-'
-#    IF [75%] {
-#      TERRAIN:(2,0) & (2,1) & (0,2) & (1,2) & (2,2), '-'
-#      IF [75%] {
-#        TERRAIN:(3,0) & (3,1) & (3,2) & (3,3) & (2,3) & (1,3) & (0,3), '-'
-#      }
-#    }
-#  }
+#ROOM: "ordinary" , lit, random, random, (11,9)
+#{
+#  SUBROOM: "delphi" , lit , (4,3) , (3,3) { }
 #}
-
-
-
 
