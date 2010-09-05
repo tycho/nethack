@@ -2433,13 +2433,15 @@ struct mkroom *mkr;
 	}
 
 	if (okroom) {
+	    if (!(r->filled & ROOMF_IRREG)) {
 #ifdef SPECIALIZATION
 		topologize(aroom,FALSE);		/* set roomno */
 #else
 		topologize(aroom);			/* set roomno */
 #endif
-		aroom->needfill = ((aroom->rtype != OROOM) && r->filled);
-	        return aroom;
+	    }
+	    aroom->needfill = ((aroom->rtype != OROOM) && (r->filled & ROOMF_FILLED));
+	    return aroom;
 	}
 	return (struct mkroom *)0;
 }
@@ -4139,6 +4141,28 @@ spo_feature(coder)
 }
 
 void
+spo_topography(coder)
+     struct sp_coder *coder;
+{
+    struct opvar *pos;
+    xchar dx,dy;
+    if (!OV_pop_c(pos)) return;
+
+    if (!coder->croom) return;
+
+    dx = SP_COORD_X(OV_i(pos));
+    dy = SP_COORD_Y(OV_i(pos));
+    get_location(&dx, &dy, DRY|WET, coder->croom);
+    min_rx = max_rx = dx;
+    min_ry = max_ry = dy;
+    flood_fill_rm(dx, dy, nroom+ROOMOFFSET, coder->croom->rlit, TRUE);
+    add_room(min_rx, min_ry, max_rx, max_ry, FALSE, coder->croom->rtype, TRUE);
+    coder->croom->irregular = TRUE;
+
+    opvar_free(pos);
+}
+
+void
 spo_terrain(coder)
      struct sp_coder *coder;
 {
@@ -4316,11 +4340,7 @@ spo_region(coder)
 	!OV_pop_i(rlit) ||
 	!OV_pop_r(area)) return;
 
-    if(OV_i(rtype) > MAXRTYPE) {
-	OV_i(rtype) -= MAXRTYPE+1;
-	prefilled = TRUE;
-    } else
-	prefilled = FALSE;
+    prefilled = ((OV_i(rirreg) & ROOMF_FILLED) != 0);
 
     if(OV_i(rlit) < 0)
 	OV_i(rlit) = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77))
@@ -4338,7 +4358,7 @@ spo_region(coder)
        an actual room to be created (such rooms are used to
        control placement of migrating monster arrivals) */
     room_not_needed = (OV_i(rtype) == OROOM &&
-		       !OV_i(rirreg) && !prefilled);
+		       !(OV_i(rirreg) & ROOMF_IRREG) && !prefilled);
     if (room_not_needed || nroom >= MAXNROFROOMS) {
 	region tmpregion;
 	if (!room_not_needed)
@@ -4364,7 +4384,7 @@ spo_region(coder)
     if (OV_i(rtype) != OROOM)
 	troom->needfill = (prefilled ? 2 : 1);
 
-    if (OV_i(rirreg)) {
+    if (OV_i(rirreg) & ROOMF_IRREG) {
 	min_rx = max_rx = dx1;
 	min_ry = max_ry = dy1;
 	flood_fill_rm(dx1, dy1, nroom+ROOMOFFSET,
@@ -4968,6 +4988,7 @@ sp_lev *lvl;
 	case SPO_NON_DIGGABLE:    spo_wall_property(coder);   break;
 	case SPO_ROOM_DOOR:       spo_room_door(coder);    break;
 	case SPO_WALLIFY:         spo_wallify(coder);    break;
+	case SPO_TOPOGRAPHY:	spo_topography(coder);   break;
 	case SPO_COPY:
 	    {
 		struct opvar *a = splev_stack_pop(coder->stack);

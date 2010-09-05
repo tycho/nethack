@@ -129,6 +129,7 @@ enum opcode_defs {
     SPO_SEL_RNDCOORD,
     SPO_SEL_ELLIPSE,
     SPO_SEL_FILTER,
+    SPO_TOPOGRAPHY,
 
     MAX_SP_OPCODES
 };
@@ -177,6 +178,9 @@ enum opcode_defs {
 #define SP_O_V_COORD		14
 #define SP_O_V_END              15 /* end of variable parameters */
 
+/* room-region flags */
+#define ROOMF_FILLED		0x01 /* room or region is prefilled */
+#define ROOMF_IRREG		0x02 /* irregular area */
 
 /* When creating objects, we need to know whether
  * it's a container and/or contents.

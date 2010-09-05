@@ -47,7 +47,7 @@ REPLACE_TERRAIN:(13,5, 33,15), 'C', '.', 100%
 REGION:(00,00,75,19),lit,"ordinary"
 REGION:(35,00,49,03),unlit,"ordinary"
 REGION:(43,12,49,16),unlit,"ordinary"
-REGION:(19,11,33,15),unlit,"ordinary",unfilled,true
+REGION:(19,11,33,15),unlit,"ordinary",unfilled,irregular
 REGION:(30,10,31,10),unlit,"ordinary"
 # Stairs
 STAIR:(30,10),down
@@ -201,21 +201,21 @@ REPLACE_TERRAIN:(13,0,21,20), ' ', 'C', 4%
 
 # Dungeon Description
 REGION:(00,00,75,20),lit,"ordinary"
-REGION:(37,04,65,16),unlit,"ordinary",filled,true {
+REGION:(37,04,65,16),unlit,"ordinary",filled,irregular {
   ROOMDOOR:true,closed,north|south|west|east,random
 }
-REGION:(39,06,63,14),unlit,"ordinary",filled,true {
+REGION:(39,06,63,14),unlit,"ordinary",filled,irregular {
   ROOMDOOR:true,closed,north|south|west|east,random
 }
-REGION:(41,08,46,12),lit,"ordinary",filled,true {
+REGION:(41,08,46,12),lit,"ordinary",filled,irregular {
   ROOMDOOR:true,closed,north|south|west,random
 }
-REGION:(56,08,61,12),lit,"ordinary",filled,true {
+REGION:(56,08,61,12),lit,"ordinary",filled,irregular {
   ROOMDOOR:true,closed,north|south|east,random
 }
 REGION:(48,08,54,08),unlit,"ordinary"
 REGION:(48,12,54,12),unlit,"ordinary"
-REGION:(48,10,54,10),unlit,"ordinary",filled,true {
+REGION:(48,10,54,10),unlit,"ordinary",filled,irregular {
   ROOMDOOR:true,closed,north|south|west|east,random
 }
 

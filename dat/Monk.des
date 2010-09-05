@@ -38,15 +38,15 @@ ENDMAP
 # Dungeon Description
 REGION:(00,00,75,19),lit,"ordinary"
 REGION:(24,06,33,13),lit,"temple"
-REGION:(42,08,44,11),lit,"ordinary",unfilled,true {
+REGION:(42,08,44,11),lit,"ordinary",unfilled,irregular {
   ROOMDOOR:false, closed, north|south|west|east, random
   ROOMDOOR:false, locked, north|south|west|east, random
 }
-REGION:(46,08,48,11),lit,"ordinary",unfilled,true {
+REGION:(46,08,48,11),lit,"ordinary",unfilled,irregular {
   ROOMDOOR:false, closed, north|south|west|east, random
   ROOMDOOR:false, locked, north|south|west|east, random
 }
-REGION:(50,08,54,11),lit,"ordinary",unfilled,true {
+REGION:(50,08,54,11),lit,"ordinary",unfilled,irregular {
   ROOMDOOR:false, closed, north|south|west, random
   ROOMDOOR:false, locked, north|south|west, random
 }

@@ -215,7 +215,7 @@ MONSTER:('O',"ogre"),(45,05),hostile
 MONSTER:('O',"ogre"),(45,06),hostile
 MONSTER:('O',"ogre"),(47,05),hostile
 MONSTER:('O',"ogre"),(46,05),hostile
-REGION:(56,03,57,04),unlit,"ordinary",unfilled,true {
+REGION:(56,03,57,04),unlit,"ordinary",unfilled,irregular {
   LOOP [5 + 2d6] {
     MONSTER:('O',"ogre"),random,hostile
   }
@@ -226,7 +226,7 @@ LOOP [1d8 + 2] {
 }
 MONSTER:'O',random,hostile
 MONSTER:'T',random,hostile
-REGION:(46,06,47,07),unlit,"ordinary",unfilled,true {
+REGION:(46,06,47,07),unlit,"ordinary",unfilled,irregular {
   LOOP [1d8 + 2] {
     MONSTER:('T',"rock troll"),random,hostile
   }

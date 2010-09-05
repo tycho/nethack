@@ -173,6 +173,7 @@ FUNCTION	return FUNCTION_ID;
 INCLUDE		return INCLUDE_ID;
 SOUNDS		return SOUNDS_ID;
 SHUFFLE		return SHUFFLE_ID;
+TOPOLOGIZE	return TOPOLOGIZE_ID;
 montype		return MONTYPE_ID;
 selection	return selection_ID;
 rect		return rect_ID;
@@ -189,6 +190,8 @@ hear		{ yylval.i=LVLSND_HEARD;  return MSG_OUTPUT_TYPE; }
 pline		{ yylval.i=LVLSND_PLINED; return MSG_OUTPUT_TYPE; }
 verbal		{ yylval.i=LVLSND_VERBAL; return MSG_OUTPUT_TYPE; }
 feel		{ yylval.i=LVLSND_FELT;   return MSG_OUTPUT_TYPE; }
+irregular	return irregular_ID;
+
 levregion	return LEV;
 quantity	return QUANTITY_ID;
 buried		return BURIED_ID;

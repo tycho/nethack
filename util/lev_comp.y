@@ -179,11 +179,12 @@ extern const char *fname;
 %token	<i> FEMALE_ID CANCELLED_ID REVIVED_ID AVENGE_ID FLEEING_ID BLINDED_ID
 %token	<i> PARALYZED_ID STUNNED_ID CONFUSED_ID SEENTRAPS_ID ALL_ID
 %token	<i> MON_GENERATION_ID MONTYPE_ID
-%token	<i> GRAVE_ID ERODEPROOF_ID
+%token	<i> GRAVE_ID ERODEPROOF_ID TOPOLOGIZE_ID
 %token	<i> FUNCTION_ID
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
 %token	<i> WALLWALK_ID COMPARE_TYPE
+%token	<i> irregular_ID
 %token	<i> rect_ID fillrect_ID line_ID randline_ID grow_ID selection_ID flood_ID
 %token	<i> rndcoord_ID circle_ID ellipse_ID filter_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
@@ -200,13 +201,13 @@ extern const char *fname;
 %token	<map> VARSTRING_SEL VARSTRING_SEL_ARRAY
 %token	<dice> DICE;
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
-%type	<i> alignment altar_type a_register roomfill door_pos
+%type	<i> alignment altar_type a_register roomfill door_pos roomflaglist roomflag
 %type	<i> alignment_prfx
 %type	<i> door_wall walled secret chance
 %type	<i> dir_list map_geometry teleprt_detail
 %type	<i> object_infos object_info monster_infos monster_info
 %type	<i> levstatements region_detail_end
-%type	<i> engraving_type flag_list prefilled
+%type	<i> engraving_type flag_list
 %type	<i> monster
 %type	<i> comparestmt encodecoord encoderegion mapchar
 %type	<i> seen_trap_mask
@@ -407,6 +408,7 @@ levstatement 	: message
 		| exitstatement
 		| function_define
 		| function_call
+		| topologize_stmt
 		| ladder_detail
 		| map_definition
 		| mazewalk_detail
@@ -964,6 +966,12 @@ if_ending	: '{' levstatements '}'
 		  }
 		;
 
+topologize_stmt : TOPOLOGIZE_ID ':' coord_or_var
+		  {
+		      add_opvars(splev, "o", SPO_TOPOGRAPHY);
+		  }
+		;
+
 message		: MESSAGE_ID ':' string_expr
 		  {
 		      add_opvars(splev, "o", SPO_MESSAGE);
@@ -1028,9 +1036,11 @@ room_begin      : room_type opt_percent ',' light_state
                   }
                 ;
 
-subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
+subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomflaglist
 		  {
-		      add_opvars(splev, "iiiiiiio", (long)$8, ERR, ERR,
+		      long flg = (long)$8;
+		      if (flg == ERR) flg = ROOMF_FILLED;
+		      add_opvars(splev, "iiiiiiio", flg, ERR, ERR,
 				 $5.x, $5.y, $7.width, $7.height, SPO_SUBROOM);
 		  }
 		  '{' levstatements '}'
@@ -1039,9 +1049,11 @@ subroom_def	: SUBROOM_ID ':' room_begin ',' subroom_pos ',' room_size roomfill
 		  }
 		;
 
-room_def	: ROOM_ID ':' room_begin ',' room_pos ',' room_align ',' room_size roomfill
+room_def	: ROOM_ID ':' room_begin ',' room_pos ',' room_align ',' room_size roomflaglist
 		  {
-		      add_opvars(splev, "iiiiiiio", (long)$10,
+		      long flg = (long)$10;
+		      if (flg == ERR) flg = ROOMF_FILLED;
+		      add_opvars(splev, "iiiiiiio", flg,
 				 $7.x, $7.y, $5.x, $5.y,
 				 $9.width, $9.height, SPO_ROOM);
 		  }
@@ -1058,6 +1070,31 @@ roomfill	: /* nothing */
 		| ',' BOOLEAN
 		  {
 			$$ = $2;
+		  }
+		;
+
+roomflag	: irregular_ID
+		  {
+		      $$ = ROOMF_IRREG;
+		  }
+		| FILLING
+		  {
+		      $$ = (($1) ? ROOMF_FILLED : 0);
+		  }
+		;
+
+roomflaglist	: /* nothing */
+		  {
+		      $$ = ERR;
+		  }
+		| ',' roomflag roomflaglist
+		  {
+		      if (($3 != ERR) && ( $2 & $3 ))
+			  lc_error("Room flag defined twice.");
+		      if ($3 != ERR)
+			  $$ = ($2 | $3);
+		      else
+			  $$ = $2;
 		  }
 		;
 
@@ -1754,15 +1791,16 @@ passwall_detail : NON_PASSWALL_ID ':' region_or_var
 		  }
 		;
 
-region_detail	: REGION_ID ':' region_or_var ',' light_state ',' room_type prefilled
+region_detail	: REGION_ID ':' region_or_var ',' light_state ',' room_type roomflaglist
 		  {
-		      long rt, irr;
+		      long rt, flg;
 		      rt = $7;
-		      if (( $8 ) & 1) rt += MAXRTYPE+1;
-		      irr = ((( $8 ) & 2) != 0);
+		      flg = $8;
+		      if (flg == ERR) flg = 0;
 		      add_opvars(splev, "iiio",
-				 (long)$5, rt, irr, SPO_REGION);
-		      $<i>$ = (irr || ($8 & 1) || rt != OROOM);
+				 (long)$5, rt, flg, SPO_REGION);
+		      $<i>$ = ((rt == OROOM && (flg & ROOMF_FILLED)) ||
+			       (rt != OROOM) || (flg & ROOMF_IRREG)); /* permanent, "room" region */
 		  }
 		  region_detail_end
 		  {
@@ -1840,20 +1878,6 @@ room_type	: string
 			Free($1);
 		  }
 		| RANDOM_TYPE
-		;
-
-prefilled	: /* empty */
-		  {
-			$$ = 0;
-		  }
-		| ',' FILLING
-		  {
-			$$ = $2;
-		  }
-		| ',' FILLING ',' BOOLEAN
-		  {
-			$$ = $2 + ($4 << 1);
-		  }
 		;
 
 door_state	: DOOR_STATE

@@ -59,11 +59,11 @@ IF [50%] {
 # The shrine to Moloch.
 REGION:(01,06,05,14),unlit,"temple"
 # The Morgues
-REGION:(19,01,24,08),unlit,"morgue",filled,true
-REGION:(09,14,16,18),unlit,"morgue",filled,true
-REGION:(37,09,43,14),unlit,"morgue",filled,true
-REGION:(50,09,64,11),unlit,"morgue",filled,true
-REGION:(02,16,05,18),unlit,"morgue",filled,true
+REGION:(19,01,24,08),unlit,"morgue",filled,irregular
+REGION:(09,14,16,18),unlit,"morgue",filled,irregular
+REGION:(37,09,43,14),unlit,"morgue",filled,irregular
+REGION:(50,09,64,11),unlit,"morgue",filled,irregular
+REGION:(02,16,05,18),unlit,"morgue",filled,irregular
 # Stairs
 STAIR:(01,01),down
 # Branch location
@@ -656,7 +656,7 @@ REGION:(15,07,21,10),lit,"temple" {
   ROOMDOOR:true, locked, north|south|east|west, random
 }
 ALTAR:(18,08),noalign,sanctum
-REGION:(41,06,48,11),unlit,"morgue",filled,true
+REGION:(41,06,48,11),unlit,"morgue",filled,irregular
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Invisible barrier separating the left & right halves of the level
