@@ -515,7 +515,7 @@ DOOR:locked,(23,13)
 DOOR:closed,(17,11)
 DOOR:closed,(17,13)
 DOOR:closed,(17,15)
-REGION:(18,10,22,16),lit,"zoo",filled,true
+REGION:(18,10,22,16),lit,"zoo",filled,irregular
 
 #soko_prize()
   IF [50%] {
@@ -611,7 +611,7 @@ DOOR:locked,(23,12)
 DOOR:closed,(17,10)
 DOOR:closed,(17,12)
 DOOR:closed,(17,14)
-REGION:(18,09,22,15),lit,"zoo",filled,true
+REGION:(18,09,22,15),lit,"zoo",filled,irregular
 #soko_prize()
   IF [50%] {
     OBJECT:('"',"amulet of reflection"),$place[0]

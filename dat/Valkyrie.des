@@ -248,7 +248,7 @@ LOOP [2 + 2d3] {
 }
 MONSTER:'a',random
 MONSTER:'a',random
-REGION:(10,6,10,6),lit,"ordinary",filled, true {
+REGION:(10,6,10,6),lit,"ordinary",filled,irregular {
   LOOP [5 + 4d3] {
     MONSTER:('H',"fire giant"),random,hostile
   }
