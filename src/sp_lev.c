@@ -833,6 +833,7 @@ rndtrap()
  */
 #define DRY	0x1
 #define WET	0x2
+#define SOLID	0x4
 
 STATIC_DCL boolean FDECL(is_ok_location, (SCHAR_P, SCHAR_P, int));
 
@@ -901,6 +902,11 @@ register int humidity;
 	register int typ;
 
 	if (Is_waterlevel(&u.uz)) return TRUE;	/* accept any spot */
+
+	if (humidity & SOLID) {
+	    typ = levl[x][y].typ;
+	    if (IS_ROCK(typ)) return TRUE;
+	}
 
 	if (humidity & DRY) {
 	    typ = levl[x][y].typ;
@@ -4404,11 +4410,15 @@ spo_region(coder)
 	min_ry = max_ry = dy1;
 	flood_fill_rm(dx1, dy1, nroom+ROOMOFFSET,
 		      OV_i(rlit), TRUE);
+	if (!room_not_needed)
+	    smeq[nroom] = nroom;
 	add_room(min_rx, min_ry, max_rx, max_ry,
 		 FALSE, OV_i(rtype), TRUE);
 	troom->rlit = OV_i(rlit);
 	troom->irregular = TRUE;
     } else {
+	if (!room_not_needed)
+	    smeq[nroom] = nroom;
 	add_room(dx1, dy1, dx2, dy2,
 		 OV_i(rlit), OV_i(rtype), TRUE);
 #ifdef SPECIALIZATION
@@ -4648,12 +4658,24 @@ spo_map(coder)
 	if (!(ystart % 2)) ystart++;
 	break;
     case 2:
-	get_location(&halign, &valign, DRY|WET, coder->croom);
+	if (!coder->croom) {
+	    xstart = 1;
+	    ystart = 0;
+	    xsize = COLNO-1-tmpmazepart.xsize;
+	    ysize = ROWNO-tmpmazepart.ysize;
+	}
+	get_location(&halign, &valign, DRY|WET|SOLID, coder->croom);
+	xsize = tmpmazepart.xsize;
+	ysize = tmpmazepart.ysize;
 	xstart = halign;
 	ystart = valign;
 	break;
     }
-    if ((ystart < 0) || (ystart + ysize > ROWNO)) {
+    if (((ystart < 0) || (ystart + ysize > ROWNO))) {
+	if (in_mk_rndvault) {
+	    coder->exit_script = TRUE;
+	    goto skipmap;
+	}
 	/* try to move the start a bit */
 	ystart += (ystart > 0) ? -2 : 2;
 	if(ysize == ROWNO) ystart = 0;
@@ -4667,6 +4689,23 @@ spo_map(coder)
 	ysize = ROWNO;
     } else {
 	xchar x,y;
+	/* random vault should never overwrite anything */
+	if (in_mk_rndvault) {
+	    boolean isokp = TRUE;
+	    for(y = ystart; y < ystart+ysize; y++)
+		for(x = xstart; x < xstart+xsize; x++) {
+		    xchar mptyp = (mpmap->vardata.str[(y-ystart) * xsize + (x-xstart)] - 1);
+		    if (mptyp >= MAX_TYPE) continue;
+		    if (isok(x,y)) {
+			if (levl[x][y].typ != STONE && levl[x][y].typ != mptyp) isokp = FALSE;
+			if (levl[x][y].roomno != NO_ROOM) isokp = FALSE;
+		    } else isokp = FALSE;
+		    if (!isokp) {
+			coder->exit_script = TRUE;
+			goto skipmap;
+		    }
+		}
+	}
 	/* Load the map */
 	for(y = ystart; y < ystart+ysize; y++)
 	    for(x = xstart; x < xstart+xsize; x++) {
@@ -4703,10 +4742,13 @@ spo_map(coder)
 	if (coder->lvl_is_joined)
 	    remove_rooms(xstart, ystart, xstart+xsize, ystart+ysize);
     }
+
     if (!OV_i(mpkeepr)) {
 	xstart = tmpxstart; ystart = tmpystart;
 	xsize = tmpxsize; ysize = tmpysize;
     }
+
+ skipmap:
 
     opvar_free(mpxs);
     opvar_free(mpys);
