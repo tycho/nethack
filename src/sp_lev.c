@@ -22,7 +22,6 @@
 #endif
 
 #include "sp_lev.h"
-#include "rect.h"
 #include "epri.h"
 #include "eshk.h"
 
@@ -1037,6 +1036,20 @@ chk:
 	return TRUE;
 }
 
+
+boolean
+check_room_space(x1,y1,x2,y2)
+{
+    int x,y;
+    for (x = x1; x <= x2; x++)
+	for (y = y1; y <= y2; y++) {
+	    if (!isok(x,y)) return FALSE;
+	    if (levl[x][y].typ != STONE || levl[x][y].roomno != NO_ROOM) return FALSE;
+	}
+    return TRUE;
+}
+
+
 /*
  * Create a new room.
  * This is still very incomplete...
@@ -1051,10 +1064,10 @@ xchar	rtype, rlit;
 {
 	xchar	xabs, yabs;
 	int	wtmp, htmp, xaltmp, yaltmp, xtmp, ytmp;
-	NhRect	*r1 = 0, r2;
 	int	trycnt = 0;
 	boolean	vault = FALSE;
 	int	xlim = XLIM, ylim = YLIM;
+	boolean fail = TRUE;
 
 	if (rtype == -1)	/* Is the type random ? */
 	    rtype = OROOM;
@@ -1088,18 +1101,11 @@ xchar	rtype, rlit;
 		if((xtmp < 0 && ytmp <0 && wtmp < 0 && xaltmp < 0 &&
 		   yaltmp < 0) || vault) {
 			xchar hx, hy, lx, ly, dx, dy;
-			r1 = rnd_rect(); /* Get a random rectangle */
 
-			if (!r1) { /* No more free rectangles ! */
-#ifdef DEBUG
-				debugpline("No more rects...");
-#endif
-				return FALSE;
-			}
-			hx = r1->hx;
-			hy = r1->hy;
-			lx = r1->lx;
-			ly = r1->ly;
+			hx = rn2(COLNO-1-2);
+			hy = rn2(ROWNO-2);
+			lx = rnd(COLNO-hx);
+			ly = rn2(ROWNO-hy);
 			if (vault)
 			    dx = dy = 1;
 			else {
@@ -1112,7 +1118,6 @@ xchar	rtype, rlit;
 			yborder = (ly > 0 && hy < ROWNO -1) ? 2*ylim : ylim+1;
 			if(hx-lx < dx + 3 + xborder ||
 			   hy-ly < dy + 3 + yborder) {
-				r1 = 0;
 				continue;
 			}
 			xabs = lx + (lx > 0 ? xlim : 3)
@@ -1125,14 +1130,15 @@ xchar	rtype, rlit;
 			    if(nroom < 4 && dy>1) dy--;
 		        }
 			if (!check_room(&xabs, &dx, &yabs, &dy, vault)) {
-				r1 = 0;
 				continue;
 			}
 			wtmp = dx+1;
 			htmp = dy+1;
-			r2.lx = xabs-1; r2.ly = yabs-1;
-			r2.hx = xabs + wtmp;
-			r2.hy = yabs + htmp;
+
+			if (in_mk_rndvault &&
+			    !check_room_space(xabs-1-1, yabs-1-1, xabs+wtmp+1, yabs+htmp+1))
+			    continue;
+			fail = FALSE;
 		} else {	/* Only some parameters are random */
 			int rndpos = 0;
 			if (xtmp < 0 && ytmp < 0) { /* Position is RANDOM */
@@ -1183,18 +1189,15 @@ xchar	rtype, rlit;
 			if (yabs < 2)
 			    yabs = 2;
 
-			/* Try to find a rectangle that fit our room ! */
-
-			r2.lx = xabs-1; r2.ly = yabs-1;
-			r2.hx = xabs + wtmp + rndpos;
-			r2.hy = yabs + htmp + rndpos;
-			r1 = get_rect(&r2);
+			if (in_mk_rndvault &&
+			    !check_room_space(xabs-1-1, yabs-1-1, xabs+wtmp+rndpos+1, yabs+htmp+rndpos+1))
+			    continue;
+			fail = FALSE;
 		}
-	} while (++trycnt <= 100 && !r1);
-	if (!r1) {	/* creation of room failed ? */
+	} while (++trycnt <= 100 && fail);
+	if (fail) {	/* creation of room failed ? */
 		return FALSE;
 	}
-	split_rects(r1, &r2);
 
 	if (!vault) {
 		smeq[nroom] = nroom;
@@ -4410,15 +4413,11 @@ spo_region(coder)
 	min_ry = max_ry = dy1;
 	flood_fill_rm(dx1, dy1, nroom+ROOMOFFSET,
 		      OV_i(rlit), TRUE);
-	if (!room_not_needed)
-	    smeq[nroom] = nroom;
 	add_room(min_rx, min_ry, max_rx, max_ry,
 		 FALSE, OV_i(rtype), TRUE);
 	troom->rlit = OV_i(rlit);
 	troom->irregular = TRUE;
     } else {
-	if (!room_not_needed)
-	    smeq[nroom] = nroom;
 	add_room(dx1, dy1, dx2, dy2,
 		 OV_i(rlit), OV_i(rtype), TRUE);
 #ifdef SPECIALIZATION
