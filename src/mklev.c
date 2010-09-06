@@ -224,65 +224,22 @@ boolean special;
 	nsubroom++;
 }
 
-void
-mk_split_room()
+
+boolean
+not_enough_rooms()
 {
-    NhRect *r1 = rnd_rect();
-    NhRect r2;
-    int area;
-    xchar hx, hy, lx, ly, wid, hei;
-    xchar rlit;
-    struct mkroom *troom;
+    int x,y;
+    long c = 0;
 
-    if (!r1) return;
+    if (nroom < 2) return TRUE;
 
-    wid = rn1(12, 5);
-    hei = rn1(3, 5);
+    for (x = 1; x < COLNO; x++)
+	for (y = 0; y < ROWNO; y++)
+	    if (levl[x][y].roomno) c++;
 
-    hx = (r1->hx - r1->lx - wid - 2);
-    hy = (r1->hy - r1->ly - hei - 2);
-
-    lx = ((hx < 1) ? 0 : rn2(hx)) + 1;
-    ly = ((hy < 1) ? 0 : rn2(hy)) + 1;
-
-    area = wid*hei;
-    if (!check_room(&lx, &wid, &ly, &hei, FALSE)) return;
-    if (wid < 5 || hei < 5) return;
-
-    r2.lx = lx;
-    r2.ly = ly;
-    r2.hx = lx + wid;
-    r2.hy = ly + hei;
-    split_rects(r1, &r2);
-    smeq[nroom] = nroom;
-    if ((wid > hei) || (wid == hei && rn2(2))) {
-	int adj = (wid/2);
-	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
-	add_room(lx,     ly, lx+adj-1,     ly+hei, rlit, OROOM, FALSE);
-	smeq[nroom] = nroom;
-	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
-	troom = &rooms[nroom];
-#ifdef SPECIALIZATION
-	topologize(troom,FALSE);              /* set roomno */
-#else
-	topologize(troom);                    /* set roomno */
-#endif
-	add_room(lx+adj+1, ly, lx+adj+adj, ly+hei, rlit, OROOM, FALSE);
-    } else {
-	int adj = (hei/2);
-	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
-	add_room(lx, ly,     lx+wid, ly+adj-1,     rlit, OROOM, FALSE);
-	smeq[nroom] = nroom;
-	rlit = (rnd(1+abs(depth(&u.uz))) < 11 && rn2(77)) ? TRUE : FALSE;
-	troom = &rooms[nroom];
-#ifdef SPECIALIZATION
-	topologize(troom,FALSE);              /* set roomno */
-#else
-	topologize(troom);                    /* set roomno */
-#endif
-	add_room(lx, ly+adj+1, lx+wid, ly+adj+adj, rlit, OROOM, FALSE);
-    }
+    return (c*5 < (COLNO*ROWNO));
 }
+
 
 STATIC_OVL void
 makerooms()
@@ -290,8 +247,7 @@ makerooms()
 	boolean tried_vault = FALSE;
 
 	/* make rooms until satisfied */
-	/* rnd_rect() will returns 0 if no more rects are available... */
-	while(nroom < MAXNROFROOMS && rnd_rect()) {
+	while (nroom < MAXNROFROOMS && not_enough_rooms()) {
 		if(nroom >= (MAXNROFROOMS/6) && rn2(2) && !tried_vault) {
 			tried_vault = TRUE;
 			if (create_vault()) {
@@ -300,22 +256,12 @@ makerooms()
 				rooms[nroom].hx = -1;
 			}
 		} else {
-		    switch (rn2(8)) {
-		    default:
-			if (!create_room(-1, -1, -1, -1, -1, -1, OROOM, -1))
-			    return;
-			break;
-		    case 0:
-			{
-			    char protofile[20];
-			    Sprintf(protofile, "vlt-%04i", rnd(34));
-			    Strcat(protofile, LEV_EXT);
-			    in_mk_rndvault = TRUE;
-			    (void) load_special(protofile);
-			    in_mk_rndvault = FALSE;
-			}
-			break;
-		    }
+		    char protofile[20];
+		    Sprintf(protofile, "vlt-%04i", rn2(8) ? 0 : rnd(36));
+		    Strcat(protofile, LEV_EXT);
+		    in_mk_rndvault = TRUE;
+		    (void) load_special(protofile);
+		    in_mk_rndvault = FALSE;
 		}
 	}
 	return;
@@ -831,9 +777,7 @@ makelevel()
 	} else
 #endif
 		makerooms();
-	/* FIXME? or Remove?
 	sort_rooms();
-	*/
 
 	/* construct stairs (up and down in different rooms if possible) */
 	croom = &rooms[rn2(nroom)];
@@ -890,7 +834,7 @@ makelevel()
 			fill_room(&rooms[nroom - 1], FALSE);
 			mk_knox_portal(vault_x+w, vault_y+h);
 			if(!level.flags.noteleport && !rn2(3)) makevtele();
-		} else if(rnd_rect() && create_vault()) {
+		} else if(not_enough_rooms() && create_vault()) {
 			vault_x = rooms[nroom].lx;
 			vault_y = rooms[nroom].ly;
 			if (check_room(&vault_x, &w, &vault_y, &h, TRUE))

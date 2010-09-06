@@ -37,6 +37,13 @@
 #
 
 
+# normal random room
+# vault 0000 is special; it's picked 7 out of 8 times when making a room.
+LEVEL:"vlt-0000"
+FLAGS:noflip
+ROOM:"ordinary", random, random, random, random {
+}
+
 
 # lava/ice/pool/tree/fountain room
 LEVEL:"vlt-0001"
@@ -400,7 +407,6 @@ IF [80%] {
 }
 
 
-
 # Circular
 LEVEL:"vlt-0029"
 GEOMETRY:random
@@ -527,6 +533,35 @@ IF [80%] {
 
 
 
+# Throne
+LEVEL:"vlt-0035"
+FLAGS:noflip
+ROOM:"rndvault", random, random, random, random {
+  OBJECT:('\', "throne"), random
+}
+
+
+# Circular, big
+LEVEL:"vlt-0036"
+GEOMETRY:random
+MAP
+xxx-----xxx
+x---...---x
+x-.......-x
+|-.......-|
+|.........|
+|.........|
+|.........|
+|-.......-|
+x-.......-x
+x---...---x
+xxx-----xxx
+ENDMAP
+IF [80%] {
+  REGION:(5,5,5,5),random,"rndvault",irregular { }
+} ELSE {
+  REGION:(5,5,5,5),random,"ordinary",irregular { }
+}
 
 
 
