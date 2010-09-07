@@ -174,6 +174,7 @@ INCLUDE		return INCLUDE_ID;
 SOUNDS		return SOUNDS_ID;
 SHUFFLE		return SHUFFLE_ID;
 TOPOLOGIZE	return TOPOLOGIZE_ID;
+VAULTGEN	return VAULTGEN_ID;
 montype		return MONTYPE_ID;
 selection	return selection_ID;
 rect		return rect_ID;
@@ -266,6 +267,7 @@ blood		{ yylval.i=ENGR_BLOOD; return ENGRAVING_TYPE; }
 blessed		{ yylval.i=1; return CURSE_TYPE; }
 uncursed	{ yylval.i=2; return CURSE_TYPE; }
 cursed		{ yylval.i=3; return CURSE_TYPE; }
+rndvault	{ yylval.i=FLAG_RNDVAULT; return FLAG_TYPE; }
 noteleport	{ yylval.i=NOTELEPORT; return FLAG_TYPE; }
 hardfloor	{ yylval.i=HARDFLOOR; return FLAG_TYPE; }
 nommap		{ yylval.i=NOMMAP; return FLAG_TYPE; }
