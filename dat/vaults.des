@@ -3,6 +3,8 @@
 
 #
 # NOTE:
+#  - Use the "rndvault" LEVEL flag.
+#  - To change vault appearing frequency, use "VAULTGEN:x"
 #  - Usually the correct choice for the vault room type is "rndvault",
 #    but occasionally other types might be acceptable. "ordinary" vault
 #    room might be converted to any other type of random room, as per
@@ -22,15 +24,11 @@
 #  - Player is occasionally put into a corner of the map. Why?
 #
 # TODO:
-#  - save how many vaults are available somewhere, so nethack can look it up.
-#  - VAULT: "unique_name_string", frequency_int
 #  - FLAGS: unique
 #  - JOIN: (x,y), doorstate
 #  - mark walls where we don't want random doors to be put.
 #  - unjoined rooms (aka $$$$ vaults)
 #  - force random corridors to join in certain place?
-#  - variable sized rooms?
-#  - should be able to mark rooms irregular.
 #  - maybe vault-specific level sounds?
 #
 #
@@ -38,16 +36,16 @@
 
 
 # normal random room
-# vault 0000 is special; it's picked 7 out of 8 times when making a room.
 LEVEL:"vlt-0000"
-FLAGS:noflip
+FLAGS:noflip,rndvault
+VAULTGEN:1000
 ROOM:"ordinary", random, random, random, random {
 }
 
 
 # lava/ice/pool/tree/fountain room
 LEVEL:"vlt-0001"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (3,3) {
   $terr = TERRAIN: { 'L', 'I', 'P', 'T', '{' }
   SHUFFLE: $terr
@@ -66,35 +64,35 @@ ROOM:"rndvault", random, random, random, (3,3) {
 
 # big room, 1
 LEVEL:"vlt-0002"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (30,10) {
 }
 
 
 # big room, 2 (max. vertical height)
 LEVEL:"vlt-0003"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (10,17) {
 }
 
 
 # thin, long, horizontal room
 LEVEL:"vlt-0004"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (17,3) {
 }
 
 
 # thin, long, vertical room
 LEVEL:"vlt-0005"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (3,17) {
 }
 
 
 # tiny cage, big monster
 LEVEL:"vlt-0006"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (5,5) {
   TERRAIN:(1,1) & (2,1) & (3,1) &
           (1,2) &         (3,2) &
@@ -109,7 +107,7 @@ ROOM:"rndvault", random, random, random, (5,5) {
 
 # room with dangerous monster and loot
 LEVEL:"vlt-0007"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
   $mons = MONSTER: { 'M', 'D', 'O', 'Z', 'T', 'H' }
   SHUFFLE: $mons
@@ -125,7 +123,7 @@ ROOM:"rndvault", random, random, random, random {
 
 # boulder room
 LEVEL:"vlt-0008"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
   LOOP [1d6 + 3] {
     OBJECT:"boulder", random
@@ -138,28 +136,28 @@ ROOM:"rndvault", random, random, random, random {
 
 # tiny room
 LEVEL:"vlt-0009"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (1,1) {
 }
 
 
 # horizontal corridor
 LEVEL:"vlt-0010"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (10,1) {
 }
 
 
 # vertical corridor
 LEVEL:"vlt-0011"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (1,10) {
 }
 
 
 # ice room
 LEVEL:"vlt-0012"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
   TERRAIN:floodfill(1,1), 'I'
 }
@@ -167,7 +165,7 @@ ROOM:"rndvault", random, random, random, random {
 
 # random cloud/lava/ice/pool/tree room
 LEVEL:"vlt-0013"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
   $fill = selection: filter(30%, floodfill(1,1))
   $terr = TERRAIN: { 'C', 'L', 'I', 'P', 'T' }
@@ -178,7 +176,7 @@ ROOM:"rndvault", random, random, random, random {
 
 # buried treasure
 LEVEL:"vlt-0014"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 # note: intentionally ordinary.
 ROOM:"ordinary", random, random, random, random {
   CONTAINER:('(', "chest"), random,buried {
@@ -191,17 +189,23 @@ ROOM:"ordinary", random, random, random, random {
 
 # massacre
 LEVEL:"vlt-0015"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
+    $mon = MONSTER: { '@', "apprentice", "warrior", "ninja", "thug", "hunter", "acolyte", "abbot",
+             "page", "attendant", "neanderthal", "chieftain", "student", "wizard", "valkyrie",
+	     "tourist", "samurai", "rogue", "ranger", "priestess", "priest", "monk",
+             "knight", "healer", "cavewoman", "caveman", "barbarian", "archeologist" }
+  SHUFFLE: $mon
   LOOP [5d5] {
-    OBJECT:('%', "corpse"), random, montype:'@'
+    IF [25%] { SHUFFLE: $mon }
+    OBJECT:('%', "corpse"), random, montype: $mon[0]
   }
 }
 
 
 # statuary
 LEVEL:"vlt-0016"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
   LOOP [5d5] {
     CONTAINER:('`', "statue"), random { }
@@ -214,7 +218,7 @@ ROOM:"rndvault", random, random, random, random {
 
 # brazier
 LEVEL:"vlt-0017"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"ordinary", unlit, random, random, random {
   OBJECT:('\\', "brazier"), random
 }
@@ -222,7 +226,7 @@ ROOM:"ordinary", unlit, random, random, random {
 
 # temple of the gods
 LEVEL:"vlt-0018"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
   ALTAR:random, align[0], altar
   ALTAR:random, align[1], altar
@@ -232,7 +236,7 @@ ROOM:"rndvault", random, random, random, random {
 
 # mausoleum
 LEVEL:"vlt-0019"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (5,5) {
   TERRAIN:(1,1) & (2,1) & (3,1) &
           (1,2) &         (3,2) &
@@ -257,7 +261,7 @@ ROOM:"rndvault", random, random, random, (5,5) {
 # Split
 # must be rndvault, otherwise causes problems due to both sides being same room.
 LEVEL:"vlt-0020"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (5,5) {
   $hole = (2,2)
   $terr = TERRAIN:{'-', 'F'}
@@ -296,31 +300,32 @@ ROOM:"rndvault", random, random, random, (5,5) {
 
 # big room, 1, random type
 LEVEL:"vlt-0021"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:random, random, random, random, (17,10) {
 }
 
 
 # big room, 2 (max. vertical height), random type
 LEVEL:"vlt-0022"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:random, random, random, random, (10,17) {
 }
 
 # very thin, long, horizontal room
 LEVEL:"vlt-0023"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (50,5) {
 }
 
 # very very thin, long, horizontal room
 LEVEL:"vlt-0024"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, (70,3) {
 }
 
 # L-shaped
 LEVEL:"vlt-0025"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 -----xxx
@@ -337,6 +342,7 @@ REGION:(1,1,3,3),random,"rndvault",irregular { }
 
 # Split horizontally
 LEVEL:"vlt-0026"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 --------
@@ -359,6 +365,7 @@ REGION:(1,4,6,6),random,"ordinary",unfilled { }
 
 # Split vertically
 LEVEL:"vlt-0027"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 ---------
@@ -381,6 +388,7 @@ REGION:(5,1,7,6),random,"ordinary",unfilled { }
 
 # Blocked center
 LEVEL:"vlt-0028"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 -----------
@@ -409,6 +417,7 @@ IF [80%] {
 
 # Circular
 LEVEL:"vlt-0029"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 xx-----xx
@@ -430,6 +439,7 @@ IF [80%] {
 
 # Circular, small
 LEVEL:"vlt-0030"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 xx---xx
@@ -449,6 +459,7 @@ IF [80%] {
 
 # T-shaped
 LEVEL:"vlt-0031"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 xxx-----xxx
@@ -469,6 +480,7 @@ IF [80%] {
 
 # S-shaped
 LEVEL:"vlt-0032"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 -----xxx
@@ -492,6 +504,7 @@ IF [80%] {
 
 # U-shaped
 LEVEL:"vlt-0033"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 -----xxx-----
@@ -512,6 +525,7 @@ IF [80%] {
 
 # C-shaped
 LEVEL:"vlt-0034"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 --------
@@ -535,7 +549,7 @@ IF [80%] {
 
 # Throne
 LEVEL:"vlt-0035"
-FLAGS:noflip
+FLAGS:noflip,rndvault
 ROOM:"rndvault", random, random, random, random {
   OBJECT:('\', "throne"), random
 }
@@ -543,6 +557,7 @@ ROOM:"rndvault", random, random, random, random {
 
 # Circular, big
 LEVEL:"vlt-0036"
+FLAGS:rndvault
 GEOMETRY:random
 MAP
 xxx-----xxx
@@ -563,6 +578,44 @@ IF [80%] {
   REGION:(5,5,5,5),random,"ordinary",irregular { }
 }
 
+
+# L-shaped, big
+LEVEL:"vlt-0037"
+FLAGS:rndvault
+GEOMETRY:random
+MAP
+-------xxxxxx
+|.....|xxxxxx
+|.....|xxxxxx
+|.....|xxxxxx
+|.....|xxxxxx
+|.....-------
+|...........|
+|...........|
+|...........|
+|...........|
+|...........|
+-------------
+ENDMAP
+REGION:(3,3,3,3),random,"rndvault",irregular { }
+
+
+# With a corner room
+LEVEL:"vlt-0038"
+FLAGS:rndvault
+GEOMETRY:random
+MAP
+--------
+|...|..|
+|...|..|
+|...---|
+|......|
+|......|
+|......|
+--------
+ENDMAP
+REGION:(1,1,3,3),random,"rndvault",irregular { }
+REGION:(5,1,6,2),random,"rndvault",irregular { }
 
 
 

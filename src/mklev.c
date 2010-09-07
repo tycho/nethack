@@ -3,6 +3,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "dlb.h"
 /* #define DEBUG */	/* uncomment to enable code debugging */
 
 #ifdef DEBUG
@@ -240,6 +241,70 @@ not_enough_rooms()
     return (c*5 < (COLNO*ROWNO));
 }
 
+struct _rndvault {
+    char *fname;
+    long freq;
+    struct _rndvault *next;
+};
+struct _rndvault_gen {
+    int n_vaults;
+    long total_freq;
+    struct _rndvault *vaults;
+};
+
+struct _rndvault_gen *rndvault_gen = NULL;
+
+void
+rndvault_gen_load()
+{
+    if (!rndvault_gen) {
+	dlb *fd;
+	char line[BUFSZ];
+	char fnamebuf[64];
+	long frq;
+	fd = dlb_fopen("vaults.dat", "r");
+        if (!fd) return;
+
+	rndvault_gen = (struct _rndvault_gen *) alloc(sizeof(struct _rndvault_gen));
+	if (!rndvault_gen) goto bailout;
+
+	rndvault_gen->n_vaults = 0;
+	rndvault_gen->total_freq = 0;
+	rndvault_gen->vaults = NULL;
+
+	while (dlb_fgets(line, sizeof line, fd)) {
+	    struct _rndvault *vlt = (struct _rndvault *) alloc(sizeof(struct _rndvault));
+	    fnamebuf[0] = '\0';
+	    if (sscanf(line, "%ld %63s", &frq, &fnamebuf) == 2) {
+		if (frq < 1) frq = 1;
+		vlt->freq = frq;
+		vlt->fname = strdup(fnamebuf);
+		vlt->next = rndvault_gen->vaults;
+		rndvault_gen->vaults = vlt;
+		rndvault_gen->n_vaults++;
+		rndvault_gen->total_freq += frq;
+	    }
+	}
+
+    bailout:
+        (void)dlb_fclose(fd);
+    }
+}
+
+char *
+rndvault_getname()
+{
+    if (!rndvault_gen) rndvault_gen_load();
+    if (rndvault_gen) {
+	long frq = rn2(rndvault_gen->total_freq);
+	struct _rndvault *tmp = rndvault_gen->vaults;
+	while (tmp && ((frq -= tmp->freq) > 0)) tmp = tmp->next;
+	if (tmp && tmp->fname)
+	    return tmp->fname;
+	return "vlt-0000";
+    }
+}
+
 
 STATIC_OVL void
 makerooms()
@@ -256,8 +321,8 @@ makerooms()
 				rooms[nroom].hx = -1;
 			}
 		} else {
-		    char protofile[20];
-		    Sprintf(protofile, "vlt-%04i", rn2(8) ? 0 : rnd(36));
+		    char protofile[64];
+		    Sprintf(protofile, "%s", rndvault_getname());
 		    Strcat(protofile, LEV_EXT);
 		    in_mk_rndvault = TRUE;
 		    (void) load_special(protofile);

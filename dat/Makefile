@@ -104,6 +104,7 @@ options:	../util/makedefs
 spec_levs: ../util/lev_comp \
 	bigroom.des castle.des endgame.des gehennom.des knox.des medusa.des \
 	mines.des oracle.des sokoban.des tower.des yendor.des vaults.des
+	-rm -f vaults.dat
 	../util/lev_comp $(LEVCOMP_FLAGS) bigroom.des
 	../util/lev_comp $(LEVCOMP_FLAGS) castle.des
 	../util/lev_comp $(LEVCOMP_FLAGS) endgame.des
@@ -144,4 +145,4 @@ dungeon: dungeon.def ../util/makedefs ../util/dgn_comp
 spotless:
 	-rm -f spec_levs quest_levs *.lev $(VARDAT) dungeon dungeon.pdf
 	-rm -f nhdat x11tiles beostiles pet_mark.xbm rip.xpm mapbg.xpm
-	-rm -f rip.img GEM_RSC.RSC title.img nh16.img NetHack.ad
+	-rm -f rip.img GEM_RSC.RSC title.img nh16.img NetHack.ad vaults.dat
