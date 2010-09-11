@@ -16,6 +16,9 @@
 
 #
 # BUGS:
+#  - Occasionally different rooms have the same roomno.
+#  - The Gold vaults are never generated.
+#  - Level generation can be slow. Maybe add the rect split code back?
 #  - ROOMDOOR cannot be used, as corridors haven't been created yet.
 #    (create_door() in sp_lev.c, "if (IS_ROCK(levl[x][y-1].typ)) goto redoloop;" etc
 #    is a check whether there's actual free space behind the door, outside the room)
