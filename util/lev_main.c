@@ -1239,7 +1239,8 @@ sp_lev *maze;
 	    "selection_rndcoord",
 	    "selection_ellipse",
 	    "selection_filter",
-	    "topologize"
+	    "topologize",
+	    "convert_type"
 	};
 
 	/* don't bother with the header stuff */

@@ -131,6 +131,7 @@ enum opcode_defs {
     SPO_SEL_ELLIPSE,
     SPO_SEL_FILTER,
     SPO_TOPOGRAPHY,
+    SPO_CONVERT_TYPE,
 
     MAX_SP_OPCODES
 };

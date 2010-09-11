@@ -199,7 +199,7 @@ extern int rnd_vault_freq;
 %token	<i> WALLWALK_ID COMPARE_TYPE VAULTGEN_ID
 %token	<i> irregular_ID
 %token	<i> rect_ID fillrect_ID line_ID randline_ID grow_ID selection_ID flood_ID
-%token	<i> rndcoord_ID circle_ID ellipse_ID filter_ID
+%token	<i> rndcoord_ID circle_ID ellipse_ID filter_ID coord_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
@@ -2047,6 +2047,22 @@ integer_or_var	: math_expr_var
 coord_or_var	: encodecoord
 		  {
 		      add_opvars(splev, "c", $1);
+		  }
+		| '(' INTEGER ',' VARSTRING_INT ')'
+		  {
+		      add_opvars(splev, "iviio", $2, $4, SPOVAR_COORD, SPOVAR_INT, SPO_CONVERT_TYPE);
+		  }
+		| '(' VARSTRING_INT ',' INTEGER ')'
+		  {
+		      add_opvars(splev, "viiio", $2, $4, SPOVAR_COORD, SPOVAR_INT, SPO_CONVERT_TYPE);
+		  }
+		| '(' VARSTRING_INT ',' VARSTRING_INT ')'
+		  {
+		      add_opvars(splev, "vviio", $2, $4, SPOVAR_COORD, SPOVAR_INT, SPO_CONVERT_TYPE);
+		  }
+		| coord_ID '(' math_expr_var ',' math_expr_var ')'
+		  {
+		      add_opvars(splev, "iio", SPOVAR_COORD, SPOVAR_INT, SPO_CONVERT_TYPE);
 		  }
 		| rndcoord_ID '(' ter_selection ')'
 		  {
