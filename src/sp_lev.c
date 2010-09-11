@@ -5429,6 +5429,64 @@ sp_lev *lvl;
 		opvar_free(pt);
 	    }
 	    break;
+	case SPO_CONVERT_TYPE:
+	    {
+		struct opvar *a;
+		struct opvar *b;
+		struct opvar *x, *y;
+		struct opvar *coord;
+
+		if (!OV_pop_i(a) || !OV_pop_i(b)) break;
+
+		if (OV_i(a) == OV_i(b)) {
+		    impossible("spo_convert_type: trying to convert to same type");
+		    break;
+		}
+
+		switch (OV_i(a)) {
+		case SPOVAR_INT:
+		    switch (OV_i(b)) {
+		    case SPOVAR_COORD:
+			{
+			    /* (2 * int) to coord */
+			    if (!OV_pop_i(y) || !OV_pop_i(x)) break;
+			    coord = opvar_new_coord(OV_i(x), OV_i(y));
+			    splev_stack_push(coder->stack, coord);
+			    opvar_free(x);
+			    opvar_free(y);
+			}
+			break;
+		    default:
+			impossible("spo_convert_type: cannot convert to type %i", OV_i(a));
+			break;
+		    }
+		    break;
+		case SPOVAR_COORD:
+		    switch (OV_i(b)) {
+		    case SPOVAR_INT:
+			{
+			    /* coord to (2 * int) */
+			    if (!OV_pop_c(coord)) break;
+			    x = opvar_new_int(SP_COORD_X(OV_i(coord)));
+			    y = opvar_new_int(SP_COORD_Y(OV_i(coord)));
+			    splev_stack_push(coder->stack, y);
+			    splev_stack_push(coder->stack, x);
+			    opvar_free(coord);
+			}
+			break;
+		    default:
+			impossible("spo_convert_type: cannot convert to type %i", OV_i(a));
+			break;
+		    }
+		    break;
+		default:
+		    impossible("spo_convert_type: cannot convert from type %i", OV_i(a));
+		    break;
+		}
+		opvar_free(a);
+		opvar_free(b);
+	    }
+	    break;
 	default:
 	    panic("sp_level_coder: Unknown opcode %i", coder->opcode);
 	}

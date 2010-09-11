@@ -186,6 +186,7 @@ randline	return randline_ID;
 grow		return grow_ID;
 floodfill	return flood_ID;
 rndcoord	return rndcoord_ID;
+coord		return coord_ID;
 circle		return circle_ID;
 ellipse		return ellipse_ID;
 filter		return filter_ID;
