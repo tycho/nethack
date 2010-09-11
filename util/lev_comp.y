@@ -2029,7 +2029,7 @@ string_or_var	: STRING
 		      add_opvars(splev, "v", $1);
 		      Free($1);
 		  }
-		| VARSTRING_STRING_ARRAY '[' math_expr ']'
+		| VARSTRING_STRING_ARRAY '[' math_expr_var ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_STRING|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2074,7 +2074,7 @@ coord_or_var	: encodecoord
 		      add_opvars(splev, "v", $1);
 		      Free($1);
 		  }
-		| VARSTRING_COORD_ARRAY '[' math_expr ']'
+		| VARSTRING_COORD_ARRAY '[' math_expr_var ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_COORD|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2104,7 +2104,7 @@ region_or_var	: encoderegion
 		      add_opvars(splev, "v", $1);
 		      Free($1);
 		  }
-		| VARSTRING_REGION_ARRAY '[' math_expr ']'
+		| VARSTRING_REGION_ARRAY '[' math_expr_var ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_REGION|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2131,7 +2131,7 @@ mapchar_or_var	: mapchar
 		      add_opvars(splev, "v", $1);
 		      Free($1);
 		  }
-		| VARSTRING_MAPCHAR_ARRAY '[' math_expr ']'
+		| VARSTRING_MAPCHAR_ARRAY '[' math_expr_var ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MAPCHAR|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2169,7 +2169,7 @@ monster_or_var	: encodemonster
 		      add_opvars(splev, "v", $1);
 		      Free($1);
 		  }
-		| VARSTRING_MONST_ARRAY '[' math_expr ']'
+		| VARSTRING_MONST_ARRAY '[' math_expr_var ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_MONST|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2220,7 +2220,7 @@ object_or_var	: encodeobj
 		      add_opvars(splev, "v", $1);
 		      Free($1);
 		  }
-		| VARSTRING_OBJ_ARRAY '[' math_expr ']'
+		| VARSTRING_OBJ_ARRAY '[' math_expr_var ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_OBJ|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
@@ -2279,7 +2279,7 @@ math_expr_var	: INTEGER                       { add_opvars(splev, "i", $1 ); }
 		      add_opvars(splev, "v", $1);
 		      Free($1);
 		  }
-		| VARSTRING_INT_ARRAY '[' math_expr ']'
+		| VARSTRING_INT_ARRAY '[' math_expr_var ']'
 		  {
 		      check_vardef_type(variable_definitions, $1, SPOVAR_INT|SPOVAR_ARRAY);
 		      add_opvars(splev, "v", $1);
