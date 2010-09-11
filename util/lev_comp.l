@@ -164,6 +164,8 @@ GRAVE		return GRAVE_ID;
 ENGRAVING	return ENGRAVING_ID;
 NAME		return NAME_ID;
 CHANCE		return CHANCE_ID;
+FOR		return FOR_ID;
+TO		return TO_ID;
 LOOP		return LOOP_ID;
 SWITCH		return SWITCH_ID;
 CASE		return CASE_ID;
