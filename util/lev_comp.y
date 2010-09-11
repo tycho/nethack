@@ -87,6 +87,16 @@ struct coord {
 	long y;
 };
 
+struct forloopdef {
+    char *varname;
+    long jmp_point;
+    long startvalue, endvalue, step;
+};
+
+static struct forloopdef forloop_list[MAX_NESTED_IFS];
+static short n_forloops = 0;
+
+
 sp_lev *splev = NULL;
 
 static struct opvar *if_list[MAX_NESTED_IFS];
@@ -176,7 +186,7 @@ extern int rnd_vault_freq;
 %token	<i> MON_APPEARANCE ROOMDOOR_ID IF_ID ELSE_ID
 %token	<i> SPILL_ID TERRAIN_ID HORIZ_OR_VERT REPLACE_TERRAIN_ID
 %token	<i> EXIT_ID SHUFFLE_ID
-%token	<i> QUANTITY_ID BURIED_ID LOOP_ID
+%token	<i> QUANTITY_ID BURIED_ID LOOP_ID FOR_ID TO_ID
 %token	<i> SWITCH_ID CASE_ID BREAK_ID DEFAULT_ID
 %token	<i> ERODED_ID TRAPPED_ID RECHARGED_ID INVIS_ID GREASED_ID
 %token	<i> FEMALE_ID CANCELLED_ID REVIVED_ID AVENGE_ID FLEEING_ID BLINDED_ID
@@ -220,7 +230,7 @@ extern int rnd_vault_freq;
 %type	<i> all_integers
 %type	<i> ter_selection ter_selection_x
 %type	<map> string level_def
-%type	<map> any_var any_var_array any_var_or_arr
+%type	<map> any_var any_var_array any_var_or_arr intvar_or_unk
 %type	<corpos> corr_spec
 %type	<lregn> region lev_region
 %type	<crd> room_pos subroom_pos room_align
@@ -410,6 +420,7 @@ levstatement 	: message
 		| fountain_detail
 		| gold_detail
 		| switchstatement
+		| forstatement
 		| loopstatement
 		| ifstatement
 		| exitstatement
@@ -884,6 +895,63 @@ breakstatement	: BREAK_ID
 		  }
 		| levstatement
 		  {
+		  }
+		;
+
+int_span	: '.' '.'
+		| TO_ID
+		;
+
+intvar_or_unk	: VARSTRING
+		{
+		    $$ = $1;
+		}
+		| VARSTRING_INT
+		{
+		    $$ = $1;
+		}
+		;
+
+forstmt_start	: FOR_ID intvar_or_unk '=' INTEGER int_span INTEGER
+		  {
+		      /* ideally we'd want to use math_expr_var instead of INTEGER above, but
+		         then we wouldn't know startvalue or endvalue */
+		      variable_definitions = add_vardef_type(variable_definitions, $2, SPOVAR_INT);
+		      add_opvars(splev, "iiso", $4, 0, $2, SPO_VAR_INIT);
+
+		      if (n_forloops >= MAX_NESTED_IFS) {
+			  lc_error("FOR: Too deeply nested loops.");
+			  n_forloops = MAX_NESTED_IFS - 1;
+		      }
+		      forloop_list[n_forloops].varname = $2;
+		      forloop_list[n_forloops].jmp_point = splev->n_opcodes;
+		      forloop_list[n_forloops].startvalue = $4;
+		      forloop_list[n_forloops].endvalue = $6;
+		      if (forloop_list[n_forloops].startvalue <= forloop_list[n_forloops].endvalue)
+			  forloop_list[n_forloops].step = 1;
+		      else
+			  forloop_list[n_forloops].step = -1;
+		      n_forloops++;
+		  }
+		;
+
+forstatement	: forstmt_start
+		  {
+		      /* nothing */
+		  }
+		 '{' levstatements '}'
+		  {
+		      n_forloops--;
+		      add_opvars(splev, "ivo", forloop_list[n_forloops].step,
+				 forloop_list[n_forloops].varname, SPO_MATH_ADD);
+		      add_opvars(splev, "oiso", SPO_COPY, 0, forloop_list[n_forloops].varname, SPO_VAR_INIT);
+		      add_opvars(splev, "io", forloop_list[n_forloops].endvalue, SPO_CMP);
+		      if (forloop_list[n_forloops].startvalue <= forloop_list[n_forloops].endvalue) {
+			  add_opvars(splev, "io", forloop_list[n_forloops].jmp_point - splev->n_opcodes - 1, SPO_JLE);
+		      } else {
+			  add_opvars(splev, "io", forloop_list[n_forloops].jmp_point - splev->n_opcodes - 1, SPO_JGE);
+		      }
+		      Free(forloop_list[n_forloops].varname);
 		  }
 		;
 
