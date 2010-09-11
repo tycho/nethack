@@ -2290,7 +2290,7 @@ math_expr_var	: INTEGER                       { add_opvars(splev, "i", $1 ); }
 		| math_expr_var '*' math_expr_var       { add_opvars(splev, "o", SPO_MATH_MUL); }
 		| math_expr_var '/' math_expr_var       { add_opvars(splev, "o", SPO_MATH_DIV); }
 		| math_expr_var '%' math_expr_var       { add_opvars(splev, "o", SPO_MATH_MOD); }
-		| '(' math_expr ')'             { }
+		| '(' math_expr_var ')'             { }
 		;
 
 math_expr	: INTEGER                       { add_opvars(splev, "i", $1 ); }
