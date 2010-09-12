@@ -4383,7 +4383,7 @@ spo_region(coder)
        an actual room to be created (such rooms are used to
        control placement of migrating monster arrivals) */
     room_not_needed = (OV_i(rtype) == OROOM &&
-		       !(OV_i(rirreg) & ROOMF_IRREG) && !prefilled);
+		       !(OV_i(rirreg) & ROOMF_IRREG) && !prefilled && !in_mk_rndvault);
     if (room_not_needed || nroom >= MAXNROFROOMS) {
 	region tmpregion;
 	if (!room_not_needed)
