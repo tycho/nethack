@@ -16,7 +16,6 @@
 
 #
 # BUGS:
-#  - Occasionally different rooms have the same roomno.
 #  - The Gold vaults are never generated.
 #  - Level generation can be slow. Maybe add the rect split code back?
 #  - ROOMDOOR cannot be used, as corridors haven't been created yet.
