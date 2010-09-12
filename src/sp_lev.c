@@ -5534,14 +5534,15 @@ const char *name;
 	if (!fd) return FALSE;
 
 	Fread((genericptr_t) &vers_info, sizeof vers_info, 1, fd);
-	if (!check_version(&vers_info, name, TRUE))
-	    goto give_up;
+	if (!check_version(&vers_info, name, TRUE)) {
+	    (void)dlb_fclose(fd);
+	    return FALSE;
+	}
 
 	result = sp_level_loader(fd, &lvl);
+	(void)dlb_fclose(fd);
 	if (result) result = sp_level_coder(&lvl);
 	sp_level_free(&lvl);
- give_up:
-	(void)dlb_fclose(fd);
 	return result;
 }
 
