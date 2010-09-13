@@ -218,8 +218,8 @@ STAIR:(45,10),up
 # Non diggable walls
 NON_DIGGABLE:(00,00,34,16)
 # Drawbridges
-DRAWBRIDGE:(17,02),south,open
-DRAWBRIDGE:(17,14),north,open
+DRAWBRIDGE:(17,02),south,random
+DRAWBRIDGE:(17,14),north,random
 # Objects
 OBJECT:('(',"crystal ball"),(17,08),blessed,5,NAME:"The Orb of Fate"
 LOOP [4 + 3d5] {
