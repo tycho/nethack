@@ -20,6 +20,46 @@ char msgs[DUMPMSGS][BUFSZ];
 int lastmsg = -1;
 #endif
 
+void
+msgpline_add(typ, pattern)
+     int typ;
+     char *pattern;
+{
+    struct _plinemsg *tmp = (struct _plinemsg *) alloc(sizeof(struct _plinemsg));
+    if (!tmp) return;
+    tmp->msgtype = typ;
+    tmp->pattern = strdup(pattern);
+    tmp->next = pline_msg;
+    pline_msg = tmp;
+}
+
+void
+msgpline_free()
+{
+    struct _plinemsg *tmp = pline_msg;
+    struct _plinemsg *tmp2;
+    while (tmp) {
+	free(tmp->pattern);
+	tmp2 = tmp;
+	tmp = tmp->next;
+	free(tmp2);
+    }
+    pline_msg = NULL;
+}
+
+int
+msgpline_type(msg)
+     char *msg;
+{
+    struct _plinemsg *tmp = pline_msg;
+    while (tmp) {
+	if (pmatch(tmp->pattern, msg)) return tmp->msgtype;
+	tmp = tmp->next;
+    }
+    return MSGTYP_NORMAL;
+}
+
+
 /*VARARGS1*/
 /* Note that these declarations rely on knowledge of the internals
  * of the variable argument handling stuff in "tradstdc.h"
@@ -35,6 +75,8 @@ pline VA_DECL(const char *, line)
 	vpline(line, VA_ARGS);
 	VA_END();
 }
+
+char prevmsg[BUFSZ];
 
 # ifdef USE_STDARG
 static void
@@ -53,6 +95,7 @@ pline VA_DECL(const char *, line)
 #endif	/* USE_STDARG | USE_VARARG */
 
 	char pbuf[BUFSZ];
+	int typ;
 /* Do NOT use VA_START and VA_END in here... see above */
 
 	if (!line || !*line) return;
@@ -60,6 +103,9 @@ pline VA_DECL(const char *, line)
 	    Vsprintf(pbuf,line,VA_ARGS);
 	    line = pbuf;
 	}
+
+	typ = msgpline_type(line);
+
 #if defined(DUMP_LOG) && defined(DUMPMSGS)
 	if (DUMPMSGS > 0 && !program_state.gameover) {
 	  lastmsg = (lastmsg + 1) % DUMPMSGS;
@@ -76,7 +122,14 @@ pline VA_DECL(const char *, line)
 #endif /* MAC */
 	if (vision_full_recalc) vision_recalc(0);
 	if (u.ux) flush_screen(1);		/* %% */
+
+	if (typ == MSGTYP_NOSHOW) return;
+	if (typ == MSGTYP_NOREP && !strcmp(line, prevmsg)) return;
+
 	putstr(WIN_MESSAGE, 0, line);
+
+	strncpy(prevmsg, line, BUFSZ);
+	if (typ == MSGTYP_STOP) display_nhwindow(WIN_MESSAGE, TRUE); /* --more-- */
 }
 
 /*VARARGS1*/
