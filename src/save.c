@@ -1137,6 +1137,7 @@ freedynamicdata()
 #ifdef MENU_COLOR
 	free_menu_coloring();
 #endif
+	msgpline_free();
 	tmp_at(DISP_FREEMEM, 0);	/* temporary display effects */
 #ifdef FREE_ALL_MEMORY
 # define freeobjchn(X)	(saveobjchn(0, X, FREE_SAVE),  X = 0)
