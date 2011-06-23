@@ -323,6 +323,8 @@ typedef unsigned char	uchar;
  * complexity of the game but also to the size of the load module.
  */
 
+#define SHOW_BORN	/* show born/extinct patch */
+#define SORTLOOT	/* optional item sorting by name */
 #define PARANOID	/* make sure the user isn't making a mistake */
 
 /* dungeon features */
@@ -375,7 +377,7 @@ typedef unsigned char	uchar;
 #define STATUS_COLORS
 
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
-/*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
+#define AUTOPICKUP_EXCEPTIONS  /* exceptions to autopickup */
 #define DUMP_LOG        /* Dump game end information to a file */
 #define DUMP_FN "dumps/%n.nh"       /* Fixed dumpfile name, if you want
                                          * to prevent definition by users */
