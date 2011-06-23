@@ -51,6 +51,17 @@ echo           ..\..\src\Makefile.gcc-orig
 copy Makefile.gcc ..\..\src\Makefile.gcc >nul
 echo MinGW Makefile copied ok.
 
+echo Copying MinGW Makefile for curses - cursmake.gcc to ..\..\src\cursmake.gcc
+if NOT exist ..\..\src\cursmake.gcc goto :docurs
+copy ..\..\src\cursmake.gcc ..\..\src\cursmake.gcc-orig >nul
+echo      Your existing
+echo           ..\..\src\cursmake.gcc
+echo      has been renamed to
+echo           ..\..\src\cursmake.gcc-orig
+:docurs
+copy cursmake.gcc ..\..\src\cursmake.gcc >nul
+echo MinGW Makefile for curses copied ok.
+
 :do_win
 if not exist ..\..\win\win32\nethack.dsw goto :err_win
 echo.
