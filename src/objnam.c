@@ -15,7 +15,7 @@ static boolean FDECL(wishymatch, (const char *,const char *,BOOLEAN_P));
 #endif
 static char *NDECL(nextobuf);
 #ifdef SORTLOOT
-char * FDECL(xname2, (struct obj *, boolean));
+char * FDECL(xname2, (struct obj *, BOOLEAN_P));
 #endif
 
 struct Jitem {
@@ -242,7 +242,7 @@ register struct obj *obj;
 char *
 xname2(obj, ignore_oquan)
 register struct obj *obj;
-boolean ignore_oquan;
+BOOLEAN_P ignore_oquan;
 #endif
 {
 	register char *buf;
