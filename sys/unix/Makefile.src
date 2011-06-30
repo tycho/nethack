@@ -338,7 +338,7 @@ HACK_H	= ../src/hack.h-t
 
 # all .c that are part of the main UnNetHack program and are not operating- or
 # windowing-system specific
-HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c ball.c bones.c \
+HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c avl.c ball.c bones.c \
 	   botl.c cmd.c dbridge.c decl.c detect.c dig.c display.c dlb.c do.c \
 	   do_name.c do_wear.c dog.c dogmove.c dokick.c dothrow.c drawing.c \
 	   dungeon.c eat.c end.c engrave.c exper.c explode.c extralev.c \
@@ -398,7 +398,7 @@ HSOURCES = $(HACKINCL) date.h onames.h pm.h vis_tab.h\
 # the following .o's _must_ be made before any others (for makedefs)
 FIRSTOBJ = monst.o objects.o
 
-HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o ball.o \
+HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o avl.o ball.o \
 	bones.o botl.o cmd.o dbridge.o decl.o detect.o dig.o display.o dlb.o \
 	do.o do_name.o do_wear.o dog.o dogmove.o dokick.o dothrow.o \
 	drawing.o dump.o dungeon.o eat.o end.o engrave.o exper.o explode.o \

@@ -172,7 +172,7 @@ HACK_H	= ../src/hack.h-t
 # all .c that are part of the main UnNetHack program and are not operating- or
 # windowing-system specific
 HACKCSRC = $(srcdir)/allmain.c $(srcdir)/alloc.c $(srcdir)/apply.c \
-	$(srcdir)/artifact.c $(srcdir)/attrib.c $(srcdir)/ball.c \
+	$(srcdir)/artifact.c $(srcdir)/attrib.c ${srcdir}/avl.c $(srcdir)/ball.c \
 	$(srcdir)/bones.c $(srcdir)/botl.c $(srcdir)/cmd.c $(srcdir)/dbridge.c \
 	$(srcdir)/decl.c $(srcdir)/detect.c $(srcdir)/dig.c $(srcdir)/display.c\
 	$(srcdir)/dlb.c $(srcdir)/do.c $(srcdir)/do_name.c $(srcdir)/do_wear.c \
@@ -254,7 +254,7 @@ HSOURCES = $(HACKINCL) date.h onames.h pm.h vis_tab.h\
 # the following .o's _must_ be made before any others (for makedefs)
 FIRSTOBJ = monst.o objects.o alloc.o
 
-HOBJ = $(FIRSTOBJ) allmain.o apply.o artifact.o attrib.o ball.o \
+HOBJ = $(FIRSTOBJ) allmain.o apply.o artifact.o attrib.o avl.o ball.o \
 	bones.o botl.o cmd.o dbridge.o decl.o detect.o dig.o display.o dlb.o \
 	do.o do_name.o do_wear.o dog.o dogmove.o dokick.o dothrow.o \
 	drawing.o dump.o dungeon.o eat.o end.o engrave.o exper.o explode.o \
@@ -733,6 +733,7 @@ apply.o: $(srcdir)/apply.c $(HACK_H) ../include/edog.h
 artifact.o: $(srcdir)/artifact.c $(HACK_H) ../include/artifact.h \
 		../include/artilist.h
 attrib.o: $(srcdir)/attrib.c $(HACK_H)
+avl.o: $(srcdir)/avl.c $(HACK_H)
 ball.o: $(srcdir)/ball.c $(HACK_H)
 bones.o: $(srcdir)/bones.c $(HACK_H) ../include/lev.h
 botl.o: $(srcdir)/botl.c $(HACK_H)
