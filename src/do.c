@@ -1330,7 +1330,7 @@ boolean at_stairs, falling, portal;
 	if (In_endgame(&u.uz) && newdungeon && u.uhave.amulet) {
 #ifdef WISH_TRACKER
 		char buf[512];
-		Sprintf(buf,"%s just entered the Plane of Earth on T:%d!",plname,moves);
+		Sprintf(buf,"%s just entered the Plane of Earth on T:%ld!",plname,moves);
 		makeannounce(buf);
 #endif
 		resurrect();
@@ -1398,7 +1398,7 @@ final_level()
 	create_mplayers(rn1(4, 3), TRUE);
 
 #ifdef WISH_TRACKER
-	Sprintf(buf,"%s just entered the Astral Plane on T:%d!",plname,moves);
+	Sprintf(buf,"%s just entered the Astral Plane on T:%ld!",plname,moves);
 	makeannounce(buf);
 #endif
 

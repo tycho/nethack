@@ -5457,7 +5457,7 @@ sp_lev *lvl;
 			}
 			break;
 		    default:
-			impossible("spo_convert_type: cannot convert to type %i", OV_i(a));
+			impossible("spo_convert_type: cannot convert to type %ld", OV_i(a));
 			break;
 		    }
 		    break;
@@ -5475,12 +5475,12 @@ sp_lev *lvl;
 			}
 			break;
 		    default:
-			impossible("spo_convert_type: cannot convert to type %i", OV_i(a));
+			impossible("spo_convert_type: cannot convert to type %ld", OV_i(a));
 			break;
 		    }
 		    break;
 		default:
-		    impossible("spo_convert_type: cannot convert from type %i", OV_i(a));
+		    impossible("spo_convert_type: cannot convert from type %ld", OV_i(a));
 		    break;
 		}
 		opvar_free(a);

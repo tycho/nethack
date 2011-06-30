@@ -177,7 +177,7 @@ doread()
 		      : card_msgs[scroll->o_id % (SIZE(card_msgs)-1)]);
             }
             /* Make a credit card number */
-	    pline("\"%d0%d %d%d1 0%d%d0\"", ((scroll->o_id % 89)+10), (scroll->o_id % 4),
+	    pline("\"%ld0%ld %ld%ld1 0%d%ld0\"", ((scroll->o_id % 89)+10), (scroll->o_id % 4),
 		  (((scroll->o_id * 499) % 899999) + 100000), (scroll->o_id % 10), 
 		  (!(scroll->o_id % 3)), ((scroll->o_id * 7) % 10));
             u.uconduct.literate++;

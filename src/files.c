@@ -623,7 +623,7 @@ char* wishstring;
 
 	fp = fopen_datafile(wish_tracker_file,"a+",LEVELPREFIX);
 	if (fp) {
-		Sprintf(bigbuf,"%s wished for %s (%d%s wish, T:%d)\n",
+		Sprintf(bigbuf,"%s wished for %s (%ld%s wish, T:%ld)\n",
 				plname,wishstring,u.uconduct.wishes,
 				u.uconduct.wishes == 1 ? "st" : u.uconduct.wishes == 2 ? "nd" : 
 				u.uconduct.wishes == 3 ? "rd" : "th",moves);
@@ -669,7 +669,7 @@ touch_whereis()
 #else
 	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
 #endif
-	Sprintf(whereis_work,"%d,%d,%d,%d,%d,0,0,%s,%s,%s,%d,%d\n",
+	Sprintf(whereis_work,"%d,%d,%d,%d,%ld,0,0,%s,%s,%s,%d,%d\n",
 			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves,
 			urole.name.m,urace.adj,u.mfemale ? "F" : "M",u.ualign.type + 2,
 			u.uhave.amulet ? 1 : 0);
@@ -695,7 +695,7 @@ delete_whereis()
 #else
 	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
 #endif
-	Sprintf(whereis_work,"%d,%d,%d,%d,%d,%d,1,%s,%s,%s,%d,%d\n",
+	Sprintf(whereis_work,"%d,%d,%d,%d,%ld,%d,1,%s,%s,%s,%d,%d\n",
 			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves, 
 			u.uevent.ascended ? 2 : killer ? 1 : 0,
 			urole.name.m,urace.adj,u.mfemale ? "F" : "M",u.ualign.type + 2,

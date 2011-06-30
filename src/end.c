@@ -728,7 +728,7 @@ int how;
 				pline("Unfortunately you are still genocided...");
 			else {
 #ifdef WISH_TRACKER
-				Sprintf(pbuf,"%s lifesaved instead of being killed by a %s on T:%d",plname,killer,moves);
+				Sprintf(pbuf,"%s lifesaved instead of being killed by a %s on T:%ld",plname,killer,moves);
 				makeannounce(pbuf);
 #endif
 				killer = 0;

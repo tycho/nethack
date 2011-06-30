@@ -265,7 +265,7 @@ struct obj *obj;
 #ifdef WISH_TRACKER
 		if (Is_sanctum(&u.uz)) {
 			Sprintf(buf,
-				"%s picked up the Amulet of Yendor in Moloch's Sanctum on T:%d", 
+				"%s picked up the Amulet of Yendor in Moloch's Sanctum on T:%ld",
 				plname,moves);
 			makeannounce(buf);
 		}

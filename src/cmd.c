@@ -1203,7 +1203,7 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 #ifdef WIZARD
 		if (wizard)
 			if (ESlow) Sprintf(eos(buf)," (from an item)");
-			else Sprintf(eos(buf)," (%d turns)",HSlow);
+			else Sprintf(eos(buf)," (%ld turns)",HSlow);
 #endif
 		you_are(buf);
 	}
@@ -1212,7 +1212,7 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 #ifdef WIZARD
 		if (wizard)
 			if (EReflecting) Sprintf(eos(buf)," (from an item)");
-			else Sprintf(eos(buf)," (%d turns)",HReflecting);
+			else Sprintf(eos(buf)," (%ld turns)",HReflecting);
 #endif
 		you_have(buf);
 	}
