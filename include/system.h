@@ -88,8 +88,8 @@ E int FDECL(srandom, (unsigned int));
 #  endif
 # endif
 #else
-E long lrand48();
-E void srand48();
+E long lrand48(void);
+E void srand48(long);
 #endif /* BSD || ULTRIX || RANDOM */
 
 #if !defined(BSD) || defined(ultrix)
@@ -344,10 +344,10 @@ E char *FDECL(memset, (char*,int,int));
 #endif /* MICRO */
 
 #if defined(BSD) && defined(ultrix)	/* i.e., old versions of Ultrix */
-E void sleep();
+E void sleep(unsigned int);
 #endif
 #if defined(ULTRIX) || defined(SYSV)
-E unsigned sleep();
+E unsigned sleep(unsigned int);
 #endif
 #if defined(HPUX)
 E unsigned int FDECL(sleep, (unsigned int));
@@ -357,7 +357,7 @@ E int FDECL(sleep, (unsigned));
 #endif
 
 E char *FDECL(getenv, (const char *));
-E char *getlogin();
+E char *getlogin(void);
 #if defined(HPUX) && !defined(_POSIX_SOURCE)
 E long NDECL(getuid);
 E long NDECL(getgid);
@@ -502,7 +502,7 @@ E char *FDECL(tgoto, (const char *,int,int));
 #else
 # if ! (defined(HPUX) && defined(_POSIX_SOURCE))
 E int FDECL(tgetent, (char *,const char *));
-E void FDECL(tputs, (const char *,int,int (*)()));
+E void FDECL(tputs, (const char *,int,int (*)(void)));
 # endif
 E int FDECL(tgetnum, (const char *));
 E int FDECL(tgetflag, (const char *));
