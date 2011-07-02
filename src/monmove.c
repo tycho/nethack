@@ -387,7 +387,7 @@ register struct monst *mtmp;
 				}
 				mtmp->msleeping = 0;
 			} else {
-				return(0);	// mtmp just went away, we'd better bail out
+				return(0);	/* mtmp just went away, we'd better bail out */
 			}
 		}
 	}

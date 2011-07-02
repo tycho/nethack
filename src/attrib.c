@@ -583,7 +583,7 @@ int oldlevel, newlevel;
 	    }
 		prevabil = *(abil->ability);
 		if (oldlevel < abil->ulevel && newlevel >= abil->ulevel) {
-			// Must do this check before we set the FROMEXPER flag
+			/* Must do this check before we set the FROMEXPER flag */
 			if ((*(abil->ability) & TIMEOUT) < 100)
 			{
 				bShowMsgAnyway = 1;

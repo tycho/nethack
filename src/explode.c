@@ -44,9 +44,10 @@ int expltype;
 	boolean skipitems = FALSE;
 
 #if 0
-	// No good justification for this.  Why should
-	// these roles take _such_ less damage from explosions?
-	// If they're going to huck fireballs around, _be careful_.
+	/* No good justification for this.  Why should
+	 * these roles take _such_ less damage from explosions?
+	 * If they're going to huck fireballs around, _be careful_.
+	 */
 
 	if (olet == WAND_CLASS)		/* retributive strike */
 		switch (Role_switch) {
