@@ -14,10 +14,10 @@
 # MAKE = make
 
 # make NetHack
-PREFIX	 = /opt/nethack
+PREFIX	 = /opt/sporkhack
 
-GAME     = nethack
-# GAME     = nethack.prg
+GAME     = sporkhack
+# GAME     = sporkhack.prg
 GAMEUID  = games
 GAMEGRP  = games
 
@@ -36,7 +36,7 @@ DIRPERM  = 0775
 # therefore there should not be anything in GAMEDIR that you want to keep
 # (if there is, you'll have to do the installation by hand or modify the
 # instructions)
-GAMEDIR  = $(PREFIX)/games/lib/$(GAME)dir
+GAMEDIR  = $(PREFIX)/lib/$(GAME)
 VARDIR  = $(GAMEDIR)
 SHELLDIR = $(PREFIX)/bin
 
