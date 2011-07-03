@@ -108,7 +108,7 @@ void curses_init_nhwindows(int* argcp, char** argv)
     set_wc2_option_mod_status(WC2_GUICOLOR, SET_IN_FILE);
 #endif
     noecho();
-    raw();
+    cbreak();
     meta(stdscr, TRUE);
     curs_set(0);
     keypad(stdscr, TRUE);
