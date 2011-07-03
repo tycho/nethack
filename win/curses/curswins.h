@@ -15,9 +15,13 @@ WINDOW *curses_get_nhwin(winid wid);
 void curses_add_nhwin(winid wid, int height, int width, int y, int x,
  orient orientation, boolean border);
 
+void curses_add_wid(winid wid);
+
 void curses_refresh_nhwin(winid wid);
 
 void curses_del_nhwin(winid wid);
+
+void curses_del_wid(winid wid);
 
 void curses_putch(winid wid, int x, int y, int ch, int color, int attrs);
 
@@ -33,23 +37,10 @@ void curses_puts(winid wid, int attr, const char *text);
 
 void curses_clear_nhwin(winid wid);
 
+void curses_draw_map(int sx, int sy, int ex, int ey);
 
-/* Private declarations */
+boolean curses_map_borders(int *sx, int *sy, int *ex, int *ey, int ux,
+ int uy);
 
-typedef struct nhw
-{
-    winid nhwin;  /* NetHack window id */
-    WINDOW *curwin; /* Curses window pointer */
-    int width;  /* Usable width not counting border */
-    int height; /* Usable height not counting border */
-    int x;  /* start of window on terminal (left) */
-    int y;  /* start of window on termial (top) */
-    int orientation;    /* Placement of window relative to map */
-    boolean border; /* Whether window has a visible border */
-    struct nhw *prev_window;    /* Pointer to previous entry */
-    struct nhw *next_window;    /* Pointer to next entry */
-} nethack_window;
-
-static void refresh_map_window(void);
 
 #endif  /* CURSWIN_H */

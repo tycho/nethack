@@ -1,5 +1,7 @@
 #include "curses.h"
 #include "hack.h"
+#include "patchlevel.h"
+#include "color.h"
 #include "wincurs.h"
 
 /* Public functions for curses NetHack interface */
@@ -8,8 +10,9 @@
 struct window_procs curses_procs = {
     "curses",
     WC_ALIGN_MESSAGE|WC_ALIGN_STATUS|WC_COLOR|WC_HILITE_PET|
-    WC_POPUP_DIALOG,
-    WC2_TERM_COLS|WC2_TERM_ROWS|WC2_WINDOWBORDERS,
+    WC_POPUP_DIALOG|WC_SPLASH_SCREEN,
+    WC2_TERM_COLS|WC2_TERM_ROWS|WC2_WINDOWBORDERS|WC2_PETATTR|
+     WC2_GUICOLOR,
     curses_init_nhwindows,
     curses_player_selection,
     curses_askname,
@@ -60,7 +63,7 @@ struct window_procs curses_procs = {
     curses_preference_update,
 };
 
-/*  
+/*
 init_nhwindows(int* argcp, char** argv)
                 -- Initialize the windows used by NetHack.  This can also
                    create the standard windows listed at the top, but does
@@ -76,6 +79,10 @@ init_nhwindows(int* argcp, char** argv)
 */
 void curses_init_nhwindows(int* argcp, char** argv)
 {
+#ifdef PDCURSES
+    char window_title[BUFSZ];
+#endif
+
 #ifdef XCURSES
     base_term = Xinitscr(*argcp, argv);
 #else
@@ -83,27 +90,66 @@ void curses_init_nhwindows(int* argcp, char** argv)
 #endif
 #ifdef TEXTCOLOR
     if (has_colors())
+    {
         start_color();
+        curses_init_nhcolors();
+    }
     else
+    {
         iflags.use_color = FALSE;
-    curses_init_nhcolors();
+        set_option_mod_status("color", SET_IN_FILE);
+        iflags.wc2_guicolor = FALSE;
+        set_wc2_option_mod_status(WC2_GUICOLOR, SET_IN_FILE);
+    }
 #else
     iflags.use_color = FALSE;
+    set_option_mod_status("color", SET_IN_FILE);
+    iflags.wc2_guicolor = FALSE;
+    set_wc2_option_mod_status(WC2_GUICOLOR, SET_IN_FILE);
 #endif
     noecho();
     raw();
-    keypad(stdscr, TRUE);
     meta(stdscr, TRUE);
     curs_set(0);
+    keypad(stdscr, TRUE);
+#ifdef NCURSES_VERSION
+# ifdef __APPLE__
+ ESCDELAY = 25;
+# else
+    set_escdelay(25);
+# endif /* __APPLE__ */
+#endif  /* NCURSES_VERSION */
+#ifdef PDCURSES
+# ifdef DEF_GAME_NAME
+#  ifdef VERSION_STRING
+    sprintf(window_title, "%s %s", DEF_GAME_NAME, VERSION_STRING);
+#  else
+    sprintf(window_title, "%s", DEF_GAME_NAME);
+#  endif /* VERSION_STRING */
+# else
+#  ifdef VERSION_STRING
+    sprintf(window_title, "%s %s", "NetHack", VERSION_STRING);
+#  else
+    sprintf(window_title, "%s", "NetHack");
+#  endif /* VERSION_STRING */
+# endif /* DEF_GAME_NAME */
+    PDC_set_title(window_title);
+    PDC_set_blink(TRUE);    /* Only if the user asks for it! */
+    timeout(1);
+    (void)getch();
+    timeout(-1);
+#endif  /* PDCURSES */
     getmaxyx(base_term, term_rows, term_cols);
+    counting = FALSE;
     curses_init_options();
-    if ((term_rows < 18) || (term_cols < 40))
+    if ((term_rows < 15) || (term_cols < 40))
     {
-        panic("Terminal too small.  Must be minumum 40 width and 18 height");
+        panic("Terminal too small.  Must be minumum 40 width and 15 height");
     }
 
     curses_create_main_windows();
     curses_init_mesg_history();
+    curses_display_splash_window();
 }
 
 
@@ -146,7 +192,7 @@ void curses_get_nh_event()
         {
             endwin();
         }
-        
+
         refresh();
         getmaxyx(base_term, term_rows, term_cols);
         curses_create_main_windows();
@@ -181,7 +227,7 @@ void curses_resume_nhwindows()
     curses_refresh_nethack_windows();
 }
 
-/*  Create a window of type "type" which can be 
+/*  Create a window of type "type" which can be
         NHW_MESSAGE     (top line)
         NHW_STATUS      (bottom lines)
         NHW_MAP         (main dungeon)
@@ -195,10 +241,9 @@ winid curses_create_nhwindow(int type)
     if (curses_is_menu(wid) || curses_is_text(wid))
     {
         curses_start_menu(wid);
-        /* Add to window list just to keep track of the wid */
-        curses_add_nhwin(wid, 0, 0, 0, 0, 0, TRUE);
+        curses_add_wid(wid);
     }
-    
+
     return wid;
 }
 
@@ -224,21 +269,22 @@ void curses_clear_nhwindow(winid wid)
 void curses_display_nhwindow(winid wid, BOOLEAN_P block)
 {
     menu_item *selected = NULL;
-    WINDOW *win = curses_get_nhwin(wid);
-    
-    if ((win != NULL) && (wid == MAP_WIN) && block)
-    {
-        curses_more();
-    }
-    else if (curses_is_menu(wid) || curses_is_text(wid))
+
+    if (curses_is_menu(wid) || curses_is_text(wid))
     {
         curses_end_menu(wid, "");
         curses_select_menu(wid, PICK_NONE, &selected);
+        return;
+    }
+
+    if ((wid == MAP_WIN) && (curses_window_exists(MAP_WIN)) && block)
+    {
+        (void) curses_more();
     }
 }
 
 
-/* Destroy will dismiss the window if the window has not 
+/* Destroy will dismiss the window if the window has not
  * already been dismissed.
 */
 void curses_destroy_nhwindow(winid wid)
@@ -281,7 +327,10 @@ Attributes
 */
 void curses_putstr(winid wid, int attr, const char *text)
 {
-    curses_puts(wid, attr, text);
+    int curses_attr = curses_convert_attr(attr);
+
+    /* We need to convert NetHack attributes to curses attributes */
+    curses_puts(wid, curses_attr, text);
 }
 
 /* Display the file named str.  Complain about missing files
@@ -334,11 +383,13 @@ add_menu(winid wid, int glyph, const anything identifier,
                    menu is displayed, set preselected to TRUE.
 */
 void curses_add_menu(winid wid, int glyph, const ANY_P * identifier,
-		CHAR_P accelerator, CHAR_P group_accel, int attr, 
+		CHAR_P accelerator, CHAR_P group_accel, int attr,
 		const char *str, BOOLEAN_P presel)
 {
-    curses_add_nhmenu_item(wid, identifier, accelerator, group_accel, attr,
-     str, presel);
+    int curses_attr = curses_convert_attr(attr);
+
+    curses_add_nhmenu_item(wid, identifier, accelerator, group_accel,
+     curses_attr, str, presel);
 }
 
 /*
@@ -387,7 +438,7 @@ int curses_select_menu(winid wid, int how, MENU_ITEM_P **selected)
 
 /*
     -- Indicate to the window port that the inventory has been changed.
-    -- Merely calls display_inventory() for window-ports that leave the 
+    -- Merely calls display_inventory() for window-ports that leave the
 	window up, otherwise empty.
 */
 void curses_update_inventory()
@@ -420,6 +471,13 @@ cliparound(x, y)-- Make sure that the user is more-or-less centered on the
 */
 void curses_cliparound(int x, int y)
 {
+    int sx, sy, ex, ey;
+    boolean redraw = curses_map_borders(&sx, &sy, &ex, &ey, x, y);
+
+    if (redraw)
+    {
+        curses_draw_map(sx, sy, ex, ey);
+    }
 }
 
 /*
@@ -431,18 +489,19 @@ print_glyph(window, x, y, glyph)
 */
 void curses_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph)
 {
-    int ch, color, special;
+    int ch, color;
+    unsigned int special;
     int attr = -1;
 
     /* map glyph to character and color */
     mapglyph(glyph, &ch, &color, &special, x, y);
     if ((special & MG_PET) && iflags.hilite_pet)
     {
-        attr = ATR_ULINE;
+        attr = iflags.wc2_petattr;
     }
     if ((special & MG_DETECT) && iflags.use_inverse)
 	{
-	    attr = ATR_INVERSE;
+	    attr = A_REVERSE;
 	}
 	if (iflags.cursesgraphics)
 	{
@@ -481,13 +540,13 @@ int nhgetch()   -- Returns a single character input from the user.
                    Returned character _must_ be non-zero.
 */
 int curses_nhgetch()
-{    
+{
     int ch;
-    
+
     curses_prehousekeeping();
     ch = curses_read_char();
     curses_posthousekeeping();
-    
+
     return ch;
 }
 
@@ -499,8 +558,8 @@ int nh_poskey(int *x, int *y, int *mod)
                    a position in the MAP window is returned in x, y and mod.
                    mod may be one of
 
-                        CLICK_1         -- mouse click type 1 
-                        CLICK_2         -- mouse click type 2 
+                        CLICK_1         -- mouse click type 1
+                        CLICK_2         -- mouse click type 2
 
                    The different click types can map to whatever the
                    hardware supports.  If no mouse is supported, this
@@ -508,7 +567,17 @@ int nh_poskey(int *x, int *y, int *mod)
 */
 int curses_nh_poskey(int *x, int *y, int *mod)
 {
-    return curses_nhgetch();
+    int key = curses_nhgetch();
+
+#ifdef NCURSES_MOUSE_VERSION
+    /* Mouse event if mouse_support is true */
+    if (key == KEY_MOUSE)
+    {
+        key = curses_get_mouse(x, y, mod);
+    }
+#endif
+
+    return key;
 }
 
 /*
@@ -528,6 +597,7 @@ doprev_message()
 int curses_doprev_message()
 {
     curses_prev_mesg();
+    return 0;
 }
 
 /*
@@ -551,7 +621,7 @@ char yn_function(const char *ques, const char *choices, char default)
 */
 char curses_yn_function(const char *question, const char *choices, CHAR_P def)
 {
-    curses_character_input_dialog(question, choices, def);
+    return (char)curses_character_input_dialog(question, choices, def);
 }
 
 /*
@@ -596,10 +666,7 @@ delay_output()  -- Causes a visible delay of 50ms in the output.
 */
 void curses_delay_output()
 {
-/*
-      curses_refresh_nethack_windows();
-      usleep(5000);
-*/
+    napms(50);
 }
 
 /*
@@ -637,7 +704,7 @@ preference_update(preference)
 		   port of that change.  If your window-port is capable of
 		   dynamically adjusting to the change then it should do so.
 		   Your window-port will only be notified of a particular
-		   change if it indicated that it wants to be by setting the 
+		   change if it indicated that it wants to be by setting the
 		   corresponding bit in the wincap mask.
 */
 void curses_preference_update(const char *pref)

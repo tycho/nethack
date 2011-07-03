@@ -42,7 +42,8 @@
  * Define all of those you want supported in your binary.
  * Some combinations make no sense.  See the installation document.
  */
-#define TTY_GRAPHICS	/* good old tty based graphics */
+#define TTY_GRAPHICS		/* good old tty based graphics */
+/* #define CURSES_GRAPHICS */	/* Proper curses interface */
 /* #define X11_GRAPHICS */	/* X11 interface */
 /* #define QT_GRAPHICS */	/* Qt interface */
 /* #define GNOME_GRAPHICS */	/* Gnome interface */
@@ -111,6 +112,12 @@
 #  define DEFAULT_WINDOW_SYS "mswin"
 # endif
 # define HACKDIR "\\nethack"
+#endif
+
+#ifdef CURSES_GRAPHICS
+# ifndef DEFAULT_WINDOW_SYS
+#  define DEFAULT_WINDOW_SYS "curses"
+# endif
 #endif
 
 #ifndef DEFAULT_WINDOW_SYS

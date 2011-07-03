@@ -5,29 +5,61 @@
 #include "func_tab.h"
 #include "dlb.h"
 
+#include <ctype.h>
+
 /* Misc. curses interface functions */
+
+/* Private declarations */
 
 static int curs_x = -1;
 static int curs_y = -1;
-static winid curs_win = 0;
+
+static int parse_escape_sequence(void);
+
+/* Macros for Control and Alt keys */
+
+#ifndef M
+# ifndef NHSTDC
+#  define M(c)		(0x80 | (c))
+# else
+#  define M(c)		((c) - 128)
+# endif /* NHSTDC */
+#endif
+#ifndef C
+#define C(c)		(0x1f & (c))
+#endif
 
 
 /* Read a character of input from the user */
 
 int curses_read_char()
 {
-    int ch;
+    int ch, tmpch;
 
     ch = getch();
-    if (!ch)
+    tmpch = ch;
+    ch = curses_convert_keys(ch);
+
+    if (ch == 0)
     {
         ch = '\033'; /* map NUL to ESC since nethack doesn't expect NUL */
     }
-    
-    if ((ch >= 0x197) && (ch <= 0x1ba)) /* Alt/Meta key handling */
+
+#if defined(ALT_0) && defined(ALT_9)    /* PDCurses, maybe others */
+    if ((ch >= ALT_0) && (ch <= ALT_9))
     {
-        ch = (ch - 0x140) | 0x80;
+        tmpch = (ch - ALT_0) + '0';
+        ch = M(tmpch);
     }
+#endif
+
+#if defined(ALT_A) && defined(ALT_Z)    /* PDCurses, maybe others */
+    if ((ch >= ALT_A) && (ch <= ALT_Z))
+    {
+        tmpch = (ch - ALT_A) + 'a';
+        ch = M(tmpch);
+    }
+#endif
 
 #ifdef KEY_RESIZE
     /* Handle resize events via get_nh_event, not this code */
@@ -37,58 +69,10 @@ int curses_read_char()
     }
 #endif
 
-    /* Handle arrow keys */
-    
-    switch (ch)
+    if (counting && !isdigit(ch)) /* Dismiss count window if necissary */
     {
-        case KEY_LEFT:
-        {
-            if (iflags.num_pad)
-            {
-                ch = '4';
-            }
-            else
-            {
-                ch = 'h';
-            }
-            break;
-        }
-        case KEY_RIGHT:
-        {
-            if (iflags.num_pad)
-            {
-                ch = '6';
-            }
-            else
-            {
-                ch = 'l';
-            }
-            break;
-        }
-        case KEY_UP:
-        {
-            if (iflags.num_pad)
-            {
-                ch = '8';
-            }
-            else
-            {
-                ch = 'k';
-            }
-            break;
-        }
-        case KEY_DOWN:
-        {
-            if (iflags.num_pad)
-            {
-                ch = '2';
-            }
-            else
-            {
-                ch = 'j';
-            }
-            break;
-        }
+        curses_count_window(NULL);
+        curses_refresh_nethack_windows();
     }
 
     return ch;
@@ -99,74 +83,86 @@ int curses_read_char()
 void curses_toggle_color_attr(WINDOW *win, int color, int attr, int onoff)
 {
 #ifdef TEXTCOLOR
-    int curses_color, curses_attr;
+    int curses_color;
 
-    switch (attr)
+    /* Map color disabled */
+    if ((!iflags.wc_color) && (win == mapwin))
     {
-        case ATR_NONE:
-        {
-            curses_attr = A_NORMAL;
-            break;
-        }
-        case ATR_ULINE:
-        {
-            curses_attr = A_UNDERLINE;
-            break;
-        }
-        case ATR_BOLD:
-        {
-            curses_attr = A_BOLD;
-            break;
-        }
-        case ATR_BLINK:
-        {
-            curses_attr = A_BLINK;
-            break;
-        }
-        case ATR_INVERSE:
-        {
-            curses_attr = A_REVERSE;
-            break;
-        }
-        default:
-        {
-            curses_attr = A_NORMAL;
-        }
+        return;
     }
+
+    /* GUI color disabled */
+    if ((!iflags.wc2_guicolor) && (win != mapwin))
+    {
+        return;
+    }
+
     if (color == 0) /* make black fg visible */
-#ifdef CURSES_VERSION
-        color = 16;
+    {
+#ifdef USE_DARKGRAY
+        if (can_change_color() && (COLORS > 16))
+        {
+            color = CURSES_DARK_GRAY - 1;
+        }
+        else    /* Use bold for a bright black */
+        {
+            wattron(win, A_BOLD);
+        }
 #else
-        color = 8;
-#endif
+        color = CLR_BLUE;
+#endif  /* USE_DARKGRAY */
+    }
     curses_color = color + 1;
-    if (curses_color > 8)
-        curses_color -= 8;
+    if (COLORS < 16)
+    {
+        if (curses_color > 8)
+            curses_color -= 8;
+    }
     if (onoff == ON)    /* Turn on color/attributes */
     {
-        if ((attr != NONE) && iflags.use_color)
-            wattron(win, curses_attr);
-        if ((color != NONE) && iflags.use_color)
+        if (color != NONE)
         {
-            if ((color > 7) && iflags.use_color)  /* high-intensity color */
+            if ((color > 7) && (COLORS < 16))
+            {
                 wattron(win, A_BOLD);
-            if (iflags.use_color)
-                wattron(win, COLOR_PAIR(curses_color));
+            }
+            wattron(win, COLOR_PAIR(curses_color));
+        }
+
+        if (attr != NONE)
+        {
+            wattron(win, attr);
         }
     }
     else                /* Turn off color/attributes */
     {
-        if ((attr != NONE) && iflags.use_color)
-            wattroff(win, curses_attr);
-        if ((color != NONE) && iflags.use_color)
+        if (color != NONE)
         {
-            if ((color > 7) && iflags.use_color)  /* high-intensity color */
+            if ((color > 7) && (COLORS < 16))
+            {
                 wattroff(win, A_BOLD);
-            if (iflags.use_color)
-                wattroff(win, COLOR_PAIR(curses_color));
+            }
+#ifdef USE_DARKGRAY
+            if ((color == 0) && (!can_change_color() ||
+             (COLORS <= 16)))
+            {
+                wattroff(win, A_BOLD);
+            }
+#else
+            if (iflags.use_inverse)
+            {
+                wattroff(win, A_REVERSE);
+            }
+#endif  /* DARKGRAY */
+            wattroff(win, COLOR_PAIR(curses_color));
+        }
+
+        if (attr != NONE)
+        {
+            wattroff(win, attr);
         }
     }
-#endif
+#endif  /* TEXTCOLOR */
 }
 
 
@@ -218,6 +214,7 @@ winid curses_get_wid(int type)
 		default:
 		{
 			panic("curses_get_wid: unsupported window type");
+			ret = -1;   /* Not reached */
 		}
 	}
 
@@ -229,7 +226,7 @@ winid curses_get_wid(int type)
 	        ret -= 9900;
 	    }
 	}
-	
+
 	if (type == NHW_MENU)
 	{
 	    menu_wid += 2;
@@ -266,17 +263,18 @@ int curses_num_lines(const char *str, int width)
     int curline = 1;
     char substr[BUFSZ];
     char tmpstr[BUFSZ];
-    
+
     strcpy(substr, str);
-    
+
     while (strlen(substr) > width)
     {
         last_space = 0;
-        
+
         for (count = 0; count <= width; count++)
         {
             if (substr[count] == ' ')
             last_space = count;
+
         }
         if (last_space == 0)    /* No spaces found */
         {
@@ -290,7 +288,7 @@ int curses_num_lines(const char *str, int width)
         strcpy(substr, tmpstr);
         curline++;
     }
-    
+
     return curline;
 }
 
@@ -307,9 +305,9 @@ char *curses_break_str(const char *str, int width, int line_num)
     char substr[strsize];
     char curstr[strsize];
     char tmpstr[strsize];
-    
+
     strcpy(substr, str);
-    
+
     while (curline < line_num)
     {
         if (strlen(substr) == 0 )
@@ -317,14 +315,14 @@ char *curses_break_str(const char *str, int width, int line_num)
             break;
         }
         curline++;
-        last_space = 0;       
+        last_space = 0;
         for (count = 0; count <= width; count++)
         {
             if (substr[count] == ' ')
             {
                 last_space = count;
             }
-            else if (substr[count] == '\0')           
+            else if (substr[count] == '\0')
             {
                 last_space = count;
                 break;
@@ -350,14 +348,14 @@ char *curses_break_str(const char *str, int width, int line_num)
         tmpstr[count - (last_space + 1)] = '\0';
         strcpy(substr, tmpstr);
     }
-    
+
     if (curline < line_num)
     {
         return NULL;
     }
-    
+
     retstr = curses_copy_of(curstr);
-    
+
     return retstr;
 }
 
@@ -373,9 +371,9 @@ char *curses_str_remainder(const char *str, int width, int line_num)
     char substr[strsize];
     char curstr[strsize];
     char tmpstr[strsize];
-    
+
     strcpy(substr, str);
-    
+
     while (curline < line_num)
     {
         if (strlen(substr) == 0 )
@@ -383,14 +381,14 @@ char *curses_str_remainder(const char *str, int width, int line_num)
             break;
         }
         curline++;
-        last_space = 0;       
+        last_space = 0;
         for (count = 0; count <= width; count++)
         {
             if (substr[count] == ' ')
             {
                 last_space = count;
             }
-            else if (substr[count] == '\0')           
+            else if (substr[count] == '\0')
             {
                 last_space = count;
                 break;
@@ -416,14 +414,14 @@ char *curses_str_remainder(const char *str, int width, int line_num)
         tmpstr[count - (last_space + 1)] = '\0';
         strcpy(substr, tmpstr);
     }
-    
+
     if (curline < line_num)
     {
         return NULL;
     }
-    
+
     retstr = curses_copy_of(substr);
-    
+
     return retstr;
 }
 
@@ -464,16 +462,23 @@ cursesgraphics option is enabled */
 int curses_convert_glyph(int ch, int glyph)
 {
     int symbol;
-    
+
+#ifdef REINCARNATION
+    if (Is_rogue_level(&u.uz))
+    {
+        return ch;
+    }
+#endif
+
     /* Save some processing time by returning if the glyph represents
     an object that we don't have custom characters for */
     if (!glyph_is_cmap(glyph))
     {
         return ch;
     }
-    
+
     symbol = glyph_to_cmap(glyph);
-    
+
     /* If user selected a custom character for this object, don't
     override this. */
     if (((glyph_is_cmap(glyph)) && (ch != showsyms[symbol])))
@@ -498,13 +503,13 @@ int curses_convert_glyph(int ch, int glyph)
         case S_crwall:
             return ACS_PLUS;
         case S_tuwall:
-            return ACS_TTEE;
-        case S_tdwall:
             return ACS_BTEE;
+        case S_tdwall:
+            return ACS_TTEE;
         case S_tlwall:
-            return ACS_LTEE;
-        case S_trwall:
             return ACS_RTEE;
+        case S_trwall:
+            return ACS_LTEE;
         case S_tree:
             return ACS_PLMINUS;
         case S_corr:
@@ -521,7 +526,13 @@ int curses_convert_glyph(int ch, int glyph)
 
 void curses_move_cursor(winid wid, int x, int y)
 {
-    WINDOW *win = curses_get_nhwin(curs_win);
+    int sx, sy, ex, ey;
+    int xadj = 0;
+    int yadj = 0;
+
+#ifndef PDCURSES
+    WINDOW *win = curses_get_nhwin(MAP_WIN);
+#endif
 
     if (wid != MAP_WIN)
     {
@@ -531,19 +542,29 @@ void curses_move_cursor(winid wid, int x, int y)
 #ifdef PDCURSES
     /* PDCurses seems to not handle wmove correctly, so we use move and
     physical screen coordinates instead */
-    curses_get_window_xy(wid, &curs_x, &curs_y);
-    curs_x += x;
-    curs_y += y;
-#else
-    curs_x = x;
-    curs_y = y;
-#endif    
-    curs_win = wid;
-#ifdef PDCURSES
-    move(curs_y, curs_x);
-#else
-    wmove(win, curs_y, curs_x);
+    curses_get_window_xy(wid, &xadj, &yadj);
 #endif
+    curs_x = x + xadj;
+    curs_y = y + yadj;
+    curses_map_borders(&sx, &sy, &ex, &ey, x, y);
+
+    if (curses_window_has_border(wid))
+    {
+        curs_x++;
+        curs_y++;
+    }
+
+    if ((x >= sx) && (x <= ex) &&
+     (y >= sy) && (y <= ey))
+    {
+        curs_x -= sx;
+        curs_y -= sy;
+#ifdef PDCURSES
+        move(curs_y, curs_x);
+#else
+        wmove(win, curs_y, curs_x);
+#endif
+    }
 }
 
 
@@ -551,7 +572,9 @@ void curses_move_cursor(winid wid, int x, int y)
 
 void curses_prehousekeeping()
 {
-    WINDOW *win = curses_get_nhwin(curs_win);
+#ifndef PDCURSES
+    WINDOW *win = curses_get_nhwin(MAP_WIN);
+#endif  /* PDCURSES */
 
     if ((curs_x > -1) && (curs_y > -1))
     {
@@ -562,8 +585,8 @@ void curses_prehousekeeping()
         move(curs_y, curs_x);
 #else
         wmove(win, curs_y, curs_x);
-#endif
-        curses_refresh_nhwin(curs_win);
+#endif  /* PDCURSES */
+        curses_refresh_nhwin(MAP_WIN);
     }
 }
 
@@ -585,7 +608,7 @@ void curses_view_file(const char *filename, boolean must_exist)
     char buf[BUFSZ];
     menu_item *selected = NULL;
     dlb *fp = dlb_fopen(filename, "r");
-    
+
     if ((fp == NULL) && (must_exist))
     {
         pline("Cannot open %s for reading!", filename);
@@ -595,25 +618,25 @@ void curses_view_file(const char *filename, boolean must_exist)
     {
         return;
     }
-    
+
     wid = curses_get_wid(NHW_MENU);
     curses_create_nhmenu(wid);
     identifier = malloc(sizeof(anything));
     identifier->a_void = NULL;
-    
+
     while (dlb_fgets(buf, BUFSZ, fp) != NULL)
     {
-        curses_add_menu(wid, NO_GLYPH, identifier, 0, 0, A_NONE, buf,
+        curses_add_menu(wid, NO_GLYPH, identifier, 0, 0, A_NORMAL, buf,
          FALSE);
     }
-    
+
     dlb_fclose(fp);
     curses_end_menu(wid, "");
     curses_select_menu(wid, PICK_NONE, &selected);
 }
 
 
-char *curses_rtrim(char *str)
+void curses_rtrim(char *str)
 {
     char *s;
 
@@ -623,25 +646,358 @@ char *curses_rtrim(char *str)
     else *(++s) = '\0';
 }
 
-/* Use nethack wall symbols for drawing unless cursesgraphics is
-defined, in which case we use the standard curses ones.  Not sure if
-this is desirable behavior since one may prefer regular lines for
-borders but traditional symbols to draw rooms.  Commenting it out for
-now. */
 
-/*
- * void curses_border(WINDOW *win)
- * {
- *     if (iflags.cursesgraphics)
- *     {
- *         box(win, 0, 0);
- *     }
- *     else
- *     {
- *         wborder(win, showsyms[S_vwall], showsyms[S_vwall],
- *          showsyms[S_hwall], showsyms[S_hwall], showsyms[S_tlcorn],
- *          showsyms[S_trcorn], showsyms[S_blcorn], showsyms[S_brcorn]);
- *     }
- * }
- */
+/* Read numbers until non-digit is encountered, and return number
+in int form. */
 
+int curses_get_count(int first_digit)
+{
+    long current_count = first_digit;
+    int current_char;
+
+    current_char = curses_read_char();
+
+    while (isdigit(current_char))
+    {
+        current_count = (current_count * 10) + (current_char - '0');
+        if (current_count > LARGEST_INT)
+        {
+            current_count = LARGEST_INT;
+        }
+
+        pline("Count: %ld", current_count);
+        current_char = curses_read_char();
+    }
+
+    ungetch(current_char);
+
+    if (current_char == '\033')    /* Cancelled with escape */
+    {
+        current_count = -1;
+    }
+
+    return current_count;
+}
+
+
+/* Convert the given NetHack text attributes into the format curses
+understands, and return that format mask. */
+
+int curses_convert_attr(int attr)
+{
+    int curses_attr;
+
+    switch (attr)
+    {
+        case ATR_NONE:
+        {
+            curses_attr = A_NORMAL;
+            break;
+        }
+        case ATR_ULINE:
+        {
+            curses_attr = A_UNDERLINE;
+            break;
+        }
+        case ATR_BOLD:
+        {
+            curses_attr = A_BOLD;
+            break;
+        }
+        case ATR_BLINK:
+        {
+            curses_attr = A_BLINK;
+            break;
+        }
+        case ATR_INVERSE:
+        {
+            curses_attr = A_REVERSE;
+            break;
+        }
+        default:
+        {
+            curses_attr = A_NORMAL;
+        }
+    }
+
+    return curses_attr;
+}
+
+
+/* Map letter attributes from a string to bitmask.  Return mask on
+success, or 0 if not found */
+
+int curses_read_attrs(char *attrs)
+{
+    int retattr = 0;
+
+    if (strchr(attrs, 'b') || strchr(attrs, 'B'))
+    {
+	    retattr = retattr|A_BOLD;
+    }
+    if (strchr(attrs, 'i') || strchr(attrs, 'I'))
+    {
+	    retattr = retattr|A_REVERSE;
+    }
+    if (strchr(attrs, 'u') || strchr(attrs, 'U'))
+    {
+	    retattr = retattr|A_UNDERLINE;
+    }
+    if (strchr(attrs, 'k') || strchr(attrs, 'K'))
+    {
+	    retattr = retattr|A_BLINK;
+    }
+#ifdef A_ITALIC
+    if (strchr(attrs, 't') || strchr(attrs, 'T'))
+    {
+	    retattr = retattr|A_ITALIC;
+    }
+#endif
+#ifdef A_RIGHTLINE
+    if (strchr(attrs, 'r') || strchr(attrs, 'R'))
+    {
+	    retattr = retattr|A_RIGHTLINE;
+    }
+
+#endif
+#ifdef A_LEFTLINE
+    if (strchr(attrs, 'l') || strchr(attrs, 'L'))
+    {
+	    retattr = retattr|A_LEFTLINE;
+    }
+#endif
+
+    return retattr;
+}
+
+
+/* Convert special keys into values that NetHack can understand.
+Currently this is limited to arrow keys, but this may be expanded. */
+
+int curses_convert_keys(int key)
+{
+    int ret = key;
+
+    if (ret == '\033')
+    {
+        ret = parse_escape_sequence();
+    }
+
+    /* Handle arrow keys */
+    switch (key)
+    {
+        case KEY_LEFT:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '4';
+            }
+            else
+            {
+                ret = 'h';
+            }
+            break;
+        }
+        case KEY_RIGHT:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '6';
+            }
+            else
+            {
+                ret = 'l';
+            }
+            break;
+        }
+        case KEY_UP:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '8';
+            }
+            else
+            {
+                ret = 'k';
+            }
+            break;
+        }
+        case KEY_DOWN:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '2';
+            }
+            else
+            {
+                ret = 'j';
+            }
+            break;
+        }
+#ifdef KEY_A1
+        case KEY_A1:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '7';
+            }
+            else
+            {
+                ret = 'y';
+            }
+            break;
+        }
+#endif  /* KEY_A1 */
+#ifdef KEY_A3
+        case KEY_A3:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '9';
+            }
+            else
+            {
+                ret = 'u';
+            }
+            break;
+        }
+#endif  /* KEY_A3 */
+#ifdef KEY_C1
+        case KEY_C1:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '1';
+            }
+            else
+            {
+                ret = 'b';
+            }
+            break;
+        }
+#endif  /* KEY_C1 */
+#ifdef KEY_C3
+        case KEY_C3:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '3';
+            }
+            else
+            {
+                ret = 'n';
+            }
+            break;
+        }
+#endif  /* KEY_C3 */
+#ifdef KEY_B2
+        case KEY_B2:
+        {
+            if (iflags.num_pad)
+            {
+                ret = '5';
+            }
+            else
+            {
+                ret = 'g';
+            }
+            break;
+        }
+#endif  /* KEY_B2 */
+    }
+
+    return ret;
+}
+
+
+/* Process mouse events.  Mouse movement is processed until no further
+mouse movement events are available.  Returns 0 for a mouse click
+event, or the first non-mouse key event in the case of mouse
+movement. */
+
+int curses_get_mouse(int *mousex, int *mousey, int *mod)
+{
+    int key = '\033';
+#ifdef NCURSES_MOUSE_VERSION
+	MEVENT event;
+
+    if (getmouse(&event) == OK)
+    {   /* When the user clicks left mouse button */
+        if(event.bstate & BUTTON1_CLICKED)
+        {
+            /* See if coords are in map window & convert coords */
+            if (wmouse_trafo(mapwin, &event.y, &event.x, TRUE))
+            {
+                key = 0;    /* Flag mouse click */
+                *mousex = event.x;
+                *mousey = event.y;
+
+                if (curses_window_has_border(MAP_WIN))
+                {
+                    (*mousex)--;
+                    (*mousey)--;
+                }
+
+                *mod = CLICK_1;
+            }
+        }
+    }
+#endif  /* NCURSES_MOUSE_VERSION */
+
+    return key;
+}
+
+
+static int parse_escape_sequence(void)
+{
+#ifndef PDCURSES
+    int ret;
+
+    timeout(10);
+
+    ret = getch();
+
+    if (ret != ERR) /* Likely an escape sequence */
+    {
+        if (((ret >= 'a') && (ret <= 'z')) ||
+         ((ret >= '0') && (ret <= '9')))
+        {
+            ret |= 0x80; /* Meta key support for most terminals */
+        }
+        else if (ret == 'O') /* Numeric keypad */
+        {
+            ret = getch();
+            if ((ret != ERR) && (ret >= 112) && (ret <= 121))
+            {
+                ret = ret - 112 + '0';  /* Convert to number */
+            }
+            else
+            {
+                ret = '\033';    /* Escape */
+            }
+        }
+    }
+    else
+    {
+        ret = '\033';    /* Just an escape character */
+    }
+
+    timeout(-1);
+
+    return ret;
+#else
+    return '\033';
+#endif  /* !PDCURSES */
+}
+
+
+/* This is a kludge for the statuscolors patch which calls tty-specific
+functions, which causes a compiler error if TTY_GRAPHICS is not
+defined.  Adding stub functions to avoid this. */
+
+#if defined(STATUS_COLORS) && !defined(TTY_GRAPHICS)
+extern void term_start_color(int color) {}
+extern void term_start_attr(int attr) {}
+extern void term_end_color() {}
+extern void term_end_attr(int attr) {}
+#endif  /* STATUS_COLORS && !TTY_GRAPGICS */

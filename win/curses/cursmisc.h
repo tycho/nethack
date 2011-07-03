@@ -33,6 +33,16 @@ void curses_posthousekeeping(void);
 
 void curses_view_file(const char *filename, boolean must_exist);
 
-char *curses_rtrim(char *str);
+void curses_rtrim(char *str);
+
+int curses_get_count(int first_digit);
+
+int curses_convert_attr(int attr);
+
+int curses_read_attrs(char *attrs);
+
+int curses_convert_keys(int key);
+
+int curses_get_mouse(int *mousex, int *mousey, int *mod);
 
 #endif  /* CURSMISC_H */

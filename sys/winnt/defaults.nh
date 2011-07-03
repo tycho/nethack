@@ -11,7 +11,16 @@
 #
 # Use the IBM character set rather than just plain ascii characters
 # for tty window-port.
+#
+# This also works for the curses interface compiled with the PDCurses-SDL
+# library.
+#
 OPTIONS=IBMGraphics
+#
+# cursesgraphics may be set for the curses interface if the IBMGraphics
+# option above doesn't work with your curses implementation.
+#
+#OPTIONS=cursesgraphics
 
 # Keyboard handling
 # Different keyboard handlers can be loaded.
@@ -22,6 +31,53 @@ OPTIONS=IBMGraphics
 # NetHack 3.4.0 keyboard handling
 # OPTIONS=altkeyhandler:nh340key.dll
 
+# *** Curses Options ***
+#
+# Use this if the binary was compiled with multiple window interfaces,
+# and curses is not the default
+OPTIONS=windowtype:curses
+#
+# Optionally specify the alignment of the message and status windows
+# relative to the map window.  If not specified, the code will default
+# to the locations used in the tty interface: message window on top,
+# and status window on bottom.  Placing either of these on the right or
+# left really only works well for winder terminal windows.
+OPTIONS=align_message:bottom,align_status:right
+#
+# Use a small popup "window" for short prompts, e.g. "Really save?".
+# If this is not set, the message window will be used for these as is
+# done for the tty interface.
+OPTIONS=popup_dialog
+#
+# Specify the initial window size for NetHack in units of characters.
+# This is supported on PDCurses for SDL as well as PDCurses for
+# Windows.
+OPTIONS=term_cols:110,term_rows:32
+#
+# Controls the usage of window borders for the main NetHack windows
+# (message, map, and status windows).  A value of 1 forces the borders
+# to be drawn, a value of 2 forces them to be off, and a value of 3
+# allows the code to decide if they should be drawn based on the size
+# of the terminal window.
+OPTIONS=windowborders:3
+#
+# Whether or not to display a fancy ascii-graphics splash screen on
+# startup.
+OPTIONS=splash_screen
+#
+# This controls what text attributes are used to highlight any pets.
+# Any combination of single letters representing each text attribute
+# may be used.  Not all attributes work on all terminals.
+#
+# Attributes may be one or more of: Bold, Inverse, Underline, blinK,
+# iTalic, Rightline, or Leftline.  The default is underline.
+OPTIONS=petattr:u
+#
+# Controls whether color and attributes are used for menu headers,
+# window borders, message text, etc.  This is separate from the color
+# option, which only controls the color of the map itself.
+OPTIONS=guicolor
+
 # *** Personal Preferences ***
 # Some options to set personal preferences.  Uncomment and change these to
 # suit your personal preference.  If several people are to use the same
@@ -30,11 +86,57 @@ OPTIONS=IBMGraphics
 #OPTIONS=name:Janet,role:Valkyrie,race:Human,gender:female,align:lawful
 #OPTIONS=dogname:Fido,catname:Morris,fruit:guava
 #OPTIONS=horsename:Silver
-#OPTIONS=autopickup,pickup_types:$"=/!?+
+#OPTIONS=autopickup,pickup_types:$
 #OPTIONS=packorder:")[%?+/=!(*0_`
 #OPTIONS=scores:10 top/2 around/own
 #OPTIONS=nolegacy,noverbose
 #OPTIONS=menustyle:traditional
+
+#
+# *** Menucolors Configuration ***
+# Highlight menu items as defined below.  This is useful e.g. to
+# see what items are blessed and cursed at a quick glance.
+# A sample configuration is given below.  See README.menucolor
+# for more details
+OPTIONS=menucolors
+MENUCOLOR="* blessed *"=white
+MENUCOLOR="* holy *"=yellow
+MENUCOLOR="* cursed *"=black&bold
+MENUCOLOR="* unholy *"=red
+MENUCOLOR="* cursed * (being worn)"=red
+MENUCOLOR="* cursed * (weapon in hand"=red
+MENUCOLOR="* cursed * (wielded)"=red
+
+#
+# *** Statuscolors Configuration ***
+# Highlight status line items as defined below.  This is handy to
+# track hit points to see when you are running low, or make dangerous
+# conditions like foodpoisining stand out more.
+# The curses interface already does highlighting to show when something
+# on the status line has gone up or down.  Items configured below
+# override this behavior, but the remaining status line items (e.g.
+# stats) still highlight when changed as normal.
+# A sample configuration is given below.  See README.statuscolor
+# for more details:
+OPTIONS=statuscolors
+# HP
+STATUSCOLOR=hp%100:green,hp%66:yellow,hp%33:red
+STATUSCOLOR=hp%15:red&inverse,hp%5:orange&inverse
+# Pw
+STATUSCOLOR=pw%100:green,pw%66:yellow,pw%33:red
+# Carry
+STATUSCOLOR=burdened:yellow,stressed:red,strained:red&inverse
+STATUSCOLOR=overtaxed:orange,overloaded:orange&inverse
+# Hunger
+STATUSCOLOR=satiated:green,hungry:yellow,weak:red
+STATUSCOLOR=fainting:red&inverse,fainted:orange&inverse
+# Mental
+STATUSCOLOR=hallu:yellow,conf:cyan,stun:red
+# Health
+STATUSCOLOR=ill:orange&inverse,foodpois:orange&inverse
+STATUSCOLOR=slime:lightgreen&inverse
+# Other
+STATUSCOLOR=held:red&inverse,blind:red
 
 #
 # General options.  You might also set "silent" so as not to attract
@@ -42,7 +144,7 @@ OPTIONS=IBMGraphics
 #
 # number_pad option can have an optional value of 0 (off), 1 (on), 
 # or 2(on,legacy-mode) which causes 5='g', alt-5='G', alt-0='I'
-OPTIONS=time,noshowexp,number_pad:2,lit_corridor
+OPTIONS=!time,noshowexp,number_pad:1,lit_corridor,topten
 #
 # If you want to get rid of "use #quit to quit..." use:
 OPTIONS=suppress_alert:3.3.1
@@ -60,22 +162,22 @@ OPTIONS=suppress_alert:3.3.1
 # possible map_mode options include: tiles|ascii4x6|ascii6x8|ascii8x8|ascii16x8|
 #                                    ascii7x12|ascii8x12|ascii16x12|ascii12x16|
 #                                    ascii10x18|fit_to_screen
-OPTIONS=map_mode:tiles,scroll_margin:5
+# OPTIONS=map_mode:tiles,scroll_margin:5
 
 # Message window settings
-OPTIONS=font_message:Arial,font_size_message:9,align_message:top
+# OPTIONS=font_message:Arial,font_size_message:9,align_message:top
 
 # Menu settings
-OPTIONS=font_menu:Arial,font_size_menu:9
+#OPTIONS=font_menu:Arial,font_size_menu:9
 
 # Text settings
-OPTIONS=font_text:Courier New,font_size_text:9
+# OPTIONS=font_text:Courier New,font_size_text:9
 
 # Status window settings
-OPTIONS=font_status:Courier New,font_size_status:9
+# OPTIONS=font_status:Courier New,font_size_status:9
 
 # Other
-OPTIONS=hilite_pet,!toptenwin
+OPTIONS=hilite_pet
 #OPTIONS=!splash_screen,player_selection:prompts
 
 # Status/message window colors
@@ -182,4 +284,3 @@ OPTIONS=hilite_pet,!toptenwin
 #          048 035 064 042                         \
 #          047 045 092 058 058 092 045 047         \
 #          047 045 092 058 032 058 092 045 047
-

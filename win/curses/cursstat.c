@@ -5,6 +5,46 @@
 
 /* Status window functions for curses interface */
 
+/* Private declarations */
+
+typedef struct nhs
+{
+    long value;
+    char *txt;
+    aligntyp alignment;
+    boolean display;
+    int highlight_turns;
+    int highlight_color;
+    int stat_color;
+    int stat_attr;
+    int x;
+    int y;
+    char *label;
+    const char *id;
+} nhstat;
+
+#ifdef STATUS_COLORS
+extern const struct text_color_option *text_colors;
+extern const struct percent_color_option *hp_colors;
+extern const struct percent_color_option *pw_colors;
+
+extern struct color_option text_color_of(const char *text,
+ const struct text_color_option *color_options);
+
+struct color_option percentage_color_of(int value, int max,
+ const struct percent_color_option *color_options);
+
+static boolean stat_colored(const char *id);
+#endif
+
+static void init_stats(void);
+
+static void set_labels(int label_width);
+
+static void set_stat_color(nhstat *stat);
+
+static void color_stat(nhstat stat, int onoff);
+
 static nhstat prevname;
 static nhstat prevdepth;
 static nhstat prevstr;
@@ -13,7 +53,7 @@ static nhstat prevwis;
 static nhstat prevdex;
 static nhstat prevcon;
 static nhstat prevcha;
-static nhstat prevalign;  
+static nhstat prevalign;
 static nhstat prevau;
 static nhstat prevhp;
 static nhstat prevmhp;
@@ -23,7 +63,9 @@ static nhstat prevmpow;
 static nhstat prevac;
 static nhstat prevexp;
 static nhstat prevtime;
+#ifdef SCORE_ON_BOTL
 static nhstat prevscore;
+#endif
 static nhstat prevhunger;
 static nhstat prevconf;
 static nhstat prevblind;
@@ -33,6 +75,10 @@ static nhstat prevsick;
 static nhstat prevslime;
 static nhstat prevencumb;
 
+#define COMPACT_LABELS  1
+#define NORMAL_LABELS   2
+#define WIDE_LABELS     3
+
 extern const char *hu_stat[]; /* from eat.c */
 extern const char *enc_stat[]; /* from botl.c */
 
@@ -40,46 +86,80 @@ extern const char *enc_stat[]; /* from botl.c */
 write to the status window, so we know somwthing has changed.  We
 override the write and update what needs to be updated ourselves. */
 
-void curses_update_stats()
+void curses_update_stats(boolean redraw)
 {
     char buf[BUFSZ];
-    int count, enc, orient, sx_start;
+    int count, enc, orient, sx_start, hp, hpmax, labels, swidth,
+     sheight, sx_end, sy_end;
     WINDOW *win = curses_get_nhwin(STATUS_WIN);
+    static int prev_labels = -1;
     static boolean first = TRUE;
-    boolean horiz;
+    static boolean horiz;
     int sx = 0;
     int sy = 0;
     boolean border = curses_window_has_border(STATUS_WIN);
-    
+
+    curses_get_window_size(STATUS_WIN, &sheight, &swidth);
+
     if (border)
     {
         sx++;
         sy++;
+        swidth--;
+        sheight--;
     }
-    
+
+    sx_end = swidth - 1;
+    sy_end = sheight - 1;
     sx_start = sx;
-        
+
     if (first)
     {
         init_stats();
         first = FALSE;
+        redraw = TRUE;
     }
-    
-    orient = curses_get_window_orientation(STATUS_WIN);
 
-    if ((orient == ALIGN_RIGHT) || (orient == ALIGN_LEFT))
+    if (redraw)
     {
-        horiz = FALSE;
+        orient = curses_get_window_orientation(STATUS_WIN);
+
+        if ((orient == ALIGN_RIGHT) || (orient == ALIGN_LEFT))
+        {
+            horiz = FALSE;
+        }
+        else
+        {
+            horiz = TRUE;
+        }
+    }
+
+    if (horiz)
+    {
+        if (term_cols >= 80)
+        {
+            labels = NORMAL_LABELS;
+        }
+        else
+        {
+            labels = COMPACT_LABELS;
+        }
     }
     else
     {
-        horiz = TRUE;
+        labels = WIDE_LABELS;
+    }
+
+    if (labels != prev_labels)
+    {
+        set_labels(labels);
+        prev_labels = labels;
     }
 
     curses_clear_nhwin(STATUS_WIN);
-    
+
     /* Line 1 */
-    
+
     /* Player name and title */
     strcpy(buf, plname);
     if ('a' <= buf[0] && buf[0] <= 'z') buf[0] += 'A'-'a';
@@ -87,7 +167,6 @@ void curses_update_stats()
     if (u.mtimedone) {
         char mname[BUFSZ];
         int k = 0;
-
         strcpy(mname, mons[u.umonnum].mname);
         while(mname[k] != 0) {
             if ((k == 0 || (k > 0 && mname[k-1] == ' '))
@@ -101,46 +180,60 @@ void curses_update_stats()
     } else {
         strcat(buf, rank_of(u.ulevel, pl_character[0], flags.female));
     }
-    
+
     if (strcmp(buf, prevname.txt) != 0) /* Title changed */
     {
         prevname.highlight_turns = 5;
         prevname.highlight_color = HIGHLIGHT_COLOR;
         free(prevname.txt);
         prevname.txt = curses_copy_of(buf);
+        if ((labels == COMPACT_LABELS) && (u.ulevel > 1))
+        {
+            curses_puts(MESSAGE_WIN, A_NORMAL, "You are now known as");
+            curses_puts(MESSAGE_WIN, A_NORMAL, prevname.txt);
+        }
     }
-    
+
     if (prevname.label != NULL)
     {
         mvwaddstr(win, sy, sx, prevname.label);
         sx += strlen(prevname.label);
     }
-    
-    if (prevname.highlight_turns > 0)
+
+    if (labels != COMPACT_LABELS)
     {
-        curses_toggle_color_attr(win, prevname.highlight_color, NONE, ON);
+        color_stat(prevname, ON);
         mvwaddstr(win, sy, sx, prevname.txt);
-        curses_toggle_color_attr(win, prevname.highlight_color, NONE, OFF);
+        color_stat(prevname, OFF);
     }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevname.txt);
-    }
-    
+
     if (horiz)
     {
-        sx += strlen(prevname.txt) + 1;
+        if (labels != COMPACT_LABELS)
+        {
+            sx += strlen(prevname.txt) + 1;
+        }
+
+
     }
     else
     {
         sx = sx_start;
         sy++;
     }
-    
+
+    /* Add dungeon name and level if status window is vertical */
+    if (!horiz)
+    {
+        sprintf(buf, "%s", dungeons[u.uz.dnum].dname);
+        mvwaddstr(win, sy, sx, buf);
+        sy += 2;
+    }
+
     /* Strength */
     if (ACURR(A_STR) != prevstr.value)  /* Strength changed */
     {
-        
+
         if (ACURR(A_STR) > prevstr.value)
         {
             prevstr.highlight_color = STAT_UP_COLOR;
@@ -176,18 +269,11 @@ void curses_update_stats()
         mvwaddstr(win, sy, sx, prevstr.label);
         sx += strlen(prevstr.label);
     }
-    
-    if (prevstr.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevstr.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevstr.txt);
-        curses_toggle_color_attr(win, prevstr.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevstr.txt);
-    }
-    
+
+    color_stat(prevstr, ON);
+    mvwaddstr(win, sy, sx, prevstr.txt);
+    color_stat(prevstr, OFF);
+
     if (horiz)
     {
         sx += strlen(prevstr.txt) + 1;
@@ -201,7 +287,7 @@ void curses_update_stats()
     /* Intelligence */
     if (ACURR(A_INT) != prevint.value)  /* Intelligence changed */
     {
-        
+
         if (ACURR(A_INT) > prevint.value)
         {
             prevint.highlight_color = STAT_UP_COLOR;
@@ -211,7 +297,7 @@ void curses_update_stats()
             prevint.highlight_color = STAT_DOWN_COLOR;
         }
         prevint.value = ACURR(A_INT);
-        sprintf(buf, "%d", ACURR(A_INT)); 
+        sprintf(buf, "%d", ACURR(A_INT));
         free(prevint.txt);
         prevint.txt = curses_copy_of(buf);
         prevint.highlight_turns = 5;
@@ -222,18 +308,11 @@ void curses_update_stats()
         mvwaddstr(win, sy, sx, prevint.label);
         sx += strlen(prevint.label);
     }
-    
-    if (prevint.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevint.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevint.txt);
-        curses_toggle_color_attr(win, prevint.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevint.txt);
-    }
-    
+
+    color_stat(prevint, ON);
+    mvwaddstr(win, sy, sx, prevint.txt);
+    color_stat(prevint, OFF);
+
     if (horiz)
     {
         sx += strlen(prevint.txt) + 1;
@@ -247,7 +326,7 @@ void curses_update_stats()
     /* Wisdom */
     if (ACURR(A_WIS) != prevwis.value)  /* Wisdom changed */
     {
-        
+
         if (ACURR(A_WIS) > prevwis.value)
         {
             prevwis.highlight_color = STAT_UP_COLOR;
@@ -257,7 +336,7 @@ void curses_update_stats()
             prevwis.highlight_color = STAT_DOWN_COLOR;
         }
         prevwis.value = ACURR(A_WIS);
-        sprintf(buf, "%d", ACURR(A_WIS)); 
+        sprintf(buf, "%d", ACURR(A_WIS));
         free(prevwis.txt);
         prevwis.txt = curses_copy_of(buf);
         prevwis.highlight_turns = 5;
@@ -268,18 +347,11 @@ void curses_update_stats()
         mvwaddstr(win, sy, sx, prevwis.label);
         sx += strlen(prevwis.label);
     }
-    
-    if (prevwis.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevwis.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevwis.txt);
-        curses_toggle_color_attr(win, prevwis.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevwis.txt);
-    }
-    
+
+    color_stat(prevwis, ON);
+    mvwaddstr(win, sy, sx, prevwis.txt);
+    color_stat(prevwis, OFF);
+
     if (horiz)
     {
         sx += strlen(prevwis.txt) + 1;
@@ -293,7 +365,7 @@ void curses_update_stats()
     /* Dexterity */
     if (ACURR(A_DEX) != prevdex.value)  /* Dexterity changed */
     {
-        
+
         if (ACURR(A_DEX) > prevdex.value)
         {
             prevdex.highlight_color = STAT_UP_COLOR;
@@ -314,18 +386,11 @@ void curses_update_stats()
         mvwaddstr(win, sy, sx, prevdex.label);
         sx += strlen(prevdex.label);
     }
-    
-    if (prevdex.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevdex.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevdex.txt);
-        curses_toggle_color_attr(win, prevdex.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevdex.txt);
-    }
-    
+
+    color_stat(prevdex, ON);
+    mvwaddstr(win, sy, sx, prevdex.txt);
+    color_stat(prevdex, OFF);
+
     if (horiz)
     {
         sx += strlen(prevdex.txt) + 1;
@@ -339,7 +404,7 @@ void curses_update_stats()
     /* Constitution */
     if (ACURR(A_CON) != prevcon.value)  /* Constitution changed */
     {
-        
+
         if (ACURR(A_CON) > prevcon.value)
         {
             prevcon.highlight_color = STAT_UP_COLOR;
@@ -360,18 +425,11 @@ void curses_update_stats()
         mvwaddstr(win, sy, sx, prevcon.label);
         sx += strlen(prevcon.label);
     }
-    
-    if (prevcon.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevcon.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevcon.txt);
-        curses_toggle_color_attr(win, prevcon.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevcon.txt);
-    }
-    
+
+    color_stat(prevcon, ON);
+    mvwaddstr(win, sy, sx, prevcon.txt);
+    color_stat(prevcon, OFF);
+
     if (horiz)
     {
         sx += strlen(prevcon.txt) + 1;
@@ -405,18 +463,11 @@ void curses_update_stats()
         mvwaddstr(win, sy, sx, prevcha.label);
         sx += strlen(prevcha.label);
     }
-    
-    if (prevcha.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevcha.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevcha.txt);
-        curses_toggle_color_attr(win, prevcha.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevcha.txt);
-    }
-    
+
+    color_stat(prevcha, ON);
+    mvwaddstr(win, sy, sx, prevcha.txt);
+    color_stat(prevcha, OFF);
+
     if (horiz)
     {
         sx += strlen(prevcha.txt) + 1;
@@ -424,9 +475,9 @@ void curses_update_stats()
     else
     {
         sx = sx_start;
-        sy++;
+        sy ++;
     }
-    
+
     /* Alignment */
     if (prevalign.alignment != u.ualign.type)   /* Alignment changed */
     {
@@ -459,23 +510,16 @@ void curses_update_stats()
         mvwaddstr(win, sy, sx, prevalign.label);
         sx += strlen(prevalign.label);
     }
-    
-    if (prevalign.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevalign.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevalign.txt);
-        curses_toggle_color_attr(win, prevalign.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevalign.txt);
-    }
-    
+
+    color_stat(prevalign, ON);
+    mvwaddstr(win, sy, sx, prevalign.txt);
+    color_stat(prevalign, OFF);
+
     /* Line 2 */
-    
+
     sx = sx_start;
     sy++;
-    
+
     /* Dungeon Level */
     if (depth(&u.uz) != prevdepth.value)    /* Dungeon level changed */
     {
@@ -493,24 +537,17 @@ void curses_update_stats()
         }
         prevdepth.txt = curses_copy_of(buf);
     }
-    
+
     if (prevdepth.label != NULL)
     {
         mvwaddstr(win, sy, sx, prevdepth.label);
         sx += strlen(prevdepth.label);
     }
-    
-    if (prevdepth.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevdepth.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevdepth.txt);
-        curses_toggle_color_attr(win, prevdepth.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevdepth.txt);
-    }
-    
+
+    color_stat(prevdepth, ON);
+    mvwaddstr(win, sy, sx, prevdepth.txt);
+    color_stat(prevdepth, OFF);
+
     if (horiz)
     {
         sx += strlen(prevdepth.txt) + 1;
@@ -520,7 +557,7 @@ void curses_update_stats()
         sx = sx_start;
         sy++;
     }
-    
+
     /* Gold */
 #ifndef GOLDOBJ
     if (prevau.value != u.ugold)    /* Gold changed */
@@ -550,23 +587,16 @@ void curses_update_stats()
         prevau.txt = curses_copy_of(buf);
         prevau.highlight_turns = 5;
     }
-    
+
     if (prevau.label != NULL)
     {
         mvwaddstr(win, sy, sx, prevau.label);
         sx += strlen(prevau.label);
     }
-    
-    if (prevau.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevau.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevau.txt);
-        curses_toggle_color_attr(win, prevau.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevau.txt);
-    }
+
+    color_stat(prevau, ON);
+    mvwaddstr(win, sy, sx, prevau.txt);
+    color_stat(prevau, OFF);
 
     if (horiz)
     {
@@ -577,30 +607,24 @@ void curses_update_stats()
         sx = sx_start;
         sy++;
     }
-    
+
+
     /* Hit Points */
+
     if (u.mtimedone)    /* Currently polymorphed - show monster HP */
     {
-	    if (u.mh != prevhp.value)
-	    {
-	        if (u.mh > prevhp.value)
-	        {
-	            prevhp.highlight_color = STAT_UP_COLOR;
-	        }
-	        else
-	        {
-	            prevhp.highlight_color = STAT_DOWN_COLOR;
-	        }
-            prevhp.highlight_turns = 3;
-            prevhp.value = u.mh;
-            sprintf(buf, "%d", u.mh);
-            free(prevhp.txt);
-            prevhp.txt = curses_copy_of(buf);
-	    }
+	    hp = u.mh;
+	    hpmax = u.mhmax;
 	}
-	else if (u.uhp != prevhp.value)  /* Not polymorphed */
+	else    /* Not polymorphed */
 	{
-	    if (u.uhp > prevhp.value)
+	    hp = u.uhp;
+	    hpmax = u.uhpmax;
+	}
+
+	if (hp != prevhp.value)
+	{
+	    if (hp > prevhp.value)
 	    {
 	        prevhp.highlight_color = STAT_UP_COLOR;
 	    }
@@ -608,8 +632,12 @@ void curses_update_stats()
 	    {
             prevhp.highlight_color = STAT_DOWN_COLOR;
 	    }
-        prevhp.value = u.uhp;
-        sprintf(buf, "%d", u.uhp);
+        prevhp.value = hp;
+        if (prevhp.value < 0)
+        {
+            prevhp.value = 0;
+        }
+        sprintf(buf, "%ld", prevhp.value);
         free(prevhp.txt);
         prevhp.txt = curses_copy_of(buf);
         prevhp.highlight_turns = 3;
@@ -621,42 +649,17 @@ void curses_update_stats()
         sx += strlen(prevhp.label);
     }
 
-    if (prevhp.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevhp.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevhp.txt);
-        curses_toggle_color_attr(win, prevhp.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevhp.txt);
-    }
-    
+    color_stat(prevhp, ON);
+    mvwaddstr(win, sy, sx, prevhp.txt);
+    color_stat(prevhp, OFF);
+
     sx += strlen(prevhp.txt);
 
     /* Max Hit Points */
-    if (u.mtimedone)    /* Currently polymorphed - show monster HP */
-    {
-	    if (u.mhmax != prevmhp.value)
-	    {
-	        if (u.mhmax > prevmhp.value)
-	        {
-	            prevmhp.highlight_color = STAT_UP_COLOR;
-	        }
-	        else
-	        {
-	            prevmhp.highlight_color = STAT_DOWN_COLOR;
-	        }
-            prevmhp.value = u.mhmax;
-            sprintf(buf, "%d", u.mhmax);
-            free(prevmhp.txt);
-            prevmhp.txt = curses_copy_of(buf);
-            prevmhp.highlight_turns = 3;
-	    }
-	}
-	else if (u.uhpmax != prevmhp.value)  /* Not polymorphed */
+
+	if (hpmax != prevmhp.value)  /* Not polymorphed */
 	{
-	    if (u.uhpmax > prevmhp.value)
+	    if (hpmax > prevmhp.value)
 	    {
 	        prevmhp.highlight_color = STAT_UP_COLOR;
 	    }
@@ -664,8 +667,8 @@ void curses_update_stats()
 	    {
             prevmhp.highlight_color = STAT_DOWN_COLOR;
 	    }
-        prevmhp.value = u.uhpmax;
-        sprintf(buf, "%d", u.uhpmax);
+        prevmhp.value = hpmax;
+        sprintf(buf, "%d", hpmax);
         free(prevmhp.txt);
         prevmhp.txt = curses_copy_of(buf);
         prevmhp.highlight_turns = 3;
@@ -677,20 +680,15 @@ void curses_update_stats()
         sx += strlen(prevmhp.label);
     }
 
-    if (prevmhp.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevmhp.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevmhp.txt);
-        curses_toggle_color_attr(win, prevmhp.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevmhp.txt);
-    }
-    
+    color_stat(prevmhp, ON);
+    mvwaddstr(win, sy, sx, prevmhp.txt);
+    color_stat(prevmhp, OFF);
+
     if (horiz)
     {
+        color_stat(prevmhp, ON);
         sx += strlen(prevmhp.txt) + 1;
+        color_stat(prevmhp, OFF);
     }
     else
     {
@@ -722,17 +720,10 @@ void curses_update_stats()
         sx += strlen(prevpow.label);
     }
 
-    if (prevpow.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevpow.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevpow.txt);
-        curses_toggle_color_attr(win, prevpow.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevpow.txt);
-    }
-    
+    color_stat(prevpow, ON);
+    mvwaddstr(win, sy, sx, prevpow.txt);
+    color_stat(prevpow, OFF);
+
     sx += strlen(prevpow.txt);
 
     /* Max Power */
@@ -759,17 +750,10 @@ void curses_update_stats()
         sx += strlen(prevmpow.label);
     }
 
-    if (prevmpow.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevmpow.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevmpow.txt);
-        curses_toggle_color_attr(win, prevmpow.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevmpow.txt);
-    }
-    
+    color_stat(prevmpow, ON);
+    mvwaddstr(win, sy, sx, prevmpow.txt);
+    color_stat(prevmpow, OFF);
+
     if (horiz)
     {
         sx += strlen(prevmpow.txt) + 1;
@@ -805,17 +789,10 @@ void curses_update_stats()
         sx += strlen(prevac.label);
     }
 
-    if (prevac.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevac.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevac.txt);
-        curses_toggle_color_attr(win, prevac.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevac.txt);
-    }
-    
+    color_stat(prevac, ON);
+    mvwaddstr(win, sy, sx, prevac.txt);
+    color_stat(prevac, OFF);
+
     if (horiz)
     {
         sx += strlen(prevac.txt) + 1;
@@ -838,7 +815,21 @@ void curses_update_stats()
         }
         else
         {
-            prevlevel.label = curses_copy_of("Lvl:");
+            if (horiz)
+            {
+                if (labels == COMPACT_LABELS)
+                {
+                    prevlevel.label = curses_copy_of("Lv:");
+                }
+                else
+                {
+                    prevlevel.label = curses_copy_of("Lvl:");
+                }
+            }
+            else
+            {
+                prevlevel.label = curses_copy_of("Level:         ");
+            }
         }
     }
 
@@ -854,7 +845,7 @@ void curses_update_stats()
 	        {
                 prevexp.highlight_color = STAT_DOWN_COLOR;
 	        }
-            sprintf(buf, "%d", u.uexp);
+            sprintf(buf, "%ld", u.uexp);
             free(prevexp.txt);
             prevexp.txt = curses_copy_of(buf);
             prevexp.highlight_turns = 3;
@@ -866,30 +857,31 @@ void curses_update_stats()
             sx += strlen(prevexp.label);
         }
 
-        if (prevexp.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevexp.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevexp.txt);
-            curses_toggle_color_attr(win, prevexp.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevexp.txt);
-        }
+        color_stat(prevexp, ON);
+        mvwaddstr(win, sy, sx, prevexp.txt);
+        color_stat(prevexp, OFF);
 
         sx += strlen(prevexp.txt);
     }
-    
+
     prevexp.value = u.uexp; /* Track it even when it's not displayed */
 #endif  /* EXP_ON_BOTL */
 
     /* Level */
     if (u.mtimedone)    /* Currently polymorphed - show monster HD */
     {
-        if (strncmp(prevlevel.label, "HD:", 3) != 0)
+        if ((strncmp(prevlevel.label, "HP:", 3) != 0) ||
+         (strncmp(prevlevel.label, "Hit Points:", 11) != 0))
         {
             free(prevlevel.label);
+            if (horiz)
+            {
             prevlevel.label = curses_copy_of("HD:");
+        }
+            else
+            {
+                prevlevel.label = curses_copy_of("Hit Dice:      ");
+            }
         }
         if (mons[u.umonnum].mlevel != prevlevel.value)
         {
@@ -910,7 +902,8 @@ void curses_update_stats()
     }
     else    /* Not polymorphed */
     {
-        if (strncmp(prevlevel.label, "HD:", 3) == 0)
+        if ((strncmp(prevlevel.label, "HD:", 3) != 0) ||
+         (strncmp(prevlevel.label, "Hit Dice:", 9) != 0))
         {
             free(prevlevel.label);
             if (prevexp.display)
@@ -919,7 +912,21 @@ void curses_update_stats()
             }
             else
             {
-                prevlevel.label = curses_copy_of("Lvl:");
+                if (horiz)
+                {
+                    if (labels == COMPACT_LABELS)
+                    {
+                        prevlevel.label = curses_copy_of("Lv:");
+                    }
+                    else
+                    {
+                        prevlevel.label = curses_copy_of("Lvl:");
+                    }
+                }
+                else
+                {
+                    prevlevel.label = curses_copy_of("Level:         ");
+                }
             }
         }
         if (u.ulevel > prevlevel.value)
@@ -944,16 +951,9 @@ void curses_update_stats()
         sx += strlen(prevlevel.label);
     }
 
-    if (prevlevel.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevlevel.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevlevel.txt);
-        curses_toggle_color_attr(win, prevlevel.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevlevel.txt);
-    }
+    color_stat(prevlevel, ON);
+    mvwaddstr(win, sy, sx, prevlevel.txt);
+    color_stat(prevlevel, OFF);
 
     if (horiz)
     {
@@ -985,7 +985,9 @@ void curses_update_stats()
             sx += strlen(prevtime.label);
         }
 
+        color_stat(prevtime, ON);
         mvwaddstr(win, sy, sx, prevtime.txt);
+        color_stat(prevtime, OFF);
 
         if (horiz)
         {
@@ -997,7 +999,7 @@ void curses_update_stats()
             sy++;
         }
     }
-    
+
     /* Score */
 #ifdef SCORE_ON_BOTL
     if (prevscore.display != flags.showscore)   /* Setting has changed */
@@ -1028,16 +1030,9 @@ void curses_update_stats()
             sx += strlen(prevscore.label);
         }
 
-        if (prevscore.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevscore.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevscore.txt);
-            curses_toggle_color_attr(win, prevscore.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevscore.txt);
-        }
+        color_stat(prevscore, ON);
+        mvwaddstr(win, sy, sx, prevscore.txt);
+        color_stat(prevscore, OFF);
 
         if (horiz)
         {
@@ -1049,7 +1044,7 @@ void curses_update_stats()
             sy++;
         }
     }
-    
+
     prevscore.value = botl_score(); /* Track it even when it's not displayed */
 #endif  /* SCORE_ON_BOTL */
 
@@ -1086,17 +1081,10 @@ void curses_update_stats()
         sx += strlen(prevhunger.label);
     }
 
-    if (prevhunger.highlight_turns > 0)
-    {
-        curses_toggle_color_attr(win, prevhunger.highlight_color, NONE, ON);
-        mvwaddstr(win, sy, sx, prevhunger.txt);
-        curses_toggle_color_attr(win, prevhunger.highlight_color, NONE, OFF);
-    }
-    else
-    {
-        mvwaddstr(win, sy, sx, prevhunger.txt);
-    }
-    
+    color_stat(prevhunger, ON);
+    mvwaddstr(win, sy, sx, prevhunger.txt);
+    color_stat(prevhunger, OFF);
+
     if (strlen(prevhunger.txt) > 0)
     {
         if (horiz)
@@ -1141,16 +1129,9 @@ void curses_update_stats()
 
     if (prevconf.txt != NULL)
     {
-        if (prevconf.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevconf.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevconf.txt);
-            curses_toggle_color_attr(win, prevconf.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevconf.txt);
-        }
+        color_stat(prevconf, ON);
+        mvwaddstr(win, sy, sx, prevconf.txt);
+        color_stat(prevconf, OFF);
     }
 
     if (prevconf.txt != NULL)
@@ -1197,16 +1178,9 @@ void curses_update_stats()
 
     if (prevblind.txt != NULL)
     {
-        if (prevblind.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevblind.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevblind.txt);
-            curses_toggle_color_attr(win, prevblind.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevblind.txt);
-        }
+        color_stat(prevblind, ON);
+        mvwaddstr(win, sy, sx, prevblind.txt);
+        color_stat(prevblind, OFF);
     }
 
     if (prevblind.txt != NULL)
@@ -1253,16 +1227,9 @@ void curses_update_stats()
 
     if (prevstun.txt != NULL)
     {
-        if (prevstun.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevstun.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevstun.txt);
-            curses_toggle_color_attr(win, prevstun.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevstun.txt);
-        }
+        color_stat(prevstun, ON);
+        mvwaddstr(win, sy, sx, prevstun.txt);
+        color_stat(prevstun, OFF);
     }
 
     if (prevstun.txt != NULL)
@@ -1309,16 +1276,9 @@ void curses_update_stats()
 
     if (prevhallu.txt != NULL)
     {
-        if (prevhallu.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevhallu.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevhallu.txt);
-            curses_toggle_color_attr(win, prevhallu.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevhallu.txt);
-        }
+        color_stat(prevhallu, ON);
+        mvwaddstr(win, sy, sx, prevhallu.txt);
+        color_stat(prevhallu, OFF);
     }
 
     if (prevhallu.txt != NULL)
@@ -1348,7 +1308,7 @@ void curses_update_stats()
             {
                 prevsick.txt = curses_copy_of("FoodPois");
             }
-            else      
+            else
             {
                 prevsick.txt = curses_copy_of("Ill");
             }
@@ -1372,16 +1332,9 @@ void curses_update_stats()
 
     if (prevsick.txt != NULL)
     {
-        if (prevsick.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevsick.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevsick.txt);
-            curses_toggle_color_attr(win, prevsick.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevsick.txt);
-        }
+        color_stat(prevsick, ON);
+        mvwaddstr(win, sy, sx, prevsick.txt);
+        color_stat(prevsick, OFF);
     }
 
     if (prevsick.txt != NULL)
@@ -1428,16 +1381,9 @@ void curses_update_stats()
 
     if (prevslime.txt != NULL)
     {
-        if (prevslime.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevslime.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevslime.txt);
-            curses_toggle_color_attr(win, prevslime.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevslime.txt);
-        }
+        color_stat(prevslime, ON);
+        mvwaddstr(win, sy, sx, prevslime.txt);
+        color_stat(prevslime, OFF);
     }
 
     if (prevslime.txt != NULL)
@@ -1455,7 +1401,7 @@ void curses_update_stats()
 
     /* Encumberance */
     enc = near_capacity();
-    
+
     if (enc != prevencumb.value)
 	{
 	    if (enc < prevencumb.value)
@@ -1491,16 +1437,9 @@ void curses_update_stats()
 
     if (prevencumb.txt != NULL)
     {
-        if (prevencumb.highlight_turns > 0)
-        {
-            curses_toggle_color_attr(win, prevencumb.highlight_color, NONE, ON);
-            mvwaddstr(win, sy, sx, prevencumb.txt);
-            curses_toggle_color_attr(win, prevencumb.highlight_color, NONE, OFF);
-        }
-        else
-        {
-            mvwaddstr(win, sy, sx, prevencumb.txt);
-        }
+        color_stat(prevencumb, ON);
+        mvwaddstr(win, sy, sx, prevencumb.txt);
+        color_stat(prevencumb, OFF);
     }
 
     if (prevencumb.txt != NULL)
@@ -1526,7 +1465,7 @@ if needed to unhighlight a stat */
 void curses_decrement_highlight()
 {
     boolean unhighlight = FALSE;
-    
+
     if (prevname.highlight_turns > 0)
     {
         prevname.highlight_turns--;
@@ -1747,10 +1686,10 @@ void curses_decrement_highlight()
             unhighlight = TRUE;
         }
     }
-    
+
     if (unhighlight)
     {
-        curses_update_stats();
+        curses_update_stats(FALSE);
     }
 }
 
@@ -1788,7 +1727,9 @@ static void init_stats()
     prevname.display = TRUE;
     prevname.highlight_turns = 0;
     prevname.label = NULL;
-    
+    prevname.id = "name";
+    set_stat_color(&prevname);
+
     /* Strength */
     if (ACURR(A_STR) > 118)
     {
@@ -1811,7 +1752,9 @@ static void init_stats()
     prevstr.txt = curses_copy_of(buf);
     prevstr.display = TRUE;
     prevstr.highlight_turns = 0;
-    prevstr.label = curses_copy_of("Str:");
+    prevstr.label = NULL;
+    prevstr.id = "str";
+    set_stat_color(&prevstr);
 
     /* Intelligence */
     sprintf(buf, "%d", ACURR(A_INT));
@@ -1819,7 +1762,9 @@ static void init_stats()
     prevint.txt = curses_copy_of(buf);
     prevint.display = TRUE;
     prevint.highlight_turns = 0;
-    prevint.label = curses_copy_of("Int:");
+    prevint.label = NULL;
+    prevint.id = "int";
+    set_stat_color(&prevint);
 
     /* Wisdom */
     sprintf(buf, "%d", ACURR(A_WIS));
@@ -1827,7 +1772,9 @@ static void init_stats()
     prevwis.txt = curses_copy_of(buf);
     prevwis.display = TRUE;
     prevwis.highlight_turns = 0;
-    prevwis.label = curses_copy_of("Wis:");
+    prevwis.label = NULL;
+    prevwis.id = "wis";
+    set_stat_color(&prevwis);
 
     /* Dexterity */
     sprintf(buf, "%d", ACURR(A_DEX));
@@ -1835,7 +1782,9 @@ static void init_stats()
     prevdex.txt = curses_copy_of(buf);
     prevdex.display = TRUE;
     prevdex.highlight_turns = 0;
-    prevdex.label = curses_copy_of("Dex:");
+    prevdex.label = NULL;
+    prevdex.id = "dex";
+    set_stat_color(&prevdex);
 
     /* Constitution */
     sprintf(buf, "%d", ACURR(A_CON));
@@ -1843,7 +1792,9 @@ static void init_stats()
     prevcon.txt = curses_copy_of(buf);
     prevcon.display = TRUE;
     prevcon.highlight_turns = 0;
-    prevcon.label = curses_copy_of("Con:");
+    prevcon.label = NULL;
+    prevcon.id = "con";
+    set_stat_color(&prevcon);
 
     /* Charisma */
     sprintf(buf, "%d", ACURR(A_CHA));
@@ -1851,7 +1802,9 @@ static void init_stats()
     prevcha.txt = curses_copy_of(buf);
     prevcha.display = TRUE;
     prevcha.highlight_turns = 0;
-    prevcha.label = curses_copy_of("Cha:");
+    prevcha.label = NULL;
+    prevcha.id = "cha";
+    set_stat_color(&prevcha);
 
     /* Alignment */
     switch (u.ualign.type)
@@ -1872,12 +1825,14 @@ static void init_stats()
             break;
         }
     }
-    
+
     prevalign.alignment = u.ualign.type;
     prevalign.display = TRUE;
     prevalign.highlight_turns = 0;
     prevalign.label = NULL;
-    
+    prevalign.id = "align";
+    set_stat_color(&prevalign);
+
     /* Dungeon level */
     if (In_endgame(&u.uz))
     {
@@ -1892,8 +1847,10 @@ static void init_stats()
     prevdepth.txt = curses_copy_of(buf);
     prevdepth.display = TRUE;
     prevdepth.highlight_turns = 0;
-    prevdepth.label = curses_copy_of("Dlvl:");
-    
+    prevdepth.label = NULL;
+    prevdepth.id = "dlvl";
+    set_stat_color(&prevdepth);
+
     /* Gold */
 #ifndef GOLDOBJ
     sprintf(buf,"%ld", u.ugold);
@@ -1905,8 +1862,9 @@ static void init_stats()
     prevau.txt = curses_copy_of(buf);
     prevau.display = TRUE;
     prevau.highlight_turns = 0;
-    sprintf(buf, "%c:", GOLD_SYM);
-    prevau.label = curses_copy_of(buf);
+    prevau.label = NULL;
+    prevau.id = "gold";
+    set_stat_color(&prevau);
 
     /* Hit Points */
     if (u.mtimedone)    /* Currently polymorphed - show monster HP */
@@ -1923,7 +1881,9 @@ static void init_stats()
 	}
 	prevhp.display = TRUE;
 	prevhp.highlight_turns = 0;
-    prevhp.label = curses_copy_of("HP:");
+    prevhp.label = NULL;
+    prevhp.id = "hp";
+    set_stat_color(&prevhp);
 
     /* Max Hit Points */
     if (u.mtimedone)    /* Currently polymorphed - show monster HP */
@@ -1941,6 +1901,8 @@ static void init_stats()
 	prevmhp.display = TRUE;
 	prevmhp.highlight_turns = 0;
     prevmhp.label = curses_copy_of("/");
+    prevmhp.id = "mhp";
+    set_stat_color(&prevmhp);
 
     /* Power */
     prevpow.value = u.uen;
@@ -1948,7 +1910,9 @@ static void init_stats()
     prevpow.txt = curses_copy_of(buf);
 	prevpow.display = TRUE;
 	prevpow.highlight_turns = 0;
-    prevpow.label = curses_copy_of("Pw:");
+    prevpow.label = NULL;
+    prevpow.id = "pw";
+    set_stat_color(&prevpow);
 
     /* Max Power */
     prevmpow.value = u.uenmax;
@@ -1957,6 +1921,8 @@ static void init_stats()
 	prevmpow.display = TRUE;
 	prevmpow.highlight_turns = 0;
     prevmpow.label = curses_copy_of("/");
+    prevmpow.id = "mpw";
+    set_stat_color(&prevmpow);
 
     /* Armor Class */
     prevac.value = u.uac;
@@ -1964,7 +1930,9 @@ static void init_stats()
     prevac.txt = curses_copy_of(buf);
 	prevac.display = TRUE;
 	prevac.highlight_turns = 0;
-    prevac.label = curses_copy_of("AC:");
+    prevac.label = NULL;
+    prevac.id = "ac";
+    set_stat_color(&prevac);
 
     /* Experience */
 #ifdef EXP_ON_BOTL
@@ -1973,33 +1941,29 @@ static void init_stats()
     prevexp.txt = curses_copy_of(buf);
 	prevexp.display = flags.showexp;
 	prevexp.highlight_turns = 0;
-    prevexp.label = curses_copy_of("Xp:");
+    prevexp.label = NULL;
+    prevexp.id = "xp";
+    set_stat_color(&prevexp);
 #endif
 
     /* Level */
+    prevlevel.label = NULL;
     if (u.mtimedone)    /* Currently polymorphed - show monster HP */
     {
         prevlevel.value = mons[u.umonnum].mlevel;
         sprintf(buf, "%d", mons[u.umonnum].mlevel);
         prevlevel.txt = curses_copy_of(buf);
-        prevlevel.label = curses_copy_of("HD:");
 	}
 	else if (u.ulevel != prevlevel.value)  /* Not polymorphed */
 	{
 	    prevlevel.value = u.ulevel;
         sprintf(buf, "%d", u.ulevel);
         prevlevel.txt = curses_copy_of(buf);
-        if (prevexp.display)
-        {
-            prevlevel.label = curses_copy_of("/");
-        }
-        else
-        {    
-            prevlevel.label = curses_copy_of("Lvl:");
-        }
 	}
 	prevlevel.display = TRUE;
 	prevlevel.highlight_turns = 0;
+    prevlevel.id = "lvl";
+    set_stat_color(&prevlevel);
 
     /* Time */
     prevtime.value = moves;
@@ -2007,7 +1971,9 @@ static void init_stats()
     prevtime.txt = curses_copy_of(buf);
 	prevtime.display = flags.time;
 	prevtime.highlight_turns = 0;
-    prevtime.label = curses_copy_of("T:");
+    prevtime.label = NULL;
+    prevtime.id = "time";
+    set_stat_color(&prevtime);
 
     /* Score */
 #ifdef SCORE_ON_BOTL
@@ -2016,7 +1982,9 @@ static void init_stats()
     prevscore.txt = curses_copy_of(buf);
 	prevscore.display = flags.showscore;
 	prevscore.highlight_turns = 0;
-    prevscore.label = curses_copy_of("S:");
+    prevscore.label = NULL;
+    prevscore.id = "score";
+    set_stat_color(&prevscore);
 #endif
 
     /* Hunger */
@@ -2035,6 +2003,8 @@ static void init_stats()
     prevhunger.display = TRUE;
     prevhunger.highlight_turns = 0;
     prevhunger.label = NULL;
+    prevhunger.id = "hunger";
+    set_stat_color(&prevhunger);
 
     /* Confusion */
     prevconf.value = Confusion;
@@ -2049,6 +2019,8 @@ static void init_stats()
     prevconf.display = TRUE;
     prevconf.highlight_turns = 0;
     prevconf.label = NULL;
+    prevconf.id = "conf";
+    set_stat_color(&prevconf);
 
     /* Blindness */
     prevblind.value = Blind;
@@ -2063,6 +2035,8 @@ static void init_stats()
     prevblind.display = TRUE;
     prevblind.highlight_turns = 0;
     prevblind.label = NULL;
+    prevblind.id = "blind";
+    set_stat_color(&prevblind);
 
     /* Stun */
     prevstun.value = Stunned;
@@ -2077,6 +2051,8 @@ static void init_stats()
     prevstun.display = TRUE;
     prevstun.highlight_turns = 0;
     prevstun.label = NULL;
+    prevstun.id = "stun";
+    set_stat_color(&prevstun);
 
     /* Hallucination */
     prevhallu.value = Hallucination;
@@ -2091,6 +2067,8 @@ static void init_stats()
     prevhallu.display = TRUE;
     prevhallu.highlight_turns = 0;
     prevhallu.label = NULL;
+    prevhallu.id = "hallu";
+    set_stat_color(&prevhallu);
 
     /* Sick */
     prevsick.value = Sick;
@@ -2098,9 +2076,9 @@ static void init_stats()
     {
         if (u.usick_type & SICK_VOMITABLE)
         {
-            prevsick.txt = curses_copy_of("Sick");
+            prevsick.txt = curses_copy_of("FoodPois");
         }
-        else     
+        else
         {
             prevsick.txt = curses_copy_of("Ill");
         }
@@ -2112,6 +2090,8 @@ static void init_stats()
     prevsick.display = TRUE;
     prevsick.highlight_turns = 0;
     prevsick.label = NULL;
+    prevsick.id = "sick";
+    set_stat_color(&prevsick);
 
     /* Slimed */
     prevslime.value = Slimed;
@@ -2126,6 +2106,8 @@ static void init_stats()
     prevslime.display = TRUE;
     prevslime.highlight_turns = 0;
     prevslime.label = NULL;
+    prevslime.id = "slime";
+    set_stat_color(&prevslime);
 
     /* Encumberance */
     prevencumb.value = near_capacity();
@@ -2141,5 +2123,604 @@ static void init_stats()
     prevencumb.display = TRUE;
     prevencumb.highlight_turns = 0;
     prevencumb.label = NULL;
+    prevencumb.id = "encumberance";
+    set_stat_color(&prevencumb);
 }
 
+/* Set labels based on orientation of status window.  If horizontal,
+we want to compress this info; otherwise we know we have a width of at
+least 26 characters. */
+
+static void set_labels(int label_width)
+{
+    char buf[BUFSZ];
+
+    switch (label_width)
+    {
+        case COMPACT_LABELS:
+        {
+            /* Strength */
+            if (prevstr.label)
+            {
+                free (prevstr.label);
+            }
+            prevstr.label = curses_copy_of("S:");
+            /* Intelligence */
+            if (prevint.label)
+            {
+                free (prevint.label);
+            }
+            prevint.label = curses_copy_of("I:");
+
+            /* Wisdom */
+            if (prevwis.label)
+            {
+                free (prevwis.label);
+            }
+            prevwis.label = curses_copy_of("W:");
+
+            /* Dexterity */
+            if (prevdex.label)
+            {
+                free (prevdex.label);
+            }
+            prevdex.label = curses_copy_of("D:");
+
+            /* Constitution */
+            if (prevcon.label)
+            {
+                free (prevcon.label);
+            }
+            prevcon.label = curses_copy_of("C:");
+
+            /* Charisma */
+            if (prevcha.label)
+            {
+                free (prevcha.label);
+            }
+            prevcha.label = curses_copy_of("Ch:");
+
+            /* Alignment */
+            if (prevalign.label)
+            {
+                free (prevalign.label);
+            }
+            prevalign.label = NULL;
+
+            /* Dungeon level */
+            if (prevdepth.label)
+            {
+                free (prevdepth.label);
+            }
+            prevdepth.label = curses_copy_of("Dl:");
+
+            /* Gold */
+            if (prevau.label)
+            {
+                free (prevau.label);
+            }
+            sprintf(buf, "%c:", GOLD_SYM);
+            prevau.label = curses_copy_of(buf);
+
+            /* Hit points */
+            if (prevhp.label)
+            {
+                free (prevhp.label);
+            }
+            prevhp.label = curses_copy_of("HP:");
+
+            /* Power */
+            if (prevpow.label)
+            {
+                free (prevpow.label);
+            }
+            prevpow.label = curses_copy_of("Pw:");
+
+            /* Armor Class */
+            if (prevac.label)
+            {
+                free (prevac.label);
+            }
+            prevac.label = curses_copy_of("AC:");
+
+#ifdef EXP_ON_BOTL
+            /* Experience */
+            if (prevexp.label)
+            {
+                free (prevexp.label);
+            }
+            prevexp.label = curses_copy_of("XP:");
+#endif
+
+            /* Level */
+            if (prevlevel.label)
+            {
+                free (prevlevel.label);
+                prevlevel.label = NULL;
+            }
+            if (u.mtimedone)    /* Currently polymorphed - show monster HP */
+            {
+                prevlevel.label = curses_copy_of("HD:");
+		}
+		else    /* Not polymorphed */
+		{
+                if (prevexp.display)
+                {
+                    prevlevel.label = curses_copy_of("/");
+                }
+                else
+                {
+                    prevlevel.label = curses_copy_of("Lv:");
+                }
+            }
+
+            /* Time */
+            if (prevtime.label)
+            {
+                free (prevtime.label);
+            }
+            prevtime.label = curses_copy_of("T:");
+
+#ifdef SCORE_ON_BOTL
+            /* Score */
+            if (prevscore.label)
+            {
+                free (prevscore.label);
+            }
+            prevscore.label = curses_copy_of("S:");
+#endif
+            break;
+        }
+        case NORMAL_LABELS:
+        {
+            /* Strength */
+            if (prevstr.label)
+            {
+                free (prevstr.label);
+            }
+            prevstr.label = curses_copy_of("Str:");
+            /* Intelligence */
+            if (prevint.label)
+            {
+                free (prevint.label);
+            }
+            prevint.label = curses_copy_of("Int:");
+
+            /* Wisdom */
+            if (prevwis.label)
+            {
+                free (prevwis.label);
+            }
+            prevwis.label = curses_copy_of("Wis:");
+
+            /* Dexterity */
+            if (prevdex.label)
+            {
+                free (prevdex.label);
+            }
+            prevdex.label = curses_copy_of("Dex:");
+
+            /* Constitution */
+            if (prevcon.label)
+            {
+                free (prevcon.label);
+            }
+            prevcon.label = curses_copy_of("Con:");
+
+            /* Charisma */
+            if (prevcha.label)
+            {
+                free (prevcha.label);
+            }
+            prevcha.label = curses_copy_of("Cha:");
+
+            /* Alignment */
+            if (prevalign.label)
+            {
+                free (prevalign.label);
+            }
+            prevalign.label = NULL;
+
+            /* Dungeon level */
+            if (prevdepth.label)
+            {
+                free (prevdepth.label);
+            }
+            prevdepth.label = curses_copy_of("Dlvl:");
+
+            /* Gold */
+            if (prevau.label)
+            {
+                free (prevau.label);
+            }
+            sprintf(buf, "%c:", GOLD_SYM);
+            prevau.label = curses_copy_of(buf);
+
+            /* Hit points */
+            if (prevhp.label)
+            {
+                free (prevhp.label);
+            }
+            prevhp.label = curses_copy_of("HP:");
+
+            /* Power */
+            if (prevpow.label)
+            {
+                free (prevpow.label);
+            }
+            prevpow.label = curses_copy_of("Pw:");
+
+            /* Armor Class */
+            if (prevac.label)
+            {
+                free (prevac.label);
+            }
+            prevac.label = curses_copy_of("AC:");
+
+#ifdef EXP_ON_BOTL
+            /* Experience */
+            if (prevexp.label)
+            {
+                free (prevexp.label);
+            }
+            prevexp.label = curses_copy_of("XP:");
+#endif
+
+            /* Level */
+            if (prevlevel.label)
+            {
+                free (prevlevel.label);
+                prevlevel.label = NULL;
+            }
+            if (u.mtimedone)    /* Currently polymorphed - show monster HP */
+            {
+                prevlevel.label = curses_copy_of("HD:");
+		}
+		else    /* Not polymorphed */
+		{
+                if (prevexp.display)
+                {
+                    prevlevel.label = curses_copy_of("/");
+                }
+                else
+                {
+                    prevlevel.label = curses_copy_of("Lvl:");
+                }
+            }
+
+            /* Time */
+            if (prevtime.label)
+            {
+                free (prevtime.label);
+            }
+            prevtime.label = curses_copy_of("T:");
+
+#ifdef SCORE_ON_BOTL
+            /* Score */
+            if (prevscore.label)
+            {
+                free (prevscore.label);
+            }
+            prevscore.label = curses_copy_of("S:");
+#endif
+            break;
+        }
+        case WIDE_LABELS:
+        {
+            /* Strength */
+            if (prevstr.label)
+            {
+                free (prevstr.label);
+            }
+            prevstr.label = curses_copy_of("Strength:      ");
+
+            /* Intelligence */
+            if (prevint.label)
+            {
+                free (prevint.label);
+            }
+            prevint.label = curses_copy_of("Intelligence:  ");
+
+            /* Wisdom */
+            if (prevwis.label)
+            {
+                free (prevwis.label);
+            }
+            prevwis.label = curses_copy_of("Wisdom:        ");
+
+            /* Dexterity */
+            if (prevdex.label)
+            {
+                free (prevdex.label);
+            }
+            prevdex.label = curses_copy_of("Dexterity:     ");
+
+            /* Constitution */
+            if (prevcon.label)
+            {
+                free (prevcon.label);
+            }
+            prevcon.label = curses_copy_of("Constitution:  ");
+
+            /* Charisma */
+            if (prevcha.label)
+            {
+                free (prevcha.label);
+            }
+            prevcha.label = curses_copy_of("Charisma:      ");
+
+            /* Alignment */
+            if (prevalign.label)
+            {
+                free (prevalign.label);
+            }
+            prevalign.label = curses_copy_of("Alignment:     ");
+
+            /* Dungeon level */
+            if (prevdepth.label)
+            {
+                free (prevdepth.label);
+            }
+            prevdepth.label = curses_copy_of("Dungeon Level: ");
+
+            /* Gold */
+            if (prevau.label)
+            {
+                free (prevau.label);
+            }
+            prevau.label = curses_copy_of("Gold:          ");
+
+            /* Hit points */
+            if (prevhp.label)
+            {
+                free (prevhp.label);
+            }
+            prevhp.label = curses_copy_of("Hit Points:    ");
+
+            /* Power */
+            if (prevpow.label)
+            {
+                free (prevpow.label);
+            }
+            prevpow.label = curses_copy_of("Magic Power:   ");
+
+            /* Armor Class */
+            if (prevac.label)
+            {
+                free (prevac.label);
+            }
+            prevac.label = curses_copy_of("Armor Class:   ");
+
+#ifdef EXP_ON_BOTL
+            /* Experience */
+            if (prevexp.label)
+            {
+                free (prevexp.label);
+            }
+            prevexp.label = curses_copy_of("Experience:    ");
+#endif
+
+            /* Level */
+            if (prevlevel.label)
+            {
+                free (prevlevel.label);
+            }
+            if (u.mtimedone)    /* Currently polymorphed - show monster HP */
+            {
+                prevlevel.label = curses_copy_of("Hit Dice:      ");
+		}
+		else    /* Not polymorphed */
+		{
+                if (prevexp.display)
+                {
+                    prevlevel.label = curses_copy_of(" / ");
+                }
+                else
+                {
+                    prevlevel.label = curses_copy_of("Level:         ");
+                }
+            }
+
+            /* Time */
+            if (prevtime.label)
+            {
+                free (prevtime.label);
+            }
+            prevtime.label = curses_copy_of("Time:          ");
+
+#ifdef SCORE_ON_BOTL
+            /* Score */
+            if (prevscore.label)
+            {
+                free (prevscore.label);
+            }
+            prevscore.label = curses_copy_of("Score:         ");
+#endif
+            break;
+        }
+        default:
+        {
+            panic( "set_labels(): Invalid label_width %d\n",
+             label_width );
+            break;
+        }
+    }
+}
+
+
+/* Get the default (non-highlighted) color for a stat.  For now, this
+is NO_COLOR unless the statuscolors patch is in use. */
+
+static void set_stat_color(nhstat *stat)
+{
+#ifdef STATUS_COLORS
+    struct color_option stat_color;
+    int count;
+    int attr = A_NORMAL;
+
+    if (iflags.use_status_colors && stat_colored(stat->id))
+    {
+        stat_color = text_color_of(stat->id, text_colors);
+
+        for (count = 0; (1 << count) <= stat_color.attr_bits; ++count)
+	{
+	    if (count != ATR_NONE && stat_color.attr_bits & (1 << count))
+	    {
+		    attr += curses_convert_attr(count);
+		}
+        }
+
+        stat->stat_color = stat_color.color;
+        stat->stat_attr = attr;
+    }
+    else
+    {
+        stat->stat_color = NO_COLOR;
+        stat->stat_attr = A_NORMAL;
+    }
+#else
+    stat->stat_color = NO_COLOR;
+    stat->stat_attr = A_NORMAL;
+#endif  /* STATUS_COLORS */
+}
+
+
+/* Set the color to the base color for the given stat, or highlight a
+ changed stat. */
+
+static void color_stat(nhstat stat, int onoff)
+{
+    WINDOW *win = curses_get_nhwin(STATUS_WIN);
+#ifdef STATUS_COLORS
+    struct color_option stat_color;
+    int color, attr, hp, hpmax, count;
+    char buf[BUFSIZ];
+
+    stat_color.color = NO_COLOR;
+    stat_color.attr_bits = ATR_NONE;
+
+    if (strcmp(stat.id, "hp") == 0)
+    {
+	hp = Upolyd ? u.mh : u.uhp;
+	hpmax = Upolyd ? u.mhmax : u.uhpmax;
+        stat_color = percentage_color_of(hp, hpmax, hp_colors);
+    }
+
+    if (strcmp(stat.id, "pw") == 0)
+    {
+        stat_color = percentage_color_of(u.uen, u.uenmax, pw_colors);
+    }
+
+    if (strcmp(stat.id, "hunger") == 0)
+    {
+        for (count = 0; count < strlen(hu_stat[u.uhs]); count++)
+        {
+            if ((hu_stat[u.uhs][count]) == ' ')
+            {
+                break;
+            }
+            buf[count] = hu_stat[u.uhs][count];
+        }
+
+        buf[count] = '\0';
+        stat_color = text_color_of(buf, text_colors);
+    }
+
+    if (strcmp(stat.id, "encumberance") == 0)
+    {
+        stat_color = text_color_of(enc_stat[prevencumb.value],
+         text_colors);
+    }
+
+    if (strcmp(stat.id, "sick") == 0)
+    {
+        if (u.usick_type & SICK_VOMITABLE)
+        {
+            stat_color = text_color_of("foodpois", text_colors);
+        }
+        else
+        {
+            stat_color = text_color_of("ill", text_colors);
+        }
+    }
+
+    if (strcmp(stat.id, "align") == 0)
+    {
+        switch (u.ualign.type)
+        {
+            case A_LAWFUL:
+            {
+                stat_color = text_color_of("lawful", text_colors);
+                break;
+            }
+            case A_NEUTRAL:
+            {
+                stat_color = text_color_of("neutral", text_colors);
+                break;
+            }
+            case A_CHAOTIC:
+            {
+                stat_color = text_color_of("chaotic", text_colors);
+                break;
+            }
+        }
+    }
+
+    color = stat_color.color;
+    attr = A_NORMAL;
+
+    for (count = 0; (1 << count) <= stat_color.attr_bits; ++count)
+	{
+	    if (count != ATR_NONE && stat_color.attr_bits & (1 << count))
+	    {
+		    attr += curses_convert_attr(count);
+		}
+    }
+
+    stat.stat_color = color;
+    stat.stat_attr = attr;
+#endif  /* STATUS_COLORS */
+
+    if ((stat.stat_color == NO_COLOR) && (stat.stat_attr == A_NORMAL))
+    {
+        if (stat.highlight_turns > 0)
+        {
+#ifdef STATUS_COLORS
+            if (iflags.use_status_colors)
+#endif
+            curses_toggle_color_attr(win, stat.highlight_color,
+             A_NORMAL, onoff);
+        }
+
+        return;
+    }
+
+#ifdef STATUS_COLORS
+    if (iflags.use_status_colors)
+#endif
+    curses_toggle_color_attr(win, stat.stat_color, stat.stat_attr,
+        onoff);
+}
+
+
+/* Determine if a stat is configured via statuscolors. */
+
+#ifdef STATUS_COLORS
+static boolean stat_colored(const char *id)
+{
+    struct text_color_option *cur_option =
+     (struct text_color_option *)text_colors;
+
+    while(cur_option != NULL)
+    {
+        if (strcmpi(cur_option->text, id) == 0)
+        {
+            return TRUE;
+        }
+
+        cur_option = (struct text_color_option *)cur_option->next;
+    }
+
+    return FALSE;
+}
+#endif  /* STATUS_COLORS */
