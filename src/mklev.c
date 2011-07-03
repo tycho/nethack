@@ -275,7 +275,7 @@ rndvault_gen_load()
 	while (dlb_fgets(line, sizeof line, fd)) {
 	    struct _rndvault *vlt = (struct _rndvault *) alloc(sizeof(struct _rndvault));
 	    fnamebuf[0] = '\0';
-	    if (sscanf(line, "%ld %63s", &frq, &fnamebuf) == 2) {
+	    if (sscanf(line, "%ld %63s", &frq, fnamebuf) == 2) {
 		if (frq < 1) frq = 1;
 		vlt->freq = frq;
 		vlt->fname = strdup(fnamebuf);
