@@ -117,8 +117,8 @@ RANDOM	= $(OBJ)\random.o
 #  debug capability in the object files, or in the NetHack executable.
 #  Comment them if you want debug capability.
 
-#cdebug =
-#linkdebug =
+cdebug =
+linkdebug =
 
 #
 # Compiler and Linker flags
