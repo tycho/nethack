@@ -33,6 +33,7 @@ extern int errno;
 #endif
 
 #if defined(UNIX) && defined(QT_GRAPHICS)
+#include <limits.h>
 #include <dirent.h>
 #endif
 

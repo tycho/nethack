@@ -174,11 +174,11 @@
 
 #ifdef UNIX
 /* path and file name extension for compression program */
-/* #define COMPRESS "/usr/bin/compress"	 Lempel-Ziv compression */
-/* #define COMPRESS_EXTENSION ".Z"	 compress's extension */
+/* #define COMPRESS "/usr/bin/compress"*/	/* Lempel-Ziv compression */
+/* #define COMPRESS_EXTENSION ".Z"	*/	/* compress's extension */
 /* An example of one alternative you might want to use: */
-#define COMPRESS "/usr/bin/gzip" /* FSF gzip compression */
-#define COMPRESS_EXTENSION ".gz" 	/* normal gzip extension */
+#define COMPRESS "/usr/bin/gzip"	 	/* FSF gzip compression */
+#define COMPRESS_EXTENSION ".gz" 		/* normal gzip extension */
 #endif
 
 #ifndef COMPRESS
@@ -209,7 +209,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/usr/games/lib/nethackdir"
+#  define HACKDIR "/usr/local/lib/sporkhack"
 # endif
 
 /*
