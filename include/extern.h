@@ -1464,6 +1464,9 @@ E void NDECL(free_autopickup_exceptions);
 #ifdef MENU_COLOR
 E boolean FDECL(add_menu_coloring, (char *));
 #endif /* MENU_COLOR */
+#ifdef STATUS_COLORS
+E boolean FDECL(parse_status_color_options, (char *));
+#endif
 
 /* ### pager.c ### */
 
@@ -1937,6 +1940,7 @@ E boolean FDECL(check_room, (xchar *,xchar *,xchar *,xchar *,BOOLEAN_P));
 E boolean FDECL(create_room, (XCHAR_P,XCHAR_P,XCHAR_P,XCHAR_P,
 			      XCHAR_P,XCHAR_P,XCHAR_P,XCHAR_P));
 E void FDECL(create_secret_door, (struct mkroom *,XCHAR_P));
+E void FDECL(flip_level, (int));
 E boolean FDECL(dig_corridor, (coord *,coord *,BOOLEAN_P,SCHAR_P,SCHAR_P));
 E void FDECL(fill_room, (struct mkroom *,BOOLEAN_P));
 E boolean FDECL(load_special, (const char *));
@@ -1945,6 +1949,9 @@ E boolean FDECL(load_special, (const char *));
 
 #ifdef USE_TRAMPOLI
 E int NDECL(learn);
+#endif
+#ifdef DUMP_LOG
+E void NDECL(dump_spells);
 #endif
 E int FDECL(study_book, (struct obj *));
 E void FDECL(book_disappears, (struct obj *));
