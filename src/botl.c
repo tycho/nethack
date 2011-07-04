@@ -373,7 +373,6 @@ bot2()
 	int hp, hpmax;
 	int cap = near_capacity();
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	struct color_option color_option;
 	int save_botlx = flags.botlx;
 #endif
 
