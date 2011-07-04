@@ -1311,7 +1311,7 @@ int zx,zy;
 			if (rx == u.ux && ry == u.uy) { 
 				somehit = TRUE; 
 				dmg += rn2(4) + (otmp->otyp == BOULDER ? d(2,6) : 0);
-			} else if (mtmp = m_at(rx,ry)) {
+			} else if ((mtmp = m_at(rx,ry))) {
 				/* spare the player a barrage of messages for each time
 				 * a monster is hit by a rock; just show the killed message */
 				mhat = which_armor(mtmp, W_ARMH);
