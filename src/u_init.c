@@ -893,7 +893,7 @@ u_init()
 			attkptr->adtyp = AD_CLRC + rn2(2);	 /* AT_MAGC must correspond to a spell type */
 		}
 		if (attkptr->aatyp == AT_BREA) {
-			attkptr->adtyp == AD_RBRE;				 /* Tiamat's breath weapon if you're a breather at all :)  */
+			attkptr->adtyp = AD_RBRE;				 /* Tiamat's breath weapon if you're a breather at all :)  */
 		}
 		attkptr->damn = 2;							 /* we're almost sure to get this wrong first time */
 		attkptr->damd = 10;							 /* either too high or too low */
