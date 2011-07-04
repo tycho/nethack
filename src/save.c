@@ -952,7 +952,7 @@ register int fd, mode;
 
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 
-void
+static void
 free_percent_color_options(list_head)
 struct percent_color_option *list_head;
 {
@@ -961,7 +961,7 @@ struct percent_color_option *list_head;
 	free(list_head);
 }
 
-void
+static void
 free_text_color_options(list_head)
 struct text_color_option *list_head;
 {
@@ -971,7 +971,7 @@ struct text_color_option *list_head;
 	free(list_head);
 }
 
-void
+static void
 free_status_colors()
 {
 	free_percent_color_options(hp_colors); hp_colors = NULL;
@@ -992,7 +992,7 @@ free_dungeons()
 }
 
 #ifdef MENU_COLOR
-void
+static void
 free_menu_coloring()
 {
     struct menucoloring *tmp = menu_colorings;

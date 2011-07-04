@@ -69,7 +69,7 @@ const struct percent_color_option *color_options;
 	return percentage_color_of(value, max, color_options->next);
 }
 
-void
+static void
 start_color_option(color_option)
 struct color_option color_option;
 {
@@ -81,7 +81,7 @@ struct color_option color_option;
 			term_start_attr(i);
 }
 
-void
+static void
 end_color_option(color_option)
 struct color_option color_option;
 {
@@ -93,7 +93,7 @@ struct color_option color_option;
 			term_end_attr(i);
 }
 
-void
+static void
 apply_color_option(color_option, newbot2)
 struct color_option color_option;
 const char *newbot2;
@@ -105,7 +105,7 @@ const char *newbot2;
 	end_color_option(color_option);
 }
 
-void
+static void
 add_colored_text(text, newbot2)
 const char *text;
 char *newbot2;
