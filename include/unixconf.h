@@ -21,7 +21,7 @@
  */
 
 /* define exactly one of the following four choices */
-/*#define BSD 1	/* define for 4.n/Free/Open/Net BSD  */
+/*#define BSD 1	*/ /* define for 4.n/Free/Open/Net BSD  */
 			/* also for relatives like SunOS 4.x, DG/UX, and */
 			/* older versions of Linux */
 #ifdef TARGET_OS_ULTRIX
@@ -41,7 +41,7 @@
 
 
 /* define any of the following that are appropriate */
-/* #define SVR4		/* use in addition to SYSV for System V Release 4 */
+/* #define SVR4	*/	/* use in addition to SYSV for System V Release 4 */
 			/* including Solaris 2+ */
 #define NETWORK		/* if running on a networked system */
 			/* e.g. Suns sharing a playground through NFS */
@@ -157,7 +157,7 @@
  * A stat system call is done on the mailbox every MAILCKFREQ moves.
  */
 
-/* #define MAIL			/* Deliver mail during the game */
+/* #define MAIL	*/		/* Deliver mail during the game */
 
 /* The Andrew Message System does mail a little differently from normal
  * UNIX.  Mail is deposited in the user's own directory in ~/Mailbox
