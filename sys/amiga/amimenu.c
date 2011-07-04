@@ -1,4 +1,3 @@
-/*    SCCS Id: @(#)amimenu.c    3.2    96/02/04			   */
 /*    Copyright (c) Olaf 'Rhialto' Seibert, 1989		   */
 /*    Copyright (c) Kenneth Lorber, Bethesda, Maryland, 1992, 1993, 1996 */
 /*    Copyright (c) Janne Salmijärvi, 2000 */
