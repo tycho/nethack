@@ -3,13 +3,16 @@
 /*.xpm
 /*.xbm
 /data
+/dlb.lst
 /dungeon
 /dungeon.pdf
 /nhdat
 /options
 /oracles
+/porthelp
 /quest.dat
 /rumors
+/ttyoptions
 /vaults.dat
 /x11tiles
 /*_levs

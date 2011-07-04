@@ -1,5 +1,11 @@
+/*.PDB
+/*.map
 /*-t
+/Makefile.*
 /Sysunix
+/cursmake.gcc
 /monstr.c
 /sporkhack
+/nhdat
+/o
 /vis_tab.c

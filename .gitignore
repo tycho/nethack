@@ -1,4 +1,8 @@
 *.[ao]
+/*.dsw
+/*.sln
+/binary
+/build
 /Makefile
 /dat/Makefile
 /doc/Makefile
