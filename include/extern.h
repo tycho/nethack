@@ -1432,6 +1432,9 @@ E void NDECL(free_autopickup_exceptions);
 #ifdef MENU_COLOR
 E boolean FDECL(add_menu_coloring, (char *));
 #endif /* MENU_COLOR */
+#ifdef STATUS_COLORS
+E boolean FDECL(parse_status_color_options, (char *));
+#endif /* STATUS_COLORS */
 
 /* ### pager.c ### */
 
@@ -1916,6 +1919,9 @@ E int FDECL(spelleffects, (int,BOOLEAN_P));
 E void NDECL(losespells);
 E int NDECL(dovspell);
 E void FDECL(initialspell, (struct obj *));
+#ifdef DUMP_LOG
+E void NDECL(dump_spells);
+#endif
 
 /* ### steal.c ### */
 

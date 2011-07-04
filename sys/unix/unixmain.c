@@ -529,7 +529,7 @@ wd_message()
  * Add a slash to any name not ending in /. There must
  * be room for the /
  */
-void
+static void
 append_slash(name)
 char *name;
 {

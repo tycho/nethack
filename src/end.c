@@ -42,7 +42,6 @@ void FDECL(list_vanquished, (CHAR_P,BOOLEAN_P));  /* showborn patch */
 #ifdef DUMP_LOG
 extern char msgs[][BUFSZ];
 extern int lastmsg;
-extern void NDECL(dump_spells);
 void FDECL(do_vanquished, (int, BOOLEAN_P, BOOLEAN_P));
 STATIC_DCL void FDECL(list_genocided, (int, BOOLEAN_P, BOOLEAN_P));
 #else
@@ -97,8 +96,8 @@ extern const char * const killed_by_prefix[];	/* from topten.c */
 FILE *dump_fp = (FILE *)0;  /* file pointer for dumps */
 /* functions dump_init, dump_exit and dump are from the dump patch */
 
-void
-dump_init ()
+static void
+dump_init()
 {
   if (dump_fn[0]) {
     char *p = (char *) strstr(dump_fn, "%n");
@@ -134,8 +133,8 @@ dump_init ()
   }
 }
 
-void
-dump_exit ()
+static void
+dump_exit()
 {
   if (dump_fp)
     fclose (dump_fp);
