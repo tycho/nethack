@@ -57,17 +57,17 @@ typedef long	off_t;
 #endif
 #ifndef SIG_RET_TYPE
 # if defined(NHSTDC) || defined(POSIX_TYPES) || defined(OS2) || defined(__DECC)
-#  define SIG_RET_TYPE void (*)()
+#  define SIG_RET_TYPE void (*)(int)
 # endif
 #endif
 #ifndef SIG_RET_TYPE
 # if defined(ULTRIX) || defined(SUNOS4) || defined(SVR3) || defined(SVR4)
 	/* SVR3 is defined automatically by some systems */
-#  define SIG_RET_TYPE void (*)()
+#  define SIG_RET_TYPE void (*)(int)
 # endif
 #endif
 #ifndef SIG_RET_TYPE	/* BSD, SIII, SVR2 and earlier, Sun3.5 and earlier */
-# define SIG_RET_TYPE int (*)()
+# define SIG_RET_TYPE int (*)(int)
 #endif
 
 #if !defined(__cplusplus) && !defined(__GO32__)
@@ -89,8 +89,8 @@ E int FDECL(srandom, (unsigned int));
 #  endif
 # endif
 #else
-E long lrand48();
-E void srand48();
+E long lrand48(void);
+E void srand48(long);
 #endif /* BSD || ULTRIX || RANDOM */
 
 #if !defined(BSD) || defined(ultrix)
@@ -348,7 +348,7 @@ E char *FDECL(memset, (char*,int,int));
 E void sleep();
 #endif
 #if defined(ULTRIX) || defined(SYSV)
-E unsigned sleep();
+E unsigned int sleep(unsigned int);
 #endif
 #if defined(HPUX)
 E unsigned int FDECL(sleep, (unsigned int));
@@ -358,7 +358,7 @@ E int FDECL(sleep, (unsigned));
 #endif
 
 E char *FDECL(getenv, (const char *));
-E char *getlogin();
+E char *getlogin(void);
 #if defined(HPUX) && !defined(_POSIX_SOURCE)
 E long NDECL(getuid);
 E long NDECL(getgid);
@@ -503,7 +503,7 @@ E char *FDECL(tgoto, (const char *,int,int));
 #else
 # if ! (defined(HPUX) && defined(_POSIX_SOURCE))
 E int FDECL(tgetent, (char *,const char *));
-E void FDECL(tputs, (const char *,int,int (*)()));
+E void FDECL(tputs, (const char *,int,int (*)(void)));
 # endif
 E int FDECL(tgetnum, (const char *));
 E int FDECL(tgetflag, (const char *));
