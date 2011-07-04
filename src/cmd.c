@@ -1312,14 +1312,6 @@ int final;
 	int ltmp;
 	char buf[BUFSZ];
 	char buf2[BUFSZ];
-	const char *enc_stat[] = { /* copied from botl.c */
-	     "",
-	     "burdened",
-	     "stressed",
-	     "strained",
-	     "overtaxed",
-	     "overloaded"
-	};
 	char *youwere = "  You were ";
 	char *youhave = "  You have ";
 	char *youhad  = "  You had ";
