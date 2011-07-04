@@ -294,7 +294,8 @@ rndvault_gen_load()
 char *
 rndvault_getname()
 {
-    if (!rndvault_gen) rndvault_gen_load();
+    if (!rndvault_gen)
+	rndvault_gen_load();
     if (rndvault_gen) {
 	long frq = rn2(rndvault_gen->total_freq);
 	struct _rndvault *tmp = rndvault_gen->vaults;
@@ -303,6 +304,8 @@ rndvault_getname()
 	    return tmp->fname;
 	return "vlt-0000";
     }
+    /* This shouldn't happen. */
+    return NULL;
 }
 
 
