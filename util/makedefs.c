@@ -1928,7 +1928,7 @@ do_vision()
 	exit(EXIT_FAILURE);
     }
     Fprintf(ofp,Dont_Edit_Code);
-    Fprintf(ofp,"#include \"config.h\"\n");
+    Fprintf(ofp,"#include \"hack.h\"\n");
     Fprintf(ofp,"#ifdef VISION_TABLES\n");
     Fprintf(ofp,"#include \"vis_tab.h\"\n");
 
