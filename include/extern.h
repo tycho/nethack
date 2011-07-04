@@ -2450,7 +2450,7 @@ E struct monst *FDECL(boomhit, (int,int,int));
 E int FDECL(burn_floor_paper, (int,int,BOOLEAN_P,BOOLEAN_P));
 E void FDECL(buzz, (int,int,XCHAR_P,XCHAR_P,int,int));
 E void FDECL(melt_ice, (XCHAR_P,XCHAR_P));
-E int FDECL(zap_over_floor, (XCHAR_P,XCHAR_P,int,boolean *,boolean));
+E int FDECL(zap_over_floor, (XCHAR_P,XCHAR_P,int,boolean *,BOOLEAN_P));
 E void FDECL(fracture_rock, (struct obj *));
 E boolean FDECL(break_statue, (struct obj *));
 E void FDECL(destroy_item, (int,int));
