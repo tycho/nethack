@@ -97,7 +97,7 @@ struct monst *invent_carrying_monster = NULL;
 
 #define SPLEV_STACK_RESERVE 128
 
-void
+static void
 splev_stack_init(st)
      struct splevstack *st;
 {
@@ -108,7 +108,7 @@ splev_stack_init(st)
     }
 }
 
-void
+static void
 splev_stack_done(st)
      struct splevstack *st;
 {
@@ -145,7 +145,7 @@ splev_stack_done(st)
     }
 }
 
-void
+static void
 splev_stack_push(st, v)
      struct splevstack *st;
      struct opvar *v;
@@ -165,7 +165,7 @@ splev_stack_push(st, v)
     st->depth++;
 }
 
-struct opvar *
+static struct opvar *
 splev_stack_pop(st)
      struct splevstack *st;
 {
@@ -195,7 +195,7 @@ splev_stack_pop(st)
 #define OV_pop_typ(x,typ) (x = splev_stack_getdat(coder, typ))
 
 
-struct opvar *
+static struct opvar *
 opvar_new_str(s)
      char *s;
 {
@@ -213,7 +213,7 @@ opvar_new_str(s)
     return tmpov;
 }
 
-struct opvar *
+static struct opvar *
 opvar_new_int(i)
      long i;
 {
@@ -224,7 +224,7 @@ opvar_new_int(i)
     return tmpov;
 }
 
-struct opvar *
+static struct opvar *
 opvar_new_coord(x,y)
      int x,y;
 {
@@ -235,7 +235,7 @@ opvar_new_coord(x,y)
     return tmpov;
 }
 
-void
+static void
 opvar_free_x(ov)
      struct opvar *ov;
 {
@@ -261,7 +261,7 @@ opvar_free_x(ov)
 
 #define opvar_free(ov) { if (ov) { opvar_free_x(ov); ov = NULL; } else impossible("opvar_free(), %s", __FUNCTION__); }
 
-struct opvar *
+static struct opvar *
 opvar_clone(ov)
      struct opvar *ov;
 {
@@ -297,7 +297,7 @@ opvar_clone(ov)
 }
 
 
-struct opvar *
+static struct opvar *
 opvar_var_conversion(coder, ov)
      struct sp_coder *coder;
      struct opvar *ov;
@@ -328,7 +328,7 @@ opvar_var_conversion(coder, ov)
     return NULL;
 }
 
-struct splev_var *
+static struct splev_var *
 opvar_var_defined(coder, name)
      struct sp_coder *coder;
      char *name;
@@ -343,7 +343,7 @@ opvar_var_defined(coder, name)
     return NULL;
 }
 
-struct opvar *
+static struct opvar *
 splev_stack_getdat(coder, typ)
      struct sp_coder *coder;
      xchar typ;
@@ -358,7 +358,7 @@ splev_stack_getdat(coder, typ)
     return NULL;
 }
 
-struct opvar *
+static struct opvar *
 splev_stack_getdat_any(coder)
      struct sp_coder *coder;
 {
@@ -373,7 +373,7 @@ splev_stack_getdat_any(coder)
 
 
 
-void
+static void
 variable_list_del(varlist)
      struct splev_var *varlist;
 {
@@ -397,7 +397,7 @@ variable_list_del(varlist)
 }
 
 
-void
+static void
 lvlfill_maze_grid(x1,y1,x2,y2,filling)
      int x1,y1,x2,y2;
      schar filling;
@@ -415,7 +415,7 @@ lvlfill_maze_grid(x1,y1,x2,y2,filling)
 	}
 }
 
-void
+static void
 lvlfill_solid(filling,lit)
      schar filling;
      schar lit;
@@ -427,7 +427,8 @@ lvlfill_solid(filling,lit)
 	}
 }
 
-void flip_drawbridge_horizontal(lev)
+static void
+flip_drawbridge_horizontal(lev)
 struct rm *lev;
 {
         if (IS_DRAWBRIDGE(lev->typ)) {
@@ -441,7 +442,8 @@ struct rm *lev;
         }
 }
 
-void flip_drawbridge_vertical(lev)
+static void
+flip_drawbridge_vertical(lev)
 struct rm *lev;
 {
         if (IS_DRAWBRIDGE(lev->typ)) {
@@ -691,7 +693,7 @@ flip_level(int flp)
     wall_extends(1, 0, COLNO-1, ROWNO-1);
 }
 
-void
+static void
 flip_level_rnd(int flp)
 {
     int c = 0;
@@ -747,7 +749,7 @@ count_features()
 	}
 }
 
-void
+static void
 remove_boundary_syms()
 {
     /*
@@ -771,7 +773,7 @@ remove_boundary_syms()
     }
 }
 
-void
+static void
 fill_rooms()
 {
     int tmpi;
@@ -1037,7 +1039,7 @@ chk:
 }
 
 
-boolean
+static boolean
 check_room_space(x1,y1,x2,y2)
 {
     int x,y;
@@ -2032,7 +2034,7 @@ int		typ;
 	levl[x][y].typ = typ;
 }
 
-void
+static void
 replace_terrain(terr, croom)
 replaceterrain *terr;
 struct mkroom *croom;
@@ -2055,7 +2057,7 @@ struct mkroom *croom;
 }
 
 
-void
+static void
 set_terrain(terr, croom)
 terrain *terr;
 struct mkroom *croom;
@@ -2575,7 +2577,7 @@ room *r;
     }
 }
 
-void
+static void
 wallify_map(x1,y1,x2,y2)
 int x1,y1,x2,y2;
 {
@@ -2776,7 +2778,7 @@ sp_lev *lvl;
     return TRUE;
 }
 
-void
+static void
 splev_initlev(linit)
 lev_init *linit;
 {
@@ -2798,7 +2800,7 @@ lev_init *linit;
     }
 }
 
-struct sp_frame *
+static struct sp_frame *
 frame_new(execptr)
      long execptr;
 {
@@ -2813,7 +2815,7 @@ frame_new(execptr)
     return frame;
 }
 
-void
+static void
 frame_del(frame)
      struct sp_frame *frame;
 {
@@ -2830,7 +2832,7 @@ frame_del(frame)
 }
 
 
-void
+static void
 spo_frame_push(coder)
      struct sp_coder *coder;
 {
@@ -2839,7 +2841,7 @@ spo_frame_push(coder)
     coder->frame = tmpframe;
 }
 
-void
+static void
 spo_frame_pop(coder)
      struct sp_coder *coder;
 {
@@ -2850,14 +2852,14 @@ spo_frame_pop(coder)
     }
 }
 
-long
+static long
 sp_code_jmpaddr(curpos, jmpaddr)
      long curpos, jmpaddr;
 {
     return (curpos + jmpaddr);
 }
 
-void
+static void
 spo_call(coder)
      struct sp_coder *coder;
 {
@@ -2880,7 +2882,7 @@ spo_call(coder)
     opvar_free(params);
 }
 
-void
+static void
 spo_return(coder)
      struct sp_coder *coder;
 {
@@ -2904,7 +2906,7 @@ spo_return(coder)
     opvar_free(params);
 }
 
-void
+static void
 spo_end_moninvent(coder)
      struct sp_coder *coder;
 {
@@ -2913,7 +2915,7 @@ spo_end_moninvent(coder)
     invent_carrying_monster = NULL;
 }
 
-void
+static void
 spo_pop_container(coder)
      struct sp_coder *coder;
 {
@@ -2924,7 +2926,7 @@ spo_pop_container(coder)
 }
 
 
-void
+static void
 spo_message(coder)
      struct sp_coder *coder;
 {
@@ -2949,7 +2951,7 @@ spo_message(coder)
     opvar_free(op);
 }
 
-void
+static void
 spo_monster(coder)
      struct sp_coder *coder;
 {
@@ -3094,7 +3096,7 @@ spo_monster(coder)
     opvar_free(varparam);
 }
 
-void
+static void
 spo_object(coder)
      struct sp_coder *coder;
 {
@@ -3247,7 +3249,7 @@ spo_object(coder)
     opvar_free(containment);
 }
 
-void
+static void
 spo_level_flags(coder)
      struct sp_coder *coder;
 {
@@ -3273,7 +3275,7 @@ spo_level_flags(coder)
     opvar_free(flagdata);
 }
 
-void
+static void
 spo_initlevel(coder)
      struct sp_coder *coder;
 {
@@ -3312,7 +3314,7 @@ spo_initlevel(coder)
     opvar_free(filling);
 }
 
-void
+static void
 spo_mon_generation(coder)
      struct sp_coder *coder;
 {
@@ -3360,7 +3362,7 @@ spo_mon_generation(coder)
     opvar_free(n_tuples);
 }
 
-void
+static void
 spo_level_sounds(coder)
      struct sp_coder *coder;
 {
@@ -3407,7 +3409,7 @@ spo_level_sounds(coder)
     opvar_free(n_tuples);
 }
 
-void
+static void
 spo_engraving(coder)
      struct sp_coder *coder;
 {
@@ -3430,7 +3432,7 @@ spo_engraving(coder)
     opvar_free(coord);
 }
 
-void
+static void
 spo_room(coder)
      struct sp_coder *coder;
 {
@@ -3492,7 +3494,7 @@ spo_room(coder)
     coder->n_subroom++;
 }
 
-void
+static void
 spo_endroom(coder)
      struct sp_coder *coder;
 {
@@ -3513,7 +3515,7 @@ spo_endroom(coder)
     }
 }
 
-void
+static void
 spo_stair(coder)
      struct sp_coder *coder;
 {
@@ -3542,7 +3544,7 @@ spo_stair(coder)
     opvar_free(up);
 }
 
-void
+static void
 spo_ladder(coder)
      struct sp_coder *coder;
 {
@@ -3570,7 +3572,7 @@ spo_ladder(coder)
     opvar_free(up);
 }
 
-void
+static void
 spo_grave(coder)
      struct sp_coder *coder;
 {
@@ -3597,7 +3599,7 @@ spo_grave(coder)
     opvar_free(txt);
 }
 
-void
+static void
 spo_altar(coder)
      struct sp_coder *coder;
 {
@@ -3620,7 +3622,7 @@ spo_altar(coder)
     opvar_free(al);
 }
 
-void
+static void
 spo_wallwalk(coder)
      struct sp_coder *coder;
 {
@@ -3647,7 +3649,7 @@ spo_wallwalk(coder)
     opvar_free(bgtyp);
 }
 
-void
+static void
 spo_trap(coder)
      struct sp_coder *coder;
 {
@@ -3667,7 +3669,7 @@ spo_trap(coder)
     opvar_free(type);
 }
 
-void
+static void
 spo_gold(coder)
      struct sp_coder *coder;
 {
@@ -3682,7 +3684,7 @@ spo_gold(coder)
     opvar_free(amt);
 }
 
-void
+static void
 spo_corridor(coder)
      struct sp_coder *coder;
 {
@@ -3714,7 +3716,7 @@ spo_corridor(coder)
     opvar_free(srcroom);
 }
 
-struct opvar *
+static struct opvar *
 selection_opvar(nbuf)
      char *nbuf;
 {
@@ -3733,7 +3735,7 @@ selection_opvar(nbuf)
     return ov;
 }
 
-char
+static char
 selection_getpoint(x,y,ov)
      int x,y;
      struct opvar *ov;
@@ -3744,7 +3746,7 @@ selection_getpoint(x,y,ov)
     return (ov->vardata.str[COLNO*y + x] - 1);
 }
 
-void
+static void
 selection_setpoint(x,y,ov, c)
      int x,y;
      struct opvar *ov;
@@ -3756,7 +3758,7 @@ selection_setpoint(x,y,ov, c)
     ov->vardata.str[COLNO*y + x] = (c + 1);
 }
 
-struct opvar *
+static struct opvar *
 selection_logical_oper(s1, s2, oper)
      struct opvar *s1, *s2;
      char oper;
@@ -3787,7 +3789,7 @@ selection_logical_oper(s1, s2, oper)
 
 
 
-void
+static void
 selection_filter_percent(ov, percent)
     struct opvar *ov;
     int percent;
@@ -3800,7 +3802,7 @@ selection_filter_percent(ov, percent)
 		selection_setpoint(x,y,ov,0);
 }
 
-int
+static int
 selection_rndcoord(ov, x,y)
     struct opvar *ov;
     schar *x, *y;
@@ -3831,7 +3833,7 @@ selection_rndcoord(ov, x,y)
     return 0;
 }
 
-void
+static void
 selection_do_grow(ov, dir)
      struct opvar *ov;
      int dir;
@@ -3863,7 +3865,7 @@ selection_do_grow(ov, dir)
 	    if (tmp[x][y]) selection_setpoint(x,y,ov,1);
 }
 
-void
+static void
 selection_floodfill(ov, x,y)
      struct opvar *ov;
      int x,y;
@@ -3895,7 +3897,7 @@ selection_floodfill(ov, x,y)
 }
 
 /* McIlroy's Ellipse Algorithm */
-void
+static void
 selection_do_ellipse(ov, xc,yc, a,b, filled)
     struct opvar *ov;
     int xc,yc,a,b,filled;
@@ -3959,7 +3961,7 @@ selection_do_ellipse(ov, xc,yc, a,b, filled)
 
 
 
-void
+static void
 selection_do_line(x1,y1,x2,y2, ov) /* bresenham line algo */
      schar x1,y1,x2,y2;
      struct opvar *ov;
@@ -4011,7 +4013,7 @@ selection_do_line(x1,y1,x2,y2, ov) /* bresenham line algo */
     }
 }
 
-void
+static void
 selection_do_randline(x1,y1,x2,y2,rough, rec, ov)
      schar x1,y1,x2,y2,rough,rec;
      struct opvar *ov;
@@ -4054,7 +4056,7 @@ selection_do_randline(x1,y1,x2,y2,rough, rec, ov)
 }
 
 
-void
+static void
 selection_iterate(ov, func, arg)
      struct opvar *ov;
      void FDECL((*func), (int,int,genericptr_t));
@@ -4067,7 +4069,7 @@ selection_iterate(ov, func, arg)
 	    if (selection_getpoint(x,y, ov)) (*func)(x,y, arg);
 }
 
-void
+static void
 sel_set_ter(x,y,arg)
      int x,y;
      genericptr_t arg;
@@ -4085,7 +4087,7 @@ sel_set_ter(x,y,arg)
     }
 }
 
-void
+static void
 sel_set_feature(x,y,arg)
      int x,y;
      genericptr_t arg;
@@ -4094,7 +4096,7 @@ sel_set_feature(x,y,arg)
     levl[x][y].typ = (*(int *)arg);
 }
 
-void
+static void
 sel_set_door(dx,dy,arg)
      int dx,dy;
      genericptr_t arg;
@@ -4128,7 +4130,7 @@ sel_set_door(dx,dy,arg)
 
 }
 
-void
+static void
 spo_door(coder)
      struct sp_coder *coder;
 {
@@ -4146,7 +4148,7 @@ spo_door(coder)
     opvar_free(msk);
 }
 
-void
+static void
 spo_feature(coder)
      struct sp_coder *coder;
 {
@@ -4165,7 +4167,7 @@ spo_feature(coder)
     opvar_free(sel);
 }
 
-void
+static void
 spo_topography(coder)
      struct sp_coder *coder;
 {
@@ -4187,7 +4189,7 @@ spo_topography(coder)
     opvar_free(pos);
 }
 
-void
+static void
 spo_terrain(coder)
      struct sp_coder *coder;
 {
@@ -4205,7 +4207,7 @@ spo_terrain(coder)
     opvar_free(sel);
 }
 
-void
+static void
 spo_replace_terrain(coder)
      struct sp_coder *coder;
 {
@@ -4235,7 +4237,7 @@ spo_replace_terrain(coder)
     opvar_free(chance);
 }
 
-void
+static void
 spo_spill(coder)
      struct sp_coder *coder;
 {
@@ -4264,7 +4266,7 @@ spo_spill(coder)
     opvar_free(lit);
 }
 
-void
+static void
 spo_levregion(coder)
      struct sp_coder *coder;
 {
@@ -4351,7 +4353,7 @@ spo_levregion(coder)
     opvar_free(padding);
 }
 
-void
+static void
 spo_region(coder)
      struct sp_coder *coder;
 {
@@ -4444,7 +4446,7 @@ spo_region(coder)
     opvar_free(rtype);
 }
 
-void
+static void
 spo_drawbridge(coder)
      struct sp_coder *coder;
 {
@@ -4467,7 +4469,7 @@ spo_drawbridge(coder)
     opvar_free(dir);
 }
 
-void
+static void
 spo_mazewalk(coder)
      struct sp_coder *coder;
 {
@@ -4541,7 +4543,7 @@ spo_mazewalk(coder)
     opvar_free(ftyp);
 }
 
-void
+static void
 spo_wall_property(coder)
      struct sp_coder *coder;
 {
@@ -4564,7 +4566,7 @@ spo_wall_property(coder)
     opvar_free(r);
 }
 
-void
+static void
 spo_room_door(coder)
      struct sp_coder *coder;
 {
@@ -4590,7 +4592,7 @@ spo_room_door(coder)
     opvar_free(pos);
 }
 
-void
+static void
 spo_wallify(coder)
      struct sp_coder *coder;
 {
@@ -4608,7 +4610,7 @@ spo_wallify(coder)
     opvar_free(r);
 }
 
-void
+static void
 spo_map(coder)
      struct sp_coder *coder;
 {
@@ -4758,7 +4760,7 @@ spo_map(coder)
     opvar_free(mpzalign);
 }
 
-void
+static void
 spo_jmp(coder, lvl)
      struct sp_coder *coder;
      sp_lev *lvl;
@@ -4773,7 +4775,7 @@ spo_jmp(coder, lvl)
     opvar_free(tmpa);
 }
 
-void
+static void
 spo_conditional_jump(coder,lvl)
      struct sp_coder *coder;
      sp_lev *lvl;
@@ -4806,7 +4808,7 @@ spo_conditional_jump(coder,lvl)
 }
 
 
-void
+static void
 spo_var_init(coder)
      struct sp_coder *coder;
 {
@@ -4910,7 +4912,7 @@ create_new_array:
     opvar_free(arraylen);
 }
 
-void
+static void
 spo_shuffle_array(coder)
      struct sp_coder *coder;
 {

@@ -190,7 +190,7 @@ boolean ghostly;
 	free((genericptr_t)tmp_dam);
 }
 
-struct lvl_sounds *
+STATIC_OVL struct lvl_sounds *
 rest_lvl_sounds(fd)
 register int fd;
 {
@@ -217,7 +217,7 @@ register int fd;
     return or;
 }
 
-struct mon_gen_override *
+STATIC_OVL struct mon_gen_override *
 rest_mongen_override(fd)
 register int fd;
 {

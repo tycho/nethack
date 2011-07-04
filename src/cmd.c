@@ -503,7 +503,7 @@ enter_explore_mode()
 
 #ifdef WIZARD
 
-int
+static int
 wiz_fliplevel()
 {
     int f = rnd(3);

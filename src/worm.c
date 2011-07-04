@@ -315,7 +315,7 @@ wormhitu(worm)
  *
  *  Remove the tail of a worm and adjust the hp of the worm.
  */
-void
+static void
 cutoff(worm, tail)
     struct monst *worm;
     struct wseg *tail;

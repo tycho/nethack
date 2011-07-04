@@ -1322,7 +1322,7 @@ register struct permonst *ptr;
 }
 
 
-struct permonst *
+static struct permonst *
 get_override_mon(override)
 struct mon_gen_override *override;
 {

@@ -990,7 +990,7 @@ const struct name_value status_attrnames[] = {
 	 { NULL,	-1 }
 };
 
-int
+STATIC_OVL int
 value_of_name(name, name_values)
 const char *name;
 const struct name_value *name_values;
@@ -1000,7 +1000,7 @@ const struct name_value *name_values;
 	return name_values->value;
 }
 
-struct color_option
+STATIC_OVL struct color_option
 parse_color_option(start)
 char *start;
 {
@@ -1030,7 +1030,7 @@ struct percent_color_option *hp_colors = NULL;
 struct percent_color_option *pw_colors = NULL;
 struct text_color_option *text_colors = NULL;
 
-struct percent_color_option *
+STATIC_OVL struct percent_color_option *
 add_percent_option(new_option, list_head)
 struct percent_color_option *new_option;
 struct percent_color_option *list_head;
@@ -1045,7 +1045,7 @@ struct percent_color_option *list_head;
 	return list_head;
 }
 
-boolean
+STATIC_OVL boolean
 parse_status_color_option(start)
 char *start;
 {

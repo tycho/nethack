@@ -101,8 +101,8 @@ extern const char * const killed_by_prefix[];	/* from topten.c */
 FILE *dump_fp = (FILE *)0;  /* file pointer for dumps */
 /* functions dump_init, dump_exit and dump are from the dump patch */
 
-void
-dump_init ()
+static void
+dump_init()
 {
 #ifdef UNIX
 	mode_t dumpmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
@@ -153,14 +153,14 @@ dump_init ()
   }
 }
 
-void
-dump_exit ()
+static void
+dump_exit()
 {
   if (dump_fp)
     fclose (dump_fp);
 }
 
-void dump (pre, str)
+void dump(pre, str)
      char *pre, *str;
 {
   if (dump_fp)

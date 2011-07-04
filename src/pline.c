@@ -47,9 +47,9 @@ msgpline_free()
     pline_msg = NULL;
 }
 
-int
+STATIC_OVL int
 msgpline_type(msg)
-     char *msg;
+    const char *msg;
 {
     struct _plinemsg *tmp = pline_msg;
     while (tmp) {

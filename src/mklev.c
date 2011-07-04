@@ -226,7 +226,7 @@ boolean special;
 }
 
 
-boolean
+static boolean
 not_enough_rooms()
 {
     int x,y;
@@ -254,7 +254,7 @@ struct _rndvault_gen {
 
 struct _rndvault_gen *rndvault_gen = NULL;
 
-void
+STATIC_OVL void
 rndvault_gen_load()
 {
     if (!rndvault_gen) {
@@ -291,7 +291,7 @@ rndvault_gen_load()
     }
 }
 
-char *
+STATIC_OVL char *
 rndvault_getname()
 {
     if (!rndvault_gen)
@@ -653,7 +653,7 @@ int trap_type;
 /* replaces horiz/vert walls with iron bars,
    iff there's no door next to the place, and there's space
    on the other side of the wall */
-void
+STATIC_OVL void
 make_ironbarwalls(chance)
      int chance;
 {

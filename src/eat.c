@@ -154,7 +154,7 @@ static const struct { const char *txt; int nut; } tintxts[] = {
 	{"", 0}
 };
 
-int
+static int
 tin_content_idx(obj)
      struct obj *obj;
 {
@@ -685,7 +685,7 @@ register struct permonst *ptr;
 	/*NOTREACHED*/
 }
 
-int
+static int
 gives_telepathy_incr(ptr)
 struct permonst *ptr;
 {

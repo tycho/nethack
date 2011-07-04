@@ -40,7 +40,7 @@ extern struct percent_color_option *hp_colors;
 extern struct percent_color_option *pw_colors;
 extern struct text_color_option *text_colors;
 
-struct color_option
+static struct color_option
 text_color_of(text, color_options)
 const char *text;
 const struct text_color_option *color_options;
@@ -55,7 +55,7 @@ const struct text_color_option *color_options;
 	return text_color_of(text, color_options->next);
 }
 
-struct color_option
+static struct color_option
 percentage_color_of(value, max, color_options)
 int value, max;
 const struct percent_color_option *color_options;
@@ -69,7 +69,7 @@ const struct percent_color_option *color_options;
 	return percentage_color_of(value, max, color_options->next);
 }
 
-void
+static void
 start_color_option(color_option)
 struct color_option color_option;
 {
@@ -81,7 +81,7 @@ struct color_option color_option;
 			term_start_attr(i);
 }
 
-void
+static void
 end_color_option(color_option)
 struct color_option color_option;
 {
@@ -93,7 +93,7 @@ struct color_option color_option;
 			term_end_attr(i);
 }
 
-void
+static void
 apply_color_option(color_option, str, x)
 struct color_option color_option;
 const char *str;
@@ -106,7 +106,7 @@ int x;
 	if (iflags.use_status_colors) end_color_option(color_option);
 }
 
-void
+static void
 add_colored_text(text, x)
 const char *text;
 int x;
