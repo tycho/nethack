@@ -453,25 +453,6 @@ static const ulong32 Td4[256] = {
     0x55555555UL, 0x21212121UL, 0x0c0c0c0cUL, 0x7d7d7d7dUL,
 };
 
-#ifdef LTC_SMALL_CODE
-
-#define Te0(x) TE0[x]
-#define Te1(x) RORc(TE0[x], 8)
-#define Te2(x) RORc(TE0[x], 16)
-#define Te3(x) RORc(TE0[x], 24)
-
-#define Td0(x) TD0[x]
-#define Td1(x) RORc(TD0[x], 8)
-#define Td2(x) RORc(TD0[x], 16)
-#define Td3(x) RORc(TD0[x], 24)
-
-#define Te4_0 0x000000FF & Te4
-#define Te4_1 0x0000FF00 & Te4
-#define Te4_2 0x00FF0000 & Te4
-#define Te4_3 0xFF000000 & Te4
-
-#else
-
 #define Te0(x) TE0[x]
 #define Te1(x) TE1[x]
 #define Te2(x) TE2[x]
@@ -1163,8 +1144,6 @@ static const ulong32 Tks3[] = {
 0x79b492a7UL, 0x70b999a9UL, 0x6bae84bbUL, 0x62a38fb5UL, 0x5d80be9fUL, 0x548db591UL, 0x4f9aa883UL, 0x4697a38dUL
 };
 
-#endif /* SMALL CODE */
-
 static const ulong32 rcon[] = {
     0x01000000UL, 0x02000000UL, 0x04000000UL, 0x08000000UL,
     0x10000000UL, 0x20000000UL, 0x40000000UL, 0x80000000UL,
@@ -1181,23 +1160,15 @@ static const ulong32 rcon[] = {
 #define Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
 #define Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
 
-static ulong32 setup_mix(ulong32 temp)
+static ulong32
+setup_mix(temp)
+ulong32 temp;
 {
    return (Te4_3[byte(temp, 2)]) ^
           (Te4_2[byte(temp, 1)]) ^
           (Te4_1[byte(temp, 0)]) ^
           (Te4_0[byte(temp, 3)]);
 }
-
-#ifdef LTC_SMALL_CODE
-static ulong32 setup_mix2(ulong32 temp)
-{
-   return Td0(255 & Te4[byte(temp, 3)]) ^
-          Td1(255 & Te4[byte(temp, 2)]) ^
-          Td2(255 & Te4[byte(temp, 1)]) ^
-          Td3(255 & Te4[byte(temp, 0)]);
-}
-#endif
 
  /**
     Initialize the AES (Rijndael) block cipher
@@ -1207,7 +1178,12 @@ static ulong32 setup_mix2(ulong32 temp)
     @param skey The key in as scheduled by this function.
     @return CRYPT_OK if successful
  */
-int AES_SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_key *skey)
+static int
+AES_SETUP(key, keylen, num_rounds, skey)
+const unsigned char *key;
+int keylen;
+int num_rounds;
+symmetric_key *skey;
 {
     int i, j;
     ulong32 temp, *rk;
@@ -1310,16 +1286,6 @@ int AES_SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_ke
     for (i = 1; i < skey->rijndael.Nr; i++) {
         rrk -= 4;
         rk  += 4;
-    #ifdef LTC_SMALL_CODE        
-        temp = rrk[0];
-        rk[0] = setup_mix2(temp);
-        temp = rrk[1];
-        rk[1] = setup_mix2(temp);
-        temp = rrk[2];
-        rk[2] = setup_mix2(temp);
-        temp = rrk[3];
-        rk[3] = setup_mix2(temp);
-     #else
         temp = rrk[0];
         rk[0] =
             Tks0[byte(temp, 3)] ^
@@ -1344,8 +1310,6 @@ int AES_SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_ke
             Tks1[byte(temp, 2)] ^
             Tks2[byte(temp, 1)] ^
             Tks3[byte(temp, 0)];
-      #endif            
-     
     }
 
     /* copy last */
@@ -1365,11 +1329,11 @@ int AES_SETUP(const unsigned char *key, int keylen, int num_rounds, symmetric_ke
   @param skey The key as scheduled
   @return CRYPT_OK if successful
 */
-#ifdef LTC_CLEAN_STACK
-static int _rijndael_ecb_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey) 
-#else
-int AES_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey)
-#endif
+static int
+AES_encrypt(pt, ct, skey)
+const unsigned char *pt;
+unsigned char *ct;
+symmetric_key *skey;
 {
     ulong32 s0, s1, s2, s3, t0, t1, t2, t3, *rk;
     int Nr, r;
@@ -1385,43 +1349,6 @@ int AES_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey)
     LOAD32H(s1, pt  +  4); s1 ^= rk[1];
     LOAD32H(s2, pt  +  8); s2 ^= rk[2];
     LOAD32H(s3, pt  + 12); s3 ^= rk[3];
-
-#ifdef LTC_SMALL_CODE
-
-    for (r = 0; ; r++) {
-        rk += 4;
-        t0 =
-            Te0(byte(s0, 3)) ^
-            Te1(byte(s1, 2)) ^
-            Te2(byte(s2, 1)) ^
-            Te3(byte(s3, 0)) ^
-            rk[0];
-        t1 =
-            Te0(byte(s1, 3)) ^
-            Te1(byte(s2, 2)) ^
-            Te2(byte(s3, 1)) ^
-            Te3(byte(s0, 0)) ^
-            rk[1];
-        t2 =
-            Te0(byte(s2, 3)) ^
-            Te1(byte(s3, 2)) ^
-            Te2(byte(s0, 1)) ^
-            Te3(byte(s1, 0)) ^
-            rk[2];
-        t3 =
-            Te0(byte(s3, 3)) ^
-            Te1(byte(s0, 2)) ^
-            Te2(byte(s1, 1)) ^
-            Te3(byte(s2, 0)) ^
-            rk[3];
-        if (r == Nr-2) { 
-           break;
-        }
-        s0 = t0; s1 = t1; s2 = t2; s3 = t3;
-    }
-    rk += 4;
-
-#else
 
     /*
      * Nr - 1 full rounds:
@@ -1484,8 +1411,6 @@ int AES_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey)
             rk[3];
     }
 
-#endif
-
     /*
      * apply last round and
      * map cipher state to byte array block:
@@ -1522,15 +1447,6 @@ int AES_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey)
     return CRYPT_OK;
 }
 
-#ifdef LTC_CLEAN_STACK
-int ECB_ENC(const unsigned char *pt, unsigned char *ct, symmetric_key *skey) 
-{
-   int err = _rijndael_ecb_encrypt(pt, ct, skey);
-   burn_stack(sizeof(unsigned long)*8 + sizeof(unsigned long*) + sizeof(int)*2);
-   return err;
-}
-#endif
-
 /**
   Decrypts a block of text with AES
   @param ct The input ciphertext (16 bytes)
@@ -1538,11 +1454,11 @@ int ECB_ENC(const unsigned char *pt, unsigned char *ct, symmetric_key *skey)
   @param skey The key as scheduled 
   @return CRYPT_OK if successful
 */
-#ifdef LTC_CLEAN_STACK
-static int _rijndael_ecb_decrypt(const unsigned char *ct, unsigned char *pt, symmetric_key *skey) 
-#else
-int ECB_DEC(const unsigned char *ct, unsigned char *pt, symmetric_key *skey)
-#endif
+static int
+ECB_DEC(ct, pt, skey)
+const unsigned char *ct;
+unsigned char *pt;
+symmetric_key *skey;
 {
     ulong32 s0, s1, s2, s3, t0, t1, t2, t3, *rk;
     int Nr, r;
@@ -1558,42 +1474,6 @@ int ECB_DEC(const unsigned char *ct, unsigned char *pt, symmetric_key *skey)
     LOAD32H(s1, ct  +  4); s1 ^= rk[1];
     LOAD32H(s2, ct  +  8); s2 ^= rk[2];
     LOAD32H(s3, ct  + 12); s3 ^= rk[3];
-
-#ifdef LTC_SMALL_CODE
-    for (r = 0; ; r++) {
-        rk += 4;
-        t0 =
-            Td0(byte(s0, 3)) ^
-            Td1(byte(s3, 2)) ^
-            Td2(byte(s2, 1)) ^
-            Td3(byte(s1, 0)) ^
-            rk[0];
-        t1 =
-            Td0(byte(s1, 3)) ^
-            Td1(byte(s0, 2)) ^
-            Td2(byte(s3, 1)) ^
-            Td3(byte(s2, 0)) ^
-            rk[1];
-        t2 =
-            Td0(byte(s2, 3)) ^
-            Td1(byte(s1, 2)) ^
-            Td2(byte(s0, 1)) ^
-            Td3(byte(s3, 0)) ^
-            rk[2];
-        t3 =
-            Td0(byte(s3, 3)) ^
-            Td1(byte(s2, 2)) ^
-            Td2(byte(s1, 1)) ^
-            Td3(byte(s0, 0)) ^
-            rk[3];
-        if (r == Nr-2) {
-           break; 
-        }
-        s0 = t0; s1 = t1; s2 = t2; s3 = t3;
-    }
-    rk += 4;
-
-#else       
 
     /*
      * Nr - 1 full rounds:
@@ -1657,7 +1537,6 @@ int ECB_DEC(const unsigned char *ct, unsigned char *pt, symmetric_key *skey)
             Td3(byte(t0, 0)) ^
             rk[3];
     }
-#endif
 
     /*
      * apply last round and
@@ -1696,20 +1575,12 @@ int ECB_DEC(const unsigned char *ct, unsigned char *pt, symmetric_key *skey)
 }
 
 
-#ifdef LTC_CLEAN_STACK
-int ECB_DEC(const unsigned char *ct, unsigned char *pt, symmetric_key *skey) 
-{
-   int err = _rijndael_ecb_decrypt(ct, pt, skey);
-   burn_stack(sizeof(unsigned long)*8 + sizeof(unsigned long*) + sizeof(int)*2);
-   return err;
-}
-#endif
-
-
 /** Terminate the context 
    @param skey    The scheduled key
 */
-void ECB_DONE(symmetric_key *skey)
+static void
+ECB_DONE(skey)
+symmetric_key *skey;
 {
 }
 
@@ -1719,7 +1590,9 @@ void ECB_DONE(symmetric_key *skey)
   @param keysize [in/out] The length of the recommended key (in bytes).  This function will store the suitable size back in this variable.
   @return CRYPT_OK if the input key size is acceptable.
 */
-int ECB_KS(int *keysize)
+static int
+ECB_KS(keysize)
+int *keysize;
 {
    if (*keysize < 16)
       return CRYPT_INVALID_KEYSIZE;
@@ -1752,40 +1625,17 @@ typedef union Hash_state {
     void *data;
 } hash_state;
 
-int sha256_init(hash_state * md);
-int sha256_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int sha256_done(hash_state * md, unsigned char *hash);
-
-#ifdef LTC_SMALL_CODE
-/* the K array */
-static const ulong32 K[64] = {
-    0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
-    0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
-    0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
-    0xc19bf174UL, 0xe49b69c1UL, 0xefbe4786UL, 0x0fc19dc6UL, 0x240ca1ccUL,
-    0x2de92c6fUL, 0x4a7484aaUL, 0x5cb0a9dcUL, 0x76f988daUL, 0x983e5152UL,
-    0xa831c66dUL, 0xb00327c8UL, 0xbf597fc7UL, 0xc6e00bf3UL, 0xd5a79147UL,
-    0x06ca6351UL, 0x14292967UL, 0x27b70a85UL, 0x2e1b2138UL, 0x4d2c6dfcUL,
-    0x53380d13UL, 0x650a7354UL, 0x766a0abbUL, 0x81c2c92eUL, 0x92722c85UL,
-    0xa2bfe8a1UL, 0xa81a664bUL, 0xc24b8b70UL, 0xc76c51a3UL, 0xd192e819UL,
-    0xd6990624UL, 0xf40e3585UL, 0x106aa070UL, 0x19a4c116UL, 0x1e376c08UL,
-    0x2748774cUL, 0x34b0bcb5UL, 0x391c0cb3UL, 0x4ed8aa4aUL, 0x5b9cca4fUL,
-    0x682e6ff3UL, 0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
-    0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL
-};
-#endif
+static int sha256_init(hash_state * md);
+static int sha256_process(hash_state * md, const unsigned char *in, unsigned long inlen);
+static int sha256_done(hash_state * md, unsigned char *hash);
 
 /* compress 512-bits */
-#ifdef LTC_CLEAN_STACK
-static int _sha256_compress(hash_state * md, unsigned char *buf)
-#else
-static int  sha256_compress(hash_state * md, unsigned char *buf)
-#endif
+static int
+sha256_compress(md, buf)
+hash_state *md;
+unsigned char *buf;
 {
     ulong32 S[8], W[64], t0, t1;
-#ifdef LTC_SMALL_CODE
-    ulong32 t;
-#endif
     int i;
 
     /* copy state into S */
@@ -1804,19 +1654,6 @@ static int  sha256_compress(hash_state * md, unsigned char *buf)
     }        
 
     /* Compress */
-#ifdef LTC_SMALL_CODE   
-#define RND(a,b,c,d,e,f,g,h,i)                         \
-     t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];   \
-     t1 = Sigma0(a) + Maj(a, b, c);                    \
-     d += t0;                                          \
-     h  = t0 + t1;
-
-     for (i = 0; i < 64; ++i) {
-         RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
-         t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4]; 
-         S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
-     }  
-#else 
 #define RND(a,b,c,d,e,f,g,h,i,ki)                    \
      t0 = h + Sigma1(e) + Ch(e, f, g) + ki + W[i];   \
      t1 = Sigma0(a) + Maj(a, b, c);                  \
@@ -1889,8 +1726,6 @@ static int  sha256_compress(hash_state * md, unsigned char *buf)
     RND(S[1],S[2],S[3],S[4],S[5],S[6],S[7],S[0],63,0xc67178f2);
 
 #undef RND     
-    
-#endif     
 
     /* feedback */
     for (i = 0; i < 8; i++) {
@@ -1899,22 +1734,14 @@ static int  sha256_compress(hash_state * md, unsigned char *buf)
     return CRYPT_OK;
 }
 
-#ifdef LTC_CLEAN_STACK
-static int sha256_compress(hash_state * md, unsigned char *buf)
-{
-    int err;
-    err = _sha256_compress(md, buf);
-    burn_stack(sizeof(ulong32) * 74);
-    return err;
-}
-#endif
-
 /**
    Initialize the hash state
    @param md   The hash state you wish to initialize
    @return CRYPT_OK if successful
 */
-int sha256_init(hash_state * md)
+int
+sha256_init(md)
+hash_state *md;
 {
     md->sha256.curlen = 0;
     md->sha256.length = 0;
@@ -1930,7 +1757,11 @@ int sha256_init(hash_state * md)
 }
 
 #define HASH_PROCESS(func_name, compress_name, state_var, block_size)                       \
-int func_name (hash_state * md, const unsigned char *in, unsigned long inlen)               \
+int                                                                                         \
+func_name(md, in, inlen)                                                                    \
+hash_state *md;                                                                             \
+const unsigned char *in;                                                                    \
+unsigned long inlen;                                                                        \
 {                                                                                           \
     unsigned long n;                                                                        \
     int           err;                                                                      \
@@ -1978,7 +1809,10 @@ HASH_PROCESS(sha256_process, sha256_compress, sha256, 64)
    @param out [out] The destination of the hash (32 bytes)
    @return CRYPT_OK if successful
 */
-int sha256_done(hash_state * md, unsigned char *out)
+static int
+sha256_done(md, out)
+hash_state *md;
+unsigned char *out;
 {
     int i;
 
@@ -2018,9 +1852,6 @@ int sha256_done(hash_state * md, unsigned char *out)
     for (i = 0; i < 8; i++) {
         STORE32H(md->sha256.state[i], out+(4*i));
     }
-#ifdef LTC_CLEAN_STACK
-    zeromem(md, sizeof(hash_state));
-#endif
     return CRYPT_OK;
 }
 
@@ -2032,7 +1863,9 @@ int sha256_done(hash_state * md, unsigned char *out)
 ***/
 
 /* UNIX /dev/random Linux /dev/urandom entropy collector */
-void collect_entropy1(char* data)
+static void
+collect_entropy1(data)
+char* data;
 {
 	#ifdef UNIX
 	#ifdef LINUX
@@ -2053,7 +1886,9 @@ void collect_entropy1(char* data)
 }
 
 /* High-resolution timer entropy collector */
-void collect_entropy2(char* data)
+static void
+collect_entropy2(data)
+char* data;
 {
 	struct timeval tv;
 	gettimeofday(&tv, (struct timezone*) 0);
@@ -2065,7 +1900,8 @@ void collect_entropy2(char* data)
 
 hash_state md;
 
-unsigned int good_random(void)
+unsigned int
+good_random()
 {
 	/* A 128-bit counter value. */
 	static unsigned int counter[] = { 0, 0, 0, 0 };
@@ -2123,6 +1959,5 @@ unsigned int good_random(void)
 	
 	return outputs[output_number++];
 }
-
 
 /*rnd.c*/
