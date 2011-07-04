@@ -525,7 +525,6 @@ wiz_show_rooms()
     winid win;
     int x,y;
     char row[COLNO+1];
-    struct rm*lev;
 
     win = create_nhwindow(NHW_TEXT);
     for (y = 0; y < ROWNO; y++) {
