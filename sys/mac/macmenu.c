@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)macmenu.c	3.4	1999/11/24	*/
 /*      Copyright (c) Macintosh NetHack Port Team, 1993.          */
 /* NetHack may be freely redistributed.  See license for details. */
 

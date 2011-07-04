@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)txt2iff.c	3.2	95/07/28	*/
 /* 	Copyright (c) 1995 by Gregg Wonderly, Naperville, Illinois */
 /* NetHack may be freely redistributed.  See license for details. */
 

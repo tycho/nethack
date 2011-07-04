@@ -39,10 +39,6 @@
  * Modified 28 February 2002 for use on WIN32 systems with Microsoft C.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)uudecode.c	5.5 (Berkeley) 7/6/88";
-#endif /* not lint */
-
 #ifdef __MSDOS__        /* For Turbo C */
 #define MSDOS 1
 #endif

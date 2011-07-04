@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)mactty.c	3.1	93/03/01			*/
 /* Copyright (c) Jon W{tte 1993.					*/
 /* NetHack may be freely redistributed.  See license for details.	*/
 

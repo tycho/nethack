@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)gnbind.c	3.4	2002/04/15	*/
 /* Copyright (C) 2002 by Dylan Alex Simon		*/
 /* NetHack may be freely redistributed.  See license for details. */
 

@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)ovlinit.c	3.4	1994/03/20	          */
 /* Copyright (c) NetHack PC Development Team 1995                 */
 /* NetHack may be freely redistributed.  See license for details. */
 

@@ -1,4 +1,3 @@
-/*   SCCS Id: @(#)tile2bin.c   3.4     1995/01/26                     */
 /*   Copyright (c) NetHack PC Development Team 1993, 1994, 1995     */
 /*   NetHack may be freely redistributed.  See license for details. */
 

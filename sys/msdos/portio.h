@@ -1,4 +1,3 @@
-/*   SCCS Id: @(#)portio.h   3.4     1995/08/05                       */
 /*   Copyright (c) NetHack PC Development Team 1995                 */
 /*   NetHack may be freely redistributed.  See license for details. */
 /*                                                                  */

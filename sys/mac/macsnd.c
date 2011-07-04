@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)macsnd.c	3.1	92/11/28	*/
 /* 	Copyright (c) 1992 by Jon Watte */
 /* NetHack may be freely redistributed.  See license for details. */
 
