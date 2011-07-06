@@ -472,6 +472,10 @@ flip_level(int flp)
     struct engr *etmp;
     struct mkroom *sroom;
 
+    if ((!xupstair && !yupstair) &&
+        (!xupladder && !yupladder))
+	flp = 0;
+
     /* stairs and ladders */
     if (flp & 1) {
 	yupstair = y2 - yupstair;
