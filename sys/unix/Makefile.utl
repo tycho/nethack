@@ -15,7 +15,7 @@
 
 # if you are using gcc as your compiler,
 #	uncomment the CC definition below if it's not in your environment
-# CC = gcc
+CC = gcc
 #
 #	For Bull DPX/2 systems at B.O.S. 2.0 or higher use the following:
 #
@@ -89,7 +89,7 @@
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -O -I../include
+CFLAGS = -O2 -std=c89 -fno-strict-aliasing -Wno-format-security -Wundef -U_FORTIFY_SOURCE -I../include
 LFLAGS =
 
 LIBS =
@@ -226,13 +226,11 @@ lev_lex.o:   lev_lex.c $(HACK_H) ../include/lev_comp.h ../include/sp_lev.h
 ../include/lev_comp.h: lev_yacc.c
 
 lev_yacc.c: lev_comp.y
-	$(YACC) $(YACCDIST) -d lev_comp.y
-	mv $(YTABC) lev_yacc.c
-	mv $(YTABH) ../include/lev_comp.h
+	mkdir -p lev_comp_tmp
+	( cd lev_comp_tmp; $(YACC) $(YACCDIST) -d ../lev_comp.y; mv $(YTABC) ../lev_yacc.c; mv $(YTABH) ../../include/lev_comp.h )
 
 lev_lex.c: lev_comp.l
-	$(LEX) $(FLEXDIST) lev_comp.l
-	mv $(LEXYYC) lev_lex.c
+	( cd lev_comp_tmp; $(LEX) $(FLEXDIST) ../lev_comp.l; mv $(LEXYYC) ../lev_lex.c )
 
 # with all of extern.h's functions to complain about, we drown in
 # 'defined but not used' without -u
@@ -257,13 +255,11 @@ dgn_lex.o:   dgn_lex.c $(CONFIG.H) ../include/dgn_comp.h ../include/dgn_file.h
 ../include/dgn_comp.h: dgn_yacc.c
 
 dgn_yacc.c: dgn_comp.y
-	$(YACC) $(YACCDIST) -d dgn_comp.y
-	mv $(YTABC) dgn_yacc.c
-	mv $(YTABH) ../include/dgn_comp.h
+	mkdir -p dgn_comp_tmp
+	( cd dgn_comp_tmp; $(YACC) $(YACCDIST) -d ../dgn_comp.y; mv $(YTABC) ../dgn_yacc.c; mv $(YTABH) ../../include/dgn_comp.h )
 
 dgn_lex.c: dgn_comp.l
-	$(LEX) $(FLEXDIST) dgn_comp.l
-	mv $(LEXYYC) dgn_lex.c
+	( cd dgn_comp_tmp; $(LEX) $(FLEXDIST) ../dgn_comp.l; mv $(LEXYYC) ../dgn_lex.c )
 
 # with all of extern.h's functions to complain about, we drown in
 # 'defined but not used' without -u
@@ -396,6 +392,7 @@ spotless: clean
 	-rm -f ../include/lev_comp.h ../include/dgn_comp.h
 	-rm -f ../include/tile.h
 	-rm -f makedefs lev_comp dgn_comp recover dlb
+	-rm -rf lev_comp_tmp dgn_comp_tmp
 	-rm -f gif2txt txt2ppm tile2x11 tile2img.ttp xpm2img.ttp tilemap
 
 tileedit: tileedit.cpp $(TEXT_IO)

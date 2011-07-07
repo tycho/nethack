@@ -14,9 +14,9 @@
 # MAKE = make
 
 # make UnNetHack
-PREFIX	 = /usr
+PREFIX	 = /opt/unnethack
 GAME     = unnethack
-# GAME     = nethack.prg
+# GAME     = unnethack.prg
 GAMEUID  = games
 GAMEGRP  = bin
 
@@ -35,9 +35,9 @@ DIRPERM  = 0755
 # therefore there should not be anything in GAMEDIR that you want to keep
 # (if there is, you'll have to do the installation by hand or modify the
 # instructions)
-GAMEDIR  = $(PREFIX)/games/lib/$(GAME)dir
+GAMEDIR  = $(PREFIX)/lib/unnethack
 VARDIR  = $(GAMEDIR)
-SHELLDIR = $(PREFIX)/games
+SHELLDIR = $(PREFIX)
 
 # per discussion in Install.X11 and Install.Qt
 VARDATND = 
@@ -168,7 +168,7 @@ title.img:
 check-dlb: options
 	@if egrep -s librarian dat/options ; then $(MAKE) dlb ; else true ; fi
 
-dlb:
+dlb: spec_levs
 	( cd util ; $(MAKE) dlb )
 	( cd dat ; ../util/dlb cf nhdat $(DATDLB) )
 
