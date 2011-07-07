@@ -4,6 +4,8 @@
 
 #include "hack.h"
 
+#include "avl.h"
+
 struct trobj {
 	short trotyp;
 	schar trspe;
@@ -1049,12 +1051,24 @@ int otyp;
     return TRUE;
 }
 
+STATIC_OVL int
+objcmp(pa, pb, param)
+const void *pa;
+const void *pb;
+void *param;
+{
+	return ((long)pa - (long)pb);
+}
+
 STATIC_OVL void
 ini_inv(trop)
 register struct trobj *trop;
 {
+	struct avl_table *nocreate;
 	struct obj *obj;
 	int otyp, i;
+
+	nocreate = avl_create(objcmp, NULL, NULL);
 
 	while (trop->trclass) {
 		if (trop->trotyp != UNDEF_TYP) {
@@ -1070,10 +1084,7 @@ register struct trobj *trop;
 			}
 			obj = mksobj(otyp, TRUE, FALSE);
 		} else {	/* UNDEF_TYP */
-			static NEARDATA short nocreate = STRANGE_OBJECT;
-			static NEARDATA short nocreate2 = STRANGE_OBJECT;
-			static NEARDATA short nocreate3 = STRANGE_OBJECT;
-			static NEARDATA short nocreate4 = STRANGE_OBJECT;
+
 		/*
 		 * For random objects, do not create certain overly powerful
 		 * items: wand of wishing, ring of levitation, or the
@@ -1087,10 +1098,7 @@ register struct trobj *trop;
 			obj = mkobj(trop->trclass, FALSE);
 			otyp = obj->otyp;
 			while (otyp == WAN_WISHING
-				|| otyp == nocreate
-				|| otyp == nocreate2
-				|| otyp == nocreate3
-				|| otyp == nocreate4
+				|| avl_find(nocreate, (void *)otyp) != NULL
 #ifdef ELBERETH
 				|| otyp == RIN_LEVITATION
 #endif
@@ -1126,27 +1134,21 @@ register struct trobj *trop;
 			if (objects[otyp].oc_charged && obj->spe <= 0)
 				obj->spe = rne(3);
 
-			/* Heavily relies on the fact that 1) we create wands
-			 * before rings, 2) that we create rings before
-			 * spellbooks, and that 3) not more than 1 object of a
-			 * particular symbol is to be prohibited.  (For more
-			 * objects, we need more nocreate variables...)
-			 */
 			switch (otyp) {
 			    case WAN_POLYMORPH:
 			    case RIN_POLYMORPH:
 			    case POT_POLYMORPH:
-				nocreate = RIN_POLYMORPH_CONTROL;
+				avl_assert_insert(nocreate, (void *)RIN_POLYMORPH_CONTROL);
 				break;
 			    case RIN_POLYMORPH_CONTROL:
-				nocreate = RIN_POLYMORPH;
-				nocreate2 = SPE_POLYMORPH;
-				nocreate3 = POT_POLYMORPH;
+				avl_assert_insert(nocreate, (void *)RIN_POLYMORPH);
+				avl_assert_insert(nocreate, (void *)SPE_POLYMORPH);
+				avl_assert_insert(nocreate, (void *)POT_POLYMORPH);
 			}
 			/* Don't have 2 of the same ring or spellbook */
 			if (obj->oclass == RING_CLASS ||
 			    obj->oclass == SPBOOK_CLASS)
-				nocreate4 = otyp;
+				avl_assert_insert(nocreate, (void *)otyp);
 		}
 
 #ifdef GOLDOBJ
@@ -1243,6 +1245,7 @@ register struct trobj *trop;
 #endif
 		trop++;
 	}
+	avl_destroy(nocreate, NULL);
 }
 
 /*u_init.c*/
