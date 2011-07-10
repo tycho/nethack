@@ -85,7 +85,7 @@ DATDLB = $(DATHELP) dungeon $(SPEC_LEVS) $(QUEST_LEVS) $(VARDATD)
 DAT = $(DATNODLB) $(DATDLB)
 
 $(GAME):
-	( cd src ; $(MAKE) )
+	$(MAKE) -C src
 
 all:	$(GAME) recover Guidebook $(VARDAT) dungeon spec_levs check-dlb
 	@echo "Done."
@@ -94,86 +94,86 @@ all:	$(GAME) recover Guidebook $(VARDAT) dungeon spec_levs check-dlb
 # to generate valid output
 
 Guidebook:
-	( cd doc ; $(MAKE) Guidebook )
+	$(MAKE) -C doc Guidebook
 
 manpages:
-	( cd doc ; $(MAKE) manpages )
+	$(MAKE) -C doc manpages
 
 data: $(GAME)
-	( cd dat ; $(MAKE) data )
+	$(MAKE) -C dat data
 
 rumors: $(GAME)
-	( cd dat ; $(MAKE) rumors )
+	$(MAKE) -C dat rumors
 
 oracles: $(GAME)
-	( cd dat ; $(MAKE) oracles )
+	$(MAKE) -C dat oracles
 
 #	Note: options should have already been made with make, but...
 options: $(GAME)
-	( cd dat ; $(MAKE) options )
+	$(MAKE) -C dat options
 
 quest.dat: $(GAME)
-	( cd dat ; $(MAKE) quest.dat )
+	$(MAKE) -C dat quest.dat
 
 spec_levs: dungeon
-	( cd util ; $(MAKE) lev_comp )
-	( cd dat ; $(MAKE) spec_levs )
-	( cd dat ; $(MAKE) quest_levs )
+	$(MAKE) -C util lev_comp
+	$(MAKE) -C dat spec_levs
+	$(MAKE) -C dat quest_levs
 
 dungeon: $(GAME)
-	( cd util ; $(MAKE) dgn_comp )
-	( cd dat ; $(MAKE) dungeon )
+	$(MAKE) -C util dgn_comp
+	$(MAKE) -C dat dungeon
 
 nhtiles.bmp: $(GAME)
-	( cd dat ; $(MAKE) nhtiles.bmp )
+	$(MAKE) -C dat nhtiles.bmp
 
 x11tiles: $(GAME)
-	( cd util ; $(MAKE) tile2x11 )
-	( cd dat ; $(MAKE) x11tiles )
+	$(MAKE) -C util tile2x11
+	$(MAKE) -C dat x11tiles
 
 beostiles: $(GAME)
-	( cd util ; $(MAKE) tile2beos )
-	( cd dat ; $(MAKE) beostiles )
+	$(MAKE) -C util tile2beos
+	$(MAKE) -C dat beostiles
 
 NetHack.ad: $(GAME)
-	( cd dat ; $(MAKE) NetHack.ad )
+	$(MAKE) -C dat NetHack.ad
 
 pet_mark.xbm:
-	( cd dat ; $(MAKE) pet_mark.xbm )
+	$(MAKE) -C dat pet_mark.xbm
 
 rip.xpm:
-	( cd dat ; $(MAKE) rip.xpm )
+	$(MAKE) -C dat rip.xpm
 
 mapbg.xpm:
-	(cd dat ; $(MAKE) mapbg.xpm )
+	$(MAKE) -C dat mapbg.xpm
 
 nhsplash.xpm:
-	( cd dat ; $(MAKE) nhsplash.xpm )
+	$(MAKE) -C dat nhsplash.xpm
 
 nh16.img: $(GAME)
-	( cd util ; $(MAKE) tile2img.ttp )
-	( cd dat ; $(MAKE) nh16.img )
+	$(MAKE) -C util tile2img.ttp
+	$(MAKE) -C dat nh16.img
 
 rip.img:
-	( cd util ; $(MAKE) xpm2img.ttp )
-	( cd dat ; $(MAKE) rip.img )
+	$(MAKE) -C util xpm2img.ttp
+	$(MAKE) -C dat rip.img
 GEM_RSC.RSC:
-	( cd dat ; $(MAKE) GEM_RSC.RSC )
+	$(MAKE) -C dat GEM_RSC.RSC
 
 title.img:
-	( cd dat ; $(MAKE) title.img )
+	$(MAKE) -C dat title.img
 
 check-dlb: options
 	@if egrep -s librarian dat/options ; then $(MAKE) dlb ; else true ; fi
 
 dlb: spec_levs
-	( cd util ; $(MAKE) dlb )
-	( cd dat ; ../util/dlb cf nhdat $(DATDLB) )
+	$(MAKE) -C util dlb
+	( cd dat && ../util/dlb cf nhdat $(DATDLB) )
 
 # recover can be used when INSURANCE is defined in include/config.h
 # and the checkpoint option is true
 recover: $(GAME)
-	( cd util ; $(MAKE) recover )
+	$(MAKE) -C util recover
 
 dofiles:
 	target=`sed -n					\
@@ -200,7 +200,7 @@ dofiles:
 	chmod $(EXEPERM) $(SHELLDIR)/$(GAME)
 
 dofiles-dlb: check-dlb
-	( cd dat ; cp nhdat $(DATNODLB) $(GAMEDIR) )
+	( cd dat && cp nhdat $(DATNODLB) $(GAMEDIR) )
 # set up their permissions
 	-( cd $(GAMEDIR) ; $(CHOWN) $(GAMEUID) nhdat $(DATNODLB) ; \
 			$(CHGRP) $(GAMEGRP) nhdat $(DATNODLB) ; \
@@ -208,7 +208,7 @@ dofiles-dlb: check-dlb
 
 dofiles-nodlb:
 # copy over the game files
-	( cd dat ; cp $(DAT) $(GAMEDIR) )
+	( cd dat && cp $(DAT) $(GAMEDIR) )
 # set up their permissions
 	-( cd $(GAMEDIR) ; $(CHOWN) $(GAMEUID) $(DAT) ; \
 			$(CHGRP) $(GAMEGRP) $(DAT) ; \
@@ -254,13 +254,13 @@ install: $(GAME) recover $(VARDAT) dungeon spec_levs
 # 'make clean' removes all the .o files, but leaves around all the executables
 # and compiled data files
 clean:
-	( cd src ; $(MAKE) clean )
-	( cd util ; $(MAKE) clean )
+	$(MAKE) -C src clean
+	$(MAKE) -C util clean
 
 # 'make spotless' returns the source tree to near-distribution condition.
 # it removes .o files, executables, and compiled data files
 spotless:
-	( cd src ; $(MAKE) spotless )
-	( cd util ; $(MAKE) spotless )
-	( cd dat ; $(MAKE) spotless )
-	( cd doc ; $(MAKE) spotless )
+	$(MAKE) -C src spotless
+	$(MAKE) -C util spotless
+	$(MAKE) -C dat spotless
+	$(MAKE) -C doc spotless
