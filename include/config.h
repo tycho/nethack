@@ -47,7 +47,7 @@
  * Define all of those you want supported in your binary.
  * Some combinations make no sense.  See the installation document.
  */
-/* #define TTY_GRAPHICS */	/* good old tty based graphics */
+#define TTY_GRAPHICS 	/* good old tty based graphics */
 /* #define CURSES_GRAPHICS */	/* Proper curses interface */
 /* #define X11_GRAPHICS */	/* X11 interface */
 /* #define QT_GRAPHICS */	/* Qt interface */
@@ -299,10 +299,10 @@ typedef unsigned char	uchar;
 
 /* Type used for outputting DECgraphics and IBMgraphics characters into
  * HTML dumps or for holding unicode codepoints. */
-#if HAVE_INTTYPES_H
+#ifdef HAVE_INTTYPES_H
 # include <inttypes.h>
 #else
-# if HAVE_STDINT_H
+# ifdef HAVE_STDINT_H
 #  include <stdint.h>
 # endif
 #endif
