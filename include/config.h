@@ -201,12 +201,14 @@
 #endif
 #endif
 
+#define UTF8_GLYPHS
+
 /*
  *	Data librarian.  Defining DLB places most of the support files into
  *	a tar-like file, thus making a neater installation.  See *conf.h
  *	for detailed configuration.
  */
-/* #define DLB */	/* not supported on all platforms */
+#define DLB 	/* not supported on all platforms */
 
 /*
  *	Defining INSURANCE slows down level changes, but allows games that
@@ -420,8 +422,8 @@ typedef long glyph_t;
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS) || \
  defined(CURSES_GRAPHICS)
 # define MENU_COLOR
-/*# define MENU_COLOR_REGEX*/
-/*# define MENU_COLOR_REGEX_POSIX */
+# define MENU_COLOR_REGEX
+# define MENU_COLOR_REGEX_POSIX
 /* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
  * GNU specific functions by default, POSIX functions with
  * MENU_COLOR_REGEX_POSIX).
@@ -434,12 +436,12 @@ typedef long glyph_t;
 
 #define DUNGEON_GROWTH /* Makes the dungeons feel a bit more living - Pasi Kallinen*/
 /*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
-/*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
+#define AUTOPICKUP_EXCEPTIONS  /* exceptions to autopickup */
 #define DUMP_LOG        /* Dump game end information to a file */
-/* #define DUMP_FN "/tmp/%n.nh" */      /* Fixed dumpfile name, if you want
+#define DUMP_FN "dumps/%n.nh"           /* Fixed dumpfile name, if you want
                                          * to prevent definition by users */
 #define DUMP_TEXT_LOG   /* Dump game end information in a plain text form */
-/*#define DUMP_HTML_LOG*/   /* Dump game end information to a html file */
+#define DUMP_HTML_LOG   /* Dump game end information to a html file */
 #define DUMPMSGS 30     /* Number of latest messages in the dump file  */
 
 #define AUTO_OPEN	/* open doors by walking into them - Stefano Busti */
