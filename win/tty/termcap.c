@@ -956,10 +956,6 @@ cl_eos()			/* free after Robert Viduya */
 
 #include <curses.h>
 
-#ifndef HAVE_TPARM
-extern char *tparm();
-#endif
-
 #  ifdef COLOR_BLACK	/* trust include file */
 #ifndef VIDEOSHADES
 #undef COLOR_BLACK
