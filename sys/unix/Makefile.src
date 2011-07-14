@@ -352,10 +352,10 @@ HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c avl.c ball.c bones.c \
 	   priest.c quest.c questpgr.c read.c rect.c region.c restore.c rip.c \
 	   rnd.c role.c rumors.c save.c shk.c shknam.c sit.c sounds.c sp_lev.c \
 	   spell.c steal.c steed.c teleport.c timeout.c topten.c track.c \
-           trap.c tutorial.c u_init.c uhitm.c vault.c version.c vision.c \
+	   trap.c tutorial.c u_init.c uhitm.c unicode.c vault.c version.c vision.c \
 	   weapon.c were.c wield.c windows.c wizard.c worm.c worn.c write.c \
-	         zap.c \
-	         livelog.c
+	   zap.c \
+	   livelog.c
 
 # all operating-system-dependent .c (for dependencies and such)
 SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
@@ -412,7 +412,7 @@ HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o avl.o ball.o \
 	quest.o questpgr.o read.o rect.o region.o restore.o rip.o rnd.o \
 	role.o rumors.o save.o shk.o shknam.o sit.o sounds.o sp_lev.o spell.o \
 	steal.o steed.o teleport.o timeout.o topten.o track.o trap.o \
-	tutorial.o u_init.o uhitm.o vault.o vision.o vis_tab.o weapon.o \
+	tutorial.o u_init.o uhitm.o unicode.o vault.o vision.o vis_tab.o weapon.o \
 	were.o wield.o windows.o wizard.o worm.o worn.o write.o zap.o \
 	$(RANDOBJ) $(SYSOBJ) $(WINOBJ) version.o \
 	livelog.o
