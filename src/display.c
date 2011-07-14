@@ -1459,7 +1459,8 @@ dump_screen()
      * Longest dungeon feature: altar to Amaterasu Omikami (lawful) */
 #define BUFSIZE_PER_SQUARE 200
     char buf[COLNO*BUFSIZE_PER_SQUARE], html_buf[COLNO*BUFSIZE_PER_SQUARE], html_c[BUFSZ], tmpbuf[BUFSIZE_PER_SQUARE], *ptr;
-    int ch, glyph, oclass;
+    int glyph, oclass;
+    glyph_t ch;
     int color;
     unsigned special;
     const char *dfeature = (char *)0;
