@@ -37,7 +37,7 @@ DIRPERM  = 0755
 # instructions)
 GAMEDIR  = $(PREFIX)/lib/unnethack
 VARDIR  = $(GAMEDIR)
-SHELLDIR = $(PREFIX)
+SHELLDIR = $(PREFIX)/bin
 
 # per discussion in Install.X11 and Install.Qt
 VARDATND = 
