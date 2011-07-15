@@ -129,12 +129,24 @@
 
 #endif
 
+#if defined(__MACH__)
+#ifndef HAVE_STDINT_H
+#define HAVE_STDINT_H 1
+#endif
+#ifndef HAVE_INTTYPES_H
+#define HAVE_INTTYPES_H 1
+#endif
+#endif
 
 #if defined(__linux__) && defined(__GNUC__) && !defined(_GNU_SOURCE)
 /* ensure _GNU_SOURCE is defined before including any system headers */
 # define _GNU_SOURCE
-# define HAVE_STDINT_H 1
-# define HAVE_INTTYPES_H 1
+#ifndef HAVE_STDINT_H
+#define HAVE_STDINT_H 1
+#endif
+#ifndef HAVE_INTTYPES_H
+#define HAVE_INTTYPES_H 1
+#endif
 #endif
 
 #ifdef VMS	/* really old compilers need special handling, detected here */
