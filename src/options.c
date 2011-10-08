@@ -591,6 +591,11 @@ initoptions()
 		monsyms[i] = (uchar) def_monsyms[i];
 	for (i = 0; i < WARNCOUNT; i++)
 		warnsyms[i] = def_warnsyms[i].sym;
+
+#ifdef USER_DUNGEONCOLOR
+	assign_colors((uchar *)0, 0, MAXPCHARS, 0);
+#endif
+
 	iflags.bouldersym = 0;
 	iflags.travelcc.x = iflags.travelcc.y = -1;
 	flags.warnlevel = 1;

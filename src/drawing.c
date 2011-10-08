@@ -23,6 +23,10 @@ uchar oc_syms[MAXOCLASSES] = DUMMY; /* the current object  display symbols */
 uchar showsyms[MAXPCHARS]  = DUMMY; /* the current feature display symbols */
 uchar monsyms[MAXMCLASSES] = DUMMY; /* the current monster display symbols */
 uchar warnsyms[WARNCOUNT]  = DUMMY;  /* the current warning display symbols */
+#ifdef USER_DUNGEONCOLOR
+uchar showsymcolors[MAXPCHARS] = DUMMY; /* current feature display colors */
+#endif
+
 
 /* Default object class symbols.  See objclass.h. */
 const char def_oc_syms[MAXOCLASSES] = {
@@ -654,6 +658,21 @@ int glth, maxlen, offset;
 	showsyms[i+offset] = (((i < glth) && graph_chars[i]) ?
 		       graph_chars[i] : defsyms[i+offset].sym);
 }
+
+#ifdef USER_DUNGEONCOLOR
+void
+assign_colors(graph_colors, glth, maxlen, offset)
+register uchar *graph_colors;
+int glth, maxlen, offset;
+{
+    register int i;
+
+    for (i = 0; i < maxlen; i++)
+	showsymcolors[i+offset] =
+	    (((i < glth) && (graph_colors[i] < CLR_MAX)) ?
+	     graph_colors[i] : defsyms[i+offset].color);
+}
+#endif
 
 void
 switch_graphics(gr_set_flag)

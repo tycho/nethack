@@ -420,6 +420,8 @@ typedef unsigned char	uchar;
 /* from Sporkhack */
 #define WHEREIS_FILE /* Write out player's current location to player.whereis */
 
+#define USER_DUNGEONCOLOR
+
 /* End of Section 5 */
 
 #include "global.h"	/* Define everything else according to choices above */
