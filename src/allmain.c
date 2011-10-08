@@ -245,7 +245,7 @@ moveloop()
 				if (occupation)
 				    stop_occupation();
 				else
-				    nomul(0);
+				    nomul(0, NULL);
 				if (change == 1) polyself(FALSE);
 				else you_were();
 				change = 0;
@@ -316,6 +316,16 @@ moveloop()
 
 	    if (vision_full_recalc) vision_recalc(0);	/* vision! */
 	}
+
+#ifdef REALTIME_ON_BOTL
+        if(iflags.showrealtime) {
+            /* Update the bottom line if the number of minutes has
+             * changed */
+            if(get_realtime() / 60 != realtime_data.last_displayed_time / 60)
+                flags.botl = 1;
+        }
+#endif
+
 	if(flags.botl || flags.botlx) bot();
 
 	flags.move = 1;
@@ -402,6 +412,7 @@ moveloop()
 		rhack(save_cm);
 	    }
 	} else if (multi == 0) {
+	  ck_server_admin_msg();
 #ifdef MAIL
 	    ckmailstatus();
 #endif
@@ -438,7 +449,7 @@ stop_occupation()
 		sync_hunger();
 */
 #ifdef REDO
-		nomul(0);
+		nomul(0, NULL);
 		pushch(0);
 #endif
 	}
@@ -537,6 +548,19 @@ newgame()
 #endif
 	program_state.something_worth_saving++;	/* useful data now exists */
 
+#if defined(RECORD_REALTIME) || defined(REALTIME_ON_BOTL)
+
+        /* Start the timer here */
+        realtime_data.realtime = (time_t)0L;
+
+#if defined(BSD) && !defined(POSIX_TYPES)
+        (void) time((long *)&realtime_data.restoretime);
+#else
+        (void) time(&realtime_data.restoretime);
+#endif
+
+#endif /* RECORD_REALTIME || REALTIME_ON_BOTL */
+
 	/* Success! */
 	welcome(TRUE);
 	return;
@@ -627,6 +651,33 @@ do_positionbar()
 	update_positionbar(pbar);
 }
 #endif
+
+#if defined(REALTIME_ON_BOTL) || defined (RECORD_REALTIME)
+time_t
+get_realtime(void)
+{
+    time_t curtime;
+
+    /* Get current time */
+#if defined(BSD) && !defined(POSIX_TYPES)
+    (void) time((long *)&curtime);
+#else
+    (void) time(&curtime);
+#endif
+
+    /* Since the timer isn't set until the game starts, this prevents us
+     * from displaying nonsense on the bottom line before it does. */
+    if(realtime_data.restoretime == 0) {
+        curtime = realtime_data.realtime;
+    } else {
+        curtime -= realtime_data.restoretime;
+        curtime += realtime_data.realtime;
+    }
+ 
+    return curtime;
+}
+#endif /* REALTIME_ON_BOTL || RECORD_REALTIME */
+
 
 #endif /* OVLB */
 

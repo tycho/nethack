@@ -54,7 +54,9 @@ char *argv[];
 	register char *dir;
 #endif
 	boolean exact_username;
-
+#ifdef SIMPLE_MAIL
+	char* e_simple = NULL;
+#endif
 #if defined(__APPLE__)
 	/* special hack to change working directory to a resource fork when
 	   running from finder --sam */
@@ -82,6 +84,12 @@ char *argv[];
 		free(mac_tmp);
 	    }
 	}
+#endif
+
+#ifdef SIMPLE_MAIL
+	/* figure this out early */
+	e_simple = nh_getenv("SIMPLEMAIL");
+	iflags.simplemail = (e_simple ? 1 : 0);
 #endif
 
 	hname = argv[0];
@@ -182,8 +190,8 @@ char *argv[];
 		Strcpy(plname, "wizard");
 	else
 #endif
-	if(!*plname || !strncmp(plname, "player", 4)
-		    || !strncmp(plname, "games", 4)) {
+	if(!*plname /*|| !strncmp(plname, "player", 4)
+		      || !strncmp(plname, "games", 4)*/) {
 		askname();
 	} else if (exact_username) {
 		/* guard against user names with hyphens in them */

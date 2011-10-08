@@ -267,7 +267,7 @@ boolean picked_some;
 
 	/* If there are objects here, take a look. */
 	if (ct) {
-	    if (flags.run) nomul(0);
+	    if (flags.run) nomul(0, NULL);
 	    flush_screen(1);
 	    (void) look_here(ct, picked_some);
 	} else {
@@ -440,7 +440,7 @@ int what;		/* should be a long */
 		}
 
 		/* if there's anything here, stop running */
-		if (OBJ_AT(u.ux,u.uy) && flags.run && flags.run != 8 && !flags.nopick) nomul(0);
+		if (OBJ_AT(u.ux,u.uy) && flags.run && flags.run != 8 && !flags.nopick) nomul(0, NULL);
 	}
 
 	add_valid_menu_class(0);	/* reset */
@@ -690,9 +690,15 @@ menu_item **pick_list;		/* return list of items picked */
 int how;			/* type of query */
 boolean FDECL((*allow), (OBJ_P));/* allow function */
 {
+#ifdef SORTLOOT
+	int i, j;
+#endif
 	int n;
 	winid win;
 	struct obj *curr, *last;
+#ifdef SORTLOOT
+	struct obj **oarray;
+#endif
 	char *pack;
 	anything any;
 	boolean printed_type_name;
@@ -717,6 +723,33 @@ boolean FDECL((*allow), (OBJ_P));/* allow function */
 	    return 1;
 	}
 
+#ifdef SORTLOOT
+	/* Make a temporary array to store the objects sorted */
+	oarray = (struct obj **)alloc(n*sizeof(struct obj*));
+
+	/* Add objects to the array */
+	i = 0;
+	for (curr = olist; curr; curr = FOLLOW(curr, qflags)) {
+	  if ((*allow)(curr)) {
+	    if (iflags.sortloot == 'f' ||
+		(iflags.sortloot == 'l' && !(qflags & USE_INVLET)))
+	      {
+		/* Insert object at correct index */
+		for (j = i; j; j--)
+		  {
+		    if (strcmpi(cxname2(curr), cxname2(oarray[j-1]))>0) break;
+		    oarray[j] = oarray[j-1];
+		  }
+		oarray[j] = curr;
+		i++;
+	      } else {
+		/* Just add it to the array */
+		oarray[i++] = curr;
+	      }
+	  }
+	}
+#endif /* SORTLOOT */
+
 	win = create_nhwindow(NHW_MENU);
 	start_menu(win);
 	any.a_obj = (struct obj *) 0;
@@ -730,7 +763,12 @@ boolean FDECL((*allow), (OBJ_P));/* allow function */
 	pack = flags.inv_order;
 	do {
 	    printed_type_name = FALSE;
+#ifdef SORTLOOT
+	    for (i = 0; i < n; i++) {
+		curr = oarray[i];
+#else /* SORTLOOT */
 	    for (curr = olist; curr; curr = FOLLOW(curr, qflags)) {
+#endif /* SORTLOOT */
 		if ((qflags & FEEL_COCKATRICE) && curr->otyp == CORPSE &&
 		     will_feel_cockatrice(curr, FALSE)) {
 			destroy_nhwindow(win);	/* stop the menu and revert */
@@ -744,7 +782,7 @@ boolean FDECL((*allow), (OBJ_P));/* allow function */
 		    if (qflags & INVORDER_SORT && !printed_type_name) {
 			any.a_obj = (struct obj *) 0;
 			add_menu(win, NO_GLYPH, &any, 0, 0, iflags.menu_headings,
-					let_to_name(*pack, FALSE), MENU_UNSELECTED);
+				 let_to_name(*pack, FALSE, iflags.show_obj_sym), MENU_UNSELECTED);
 			printed_type_name = TRUE;
 		    }
 
@@ -758,6 +796,9 @@ boolean FDECL((*allow), (OBJ_P));/* allow function */
 	    pack++;
 	} while (qflags & INVORDER_SORT && *pack);
 
+#ifdef SORTLOOT
+	free(oarray);
+#endif
 	end_menu(win, qstr);
 	n = select_menu(win, how, pick_list);
 	destroy_nhwindow(win);
@@ -868,7 +909,7 @@ int how;			/* type of query */
 			any.a_int = curr->oclass;
 			add_menu(win, NO_GLYPH, &any, invlet++,
 				def_oc_syms[(int)objects[curr->otyp].oc_class],
-				ATR_NONE, let_to_name(*pack, FALSE),
+				 ATR_NONE, let_to_name(*pack, FALSE, iflags.show_obj_sym),
 				MENU_UNSELECTED);
 			collected_type_name = TRUE;
 		   }
@@ -1301,7 +1342,7 @@ boolean telekinesis;	/* not picking it up directly by hand */
 		    obj->quan -= count;
 	    }
 	    flags.botl = 1;
-	    if (flags.run) nomul(0);
+	    if (flags.run) nomul(0, NULL);
 	    return 1;
 #endif
 	} else if (obj->otyp == CORPSE) {
@@ -1503,6 +1544,33 @@ int x, y;
 }
 
 int
+do_loot_cont(cobj, noit)
+struct obj *cobj;
+boolean noit;
+{
+    if (!cobj) return 0;
+
+    if (cobj->olocked) {
+	pline("Hmmm, %s seems to be locked.", noit ? the(xname(cobj)) : "it");
+	return 0;
+    }
+    if (cobj->otyp == BAG_OF_TRICKS) {
+	int tmp;
+	You("carefully open the bag...");
+	pline("It develops a huge set of teeth and bites you!");
+	tmp = rnd(10);
+	if (Half_physical_damage) tmp = (tmp+1) / 2;
+	losehp(tmp, "carnivorous bag", KILLED_BY_AN);
+	makeknown(BAG_OF_TRICKS);
+	return 1;
+    }
+
+    You("carefully open %s...", the(xname(cobj)));
+    return use_container(cobj, 0);
+}
+
+
+int
 doloot()	/* loot a container on the floor or loot saddle from mon. */
 {
     register struct obj *cobj, *nobj;
@@ -1515,6 +1583,7 @@ doloot()	/* loot a container on the floor or loot saddle from mon. */
     char qbuf[BUFSZ];
     int prev_inquiry = 0;
     boolean prev_loot = FALSE;
+    int num_cont = 0;
 
     if (check_capacity((char *)0)) {
 	/* "Can't do that while carrying so much stuff." */
@@ -1532,6 +1601,50 @@ lootcont:
 	boolean any = FALSE;
 
 	if (!able_to_loot(cc.x, cc.y)) return 0;
+
+	for (cobj = level.objects[cc.x][cc.y]; cobj; cobj = cobj->nexthere) {
+	    if (Is_container(cobj)) num_cont++;
+	}
+
+	if (num_cont > 1) {
+	    /* use a menu to loot many containers */
+	    int n, i;
+
+	    winid win;
+	    anything any;
+	    menu_item *pick_list;
+
+	    timepassed = 0;
+
+	    any.a_void = 0;
+	    win = create_nhwindow(NHW_MENU);
+	    start_menu(win);
+
+	    for (cobj = level.objects[cc.x][cc.y]; cobj; cobj = cobj->nexthere) {
+		if (Is_container(cobj)) {
+		    any.a_obj = cobj;
+		    add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, doname(cobj),
+			     MENU_UNSELECTED);
+		}
+	    }
+	    end_menu(win, "Loot which containers?");
+	    n = select_menu(win, PICK_ANY, &pick_list);
+	    destroy_nhwindow(win);
+
+	    if (n > 0) {
+		for (i = 0; i < n; i++) {
+		    timepassed |= do_loot_cont(pick_list[i].item.a_obj, TRUE);
+		    if (multi < 0) {/* chest trap, stop looting */
+			free((genericptr_t) pick_list);
+			return 1;
+		    }
+		}
+	    }
+	    if (pick_list)
+		free((genericptr_t) pick_list);
+	    if (n != 0) c = 'y';
+	} else {
+
 	for (cobj = level.objects[cc.x][cc.y]; cobj; cobj = nobj) {
 	    nobj = cobj->nexthere;
 
@@ -1545,28 +1658,12 @@ lootcont:
 		if (c == 'n') continue;
 		any = TRUE;
 
-		if (cobj->olocked) {
-		    pline("Hmmm, it seems to be locked.");
-		    continue;
-		}
-		if (cobj->otyp == BAG_OF_TRICKS) {
-		    int tmp;
-		    You("carefully open the bag...");
-		    pline("It develops a huge set of teeth and bites you!");
-		    tmp = rnd(10);
-		    if (Half_physical_damage) tmp = (tmp+1) / 2;
-		    losehp(tmp, "carnivorous bag", KILLED_BY_AN);
-		    makeknown(BAG_OF_TRICKS);
-		    timepassed = 1;
-		    continue;
-		}
-
-		You("carefully open %s...", the(xname(cobj)));
-		timepassed |= use_container(cobj, 0);
+		timepassed |= do_loot_cont(cobj, FALSE);
 		if (multi < 0) return 1;		/* chest trap */
 	    }
 	}
 	if (any) c = 'y';
+	}
     } else if (Confusion) {
 #ifndef GOLDOBJ
 	if (u.ugold){
@@ -2101,7 +2198,7 @@ register int held;
 	    (void) chest_trap(obj, HAND, FALSE);
 	    /* even if the trap fails, you've used up this turn */
 	    if (multi >= 0) {	/* in case we didn't become paralyzed */
-		nomul(-1);
+		nomul(-1, "opening a container");
 		nomovemsg = "";
 	    }
 	    return 1;

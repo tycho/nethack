@@ -3436,7 +3436,7 @@ register int dx,dy;
 		miss(fltxt,mon);
 	    }
 	} else if (sx == u.ux && sy == u.uy && range >= 0) {
-	    nomul(0);
+	    nomul(0, NULL);
 #ifdef STEED
 	    if (u.usteed && !rn2(3) && !mon_reflects(u.usteed, (char *)0)) {
 		    mon = u.usteed;
@@ -3466,7 +3466,7 @@ register int dx,dy;
 		if (!Blind) Your(vision_clears);
 	    }
 	    stop_occupation();
-	    nomul(0);
+	    nomul(0, NULL);
 	}
 
 	if(!ZAP_POS(lev->typ) || (closed_door(sx, sy) && (range >= 0))) {
@@ -4093,6 +4093,7 @@ void
 makewish()
 {
 	char buf[BUFSZ];
+	char bufcpy[BUFSZ];
 	struct obj *otmp, nothing;
 	int tries = 0;
 
@@ -4107,6 +4108,7 @@ retry:
 	 *  has been denied.  Wishing for "nothing" requires a separate
 	 *  value to remain distinct.
 	 */
+	strcpy(bufcpy, buf);
 	otmp = readobjnam(buf, &nothing, TRUE);
 	if (!otmp) {
 	    pline("Nothing fitting that description exists in the game.");
@@ -4124,6 +4126,11 @@ retry:
 	u.uconduct.wishes++;
 
 	if (otmp != &zeroobj) {
+
+	    char llog[BUFSZ+20];
+	    Sprintf(llog, "wished for \"%s\"", mungspaces(bufcpy));
+	    livelog_write_string(llog);
+
 	    /* The(aobjnam()) is safe since otmp is unidentified -dlc */
 	    (void) hold_another_object(otmp, u.uswallow ?
 				       "Oops!  %s out of your reach!" :

@@ -1481,6 +1481,12 @@ register struct monst *mtmp;
 #endif
 	if(mtmp->iswiz) wizdead();
 	if(mtmp->data->msound == MS_NEMESIS) nemdead();
+        
+#ifdef RECORD_ACHIEVE
+        if(mtmp->data == &mons[PM_MEDUSA])
+            achieve.killed_medusa = 1;
+#endif
+
 	if(glyph_is_invisible(levl[mtmp->mx][mtmp->my].glyph))
 	    unmap_object(mtmp->mx, mtmp->my);
 	m_detach(mtmp, mptr);
@@ -1601,6 +1607,7 @@ register struct monst *mdef;
 	struct obj *otmp, *obj, *oldminvent;
 	xchar x = mdef->mx, y = mdef->my;
 	boolean wasinside = FALSE;
+	int oldgold;
 
 	/* we have to make the statue before calling mondead, to be able to
 	 * put inventory in it, and we have to check for lifesaving before
@@ -1639,6 +1646,10 @@ register struct monst *mdef;
 		/* defer statue creation until after inventory removal
 		   so that saved monster traits won't retain any stale
 		   item-conferred attributes */
+#ifndef GOLDOBJ
+		oldgold = mdef->mgold;
+		mdef->mgold = 0;
+#endif
 		otmp = mkcorpstat(STATUE, KEEPTRAITS(mdef) ? mdef : 0,
 				  mdef->data, x, y, FALSE);
 		if (mdef->mnamelth) otmp = oname(otmp, NAME(mdef));
@@ -1647,13 +1658,12 @@ register struct monst *mdef;
 		    (void) add_to_container(otmp, obj);
 		}
 #ifndef GOLDOBJ
-		if (mdef->mgold) {
+		if (oldgold) {
 			struct obj *au;
 			au = mksobj(GOLD_PIECE, FALSE, FALSE);
-			au->quan = mdef->mgold;
+			au->quan = oldgold;
 			au->owt = weight(au);
 			(void) add_to_container(otmp, au);
-			mdef->mgold = 0;
 		}
 #endif
 		/* Archeologists should not break unique statues */

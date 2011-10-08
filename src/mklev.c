@@ -1462,6 +1462,12 @@ mkinvokearea()
     mkstairs(u.ux, u.uy, 0, (struct mkroom *)0); /* down */
     newsym(u.ux, u.uy);
     vision_full_recalc = 1;	/* everything changed */
+
+    livelog_write_string("performed the invocation");
+
+#ifdef RECORD_ACHIEVE
+    achieve.perform_invocation = 1;
+#endif
 }
 
 /* Change level topology.  Boulders in the vicinity are eliminated.

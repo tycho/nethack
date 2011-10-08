@@ -19,7 +19,10 @@ char *catmore = 0;		/* default pager */
 
 NEARDATA int bases[MAXOCLASSES] = DUMMY;
 
+long has_loaded_bones = 0L;
+
 NEARDATA int multi = 0;
+char multi_txt[BUFSZ] = DUMMY;
 #if 0
 NEARDATA int warnlevel = 0;		/* used by movemon and dochugw */
 #endif
@@ -54,6 +57,9 @@ const char *delayed_killer = 0;
 NEARDATA long done_money = 0;
 #endif
 char killer_buf[BUFSZ] = DUMMY;
+
+long killer_flags = 0L;
+
 const char *nomovemsg = 0;
 const char nul[40] = DUMMY;			/* contains zeros */
 NEARDATA char plname[PL_NSIZ] = DUMMY;		/* player name */
@@ -209,6 +215,15 @@ NEARDATA struct monst *migrating_mons = (struct monst *)0;
 
 NEARDATA struct mvitals mvitals[NUMMONS];
 
+/* originally from end.c */
+#ifdef DUMP_LOG
+#ifdef DUMP_FN
+char dump_fn[] = DUMP_FN;
+#else
+char dump_fn[PL_PSIZ] = DUMMY;
+#endif
+#endif /* DUMP_LOG */
+
 NEARDATA struct c_color_names c_color_names = {
 	"black", "amber", "golden",
 	"light blue", "red", "green",
@@ -234,6 +249,10 @@ const char *c_obj_colors[] = {
 	"bright cyan",		/* CLR_BRIGHT_CYAN */
 	"white",		/* CLR_WHITE */
 };
+
+#ifdef MENU_COLOR
+struct menucoloring *menu_colorings = 0;
+#endif
 
 struct c_common_strings c_common_strings = {
 	"Nothing happens.",		"That's enough tries!",
@@ -270,6 +289,18 @@ char *fqn_prefix_names[PREFIX_COUNT] = { "hackdir", "leveldir", "savedir",
 					"bonesdir", "datadir", "scoredir",
 					"lockdir", "configdir", "troubledir" };
 #endif
+
+#ifdef RECORD_ACHIEVE
+struct u_achieve achieve = DUMMY;
+#endif
+
+#if defined(RECORD_REALTIME) || defined(REALTIME_ON_BOTL)
+struct realtime_data realtime_data = { 0, 0, 0 };
+#endif
+
+
+struct _plinemsg *pline_msg = NULL;
+
 
 /* dummy routine used to force linkage */
 void

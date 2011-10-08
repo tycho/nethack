@@ -376,6 +376,8 @@ unsigned int *stuckid, *steedid;	/* STEED */
 
 	mread(fd, (genericptr_t) &flags, sizeof(struct flag));
 	flags.bypasses = 0;	/* never use the saved value of bypasses */
+	has_loaded_bones = flags.end_around;
+	flags.end_around = 2;
 	if (remember_discover) discover = remember_discover;
 
 	role_init();	/* Reset the initial role, race, gender, and alignment */
@@ -445,9 +447,21 @@ unsigned int *stuckid, *steedid;	/* STEED */
 
 	restnames(fd);
 	restore_waterlevel(fd);
+
+#ifdef RECORD_ACHIEVE
+        mread(fd, (genericptr_t) &achieve, sizeof achieve);
+#endif
+#if defined(RECORD_REALTIME) || defined(REALTIME_ON_BOTL)
+        mread(fd, (genericptr_t) &realtime_data.realtime, 
+                  sizeof realtime_data.realtime);
+#endif
+
 	/* must come after all mons & objs are restored */
 	relink_timers(FALSE);
 	relink_light_sources(FALSE);
+#ifdef WHEREIS_FILE
+        touch_whereis();
+#endif
 	return(TRUE);
 }
 
@@ -675,6 +689,17 @@ register int fd;
 	restoring = FALSE;
 	clear_nhwindow(WIN_MESSAGE);
 	program_state.something_worth_saving++;	/* useful data now exists */
+
+#if defined(RECORD_REALTIME) || defined(REALTIME_ON_BOTL)
+
+/* Start the timer here (realtime has already been set) */
+#if defined(BSD) && !defined(POSIX_TYPES)
+        (void) time((long *)&realtime_data.restoretime);
+#else
+        (void) time(&realtime_data.restoretime);
+#endif
+
+#endif /* RECORD_REALTIME || REALTIME_ON_BOTL */
 
 	/* Success! */
 	welcome(FALSE);
