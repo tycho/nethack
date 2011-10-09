@@ -1001,6 +1001,41 @@ static const char * const bogusmons[] = {
 	"angry mariachi",
 	"manbearpig",
 	"star-nosed mole",
+	"acid blog",
+	"guillemet",
+	"solidus",
+	"obelus",
+
+        "apostrophe golem", "Bob the angry flower",
+        "bonsai-kitten", "Boxxy", "lonelygirl15",
+        "tie-thulu", "Domo-kun",
+        "looooooooooooong cat",                 /* internet memes */
+        "bohrbug", "mandelbug", "schroedinbug", /* bugs */
+        "Gerbenok",                             /* Monty Python killer rabbit */
+        "doenertier",                           /* Erkan & Stefan */
+        "Invisible Pink Unicorn",
+        "Flying Spaghetti Monster",             /* deities */
+        "Bluebear", "Professor Abdullah Nightingale",
+        "Qwerty Uiop", "troglotroll",           /* Zamonien */
+        "wolpertinger", "elwedritsche", "skvader",
+        "Nessie", "tatzelwurm", "dahu",         /* european cryptids */
+        "three-headed monkey",                  /* Monkey Island */
+        "little green man",                     /* modern folklore */
+        "weighted Companion Cube",              /* Portal */
+        "/b/tard",                              /* /b/ */
+        "manbearpig",                           /* South Park */
+        "ceiling cat", "basement cat",
+        "monorail cat",                         /* the Internet is made for cat pix */
+        "rape golem",                           /* schnippi */
+        "tridude",                              /* POWDER */
+        "orcus cosmicus",                       /* Radomir Dopieralski */
+        "yeek", "quylthulg",
+        "Greater Hell Beast",                   /* Angband */
+        "Vendor of Yizard",                     /* Souljazz */
+        "Sigmund", "lernaean hydra", "Ijyb",
+        "Gloorx Vloq", "Blork the orc",         /* Dungeon Crawl Stone Soup */
+        "unicorn pegasus kitten",               /* Wil Wheaton, John Scalzi */
+
 	"nyan cat"
 };
 
