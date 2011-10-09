@@ -1570,7 +1570,8 @@ minimal_enlightenment()
 }
 
 int
-do_naming()
+do_naming(typ)
+int typ;
 {
     winid win;
     anything any;
@@ -1582,31 +1583,34 @@ do_naming()
 	SCROLL_CLASS, POTION_CLASS, WAND_CLASS, RING_CLASS, AMULET_CLASS,
 	GEM_CLASS, SPBOOK_CLASS, ARMOR_CLASS, TOOL_CLASS, 0 };
 
-    any.a_void = 0;
-    win = create_nhwindow(NHW_MENU);
-    start_menu(win);
+    if (!typ) {
+      any.a_void = 0;
+      win = create_nhwindow(NHW_MENU);
+      start_menu(win);
 
-    any.a_int = 1;
-    add_menu(win, NO_GLYPH, &any, 'a', 0, ATR_NONE, "Name a monster", MENU_UNSELECTED);
+      any.a_int = 1;
+      add_menu(win, NO_GLYPH, &any, 'a', 0, ATR_NONE, "Name a monster", MENU_UNSELECTED);
 
-    any.a_int = 2;
-    add_menu(win, NO_GLYPH, &any, 'b', 'y', ATR_NONE, "Name an individual item", MENU_UNSELECTED);
+      any.a_int = 2;
+      add_menu(win, NO_GLYPH, &any, 'b', 'y', ATR_NONE, "Name an individual item", MENU_UNSELECTED);
 
-    any.a_int = 3;
-    add_menu(win, NO_GLYPH, &any, 'c', 'n', ATR_NONE, "Name all items of a certain type", MENU_UNSELECTED);
+      any.a_int = 3;
+      add_menu(win, NO_GLYPH, &any, 'c', 'n', ATR_NONE, "Name all items of a certain type", MENU_UNSELECTED);
 
-    any.a_int = 0;
-    add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, "", MENU_UNSELECTED);
+      any.a_int = 0;
+      add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, "", MENU_UNSELECTED);
 
-    end_menu(win, "What do you wish to name?");
-    n = select_menu(win, PICK_ONE, &pick_list);
-    destroy_nhwindow(win);
+      end_menu(win, "What do you wish to name?");
+      n = select_menu(win, PICK_ONE, &pick_list);
+      destroy_nhwindow(win);
 
-    if (pick_list) {
+      if (pick_list) {
 	n = (pick_list[0].item.a_int - 1);
 	free((genericptr_t) pick_list);
-    } else return 0;
-
+      } else return 0;
+    } else {
+      n = (typ - 1);
+    }
     switch (n) {
     default: break;
     case 0: do_mname(); break;
@@ -1634,6 +1638,20 @@ do_naming()
     }
     return 0;
 }
+
+int
+do_naming_mname()
+{
+  if (iflags.old_C_behaviour) return do_naming(1);
+  return do_naming(0);
+}
+
+int
+do_naming_ddocall()
+{
+  return do_naming(0);
+}
+
 
 STATIC_PTR int
 doattributes()
@@ -1881,7 +1899,7 @@ static const struct func_tab cmdlist[] = {
 	{M('a'), TRUE, doorganize},
 /*	'b', 'B' : go sw */
 	{'c', FALSE, doclose},
-	{'C', TRUE, do_naming},
+	{'C', TRUE, do_naming_mname},
 	{M('c'), TRUE, dotalk},
 	{'d', FALSE, dodrop},
 	{'D', FALSE, doddrop},
@@ -1906,9 +1924,9 @@ static const struct func_tab cmdlist[] = {
 	{M('l'), FALSE, doloot},
 /*	'n' prefixes a count if number_pad is on */
 	{M('m'), TRUE, domonability},
-	{'N', TRUE, do_naming}, /* if number_pad is on */
-	{M('n'), TRUE, do_naming},
-	{M('N'), TRUE, do_naming},
+	{'N', TRUE, do_naming_ddocall}, /* if number_pad is on */
+	{M('n'), TRUE, do_naming_ddocall},
+	{M('N'), TRUE, do_naming_ddocall},
 	{'o', FALSE, doopen},
 	{'O', TRUE, doset},
 	{M('o'), FALSE, dosacrifice},
@@ -1985,7 +2003,7 @@ struct ext_func_tab extcmdlist[] = {
 	{"jump", "jump to a location", dojump, FALSE},
 	{"loot", "loot a box on the floor", doloot, FALSE},
 	{"monster", "use a monster's special ability", domonability, TRUE},
-	{"name", "name an item or type of object", do_naming, TRUE},
+	{"name", "name an item or type of object", do_naming_ddocall, TRUE},
 	{"offer", "offer a sacrifice to the gods", dosacrifice, FALSE},
 	{"pray", "pray to the gods for help", dopray, TRUE},
 	{"quit", "exit without saving current game", done2, TRUE},

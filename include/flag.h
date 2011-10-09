@@ -305,6 +305,7 @@ struct instance_flags {
 	boolean wc2_darkgray;		/* try to use PC dark-gray color
 					 * to represent black object */
 
+  boolean old_C_behaviour;
         boolean show_buc;
 	boolean show_obj_sym;
 	boolean  cmdassist;	/* provide detailed assistance for some commands */
