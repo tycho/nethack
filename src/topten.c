@@ -1209,7 +1209,7 @@ struct obj *otmp;
 	}
 
 	tt = &tt_buf;
-	rank = rnd(10);
+	rank = rnd(1000);
 pickentry:
 	for(i = rank; i; i--) {
 	    readentry(rfile, tt);
