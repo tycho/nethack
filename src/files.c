@@ -2591,8 +2591,13 @@ livelog_write_string(buffer)
 	    pline("Cannot open live log file!");
 	} else {
 	    char tmpbuf[1024];
-	    snprintf(tmpbuf, 1024, "player=%s:turns=%ld:starttime=%ld:curtime=%ld:message=%s\n",
-		     plname, moves, (long)u.ubirthday, (long)time(NULL), buffer);
+	    snprintf(tmpbuf, 1024, "player=%s:role=%s:race=%s:gender=%s:align=%s:turns=%ld:starttime=%ld:curtime=%ld:message=%s\n",
+		     plname,
+		     urole.filecode,
+		     urace.filecode,
+		     genders[flags.female].filecode,
+		     aligns[1-u.ualign.type].filecode,
+		     moves, (long)u.ubirthday, (long)time(NULL), buffer);
 
 	    fprintf(livelogfile, tmpbuf);
 	    (void) fclose(livelogfile);
