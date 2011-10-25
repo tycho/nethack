@@ -664,8 +664,9 @@ cast_protection()
 			      hgolden);
 		else
 		    pline_The("%s around you begins to shimmer with %s haze.",
-			/*[ what about being inside solid rock while polyd? ]*/
-			(Underwater || Is_waterlevel(&u.uz)) ? "water" : "air",
+			      (Underwater || Is_waterlevel(&u.uz)) ? "water" :
+			       u.uswallow ? mbodypart(u.ustuck, STOMACH) :
+			      IS_STWALL(levl[u.ux][u.uy].typ) ? "stone" : "air",
 			      an(hgolden));
 	    }
 	    u.uspellprot += gain;
