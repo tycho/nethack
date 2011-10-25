@@ -2402,8 +2402,8 @@ E int NDECL(spell_damage_bonus);
 E const char *FDECL(exclam, (int force));
 E void FDECL(hit, (const char *,struct monst *,const char *));
 E void FDECL(miss, (const char *,struct monst *));
-E struct monst *FDECL(bhit, (int,int,int,int,int (*)(struct monst*,struct obj*),
-			     int (*)(struct obj*,struct obj*),struct obj *));
+E struct monst *FDECL(bhit, (int,int,int,int,int (*)(struct monst *,struct obj*),
+			     int (*)(struct obj*,struct obj*),struct obj *, bool *));
 E struct monst *FDECL(boomhit, (int,int));
 E int FDECL(burn_floor_paper, (int,int,bool,bool));
 E void FDECL(buzz, (int,int,xchar,xchar,int,int));

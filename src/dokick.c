@@ -552,7 +552,7 @@ xchar x, y;
 	mon = bhit(u.dx, u.dy, range, KICKED_WEAPON,
 		   (int FDECL((*),(struct monst*,struct obj*)))0,
 		   (int FDECL((*),(struct obj*,struct obj*)))0,
-		   kickobj);
+		   kickobj, NULL);
 
 	if(mon) {
 	    if (mon->isshk &&
