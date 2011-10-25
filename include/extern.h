@@ -2049,7 +2049,7 @@ E void NDECL(float_up);
 E void FDECL(fill_pit, (int,int));
 E int FDECL(float_down, (long, long));
 E int FDECL(fire_damage, (struct obj *,bool,bool,xchar,xchar));
-E void FDECL(water_damage, (struct obj *,bool,bool));
+E bool FDECL(water_damage, (struct obj *,bool,bool));
 E bool NDECL(drown);
 E void FDECL(drain_en, (int));
 E int NDECL(dountrap);
