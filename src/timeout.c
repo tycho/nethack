@@ -29,8 +29,10 @@ stoned_dialogue()
 {
 	long i = (Stoned & TIMEOUT);
 
-	if (i > 0L && i <= SIZE(stoned_texts))
-		pline("%s", stoned_texts[SIZE(stoned_texts) - i]);
+	if (i > 0L && i <= SIZE(stoned_texts)) {
+		pline(stoned_texts[SIZE(stoned_texts) - i]);
+		nomul(0, NULL); /* fix for C343-74 */
+	}
 	if (i == 5L)
 		HFast = 0L;
 	if (i == 3L)
