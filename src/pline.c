@@ -267,7 +267,7 @@ impossible VA_DECL(const char *, s)
 	    paniclog("impossible", pbuf);
 	}
 	vpline(s,VA_ARGS);
-	pline("Program in disorder - perhaps you'd better #quit.");
+	pline("Program in disorder - you should probably S)ave and reload the game.");
 	program_state.in_impossible = 0;
 	VA_END();
 }
