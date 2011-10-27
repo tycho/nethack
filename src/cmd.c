@@ -159,6 +159,7 @@ static void NDECL(end_of_input);
 #endif /* OVLB */
 
 static const char* readchar_queue="";
+static char last_cmd_char='\0';
 
 STATIC_DCL char *NDECL(parse);
 STATIC_DCL boolean FDECL(help_dir, (CHAR_P,const char *));
@@ -2483,6 +2484,7 @@ register char *cmd;
 		    func = ((struct func_tab *)tlist)->f_funct;
 		    if (tlist->f_text && !occupation && multi)
 			set_occupation(func, tlist->f_text, multi);
+		    last_cmd_char = *cmd;	/* remember pressed character */
 		    res = (*func)();		/* perform the command */
 		}
 		if (!res) {
@@ -2601,7 +2603,7 @@ getdir(s)
 const char *s;
 {
 	char dirsym;
-
+	static char saved_dirsym = '\0'; /* saved direction of the previous call of getdir() */
 #ifdef REDO
 	if(in_doagain || *readchar_queue)
 	    dirsym = readchar();
@@ -2612,7 +2614,13 @@ const char *s;
 #ifdef REDO
 	savech(dirsym);
 #endif
-	if(dirsym == '.' || dirsym == 's')
+	if (dirsym == last_cmd_char) {
+	  /* in here dirsym is not representing a direction
+	   * but the same sym used before for calling the
+	   * current cmd */
+	  movecmd(saved_dirsym);
+	  dirsym = saved_dirsym;
+        } else if(dirsym == '.' || dirsym == 's')
 		u.dx = u.dy = u.dz = 0;
 	else if(!movecmd(dirsym) && !u.dz) {
 		boolean did_help = FALSE;
@@ -2625,6 +2633,7 @@ const char *s;
 		}
 		return 0;
 	}
+	saved_dirsym = dirsym;
 	if(!u.dz && (Stunned || (Confusion && !rn2(5)))) confdir();
 	return 1;
 }
