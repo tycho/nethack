@@ -849,6 +849,9 @@ E int FDECL(count_buc, (struct obj *,int));
 E void FDECL(carry_obj_effects, (struct obj *));
 E const char *FDECL(currency, (long));
 E void FDECL(silly_thing, (const char *,struct obj *));
+#ifdef SORTLOOT
+E int FDECL(sortloot_cmp, (struct obj *, struct obj *));
+#endif
 
 /* ### ioctl.c ### */
 
