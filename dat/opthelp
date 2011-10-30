@@ -28,6 +28,9 @@ perm_invent    keep inventory in a permanent window               [FALSE]
 prayconfirm    use confirmation prompt when #pray command issued  [TRUE]
 pushweapon     when wielding a new weapon, put your previously
                wielded weapon into the secondary weapon slot      [FALSE]
+quiver_fired   when using the f (fire) command and no ammunition
+               is quivered, prompt for ammunition to quiver, then
+               fire it.                                           [TRUE]
 rawio          allow the use of raw I/O                           [FALSE]
 rest_on_space  count the space bar as a rest character            [FALSE]
 safe_pet       prevent you from (knowingly) attacking your pet(s) [TRUE]

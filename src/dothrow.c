@@ -299,15 +299,19 @@ dofire()
 		if (!flags.autoquiver) {
 			/* Don't automatically fill the quiver */
 			You("have no ammunition readied!");
-			return(dothrow());
-		}
-		autoquiver();
-		if (!uquiver) {
+			if (iflags.quiver_fired)
+			  dowieldquiver(); /* quiver_fired */
+			if (!uquiver)
+			  return(dothrow());
+		} else {
+		  autoquiver();
+		  if (!uquiver) {
 			You("have nothing appropriate for your quiver!");
 			return(dothrow());
-		} else {
+		  } else {
 			You("fill your quiver:");
 			prinv((char *)0, uquiver, 0L);
+		  }
 		}
 	}
 

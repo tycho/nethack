@@ -246,6 +246,7 @@ struct instance_flags {
 #ifdef SORTLOOT
 	char sortloot;          /* sort items to loot alphabetically */
 #endif
+	bool quiver_fired;
 /*
  * Window capability support.
  */
