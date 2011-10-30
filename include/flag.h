@@ -250,6 +250,7 @@ struct instance_flags {
 #ifdef USE_TILES
 	boolean  vt_nethack;
 #endif
+	boolean  quiver_fired;
 /*
  * Window capability support.
  */
