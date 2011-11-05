@@ -251,6 +251,7 @@ struct instance_flags {
 	boolean  vt_nethack;
 #endif
 	boolean  quiver_fired;
+       boolean  pickup_thrown;
 /*
  * Window capability support.
  */
