@@ -50,9 +50,7 @@ moveloop()
     monstr_init();	/* monster strengths */
     objects_init();
 
-#ifdef WIZARD
-    if (wizard) add_debug_extended_commands();
-#endif
+    commands_init();
 
     (void) encumber_msg(); /* in case they auto-picked up something */
 

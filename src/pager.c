@@ -866,8 +866,9 @@ static const char *help_menu_items[] = {
 /* 4*/	"Info on what a given key does.",
 /* 5*/	"List of game options.",
 /* 6*/	"Longer explanation of game options.",
-/* 7*/	"List of extended commands.",
-/* 8*/	"The NetHack license.",
+/* 7*/  "Full list of keyboard commands.",
+/* 8*/	"List of extended commands.",
+/* 9*/	"The NetHack license.",
 #ifdef PORT_HELP
 	"%s-specific help and commands.",
 #define PORT_HELP_ID 100
@@ -940,8 +941,9 @@ dohelp()
 			case  4:  (void) dowhatdoes();  break;
 			case  5:  option_help();  break;
 			case  6:  display_file(OPTIONFILE, TRUE);  break;
-			case  7:  (void) doextlist();  break;
-			case  8:  display_file(LICENSE, TRUE);  break;
+			case  7:  dokeylist(); break;
+			case  8:  (void) doextlist();  break;
+			case  9:  display_file(LICENSE, TRUE);  break;
 #ifdef WIZARD
 			/* handle slot 9 or 10 */
 			default: display_file(DEBUGHELP, TRUE);  break;

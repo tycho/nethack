@@ -98,7 +98,7 @@ void curses_message_win_puts(const char *message, boolean recursed)
             {
                 /* Pause until key is hit - Esc suppresses any further
                 messages that turn */
-                if (curses_more() == '\033')
+                if (curses_more() == DOESCAPE)
                 {
                     suppress_turn = moves;
                     return;

@@ -165,10 +165,8 @@ E char NDECL(pgetchar);
 E void FDECL(pushch, (CHAR_P));
 E void FDECL(savech, (CHAR_P));
 #endif
-#ifdef WIZARD
-E void NDECL(add_debug_extended_commands);
-#endif /* WIZARD */
 E void FDECL(rhack, (char *));
+E void NDECL(dokeylist);
 E int NDECL(doextlist);
 E int NDECL(extcmd_via_menu);
 E void FDECL(enlightenment, (int));
@@ -189,6 +187,13 @@ E char NDECL(readchar);
 #ifdef WIZARD
 E void NDECL(sanity_check);
 #endif
+E void NDECL(commands_init);
+E char* FDECL(stripspace, (char*));
+E void FDECL(parsebindings, (char*));
+E void FDECL(parseautocomplete, (char*,boolean));
+E char FDECL(txt2key, (char*));
+E char* FDECL(key2txt, (char, char*));
+E char* FDECL(str2txt, (char*, char*));
 E char FDECL(yn_function, (const char *, const char *, CHAR_P));
 
 /* ### dbridge.c ### */

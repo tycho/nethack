@@ -198,7 +198,7 @@ int curses_character_input_dialog(const char *prompt, const char *choices, CHAR_
         choicestr[1] = '[';
         for (count = 0; choices[count] != '\0'; count++)
         {
-            if (choices[count] == '\033')   /* Escape */
+            if (choices[count] == DOESCAPE)   /* Escape */
             {
                 break;
             }
@@ -416,7 +416,7 @@ int curses_ext_cmd()
 	    prompt_width = strlen(cur_choice);
         matches = 0;
 
-        if (letter == '\033')
+        if (letter == DOESCAPE)
         {
             ret = -1;
             break;
@@ -444,6 +444,7 @@ int curses_ext_cmd()
         
         for (count = 0; extcmdlist[count].ef_txt; count++)
         {
+	  if (!extcmdlist[count].autocomplete) continue;
             if (strlen(extcmdlist[count].ef_txt) > prompt_width)
             {
                 if (strncasecmp(cur_choice, extcmdlist[count].ef_txt,
@@ -1189,7 +1190,7 @@ static int menu_get_selections(WINDOW *win, nhmenu *menu, int how)
     {
         curletter = getch();
         
-        if (curletter == '\033')
+        if (curletter == DOESCAPE)
         {
             curletter = curses_convert_keys(curletter);
         }
