@@ -1135,7 +1135,13 @@ static const char * const bogusmons[] = {
         "Gloorx Vloq", "Blork the orc",         /* Dungeon Crawl Stone Soup */
         "unicorn pegasus kitten",               /* Wil Wheaton, John Scalzi */
 
-	"nyan cat"
+	"nyan cat",
+	"grind bug",
+	"enderman",
+	"wight supremacist",
+	"Magical Trevor",
+	"first category perpetual motion device"
+	
 };
 
 
