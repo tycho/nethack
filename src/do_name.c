@@ -1210,7 +1210,9 @@ static const char * const bogusmons[] = {
 	"umbrella hulk",
 	"vampire mace",
 	"verbal jabberwock",
-	"water lemon"
+	"water lemon",
+	"winged grizzly",
+	"yellow wight"
 
 };
 
