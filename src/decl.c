@@ -21,6 +21,8 @@ NEARDATA int bases[MAXOCLASSES] = DUMMY;
 
 long has_loaded_bones = 0L;
 
+long last_clear_screen = 0L;
+
 NEARDATA int multi = 0;
 char multi_txt[BUFSZ] = DUMMY;
 #if 0

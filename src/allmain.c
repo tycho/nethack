@@ -428,6 +428,9 @@ moveloop()
 	    if (flags.time && flags.run) flags.botl = 1;
 	    display_nhwindow(WIN_MAP, FALSE);
 	}
+
+	if (moves > last_clear_screen + 2000) doredraw();
+
     }
 }
 

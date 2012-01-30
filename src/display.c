@@ -1152,6 +1152,8 @@ docrt()
     register int x,y;
     register struct rm *lev;
 
+    last_clear_screen = moves;
+
     if (!u.ux) return; /* display isn't ready yet */
 
     if (u.uswallow) {

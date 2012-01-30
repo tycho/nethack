@@ -28,6 +28,7 @@ E NEARDATA int bases[MAXOCLASSES];
 
 E long has_loaded_bones;
 
+E long last_clear_screen;
 
 E NEARDATA int multi;
 E char multi_txt[BUFSZ];
