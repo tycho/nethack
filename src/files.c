@@ -2594,14 +2594,22 @@ livelog_write_string(buffer)
 	if(!(livelogfile = fopen_datafile(LIVELOGFILE, "a", SCOREPREFIX))) {
 	    pline("Cannot open live log file!");
 	} else {
-	    char tmpbuf[1024];
+	    char tmpbuf[1024+1];
+	    char msgbuf[512+1];
+	    char *c1 = msgbuf;
+	    strncpy(msgbuf, buffer, 512);
+	    msgbuf[512] = '\0';
+	    while (*c1 != '\0') {
+	      if (*c1 == ':') *c1 = '_';
+	      c1++;
+	    }
 	    snprintf(tmpbuf, 1024, "player=%s:role=%s:race=%s:gender=%s:align=%s:turns=%ld:starttime=%ld:curtime=%ld:message=%s\n",
 		     plname,
 		     urole.filecode,
 		     urace.filecode,
 		     genders[flags.female].filecode,
 		     aligns[1-u.ualign.type].filecode,
-		     moves, (long)u.ubirthday, (long)time(NULL), buffer);
+		     moves, (long)u.ubirthday, (long)time(NULL), msgbuf);
 
 	    fprintf(livelogfile, tmpbuf);
 	    (void) fclose(livelogfile);
