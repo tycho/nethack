@@ -1,5 +1,5 @@
 Name "NitroHack"
-OutFile "NitroHack-4.0.1.exe"
+OutFile "NitroHack-4.0.4.exe"
 InstallDir "$PROGRAMFILES\NitroHack"
 
 ;--------------------------------

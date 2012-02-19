@@ -7,10 +7,10 @@
 #ifndef NITROHACK_H
 #define NITROHACK_H
 
-/* NitroHack 4.0.3 */
+/* NitroHack 4.0.4 */
 #define VERSION_MAJOR	4
 #define VERSION_MINOR	0
-#define PATCHLEVEL	3
+#define PATCHLEVEL	4
 
 #include "nitrohack_types.h"
 
