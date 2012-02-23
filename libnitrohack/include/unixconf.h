@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 /* Cygwin already defines this. */
 #if !defined(__CYGWIN__)
