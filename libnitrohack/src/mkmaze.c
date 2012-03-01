@@ -430,9 +430,11 @@ static void fixup_special(struct level *lev)
 	/* stock the main vault */
 	for (x = croom->lx; x <= croom->hx; x++)
 	    for (y = croom->ly; y <= croom->hy; y++) {
-		mkgold((long) rn1(300, 600), lev, x, y);
-		if (!rn2(3) && !is_pool(lev, x,y))
-		    maketrap(lev, x, y, rn2(3) ? LANDMINE : SPIKED_PIT);
+		if (!is_solid(lev, x, y)) {
+		    mkgold((long) rn1(300, 600), lev, x, y);
+		    if (!rn2(3) && !is_pool(lev, x,y))
+			maketrap(lev, x, y, rn2(3) ? LANDMINE : SPIKED_PIT);
+		}
 	    }
     } else if (Role_if (PM_PRIEST) && In_quest(&lev->z)) {
 	/* less chance for undead corpses (lured from lower morgues) */
