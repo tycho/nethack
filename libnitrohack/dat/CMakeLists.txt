@@ -54,9 +54,15 @@ set (COMPILED_LEVELS
     Ran-goal.lev Ran-loca.lev Ran-strt.lev Rog-fila.lev
     Rog-filb.lev Rog-goal.lev Rog-loca.lev Rog-strt.lev
     Sam-fila.lev Sam-filb.lev Sam-goal.lev Sam-loca.lev
-    Sam-strt.lev sanctum.lev  soko1-1.lev  soko1-2.lev
-    soko2-1.lev  soko2-2.lev  soko3-1.lev  soko3-2.lev
-    soko4-1.lev  soko4-2.lev  Tou-fila.lev Tou-filb.lev
+    Sam-strt.lev sanctum.lev
+    soko1-1.lev  soko1-2.lev  soko1-3.lev  soko1-4.lev
+    soko2-1.lev  soko2-2.lev  soko2-3.lev  soko2-4.lev
+    soko2-5.lev  soko2-6.lev  soko2-7.lev  soko3-1.lev
+    soko3-2.lev  soko3-3.lev  soko3-4.lev  soko3-5.lev
+    soko3-6.lev  soko3-7.lev  soko4-1.lev  soko4-2.lev
+    soko4-3.lev  soko4-4.lev  soko4-5.lev  soko4-6.lev
+    soko4-7.lev  soko4-8.lev  soko4-9.lev
+    Tou-fila.lev Tou-filb.lev
     Tou-goal.lev Tou-loca.lev Tou-strt.lev tower1.lev
     tower2.lev   tower3.lev   Val-fila.lev Val-filb.lev
     Val-goal.lev valley.lev   Val-loca.lev Val-strt.lev
