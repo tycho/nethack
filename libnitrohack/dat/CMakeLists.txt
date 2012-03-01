@@ -42,7 +42,9 @@ set (COMPILED_LEVELS
     fire.lev     Hea-fila.lev Hea-filb.lev Hea-goal.lev
     Hea-loca.lev Hea-strt.lev juiblex.lev  Kni-fila.lev
     Kni-filb.lev Kni-goal.lev Kni-loca.lev Kni-strt.lev
-    knox.lev     medusa-1.lev medusa-2.lev minefill.lev
+    knox.lev
+    medusa-1.lev medusa-2.lev medusa-3.lev medusa-4.lev
+    minefill.lev
     minend-1.lev minend-2.lev minend-3.lev minetn-1.lev
     minetn-2.lev minetn-3.lev minetn-4.lev minetn-5.lev
     minetn-6.lev minetn-7.lev Mon-fila.lev Mon-filb.lev
