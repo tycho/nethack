@@ -36,7 +36,7 @@ set (COMPILED_LEVELS
     bigrm-1.lev  bigrm-2.lev  bigrm-3.lev  bigrm-4.lev
     bigrm-5.lev  bigrm-6.lev  bigrm-7.lev  bigrm-8.lev
     bigrm-9.lev  bigrm-10.lev bigrm-11.lev
-    castle.lev
+    castle-1.lev castle-2.lev castle-3.lev
     Cav-fila.lev Cav-filb.lev Cav-goal.lev Cav-loca.lev
     Cav-strt.lev earth.lev    fakewiz1.lev fakewiz2.lev
     fire.lev     Hea-fila.lev Hea-filb.lev Hea-goal.lev
