@@ -340,7 +340,11 @@ static void fixup_special(struct level *lev)
 		lvl = lev->z;
 		lvl.dlevel = atoi(r->rname.str);
 	    } else {
-		s_level *sp = find_level(r->rname.str);
+		s_level *sp;
+		if (strcmp("random_plane", r->rname.str) == 0)
+		    sp = get_next_elemental_plane(&u.uz);
+		else
+		    sp = find_level(r->rname.str);
 		lvl = sp->dlevel;
 	    }
 	    /* fall into... */

@@ -42,6 +42,7 @@ static void write_topten(int fd, const struct toptenentry *ttlist);
 static void update_log(const struct toptenentry *newtt);
 static boolean readentry(char *line, struct toptenentry *tt);
 static struct toptenentry *read_topten(int fd, int limit);
+static int observable_depth(const d_level *lev);
 static void fill_topten_entry(struct toptenentry *newtt, int how);
 static boolean toptenlist_insert(struct toptenentry *ttlist, struct toptenentry *newtt);
 static int classmon(char *plch, boolean fem);
@@ -151,6 +152,23 @@ static struct toptenentry *read_topten(int fd, int limit)
 }
 
 
+static int observable_depth(const d_level *lev)
+{
+    /* with the order of the elemental planes randomized, we must use a
+     * constant external representation in the record file
+     */
+    if (In_endgame(lev)) {
+	if (Is_astralevel(lev))	     return -5;
+	else if (Is_waterlevel(lev)) return -4;
+	else if (Is_firelevel(lev))  return -3;
+	else if (Is_airlevel(lev))   return -2;
+	else if (Is_earthlevel(lev)) return -1;
+	else			     return 0;	/* ? */
+    }
+    return depth(lev);
+}
+
+
 static void fill_topten_entry(struct toptenentry *newtt, int how)
 {
     int uid = getuid();
@@ -167,7 +185,7 @@ static void fill_topten_entry(struct toptenentry *newtt, int how)
     newtt->patchlevel = PATCHLEVEL;
     newtt->points = u.urexp;
     newtt->deathdnum = u.uz.dnum;
-    newtt->deathlev = depth(&u.uz);
+    newtt->deathlev = observable_depth(&u.uz);
     newtt->maxlvl = deepest_lev_reached(TRUE);
     newtt->hp = u.uhp;
     newtt->maxhp = u.uhpmax;

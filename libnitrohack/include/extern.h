@@ -384,6 +384,8 @@ extern void insert_branch(branch *,boolean);
 extern void init_dungeons(void);
 extern s_level *find_level(const char *);
 extern s_level *Is_special(const d_level *);
+extern s_level *get_next_elemental_plane(const d_level *);
+extern d_level *get_first_elemental_plane(void);
 extern branch *Is_branchlev(const d_level *);
 extern xchar ledger_no(const d_level *);
 extern xchar maxledgerno(void);
