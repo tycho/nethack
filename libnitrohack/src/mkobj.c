@@ -455,8 +455,9 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 		case BAG_OF_HOLDING:	mkbox_cnts(otmp);
 					break;
 		case EXPENSIVE_CAMERA:
-		case TINNING_KIT:
-		case MAGIC_MARKER:	otmp->spe = rn1(70,30);
+		case TINNING_KIT:	otmp->spe = rn1(70,30);
+					break;
+		case MAGIC_MARKER:	otmp->spe = rn1(16,15);
 					break;
 		case CAN_OF_GREASE:	otmp->spe = rnd(25);
 					blessorcurse(otmp, 10);
