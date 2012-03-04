@@ -1242,6 +1242,7 @@ extern const char *a_gname(void);
 extern const char *a_gname_at(xchar x,xchar y);
 extern const char *align_gname(aligntyp);
 extern const char *halu_gname(aligntyp);
+extern const char *rnd_gname(int);
 extern const char *align_gtitle(aligntyp);
 extern void altar_wrath(int,int);
 

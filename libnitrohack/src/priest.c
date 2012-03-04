@@ -248,7 +248,14 @@ char *priestname(const struct monst *mon,
 				strcat(pname, "priest ");
 		}
 		strcat(pname, "of ");
-		strcat(pname, halu_gname((int)EPRI(mon)->shralign));
+		/* Astral Call bugfix */
+		if (mon->data == &mons[PM_HIGH_PRIEST] && !Hallucination &&
+			Is_astralevel(&u.uz) && distu(mon->mx, mon->my) > 2) {
+		    strcat(pname, rnd_gname(str2role((char *)urole.name.m)));
+		    strcat(pname, "?");
+		} else {
+		    strcat(pname, halu_gname((int)EPRI(mon)->shralign));
+		}
 		return pname;
 	}
 	/* use emin instead of epri */
