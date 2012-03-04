@@ -30,6 +30,7 @@ static void makerooms(struct level *lev);
 static void finddpos(struct level *lev, coord *,xchar,xchar,xchar,xchar);
 static void mkinvpos(xchar,xchar,int);
 static void mk_knox_portal(struct level *lev, xchar,xchar);
+static void place_random_engravings(struct level *lev);
 
 #define create_vault(lev)	create_room(lev, -1, -1, 2, 2, -1, -1, VAULT, TRUE)
 #define do_vault()	(vault_x != -1)
@@ -397,6 +398,32 @@ static const char * const trap_engravings[TRAPNUM] = {
 			"Vlad was here", NULL, "ad aerarium", "ad aerarium",
 			NULL, NULL, NULL, NULL, NULL,
 			NULL,
+};
+
+/* Quotes from or about the Illuminati */
+static const char * const illuminati_engravings[] = {
+	"Ewige Blumenkraft!", /* the Illuminatus' motto */
+	"Ewige Blumenkraft Und Ewige Schlangenkraft", /* the complete Illuminatus' motto */
+	"fnord", /* you can't see it */
+	"FUCKUP calculates your odds of ascending as negligibly small",
+	"Hail Eris!",
+	"Jeder Gedanke ist verschenkt, wenn Adam Weishaupt fuer dich denkt", /* Welle:Erdball */
+	"Novus Ordo Seclorum",
+	"Think for yourself, schmuck",
+};
+
+/* Quotes from or about the Hitchhikers Guide to the Galaxy */
+static const char * const hhgtg_engravings[] = {
+	"Beeblebrox for President!",
+	"Don't Panic",
+	"Got your towel?",
+	"Time is an illusion. Lunchtime doubly so.",
+	"Oh no, not again.",
+	"Resistance is useless!",
+	"Slartibartfast was here!",
+	"So long, and thanks for all the fish",
+	"Visit Milliways, the Restaurant at the End of the Universe!",
+	"We apologize for the inconvenience",
 };
 
 static void makeniche(struct level *lev, int trap_type)
@@ -805,6 +832,7 @@ struct level *mklev(d_level *levnum)
 	makelevel(lev);
 	bound_digging(lev);
 	mineralize(lev);
+	place_random_engravings(lev);
 	in_mklev = FALSE;
 	/* has_morgue gets cleared once morgue is entered; graveyard stays
 	   set (graveyard might already be set even when has_morgue is clear
@@ -1393,6 +1421,47 @@ static void mk_knox_portal(struct level *lev, xchar x, xchar y)
 	insert_branch(br, TRUE);
 
 	place_branch(lev, br, x, y);
+}
+
+/*
+ * Places a random engraving from an array of engravings into
+ * a random room on the current level.
+ */
+void place_random_engraving(struct level *lev, const char *const engravings[], const int size)
+{
+	struct mkroom *some_room;
+	xchar sx, sy;
+	int tries;
+	char const *engraving = engravings[rn2(size)];
+
+	tries = 0;
+	do {
+	    if (Inhell || lev->nroom <= 1) {
+		/* random placement in Gehennom or levels with no rooms */
+		sx = rn2(COLNO);
+		sy = rn2(ROWNO);
+	    } else {
+		/* placement inside of rooms, not corridors */
+		some_room = &lev->rooms[rn2(lev->nroom - 1)];
+		sx = somex(some_room);
+		sy = somey(some_room);
+	    }
+	    tries++;
+	} while (occupied(lev, sx, sy) && tries < 100);
+
+	if (tries < 100)
+	    make_engr_at(lev, sx, sy, engraving, 0L, MARK);
+}
+
+/*
+ * Places dungeon level dependent engravings on the current level.
+ */
+void place_random_engravings(struct level *lev)
+{
+	switch (depth(&u.uz)) {
+	    case 23: place_random_engraving(lev, illuminati_engravings, SIZE(illuminati_engravings)); break;
+	    case 42: place_random_engraving(lev, hhgtg_engravings, SIZE(hhgtg_engravings)); break;
+	}
 }
 
 /*mklev.c*/
