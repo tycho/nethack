@@ -974,7 +974,15 @@ int seffects(struct obj *sobj, boolean *known)
 		}
 		break;
 	case SCR_GOLD_DETECTION:
-		if (confused || sobj->cursed) return trap_detect(sobj);
+		if (confused || (sobj->cursed && In_endgame(&u.uz))) {
+		    /* detect random item class */
+		    int random_classes[] = {
+			WEAPON_CLASS, ARMOR_CLASS, RING_CLASS, AMULET_CLASS,
+			TOOL_CLASS, FOOD_CLASS, POTION_CLASS, SCROLL_CLASS,
+			SPBOOK_CLASS, WAND_CLASS, COIN_CLASS, GEM_CLASS
+		    };
+		    return object_detect((struct obj *)0, random_classes[rn2(SIZE(random_classes))]);
+		} else if (sobj->cursed) return trap_detect(sobj);
 		else return gold_detect(sobj, known);
 	case SCR_FOOD_DETECTION:
 	case SPE_DETECT_FOOD:
