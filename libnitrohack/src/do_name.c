@@ -508,6 +508,10 @@ char *x_monnam(const struct monst *mtmp,
 				 monsndx(mdat), (boolean)mtmp->female));
 	    strcat(buf, lcase(pbuf));
 	    name_at_start = FALSE;
+	} else if (is_rider(mtmp->data) && distu(mtmp->mx, mtmp->my) > 2) {
+	    /* prevent the three horsemen from being identified from afar */
+	    strcat(buf, "Rider");
+	    name_at_start = FALSE;
 	} else {
 	    strcat(buf, mdat->mname);
 	    name_at_start = (boolean)type_is_pname(mdat);
