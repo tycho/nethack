@@ -980,6 +980,8 @@ void begin_burn(struct obj *obj, boolean already_lit)
 	    return;
 
 	switch (obj->otyp) {
+	    case GOLD_DRAGON_SCALE_MAIL:
+	    case GOLD_DRAGON_SCALES:
 	    case MAGIC_LAMP:
 		obj->lamplit = 1;
 		do_timer = FALSE;
