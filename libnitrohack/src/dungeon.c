@@ -355,7 +355,7 @@ static int level_range(xchar dgn, int base, int rrand, int chain,
 	}
 
 	if (base < 1 || base > lmax)
-	    panic("level_range: base value out of range");
+	    panic("level_range: base value out of range. base: %d, lmax: %d", base, lmax);
 
 	*adjusted_base = base;
 
@@ -884,6 +884,7 @@ void init_dungeons(void)	/* initialize the "dungeon" structs */
 	sokoban_dnum = dname_to_dnum("Sokoban");
 	mines_dnum = dname_to_dnum("The Gnomish Mines");
 	tower_dnum = dname_to_dnum("Vlad's Tower");
+	mall_dnum = dname_to_dnum("Town");
 
 	/* one special fixup for dummy surface level */
 	if ((x = find_level("dummy")) != 0) {

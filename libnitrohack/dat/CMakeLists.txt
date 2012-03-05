@@ -22,6 +22,7 @@ set (LEVEL_DESCRIPTIONS
     ${LNH_DAT}/sokoban.des
     ${LNH_DAT}/Tourist.des
     ${LNH_DAT}/tower.des
+    ${LNH_DAT}/town.des
     ${LNH_DAT}/Valkyrie.des
     ${LNH_DAT}/Wizard.des
     ${LNH_DAT}/yendor.des 
@@ -64,7 +65,9 @@ set (COMPILED_LEVELS
     soko4-7.lev  soko4-8.lev  soko4-9.lev
     Tou-fila.lev Tou-filb.lev
     Tou-goal.lev Tou-loca.lev Tou-strt.lev tower1.lev
-    tower2.lev   tower3.lev   Val-fila.lev Val-filb.lev
+    tower2.lev   tower3.lev
+    town-1.lev   town-2.lev
+    Val-fila.lev Val-filb.lev
     Val-goal.lev valley.lev   Val-loca.lev Val-strt.lev
     water.lev    wizard1.lev  wizard2.lev  wizard3.lev
     Wiz-fila.lev Wiz-filb.lev Wiz-goal.lev Wiz-loca.lev
