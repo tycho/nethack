@@ -1796,9 +1796,13 @@ static long set_cost(struct obj *obj, struct monst *shkp)
 	else
 		tmp /= 2L;
 
+	/* some shopkeepers just want to rip you off */
+	if (tmp > 4L && ESHK(shkp)->cheapskate) {
+		tmp -= tmp / 4L;
+
 	/* shopkeeper may notice if the player isn't very knowledgeable -
 	   especially when gem prices are concerned */
-	if (!obj->dknown || !objects[obj->otyp].oc_name_known) {
+	} else if (!obj->dknown || !objects[obj->otyp].oc_name_known) {
 		if (obj->oclass == GEM_CLASS) {
 			/* different shop keepers give different prices */
 			if (objects[obj->otyp].oc_material == GEMSTONE ||
@@ -1806,8 +1810,7 @@ static long set_cost(struct obj *obj, struct monst *shkp)
 				tmp = (obj->otyp % (6 - shkp->m_id % 3));
 				tmp = (tmp + 3) * obj->quan;
 			}
-		} else if (tmp > 1L && !rn2(4))
-			tmp -= tmp / 4L;
+		}
 	}
 	return tmp;
 }

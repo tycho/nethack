@@ -338,6 +338,7 @@ shk_failed:
 	ESHK(shk)->loan = 0L;
 	ESHK(shk)->visitct = 0;
 	ESHK(shk)->following = 0;
+	ESHK(shk)->cheapskate = (rn2(3) == 0) ? TRUE : FALSE;
 	ESHK(shk)->billct = 0;
         mkmonmoney(shk, 1000L + 30L*(long)rnd(100));	/* initial capital */
 	if (shp->shknms == shkrings)

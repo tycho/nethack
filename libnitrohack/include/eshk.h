@@ -31,6 +31,7 @@ struct eshk {
 	schar shoproom;		/* index in rooms; set by inshop() */
 	boolean following;	/* following customer since he owes us sth */
 	boolean surcharge;	/* angry shk inflates prices */
+	boolean cheapskate;	/* offers less than normal for sold goods */
 	char customer[PL_NSIZ]; /* most recent customer */
 	char shknam[PL_NSIZ];
 };

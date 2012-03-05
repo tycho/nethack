@@ -4,6 +4,7 @@
 #include "hack.h"
 #include "epri.h"
 #include "edog.h"
+#include "eshk.h"
 
 static boolean no_repeat = FALSE;
 
@@ -222,6 +223,8 @@ void mstatusline(struct monst *mtmp)
 				", engulfed you") :
 				", holding you");
 	if (mtmp == u.usteed)	  strcat(info, ", carrying you");
+	if (wizard && mtmp->isshk && ESHK(mtmp)->cheapskate)
+	    strcat(info, ", cheapskate");
 
 	/* avoid "Status of the invisible newt ..., invisible" */
 	/* and unlike a normal mon_nam, use "saddled" even if it has a name */
