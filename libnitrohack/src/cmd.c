@@ -226,7 +226,7 @@ static int domonability(void)
 		    dryup(u.ux, u.uy, TRUE);
 	    } else pline("There is no fountain here.");
 	} else if (is_unicorn(youmonst.data)) {
-	    use_unicorn_horn(NULL);
+	    fix_attributes_and_properties(NULL, 0);
 	    return 1;
 	} else if (youmonst.data->msound == MS_SHRIEK) {
 	    pline("You shriek.");

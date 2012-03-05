@@ -35,7 +35,7 @@ extern boolean um_dist(xchar, xchar, xchar);
 extern boolean snuff_candle(struct obj *);
 extern boolean snuff_lit(struct obj *);
 extern boolean catch_lit(struct obj *);
-extern void use_unicorn_horn(struct obj *);
+extern void fix_attributes_and_properties(struct obj *, int);
 extern boolean tinnable(struct obj *);
 extern void reset_trapset(void);
 extern void fig_transform(void *, long);

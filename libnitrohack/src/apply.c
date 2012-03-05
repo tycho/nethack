@@ -1357,13 +1357,14 @@ static void use_tinning_kit(struct obj *obj)
 	} else impossible("Tinning failed.");
 }
 
-void use_unicorn_horn(struct obj *obj)
+/* Formerly known as use_unicorn_horn. attr_point = num attr pts we might fix. */
+void fix_attributes_and_properties(struct obj *obj, int attr_point)
 {
 #define PROP_COUNT 6		/* number of properties we're dealing with */
-#define ATTR_COUNT (A_MAX*3)	/* number of attribute points we might fix */
+	int attr_count = A_MAX * attr_point;
 	int idx, val, val_limit,
 	    trouble_count, unfixable_trbl, did_prop, did_attr;
-	int trouble_list[PROP_COUNT + ATTR_COUNT];
+	int trouble_list[PROP_COUNT + attr_count];
 
 	if (obj && obj->cursed) {
 	    long lcount = (long) rnd(100);
@@ -1414,8 +1415,8 @@ void use_unicorn_horn(struct obj *obj)
 	    val_limit = AMAX(idx);
 	    /* don't recover strength lost from hunger */
 	    if (idx == A_STR && u.uhs >= WEAK) val_limit--;
-	    /* don't recover more than 3 points worth of any attribute */
-	    if (val_limit > ABASE(idx) + 3) val_limit = ABASE(idx) + 3;
+	    /* don't recover more than attr_point points worth of any attribute */
+	    if (val_limit > ABASE(idx) + attr_point) val_limit = ABASE(idx) + attr_point;
 
 	    for (val = ABASE(idx); val < val_limit; val++)
 		attr_trouble(idx);
@@ -1480,7 +1481,7 @@ void use_unicorn_horn(struct obj *obj)
 		    ABASE(idx) += 1;
 		    did_attr++;
 		} else
-		    panic("use_unicorn_horn: bad trouble? (%d)", idx);
+		    panic("fix_attributes_and_properties: bad trouble? (%d)", idx);
 		break;
 	    }
 	}
@@ -2779,7 +2780,7 @@ int doapply(struct obj *obj)
 		    obj = NULL; /* used up */
 		break;
 	case UNICORN_HORN:
-		use_unicorn_horn(obj);
+		fix_attributes_and_properties(obj, 0);
 		break;
 	case WOODEN_FLUTE:
 	case MAGIC_FLUTE:
