@@ -179,7 +179,9 @@ int dosit(void)
 			if (u.uluck + rn2(5) < 0) {
 			    pline("You feel your luck is changing.");
 			    change_luck(1);
-			} else	    makewish();
+			} else {
+			    fix_attributes_and_properties(NULL, 6);
+			}
 			break;
 		    case 7:
 			{
