@@ -760,7 +760,10 @@ static int domonnoise(struct monst *mtmp)
 	case MS_RIDER:
 	    if (ptr == &mons[PM_DEATH] && !rn2(10))
 		pline_msg = "is busy reading a copy of Sandman #8.";
-	    else verbl_msg = "Who do you think you are, War?";
+	    else
+		verbl_msg = (ptr == &mons[PM_DEATH]) ?
+			 "WHO DO YOU THINK YOU ARE, WAR?" :
+			 "Who do you think you are, War?";
 	    break;
     }
 
