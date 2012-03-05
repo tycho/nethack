@@ -21,6 +21,7 @@ static void mkshop(struct level *lev);
 static void mkzoo(struct level *lev, int type);
 static void mkswamp(struct level *lev);
 static void mktemple(struct level *lev);
+static void mkgarden(struct level *lev, struct mkroom *croom);
 static coord * shrine_pos(struct level *lev, int roomno);
 static const struct permonst * morguemon(const d_level *dlev);
 static const struct permonst * antholemon(const d_level *dlev);
@@ -54,6 +55,7 @@ void mkroom(struct level *lev, int roomtype)
 	case MORGUE:	mkzoo(lev, MORGUE); break;
 	case BARRACKS:	mkzoo(lev, BARRACKS); break;
 	case SWAMP:	mkswamp(lev); break;
+	case GARDEN:	mkgarden(lev, NULL); break;
 	case TEMPLE:	mktemple(lev); break;
 	case LEPREHALL:	mkzoo(lev, LEPREHALL); break;
 	case COCKNEST:	mkzoo(lev, COCKNEST); break;
@@ -155,6 +157,10 @@ void fill_zoo(struct level *lev, struct mkroom *sroom)
 
 	sh = sroom->fdoor;
 	switch(type) {
+	    case GARDEN:
+		mkgarden(lev, sroom);
+		/* mkgarden() sets flags and we don't want other fillings */
+		return;
 	    case COURT:
 		if (lev->flags.is_maze_lev) {
 		    for (tx = sroom->lx; tx <= sroom->hx; tx++)
@@ -350,6 +356,56 @@ static const struct permonst *antholemon(const d_level *dlev)
 	case 1:		mtyp = PM_FIRE_ANT; break;
 	}
 	return (mvitals[mtyp].mvflags & G_GONE) ? NULL : &mons[mtyp];
+}
+
+/** Create a special room with trees, fountains and nymphs.
+ *  @author Pasi Kallinen
+ */
+static void mkgarden(struct level *lev, struct mkroom *croom)
+{
+	int tryct = 0;
+	boolean maderoom = FALSE;
+	coord pos;
+	int i, tried;
+
+	while ((tryct++ < 25) && !maderoom) {
+	    struct mkroom *sroom = croom ? croom : &lev->rooms[rn2(lev->nroom)];
+
+	    if (sroom->hx < 0 || (!croom &&
+		    (sroom->rtype != OROOM || !sroom->rlit ||
+		    has_upstairs(lev, sroom) || has_dnstairs(lev, sroom))))
+		continue;
+
+	    sroom->rtype = GARDEN;
+	    maderoom = TRUE;
+	    lev->flags.has_garden = 1;
+
+	    tried = 0;
+	    i = rn1(5, 3);
+	    while ((tried++ < 50) && (i >= 0) && somexy(lev, sroom, &pos)) {
+		const struct permonst *pmon;
+		if (!MON_AT(lev, pos.x, pos.y) && (pmon = mkclass(&lev->z, S_NYMPH, 0))) {
+		    struct monst *mtmp = makemon(pmon, lev, pos.x, pos.y, NO_MM_FLAGS);
+		    mtmp->msleeping = 1;
+		    i--;
+		}
+	    }
+
+	    tried = 0;
+	    i = rn1(3, 3);
+	    while ((tried++ < 50) && (i >= 0) && somexy(lev, sroom, &pos)) {
+		if (lev->locations[pos.x][pos.y].typ == ROOM && !MON_AT(lev, pos.x, pos.y) &&
+			!nexttodoor(lev, pos.x, pos.y)) {
+		    if (rn2(3)) {
+			lev->locations[pos.x][pos.y].typ = TREE;
+		    } else {
+			lev->locations[pos.x][pos.y].typ = FOUNTAIN;
+			lev->flags.nfountains++;
+		    }
+		    i--;
+		}
+	    }
+	}
 }
 
 static void mkswamp(struct level *lev)

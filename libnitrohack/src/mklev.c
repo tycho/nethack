@@ -641,6 +641,7 @@ static void makelevel(struct level *lev)
 	else if (u_depth > 5 && !rn2(8) &&
 	   !(mvitals[PM_LEPRECHAUN].mvflags & G_GONE)) mkroom(lev, LEPREHALL);
 	else if (u_depth > 6 && !rn2(7)) mkroom(lev, ZOO);
+	else if (u_depth > 7 && !rn2(6)) mkroom(lev, GARDEN);
 	else if (u_depth > 8 && !rn2(5)) mkroom(lev, TEMPLE);
 	else if (u_depth > 9 && !rn2(5) &&
 	   !(mvitals[PM_KILLER_BEE].mvflags & G_GONE)) mkroom(lev, BEEHIVE);

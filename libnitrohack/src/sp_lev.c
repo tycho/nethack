@@ -1370,6 +1370,7 @@ void fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 			for (y=croom->ly;y<=croom->hy;y++)
 			    mkgold((long)rn1(abs(depth(&lev->z))*100, 51), lev, x, y);
 		    break;
+		case GARDEN:
 		case COURT:
 		case ZOO:
 		case BEEHIVE:
@@ -1385,6 +1386,9 @@ void fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 		break;
 	    case ZOO:
 		lev->flags.has_zoo = TRUE;
+		break;
+	    case GARDEN:
+		lev->flags.has_garden = TRUE;
 		break;
 	    case COURT:
 		lev->flags.has_court = TRUE;

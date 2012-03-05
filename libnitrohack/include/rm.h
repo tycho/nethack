@@ -417,6 +417,7 @@ struct levelflags {
 	unsigned has_zoo:1;
 	unsigned has_court:1;
 	unsigned has_morgue:1;
+	unsigned has_garden:1;
 	unsigned has_beehive:1;
 	unsigned has_barracks:1;
 	unsigned has_temple:1;
