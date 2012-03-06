@@ -267,8 +267,8 @@ void fill_zoo(struct level *lev, struct mkroom *sroom)
 			break;
 		    case BARRACKS:
 			if (!rn2(20))	/* the payroll and some loot */
-			    mksobj_at((rn2(3)) ? LARGE_BOX : CHEST, lev,
-					     sx, sy, TRUE, FALSE);
+			    mksobj_at((rn2(3) || depth(&u.uz) < 16) ? CHEST : IRON_SAFE,
+				      lev, sx, sy, TRUE, FALSE);
 			break;
 		    case COCKNEST:
 			if (!rn2(3)) {
@@ -308,7 +308,8 @@ void fill_zoo(struct level *lev, struct mkroom *sroom)
 		  somexy(lev, sroom, &mm);
 		  mkgold((long) rn1(50 * level_difficulty(&lev->z),10), lev, mm.x, mm.y);
 		  /* the royal coffers */
-		  chest = mksobj_at(CHEST, lev, mm.x, mm.y, TRUE, FALSE);
+		  chest = mksobj_at((depth(&u.uz) > 15) ? IRON_SAFE : CHEST,
+			lev, mm.x, mm.y, TRUE, FALSE);
 		  chest->spe = 2; /* so it can be found later */
 		  lev->flags.has_court = 1;
 		  break;

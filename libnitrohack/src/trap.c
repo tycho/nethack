@@ -2500,6 +2500,7 @@ int fire_damage(struct obj *chain, boolean force, boolean here, xchar x, xchar y
 	if (Is_container(obj)) {
 	    switch (obj->otyp) {
 	    case ICE_BOX:
+	    case IRON_SAFE:
 		continue;		/* Immune */
 		/*NOTREACHED*/
 		break;

@@ -610,7 +610,8 @@ int trap_detect(struct obj *sobj)
 	else found = TRUE;
     }
     for (obj = level->objlist; obj; obj = obj->nobj) {
-	if ((obj->otyp==LARGE_BOX || obj->otyp==CHEST) && obj->otrapped) {
+	if ((obj->otyp == LARGE_BOX || obj->otyp == CHEST || obj->otyp == IRON_SAFE) &&
+		obj->otrapped) {
 	    if (obj->ox != u.ux || obj->oy != u.uy)
 		goto outtrapmap;
 	    else found = TRUE;
@@ -641,13 +642,14 @@ outtrapmap:
 	sense_trap(ttmp, 0, 0, sobj && sobj->cursed);
 
     for (obj = level->objlist; obj; obj = obj->nobj)
-	if ((obj->otyp==LARGE_BOX || obj->otyp==CHEST) && obj->otrapped)
-	sense_trap(NULL, obj->ox, obj->oy, sobj && sobj->cursed);
+	if ((obj->otyp == LARGE_BOX || obj->otyp == CHEST || obj->otyp == IRON_SAFE) &&
+		obj->otrapped)
+	    sense_trap(NULL, obj->ox, obj->oy, sobj && sobj->cursed);
 
     for (door = 0; door < level->doorindex; door++) {
 	cc = level->doors[door];
 	if (level->locations[cc.x][cc.y].doormask & D_TRAPPED)
-	sense_trap(NULL, cc.x, cc.y, sobj && sobj->cursed);
+	    sense_trap(NULL, cc.x, cc.y, sobj && sobj->cursed);
     }
 
     newsym(u.ux,u.uy);

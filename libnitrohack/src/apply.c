@@ -10,7 +10,7 @@ static const char tools_too[] = { ALL_CLASSES, TOOL_CLASS, POTION_CLASS,
 
 static int use_camera(struct obj *);
 static int use_towel(struct obj *);
-static boolean its_dead(int,int,int *);
+static boolean its_dead(int, int, int *, struct obj *);
 static int use_stethoscope(struct obj *);
 static void use_whistle(struct obj *);
 static void use_magic_whistle(struct obj *);
@@ -141,7 +141,7 @@ static int use_towel(struct obj *obj)
 }
 
 /* maybe give a stethoscope message based on floor objects */
-static boolean its_dead(int rx, int ry, int *resp)
+static boolean its_dead(int rx, int ry, int *resp, struct obj *tobj)
 {
 	struct obj *otmp;
 	struct trap *ttmp;
@@ -172,6 +172,13 @@ static boolean its_dead(int rx, int ry, int *resp)
 	    }
 	    return TRUE;
 	}
+
+	/* Using a stethoscope on a safe may crack the safe open. */
+	if (otmp = sobj_at(IRON_SAFE, level, rx, ry)) {
+	    pick_lock(tobj, rx, ry);
+	    return TRUE;
+	}
+
 	return FALSE;
 }
 
@@ -225,7 +232,7 @@ static int use_stethoscope(struct obj *obj)
 		else if (dz < 0 || !can_reach_floor())
 		    pline("You can't reach the %s.",
 			(dz > 0) ? surface(u.ux, u.uy) : ceiling(u.ux, u.uy));
-		else if (its_dead(u.ux, u.uy, &res))
+		else if (its_dead(u.ux, u.uy, &res, obj))
 		    ;	/* message already given */
 		else if (Is_stronghold(&u.uz))
 		    You_hear("the crackling of hellfire.");
@@ -281,7 +288,7 @@ static int use_stethoscope(struct obj *obj)
 		return res;
 	}
 
-	if (!its_dead(rx, ry, &res))
+	if (!its_dead(rx, ry, &res, obj))
 	    pline("You hear nothing special.");	/* not You_hear()  */
 	return res;
 }
@@ -2673,6 +2680,7 @@ int doapply(struct obj *obj)
 	case SACK:
 	case BAG_OF_HOLDING:
 	case OILSKIN_SACK:
+	case IRON_SAFE:
 		res = use_container(obj, 1);
 		break;
 	case BAG_OF_TRICKS:
@@ -2684,7 +2692,7 @@ int doapply(struct obj *obj)
 	case LOCK_PICK:
 	case CREDIT_CARD:
 	case SKELETON_KEY:
-		pick_lock(obj);
+		pick_lock(obj, 0, 0);
 		break;
 	case PICK_AXE:
 	case DWARVISH_MATTOCK:
