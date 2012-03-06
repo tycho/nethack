@@ -350,10 +350,11 @@ static const struct permonst *antholemon(const d_level *dlev)
 	int mtyp;
 
 	/* Same monsters within a level, different ones between levels */
-	switch ((level_difficulty(dlev) + ((long)u.ubirthday)) % 3) {
+	switch ((level_difficulty(dlev) + ((long)u.ubirthday)) % 4) {
 	default:	mtyp = PM_GIANT_ANT; break;
 	case 0:		mtyp = PM_SOLDIER_ANT; break;
 	case 1:		mtyp = PM_FIRE_ANT; break;
+	case 2:		mtyp = PM_SNOW_ANT; break;
 	}
 	return (mvitals[mtyp].mvflags & G_GONE) ? NULL : &mons[mtyp];
 }
