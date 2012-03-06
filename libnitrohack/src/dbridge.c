@@ -599,6 +599,10 @@ void close_drawbridge(int x, int y)
 
 	loc1 = &level->locations[x][y];
 	if (loc1->typ != DRAWBRIDGE_DOWN) return;
+	if (rn2(5) == 0) {
+	    pline("The mechanism seems to have something stuck in it and won't close.");
+	    return;
+	}
 	x2 = x; y2 = y;
 	get_wall_for_db(&x2,&y2);
 	if (cansee(x,y) || cansee(x2,y2))
