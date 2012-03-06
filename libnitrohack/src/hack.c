@@ -1683,6 +1683,9 @@ void check_special_room(boolean newlev)
 		case COCKNEST:
 		    pline("You enter a disgusting nest!");
 		    break;
+		case ARMORY:
+		    pline("You enter a dilapidated armory.");
+		    break;
 		case ANTHOLE:
 		    pline("You enter an anthole!");
 		    break;
