@@ -786,10 +786,20 @@ SCROLL("stinking cloud",        "VELOX NEB",            1,  15, 300),
 SCROLL(NULL,                    "FOOBIE BLETCH",        1,   0, 100),
 SCROLL(NULL,                    "TEMOV",                1,   0, 100),
 SCROLL(NULL,                    "GARVEN DEH",           1,   0, 100),
-SCROLL(NULL,                    "READ ME",              1,   0, 100),
+SCROLL(NULL,                    "READ ME",              1,   0, 100), /* Lewis Carroll */
 SCROLL(NULL,                    "ETAOIN SHRDLU",        1,   0, 100),
 SCROLL(NULL,                    "LOREN IPSUM",          1,   0, 100),
-SCROLL(NULL,                    "FNORD",                1,   0, 100),
+SCROLL(NULL,                    "FNORD",                1,   0, 100), /* Illuminati */
+SCROLL(NULL,                    "KO BATE",              1,   0, 100), /* Kurd Lasswitz */
+SCROLL(NULL,                    "ACHAT SHTAYIM SHALOSH",1,   0, 100), /* Uri Geller */
+SCROLL(NULL,                    "ABRA KA DABRA",        1,   0, 100), /* traditional incantation */
+SCROLL(NULL,                    "ASHPD",                1,   0, 100), /* Portal */
+SCROLL(NULL,                    "SODALG",               1,   0, 100), /* Portal */
+SCROLL(NULL,                    "ZLORFIK",              1,   0, 100), /* Zak McKracken */
+SCROLL(NULL,                    "HAPAX LEGOMENON",      1,   0, 100),
+SCROLL(NULL,                    "HZLRC KSTSBD MPFNG",   1,   0, 100),
+SCROLL(NULL,                    "EIRIS SAZUN IDISI",    1,   0, 100), /* Merseburg Incantations */
+SCROLL(NULL,                    "PHOL ENDE WODAN",      1,   0, 100), /* Merseburg Incantations */
 /* these must come last because they have special descriptions */
 SCROLL("blank paper",           "unlabeled",        0,  28,  60),
 #undef SCROLL
