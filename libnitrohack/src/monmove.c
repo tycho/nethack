@@ -99,6 +99,8 @@ boolean onscary(int x, int y, struct monst *mtmp)
 	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
 	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
 	    is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
+	    /* Vlad ignores Elbereth/scare monster/garlic */
+	    mtmp->data == &mons[PM_VLAD_THE_IMPALER] ||
 	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
 		return FALSE;
 
