@@ -105,7 +105,7 @@ static long botl_score(void)
     long umoney = money_cnt(invent) + hidden_gold();
 
     if ((umoney -= u.umoney0) < 0L) umoney = 0L;
-    return umoney + u.urexp + (long)(50 * (deepest - 1))
+    return umoney + u.urscore + (long)(50 * (deepest - 1))
 			  + (long)(deepest > 30 ? 10000 :
 				   deepest > 20 ? 1000*(deepest - 20) : 0);
 }

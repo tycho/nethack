@@ -80,10 +80,12 @@ int experience(struct monst *mtmp, int nk)
 	return tmp;
 }
 
-void more_experienced(int exp, int rexp)
+/* Add to experience and scoring counter. */
+void more_experienced(int exp, int score, int rexp)
 {
 	u.uexp += exp;
 	u.urexp += 4*exp + rexp;
+	u.urscore += 4*score + rexp;
 	iflags.botl = 1;
 	if (u.urexp >= (Role_if (PM_WIZARD) ? 1000 : 2000))
 		flags.beginner = 0;

@@ -168,6 +168,7 @@ struct you {
 	int ublessed, ublesscnt;	/* blessing/duration from #pray */
 	int	umoney0;
 	int	uexp, urexp;
+	int	urscore;	/* the current score */
 	int	ucleansed;	/* to record moves when player was cleansed */
 	int	usleep;		/* sleeping; monstermove you last started */
 	int uinvault;

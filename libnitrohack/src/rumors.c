@@ -348,7 +348,7 @@ int doconsult(struct monst *oracl)
 		exercise(A_WIS, !cheapskate);
 	}
 	if (add_xpts) {
-		more_experienced(add_xpts, u_pay/50);
+		more_experienced(add_xpts, add_xpts, u_pay/50);
 		newexplevel();
 	}
 	return 1;

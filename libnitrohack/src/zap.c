@@ -1736,7 +1736,7 @@ void zapnodir(struct obj *obj)
 	}
 	if (known && !objects[obj->otyp].oc_name_known) {
 		makeknown(obj->otyp);
-		more_experienced(0,10);
+		more_experienced(0, 0, 10);
 	}
 }
 
@@ -2407,7 +2407,7 @@ void weffects(struct obj *obj, schar dx, schar dy, schar dz)
 	}
 	if (disclose && was_unkn) {
 	    makeknown(otyp);
-	    more_experienced(0,10);
+	    more_experienced(0, 0, 10);
 	}
 	return;
 }

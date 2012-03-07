@@ -183,7 +183,7 @@ static void fill_topten_entry(struct toptenentry *newtt, int how)
     newtt->ver_major = VERSION_MAJOR;
     newtt->ver_minor = VERSION_MINOR;
     newtt->patchlevel = PATCHLEVEL;
-    newtt->points = u.urexp;
+    newtt->points = u.urscore;
     newtt->deathdnum = u.uz.dnum;
     newtt->deathlev = observable_depth(&u.uz);
     newtt->maxlvl = deepest_lev_reached(TRUE);

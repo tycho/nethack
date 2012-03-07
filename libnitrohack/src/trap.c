@@ -3092,7 +3092,7 @@ static int disarm_squeaky_board(struct trap *ttmp, schar dx, schar dy)
 	pline("You repair the squeaky board.");	/* no madeby_u */
 	deltrap(ttmp);
 	newsym(u.ux + dx, u.uy + dy);
-	more_experienced(1, 5);
+	more_experienced(1, 1, 5);
 	newexplevel();
 	return 1;
 }
