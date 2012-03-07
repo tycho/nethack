@@ -26,6 +26,8 @@ static const char *const random_mesg[] = {
 	"Two thumbs up!", /* Siskel & Ebert */
 	"Hello, World!", /* The First C Program */
 	"As if!", /* Clueless */
+	"She's watching you!", /* Portal */
+	"The cake is a lie!", /* Portal */
 };
 
 char *random_engraving(char *outbuf)
