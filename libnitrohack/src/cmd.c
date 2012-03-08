@@ -262,7 +262,7 @@ static int wiz_wish(void)	/* Unlimited wishes for debug mode by Paul Polderman *
 	    boolean save_verbose = flags.verbose;
 
 	    flags.verbose = FALSE;
-	    makewish();
+	    makewish(TRUE);
 	    flags.verbose = save_verbose;
 	    encumber_msg();
 	} else

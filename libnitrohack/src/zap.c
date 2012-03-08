@@ -1723,7 +1723,7 @@ void zapnodir(struct obj *obj)
 				pline("Unfortunately, nothing happens.");
 				break;
 			}
-			makewish();
+			makewish(TRUE);
 			break;
 		case WAN_ENLIGHTENMENT:
 			known = TRUE;
@@ -3908,7 +3908,12 @@ int resist(struct monst *mtmp, char oclass, int damage, int domsg)
 	return resisted;
 }
 
-void makewish(void)
+/* Let the player make a wish.
+ * Entering an empty string selects a random object.
+ * Entering "nothing" returns nothing and keeps the wishing conduct.
+ *
+ * If magical is true, wishing for magical items is allowed. */
+void makewish(boolean magical)
 {
 	char buf[BUFSZ];
 	struct obj *otmp, nothing;
@@ -3919,6 +3924,16 @@ void makewish(void)
 retry:
 	getlin("For what do you wish?", buf);
 	if (buf[0] == '\033') buf[0] = 0;
+
+	/*
+	 *  WORKAROUND: Wishing for a random non-magical item is not easily done
+	 *              with the current code.
+	 *              For the time being select FOOD or WEAPON class as those
+	 *              are the only classes without any magical items in them.
+	 */
+	if (!magical && buf[0] == 0)
+	    strcpy(buf, rn2(2) ? "%" : ")");
+
 	/*
 	 *  Note: if they wished for and got a non-object successfully,
 	 *  otmp == &zeroobj.  That includes gold, or an artifact that
@@ -3937,6 +3952,16 @@ retry:
 	    /* explicitly wished for "nothing", presumeably attempting
 	       to retain wishless conduct */
 	    return;
+	}
+
+	/* Check if wishing for magical objects is allowed. */
+	if (!magical && otmp &&
+	    (otmp->oartifact || objects[otmp->otyp].oc_magic)) {
+	    verbalize("I am sorry, but I am unable to provide you with magical items.");
+	    if (otmp->oartifact) artifact_exists(otmp, ONAME(otmp), FALSE);
+	    obfree(otmp, NULL);
+	    otmp = &zeroobj;
+	    goto retry;
 	} else
 	    historic_event(FALSE, "wished for \"%s\".", buf);
 
