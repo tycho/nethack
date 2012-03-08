@@ -921,7 +921,7 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 		return TRUE;
 	}
     } else if (otmp->oartifact == ART_VORPAL_BLADE &&
-		(dieroll == 1 || mdef->data == &mons[PM_JABBERWOCK])) {
+	       (dieroll == 1 || mdef->data->mlet == S_JABBERWOCK)) {
 	static const char * const behead_msg[2] = {
 		"%s beheads %s!",
 		"%s decapitates %s!"
