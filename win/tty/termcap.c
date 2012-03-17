@@ -873,6 +873,7 @@ init_hilite()
 	int length_md;
 
 	if (tgetnum("Co") < 8
+	    || (MD == NULL) || (strlen(MD) == 0)
 	    || ((setf = tgetstr("AF", (char **)0)) == (char *)0
 		 && (setf = tgetstr("Sf", (char **)0)) == (char *)0))
 	{
