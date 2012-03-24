@@ -9,6 +9,7 @@
 extern char *lev_message;
 extern lev_region *lregions;
 extern int num_lregions;
+extern char SpLev_Map[COLNO][ROWNO];
 
 static boolean iswall(struct level *lev, int x, int y);
 static boolean iswall_or_stone(struct level *lev, int x, int y);
@@ -629,6 +630,7 @@ void walkfrom(struct level *lev, int x, int y)
 	    /* might still be on edge of MAP, so don't overwrite */
 	    lev->locations[x][y].typ = ROOM;
 	    lev->locations[x][y].flags = 0;
+	    SpLev_Map[x][y] = 1;
 	}
 
 	while (1) {
@@ -639,7 +641,9 @@ void walkfrom(struct level *lev, int x, int y)
 		dir = dirs[rn2(q)];
 		move(&x,&y,dir);
 		lev->locations[x][y].typ = ROOM;
+		SpLev_Map[x][y] = 1;
 		move(&x,&y,dir);
+		SpLev_Map[x][y] = 1;
 		walkfrom(lev, x,y);
 	}
 }

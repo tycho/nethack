@@ -30,6 +30,7 @@ static boolean search_door(struct mkroom *, xchar *, xchar *,
 					xchar, int);
 static void fix_stair_rooms(struct level *lev);
 static void create_corridor(struct level *lev, corridor *);
+static void count_features(struct level *lev);
 
 static boolean create_subroom(struct level *lev, struct mkroom *, xchar, xchar,
 					xchar, xchar, xchar, xchar);
@@ -43,49 +44,42 @@ static boolean create_subroom(struct level *lev, struct mkroom *, xchar, xchar,
 #define TOP	1
 #define BOTTOM	5
 
-#define sq(x) ((x)*(x))
-
 #define XLIM	4
 #define YLIM	3
 
 #define Fread(ptr, size, count, stream)  if (dlb_fread(ptr,size,count,stream) != count) goto err_out;
 #define Fgetc	(schar)dlb_fgetc
-#define New(type)		malloc(sizeof(type))
-#define NewTab(type, size)	malloc(sizeof(type *) * (unsigned)size)
 #define Free(ptr)		if (ptr) free((ptr))
 
-static walk walklist[50];
 extern int min_rx, max_rx, min_ry, max_ry; /* from mkmap.c */
 
-static char Map[COLNO][ROWNO];
-static char robjects[10], rloc_x[10], rloc_y[10], rmonst[10];
+char SpLev_Map[COLNO][ROWNO];
+static char robjects[MAX_REGISTERS], rmonst[MAX_REGISTERS];
+static char rloc_x[MAX_REGISTERS], rloc_y[MAX_REGISTERS];
 static const aligntyp init_ralign[3] = { AM_CHAOTIC, AM_NEUTRAL, AM_LAWFUL };
 static aligntyp ralign[3];
 static xchar xstart, ystart;
 static char xsize, ysize;
+static int n_rloc, n_robj, n_rmon; /* # or random registers */
 
 static void set_wall_property(struct level *lev, xchar,xchar,xchar,xchar,int);
 static int rnddoor(void);
 static int rndtrap(struct level *lev);
-static void get_location(struct level *lev, schar *x, schar *y, int humidity);
+static void get_location(struct level *lev, schar *x, schar *y, int humidity, struct mkroom *croom);
 static boolean is_ok_location(struct level *lev, schar, schar, int);
 static void sp_lev_shuffle(char *,char *,int);
 static void light_region(struct level *lev, region *tmpregion);
-static void load_common_data(struct level *lev, dlb *,int);
 static void load_one_monster(dlb *,monster *);
 static void load_one_object(dlb *,object *);
 static void load_one_engraving(dlb *,engraving *);
-static boolean load_rooms(struct level *lev, dlb *);
 static void maze1xy(struct level *lev, coord *m, int humidity);
-static boolean load_maze(struct level *lev, dlb *fp);
+static boolean sp_level_loader(struct level *lev, dlb *fp, sp_lev *lvl);
 static void create_door(struct level *lev, room_door *, struct mkroom *);
-static void free_rooms(room **, int);
-static void build_room(struct level *lev, room *, room*);
+static struct mkroom *build_room(struct level *lev, room *, struct mkroom *);
 
 char *lev_message = 0;
 lev_region *lregions = 0;
 int num_lregions = 0;
-lev_init init_lev;
 
 /*
  * Make walls of the area (x1, y1, x2, y2) non diggable/non passwall-able
@@ -100,6 +94,34 @@ static void set_wall_property(struct level *lev, xchar x1, xchar y1,
 	    for (x = x1; x <= x2; x++)
 		if (IS_STWALL(lev->locations[x][y].typ))
 		    lev->locations[x][y].wall_info |= prop;
+}
+
+static void shuffle_alignments(void)
+{
+	int i;
+	aligntyp atmp;
+	/* shuffle 3 alignments; can't use sp_lev_shuffle() aligntyp's */
+	ralign[0] = init_ralign[0]; ralign[1] = init_ralign[1]; ralign[2] = init_ralign[2];
+	i = rn2(3);   atmp = ralign[2]; ralign[2] = ralign[i]; ralign[i] = atmp;
+	if (rn2(2)) { atmp = ralign[1]; ralign[1] = ralign[0]; ralign[0] = atmp; }
+}
+
+/*
+ * Count the different features (sinks, fountains) in the level.
+ */
+static void count_features(struct level *lev)
+{
+	xchar x, y;
+	lev->flags.nfountains = lev->flags.nsinks = 0;
+	for (y = 0; y < ROWNO; y++) {
+	    for (x = 0; x < COLNO; x++) {
+		int typ = lev->locations[x][y].typ;
+		if (typ == FOUNTAIN)
+		    lev->flags.nfountains++;
+		else if (typ == SINK)
+		    lev->flags.nsinks++;
+	    }
+	}
 }
 
 /*
@@ -142,8 +164,8 @@ static int rndtrap(struct level *lev)
 /*
  * Coordinates in special level files are handled specially:
  *
- *	if x or y is -11, we generate a random coordinate.
- *	if x or y is between -1 and -10, we read one from the corresponding
+ *	if x or y is -(MAX_REGISTERS+1), we generate a random coordinate.
+ *	if x or y is between -1 and -MAX_REGISTERS, we read one from the corresponding
  *	register (x0, x1, ... x9).
  *	if x or y is nonnegative, we convert it from relative to the local map
  *	to global coordinates.
@@ -154,31 +176,45 @@ static int rndtrap(struct level *lev)
 #define WET	0x2
 
 
-static void get_location(struct level *lev, schar *x, schar *y, int humidity)
+static void get_location(struct level *lev, schar *x, schar *y, int humidity, struct mkroom *croom)
 {
 	int cpt = 0;
+	int mx, my, sx, sy;
+
+	if (croom) {
+	    mx = croom->lx;
+	    my = croom->ly;
+	    sx = croom->hx - mx + 1;
+	    sy = croom->hy - my + 1;
+	} else {
+	    mx = xstart;
+	    my = ystart;
+	    sx = xsize;
+	    sy = ysize;
+	}
 
 	if (*x >= 0) {			/* normal locations */
-		*x += xstart;
-		*y += ystart;
-	} else if (*x > -11) {		/* special locations */
-		*y = ystart + rloc_y[ - *y - 1];
-		*x = xstart + rloc_x[ - *x - 1];
+		*x += mx;
+		*y += my;
+	} else if (*x > -(MAX_REGISTERS+1)) {		/* special locations */
+		*y = my + rloc_y[ - *y - 1];
+		*x = mx + rloc_x[ - *x - 1];
 	} else {			/* random location */
 	    do {
-		*x = xstart + rn2((int)xsize);
-		*y = ystart + rn2((int)ysize);
+		*x = mx + rn2((int)sx);
+		*y = my + rn2((int)sy);
 		if (is_ok_location(lev, *x,*y,humidity)) break;
 	    } while (++cpt < 100);
 	    if (cpt >= 100) {
 		int xx, yy;
 		/* last try */
-		for (xx = 0; xx < xsize; xx++)
-		    for (yy = 0; yy < ysize; yy++) {
-			*x = xstart + xx;
-			*y = ystart + yy;
+		for (xx = 0; xx < sx; xx++) {
+		    for (yy = 0; yy < sy; yy++) {
+			*x = mx + xx;
+			*y = my + yy;
 			if (is_ok_location(lev, *x,*y,humidity)) goto found_it;
 		    }
+		}
 		panic("get_location:  can't find a place!");
 	    }
 	}
@@ -265,13 +301,18 @@ static void get_free_room_loc(struct level *lev, schar *x, schar *y,
 	schar try_x, try_y;
 	int trycnt = 0;
 
-	do {
-	    try_x = *x,  try_y = *y;
-	    get_room_loc(lev, &try_x, &try_y, croom);
-	} while (lev->locations[try_x][try_y].typ != ROOM && ++trycnt <= 100);
+	try_x = *x,  try_y = *y;
 
-	if (trycnt > 100)
-	    panic("get_free_room_loc:  can't find a place!");
+	get_location(lev, &try_x, &try_y, DRY, croom);
+	if (lev->locations[try_x][try_y].typ != ROOM) {
+	    do {
+		try_x = *x,  try_y = *y;
+		get_room_loc(lev, &try_x, &try_y, croom);
+	    } while (lev->locations[try_x][try_y].typ != ROOM && ++trycnt <= 100);
+
+	    if (trycnt > 100)
+		panic("get_free_room_loc : can't find a place!");
+	}
 	*x = try_x,  *y = try_y;
 }
 
@@ -537,8 +578,8 @@ static boolean create_subroom(struct level *lev, struct mkroom *proom, xchar x, 
 
 static void create_door(struct level *lev, room_door *dd, struct mkroom *broom)
 {
-	int	x, y;
-	int	trycnt = 0;
+	int	x = 0, y = 0;
+	int	trycnt = 0, walltry = 0, wtry = 0;
 
 	if (dd->secret == -1)
 	    dd->secret = rn2(2);
@@ -667,7 +708,7 @@ static void create_trap(struct level *lev, trap *t, struct mkroom *croom)
 	if (croom)
 	    get_free_room_loc(lev, &x, &y, croom);
 	else
-	    get_location(lev, &x, &y, DRY);
+	    get_location(lev, &x, &y, DRY, croom);
 
 	tm.x = x;
 	tm.y = y;
@@ -703,7 +744,7 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 
 	if (m->class >= 0)
 	    class = (char) def_char_to_monclass((char)m->class);
-	else if (m->class > -11)
+	else if (m->class > -(MAX_REGISTERS+1))
 	    class = (char) def_char_to_monclass(rmonst[- m->class - 1]);
 	else
 	    class = 0;
@@ -715,7 +756,7 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 			Align2amask(u.ualignbase[A_ORIGINAL]) :
 		(m->align == AM_SPLEV_NONCO) ?
 			Align2amask(noncoalignment(u.ualignbase[A_ORIGINAL])) :
-		(m->align <= -11) ? induced_align(&lev->z, 80) :
+		(m->align <= -(MAX_REGISTERS+1)) ? induced_align(&lev->z, 80) :
 		(m->align < 0 ? ralign[-m->align-1] : m->align);
 
 	if (!class)
@@ -724,7 +765,7 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 	    pm = &mons[m->id];
 	    g_mvflags = (unsigned) mvitals[m->id].mvflags;
 	    if ((pm->geno & G_UNIQ) && (g_mvflags & G_EXTINCT))
-		goto m_done;
+		return;
 	    else if (g_mvflags & G_GONE)	/* genocided or extinct */
 		pm = NULL;	/* make random monster */
 	} else {
@@ -738,21 +779,17 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 
 	x = m->x;
 	y = m->y;
-	if (croom)
-	    get_room_loc(lev, &x, &y, croom);
-	else {
-	    if (!pm || !is_swimmer(pm))
-		get_location(lev, &x, &y, DRY);
-	    else if (pm->mlet == S_EEL)
-		get_location(lev, &x, &y, WET);
-	    else
-		get_location(lev, &x, &y, DRY|WET);
-	}
+	if (!pm || !is_swimmer(pm))
+	    get_location(lev, &x, &y, DRY, croom);
+	else if (pm->mlet == S_EEL)
+	    get_location(lev, &x, &y, WET, croom);
+	else
+	    get_location(lev, &x, &y, DRY|WET, croom);
 	/* try to find a close place if someone else is already there */
 	if (MON_AT(lev, x,y) && enexto(&cc, lev, x, y, pm))
 	    x = cc.x,  y = cc.y;
 
-	if (m->align != -12)
+	if (m->align != -(MAX_REGISTERS+2))
 	    mtmp = mk_roamer(pm, Amask2align(amask), lev, x, y, m->peaceful);
 	else if (PM_ARCHEOLOGIST <= m->id && m->id <= PM_WIZARD)
 	         mtmp = mk_mplayer(pm, lev, x, y, FALSE);
@@ -829,9 +866,6 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 	}
 
     }		/* if (rn2(100) < m->chance) */
- m_done:
-    Free(m->name.str);
-    Free(m->appear_as.str);
 }
 
 /*
@@ -848,14 +882,11 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	named = o->name.str ? TRUE : FALSE;
 
 	x = o->x; y = o->y;
-	if (croom)
-	    get_room_loc(lev, &x, &y, croom);
-	else
-	    get_location(lev, &x, &y, DRY);
+	get_location(lev, &x, &y, DRY, croom);
 
 	if (o->class >= 0)
 	    c = o->class;
-	else if (o->class > -11)
+	else if (o->class > -(MAX_REGISTERS+1))
 	    c = robjects[ -(o->class+1)];
 	else
 	    c = 0;
@@ -919,7 +950,7 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 		}
 		remove_object(otmp);
 		add_to_container(container, otmp);
-		goto o_done;		/* don't stack, but do other cleanup */
+		return;		/* don't stack */
 	    /* container */
 	    case 2:
 		delete_contents(otmp);
@@ -965,8 +996,6 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	stackobj(otmp);
 
     }		/* if (rn2(100) < o->chance) */
- o_done:
-    Free(o->name.str);
 }
 
 /*
@@ -977,13 +1006,9 @@ static void create_engraving(struct level *lev, engraving *e, struct mkroom *cro
 	xchar x, y;
 
 	x = e->x,  y = e->y;
-	if (croom)
-	    get_room_loc(lev, &x, &y, croom);
-	else
-	    get_location(lev, &x, &y, DRY);
+	get_location(lev, &x, &y, DRY, croom);
 
 	make_engr_at(lev, x, y, e->engr.str, 0L, e->etype);
-	free(e->engr.str);
 }
 
 /*
@@ -994,7 +1019,7 @@ static void create_stairs(struct level *lev, stair *s, struct mkroom *croom)
 	schar x,y;
 
 	x = s->x; y = s->y;
-	get_free_room_loc(lev, &x, &y, croom);
+	get_location(lev, &x, &y, DRY, croom);
 	mkstairs(lev, x,y,(char)s->up, croom);
 }
 
@@ -1015,7 +1040,7 @@ static void create_altar(struct level *lev, altar *a, struct mkroom *croom)
 	    if (croom->rtype != TEMPLE)
 		croom_is_temple = FALSE;
 	} else {
-	    get_location(lev, &x, &y, DRY);
+	    get_location(lev, &x, &y, DRY, croom);
 	    if ((sproom = (schar) *in_rooms(lev, x, y, TEMPLE)) != 0)
 		croom = &lev->rooms[sproom - ROOMOFFSET];
 	    else
@@ -1042,18 +1067,13 @@ static void create_altar(struct level *lev, altar *a, struct mkroom *croom)
 			Align2amask(u.ualignbase[A_ORIGINAL]) :
 		(a->align == AM_SPLEV_NONCO) ?
 			Align2amask(noncoalignment(u.ualignbase[A_ORIGINAL])) :
-		(a->align == -11) ? induced_align(&lev->z, 80) :
+		(a->align == -(MAX_REGISTERS+1)) ? induced_align(&lev->z, 80) :
 		(a->align < 0 ? ralign[-a->align-1] : a->align);
 
 	lev->locations[x][y].typ = ALTAR;
 	lev->locations[x][y].altarmask = amask;
 
 	if (a->shrine < 0) a->shrine = rn2(2);	/* handle random case */
-
-	if (oldtyp == FOUNTAIN)
-	    lev->flags.nfountains--;
-	else if (oldtyp == SINK)
-	    lev->flags.nsinks--;
 
 	if (!croom_is_temple || !a->shrine) return;
 
@@ -1072,10 +1092,7 @@ static void create_gold(struct level *lev, gold *g, struct mkroom *croom)
 	schar		x,y;
 
 	x = g->x; y= g->y;
-	if (croom)
-	    get_room_loc(lev, &x, &y, croom);
-	else
-	    get_location(lev, &x, &y, DRY);
+	get_location(lev, &x, &y, DRY, croom);
 
 	if (g->amount == -1)
 	    g->amount = rnd(200);
@@ -1088,22 +1105,9 @@ static void create_gold(struct level *lev, gold *g, struct mkroom *croom)
 static void create_feature(struct level *lev, int fx, int fy, struct mkroom *croom, int typ)
 {
 	schar	x,y;
-	int	trycnt = 0;
 
 	x = fx;  y = fy;
-	if (croom) {
-	    if (x < 0 && y < 0)
-		do {
-		    x = -1;  y = -1;
-		    get_room_loc(lev, &x, &y, croom);
-		} while (++trycnt <= 200 && occupied(lev, x, y));
-	    else
-		get_room_loc(lev, &x, &y, croom);
-	    if (trycnt > 200)
-		return;
-	} else {
-	    get_location(lev, &x, &y, DRY);
-	}
+	get_location(lev, &x, &y, DRY, croom);
 	/* Don't cover up an existing feature (particularly randomly
 	   placed stairs).  However, if the _same_ feature is already
 	   here, it came from the map drawing and we still need to
@@ -1112,10 +1116,6 @@ static void create_feature(struct level *lev, int fx, int fy, struct mkroom *cro
 	    return;
 
 	lev->locations[x][y].typ = typ;
-	if (typ == FOUNTAIN)
-	    lev->flags.nfountains++;
-	else if (typ == SINK)
-	    lev->flags.nsinks++;
 }
 
 /*
@@ -1315,7 +1315,6 @@ static void create_corridor(struct level *lev, corridor *c)
 	coord org, dest;
 
 	if (c->src.room == -1) {
-		sort_rooms(lev);
 		fix_stair_rooms(lev);
 		makecorridors(lev);
 		return;
@@ -1411,145 +1410,28 @@ void fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 	}
 }
 
-static void free_rooms(room **ro, int n)
-{
-	short j;
-	room *r;
-
-	while (n--) {
-		r = ro[n];
-		Free(r->name);
-		Free(r->parent);
-		if ((j = r->ndoor) != 0) {
-			while (j--)
-			    Free(r->doors[j]);
-			Free(r->doors);
-		}
-		if ((j = r->nstair) != 0) {
-			while (j--)
-			    Free(r->stairs[j]);
-			Free(r->stairs);
-		}
-		if ((j = r->naltar) != 0) {
-			while (j--)
-			    Free(r->altars[j]);
-			Free(r->altars);
-		}
-		if ((j = r->nfountain) != 0) {
-			while (j--)
-			    Free(r->fountains[j]);
-			Free(r->fountains);
-		}
-		if ((j = r->nsink) != 0) {
-			while (j--)
-			    Free(r->sinks[j]);
-			Free(r->sinks);
-		}
-		if ((j = r->npool) != 0) {
-			while (j--)
-			    Free(r->pools[j]);
-			Free(r->pools);
-		}
-		if ((j = r->ntrap) != 0) {
-			while (j--)
-			    Free(r->traps[j]);
-			Free(r->traps);
-		}
-		if ((j = r->nmonster) != 0) {
-			while (j--)
-				Free(r->monsters[j]);
-			Free(r->monsters);
-		}
-		if ((j = r->nobject) != 0) {
-			while (j--)
-				Free(r->objects[j]);
-			Free(r->objects);
-		}
-		if ((j = r->ngold) != 0) {
-			while (j--)
-			    Free(r->golds[j]);
-			Free(r->golds);
-		}
-		if ((j = r->nengraving) != 0) {
-			while (j--)
-				Free(r->engravings[j]);
-			Free(r->engravings);
-		}
-		Free(r);
-	}
-	Free(ro);
-}
-
-static void build_room(struct level *lev, room *r, room *pr)
+static struct mkroom *build_room(struct level *lev, room *r, struct mkroom *mkr)
 {
 	boolean okroom;
 	struct mkroom	*aroom;
-	short i;
 	xchar rtype = (!r->chance || rn2(100) < r->chance) ? r->rtype : OROOM;
 
-	if (pr) {
+	if (mkr) {
 		aroom = &lev->subrooms[lev->nsubroom];
-		okroom = create_subroom(lev, pr->mkr, r->x, r->y, r->w, r->h,
+		okroom = create_subroom(lev, mkr, r->x, r->y, r->w, r->h,
 					rtype, r->rlit);
 	} else {
 		aroom = &lev->rooms[lev->nroom];
 		okroom = create_room(lev, r->x, r->y, r->w, r->h, r->xalign,
 				     r->yalign, rtype, r->rlit);
-		r->mkr = aroom;
 	}
 
 	if (okroom) {
-		/* Create subrooms if necessary... */
-		for (i=0; i < r->nsubroom; i++)
-		    build_room(lev, r->subrooms[i], r);
-		/* And now we can fill the room! */
-
-		/* Priority to the stairs */
-
-		for (i=0; i <r->nstair; i++)
-		    create_stairs(lev, r->stairs[i], aroom);
-
-		/* Then to the various elements (sinks, etc..) */
-		for (i = 0; i<r->nsink; i++)
-		    create_feature(lev, r->sinks[i]->x, r->sinks[i]->y, aroom, SINK);
-		for (i = 0; i<r->npool; i++)
-		    create_feature(lev, r->pools[i]->x, r->pools[i]->y, aroom, POOL);
-		for (i = 0; i<r->nfountain; i++)
-		    create_feature(lev, r->fountains[i]->x, r->fountains[i]->y,
-				   aroom, FOUNTAIN);
-		for (i = 0; i<r->naltar; i++)
-		    create_altar(lev, r->altars[i], aroom);
-		for (i = 0; i<r->ndoor; i++)
-		    create_door(lev, r->doors[i], aroom);
-
-		/* The traps */
-		for (i = 0; i<r->ntrap; i++)
-		    create_trap(lev, r->traps[i], aroom);
-
-		/* The monsters */
-		for (i = 0; i<r->nmonster; i++)
-		    create_monster(lev, r->monsters[i], aroom);
-
-		/* The objects */
-		for (i = 0; i<r->nobject; i++)
-		    create_object(lev, r->objects[i], aroom);
-
-		/* The gold piles */
-		for (i = 0; i<r->ngold; i++)
-		    create_gold(lev, r->golds[i], aroom);
-
-		/* The engravings */
-		for (i = 0; i < r->nengraving; i++)
-		    create_engraving(lev, r->engravings[i], aroom);
-
 		topologize(lev, aroom);			/* set roomno */
-		/* MRS - 07/04/91 - This is temporary but should result
-		 * in proper filling of shops, etc.
-		 * DLC - this can fail if corridors are added to this room
-		 * at a later point.  Currently no good way to fix this.
-		 */
-		if (aroom->rtype != OROOM && r->filled) fill_room(lev, aroom, FALSE);
+		aroom->needfill = ((aroom->rtype != OROOM) && r->filled);
+		return aroom;
 	}
+	return NULL;
 }
 
 /*
@@ -1579,57 +1461,6 @@ static void light_region(struct level *lev, region *tmpregion)
 	    loc++;
 	}
     }
-}
-
-/* initialization common to all special levels */
-static void load_common_data(struct level *lev, dlb *fd, int typ)
-{
-	uchar	n;
-	long	lev_flags;
-	int	i;
-
-      {
-	aligntyp atmp;
-	/* shuffle 3 alignments; can't use sp_lev_shuffle() on aligntyp's */
-	ralign[0] = init_ralign[0]; ralign[1] = init_ralign[1]; ralign[2] = init_ralign[2]; 
-	i = rn2(3);   atmp=ralign[2]; ralign[2]=ralign[i]; ralign[i]=atmp;
-	if (rn2(2)) { atmp=ralign[1]; ralign[1]=ralign[0]; ralign[0]=atmp; }
-      }
-
-	lev->flags.is_maze_lev = typ == SP_LEV_MAZE;
-
-	/* Read the level initialization data */
-	Fread(&init_lev, 1, sizeof(lev_init), fd);
-	if (init_lev.init_present) {
-	    if (init_lev.lit < 0)
-		init_lev.lit = rn2(2);
-	    mkmap(lev, &init_lev);
-	}
-
-	/* Read the per level flags */
-	Fread(&lev_flags, 1, sizeof(lev_flags), fd);
-	if (lev_flags & NOTELEPORT)
-	    lev->flags.noteleport = 1;
-	if (lev_flags & HARDFLOOR)
-	    lev->flags.hardfloor = 1;
-	if (lev_flags & NOMMAP)
-	    lev->flags.nommap = 1;
-	if (lev_flags & SHORTSIGHTED)
-	    lev->flags.shortsighted = 1;
-	if (lev_flags & ARBOREAL)
-	    lev->flags.arboreal = 1;
-
-	/* Read message */
-	Fread(&n, 1, sizeof(n), fd);
-	if (n) {
-	    lev_message = malloc(n + 1);
-	    Fread(lev_message, 1, (int) n, fd);
-	    lev_message[n] = 0;
-	}
-	
-	return;
-err_out:
-	fprintf(stderr, "read error in load_common_data\n");
 }
 
 static void load_one_monster(dlb *fd, monster *m)
@@ -1687,229 +1518,51 @@ err_out:
 	fprintf(stderr, "read error in load_one_engraving\n");
 }
 
-static boolean load_rooms(struct level *lev, dlb *fd)
+static void load_one_room(struct level *lev, dlb *fd, room *r)
 {
-	xchar		nrooms, ncorr;
-	char		n;
-	short		size;
-	corridor	tmpcor;
-	room**		tmproom;
-	int		i, j;
+	int size;
 
-	load_common_data(lev, fd, SP_LEV_ROOMS);
-
-	Fread(&n, 1, sizeof(n), fd); /* nrobjects */
-	if (n) {
-		Fread(robjects, sizeof(*robjects), n, fd);
-		sp_lev_shuffle(robjects, NULL, (int)n);
+	Fread(r, 1, sizeof *r, fd);
+	size = r->name.len;
+	if (size > 0) {
+	    r->name.str = malloc((unsigned)size+1);
+	    Fread(r->name.str, 1, size, fd);
+	    r->name.str[size] = '\0';
 	}
-
-	Fread(&n, 1, sizeof(n), fd); /* nrmonst */
-	if (n) {
-		Fread(rmonst, sizeof(*rmonst), n, fd);
-		sp_lev_shuffle(rmonst, NULL, (int)n);
+	size = r->parent.len;
+	if (size > 0) {
+	    r->parent.str = malloc((unsigned)size+1);
+	    Fread(r->parent.str, 1, size, fd);
+	    r->parent.str[size] = '\0';
 	}
-
-	Fread(&nrooms, 1, sizeof(nrooms), fd);
-						/* Number of rooms to read */
-	tmproom = NewTab(room,nrooms);
-	for (i=0;i<nrooms;i++) {
-		room *r;
-
-		r = tmproom[i] = New(room);
-
-		/* Let's see if this room has a name */
-		Fread(&size, 1, sizeof(size), fd);
-		if (size > 0) {	/* Yup, it does! */
-			r->name = malloc((unsigned)size + 1);
-			Fread(r->name, 1, size, fd);
-			r->name[size] = 0;
-		} else
-		    r->name = NULL;
-
-		/* Let's see if this room has a parent */
-		Fread(&size, 1, sizeof(size), fd);
-		if (size > 0) {	/* Yup, it does! */
-			r->parent = malloc((unsigned)size + 1);
-			Fread(r->parent, 1, size, fd);
-			r->parent[size] = 0;
-		} else
-		    r->parent = NULL;
-
-		Fread(&r->x, 1, sizeof(r->x), fd);
-					/* x pos on the grid (1-5) */
-		Fread(&r->y, 1, sizeof(r->y), fd);
-					 /* y pos on the grid (1-5) */
-		Fread(&r->w, 1, sizeof(r->w), fd);
-					 /* width of the room */
-		Fread(&r->h, 1, sizeof(r->h), fd);
-					 /* height of the room */
-		Fread(&r->xalign, 1, sizeof(r->xalign), fd);
-					 /* horizontal alignment */
-		Fread(&r->yalign, 1, sizeof(r->yalign), fd);
-					 /* vertical alignment */
-		Fread(&r->rtype, 1, sizeof(r->rtype), fd);
-					 /* type of room (zoo, shop, etc.) */
-		Fread(&r->chance, 1, sizeof(r->chance), fd);
-					 /* chance of room being special. */
-		Fread(&r->rlit, 1, sizeof(r->rlit), fd);
-					 /* lit or not ? */
-		Fread(&r->filled, 1, sizeof(r->filled), fd);
-					 /* to be filled? */
-		r->nsubroom= 0;
-
-		/* read the doors */
-		Fread(&r->ndoor, 1, sizeof(r->ndoor), fd);
-		if ((n = r->ndoor) != 0)
-		    r->doors = NewTab(room_door, n);
-		while (n--) {
-			r->doors[(int)n] = New(room_door);
-			Fread(r->doors[(int)n], 1,
-				sizeof(room_door), fd);
-		}
-
-		/* read the stairs */
-		Fread(&r->nstair, 1, sizeof(r->nstair), fd);
-		if ((n = r->nstair) != 0)
-		    r->stairs = NewTab(stair, n);
-		while (n--) {
-			r->stairs[(int)n] = New(stair);
-			Fread(r->stairs[(int)n], 1,
-				sizeof(stair), fd);
-		}
-
-		/* read the altars */
-		Fread(&r->naltar, 1, sizeof(r->naltar), fd);
-		if ((n = r->naltar) != 0)
-		    r->altars = NewTab(altar, n);
-		while (n--) {
-			r->altars[(int)n] = New(altar);
-			Fread(r->altars[(int)n], 1,
-				sizeof(altar), fd);
-		}
-
-		/* read the fountains */
-		Fread(&r->nfountain, 1,
-			sizeof(r->nfountain), fd);
-		if ((n = r->nfountain) != 0)
-		    r->fountains = NewTab(fountain, n);
-		while (n--) {
-			r->fountains[(int)n] = New(fountain);
-			Fread(r->fountains[(int)n], 1,
-				sizeof(fountain), fd);
-		}
-
-		/* read the sinks */
-		Fread(&r->nsink, 1, sizeof(r->nsink), fd);
-		if ((n = r->nsink) != 0)
-		    r->sinks = NewTab(sink, n);
-		while (n--) {
-			r->sinks[(int)n] = New(sink);
-			Fread(r->sinks[(int)n], 1, sizeof(sink), fd);
-		}
-
-		/* read the pools */
-		Fread(&r->npool, 1, sizeof(r->npool), fd);
-		if ((n = r->npool) != 0)
-		    r->pools = NewTab(pool,n);
-		while (n--) {
-			r->pools[(int)n] = New(pool);
-			Fread(r->pools[(int)n], 1, sizeof(pool), fd);
-		}
-
-		/* read the traps */
-		Fread(&r->ntrap, 1, sizeof(r->ntrap), fd);
-		if ((n = r->ntrap) != 0)
-		    r->traps = NewTab(trap, n);
-		while (n--) {
-			r->traps[(int)n] = New(trap);
-			Fread(r->traps[(int)n], 1, sizeof(trap), fd);
-		}
-
-		/* read the monsters */
-		Fread(&r->nmonster, 1, sizeof(r->nmonster), fd);
-		if ((n = r->nmonster) != 0) {
-		    r->monsters = NewTab(monster, n);
-		    while (n--) {
-			r->monsters[(int)n] = New(monster);
-			load_one_monster(fd, r->monsters[(int)n]);
-		    }
-		} else
-		    r->monsters = 0;
-
-		/* read the objects, in same order as mazes */
-		Fread(&r->nobject, 1, sizeof(r->nobject), fd);
-		if ((n = r->nobject) != 0) {
-		    r->objects = NewTab(object, n);
-		    for (j = 0; j < n; ++j) {
-			r->objects[j] = New(object);
-			load_one_object(fd, r->objects[j]);
-		    }
-		} else
-		    r->objects = 0;
-
-		/* read the gold piles */
-		Fread(&r->ngold, 1, sizeof(r->ngold), fd);
-		if ((n = r->ngold) != 0)
-		    r->golds = NewTab(gold, n);
-		while (n--) {
-			r->golds[(int)n] = New(gold);
-			Fread(r->golds[(int)n], 1, sizeof(gold), fd);
-		}
-
-		/* read the engravings */
-		Fread(&r->nengraving, 1,
-			sizeof(r->nengraving), fd);
-		if ((n = r->nengraving) != 0) {
-		    r->engravings = NewTab(engraving,n);
-		    while (n--) {
-			r->engravings[(int)n] = New(engraving);
-			load_one_engraving(fd, r->engravings[(int)n]);
-		    }
-		} else
-		    r->engravings = 0;
-
-	}
-
-	/* Now that we have loaded all the rooms, search the
-	 * subrooms and create the links.
-	 */
-
-	for (i = 0; i<nrooms; i++)
-	    if (tmproom[i]->parent) {
-		    /* Search the parent room */
-		    for (j=0; j<nrooms; j++)
-			if (tmproom[j]->name && !strcmp(tmproom[j]->name,
-						       tmproom[i]->parent)) {
-				n = tmproom[j]->nsubroom++;
-				tmproom[j]->subrooms[(int)n] = tmproom[i];
-				break;
-			}
-	    }
-
-	/*
-	 * Create the rooms now...
-	 */
-
-	for (i=0; i < nrooms; i++)
-	    if (!tmproom[i]->parent)
-		build_room(lev, tmproom[i], NULL);
-
-	free_rooms(tmproom, nrooms);
-
-	/* read the corridors */
-
-	Fread(&ncorr, sizeof(ncorr), 1, fd);
-	for (i=0; i<ncorr; i++) {
-		Fread(&tmpcor, 1, sizeof(tmpcor), fd);
-		create_corridor(lev, &tmpcor);
-	}
-
-	return TRUE;
-	
+	return;
 err_out:
-	fprintf(stderr, "read error in load_rooms\n");
-	return FALSE;
+	fprintf(stderr, "read error in load_one_room\n");
+}
+
+void wallify_map(struct level *lev)
+{
+	int x, y, xx, yy, lo_xx, lo_yy, hi_xx, hi_yy;
+
+	for (y = ystart; y <= ystart + ysize; y++) {
+	    lo_yy = (y > 0) ? y - 1 : 0;
+	    hi_yy = (y < ystart + ysize) ? y + 1 : ystart + ysize;
+	    for (x = xstart; x <= xstart + xsize; x++) {
+		if (lev->locations[x][y].typ != STONE) continue;
+		lo_xx = (x > 0) ? x - 1 : 0;
+		hi_xx = (x < xstart + xsize) ? x + 1 : xstart + xsize;
+		for (yy = lo_yy; yy <= hi_yy; yy++) {
+		    for (xx = lo_xx; xx <= hi_xx; xx++) {
+			if (IS_ROOM(lev->locations[xx][yy].typ) ||
+				lev->locations[xx][yy].typ == CROSSWALL) {
+			    lev->locations[x][y].typ = (yy != y) ? HWALL : VWALL;
+			    yy = hi_yy;		/* end 'yy' loop */
+			    break;		/* end 'xx' loop */
+			}
+		    }
+		}
+	    }
+	}
 }
 
 /*
@@ -1929,479 +1582,736 @@ static void maze1xy(struct level *lev, coord *m, int humidity)
 	    x = rn1(x_maze_max - 3, 3);
 	    y = rn1(y_maze_max - 3, 3);
 	    if (--tryct < 0) break;	/* give up */
-	} while (!(x % 2) || !(y % 2) || Map[x][y] ||
+	} while (!(x % 2) || !(y % 2) || !SpLev_Map[x][y] ||
 		 !is_ok_location(lev, (schar)x, (schar)y, humidity));
 
 	m->x = (xchar)x,  m->y = (xchar)y;
 }
 
 /*
- * The Big Thing: special maze loader
+ * If there's a significant portion of maze unused by the special level,
+ * we don't want it empty.
  *
- * Could be cleaner, but it works.
+ * Makes the number of traps, monsters, etc. proportional
+ * to the size of the maze.
  */
-static boolean load_maze(struct level *lev, dlb *fd)
+static void fill_empty_maze(struct level *lev)
 {
-    xchar   x, y, typ;
-    boolean prefilled, room_not_needed;
+    int mapcountmax, mapcount, mapfact;
+    xchar x, y;
+    coord mm;
 
-    char    n, numpart = 0;
-    xchar   nwalk = 0, nwalk_sav;
-    schar   filling;
-    char    halign, valign;
+    mapcountmax = mapcount = (x_maze_max - 2) * (y_maze_max - 2);
+    mapcountmax = mapcountmax / 2;
 
-    int     xi, dir, size;
-    coord   mm;
-    int     mapcount, mapcountmax, mapfact;
-
-    lev_region  tmplregion;
-    region  tmpregion;
-    door    tmpdoor;
-    trap    tmptrap;
-    monster tmpmons;
-    object  tmpobj;
-    drawbridge tmpdb;
-    walk    tmpwalk;
-    digpos  tmpdig;
-    lad     tmplad;
-    stair   tmpstair, prevstair;
-    altar   tmpaltar;
-    gold    tmpgold;
-    fountain tmpfountain;
-    engraving tmpengraving;
-    xchar   mustfill[(MAXNROFROOMS+1)*2];
-    struct trap *badtrap;
-    boolean has_bounds;
-
-    memset(&Map[0][0], 0, sizeof Map);
-    load_common_data(lev, fd, SP_LEV_MAZE);
-
-    /* Initialize map */
-    Fread(&filling, 1, sizeof(filling), fd);
-    if (!init_lev.init_present) { /* don't init if mkmap() has been called */
-      for (x = 2; x <= x_maze_max; x++)
-	for (y = 0; y <= y_maze_max; y++)
-	    if (filling == -1) {
-		    lev->locations[x][y].typ =
-			(y < 2 || ((x % 2) && (y % 2))) ? STONE : HWALL;
-	    } else {
-		    lev->locations[x][y].typ = filling;
-	    }
+    for (x = 2; x < x_maze_max; x++) {
+	for (y = 0; y < y_maze_max; y++)
+	    if (!SpLev_Map[x][y]) mapcount--;
     }
 
-    /* Start reading the file */
-    Fread(&numpart, 1, sizeof(numpart), fd);
-						/* Number of parts */
-    if (!numpart || numpart > 9)
-	panic("load_maze error: numpart = %d", (int) numpart);
-
-    while (numpart--) {
-	Fread(&halign, 1, sizeof(halign), fd);
-					/* Horizontal alignment */
-	Fread(&valign, 1, sizeof(valign), fd);
-					/* Vertical alignment */
-	Fread(&xsize, 1, sizeof(xsize), fd);
-					/* size in X */
-	Fread(&ysize, 1, sizeof(ysize), fd);
-					/* size in Y */
-	switch((int) halign) {
-	    case LEFT:	    xstart = 3;					break;
-	    case H_LEFT:    xstart = 2+((x_maze_max-2-xsize)/4);	break;
-	    case CENTER:    xstart = 2+((x_maze_max-2-xsize)/2);	break;
-	    case H_RIGHT:   xstart = 2+((x_maze_max-2-xsize)*3/4);	break;
-	    case RIGHT:     xstart = x_maze_max-xsize-1;		break;
+    if (mapcount > (int)(mapcountmax / 10)) {
+	mapfact = (int)((mapcount * 100L) / mapcountmax);
+	for (x = rnd((int)(20 * mapfact) / 100); x; x--) {
+	    maze1xy(lev, &mm, DRY);
+	    mkobj_at(rn2(2) ? GEM_CLASS : RANDOM_CLASS,
+		    lev, mm.x, mm.y, TRUE);
 	}
-	switch((int) valign) {
-	    case TOP:	    ystart = 3;					break;
-	    case CENTER:    ystart = 2+((y_maze_max-2-ysize)/2);	break;
-	    case BOTTOM:    ystart = y_maze_max-ysize-1;		break;
+	for (x = rnd((int)(12 * mapfact) / 100); x; x--) {
+	    maze1xy(lev, &mm, DRY);
+	    mksobj_at(BOULDER, lev, mm.x, mm.y, TRUE, FALSE);
 	}
-	if (!(xstart % 2)) xstart++;
-	if (!(ystart % 2)) ystart++;
-	if ((ystart < 0) || (ystart + ysize > ROWNO)) {
-	    /* try to move the start a bit */
-	    ystart += (ystart > 0) ? -2 : 2;
-	    if (ysize == ROWNO) ystart = 0;
-	    if (ystart < 0 || ystart + ysize > ROWNO)
-		panic("reading special level with ysize too large");
+	for (x = rn2(2); x; x--) {
+	    maze1xy(lev, &mm, DRY);
+	    makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, NO_MM_FLAGS);
 	}
+	for (x = rnd((int)(12 * mapfact) / 100); x; x--) {
+	    maze1xy(lev, &mm, WET|DRY);
+	    makemon(NULL, lev, mm.x, mm.y, NO_MM_FLAGS);
+	}
+	for (x = rnd((int)(15 * mapfact) / 100); x; x--) {
+	    maze1xy(lev, &mm, DRY);
+	    mkgold(0L, lev, mm.x, mm.y);
+	}
+	for (x = rnd((int)(15 * mapfact) / 100); x; x--) {
+	    int trytrap;
 
-	/*
-	 * If any CROSSWALLs are found, must change to ROOM after REGION's
-	 * are laid out.  CROSSWALLS are used to specify "invisible"
-	 * boundaries where DOOR syms look bad or aren't desirable.
-	 */
-	has_bounds = FALSE;
-
-	if (init_lev.init_present && xsize <= 1 && ysize <= 1) {
-	    xstart = 1;
-	    ystart = 0;
-	    xsize = COLNO-1;
-	    ysize = ROWNO;
-	} else {
-	    /* Load the map */
-	    for (y = ystart; y < ystart+ysize; y++)
-		for (x = xstart; x < xstart+xsize; x++) {
-		    lev->locations[x][y].typ = Fgetc(fd);
-		    lev->locations[x][y].lit = FALSE;
-		    /* clear out lev->locations: load_common_data may set them */
-		    lev->locations[x][y].flags = 0;
-		    lev->locations[x][y].horizontal = 0;
-		    lev->locations[x][y].roomno = 0;
-		    lev->locations[x][y].edge = 0;
-		    /*
-		     * Note: Even though lev->locations[x][y].typ is type schar,
-		     *	 lev_comp.y saves it as type char. Since schar != char
-		     *	 all the time we must make this exception or hack
-		     *	 through lev_comp.y to fix.
-		     */
-
-		    /*
-		     *  Set secret doors to closed (why not trapped too?).  Set
-		     *  the horizontal bit.
-		     */
-		    if (lev->locations[x][y].typ == SDOOR || IS_DOOR(lev->locations[x][y].typ)) {
-			if (lev->locations[x][y].typ == SDOOR)
-			    lev->locations[x][y].doormask = D_CLOSED;
-			/*
-			 *  If there is a wall to the left that connects to a
-			 *  (secret) door, then it is horizontal.  This does
-			 *  not allow (secret) doors to be corners of rooms.
-			 */
-			if (x != xstart && (IS_WALL(lev->locations[x-1][y].typ) ||
-					    lev->locations[x-1][y].horizontal))
-			    lev->locations[x][y].horizontal = 1;
-		    } else if (lev->locations[x][y].typ == HWALL ||
-				lev->locations[x][y].typ == IRONBARS)
-			lev->locations[x][y].horizontal = 1;
-		    else if (lev->locations[x][y].typ == LAVAPOOL)
-			lev->locations[x][y].lit = 1;
-		    else if (lev->locations[x][y].typ == CROSSWALL)
-			has_bounds = TRUE;
-		    Map[x][y] = 1;
+	    maze1xy(lev, &mm, DRY);
+	    trytrap = rndtrap(lev);
+	    if (sobj_at(BOULDER, lev, mm.x, mm.y)) {
+		while (trytrap == PIT || trytrap == SPIKED_PIT ||
+			trytrap == TRAPDOOR || trytrap == HOLE) {
+		    trytrap = rndtrap(lev);
 		}
-	    if (init_lev.init_present && init_lev.joined)
-		remove_rooms(lev, xstart, ystart, xstart+xsize, ystart+ysize);
+	    }
+	    maketrap(lev, mm.x, mm.y, trytrap);
+	}
+    }
+}
+
+/*
+ * Special level loader.
+ */
+static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
+{
+    long n_opcode = 0;
+    long i, j;
+    void *opdat;
+    char n;
+    int size, opcode;
+    lev_region *tmplregion;
+    mazepart *tmpmazepart;
+
+    /* Read the level initialization data. */
+    Fread(&lvl->init_lev, 1, sizeof(lev_init), fd);
+
+    lvl->opcodes = malloc(sizeof(_opcode) * lvl->init_lev.n_opcodes);
+
+    while (n_opcode < lvl->init_lev.n_opcodes) {
+
+	Fread(&lvl->opcodes[n_opcode].opcode, 1,
+		sizeof(lvl->opcodes[n_opcode].opcode), fd);
+	opcode = lvl->opcodes[n_opcode].opcode;
+
+	opdat = NULL;
+
+	switch (opcode) {
+	case SPO_NULL:
+	case SPO_WALLIFY:
+	    break;
+	case SPO_MESSAGE:
+	    Fread(&n, 1, sizeof(n), fd);
+	    if (n) {
+		char *msg;
+		opdat = malloc(n + 1);
+		Fread(opdat, 1, n, fd);
+		msg = (char *)opdat;
+		msg[n] = '\0';
+	    }
+	    break;
+	case SPO_MONSTER:
+	    opdat = malloc(sizeof(monster));
+	    load_one_monster(fd, opdat);
+	    break;
+	case SPO_OBJECT:
+	    opdat = malloc(sizeof(object));
+	    load_one_object(fd, opdat);
+	    break;
+	case SPO_ENGRAVING:
+	    opdat = malloc(sizeof(engraving));
+	    load_one_engraving(fd, opdat);
+	    break;
+	case SPO_SUBROOM:
+	case SPO_ROOM:
+	    opdat = malloc(sizeof(room));
+	    load_one_room(lev, fd, opdat);
+	    break;
+	case SPO_DOOR:
+	    opdat = malloc(sizeof(door));
+	    Fread(opdat, 1, sizeof(door), fd);
+	    break;
+	case SPO_STAIR:
+	    opdat = malloc(sizeof(stair));
+	    Fread(opdat, 1, sizeof(stair), fd);
+	    break;
+	case SPO_LADDER:
+	    opdat = malloc(sizeof(lad));
+	    Fread(opdat, 1, sizeof(lad), fd);
+	    break;
+	case SPO_ALTAR:
+	    opdat = malloc(sizeof(altar));
+	    Fread(opdat, 1, sizeof(altar), fd);
+	    break;
+	case SPO_FOUNTAIN:
+	    opdat = malloc(sizeof(fountain));
+	    Fread(opdat, 1, sizeof(fountain), fd);
+	    break;
+	case SPO_SINK:
+	    opdat = malloc(sizeof(sink));
+	    Fread(opdat, 1, sizeof(sink), fd);
+	    break;
+	case SPO_POOL:
+	    opdat = malloc(sizeof(pool));
+	    Fread(opdat, 1, sizeof(pool), fd);
+	    break;
+	case SPO_TRAP:
+	    opdat = malloc(sizeof(trap));
+	    Fread(opdat, 1, sizeof(trap), fd);
+	    break;
+	case SPO_GOLD:
+	    opdat = malloc(sizeof(gold));
+	    Fread(opdat, 1, sizeof(gold), fd);
+	    break;
+	case SPO_CORRIDOR:
+	    opdat = malloc(sizeof(corridor));
+	    Fread(opdat, 1, sizeof(corridor), fd);
+	    break;
+	case SPO_LEVREGION:
+	    opdat = malloc(sizeof(lev_region));
+	    tmplregion = (lev_region *)opdat;
+	    Fread(opdat, sizeof(lev_region), 1, fd);
+	    size = tmplregion->rname.len;
+	    if (size != 0) {
+		tmplregion->rname.str = malloc((unsigned)size + 1);
+		Fread(tmplregion->rname.str, size, 1, fd);
+		tmplregion->rname.str[size] = '\0';
+	    } else {
+		tmplregion->rname.str = NULL;
+	    }
+	    break;
+	case SPO_REGION:
+	    opdat = malloc(sizeof(region));
+	    Fread(opdat, 1, sizeof(region), fd);
+	    break;
+	case SPO_RANDOM_OBJECTS:
+	    Fread(&n, 1, sizeof(n), fd);
+	    if (n > 0 && n <= MAX_REGISTERS) {
+		char *msg;
+		opdat = malloc(n+1);
+		Fread(opdat, 1, n, fd);
+		msg = (char *)opdat;
+		msg[n] = '\0';
+	    } else panic("sp_level_loader: rnd_objs idx out-of-bounds (%i)", n);
+	    break;
+	case SPO_RANDOM_PLACES:
+	    Fread(&n, 1, sizeof(n), fd);
+	    if (n > 0 && n <= (2 * MAX_REGISTERS)) {
+		char *tmpstr = malloc(n+1);
+		Fread(tmpstr, 1, n, fd);
+		tmpstr[n] = '\0';
+		opdat = tmpstr;
+	    } else panic("sp_level_loader: rnd_places idx out-of-bounds (%i)", n);
+	    break;
+	case SPO_RANDOM_MONSTERS:
+	    Fread(&n, 1, sizeof(n), fd);
+	    if (n > 0 && n <= MAX_REGISTERS) {
+		char *tmpstr = malloc(n+1);
+		Fread(tmpstr, 1, n, fd);
+		tmpstr[n] = '\0';
+		opdat = tmpstr;
+	    } else panic("sp_level_loader: rn_mons idx out-of-bounds (%i)", n);
+	    break;
+	case SPO_DRAWBRIDGE:
+	    opdat = malloc(sizeof(drawbridge));
+	    Fread(opdat, 1, sizeof(drawbridge), fd);
+	    break;
+	case SPO_MAZEWALK:
+	    opdat = malloc(sizeof(walk));
+	    Fread(opdat, 1, sizeof(walk), fd);
+	    break;
+	case SPO_NON_DIGGABLE:
+	case SPO_NON_PASSWALL:
+	    opdat = malloc(sizeof(digpos));
+	    Fread(opdat, 1, sizeof(digpos), fd);
+	    break;
+	case SPO_ROOM_DOOR:
+	    opdat = malloc(sizeof(room_door));
+	    Fread(opdat, 1, sizeof(room_door), fd);
+	    break;
+	case SPO_CMP:
+	    opdat = malloc(sizeof(opcmp));
+	    Fread(opdat, 1, sizeof(opcmp), fd);
+	    break;
+	case SPO_JMP:
+	case SPO_JL:
+	case SPO_JG:
+	    opdat = malloc(sizeof(opjmp));
+	    Fread(opdat, 1, sizeof(opjmp), fd);
+	    break;
+	case SPO_MAP:
+	    opdat = malloc(sizeof(mazepart));
+	    tmpmazepart = (mazepart *)opdat;
+	    Fread(&tmpmazepart->halign, 1, sizeof(tmpmazepart->halign), fd);
+	    Fread(&tmpmazepart->valign, 1, sizeof(tmpmazepart->valign), fd);
+	    Fread(&tmpmazepart->xsize, 1, sizeof(tmpmazepart->xsize), fd);
+	    Fread(&tmpmazepart->ysize, 1, sizeof(tmpmazepart->ysize), fd);
+	    if (tmpmazepart->xsize > 0 && tmpmazepart->ysize > 0) {
+		tmpmazepart->map = malloc(tmpmazepart->ysize * sizeof(char *));
+		for (i = 0; i < tmpmazepart->ysize; i++) {
+		    tmpmazepart->map[i] = malloc(tmpmazepart->xsize);
+		    for (j = 0; j < tmpmazepart->xsize; j++)
+			tmpmazepart->map[i][j] = Fgetc(fd);
+		}
+	    }
+	    break;
+	default:
+	    panic("sp_level_loader: Unknown opcode %i", opcode);
 	}
 
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of level regions */
-	if (n) {
+	lvl->opcodes[n_opcode].opdat = opdat;
+	n_opcode++;
+    } /* while */
+
+    return TRUE;
+
+err_out:
+    fprintf(stderr, "read error in sp_level_loader\n");
+    return FALSE;
+}
+
+/*
+ * Free the memory allocated for special level creation structs.
+ */
+static boolean sp_level_free(sp_lev *lvl)
+{
+    long n_opcode = 0;
+    monster *tmpmons;
+    object *tmpobj;
+    engraving *tmpengraving;
+    room *tmproom;
+    mazepart *mpart;
+
+    while (n_opcode < lvl->init_lev.n_opcodes) {
+	int opcode = lvl->opcodes[n_opcode].opcode;
+	void *opdat = lvl->opcodes[n_opcode].opdat;
+
+	switch (opcode) {
+	case SPO_CMP:
+	case SPO_JMP:
+	case SPO_JL:
+	case SPO_JG:
+	case SPO_NULL:
+	case SPO_MESSAGE:
+	case SPO_DOOR:
+	case SPO_STAIR:
+	case SPO_LADDER:
+	case SPO_ALTAR:
+	case SPO_FOUNTAIN:
+	case SPO_SINK:
+	case SPO_POOL:
+	case SPO_TRAP:
+	case SPO_GOLD:
+	case SPO_CORRIDOR:
+	case SPO_REGION:
+	case SPO_RANDOM_OBJECTS:
+	case SPO_RANDOM_PLACES:
+	case SPO_RANDOM_MONSTERS:
+	case SPO_DRAWBRIDGE:
+	case SPO_MAZEWALK:
+	case SPO_NON_DIGGABLE:
+	case SPO_NON_PASSWALL:
+	case SPO_ROOM_DOOR:
+	case SPO_WALLIFY:
+	    /* nothing extra to free here */
+	    break;
+	case SPO_SUBROOM:
+	case SPO_ROOM:
+	    tmproom = (room *)opdat;
+	    if (tmproom) {
+		Free(tmproom->name.str);
+		Free(tmproom->parent.str);
+	    }
+	    break;
+	case SPO_LEVREGION:
+	    /* lev_regions are moved to lregions, and used in mkmaze.c,
+	       so do not free them here! */
+	    break;
+	case SPO_MONSTER:
+	    tmpmons = (monster *)opdat;
+	    if (tmpmons) {
+		Free(tmpmons->name.str);
+		Free(tmpmons->appear_as.str);
+	    }
+	    break;
+	case SPO_OBJECT:
+	    tmpobj = (object *)opdat;
+	    if (tmpobj) {
+		Free(tmpobj->name.str);
+	    }
+	    break;
+	case SPO_ENGRAVING:
+	    tmpengraving = (engraving *)opdat;
+	    if (tmpengraving) {
+		Free(tmpengraving->engr.str);
+	    }
+	    break;
+	case SPO_MAP:
+	    mpart = (mazepart *)opdat;
+	    if (mpart) {
+		int j;
+		if (mpart->xsize > 0 && mpart->ysize > 0) {
+		    for (j = 0; j < mpart->ysize; j++) {
+			Free(mpart->map[j]);
+		    }
+		    Free(mpart->map);
+		}
+	    }
+	    break;
+	default:
+	    panic("sp_level_free: Unknown opcode %i", opcode);
+	}
+	Free(opdat);
+	n_opcode++;
+    } /* while */
+
+    free(lvl->opcodes);
+
+    return TRUE;
+}
+
+/*
+ * Special level coder; creates the special level from the sp_lev codes.
+ * Does not free the allocated memory.
+ */
+static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
+{
+    long n_opcode = 0;
+    long exec_opcodes = 0;
+    boolean exit_script = FALSE;
+    int tmpidx;
+    int cpu_flags = 0;
+    char *tmpstr;
+    monster *tmpmons;
+    object *tmpobj;
+    engraving *tmpengraving;
+    door *tmpdoor;
+    stair *tmpstair;
+    stair prevstair;
+    lad *tmplad;
+    altar *tmpaltar;
+    fountain *tmpfountain;
+    trap *tmptrap;
+    gold *tmpgold;
+    lev_region *tmplregion;
+    region *tmpregion;
+    drawbridge *tmpdb;
+    walk *tmpwalk;
+    digpos *tmpdig;
+    mazepart *tmpmazepart;
+    sink *tmpsink;
+    pool *tmppool;
+    corridor *tmpcorridor;
+    room *tmproom, *tmpsubroom;
+    room_door *tmproomdoor;
+    struct mkroom *croom,
+	    *mkr = NULL,
+	    *mkrsub = NULL;
+
+    xchar x, y, typ;
+    boolean prefilled, room_not_needed;
+
+    char n = '\0';
+    char halign, valign;
+
+    int xi, dir;
+    int tmpi;
+
+    struct trap *badtrap;
+    boolean has_bounds = FALSE;
+
+    prevstair.x = prevstair.y = 0;
+    tmproom = tmpsubroom = NULL;
+
+    shuffle_alignments();
+
+    memset(&SpLev_Map[0][0], 0, sizeof(SpLev_Map));
+
+    lev->flags.is_maze_lev = lvl->init_lev.levtyp == SP_LEV_MAZE;
+
+    if (lvl->init_lev.init_present) {
+	if (lvl->init_lev.lit < 0)
+	    lvl->init_lev.lit = rn2(2);
+	mkmap(lev, &(lvl->init_lev));
+    } else {
+	for (x = 2; x <= x_maze_max; x++) {
+	    for (y = 0; y <= y_maze_max; y++) {
+		if (lvl->init_lev.filling == -1) {
+		    lev->locations[x][y].typ =
+			    (y < 2 || ((x % 2) && (y % 2))) ? STONE : HWALL;
+		} else {
+		    lev->locations[x][y].typ = lvl->init_lev.filling;
+		}
+	    }
+	}
+    }
+
+    if (lvl->init_lev.flags & NOTELEPORT)   lev->flags.noteleport = 1;
+    if (lvl->init_lev.flags & HARDFLOOR)    lev->flags.hardfloor = 1;
+    if (lvl->init_lev.flags & NOMMAP)	    lev->flags.nommap = 1;
+    if (lvl->init_lev.flags & SHORTSIGHTED) lev->flags.shortsighted = 1;
+    if (lvl->init_lev.flags & ARBOREAL)	    lev->flags.arboreal = 1;
+
+    while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
+	int opcode = lvl->opcodes[n_opcode].opcode;
+	void *opdat = lvl->opcodes[n_opcode].opdat;
+
+	if (exec_opcodes++ > SPCODER_MAX_RUNTIME) {
+	    impossible("Level script is taking too much time, stopping.");
+	    exit_script = TRUE;
+	}
+
+	croom = mkrsub ? mkrsub : mkr;
+
+	switch (opcode) {
+	case SPO_NULL:
+	    break;
+	case SPO_MESSAGE:
+	    if (opdat) {
+		char *msg = (char *)opdat;
+		char *levmsg;
+		int old_n = lev_message ? (strlen(lev_message) + 1) : 0;
+		n = strlen(msg);
+		levmsg = malloc(old_n + n + 1);
+		if (old_n)
+		    levmsg[old_n - 1] = '\n';
+		if (lev_message)
+		    memcpy(levmsg, lev_message, old_n - 1);
+		memcpy(&levmsg[old_n], opdat, n);
+		levmsg[old_n + n] = '\0';
+		Free(lev_message);
+		lev_message = levmsg;
+	    }
+	    break;
+	case SPO_MONSTER:
+	    tmpmons = (monster *)opdat;
+	    if (tmpmons) create_monster(lev, tmpmons, croom);
+	    break;
+	case SPO_OBJECT:
+	    tmpobj = (object *)opdat;
+	    if (tmpobj) create_object(lev, tmpobj, croom);
+	    break;
+	case SPO_ENGRAVING:
+	    tmpengraving = (engraving *)opdat;
+	    if (tmpengraving)
+		create_engraving(lev, tmpengraving, croom);
+	    break;
+	case SPO_SUBROOM:
+	    tmpsubroom = (room *)opdat;
+	    if (!mkr) {
+		panic("Subroom without a parent room?!");
+	    } else if (!tmpsubroom) panic("Subroom without data?");
+	    croom = build_room(lev, tmpsubroom, mkr);
+	    if (croom) mkrsub = croom;
+	    break;
+	case SPO_ROOM:
+	    tmproom = (room *)opdat;
+	    tmpsubroom = NULL;
+	    mkrsub = NULL;
+	    if (!tmproom) panic("Room without data?");
+	    croom = build_room(lev, tmproom, NULL);
+	    if (croom) mkr = croom;
+	    break;
+	case SPO_DOOR:
+	    croom = &lev->rooms[0];
+
+	    tmpdoor = (door *)opdat;
+	    x = tmpdoor->x;
+	    y = tmpdoor->y;
+	    typ = tmpdoor->mask == -1 ? rnddoor() : tmpdoor->mask;
+
+	    get_location(lev, &x, &y, DRY, NULL);
+	    if (lev->locations[x][y].typ != SDOOR) {
+		lev->locations[x][y].typ = DOOR;
+	    } else {
+		if (typ < D_CLOSED)
+		    typ = D_CLOSED; /* force it to be closed */
+	    }
+	    lev->locations[x][y].doormask = typ;
+
+	    /* Now the complicated part: list it with each subroom.
+	     * The dog move and mail daemon routines use this. */
+	    while (croom->hx >= 0 && lev->doorindex < DOORMAX) {
+		if (croom->hx >= x - 1 && croom->lx <= x + 1 &&
+		    croom->hy >= y - 1 && croom->ly <= y + 1) {
+		    /* Found it! */
+		    add_door(lev, x, y, croom);
+		}
+		croom++;
+	    }
+	    break;
+	case SPO_STAIR:
+	    tmpstair = (stair *)opdat;
+	    if (croom) {
+		create_stairs(lev, tmpstair, croom);
+	    } else {
+		xi = 0;
+		do {
+		    x = tmpstair->x;  y = tmpstair->y;
+		    get_location(lev, &x, &y, DRY, croom);
+		} while (prevstair.x && xi++ < 100 &&
+			 distmin(x, y, prevstair.x, prevstair.y) <= 8);
+		if ((badtrap = t_at(lev, x, y)) != 0) deltrap(badtrap);
+		mkstairs(lev, x, y, (char)tmpstair->up, croom);
+		prevstair.x = x;
+		prevstair.y = y;
+	    }
+	    break;
+	case SPO_LADDER:
+	    tmplad = (lad *)opdat;
+
+	    x = tmplad->x;  y = tmplad->y;
+	    get_location(lev, &x, &y, DRY, croom);
+
+	    lev->locations[x][y].typ = LADDER;
+	    if (tmplad->up == 1) {
+		lev->upladder.sx = x;  lev->upladder.sy = y;
+		lev->locations[x][y].ladder = LA_UP;
+	    } else {
+		lev->dnladder.sx = x;  lev->dnladder.sy = y;
+		lev->locations[x][y].ladder = LA_DOWN;
+	    }
+	    break;
+	case SPO_ALTAR:
+	    tmpaltar = (altar *)opdat;
+	    create_altar(lev, tmpaltar, croom);
+	    break;
+	case SPO_FOUNTAIN:
+	    tmpfountain = (fountain *)opdat;
+	    create_feature(lev, tmpfountain->x, tmpfountain->y, croom, FOUNTAIN);
+	    break;
+	case SPO_SINK:
+	    tmpsink = (sink *)opdat;
+	    create_feature(lev, tmpsink->x, tmpsink->y, croom, SINK);
+	    break;
+	case SPO_POOL:
+	    tmppool = (pool *)opdat;
+	    create_feature(lev, tmppool->x, tmppool->y, croom, POOL);
+	    break;
+	case SPO_TRAP:
+	    tmptrap = (trap *)opdat;
+	    create_trap(lev, tmptrap, croom);
+	    break;
+	case SPO_GOLD:
+	    tmpgold = (gold *)opdat;
+	    create_gold(lev, tmpgold, croom);
+	    break;
+	case SPO_CORRIDOR:
+	    tmpcorridor = (corridor *)opdat;
+	    create_corridor(lev, tmpcorridor);
+	    break;
+	case SPO_LEVREGION:
+	    tmplregion = (lev_region *)opdat;
+	    if (!tmplregion->in_islev) {
+		get_location(lev, &tmplregion->inarea.x1, &tmplregion->inarea.y1,
+			     DRY|WET, NULL);
+		get_location(lev, &tmplregion->inarea.x2, &tmplregion->inarea.y2,
+			     DRY|WET, NULL);
+	    }
+	    if (!tmplregion->del_islev) {
+		get_location(lev, &tmplregion->delarea.x1, &tmplregion->delarea.y1,
+			     DRY|WET, NULL);
+		get_location(lev, &tmplregion->delarea.x2, &tmplregion->delarea.y2,
+			     DRY|WET, NULL);
+	    }
 	    if (num_lregions) {
-		/* realloc the lregion space to add the new ones */
-		/* don't really free it up until the whole level is done */
+		/* realloc the lregion space to add the new one */
 		lev_region *newl = malloc(sizeof(lev_region) *
-						(unsigned)(n+num_lregions));
-		memcpy((newl+n), (void *)lregions,
-					sizeof(lev_region) * num_lregions);
+			(unsigned)(1 + num_lregions));
+		memcpy(newl, lregions, sizeof(lev_region) * num_lregions);
 		Free(lregions);
-		num_lregions += n;
+		num_lregions += 1;
 		lregions = newl;
 	    } else {
-		num_lregions = n;
-		lregions = malloc(sizeof(lev_region) * n);
+		num_lregions = 1;
+		lregions = malloc(sizeof(lev_region) * (unsigned)1);
 	    }
-	}
-
-	while (n--) {
-	    Fread(&tmplregion, sizeof(tmplregion), 1, fd);
-	    if ((size = tmplregion.rname.len) != 0) {
-		tmplregion.rname.str = malloc((unsigned)size + 1);
-		Fread(tmplregion.rname.str, size, 1, fd);
-		tmplregion.rname.str[size] = '\0';
-	    } else
-		tmplregion.rname.str = NULL;
-	    if (!tmplregion.in_islev) {
-		get_location(lev, &tmplregion.inarea.x1, &tmplregion.inarea.y1,
-								DRY|WET);
-		get_location(lev, &tmplregion.inarea.x2, &tmplregion.inarea.y2,
-								DRY|WET);
-	    }
-	    if (!tmplregion.del_islev) {
-		get_location(lev, &tmplregion.delarea.x1, &tmplregion.delarea.y1,
-								DRY|WET);
-		get_location(lev, &tmplregion.delarea.x2, &tmplregion.delarea.y2,
-								DRY|WET);
-	    }
-	    lregions[(int)n] = tmplregion;
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Random objects */
-	if (n) {
-		Fread(robjects, sizeof(*robjects), (int) n, fd);
-		sp_lev_shuffle(robjects, NULL, (int)n);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Random locations */
-	if (n) {
-		Fread(rloc_x, sizeof(*rloc_x), (int) n, fd);
-		Fread(rloc_y, sizeof(*rloc_y), (int) n, fd);
-		sp_lev_shuffle(rloc_x, rloc_y, (int)n);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Random monsters */
-	if (n) {
-		Fread(rmonst, sizeof(*rmonst), (int) n, fd);
-		sp_lev_shuffle(rmonst, NULL, (int)n);
-	}
-
-	memset(mustfill, 0, sizeof(mustfill));
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of subrooms */
-	while (n--) {
+	    memcpy(&lregions[num_lregions - 1], tmplregion, sizeof(lev_region));
+	    break;
+	case SPO_REGION:
+	    {
 		struct mkroom *troom;
-
-		Fread(&tmpregion, 1, sizeof(tmpregion), fd);
-
-		if (tmpregion.rtype > MAXRTYPE) {
-		    tmpregion.rtype -= MAXRTYPE+1;
+		tmpregion = (region *)opdat;
+		if (tmpregion->rtype > MAXRTYPE) {
+		    tmpregion->rtype -= MAXRTYPE + 1;
 		    prefilled = TRUE;
-		} else
+		} else {
 		    prefilled = FALSE;
+		}
 
-		if (tmpregion.rlit < 0)
-		    tmpregion.rlit = (rnd(1+abs(depth(&lev->z))) < 11 && rn2(77))
-			? TRUE : FALSE;
+		if (tmpregion->rlit < 0) {
+		    tmpregion->rlit = (rnd(1 + abs(depth(&lev->z))) < 11 && rn2(77)) ?
+			    TRUE : FALSE;
+		}
 
-		get_location(lev, &tmpregion.x1, &tmpregion.y1, DRY|WET);
-		get_location(lev, &tmpregion.x2, &tmpregion.y2, DRY|WET);
+		get_location(lev, &tmpregion->x1, &tmpregion->y1, DRY|WET, NULL);
+		get_location(lev, &tmpregion->x2, &tmpregion->y2, DRY|WET, NULL);
 
-		/* for an ordinary room, `prefilled' is a flag to force
+		/* For an ordinary room, 'prefilled' is a flag to force
 		   an actual room to be created (such rooms are used to
-		   control placement of migrating monster arrivals) */
-		room_not_needed = (tmpregion.rtype == OROOM &&
-				   !tmpregion.rirreg && !prefilled);
+		   control placement of migrating monster arrivals). */
+		room_not_needed = (tmpregion->rtype == OROOM &&
+				   !tmpregion->rirreg && !prefilled);
 		if (room_not_needed || lev->nroom >= MAXNROFROOMS) {
 		    if (!room_not_needed)
 			impossible("Too many rooms on new level!");
-		    light_region(lev, &tmpregion);
-		    continue;
+		    light_region(lev, tmpregion);
+		    goto next_opcode;
 		}
 
 		troom = &lev->rooms[lev->nroom];
 
 		/* mark rooms that must be filled, but do it later */
-		if (tmpregion.rtype != OROOM)
-		    mustfill[lev->nroom] = (prefilled ? 2 : 1);
+		if (tmpregion->rtype != OROOM)
+		    troom->needfill = (prefilled ? 2 : 1);
 
-		if (tmpregion.rirreg) {
-		    min_rx = max_rx = tmpregion.x1;
-		    min_ry = max_ry = tmpregion.y1;
-		    flood_fill_rm(lev, tmpregion.x1, tmpregion.y1,
-				  lev->nroom+ROOMOFFSET, tmpregion.rlit, TRUE);
+		if (tmpregion->rirreg) {
+		    min_rx = max_rx = tmpregion->x1;
+		    min_ry = max_ry = tmpregion->y1;
+		    flood_fill_rm(lev, tmpregion->x1, tmpregion->y1,
+				  lev->nroom + ROOMOFFSET, tmpregion->rlit, TRUE);
 		    add_room(lev, min_rx, min_ry, max_rx, max_ry,
-			     FALSE, tmpregion.rtype, TRUE);
-		    troom->rlit = tmpregion.rlit;
+			     FALSE, tmpregion->rtype, TRUE);
+		    troom->rlit = tmpregion->rlit;
 		    troom->irregular = TRUE;
 		} else {
-		    add_room(lev, tmpregion.x1, tmpregion.y1,
-			     tmpregion.x2, tmpregion.y2,
-			     tmpregion.rlit, tmpregion.rtype, TRUE);
-		    topologize(lev, troom);			/* set roomno */
+		    add_room(lev, tmpregion->x1, tmpregion->y1,
+			     tmpregion->x2, tmpregion->y2,
+			     tmpregion->rlit, tmpregion->rtype, TRUE);
+		    topologize(lev, troom);
 		}
-	}
+	    }
+	    break;
+	case SPO_RANDOM_OBJECTS:
+	    tmpstr = (char *)opdat;
+	    n_robj = strlen(tmpstr);
+	    if (n_robj <= 0 || n_robj > MAX_REGISTERS)
+		panic("sp_level_coder: rnd_objs idx out-of-bounds (%i)", n_robj);
+	    memcpy(robjects, tmpstr, n_robj);
+	    sp_lev_shuffle(robjects, NULL, n_robj);
+	    break;
+	case SPO_RANDOM_PLACES:
+	    tmpstr = (char *)opdat;
+	    n_rloc = strlen(tmpstr);
+	    if (n_rloc <= 0 || n_rloc > 2 * MAX_REGISTERS)
+		panic("sp_level_coder: rnd_places idx out-of-bounds (%i)", n_rloc);
+	    n_rloc = n_rloc / 2;
+	    for (tmpidx = 0; tmpidx < n_rloc; tmpidx++) {
+		rloc_x[tmpidx] = tmpstr[tmpidx * 2] - 1;
+		rloc_y[tmpidx] = tmpstr[tmpidx * 2 + 1] - 1;
+	    }
+	    sp_lev_shuffle(rloc_x, rloc_y, n_rloc);
+	    break;
+	case SPO_RANDOM_MONSTERS:
+	    tmpstr = (char *)opdat;
+	    n_rmon = strlen(tmpstr);
+	    if (n_rmon <= 0 || n_rmon > MAX_REGISTERS)
+		panic("sp_level_coder: rnd_mons idx out-of-bounds (%i)", n_rmon);
+	    memcpy(rmonst, tmpstr, n_rmon);
+	    sp_lev_shuffle(rmonst, NULL, n_rmon);
+	    break;
+	case SPO_DRAWBRIDGE:
+	    tmpdb = (drawbridge *)opdat;
 
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of doors */
-	while (n--) {
-		struct mkroom *croom = &lev->rooms[0];
+	    x = tmpdb->x;  y = tmpdb->y;
+	    get_location(lev, &x, &y, DRY|WET, croom);
 
-		Fread(&tmpdoor, 1, sizeof(tmpdoor), fd);
+	    if (!create_drawbridge(lev, x, y, tmpdb->dir, tmpdb->db_open))
+		impossible("Cannot create drawbridge.");
+	    break;
+	case SPO_MAZEWALK:
+	    tmpwalk = (walk *)opdat;
 
-		x = tmpdoor.x;	y = tmpdoor.y;
-		typ = tmpdoor.mask == -1 ? rnddoor() : tmpdoor.mask;
+	    get_location(lev, &tmpwalk->x, &tmpwalk->y, DRY|WET, NULL);
 
-		get_location(lev, &x, &y, DRY);
-		if (lev->locations[x][y].typ != SDOOR)
-			lev->locations[x][y].typ = DOOR;
-		else {
-			if (typ < D_CLOSED)
-			    typ = D_CLOSED; /* force it to be closed */
-		}
-		lev->locations[x][y].doormask = typ;
-
-		/* Now the complicated part, list it with each subroom */
-		/* The dog move and mail daemon routines use this */
-		while (croom->hx >= 0 && lev->doorindex < DOORMAX) {
-		    if (croom->hx >= x-1 && croom->lx <= x+1 &&
-		       croom->hy >= y-1 && croom->ly <= y+1) {
-			/* Found it */
-			add_door(lev, x, y, croom);
-		    }
-		    croom++;
-		}
-	}
-
-	/* now that we have rooms _and_ associated doors, fill the rooms */
-	for (n = 0; n < SIZE(mustfill); n++)
-	    if (mustfill[(int)n])
-		fill_room(lev, &lev->rooms[(int)n], (mustfill[(int)n] == 2));
-
-	/* if special boundary syms (CROSSWALL) in map, remove them now */
-	if (has_bounds) {
-	    for (x = xstart; x < xstart+xsize; x++)
-		for (y = ystart; y < ystart+ysize; y++)
-		    if (lev->locations[x][y].typ == CROSSWALL)
-			lev->locations[x][y].typ = ROOM;
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of drawbridges */
-	while (n--) {
-		Fread(&tmpdb, 1, sizeof(tmpdb), fd);
-
-		x = tmpdb.x;  y = tmpdb.y;
-		get_location(lev, &x, &y, DRY|WET);
-
-		if (!create_drawbridge(lev, x, y, tmpdb.dir, tmpdb.db_open))
-		    impossible("Cannot create drawbridge.");
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of mazewalks */
-	while (n--) {
-		Fread(&tmpwalk, 1, sizeof(tmpwalk), fd);
-
-		get_location(lev, &tmpwalk.x, &tmpwalk.y, DRY|WET);
-
-		walklist[nwalk++] = tmpwalk;
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of non_diggables */
-	while (n--) {
-		Fread(&tmpdig, 1, sizeof(tmpdig), fd);
-
-		get_location(lev, &tmpdig.x1, &tmpdig.y1, DRY|WET);
-		get_location(lev, &tmpdig.x2, &tmpdig.y2, DRY|WET);
-
-		set_wall_property(lev, tmpdig.x1, tmpdig.y1,
-				  tmpdig.x2, tmpdig.y2, W_NONDIGGABLE);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of non_passables */
-	while (n--) {
-		Fread(&tmpdig, 1, sizeof(tmpdig), fd);
-
-		get_location(lev, &tmpdig.x1, &tmpdig.y1, DRY|WET);
-		get_location(lev, &tmpdig.x2, &tmpdig.y2, DRY|WET);
-
-		set_wall_property(lev, tmpdig.x1, tmpdig.y1,
-				  tmpdig.x2, tmpdig.y2, W_NONPASSWALL);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of ladders */
-	while (n--) {
-		Fread(&tmplad, 1, sizeof(tmplad), fd);
-
-		x = tmplad.x;  y = tmplad.y;
-		get_location(lev, &x, &y, DRY);
-
-		lev->locations[x][y].typ = LADDER;
-		if (tmplad.up == 1) {
-			lev->upladder.sx = x;	lev->upladder.sy = y;
-			lev->locations[x][y].ladder = LA_UP;
-		} else {
-			lev->dnladder.sx = x;	lev->dnladder.sy = y;
-			lev->locations[x][y].ladder = LA_DOWN;
-		}
-	}
-
-	prevstair.x = prevstair.y = 0;
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of stairs */
-	while (n--) {
-		Fread(&tmpstair, 1, sizeof(tmpstair), fd);
-
-		xi = 0;
-		do {
-		    x = tmpstair.x;  y = tmpstair.y;
-		    get_location(lev, &x, &y, DRY);
-		} while (prevstair.x && xi++ < 100 &&
-			distmin(x,y,prevstair.x,prevstair.y) <= 8);
-		if ((badtrap = t_at(lev, x, y)) != 0) deltrap(badtrap);
-		mkstairs(lev, x, y, (char)tmpstair.up, NULL);
-		prevstair.x = x;
-		prevstair.y = y;
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of altars */
-	while (n--) {
-		Fread(&tmpaltar, 1, sizeof(tmpaltar), fd);
-
-		create_altar(lev, &tmpaltar, NULL);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of fountains */
-	while (n--) {
-		Fread(&tmpfountain, 1, sizeof(tmpfountain), fd);
-
-		create_feature(lev, tmpfountain.x, tmpfountain.y,
-			       NULL, FOUNTAIN);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of traps */
-	while (n--) {
-		Fread(&tmptrap, 1, sizeof(tmptrap), fd);
-
-		create_trap(lev, &tmptrap, NULL);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of monsters */
-	while (n--) {
-		load_one_monster(fd, &tmpmons);
-
-		create_monster(lev, &tmpmons, NULL);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of objects */
-	while (n--) {
-		load_one_object(fd, &tmpobj);
-
-		create_object(lev, &tmpobj, NULL);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of gold piles */
-	while (n--) {
-		Fread(&tmpgold, 1, sizeof(tmpgold), fd);
-
-		create_gold(lev, &tmpgold, NULL);
-	}
-
-	Fread(&n, 1, sizeof(n), fd);
-						/* Number of engravings */
-	while (n--) {
-		load_one_engraving(fd, &tmpengraving);
-
-		create_engraving(lev, &tmpengraving, NULL);
-	}
-
-    }		/* numpart loop */
-
-    nwalk_sav = nwalk;
-    while (nwalk--) {
-	    x = (xchar) walklist[nwalk].x;
-	    y = (xchar) walklist[nwalk].y;
-	    dir = walklist[nwalk].dir;
+	    x = (xchar)tmpwalk->x;  y = (xchar)tmpwalk->y;
+	    dir = tmpwalk->dir;
 
 	    /* don't use move() - it doesn't use W_NORTH, etc. */
 	    switch (dir) {
-		case W_NORTH: --y; break;
-		case W_SOUTH: y++; break;
-		case W_EAST:  x++; break;
-		case W_WEST:  --x; break;
-		default: panic("load_maze: bad MAZEWALK direction");
+	    case W_NORTH: --y; break;
+	    case W_SOUTH: y++; break;
+	    case W_EAST:  x++; break;
+	    case W_WEST:  --x; break;
+	    default: panic("sp_level_coder: bad MAZEWALK direction");
 	    }
 
 	    if (!IS_DOOR(lev->locations[x][y].typ)) {
@@ -2433,62 +2343,187 @@ static boolean load_maze(struct level *lev, dlb *fd)
 	    }
 
 	    walkfrom(lev, x, y);
+	    fill_empty_maze(lev);
+	    break;
+	case SPO_NON_DIGGABLE:
+	    tmpdig = (digpos *)opdat;
+
+	    get_location(lev, &tmpdig->x1, &tmpdig->y1, DRY|WET, NULL);
+	    get_location(lev, &tmpdig->x2, &tmpdig->y2, DRY|WET, NULL);
+
+	    set_wall_property(lev, tmpdig->x1, tmpdig->y1,
+			      tmpdig->x2, tmpdig->y2, W_NONDIGGABLE);
+	    break;
+	case SPO_NON_PASSWALL:
+	    tmpdig = (digpos *)opdat;
+
+	    get_location(lev, &tmpdig->x1, &tmpdig->y1, DRY|WET, NULL);
+	    get_location(lev, &tmpdig->x2, &tmpdig->y2, DRY|WET, NULL);
+
+	    set_wall_property(lev, tmpdig->x1, tmpdig->y1,
+			      tmpdig->x2, tmpdig->y2, W_NONPASSWALL);
+	    break;
+	case SPO_ROOM_DOOR:
+	    tmproomdoor = (room_door *)opdat;
+	    if (!croom) impossible("Room_door without room?");
+	    create_door(lev, tmproomdoor, croom);
+	    break;
+	case SPO_WALLIFY:
+	    wallify_map(lev);
+	    break;
+	case SPO_CMP:
+	    {
+		opcmp *tmpcmp = (opcmp *)opdat;
+		int tmpval = 0;
+		if (tmpcmp->cmp_what == 0) tmpval = rn2(100);
+		cpu_flags = 0;
+		if (tmpval < tmpcmp->cmp_val) cpu_flags += SP_CPUFLAG_LT;
+		if (tmpval > tmpcmp->cmp_val) cpu_flags += SP_CPUFLAG_GT;
+		if (tmpval == tmpcmp->cmp_val) cpu_flags += SP_CPUFLAG_EQ;
+	    }
+	    break;
+	case SPO_JMP:
+	    {
+		opjmp *tmpjmp = (opjmp *)opdat;
+		if (tmpjmp->jmp_target >= 0 &&
+		    tmpjmp->jmp_target < lvl->init_lev.n_opcodes)
+		    n_opcode = tmpjmp->jmp_target;
+	    }
+	    break;
+	case SPO_JL:
+	    {
+		opjmp *tmpjmp = (opjmp *)opdat;
+		if ((cpu_flags & SP_CPUFLAG_LT) &&
+		    tmpjmp->jmp_target >= 0 &&
+		    tmpjmp->jmp_target < lvl->init_lev.n_opcodes)
+		    n_opcode = tmpjmp->jmp_target;
+	    }
+	    break;
+	case SPO_JG:
+	    {
+		opjmp *tmpjmp = (opjmp *)opdat;
+		if ((cpu_flags & SP_CPUFLAG_GT) &&
+		    tmpjmp->jmp_target >= 0 &&
+		    tmpjmp->jmp_target < lvl->init_lev.n_opcodes)
+		    n_opcode = tmpjmp->jmp_target;
+	    }
+	    break;
+	case SPO_MAP:
+	    tmproom = tmpsubroom = NULL;
+	    tmpmazepart = (mazepart *)opdat;
+	    halign = tmpmazepart->halign;
+	    valign = tmpmazepart->valign;
+	    xsize = tmpmazepart->xsize;
+	    ysize = tmpmazepart->ysize;
+	    switch ((int)halign) {
+	    case LEFT:	    xstart = 3;					    break;
+	    case H_LEFT:    xstart = 2 + (x_maze_max - 2 - xsize) / 4;	    break;
+	    case CENTER:    xstart = 2 + (x_maze_max - 2 - xsize) / 2;	    break;
+	    case H_RIGHT:   xstart = 2 + (x_maze_max - 2 - xsize) * 3 / 4;  break;
+	    case RIGHT:	    xstart = x_maze_max - xsize - 1;		    break;
+	    }
+	    switch ((int)valign) {
+	    case TOP:	    ystart = 3;					    break;
+	    case CENTER:    ystart = 2 + (y_maze_max - 2 - ysize) / 2;	    break;
+	    case BOTTOM:    ystart = y_maze_max - ysize - 1;		    break;
+	    }
+	    if (!(xstart % 2)) xstart++;
+	    if (!(ystart % 2)) ystart++;
+	    if (ystart < 0 || ystart + ysize > ROWNO) {
+		/* try to move the start a bit */
+		ystart += (ystart > 0) ? -2 : 2;
+		if (ysize == ROWNO) ystart = 0;
+		if (ystart < 0 || ystart + ysize > ROWNO)
+		    panic("reading special level with ysize too large");
+	    }
+
+	    if (lvl->init_lev.init_present && xsize <= 1 && ysize <= 1) {
+		xstart = 1;
+		ystart = 0;
+		xsize = COLNO - 1;
+		ysize = ROWNO;
+	    } else {
+		/* Load the map. */
+		for (y = ystart; y < ystart + ysize; y++) {
+		    for (x = xstart; x < xstart + xsize; x++) {
+			lev->locations[x][y].typ =
+				tmpmazepart->map[y - ystart][x - xstart];
+			lev->locations[x][y].lit = FALSE;
+			/* clear out lev->locations: load_common_data may set them */
+			lev->locations[x][y].flags = 0;
+			lev->locations[x][y].horizontal = 0;
+			lev->locations[x][y].roomno = 0;
+			lev->locations[x][y].edge = 0;
+
+			/*
+			 *  Set secret doors to closed (why not trapped too?).
+			 *  Set the horizontal bit.
+			 */
+			if (lev->locations[x][y].typ == SDOOR ||
+				IS_DOOR(lev->locations[x][y].typ)) {
+			    if (lev->locations[x][y].typ == SDOOR)
+				lev->locations[x][y].doormask = D_CLOSED;
+			    /*
+			     *  If there is a wall to the left that connects to a
+			     *  (secret) door, then it is horizontal.  This does
+			     *  not allow (secret) doors to be corners of rooms.
+			     */
+			    if (x != xstart && (IS_WALL(lev->locations[x - 1][y].typ) ||
+						lev->locations[x - 1][y].horizontal))
+				lev->locations[x][y].horizontal = 1;
+			} else if (lev->locations[x][y].typ == HWALL ||
+				   lev->locations[x][y].typ == IRONBARS) {
+			    lev->locations[x][y].horizontal = 1;
+			} else if (lev->locations[x][y].typ == LAVAPOOL) {
+			    lev->locations[x][y].lit = 1;
+			} else if (lev->locations[x][y].typ == CROSSWALL) {
+			    has_bounds = TRUE;
+			}
+		    }
+		}
+		if (lvl->init_lev.init_present && lvl->init_lev.joined)
+		    remove_rooms(lev, xstart, ystart, xstart + xsize, ystart + ysize);
+	    }
+	    break;
+	default:
+	    panic("sp_level_coder: Unknown opcode %i", opcode);
+	}
+    next_opcode:
+	n_opcode++;
+    } /* while */
+
+    /* Now that we have rooms _and_ associated doors, fill the rooms. */
+    for (tmpi = 0; tmpi < lev->nroom; tmpi++) {
+	int m;
+	if (lev->rooms[tmpi].needfill)
+	    fill_room(lev, &lev->rooms[tmpi],
+		      (lev->rooms[tmpi].needfill == 2) ? TRUE : FALSE);
+	for (m = 0; m < lev->rooms[tmpi].nsubrooms; m++) {
+	    if (lev->rooms[tmpi].sbrooms[m]->needfill)
+		fill_room(lev, lev->rooms[tmpi].sbrooms[m], FALSE);
+	}
     }
-    wallification(lev, 1, 0, COLNO-1, ROWNO-1);
 
     /*
-     * If there's a significant portion of maze unused by the special level,
-     * we don't want it empty.
-     *
-     * Makes the number of traps, monsters, etc. proportional
-     * to the size of the maze.
+     * If any CROSSWALLs are found, must change to ROOM after REGION's
+     * are laid out.  CROSSWALLS are used to specify "invisible"
+     * boundaries where DOOR syms look bad or aren't desirable.
      */
-    mapcountmax = mapcount = (x_maze_max - 2) * (y_maze_max - 2);
-
-    for (x = 2; x < x_maze_max; x++)
-	for (y = 0; y < y_maze_max; y++)
-	    if (Map[x][y]) mapcount--;
-
-    if (nwalk_sav && (mapcount > (int) (mapcountmax / 10))) {
-	    mapfact = (int) ((mapcount * 100L) / mapcountmax);
-	    for (x = rnd((int) (20 * mapfact) / 100); x; x--) {
-		    maze1xy(lev, &mm, DRY);
-		    mkobj_at(rn2(2) ? GEM_CLASS : RANDOM_CLASS, lev,
-							mm.x, mm.y, TRUE);
+    /* if special boundary syms (CROSSWALL) in map, remove them now */
+    if (has_bounds) {
+	for (x = 0; x < x_maze_max; x++) {
+	    for (y = 0; y < y_maze_max; y++) {
+		if (lev->locations[x][y].typ == CROSSWALL && !SpLev_Map[x][y])
+		    lev->locations[x][y].typ = ROOM;
 	    }
-	    for (x = rnd((int) (12 * mapfact) / 100); x; x--) {
-		    maze1xy(lev, &mm, DRY);
-		    mksobj_at(BOULDER, lev, mm.x, mm.y, TRUE, FALSE);
-	    }
-	    for (x = rn2(2); x; x--) {
-		maze1xy(lev, &mm, DRY);
-		makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, NO_MM_FLAGS);
-	    }
-	    for (x = rnd((int) (12 * mapfact) / 100); x; x--) {
-		    maze1xy(lev, &mm, WET|DRY);
-		    makemon(NULL, lev, mm.x, mm.y, NO_MM_FLAGS);
-	    }
-	    for (x = rn2((int) (15 * mapfact) / 100); x; x--) {
-		    maze1xy(lev, &mm, DRY);
-		    mkgold(0L, lev, mm.x, mm.y);
-	    }
-	    for (x = rn2((int) (15 * mapfact) / 100); x; x--) {
-		    int trytrap;
-
-		    maze1xy(lev, &mm, DRY);
-		    trytrap = rndtrap(lev);
-		    if (sobj_at(BOULDER, lev, mm.x, mm.y))
-			while (trytrap == PIT || trytrap == SPIKED_PIT ||
-				trytrap == TRAPDOOR || trytrap == HOLE)
-			    trytrap = rndtrap(lev);
-		    maketrap(lev, mm.x, mm.y, trytrap);
-	    }
+	}
     }
+
+    wallification(lev, 1, 0, COLNO - 1, ROWNO - 1);
+
+    count_features(lev);
+
     return TRUE;
-	
-err_out:
-	fprintf(stderr, "read error in load_maze\n");
-	return FALSE;
 }
 
 /*
@@ -2497,8 +2532,8 @@ err_out:
 boolean load_special(struct level *lev, const char *name)
 {
 	dlb *fd;
+	sp_lev lvl;
 	boolean result = FALSE;
-	char c;
 	struct version_info vers_info;
 
 	fd = dlb_fopen(name, RDBMODE);
@@ -2508,23 +2543,13 @@ boolean load_special(struct level *lev, const char *name)
 	if (!check_version(&vers_info, name, TRUE))
 	    goto give_up;
 
-	Fread(&c, sizeof c, 1, fd); /* c Header */
-
-	switch (c) {
-		case SP_LEV_ROOMS:
-		    result = load_rooms(lev, fd);
-		    break;
-		case SP_LEV_MAZE:
-		    result = load_maze(lev, fd);
-		    break;
-		default:	/* ??? */
-		    result = FALSE;
-	}
-	
+	result = sp_level_loader(lev, fd, &lvl);
+	if (result) result = sp_level_coder(lev, &lvl);
+	sp_level_free(&lvl);
 give_up:
 	dlb_fclose(fd);
 	return result;
-	
+
 err_out:
 	fprintf(stderr, "read error in load_special\n");
 	return FALSE;

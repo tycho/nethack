@@ -31,6 +31,8 @@ static int wiz_show_seenv(void);
 static int wiz_show_vision(void);
 static int wiz_mon_polycontrol(void);
 static int wiz_show_wmodes(void);
+static int wiz_mazewalkmap(void);
+extern char SpLev_Map[COLNO][ROWNO];
 static void count_obj(struct obj *, long *, long *, boolean, boolean);
 static void obj_chain(struct menulist *, const char *, struct obj *, long *, long *);
 static void mon_invent_chain(struct menulist *, const char *, struct monst *,
@@ -86,6 +88,7 @@ const struct cmd_desc cmdlist[] = {
 	{"license", "show the NitroHack license", 0, 0, TRUE, dolicense, CMD_ARG_NONE | CMD_HELP | CMD_NOTIME},
 	{"lookhere", "describe the current square", ':', 0, TRUE, dolook, CMD_ARG_NONE | CMD_NOTIME},
 	{"loot", "loot a bag or box on the floor", M('l'), 'l', FALSE, doloot, CMD_ARG_NONE | CMD_EXT},
+	{"mazewalkmap", "show MAZEWALK paths", 0, 0, TRUE, wiz_mazewalkmap, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT | CMD_NOTIME},
 	{"menuinv", "show a partial inventory", 'I', 0, TRUE, dotypeinv, CMD_ARG_NONE | CMD_NOTIME},
 	{"monster", "use a monster's special ability", 'M', M('m'), TRUE, domonability, CMD_ARG_NONE | CMD_EXT},
 	{"multidrop", "drop multiple items", 'D', 0, FALSE, doddrop, CMD_ARG_NONE},
@@ -1378,6 +1381,27 @@ static void mon_chain(struct menulist *menu, const char *src, struct monst *chai
 	*total_size += size;
 	sprintf(buf, template, src, count, size);
 	add_menutext(menu, buf);
+}
+
+static int wiz_mazewalkmap(void)
+{
+	struct menulist menu;
+	int x, y;
+	char row[COLNO+1];
+
+	init_menulist(&menu);
+
+	for (y = 0; y < ROWNO; y++) {
+	    for (x = 0; x < COLNO; x++)
+		row[x] = SpLev_Map[x][y] ? '1' : '.';
+	    if (y == u.uy)
+		row[u.ux] = '@';
+	    row[x] = '\0';
+	    add_menutext(&menu, row);
+	}
+	display_menu(menu.items, menu.icount, NULL, PICK_NONE, NULL);
+	free(menu.items);
+	return 0;
 }
 
 /*
