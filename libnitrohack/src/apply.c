@@ -174,7 +174,7 @@ static boolean its_dead(int rx, int ry, int *resp, struct obj *tobj)
 	}
 
 	/* Using a stethoscope on a safe may crack the safe open. */
-	if (otmp = sobj_at(IRON_SAFE, level, rx, ry)) {
+	if ((otmp = sobj_at(IRON_SAFE, level, rx, ry))) {
 	    pick_lock(tobj, rx, ry);
 	    return TRUE;
 	}

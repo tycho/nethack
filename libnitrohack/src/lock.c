@@ -274,7 +274,7 @@ int pick_lock(struct obj *pick, int rx, int ry)
 
 	/* Very clumsy special case for this, but forcing the player to
 	 * a)pply > just to open a safe, when a)pply . works in all other cases? */
-	if (cc.x == u.ux && cc.y == u.uy || picktyp == STETHOSCOPE) {	/* pick lock on a container */
+	if ((cc.x == u.ux && cc.y == u.uy) || picktyp == STETHOSCOPE) {	/* pick lock on a container */
 	    const char *verb;
 	    boolean it;
 	    int count;
