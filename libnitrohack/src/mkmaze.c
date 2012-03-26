@@ -343,7 +343,7 @@ static void fixup_special(struct level *lev)
 	    } else {
 		s_level *sp;
 		if (strcmp("random_plane", r->rname.str) == 0)
-		    sp = get_next_elemental_plane(&u.uz);
+		    sp = get_next_elemental_plane(&lev->z);
 		else
 		    sp = find_level(r->rname.str);
 		lvl = sp->dlevel;
