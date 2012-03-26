@@ -37,7 +37,7 @@ static const char *list_file = LIBLISTFILE;
 #define O_BINARY 0
 #endif
 
-#define MAX_DLB_FILES 200	/* max # of files we'll handle */
+#define MAX_DLB_FILES 250	/* max # of files we'll handle */
 #define DLB_VERS 1		/* version of dlb file we will write */
 
 /*
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 		if (nfiles >= MAX_DLB_FILES) {
 		    printf("Too many dlb files!  Stopping at %d.\n",
 								MAX_DLB_FILES);
-		    break;
+		    xexit(EXIT_FAILURE);
 		}
 		ld[nfiles].fname = malloc(strlen(argv[ap]) + 1);
 		strcpy(ld[nfiles].fname, argv[ap]);
@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
 		if (nfiles >= MAX_DLB_FILES) {
 		    printf("Too many dlb files!  Stopping at %d.\n",
 								MAX_DLB_FILES);
-		    break;
+		    xexit(EXIT_FAILURE);
 		}
 		*(eos(buf)-1) = '\0';	/* strip newline */
 		ld[nfiles].fname = malloc(strlen(buf) + 1);
