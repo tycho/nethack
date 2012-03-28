@@ -41,7 +41,9 @@ set (COMPILED_LEVELS
     Cav-fila.lev Cav-filb.lev Cav-goal.lev Cav-loca.lev
     Cav-strt.lev earth.lev    fakewiz1.lev fakewiz2.lev
     fire.lev     Hea-fila.lev Hea-filb.lev Hea-goal.lev
-    Hea-loca.lev Hea-strt.lev juiblex.lev  Kni-fila.lev
+    Hea-loca.lev Hea-strt.lev
+    hellfill.lev
+    juiblex.lev  Kni-fila.lev
     Kni-filb.lev Kni-goal.lev Kni-loca.lev Kni-strt.lev
     knox-1.lev   knox-2.lev   knox-3.lev
     medusa-1.lev medusa-2.lev medusa-3.lev medusa-4.lev

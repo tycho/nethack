@@ -717,6 +717,89 @@ static void create_trap(struct level *lev, trap *t, struct mkroom *croom)
     }
 }
 
+static void spill_terrain(struct level *lev, spill *sp, struct mkroom *croom)
+{
+	schar x, y, nx, ny, qx, qy;
+	int j, k, lastdir, guard;
+	boolean found = FALSE;
+
+	if (sp->typ >= MAX_TYPE) return;
+
+	/* This code assumes that you're going to spill one particular
+	 * type of terrain from a wall into somewhere.
+	 *
+	 * If we were given a specific coordinate, though, it doesn't have
+	 * to start from a wall... */
+	if (sp->x <= -(MAX_REGISTERS+1) || sp->y <= -(MAX_REGISTERS+1)) {
+	    for (j = 0; j < 500; j++) {
+		x = sp->x;
+		y = sp->y;
+		get_location(lev, &x, &y, DRY|WET, croom);
+		nx = x;  ny = y;
+		switch (sp->direction) {
+		/* backwards to make sure we're against a wall */
+		case W_NORTH: ny++; break;
+		case W_SOUTH: ny--; break;
+		case W_WEST: nx++; break;
+		case W_EAST: nx--; break;
+		default: return; break;
+		}
+		if (!isok(nx,ny)) continue;
+		if (IS_WALL(lev->locations[nx][ny].typ)) {
+		    /* mark it as broken through */
+		    lev->locations[nx][ny].typ = sp->typ;
+		    lev->locations[nx][ny].lit = sp->lit;
+		    found = TRUE;
+		    break;
+		}
+	    }
+	} else {
+	    found = TRUE;
+	    x = sp->x;
+	    y = sp->y;
+	    /* support random registers too */
+	    get_location(lev, &x, &y, DRY|WET, croom);
+	}
+
+	if (!found) return;
+
+	/* gloop! */
+	lastdir = -1;  nx = x;  ny = y;
+	for (j = sp->count; j > 0; j--) {
+	    guard = 0;
+	    lev->locations[nx][ny].typ = sp->typ;
+	    lev->locations[nx][ny].lit = sp->lit;
+	    do {
+		guard++;
+		do {
+		    k = rn2(5);
+		    qx = nx;  qy = ny;
+		    if (k > 3)
+			k = sp->direction;
+		    else
+			k = 1 << k;
+		    switch(k) {
+		    case W_NORTH: qy--; break;
+		    case W_SOUTH: qy++; break;
+		    case W_WEST: qx--; break;
+		    case W_EAST: qx++; break;
+		    }
+		} while (!isok(qx,qy));
+	    } while ((k == lastdir || lev->locations[qx][qy].typ == sp->typ) &&
+		     guard < 200);
+	    /* tend to not make rivers, but pools;
+	     * and don't redo stuff of the same type! */
+
+	    switch(k) {
+	    case W_NORTH: ny--; break;
+	    case W_SOUTH: ny++; break;
+	    case W_WEST: nx--; break;
+	    case W_EAST: nx++; break;
+	    }
+	    lastdir = k;
+	}
+}
+
 /*
  * Create a monster in a room.
  */
@@ -1116,6 +1199,96 @@ static void create_feature(struct level *lev, int fx, int fy, struct mkroom *cro
 	    return;
 
 	lev->locations[x][y].typ = typ;
+}
+
+void replace_terrain(struct level *lev, replaceterrain *terr, struct mkroom *croom)
+{
+	schar x, y, x1, y1, x2, y2;
+
+	if (terr->toter >= MAX_TYPE) return;
+
+	x1 = terr->x1;  y1 = terr->y1;
+	get_location(lev, &x1, &y1, DRY|WET, croom);
+
+	x2 = terr->x2;  y2 = terr->y2;
+	get_location(lev, &x2, &y2, DRY|WET, croom);
+
+	for (x = x1; x <= x2; x++) {
+	    for (y = y1; y <= y2; y++) {
+		if (lev->locations[x][y].typ == terr->fromter &&
+			rn2(100) < terr->chance) {
+		    lev->locations[x][y].typ = terr->toter;
+		    lev->locations[x][y].lit = terr->tolit;
+		}
+	    }
+	}
+}
+
+void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
+{
+	schar x, y, x1, y1, x2, y2;
+
+	if (terr->ter >= MAX_TYPE) return;
+
+	if (rn2(100) >= terr->chance) return;
+
+	x1 = terr->x1;  y1 = terr->y1;
+	get_location(lev, &x1, &y1, DRY|WET, croom);
+
+	switch (terr->areatyp) {
+	case 0: /* point */
+	default:
+	    lev->locations[x1][y1].typ = terr->ter;
+	    lev->locations[x1][y1].lit = terr->tlit;
+	    /* handle doors and secret doors */
+	    if (lev->locations[x1][y1].typ == SDOOR ||
+		    IS_DOOR(lev->locations[x1][y1].typ)) {
+		if (lev->locations[x1][y1].typ == SDOOR)
+		    lev->locations[x1][y1].doormask = D_CLOSED;
+		if (x1 && (IS_WALL(lev->locations[x1-1][y1].typ) ||
+			lev->locations[x1-1][y1].horizontal))
+		    lev->locations[x1][y1].horizontal = 1;
+	    }
+	    break;
+	case 1: /* horiz line */
+	    for (x = 0; x < terr->x2; x++) {
+		lev->locations[x + x1][y1].typ = terr->ter;
+		lev->locations[x + x1][y1].lit = terr->tlit;
+	    }
+	    break;
+	case 2: /* vert line */
+	    for (y = 0; y < terr->y2; y++) {
+		lev->locations[x1][y + y1].typ = terr->ter;
+		lev->locations[x1][y + y1].lit = terr->tlit;
+	    }
+	    break;
+	case 3: /* filled rectangle */
+	    x2 = terr->x2;  y2 = terr->y2;
+	    get_location(lev, &x2, &y2, DRY|WET, croom);
+	    for (x = x1; x <= x2; x++) {
+		for (y = y1; y <= y2; y++) {
+		    lev->locations[x][y].typ = terr->ter;
+		    lev->locations[x][y].lit = terr->tlit;
+		}
+	    }
+	    break;
+	case 4: /* rectangle */
+	    x2 = terr->x2;  y2 = terr->y2;
+	    get_location(lev, &x2, &y2, DRY|WET, croom);
+	    for (x = x1; x <= x2; x++) {
+		lev->locations[x][y1].typ = terr->ter;
+		lev->locations[x][y1].lit = terr->tlit;
+		lev->locations[x][y2].typ = terr->ter;
+		lev->locations[x][y2].lit = terr->tlit;
+	    }
+	    for (y = y1; y <= y2; y++) {
+		lev->locations[x1][y].typ = terr->ter;
+		lev->locations[x1][y].lit = terr->tlit;
+		lev->locations[x2][y].typ = terr->ter;
+		lev->locations[x2][y].lit = terr->tlit;
+	    }
+	    break;
+	}
 }
 
 /*
@@ -1676,6 +1849,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 
 	switch (opcode) {
 	case SPO_NULL:
+	case SPO_EXIT:
 	case SPO_WALLIFY:
 	    break;
 	case SPO_MESSAGE:
@@ -1817,9 +1991,23 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	    opdat = malloc(sizeof(opjmp));
 	    Fread(opdat, 1, sizeof(opjmp), fd);
 	    break;
+	case SPO_REPLACETERRAIN:
+	    opdat = malloc(sizeof(replaceterrain));
+	    Fread(opdat, 1, sizeof(replaceterrain), fd);
+	    break;
+	case SPO_TERRAIN:
+	    opdat = malloc(sizeof(terrain));
+	    Fread(opdat, 1, sizeof(terrain), fd);
+	    break;
+	case SPO_SPILL:
+	    opdat = malloc(sizeof(spill));
+	    Fread(opdat, 1, sizeof(spill), fd);
+	    break;
 	case SPO_MAP:
 	    opdat = malloc(sizeof(mazepart));
 	    tmpmazepart = (mazepart *)opdat;
+	    Fread(&tmpmazepart->zaligntyp, 1, sizeof(tmpmazepart->zaligntyp), fd);
+	    Fread(&tmpmazepart->keep_region, 1, sizeof(tmpmazepart->keep_region), fd);
 	    Fread(&tmpmazepart->halign, 1, sizeof(tmpmazepart->halign), fd);
 	    Fread(&tmpmazepart->valign, 1, sizeof(tmpmazepart->valign), fd);
 	    Fread(&tmpmazepart->xsize, 1, sizeof(tmpmazepart->xsize), fd);
@@ -1870,6 +2058,7 @@ static boolean sp_level_free(sp_lev *lvl)
 	case SPO_JL:
 	case SPO_JG:
 	case SPO_NULL:
+	case SPO_EXIT:
 	case SPO_MESSAGE:
 	case SPO_DOOR:
 	case SPO_STAIR:
@@ -1891,6 +2080,9 @@ static boolean sp_level_free(sp_lev *lvl)
 	case SPO_NON_PASSWALL:
 	case SPO_ROOM_DOOR:
 	case SPO_WALLIFY:
+	case SPO_TERRAIN:
+	case SPO_REPLACETERRAIN:
+	case SPO_SPILL:
 	    /* nothing extra to free here */
 	    break;
 	case SPO_SUBROOM:
@@ -1980,6 +2172,9 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
     sink *tmpsink;
     pool *tmppool;
     corridor *tmpcorridor;
+    terrain *tmpterrain;
+    replaceterrain *tmpreplaceterrain;
+    spill *tmpspill;
     room *tmproom, *tmpsubroom;
     room_door *tmproomdoor;
     struct mkroom *croom,
@@ -1994,6 +2189,8 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
     int xi, dir;
     int tmpi;
+
+    xchar tmpxstart, tmpystart, tmpxsize, tmpysize;
 
     struct trap *badtrap;
     boolean has_bounds = FALSE;
@@ -2043,6 +2240,9 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
 	switch (opcode) {
 	case SPO_NULL:
+	    break;
+	case SPO_EXIT:
+	    exit_script = TRUE;
 	    break;
 	case SPO_MESSAGE:
 	    if (opdat) {
@@ -2177,6 +2377,18 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	case SPO_CORRIDOR:
 	    tmpcorridor = (corridor *)opdat;
 	    create_corridor(lev, tmpcorridor);
+	    break;
+	case SPO_TERRAIN:
+	    tmpterrain = (terrain *)opdat;
+	    set_terrain(lev, tmpterrain, croom);
+	    break;
+	case SPO_REPLACETERRAIN:
+	    tmpreplaceterrain = (replaceterrain *)opdat;
+	    replace_terrain(lev, tmpreplaceterrain, croom);
+	    break;
+	case SPO_SPILL:
+	    tmpspill = (spill *)opdat;
+	    spill_terrain(lev, tmpspill, croom);
 	    break;
 	case SPO_LEVREGION:
 	    tmplregion = (lev_region *)opdat;
@@ -2411,24 +2623,42 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	case SPO_MAP:
 	    tmproom = tmpsubroom = NULL;
 	    tmpmazepart = (mazepart *)opdat;
+
+	    tmpxsize = xsize;  tmpysize = ysize;
+	    tmpxstart = xstart;  tmpystart = ystart;
+
 	    halign = tmpmazepart->halign;
 	    valign = tmpmazepart->valign;
 	    xsize = tmpmazepart->xsize;
 	    ysize = tmpmazepart->ysize;
-	    switch ((int)halign) {
-	    case LEFT:	    xstart = 3;					    break;
-	    case H_LEFT:    xstart = 2 + (x_maze_max - 2 - xsize) / 4;	    break;
-	    case CENTER:    xstart = 2 + (x_maze_max - 2 - xsize) / 2;	    break;
-	    case H_RIGHT:   xstart = 2 + (x_maze_max - 2 - xsize) * 3 / 4;  break;
-	    case RIGHT:	    xstart = x_maze_max - xsize - 1;		    break;
+
+	    switch (tmpmazepart->zaligntyp) {
+	    default:
+	    case 0:
+		break;
+	    case 1:
+		switch ((int)halign) {
+		case LEFT:    xstart = 3;					break;
+		case H_LEFT:  xstart = 2 + (x_maze_max - 2 - xsize) / 4;	break;
+		case CENTER:  xstart = 2 + (x_maze_max - 2 - xsize) / 2;	break;
+		case H_RIGHT: xstart = 2 + (x_maze_max - 2 - xsize) * 3 / 4;	break;
+		case RIGHT:   xstart = x_maze_max - xsize - 1;			break;
+		}
+		switch ((int)valign) {
+		case TOP:    ystart = 3;				break;
+		case CENTER: ystart = 2 + (y_maze_max - 2 - ysize) / 2; break;
+		case BOTTOM: ystart = y_maze_max - ysize - 1;		break;
+		}
+		if (!(xstart % 2)) xstart++;
+		if (!(ystart % 2)) ystart++;
+		break;
+	    case 2:
+		get_location(lev, &halign, &valign, DRY|WET, croom);
+		xstart = halign;
+		ystart = valign;
+		break;
 	    }
-	    switch ((int)valign) {
-	    case TOP:	    ystart = 3;					    break;
-	    case CENTER:    ystart = 2 + (y_maze_max - 2 - ysize) / 2;	    break;
-	    case BOTTOM:    ystart = y_maze_max - ysize - 1;		    break;
-	    }
-	    if (!(xstart % 2)) xstart++;
-	    if (!(ystart % 2)) ystart++;
+
 	    if (ystart < 0 || ystart + ysize > ROWNO) {
 		/* try to move the start a bit */
 		ystart += (ystart > 0) ? -2 : 2;
@@ -2446,6 +2676,8 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		/* Load the map. */
 		for (y = ystart; y < ystart + ysize; y++) {
 		    for (x = xstart; x < xstart + xsize; x++) {
+			if (tmpmazepart->map[y - ystart][x - xstart] >= MAX_TYPE)
+			    continue;
 			lev->locations[x][y].typ =
 				tmpmazepart->map[y - ystart][x - xstart];
 			lev->locations[x][y].lit = FALSE;
@@ -2484,6 +2716,13 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		if (lvl->init_lev.init_present && lvl->init_lev.joined)
 		    remove_rooms(lev, xstart, ystart, xstart + xsize, ystart + ysize);
 	    }
+
+	    if (!tmpmazepart->keep_region) {
+		/* should use a stack for this stuff... */
+		xstart = tmpxstart;  ystart = tmpystart;
+		xsize = tmpxsize;  ysize = tmpysize;
+	    }
+
 	    break;
 	default:
 	    panic("sp_level_coder: Unknown opcode %i", opcode);

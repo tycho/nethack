@@ -566,7 +566,13 @@ static void makelevel(struct level *lev)
 	    } else if (In_hell(&lev->z) ||
 		  (rn2(5) && lev->z.dnum == medusa_level.dnum
 			  && depth(&lev->z) > depth(&medusa_level))) {
-		    makemaz(lev, "");
+		    /* The vibrating square code is hardcoded into mkmaze --
+		     * rather than fiddle around trying to port it to a 'generalist'
+		     * sort of level, just go ahead and let the VS level be a maze */
+		    if (!Invocation_lev(&lev->z))
+			makemaz(lev, "hellfill");
+		    else
+			makemaz(lev, "");
 		    return;
 	    }
 	}

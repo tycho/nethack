@@ -17,6 +17,7 @@ static void wallify_map(struct level *lev);
 static void join_map(struct level *lev, schar,schar);
 static void finish_map(struct level *lev, schar,schar,xchar,xchar);
 static void remove_room(struct level *lev, unsigned roomno);
+static void backfill(struct level *lev, schar bg_typ, schar filler);
 
 char *new_locations;
 int min_rx, max_rx, min_ry, max_ry; /* rectangle bounds for regions */
@@ -26,15 +27,36 @@ static void init_map(struct level *lev, schar bg_typ)
 {
 	int i,j;
 
+	if (bg_typ >= MAX_TYPE) return;
+
 	for (i=1; i<COLNO; i++)
 	    for (j=0; j<ROWNO; j++)
 		lev->locations[i][j].typ = bg_typ;
+}
+
+static void backfill(struct level *lev, schar bg_typ, schar filler)
+{
+	int x, y;
+
+	if (filler >= MAX_TYPE) return;
+
+	for (x = 1; x < COLNO; x++) {
+	    for (y = 0; y < ROWNO; y++) {
+		if (lev->locations[x][y].typ == bg_typ) {
+		    lev->locations[x][y].typ = filler;
+		    if (filler == LAVAPOOL)    /* lava's always lit */
+			lev->locations[x][y].lit = 1;
+		}
+	    }
+	}
 }
 
 static void init_fill(struct level *lev, schar bg_typ, schar fg_typ)
 {
 	int i,j;
 	long limit, count;
+
+	if (fg_typ >= MAX_TYPE) return;
 
 	limit = (WIDTH * HEIGHT * 2) / 5;
 	count = 0;
@@ -76,12 +98,14 @@ static void pass_one(struct level *lev, schar bg_typ, schar fg_typ)
 		  case 0 : /* death */
 		  case 1 :
 		  case 2:
+			  if (bg_typ >= MAX_TYPE) break;
 			  lev->locations[i][j].typ = bg_typ;
 			  break;
 		  case 5:
 		  case 6:
 		  case 7:
 		  case 8:
+			  if (fg_typ >= MAX_TYPE) break;
 			  lev->locations[i][j].typ = fg_typ;
 			  break;
 		  default:
@@ -111,7 +135,8 @@ static void pass_two(struct level *lev, schar bg_typ, schar fg_typ)
 
 	for (i=2; i<=WIDTH; i++)
 	    for (j=1; j<HEIGHT; j++)
-		lev->locations[i][j].typ = new_loc(i,j);
+		if (new_loc(i,j) < MAX_TYPE)
+		    lev->locations[i][j].typ = new_loc(i,j);
 }
 
 static void pass_three(struct level *lev, schar bg_typ, schar fg_typ)
@@ -133,7 +158,8 @@ static void pass_three(struct level *lev, schar bg_typ, schar fg_typ)
 
 	for (i=2; i<=WIDTH; i++)
 	    for (j=1; j<HEIGHT; j++)
-		lev->locations[i][j].typ = new_loc(i,j);
+		if (new_loc(i,j) < MAX_TYPE)
+		    lev->locations[i][j].typ = new_loc(i,j);
 }
 
 /*
@@ -418,7 +444,8 @@ void mkmap(struct level *lev, lev_init *init_lev)
 
 	new_locations = malloc((WIDTH+1) * HEIGHT);
 
-	init_map(lev, bg_typ);
+	if (bg_typ < MAX_TYPE)
+	    init_map(lev, bg_typ);
 	init_fill(lev, bg_typ, fg_typ);
 
 	for (i = 0; i < N_P1_ITER; i++)
@@ -435,10 +462,16 @@ void mkmap(struct level *lev, lev_init *init_lev)
 	    join_map(lev, bg_typ, fg_typ);
 
 	finish_map(lev, fg_typ, bg_typ, (boolean)lit, (boolean)walled);
-	/* a walled, joined level is cavernous, not mazelike -dlc */
+	/* a walled, joined level is cavernous, not mazelike -dlc
+	 *
+	 * also, caverns have a defined "inside" and "outside"; the outside
+	 * doesn't _have_ to be stone, say, for hell.  so if the player
+	 * defined a maze filler originally, go ahead and backfill the
+	 * background in with that filler - DSR */
 	if (walled && join) {
 	    lev->flags.is_maze_lev = FALSE;
 	    lev->flags.is_cavernous_lev = TRUE;
+	    backfill(lev, bg_typ, init_lev->filling);
 	}
 	free(new_locations);
 }
