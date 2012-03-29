@@ -3014,7 +3014,7 @@ static void zap_hit_u(int type, int nd, const char *fltxt, xchar sx, xchar sy)
 	    killer = fltxt;
 	    /* when killed by disintegration breath, don't leave corpse */
 	    u.ugrave_arise = (type == -ZT_BREATH(ZT_DEATH)) ? -3 : NON_PM;
-	    done(DIED);
+	    done((type == -ZT_BREATH(ZT_DEATH)) ? DISINTEGRATED : DIED);
 	    return; /* lifesaved */
 	case ZT_LIGHTNING:
 	    if (Shock_resistance) {
@@ -3243,14 +3243,16 @@ buzzmonst:
 			}
 
 /* note: worn amulet of life saving must be preserved in order to operate */
+#ifndef oresist_disintegration
 #define oresist_disintegration(obj) \
 		(objects[obj->otyp].oc_oprop == DISINT_RES || \
 		 obj_resists(obj, 5, 50) || is_quest_artifact(obj) || \
 		 obj == m_amulet)
+#endif
 
 			for (otmp = mon->minvent; otmp; otmp = otmp2) {
 			    otmp2 = otmp->nobj;
-			    if (!oresist_disintegration(otmp)) {
+			    if (otmp == m_amulet || !oresist_disintegration(otmp)) {
 				/* update the monsters intrinsics and saddle in
 				 * case it is lifesaved. */
 				if (otmp->owornmask && otmp->otyp == SADDLE)

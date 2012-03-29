@@ -1136,6 +1136,10 @@ int thitmonst(struct monst *mon, struct obj *obj)
 	int	disttmp; /* distance modifier */
 	int otyp = obj->otyp;
 	boolean guaranteed_hit = (u.uswallow && mon == u.ustuck);
+	boolean obj_disint = (touch_disintegrates(mon->data) &&
+			      !mon->mcan &&
+			      (mon->mhp > 1) &&
+			      !oresist_disintegration(obj));
 
 	/* Differences from melee weapons:
 	 *
@@ -1289,7 +1293,7 @@ int thitmonst(struct monst *mon, struct obj *obj)
 		    if (obj->blessed && !rnl(4))
 			broken = 0;
 
-		    if (broken) {
+		    if (broken || obj_disint) {
 			if (*u.ushops)
 			    check_shop_obj(obj, bhitpos.x,bhitpos.y, TRUE);
 			obfree(obj, NULL);
@@ -1311,6 +1315,13 @@ int thitmonst(struct monst *mon, struct obj *obj)
 		    if (was_swallowed && !u.uswallow && obj == uball)
 			return 1;	/* already did placebc() */
 		}
+
+		if (obj_disint) {
+		    if (*u.ushops)
+			check_shop_obj(obj, bhitpos.x,bhitpos.y, TRUE);
+		    obfree(obj, NULL);
+		    return 1;
+		}
 	    } else {
 		tmiss(obj, mon);
 	    }
@@ -1320,6 +1331,12 @@ int thitmonst(struct monst *mon, struct obj *obj)
 	    if (tmp >= rnd(20)) {
 		exercise(A_DEX, TRUE);
 		hmon(mon,obj,1);
+		if (obj_disint) {
+		    if (*u.ushops)
+			check_shop_obj(obj, bhitpos.x,bhitpos.y, TRUE);
+		    obfree(obj, NULL);
+		    return 1;
+		}
 	    } else {
 		tmiss(obj, mon);
 	    }

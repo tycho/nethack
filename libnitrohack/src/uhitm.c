@@ -499,6 +499,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 	boolean get_dmg_bonus = TRUE;
 	boolean ispoisoned = FALSE, needpoismsg = FALSE, poiskilled = FALSE;
 	boolean silvermsg = FALSE, silverobj = FALSE;
+	boolean disint_obj = FALSE;
 	boolean valid_weapon_attack = FALSE;
 	boolean unarmed = !uwep && !uarm && !uarms;
 	int jousting = 0;
@@ -535,325 +536,369 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 		    tmp += rnd(20);
 		    silvermsg = TRUE;
 		}
+		if (touch_disintegrates(mdat) && !mon->mcan && mon->mhp > 6) {
+		    int dis_dmg;
+		    valid_weapon_attack = 0;
+		    sprintf(unconventional, "barehandedly striking %s",
+			    an(mdat->mname));
+		    if (!flags.verbose) {
+			pline("You hit it.");
+		    } else {
+			pline("You %s %s%s", Role_if(PM_BARBARIAN) ? "smite" : "hit",
+			      mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+		    }
+		    dis_dmg = instadisintegrate(unconventional);
+		    tmp = min(dis_dmg, tmp);
+		    unconventional[0] = '\0';
+		    disint_obj = TRUE;
+		    hittxt = TRUE;
+		}
+	    } else {
+		if (touch_disintegrates(mdat) && !mon->mcan && mon->mhp > 6 &&
+		    !oresist_disintegration(uarmg)) {
+		    int dis_dmg = uarmg->owt;
+		    weight_dmg(dis_dmg);
+		    if (!flags.verbose) {
+			pline("You hit it.");
+		    } else {
+			pline("You %s %s%s", Role_if(PM_BARBARIAN) ? "smite" : "hit",
+			      mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+		    }
+		    hittxt = TRUE;
+		    destroy_arm(uarmg);
+		    tmp = min(dis_dmg, tmp);
+		    disint_obj = TRUE;
+		    valid_weapon_attack = 0;
+		}
 	    }
 	} else {
-	    strcpy(saved_oname, cxname(obj));
-	    if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
-	       obj->oclass == GEM_CLASS) {
-
-		/* is it not a melee weapon? */
-		if (/* if you strike with a bow... */
-		    is_launcher(obj) ||
-		    /* or strike with a missile in your hand... */
-		    (!thrown && (is_missile(obj) || is_ammo(obj))) ||
-		    /* or use a pole at short range and not mounted... */
-		    (!thrown && !u.usteed && is_pole(obj)) ||
-		    /* or throw a missile without the proper bow... */
-		    (is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
-		    /* then do only 1-2 points of damage */
-		    if (mdat == &mons[PM_SHADE] && obj->otyp != SILVER_ARROW)
-			tmp = 0;
-		    else
-			tmp = rnd(2);
-
-		    /* need to duplicate this check for silver arrows: they
-		     * aren't caught below as they're weapons, and aren't caught
-		     * in dmgval as they aren't melee weapons.
-		     */
-		    if (objects[obj->otyp].oc_material == SILVER &&
-			hates_silver(mdat)) {
-			silvermsg = TRUE;
-			silverobj = TRUE;
-			tmp += rnd(20);
-		    }
-
-		    if (!thrown && obj == uwep && obj->otyp == BOOMERANG &&
-			    rnl(4) == 4-1) {
-			boolean more_than_1 = (obj->quan > 1L);
-
-			pline("As you hit %s, %s%s %s breaks into splinters.",
-			      mon_nam(mon), more_than_1 ? "one of " : "",
-			      shk_your(yourbuf, obj), xname(obj));
-			if (!more_than_1) uwepgone();	/* set unweapon */
-			useup(obj);
-			if (!more_than_1) obj = NULL;
-			hittxt = TRUE;
-			if (mdat != &mons[PM_SHADE])
-			    tmp++;
-		    }
-		} else {
-		    tmp = dmgval(obj, mon);
-		    /* a minimal hit doesn't exercise proficiency */
-		    valid_weapon_attack = (tmp > 1);
-		    if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
-			;	/* no special bonuses */
-		    } else if (mon->mflee && Role_if (PM_ROGUE) && !Upolyd) {
-			pline("You strike %s from behind!", mon_nam(mon));
-			tmp += rnd(u.ulevel);
-			hittxt = TRUE;
-		    } else if (dieroll == 2 && obj == uwep &&
-			  obj->oclass == WEAPON_CLASS &&
-			  (bimanual(obj) ||
-			    (Role_if (PM_SAMURAI) && obj->otyp == KATANA && !uarms)) &&
-			  ((wtype = uwep_skill_type()) != P_NONE &&
-			    P_SKILL(wtype) >= P_SKILLED) &&
-			  ((monwep = MON_WEP(mon)) != 0 &&
-			   !is_flimsy(monwep) &&
-			   !obj_resists(monwep,
-				 50 + 15 * greatest_erosion(obj), 100))) {
-			/*
-			 * 2.5% chance of shattering defender's weapon when
-			 * using a two-handed weapon; less if uwep is rusted.
-			 * [dieroll == 2 is most successful non-beheading or
-			 * -bisecting hit, in case of special artifact damage;
-			 * the percentage chance is (1/20)*(50/100).]
-			 */
-			setmnotwielded(mon,monwep);
-			MON_NOWEP(mon);
-			mon->weapon_check = NEED_WEAPON;
-			pline("%s %s %s from the force of your blow!",
-			      s_suffix(Monnam(mon)), xname(monwep),
-			      otense(monwep, "shatter"));
-			m_useup(mon, monwep);
-			/* If someone just shattered MY weapon, I'd flee! */
-			if (rn2(4)) {
-			    monflee(mon, dice(2,3), TRUE, TRUE);
-			}
-			hittxt = TRUE;
-		    }
-
-		    if (obj->oartifact &&
-			artifact_hit(&youmonst, mon, obj, &tmp, dieroll)) {
-			if (mon->mhp <= 0) /* artifact killed monster */
-			    return FALSE;
-			if (tmp == 0) return TRUE;
-			hittxt = TRUE;
-		    }
-		    if (objects[obj->otyp].oc_material == SILVER
-				&& hates_silver(mdat)) {
-			silvermsg = TRUE; silverobj = TRUE;
-		    }
-		    if (u.usteed && !thrown && tmp > 0 &&
-			    weapon_type(obj) == P_LANCE && mon != u.ustuck) {
-			jousting = joust(mon, obj);
-			/* exercise skill even for minimal damage hits */
-			if (jousting) valid_weapon_attack = TRUE;
-		    }
-		    if (thrown && (is_ammo(obj) || is_missile(obj))) {
-			if (ammo_and_launcher(obj, uwep)) {
-			    /* Elves and Samurai do extra damage using
-			     * their bows&arrows; they're highly trained.
-			     */
-			    if (Role_if (PM_SAMURAI) &&
-				obj->otyp == YA && uwep->otyp == YUMI)
-				tmp++;
-			    else if (Race_if (PM_ELF) &&
-				     obj->otyp == ELVEN_ARROW &&
-				     uwep->otyp == ELVEN_BOW)
-				tmp++;
-			}
-			if (obj->opoisoned && is_poisonable(obj))
-			    ispoisoned = TRUE;
-		    }
-		}
-	    } else if (obj->oclass == POTION_CLASS) {
-		if (obj->quan > 1L)
-		    obj = splitobj(obj, 1L);
-		else
-		    setuwep(NULL);
-		freeinv(obj);
-		potionhit(mon, obj, TRUE);
-		if (mon->mhp <= 0) return FALSE;	/* killed */
-		hittxt = TRUE;
-		/* in case potion effect causes transformation */
-		mdat = mon->data;
-		tmp = (mdat == &mons[PM_SHADE]) ? 0 : 1;
+	    if (touch_disintegrates(mdat) &&
+		!oresist_disintegration(obj) &&
+		 mon->mhp > 6 &&
+		!mon->mcan) {
+		disint_obj = TRUE;
+		valid_weapon_attack = FALSE;
+		tmp = obj->owt;
+		weight_dmg(tmp);
 	    } else {
-		if (mdat == &mons[PM_SHADE] && !shade_aware(obj)) {
-		    tmp = 0;
-		    strcpy(unconventional, cxname(obj));
-		} else {
-		    switch(obj->otyp) {
-		    case BOULDER:		/* 1d20 */
-		    case HEAVY_IRON_BALL:	/* 1d25 */
-		    case IRON_CHAIN:		/* 1d4+1 */
-			tmp = dmgval(obj, mon);
-			break;
-		    case MIRROR:
-			if (breaktest(obj)) {
-			    pline("You break %s mirror.  That's bad luck!",
-				shk_your(yourbuf, obj));
-			    change_luck(-2);
-			    useup(obj);
-			    obj = NULL;
-			    unarmed = FALSE;	/* avoid obj==0 confusion */
-			    get_dmg_bonus = FALSE;
-			    hittxt = TRUE;
-			}
-			tmp = 1;
-			break;
-		    case EXPENSIVE_CAMERA:
-			pline("You succeed in destroying %s camera.  Congratulations!",
-			        shk_your(yourbuf, obj));
-			useup(obj);
-			return TRUE;
-			/*NOTREACHED*/
-			break;
-		    case CORPSE:		/* fixed by polder@cs.vu.nl */
-			if (touch_petrifies(&mons[obj->corpsenm])) {
-			    static const char withwhat[] = "corpse";
-			    tmp = 1;
-			    hittxt = TRUE;
-			    pline("You hit %s with %s %s.", mon_nam(mon),
-				obj->dknown ? the(mons[obj->corpsenm].mname) :
-				an(mons[obj->corpsenm].mname),
-				(obj->quan > 1) ? makeplural(withwhat) : withwhat);
-			    if (!munstone(mon, TRUE))
-				minstapetrify(mon, TRUE);
-			    if (resists_ston(mon)) break;
-			    /* note: hp may be <= 0 even if munstoned==TRUE */
-			    return (boolean) (mon->mhp > 0);
-			}
-			tmp = (obj->corpsenm >= LOW_PM ?
-					mons[obj->corpsenm].msize : 0) + 1;
-			break;
-		    case EGG:
-		      {
-#define useup_eggs(o)	{ if (thrown) obfree(o,NULL); \
-			  else useupall(o); \
-			  o = NULL; }	/* now gone */
-			long cnt = obj->quan;
+		strcpy(saved_oname, cxname(obj));
+		if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
+		   obj->oclass == GEM_CLASS) {
 
-			tmp = 1;		/* nominal physical damage */
-			get_dmg_bonus = FALSE;
-			hittxt = TRUE;		/* message always given */
-			/* egg is always either used up or transformed, so next
-			   hand-to-hand attack should yield a "bashing" mesg */
-			if (obj == uwep) unweapon = TRUE;
-			if (obj->spe && obj->corpsenm >= LOW_PM) {
-			    if (obj->quan < 5)
-				change_luck((schar) -(obj->quan));
-			    else
-				change_luck(-5);
-			}
+		    /* is it not a melee weapon? */
+		    if (/* if you strike with a bow... */
+			is_launcher(obj) ||
+			/* or strike with a missile in your hand... */
+			(!thrown && (is_missile(obj) || is_ammo(obj))) ||
+			/* or use a pole at short range and not mounted... */
+			(!thrown && !u.usteed && is_pole(obj)) ||
+			/* or throw a missile without the proper bow... */
+			(is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
+			/* then do only 1-2 points of damage */
+			if (mdat == &mons[PM_SHADE] && obj->otyp != SILVER_ARROW)
+			    tmp = 0;
+			else
+			    tmp = rnd(2);
 
-			if (touch_petrifies(&mons[obj->corpsenm])) {
-			    /*learn_egg_type(obj->corpsenm);*/
-			    pline("Splat! You hit %s with %s %s egg%s!",
-				mon_nam(mon),
-				obj->known ? "the" : cnt > 1L ? "some" : "a",
-				obj->known ? mons[obj->corpsenm].mname : "petrifying",
-				plur(cnt));
-			    obj->known = 1;	/* (not much point...) */
-			    useup_eggs(obj);
-			    if (!munstone(mon, TRUE))
-				minstapetrify(mon, TRUE);
-			    if (resists_ston(mon)) break;
-			    return (boolean) (mon->mhp > 0);
-			} else {	/* ordinary egg(s) */
-			    const char *eggp =
-				     (obj->corpsenm != NON_PM && obj->known) ?
-					      the(mons[obj->corpsenm].mname) :
-					      (cnt > 1L) ? "some" : "an";
-			    pline("You hit %s with %s egg%s.",
-				mon_nam(mon), eggp, plur(cnt));
-			    if (touch_petrifies(mdat) && !stale_egg(obj)) {
-				pline("The egg%s %s alive any more...",
-				      plur(cnt),
-				      (cnt == 1L) ? "isn't" : "aren't");
-				if (obj->timed) obj_stop_timers(obj);
-				obj->otyp = ROCK;
-				obj->oclass = GEM_CLASS;
-				obj->oartifact = 0;
-				obj->spe = 0;
-				obj->known = obj->dknown = obj->bknown = 0;
-				obj->owt = weight(obj);
-				if (thrown) place_object(obj, level, mon->mx, mon->my);
-			    } else {
-				pline("Splat!");
-				useup_eggs(obj);
-				exercise(A_WIS, FALSE);
-			    }
-			}
-			break;
-#undef useup_eggs
-		      }
-		    case CLOVE_OF_GARLIC:	/* no effect against demons */
-			if (is_undead(mdat)) {
-			    monflee(mon, dice(2, 4), FALSE, TRUE);
-			}
-			tmp = 1;
-			break;
-		    case CREAM_PIE:
-		    case BLINDING_VENOM:
-			mon->msleeping = 0;
-			if (can_blnd(&youmonst, mon, (uchar)
-				    (obj->otyp == BLINDING_VENOM
-				     ? AT_SPIT : AT_WEAP), obj)) {
-			    if (Blind) {
-				pline(obj->otyp == CREAM_PIE ?
-				      "Splat!" : "Splash!");
-			    } else if (obj->otyp == BLINDING_VENOM) {
-				pline("The venom blinds %s%s!", mon_nam(mon),
-					  mon->mcansee ? "" : " further");
-			    } else {
-				char *whom = mon_nam(mon);
-				char *what = The(xname(obj));
-				if (!thrown && obj->quan > 1)
-				    what = An(singular(obj, xname));
-				/* note: s_suffix returns a modifiable buffer */
-				if (haseyes(mdat)
-				    && mdat != &mons[PM_FLOATING_EYE])
-				    whom = strcat(strcat(s_suffix(whom), " "),
-						  mbodypart(mon, FACE));
-				pline("%s %s over %s!",
-				      what, vtense(what, "splash"), whom);
-			    }
-			    setmangry(mon);
-			    mon->mcansee = 0;
-			    tmp = rn1(25, 21);
-			    if (((int) mon->mblinded + tmp) > 127)
-				mon->mblinded = 127;
-			    else mon->mblinded += tmp;
-			} else {
-			    pline(obj->otyp==CREAM_PIE ? "Splat!" : "Splash!");
-			    setmangry(mon);
-			}
-			if (thrown) obfree(obj, NULL);
-			else useup(obj);
-			hittxt = TRUE;
-			get_dmg_bonus = FALSE;
-			tmp = 0;
-			break;
-		    case ACID_VENOM: /* thrown (or spit) */
-			if (resists_acid(mon)) {
-				pline("Your venom hits %s harmlessly.",
-					mon_nam(mon));
-				tmp = 0;
-			} else {
-				pline("Your venom burns %s!", mon_nam(mon));
-				tmp = dmgval(obj, mon);
-			}
-			if (thrown) obfree(obj, NULL);
-			else useup(obj);
-			hittxt = TRUE;
-			get_dmg_bonus = FALSE;
-			break;
-		    default:
-			/* non-weapons can damage because of their weight */
-			/* (but not too much) */
-			tmp = obj->owt/100;
-			if (tmp < 1) tmp = 1;
-			else tmp = rnd(tmp);
-			if (tmp > 6) tmp = 6;
-			/*
-			 * Things like silver wands can arrive here so
-			 * so we need another silver check.
+			/* need to duplicate this check for silver arrows: they
+			 * aren't caught below as they're weapons, and aren't caught
+			 * in dmgval as they aren't melee weapons.
 			 */
+			if (objects[obj->otyp].oc_material == SILVER &&
+			    hates_silver(mdat)) {
+			    silvermsg = TRUE;
+			    silverobj = TRUE;
+			    tmp += rnd(20);
+			}
+
+			if (!thrown && obj == uwep && obj->otyp == BOOMERANG &&
+				rnl(4) == 4-1) {
+			    boolean more_than_1 = (obj->quan > 1L);
+
+			    pline("As you hit %s, %s%s %s breaks into splinters.",
+				  mon_nam(mon), more_than_1 ? "one of " : "",
+				  shk_your(yourbuf, obj), xname(obj));
+			    if (!more_than_1) uwepgone();	/* set unweapon */
+			    useup(obj);
+			    if (!more_than_1) obj = NULL;
+			    hittxt = TRUE;
+			    if (mdat != &mons[PM_SHADE])
+				tmp++;
+			}
+		    } else {
+			tmp = dmgval(obj, mon);
+			/* a minimal hit doesn't exercise proficiency */
+			valid_weapon_attack = (tmp > 1);
+			if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
+			    ;	/* no special bonuses */
+			} else if (mon->mflee && Role_if (PM_ROGUE) && !Upolyd) {
+			    pline("You strike %s from behind!", mon_nam(mon));
+			    tmp += rnd(u.ulevel);
+			    hittxt = TRUE;
+			} else if (dieroll == 2 && obj == uwep &&
+			      obj->oclass == WEAPON_CLASS &&
+			      (bimanual(obj) ||
+				(Role_if (PM_SAMURAI) && obj->otyp == KATANA && !uarms)) &&
+			      ((wtype = uwep_skill_type()) != P_NONE &&
+				P_SKILL(wtype) >= P_SKILLED) &&
+			      ((monwep = MON_WEP(mon)) != 0 &&
+			       !is_flimsy(monwep) &&
+			       !obj_resists(monwep,
+				     50 + 15 * greatest_erosion(obj), 100))) {
+			    /*
+			     * 2.5% chance of shattering defender's weapon when
+			     * using a two-handed weapon; less if uwep is rusted.
+			     * [dieroll == 2 is most successful non-beheading or
+			     * -bisecting hit, in case of special artifact damage;
+			     * the percentage chance is (1/20)*(50/100).]
+			     */
+			    setmnotwielded(mon,monwep);
+			    MON_NOWEP(mon);
+			    mon->weapon_check = NEED_WEAPON;
+			    pline("%s %s %s from the force of your blow!",
+				  s_suffix(Monnam(mon)), xname(monwep),
+				  otense(monwep, "shatter"));
+			    m_useup(mon, monwep);
+			    /* If someone just shattered MY weapon, I'd flee! */
+			    if (rn2(4)) {
+				monflee(mon, dice(2,3), TRUE, TRUE);
+			    }
+			    hittxt = TRUE;
+			}
+
+			if (obj->oartifact &&
+			    artifact_hit(&youmonst, mon, obj, &tmp, dieroll)) {
+			    if (mon->mhp <= 0) /* artifact killed monster */
+				return FALSE;
+			    if (tmp == 0) return TRUE;
+			    hittxt = TRUE;
+			}
 			if (objects[obj->otyp].oc_material == SILVER
-						&& hates_silver(mdat)) {
-				tmp += rnd(20);
-				silvermsg = TRUE; silverobj = TRUE;
+				    && hates_silver(mdat)) {
+			    silvermsg = TRUE; silverobj = TRUE;
+			}
+			if (u.usteed && !thrown && tmp > 0 &&
+				weapon_type(obj) == P_LANCE && mon != u.ustuck) {
+			    jousting = joust(mon, obj);
+			    /* exercise skill even for minimal damage hits */
+			    if (jousting) valid_weapon_attack = TRUE;
+			}
+			if (thrown && (is_ammo(obj) || is_missile(obj))) {
+			    if (ammo_and_launcher(obj, uwep)) {
+				/* Elves and Samurai do extra damage using
+				 * their bows&arrows; they're highly trained.
+				 */
+				if (Role_if (PM_SAMURAI) &&
+				    obj->otyp == YA && uwep->otyp == YUMI)
+				    tmp++;
+				else if (Race_if (PM_ELF) &&
+					 obj->otyp == ELVEN_ARROW &&
+					 uwep->otyp == ELVEN_BOW)
+				    tmp++;
+			    }
+			    if (obj->opoisoned && is_poisonable(obj))
+				ispoisoned = TRUE;
+			}
+		    }
+		} else if (obj->oclass == POTION_CLASS) {
+		    if (obj->quan > 1L)
+			obj = splitobj(obj, 1L);
+		    else
+			setuwep(NULL);
+		    freeinv(obj);
+		    potionhit(mon, obj, TRUE);
+		    if (mon->mhp <= 0) return FALSE;	/* killed */
+		    hittxt = TRUE;
+		    /* in case potion effect causes transformation */
+		    mdat = mon->data;
+		    tmp = (mdat == &mons[PM_SHADE]) ? 0 : 1;
+		} else {
+		    if (mdat == &mons[PM_SHADE] && !shade_aware(obj)) {
+			tmp = 0;
+			strcpy(unconventional, cxname(obj));
+		    } else {
+			switch(obj->otyp) {
+			case BOULDER:		/* 1d20 */
+			case HEAVY_IRON_BALL:	/* 1d25 */
+			case IRON_CHAIN:		/* 1d4+1 */
+			    tmp = dmgval(obj, mon);
+			    break;
+			case MIRROR:
+			    if (breaktest(obj)) {
+				pline("You break %s mirror.  That's bad luck!",
+				    shk_your(yourbuf, obj));
+				change_luck(-2);
+				useup(obj);
+				obj = NULL;
+				unarmed = FALSE;	/* avoid obj==0 confusion */
+				get_dmg_bonus = FALSE;
+				hittxt = TRUE;
+			    }
+			    tmp = 1;
+			    break;
+			case EXPENSIVE_CAMERA:
+			    pline("You succeed in destroying %s camera.  Congratulations!",
+				    shk_your(yourbuf, obj));
+			    useup(obj);
+			    return TRUE;
+			    /*NOTREACHED*/
+			    break;
+			case CORPSE:		/* fixed by polder@cs.vu.nl */
+			    if (touch_petrifies(&mons[obj->corpsenm])) {
+				static const char withwhat[] = "corpse";
+				tmp = 1;
+				hittxt = TRUE;
+				pline("You hit %s with %s %s.", mon_nam(mon),
+				    obj->dknown ? the(mons[obj->corpsenm].mname) :
+				    an(mons[obj->corpsenm].mname),
+				    (obj->quan > 1) ? makeplural(withwhat) : withwhat);
+				if (!munstone(mon, TRUE))
+				    minstapetrify(mon, TRUE);
+				if (resists_ston(mon)) break;
+				/* note: hp may be <= 0 even if munstoned==TRUE */
+				return (boolean) (mon->mhp > 0);
+			    }
+			    tmp = (obj->corpsenm >= LOW_PM ?
+					    mons[obj->corpsenm].msize : 0) + 1;
+			    break;
+			case EGG:
+			  {
+    #define useup_eggs(o)	{ if (thrown) obfree(o,NULL); \
+			      else useupall(o); \
+			      o = NULL; }	/* now gone */
+			    long cnt = obj->quan;
+
+			    tmp = 1;		/* nominal physical damage */
+			    get_dmg_bonus = FALSE;
+			    hittxt = TRUE;		/* message always given */
+			    /* egg is always either used up or transformed, so next
+			       hand-to-hand attack should yield a "bashing" mesg */
+			    if (obj == uwep) unweapon = TRUE;
+			    if (obj->spe && obj->corpsenm >= LOW_PM) {
+				if (obj->quan < 5)
+				    change_luck((schar) -(obj->quan));
+				else
+				    change_luck(-5);
+			    }
+
+			    if (touch_petrifies(&mons[obj->corpsenm])) {
+				/*learn_egg_type(obj->corpsenm);*/
+				pline("Splat! You hit %s with %s %s egg%s!",
+				    mon_nam(mon),
+				    obj->known ? "the" : cnt > 1L ? "some" : "a",
+				    obj->known ? mons[obj->corpsenm].mname : "petrifying",
+				    plur(cnt));
+				obj->known = 1;	/* (not much point...) */
+				useup_eggs(obj);
+				if (!munstone(mon, TRUE))
+				    minstapetrify(mon, TRUE);
+				if (resists_ston(mon)) break;
+				return (boolean) (mon->mhp > 0);
+			    } else {	/* ordinary egg(s) */
+				const char *eggp =
+					 (obj->corpsenm != NON_PM && obj->known) ?
+						  the(mons[obj->corpsenm].mname) :
+						  (cnt > 1L) ? "some" : "an";
+				pline("You hit %s with %s egg%s.",
+				    mon_nam(mon), eggp, plur(cnt));
+				if (touch_petrifies(mdat) && !stale_egg(obj)) {
+				    pline("The egg%s %s alive any more...",
+					  plur(cnt),
+					  (cnt == 1L) ? "isn't" : "aren't");
+				    if (obj->timed) obj_stop_timers(obj);
+				    obj->otyp = ROCK;
+				    obj->oclass = GEM_CLASS;
+				    obj->oartifact = 0;
+				    obj->spe = 0;
+				    obj->known = obj->dknown = obj->bknown = 0;
+				    obj->owt = weight(obj);
+				    if (thrown) place_object(obj, level, mon->mx, mon->my);
+				} else {
+				    pline("Splat!");
+				    useup_eggs(obj);
+				    exercise(A_WIS, FALSE);
+				}
+			    }
+			    break;
+    #undef useup_eggs
+			  }
+			case CLOVE_OF_GARLIC:	/* no effect against demons */
+			    if (is_undead(mdat)) {
+				monflee(mon, dice(2, 4), FALSE, TRUE);
+			    }
+			    tmp = 1;
+			    break;
+			case CREAM_PIE:
+			case BLINDING_VENOM:
+			    mon->msleeping = 0;
+			    if (can_blnd(&youmonst, mon, (uchar)
+					(obj->otyp == BLINDING_VENOM
+					 ? AT_SPIT : AT_WEAP), obj)) {
+				if (Blind) {
+				    pline(obj->otyp == CREAM_PIE ?
+					  "Splat!" : "Splash!");
+				} else if (obj->otyp == BLINDING_VENOM) {
+				    pline("The venom blinds %s%s!", mon_nam(mon),
+					      mon->mcansee ? "" : " further");
+				} else {
+				    char *whom = mon_nam(mon);
+				    char *what = The(xname(obj));
+				    if (!thrown && obj->quan > 1)
+					what = An(singular(obj, xname));
+				    /* note: s_suffix returns a modifiable buffer */
+				    if (haseyes(mdat)
+					&& mdat != &mons[PM_FLOATING_EYE])
+					whom = strcat(strcat(s_suffix(whom), " "),
+						      mbodypart(mon, FACE));
+				    pline("%s %s over %s!",
+					  what, vtense(what, "splash"), whom);
+				}
+				setmangry(mon);
+				mon->mcansee = 0;
+				tmp = rn1(25, 21);
+				if (((int) mon->mblinded + tmp) > 127)
+				    mon->mblinded = 127;
+				else mon->mblinded += tmp;
+			    } else {
+				pline(obj->otyp==CREAM_PIE ? "Splat!" : "Splash!");
+				setmangry(mon);
+			    }
+			    if (thrown) obfree(obj, NULL);
+			    else useup(obj);
+			    hittxt = TRUE;
+			    get_dmg_bonus = FALSE;
+			    tmp = 0;
+			    break;
+			case ACID_VENOM: /* thrown (or spit) */
+			    if (resists_acid(mon)) {
+				    pline("Your venom hits %s harmlessly.",
+					    mon_nam(mon));
+				    tmp = 0;
+			    } else {
+				    pline("Your venom burns %s!", mon_nam(mon));
+				    tmp = dmgval(obj, mon);
+			    }
+			    if (thrown) obfree(obj, NULL);
+			    else useup(obj);
+			    hittxt = TRUE;
+			    get_dmg_bonus = FALSE;
+			    break;
+			default:
+			    /* non-weapons can damage because of their weight */
+			    /* (but not too much) */
+			    tmp = obj->owt/100;
+			    if (tmp < 1) tmp = 1;
+			    else tmp = rnd(tmp);
+			    if (tmp > 6) tmp = 6;
+			    /*
+			     * Things like silver wands can arrive here so
+			     * so we need another silver check.
+			     */
+			    if (objects[obj->otyp].oc_material == SILVER
+						    && hates_silver(mdat)) {
+				    tmp += rnd(20);
+				    silvermsg = TRUE; silverobj = TRUE;
+			    }
 			}
 		    }
 		}
@@ -898,7 +943,9 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 		pline("Your %s %s no longer poisoned.", xname(obj),
 		     otense(obj, "are"));
 	    }
-	    if (resists_poison(mon))
+	    if (disint_obj) {
+		/* do nothing */
+	    } else if (resists_poison(mon))
 		needpoismsg = TRUE;
 	    else if (rn2(10))
 		tmp += rnd(6);
@@ -921,7 +968,25 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 	    }
 	}
 
-	if (jousting) {
+	if (disint_obj && obj) { /* all the hit msgs, no object destruction */
+	    if (obj->oclass == POTION_CLASS || obj->oclass == VENOM_CLASS ||
+		    obj->otyp == EGG || obj->otyp == CREAM_PIE) {
+		if (cansee(mon->mx, mon->my)) {
+		    pline("The %s %s in a %s of green light!",
+		          xname(obj), vtense(xname(obj), "vanish"),
+		          (obj->oclass == VENOM_CLASS) ? "twinkle" : "flash");
+		} else {
+		    pline("Vip!");
+		}
+		hittxt = TRUE;
+	    } else if (u.usteed && !thrown && tmp > 0 &&
+		    weapon_type(obj) == P_LANCE && mon != u.ustuck && joust(mon,obj)) {
+		pline("You joust %s%s",
+		      mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+		pline("Your %s vanishes on impact!", xname(obj));
+		hittxt = TRUE;
+	    }
+	} else if (jousting) {
 	    tmp += dice(2, (obj == uwep) ? 10 : 2);	/* [was in dmgval()] */
 	    pline("You joust %s%s",
 			 mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
@@ -989,6 +1054,24 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 		else if (!flags.verbose) pline("You hit it.");
 		else pline("You %s %s%s", Role_if (PM_BARBARIAN) ? "smite" : "hit",
 			 mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+	}
+
+	if (disint_obj && obj) {
+	    if (!hittxt) {
+		if (cansee(mon->mx, mon->my)) {
+		    pline("The %s %s!", mshot_xname(obj),
+		          (obj->oartifact) ? "dissolves" : "disintegrates");
+		} else {
+		    pline("Vip!%s",
+			  (!thrown) ? "  Your weapon vanishes from your grip!" : "");
+		}
+	    }
+	    if (!thrown) {
+		u.twoweap = FALSE;	/* untwoweapon() is too verbose here */
+		if (obj == uwep) uwepgone();	/* set unweapon */
+		useupall(obj);
+		obj = 0;
+	    }
 	}
 
 	if (silvermsg) {
@@ -1721,7 +1804,8 @@ static int gulpum(struct monst *mdef, const struct attack *mattk)
 	    for (otmp = mdef->minvent; otmp; otmp = otmp->nobj)
 		snuff_lit(otmp);
 
-	    if (!touch_petrifies(mdef->data) || Stone_resistance) {
+	    if ((!touch_petrifies(mdef->data) || Stone_resistance) &&
+		(!touch_disintegrates(mdef->data) || Disint_resistance)) {
 		static char msgbuf[BUFSZ];
 		start_engulf(mdef);
 		switch(mattk->adtyp) {
@@ -1871,6 +1955,7 @@ static int gulpum(struct monst *mdef, const struct attack *mattk)
 		pline("You bite into %s.", mon_nam(mdef));
 		sprintf(kbuf, "swallowing %s whole", an(mdef->data->mname));
 		instapetrify(kbuf);
+		instadisintegrate(kbuf);
 	    }
 	}
 	return 0;
@@ -1986,7 +2071,37 @@ use_weapon:
 			    else if (mattk->aatyp == AT_TENT)
 				    pline("Your tentacles suck %s.", mon_nam(mon));
 			    else pline("You hit %s.", mon_nam(mon));
-			    sum[i] = damageum(mon, mattk);
+			    if (touch_disintegrates(mon->data) && !mon->mcan &&
+				mon->mhp > 1) {
+				int dis_dmg = 0;
+				if (mattk->aatyp == AT_KICK && uarmf) {
+				    if (!oresist_disintegration(uarmf)) {
+					dis_dmg += uarmf->owt;
+					destroy_arm(uarmf);
+				    }
+				} else if (uarmg && (mattk->aatyp == AT_WEAP ||
+					   mattk->aatyp == AT_CLAW ||
+					   mattk->aatyp == AT_TUCH)) {
+				    if (!oresist_disintegration(uarmg)) {
+					dis_dmg += uarmg->owt;
+					destroy_arm(uarmg);
+				    }
+				} else if (mattk->aatyp == AT_BUTT && uarmh) {
+				    if (!oresist_disintegration(uarmh)) {
+					dis_dmg += (uarmh->owt);
+					destroy_arm(uarmh);
+				    }
+				} else {
+				    char kbuf[BUFSZ];
+				    sprintf(kbuf, "touching %s", an(mon->data->mname));
+				    mon->mhp -= instadisintegrate(kbuf);
+				}
+				sum[i] = 1;
+				if (dis_dmg) weight_dmg(dis_dmg);
+				mon->mhp -= dis_dmg;
+				if (mon->mhp < 1) mon->mhp = 1;
+			    } else
+				sum[i] = damageum(mon, mattk);
 			} else
 			    missum(mon, mattk);
 			break;

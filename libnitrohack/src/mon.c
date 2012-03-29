@@ -19,7 +19,7 @@ static void kill_eggs(struct obj *);
 
 static struct obj *make_corpse(struct monst *);
 static void m_detach(struct monst *, const struct permonst *);
-static void lifesaved_monster(struct monst *);
+static void lifesaved_monster(struct monst *, int);
 
 /* convert the monster index of an undead to its living counterpart */
 int undead_to_corpse(int mndx)
@@ -1195,7 +1195,7 @@ struct obj *mlifesaver(struct monst *mon)
 	return NULL;
 }
 
-static void lifesaved_monster(struct monst *mtmp)
+static void lifesaved_monster(struct monst *mtmp, int adtyp)
 {
 	struct obj *lifesave = mlifesaver(mtmp);
 
@@ -1210,7 +1210,8 @@ static void lifesaved_monster(struct monst *mtmp)
 				s_suffix(Monnam(mtmp)));
 			makeknown(AMULET_OF_LIFE_SAVING);
 			if (attacktype(mtmp->data, AT_EXPL)
-			    || attacktype(mtmp->data, AT_BOOM))
+			    || attacktype(mtmp->data, AT_BOOM)
+			    || adtyp == AD_DISN)
 				pline("%s reconstitutes!", Monnam(mtmp));
 			else if (canseemon(mtmp))
 				pline("%s looks much better!", Monnam(mtmp));
@@ -1238,6 +1239,11 @@ static void lifesaved_monster(struct monst *mtmp)
 
 void mondead(struct monst *mtmp)
 {
+	mondead_helper(mtmp, 0);
+}
+
+void mondead_helper(struct monst *mtmp, int adtyp)
+{
 	const struct permonst *mptr;
 	int tmp;
 	struct obj *otmp;
@@ -1247,7 +1253,7 @@ void mondead(struct monst *mtmp)
 		 * the m_detach or there will be relmon problems later */
 		if (!grddead(mtmp)) return;
 	}
-	lifesaved_monster(mtmp);
+	lifesaved_monster(mtmp, adtyp);
 	if (mtmp->mhp > 0) return;
 
 	/* Player is thrown from his steed when it dies */
@@ -1318,7 +1324,8 @@ boolean corpse_chance(struct monst *mon,
 	const struct permonst *mdat = mon->data;
 	int i, tmp;
 
-	if (mdat == &mons[PM_VLAD_THE_IMPALER] || mdat->mlet == S_LICH) {
+	if (mdat == &mons[PM_VLAD_THE_IMPALER] || mdat->mlet == S_LICH ||
+	    mdat == &mons[PM_DISINTEGRATOR]) {
 	    if (cansee(mon->mx, mon->my) && !was_swallowed)
 		pline("%s body crumbles into dust.", s_suffix(Monnam(mon)));
 	    return FALSE;
@@ -1417,7 +1424,7 @@ void monstone(struct monst *mdef)
 	 * put inventory in it, and we have to check for lifesaving before
 	 * making the statue....
 	 */
-	lifesaved_monster(mdef);
+	lifesaved_monster(mdef, AD_STON);
 	if (mdef->mhp > 0) return;
 
 	mdef->mtrapped = 0;	/* (see m_detach) */
@@ -1496,8 +1503,8 @@ void monkilled(struct monst *mdef, const char *fltxt, int how)
 	    be_sad = (mdef->mtame != 0);
 
 	/* no corpses if digested or disintegrated */
-	if (how == AD_DGST || how == -AD_RBRE)
-	    mondead(mdef);
+	if (how == AD_DGST || how == -AD_RBRE || how == AD_DISN)
+	    mondead_helper(mdef, how);
 	else
 	    mondied(mdef);
 

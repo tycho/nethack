@@ -142,7 +142,23 @@ static void kick_monster(xchar x, xchar y, schar dx, schar dy)
 		/* we only care about kicking attacks here */
 		if (uattk->aatyp != AT_KICK) continue;
 
-		if (mon->data == &mons[PM_SHADE] &&
+		if (touch_disintegrates(mon->data) && !mon->mcan && mon->mhp > 6) {
+		    if (uarmf) {
+			if (!oresist_disintegration(uarmf)) {
+			    tmp = uarmf->owt;
+			    weight_dmg(tmp);
+			    destroy_arm(uarmf);
+			    break;
+			}
+		    } else {
+			char kbuf[BUFSZ];
+			int dis_dmg;
+			sprintf(kbuf, "barefootedly kicking %s",
+				an(mon->data->mname));
+			dis_dmg = instadisintegrate(kbuf);
+			break;
+		    }
+		} else if (mon->data == &mons[PM_SHADE] &&
 			(!uarmf || !uarmf->blessed)) {
 		    /* doesn't matter whether it would have hit or missed,
 		       and shades have no passive counterattack */
@@ -230,6 +246,14 @@ doit:
 boolean ghitm(struct monst *mtmp, struct obj *gold)
 {
 	boolean msg_given = FALSE;
+
+	if (touch_disintegrates(mtmp->data) && !mtmp->mcan && mtmp->mhp > 6 &&
+		!oresist_disintegration(gold)) {
+	    if (cansee(mtmp->mx, mtmp->my))
+		pline("The %s %s!", xname(gold), vtense(xname(gold),"disintegrate"));
+	    dealloc_obj(gold);
+	    return TRUE;
+	}
 
 	if (!likes_gold(mtmp->data) && !mtmp->isshk && !mtmp->ispriest
 			&& !is_mercenary(mtmp->data)) {

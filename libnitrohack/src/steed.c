@@ -76,10 +76,19 @@ int use_saddle(struct obj *otmp)
 	    char kbuf[BUFSZ];
 
 	    pline("You touch %s.", mon_nam(mtmp));
- 	    if (!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
+	    if (!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
 		sprintf(kbuf, "attempting to saddle %s", an(mtmp->data->mname));
 		instapetrify(kbuf);
- 	    }
+	    }
+	}
+	if (touch_disintegrates(ptr)) {
+	    char kbuf[BUFSZ];
+	    if (!oresist_disintegration(otmp)) {
+		pline("%s disintegrates!", Yname2(otmp));
+		useup(otmp);
+	    }
+	    sprintf(kbuf, "attempting to saddle %s", a_monnam(mtmp));
+	    instadisintegrate(kbuf);
 	}
 	if (ptr == &mons[PM_INCUBUS] || ptr == &mons[PM_SUCCUBUS]) {
 	    pline("Shame on you!");

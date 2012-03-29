@@ -55,7 +55,8 @@ static void fill_nh_score_entry(struct toptenentry *in, struct nh_topten_entry *
 const char * const killed_by_prefix[] = {
     "killed by ", "choked on ", "poisoned by ", "died of ", "drowned in ",
     "burned by ", "dissolved in ", "crushed to death by ", "petrified by ",
-    "turned to slime by ", "killed by ", "", "", "", "", ""
+    "turned to slime by ", "killed by ", "disintegrated by ",
+    "", "", "", "", ""
 };
 
 static int end_how;

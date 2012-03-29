@@ -44,7 +44,7 @@ static const char *const deaths[] = {		/* the array of death */
 	"died", "choked", "poisoned", "starvation", "drowning",
 	"burning", "dissolving under the heat and pressure",
 	"crushed", "turned to stone", "turned into slime",
-	"genocided", "panic", "trickery",
+	"genocided", "disintegrated", "panic", "trickery",
 	"quit", "escaped", "ascended"
 };
 
@@ -52,7 +52,7 @@ static const char *const ends[] = {		/* "when you..." */
 	"died", "choked", "were poisoned", "starved", "drowned",
 	"burned", "dissolved in the lava",
 	"were crushed", "turned to stone", "turned into slime",
-	"were genocided", "panicked", "were tricked",
+	"were genocided", "were disintegrated", "panicked", "were tricked",
 	"quit", "escaped", "ascended"
 };
 
@@ -428,7 +428,8 @@ static boolean check_survival(int how, char *kilbuf)
 		pline("Your medallion %s!",
 		      !Blind ? "begins to glow" : "feels warm");
 		if (how == CHOKING) pline("You vomit ...");
-		pline("You feel much better!");
+		if (how == DISINTEGRATED) pline("You reconstitute!");
+		else pline("You feel much better!");
 		pline("The medallion crumbles to dust!");
 		if (uamul) useup(uamul);
 

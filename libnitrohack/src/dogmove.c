@@ -571,8 +571,10 @@ int dog_move(struct monst *mtmp,
 			  || mtmp2->data->msound == MS_GUARDIAN
 			  || mtmp2->data->msound == MS_LEADER) &&
 			 mtmp2->mpeaceful && !Conflict) ||
-			   (touch_petrifies(mtmp2->data) &&
-				!resists_ston(mtmp)))
+			(touch_disintegrates(mtmp2->data) &&
+			 !resists_disint(mtmp)) ||
+			(touch_petrifies(mtmp2->data) &&
+			 !resists_ston(mtmp)))
 			continue;
 
 		    if (after) return 0; /* hit only once each move */
