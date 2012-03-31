@@ -388,9 +388,24 @@ static void fixup_special(struct level *lev)
 	place_lregion(lev, 0,0,0,0,0,0,0,0,LR_BRANCH,NULL);
     }
 
-	/* KMH -- Sokoban levels */
-	if (In_sokoban(&lev->z))
-		sokoban_detect(lev);
+    /* KMH -- Sokoban levels */
+    if (In_sokoban(&lev->z)) {
+	sokoban_detect(lev);
+
+	/* randomize Sokoban prize */
+	int x, y;
+	for (x = 1; x < COLNO; x++) {
+	    for (y = 1; y < ROWNO; y++) {
+		struct engr *ep = engr_at(lev, x, y);
+		/* Sokoban top levels have no random, burned engravings */
+		if (ep && ep->engr_txt[0] && ep->engr_type == BURN &&
+		    !strcmp(ep->engr_txt, "Elbereth")) {
+		    mksobj_at(rn2(2) ? BAG_OF_HOLDING : AMULET_OF_REFLECTION,
+			      lev, x, y, TRUE, FALSE);
+		}
+	    }
+	}
+   }
 
     /* Still need to add some stuff to level file */
     if (Is_medusa_level(&lev->z)) {
