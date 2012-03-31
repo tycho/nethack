@@ -3020,7 +3020,20 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
     wallification(lev, 1, 0, COLNO - 1, ROWNO - 1);
 
-    flip_level_rnd(lev, 3);
+    /* disable level flipping for some levels */
+    if (!Is_astralevel(&lev->z) &&
+	!Is_knox(&lev->z) &&
+	!Is_oracle_level(&lev->z) &&
+	!Is_minetown_level(&lev->z) &&
+	!Is_town_level(&lev->z) &&
+	/* When returning from the Valley the player gets
+	 * placed on the right side of the screen, regardless
+	 * of flipped state. */
+	!Is_stronghold(&lev->z) &&
+	/* Up and down ladders should be in the same position. */
+	!In_V_tower(&lev->z)) {
+	    flip_level_rnd(lev, 3);
+    }
 
     count_features(lev);
 
