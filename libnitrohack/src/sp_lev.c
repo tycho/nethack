@@ -2458,6 +2458,11 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
     prevstair.x = prevstair.y = 0;
     tmproom = tmpsubroom = NULL;
 
+    /* This function may call functions that rely on the 'level' global
+     * pointer being set properly, so set it here ahead of it being set
+     * to mklev's return value. */
+    level = lev;
+
     shuffle_alignments();
 
     memset(&SpLev_Map[0][0], 0, sizeof(SpLev_Map));
