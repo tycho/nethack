@@ -836,6 +836,39 @@ void enlightenment(int final)
 }
 
 /*
+ * Returns the alignment code for the deities list.
+ */
+static const char *get_alignment_code(int alignment)
+{
+	/* alignment at beginning of game */
+	aligntyp starting_alignment = u.ualignbase[A_ORIGINAL];
+	/* alignment without any modifications
+	 * e.g. helm of opposite alignment */
+	aligntyp current_alignment = u.ualignbase[A_CURRENT];
+	/* temporary alignment, effective for praying,
+	 * feelings in temples */
+	aligntyp pray_alignment = u.ualign.type;
+
+	if (starting_alignment == current_alignment &&
+	    current_alignment  == alignment)
+		return " (s,c)";
+	else if (starting_alignment == pray_alignment &&
+		 pray_alignment  == alignment)
+		return " (s,t)";
+	else if (pray_alignment == current_alignment &&
+		 current_alignment  == alignment)
+		return " (c)";
+	else if (starting_alignment == alignment)
+		return " (s)";
+	else if (current_alignment == alignment)
+		return " (c)";
+	else if (pray_alignment == alignment)
+		return " (t)";
+	else
+		return "";
+}
+
+/*
  * Courtesy function for non-debug, non-explorer mode players
  * to help refresh them about who/what they are.
  * Returns FALSE if menu cancelled (dismissed with ESC), TRUE otherwise.
@@ -896,26 +929,17 @@ static boolean minimal_enlightenment(void)
 	set_menuitem(&items[i++], 0, MI_NORMAL, "", 0, FALSE);
 	set_menuitem(&items[i++], 0, MI_HEADING, "Deities", 0, FALSE);
 	sprintf(buf2, deity_fmtstr, align_gname(A_CHAOTIC),
-	    (u.ualignbase[A_ORIGINAL] == u.ualign.type
-		&& u.ualign.type == A_CHAOTIC) ? " (s,c)" :
-	    (u.ualignbase[A_ORIGINAL] == A_CHAOTIC)       ? " (s)" :
-	    (u.ualign.type   == A_CHAOTIC)       ? " (c)" : "");
+	    get_alignment_code(A_CHAOTIC));
 	sprintf(buf, fmtstr, "Chaotic", buf2);
 	set_menuitem(&items[i++], 0, MI_NORMAL, buf, 0, FALSE);
 
 	sprintf(buf2, deity_fmtstr, align_gname(A_NEUTRAL),
-	    (u.ualignbase[A_ORIGINAL] == u.ualign.type
-		&& u.ualign.type == A_NEUTRAL) ? " (s,c)" :
-	    (u.ualignbase[A_ORIGINAL] == A_NEUTRAL)       ? " (s)" :
-	    (u.ualign.type   == A_NEUTRAL)       ? " (c)" : "");
+	    get_alignment_code(A_NEUTRAL));
 	sprintf(buf, fmtstr, "Neutral", buf2);
 	set_menuitem(&items[i++], 0, MI_NORMAL, buf, 0, FALSE);
 
 	sprintf(buf2, deity_fmtstr, align_gname(A_LAWFUL),
-	    (u.ualignbase[A_ORIGINAL] == u.ualign.type &&
-		u.ualign.type == A_LAWFUL)  ? " (s,c)" :
-	    (u.ualignbase[A_ORIGINAL] == A_LAWFUL)        ? " (s)" :
-	    (u.ualign.type   == A_LAWFUL)        ? " (c)" : "");
+	    get_alignment_code(A_LAWFUL));
 	sprintf(buf, fmtstr, "Lawful", buf2);
 	set_menuitem(&items[i++], 0, MI_NORMAL, buf, 0, FALSE);
 

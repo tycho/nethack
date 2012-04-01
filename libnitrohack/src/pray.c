@@ -1087,6 +1087,9 @@ int dosacrifice(struct obj *otmp)
     int value = 0;
     int pm;
     aligntyp altaralign = a_align(u.ux,u.uy);
+    /* The real current alignment, without modification
+     * by a helm of opposite alignment. */
+    aligntyp real_alignment = u.ualignbase[A_CURRENT];
 
     if (!on_altar() || u.uswallow) {
 	pline("You are not standing on an altar.");
@@ -1248,13 +1251,14 @@ int dosacrifice(struct obj *otmp)
 	    if (carried(otmp)) useup(otmp); /* well, it's gone now */
 	    else useupf(otmp, 1L);
 	    pline("You offer the Amulet of Yendor to %s...", a_gname());
-	    if (u.ualign.type != altaralign) {
+	    /* Only true believers are rewarded. */
+	    if (real_alignment != altaralign) {
 		/* And the opposing team picks you up and
 		   carries you off on their shoulders */
 		adjalign(-99);
 		pline("%s accepts your gift, and gains dominion over %s...",
-		      a_gname(), u_gname());
-		pline("%s is enraged...", u_gname());
+		      a_gname(), align_gname(real_alignment));
+		pline("%s is enraged...", align_gname(real_alignment));
 		pline("Fortunately, %s permits you to live...", a_gname());
 		pline("A cloud of %s smoke surrounds you...",
 		      hcolor("orange"));
