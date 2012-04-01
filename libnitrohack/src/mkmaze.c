@@ -608,7 +608,11 @@ void makemaz(struct level *lev, const char *s)
 		     !SPACE_POS(lev->locations[x][y].typ) || occupied(lev, x, y));
 	    inv_pos.x = x;
 	    inv_pos.y = y;
-            maketrap(lev, inv_pos.x, inv_pos.y, VIBRATING_SQUARE);
+	    maketrap(lev, inv_pos.x, inv_pos.y, VIBRATING_SQUARE);
+
+	    /* "'X' never, ever marks the spot." */
+	    if (Role_if(PM_ARCHEOLOGIST))
+		make_engr_at(lev, inv_pos.x, inv_pos.y, "X", 0L, DUST);
 #undef INVPOS_X_MARGIN
 #undef INVPOS_Y_MARGIN
 #undef INVPOS_DISTANCE

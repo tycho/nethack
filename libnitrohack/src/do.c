@@ -1146,6 +1146,11 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 
 	if (new && Is_rogue_level(&u.uz))
 	    pline("You enter what seems to be an older, more primitive world.");
+
+	if (new && Hallucination && Role_if(PM_ARCHEOLOGIST) &&
+		Is_juiblex_level(&u.uz))
+	    pline("Ahh, Venice.");
+
 	/* Final confrontation */
 	if (In_endgame(&u.uz) && newdungeon && u.uhave.amulet)
 		resurrect();

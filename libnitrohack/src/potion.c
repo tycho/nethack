@@ -321,7 +321,11 @@ int dodrink(struct obj *potion)
 	/* Or are you surrounded by water? */
 	if (Underwater) {
 		if (yn("Drink the water around you?") == 'y') {
-		    pline("Do you know what lives in this water!");
+			/* Indiana Jones 3 */
+			if (Role_if(PM_ARCHEOLOGIST))
+			    pline("No thank you, fish make love in it!");
+			else
+			    pline("Do you know what lives in this water!?");
 			return 1;
 		}
 	}

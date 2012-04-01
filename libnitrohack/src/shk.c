@@ -3356,6 +3356,23 @@ const char *const Izchak_speaks[]={
     "%s comments about the Valley of the Dead as being a gateway."
 };
 
+/** returns TRUE if shopkeeper has at least one leather jacket in his shop. */
+static boolean shk_has_leather_jackets(struct monst *shkp)
+{
+	struct eshk *eshk = ESHK(shkp);
+	struct mkroom *sroom = &level->rooms[eshk->shoproom - ROOMOFFSET];
+	struct obj *otmp;
+	int sx, sy;
+
+	for (sx = sroom->lx; sx <= sroom->hx; sx++)
+	    for (sy = sroom->ly; sy <= sroom->hy; sy++)
+		if (costly_spot(sx, sy))
+		    for (otmp = level->objects[sx][sy]; otmp; otmp = otmp->nexthere)
+			if (!otmp->no_charge && otmp->otyp == LEATHER_JACKET)
+			    return TRUE;
+	return FALSE;
+}
+
 void shk_chat(struct monst *shkp)
 {
 	struct eshk *eshk;
@@ -3406,6 +3423,10 @@ void shk_chat(struct monst *shkp)
 		pline("%s says that business is good.", shkname(shkp));
 	else if (strcmp(shkname(shkp), "Izchak") == 0)
 		pline(Izchak_speaks[rn2(SIZE(Izchak_speaks))],shkname(shkp));
+	else if (Role_if(PM_ARCHEOLOGIST) && inhishop(shkp) &&
+		 shk_has_leather_jackets(shkp))
+		pline("%s says that he's selling these fine leather jackets.",
+		      shkname(shkp));
 	else
 		pline("%s talks about the problem of shoplifters.",shkname(shkp));
 }
