@@ -205,7 +205,7 @@ void update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
 
     unseen = !canseemon(mon);
 
-    if (obj->otyp == GOLD_DRAGON_SCALE_MAIL || obj->otyp == GOLD_DRAGON_SCALES) {
+    if (Is_gold_dragon_armor(obj)) {
 	if (on)
 	    begin_burn(obj, FALSE);
 	else

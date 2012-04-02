@@ -8,6 +8,7 @@ static void setgemprobs(const d_level *dlev);
 static void shuffle(int,int,boolean);
 static void shuffle_all(void);
 static boolean interesting_to_discover(int);
+static void swap_armor(int,int,int);
 
 
 static void setgemprobs(const d_level *dlev)
@@ -136,7 +137,9 @@ void init_objects(void)
 
 static void shuffle_all(void)
 {
-	int first, last, oclass;
+	int first, last, oclass, j;
+
+	int num_scales = YELLOW_DRAGON_SCALES - GRAY_DRAGON_SCALES;
 
 	for (oclass = 1; oclass < MAXOCLASSES; oclass++) {
 		first = bases[oclass];
@@ -180,6 +183,36 @@ static void shuffle_all(void)
 
 	/* shuffle the boots [if they change, update find_skates() below] */
 	shuffle(SPEED_BOOTS, LEVITATION_BOOTS, FALSE);
+
+	/* shuffle dragon scales / scale mail */
+	for (j = num_scales; j >= 0; j--) {
+	    int pos = rn2(j + 1);
+	    swap_armor(j, pos, GRAY_DRAGON_SCALES);
+	    swap_armor(j, pos, GRAY_DRAGON_SCALE_MAIL);
+	}
+}
+
+/* swap two items of the same armor class;
+ * currently name, color, price are swapped
+ */
+void swap_armor(int old_relative_position, int new_relative_position, int first)
+{
+	struct objclass tmp;
+
+	int old_pos = old_relative_position + first;
+	int new_pos = new_relative_position + first;
+
+	tmp.oc_name_idx = objects[old_pos].oc_name_idx;
+	tmp.oc_color    = objects[old_pos].oc_color;
+	tmp.oc_cost     = objects[old_pos].oc_cost;
+
+	objects[old_pos].oc_name_idx = objects[new_pos].oc_name_idx;
+	objects[old_pos].oc_color    = objects[new_pos].oc_color;
+	objects[old_pos].oc_cost     = objects[new_pos].oc_cost;
+
+	objects[new_pos].oc_name_idx = tmp.oc_name_idx;
+	objects[new_pos].oc_color    = tmp.oc_color;
+	objects[new_pos].oc_cost     = tmp.oc_cost;
 }
 
 /* find the object index for snow boots; used [once] by slippery ice code */
@@ -445,6 +478,43 @@ int dodiscovered(void)
     free(menu.items);
 
     return 0;
+}
+
+/* Align dragon properties with their shuffled scales.
+ * Currently name and color are adjusted.
+ */
+void dragons_init(void)
+{
+	/* Number of existing dragons. Assumes order of dragons. */
+#define DRAGONS_INIT_NDRAGONS (YELLOW_DRAGON_SCALES - GRAY_DRAGON_SCALES + 1)
+	static struct permonst tmp[DRAGONS_INIT_NDRAGONS];
+	static struct permonst baby_tmp[DRAGONS_INIT_NDRAGONS];
+	static boolean tmps_filled = FALSE;
+
+	int i, j;
+
+	/* Preserve standard order before it gets
+	 * adjusted below for game sessions.
+	 */
+	if (!tmps_filled) {
+	    for (i = 0; i < DRAGONS_INIT_NDRAGONS; i++) {
+		tmp[i].mname  = mons[i + PM_GRAY_DRAGON].mname;
+		tmp[i].mcolor = mons[i + PM_GRAY_DRAGON].mcolor;
+		baby_tmp[i].mname  = mons[i + PM_BABY_GRAY_DRAGON].mname;
+		baby_tmp[i].mcolor = mons[i + PM_BABY_GRAY_DRAGON].mcolor;
+	    }
+	    tmps_filled = TRUE;
+	}
+
+	/* copy name and color to new positions */
+	for (i = 0; i < DRAGONS_INIT_NDRAGONS; i++) {
+	    j = objects[i + GRAY_DRAGON_SCALES].oc_name_idx - GRAY_DRAGON_SCALES;
+	    mons[i + PM_GRAY_DRAGON].mname  = tmp[j].mname;
+	    mons[i + PM_GRAY_DRAGON].mcolor = tmp[j].mcolor;
+	    mons[i + PM_BABY_GRAY_DRAGON].mname  = baby_tmp[j].mname;
+	    mons[i + PM_BABY_GRAY_DRAGON].mcolor = baby_tmp[j].mcolor;
+	}
+#undef DRAGONS_INIT_NDRAGONS
 }
 
 /*o_init.c*/

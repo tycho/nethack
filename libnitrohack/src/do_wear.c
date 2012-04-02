@@ -482,7 +482,7 @@ int Shirt_off(void)
  */
 static int Armor_on(void)
 {
-    if (uarm->otyp == GOLD_DRAGON_SCALE_MAIL || uarm->otyp == GOLD_DRAGON_SCALES) {
+    if (Is_gold_dragon_armor(uarm)) {
 	begin_burn(uarm, FALSE);
 	if (!Blind)
 	    pline("%s to glow.", Tobjnam(uarm, "begin"));
@@ -492,7 +492,7 @@ static int Armor_on(void)
 
 int Armor_off(void)
 {
-    if (uarm->otyp == GOLD_DRAGON_SCALE_MAIL || uarm->otyp == GOLD_DRAGON_SCALES) {
+    if (Is_gold_dragon_armor(uarm)) {
 	end_burn(uarm, FALSE);
 	if (!Blind)
 	    pline("%s glowing.", Tobjnam(uarm, "stop"));
@@ -508,7 +508,7 @@ int Armor_off(void)
  */
 int Armor_gone(void)
 {
-    if (uarm->otyp == GOLD_DRAGON_SCALE_MAIL || uarm->otyp == GOLD_DRAGON_SCALES)
+    if (Is_gold_dragon_armor(uarm))
 	end_burn(uarm, FALSE);
     takeoff_mask &= ~W_ARM;
     setnotworn(uarm);
