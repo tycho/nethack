@@ -1092,6 +1092,7 @@ extern void discover_object(int,boolean,boolean);
 extern void undiscover_object(int);
 extern int dodiscovered(void);
 extern void dragons_init(void);
+extern int rndndx_dragon(int);
 
 /* ### objnam.c ### */
 

@@ -193,7 +193,7 @@ static void shuffle_all(void)
 }
 
 /* swap two items of the same armor class;
- * currently name, color, price are swapped
+ * currently name, description, color, price are swapped
  */
 void swap_armor(int old_relative_position, int new_relative_position, int first)
 {
@@ -202,17 +202,20 @@ void swap_armor(int old_relative_position, int new_relative_position, int first)
 	int old_pos = old_relative_position + first;
 	int new_pos = new_relative_position + first;
 
-	tmp.oc_name_idx = objects[old_pos].oc_name_idx;
-	tmp.oc_color    = objects[old_pos].oc_color;
-	tmp.oc_cost     = objects[old_pos].oc_cost;
+	tmp.oc_name_idx  = objects[old_pos].oc_name_idx;
+	tmp.oc_descr_idx = objects[old_pos].oc_descr_idx;
+	tmp.oc_color     = objects[old_pos].oc_color;
+	tmp.oc_cost      = objects[old_pos].oc_cost;
 
-	objects[old_pos].oc_name_idx = objects[new_pos].oc_name_idx;
-	objects[old_pos].oc_color    = objects[new_pos].oc_color;
-	objects[old_pos].oc_cost     = objects[new_pos].oc_cost;
+	objects[old_pos].oc_name_idx  = objects[new_pos].oc_name_idx;
+	objects[old_pos].oc_descr_idx = objects[new_pos].oc_descr_idx;
+	objects[old_pos].oc_color     = objects[new_pos].oc_color;
+	objects[old_pos].oc_cost      = objects[new_pos].oc_cost;
 
-	objects[new_pos].oc_name_idx = tmp.oc_name_idx;
-	objects[new_pos].oc_color    = tmp.oc_color;
-	objects[new_pos].oc_cost     = tmp.oc_cost;
+	objects[new_pos].oc_name_idx  = tmp.oc_name_idx;
+	objects[new_pos].oc_descr_idx = tmp.oc_descr_idx;
+	objects[new_pos].oc_color     = tmp.oc_color;
+	objects[new_pos].oc_cost      = tmp.oc_cost;
 }
 
 /* find the object index for snow boots; used [once] by slippery ice code */
@@ -515,6 +518,31 @@ void dragons_init(void)
 	    mons[i + PM_BABY_GRAY_DRAGON].mcolor = baby_tmp[j].mcolor;
 	}
 #undef DRAGONS_INIT_NDRAGONS
+}
+
+/* Map a real dragon mons[] index to its matching shuffled appearance
+ * index, e.g. a lightning dragon randomly appearing as white should
+ * return the index of white dragons. Used by display.c to correct
+ * dragon colors.
+ */
+int rndndx_dragon(int monnum)
+{
+	int dragon_offset;
+	boolean is_dragon = FALSE;
+	boolean is_baby = FALSE;
+
+	if (monnum >= PM_GRAY_DRAGON && monnum <= PM_YELLOW_DRAGON)
+	    is_dragon = TRUE;
+	if (monnum >= PM_BABY_GRAY_DRAGON && monnum <= PM_BABY_YELLOW_DRAGON)
+	    is_baby = TRUE;
+
+	if (!is_dragon && !is_baby)
+	    return monnum;
+
+	dragon_offset = is_baby ? PM_BABY_GRAY_DRAGON : PM_GRAY_DRAGON;
+
+	return objects[monnum - dragon_offset + GRAY_DRAGON_SCALES].oc_name_idx -
+		GRAY_DRAGON_SCALES + dragon_offset;
 }
 
 /*o_init.c*/

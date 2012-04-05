@@ -337,7 +337,6 @@ static const char *make_mon_name(int mnum)
 }
 
 
-#include <stdio.h>
 struct nh_drawing_info *nh_get_drawing_info(void)
 {
     int i;
