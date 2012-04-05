@@ -980,8 +980,6 @@ void begin_burn(struct obj *obj, boolean already_lit)
 	    return;
 
 	switch (obj->otyp) {
-	    case GOLD_DRAGON_SCALE_MAIL:
-	    case GOLD_DRAGON_SCALES:
 	    case MAGIC_LAMP:
 		obj->lamplit = 1;
 		do_timer = FALSE;
@@ -1026,6 +1024,9 @@ void begin_burn(struct obj *obj, boolean already_lit)
 		    obj->lamplit = 1;
 		    do_timer = FALSE;
 		    radius = 2;
+		} else if (Is_gold_dragon_armor(obj)) {
+		    obj->lamplit = 1;
+		    do_timer = FALSE;
 		} else {
 		    impossible("begin burn: unexpected %s", xname(obj));
 		    turns = obj->age;

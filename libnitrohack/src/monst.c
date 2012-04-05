@@ -81,7 +81,7 @@ void monst_init(void);
  * unconsciously. Use your common sense.
  */
 
-const struct permonst mons[] = {
+struct permonst mons[] = {
 /*
  * ants
  */

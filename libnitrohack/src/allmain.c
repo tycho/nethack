@@ -216,6 +216,10 @@ static void realtime_tasks(void)
 
 static void post_init_tasks(void)
 {
+    /* must be done after dragon armor in objects[] has been
+     * shuffled (new game) or loaded (restored game). */
+    dragons_init();
+
     realtime_tasks();
     encumber_msg(); /* in case they auto-picked up something */
 
