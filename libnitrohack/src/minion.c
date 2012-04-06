@@ -158,11 +158,18 @@ int demon_talk(struct monst *mtmp)
 	    if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
 	    return 1;
 	}
-	cash = money_cnt(invent);
-	demand = (cash * (rnd(80) + 20 * Athome)) /
-	    (100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
 
-	if (!demand) {		/* you have no gold */
+	/* This isn't _that_ much better than the old way, but it removes
+	 * the trivial case of people being able to bribe demons with
+	 * 10 gold pieces to bypass him.  You can still carry lots of gold,
+	 * of course, but at least now you have to lug it with you. */
+	do {
+	    cash = rnd(15000) + 5000;
+	    demand = (cash * (rnd(80) + 20 * Athome)) /
+		(100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
+	} while (demand < 3000);
+
+	if (money_cnt(invent) == 0) {		/* you have no gold */
 	    mtmp->mpeaceful = 0;
 	    set_malign(mtmp);
 	    return 0;
@@ -171,7 +178,7 @@ int demon_talk(struct monst *mtmp)
 	       has the Amulet, preventing monster from being satisified
 	       and removed from the game (along with said Amulet...) */
 	    if (mon_has_amulet(mtmp))
-		demand = cash + (long)rn1(1000,40);
+		demand = money_cnt(invent) + (long)rn1(10000,40);
 
 	    pline("%s demands %ld %s for safe passage.",
 		  Amonnam(mtmp), demand, currency(demand));
