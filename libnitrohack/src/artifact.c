@@ -1132,6 +1132,25 @@ boolean artifact_hit(
 	if (spec_ability(otmp, SPFX_DRLI))
 		return artifact_hit_drainlife(magr, mdef, otmp, dmgptr);
 	
+	/* WAC -- 1/6 chance of cancellation with foobane weapons */
+	if (otmp->oartifact == ART_ORCRIST ||
+	    otmp->oartifact == ART_DRAGONBANE ||
+	    otmp->oartifact == ART_DEMONBANE ||
+	    otmp->oartifact == ART_WEREBANE ||
+	    otmp->oartifact == ART_TROLLSBANE ||
+	    otmp->oartifact == ART_OGRESMASHER) {
+		if (dieroll < 4) {
+		    if (realizes_damage) {
+			pline("%s %s as it strikes %s!",
+			      The(distant_name(otmp, xname)),
+			      Blind ? "roars deafeningly" : "shines brilliantly",
+			      hittee);
+		    }
+		    cancel_monst(mdef, otmp, youattack, TRUE, magr == mdef);
+		    return TRUE;
+		}
+	}
+	
 	return FALSE;
 }
 
