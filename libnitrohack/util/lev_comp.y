@@ -832,7 +832,7 @@ object_where	: coordinate
 			object *tmpobj = (object *)get_last_opcode_data1(&splev, SPO_OBJECT);
 			if (!tmpobj) yyerror("No object defined?!");
 			tmpobj->containment = 1;
-			/* random coordinate, will be overriden anyway */
+			/* random coordinate, will be overridden anyway */
 			tmpobj->x = -MAX_REGISTERS - 1;
 			tmpobj->y = -MAX_REGISTERS - 1;
 		  }
@@ -1489,7 +1489,7 @@ m_register	: M_REGISTER '[' INTEGER ']'
 		  {
 			if (on_mlist == 0)
 				yyerror("No random monsters defined!");
-			else if ( $3 >= on_mlist )
+			if ( $3 >= on_mlist )
 				yyerror("Register Index overflow!");
 			else
 				$<i>$ = - $3 - 1;
@@ -1557,7 +1557,7 @@ engraving_type	: ENGRAVING_TYPE
 coord		: '(' INTEGER ',' INTEGER ')'
 		  {
 			if ($2 < 0 || $4 < 0 || $2 >= COLNO || $4 >= ROWNO)
-			    yyerror("Cooridnates out of map range!");
+			    yyerror("Coordinates out of map range!");
 			current_coord.x = $2;
 			current_coord.y = $4;
 		  }
