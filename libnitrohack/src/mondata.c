@@ -359,12 +359,6 @@ int vis_monsndx(const struct permonst *ptr)
 
 	int ndx = monsndx(ptr);
 
-	/* Without objects, this function is the same as monsndx. */
-	/*
-	if (!objects)
-	    return ndx;
-	*/
-
 	if (ndx >= PM_GRAY_DRAGON && ndx <= PM_YELLOW_DRAGON)
 	    is_dragon = TRUE;
 	if (ndx >= PM_BABY_GRAY_DRAGON && ndx <= PM_BABY_YELLOW_DRAGON)
