@@ -1360,7 +1360,7 @@ const struct permonst *grow_up(struct monst *mtmp, /* `mtmp' might "grow up" int
 	    if (mvitals[newtype].mvflags & G_GENOD) {	/* allow G_EXTINCT */
 		if (sensemon(mtmp))
 		    pline("As %s grows up into %s, %s %s!", mon_nam(mtmp),
-			an(ptr->mname), mhe(mtmp),
+			an(mons_mname(ptr)), mhe(mtmp),
 			nonliving(ptr) ? "expires" : "dies");
 		set_mon_data(mtmp, ptr, -1);	/* keep mvitals[] accurate */
 		mondied(mtmp);

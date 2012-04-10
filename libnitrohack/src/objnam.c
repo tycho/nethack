@@ -351,8 +351,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 		/* it whenever calling doname() or xname(). */
 		if (typ == FIGURINE)
 		    sprintf(eos(buf), " of a%s %s",
-			strchr(vowels,*(mons[obj->corpsenm].mname)) ? "n" : "",
-			mons[obj->corpsenm].mname);
+			strchr(vowels,*(mons_mname(&mons[obj->corpsenm]))) ? "n" : "",
+			mons_mname(&mons[obj->corpsenm]));
 		break;
 	    case ARMOR_CLASS:
 		/* depends on order of the dragon scales objects */
@@ -411,9 +411,9 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 		    else if (obj->corpsenm == NON_PM)
 		        strcpy(buf, "empty tin");
 		    else if (vegetarian(&mons[obj->corpsenm]))
-			sprintf(eos(buf), " of %s", mons[obj->corpsenm].mname);
+			sprintf(eos(buf), " of %s", mons_mname(&mons[obj->corpsenm]));
 		    else
-			sprintf(eos(buf), " of %s meat", mons[obj->corpsenm].mname);
+			sprintf(eos(buf), " of %s meat", mons_mname(&mons[obj->corpsenm]));
 		}
 		break;
 	    case COIN_CLASS:
@@ -427,9 +427,9 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			actualn,
 			type_is_pname(&mons[obj->corpsenm]) ? "" :
 			  (mons[obj->corpsenm].geno & G_UNIQ) ? "the " :
-			    (strchr(vowels,*(mons[obj->corpsenm].mname)) ?
+			    (strchr(vowels,*(mons_mname(&mons[obj->corpsenm]))) ?
 								"an " : "a "),
-			mons[obj->corpsenm].mname);
+			mons_mname(&mons[obj->corpsenm]));
 		else strcpy(buf, actualn);
 		break;
 	    case BALL_CLASS:
@@ -756,17 +756,17 @@ ring:
 			sprintf(prefix, "%s%s ",
 				(type_is_pname(&mons[obj->corpsenm]) ?
 					"" : "the "),
-				s_suffix(mons[obj->corpsenm].mname));
+				s_suffix(mons_mname(&mons[obj->corpsenm])));
 			if (obj->oeaten) strcat(prefix, "partly eaten ");
 		    } else {
-			strcat(prefix, mons[obj->corpsenm].mname);
+			strcat(prefix, mons_mname(&mons[obj->corpsenm]));
 			strcat(prefix, " ");
 		    }
 		} else if (obj->otyp == EGG) {
 		    if (obj->corpsenm >= LOW_PM &&
 			    (obj->known ||
 			    mvitals[obj->corpsenm].mvflags & MV_KNOWS_EGG)) {
-			strcat(prefix, mons[obj->corpsenm].mname);
+			strcat(prefix, mons_mname(&mons[obj->corpsenm]));
 			strcat(prefix, " ");
 			if (obj->spe)
 			    strcat(bp, " (laid by you)");
@@ -883,7 +883,7 @@ char *corpse_xname(const struct obj *otmp,
 {
 	char *nambuf = nextobuf();
 
-	sprintf(nambuf, "%s corpse", mons[otmp->corpsenm].mname);
+	sprintf(nambuf, "%s corpse", mons_mname(&mons[otmp->corpsenm]));
 
 	if (ignore_oquan || otmp->quan < 2)
 	    return nambuf;
@@ -2005,7 +2005,7 @@ struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user)
 		int mntmptoo, mntmplen;	/* double check for rank title */
 		char *obp = bp;
 		mntmptoo = title_to_mon(bp, NULL, &mntmplen);
-		bp += mntmp != mntmptoo ? (int)strlen(mons[mntmp].mname) : mntmplen;
+		bp += mntmp != mntmptoo ? (int)strlen(mons_mname(&mons[mntmp])) : mntmplen;
 		if (*bp == ' ') bp++;
 		else if (!strncmpi(bp, "s ", 2)) bp += 2;
 		else if (!strncmpi(bp, "es ", 3)) bp += 3;

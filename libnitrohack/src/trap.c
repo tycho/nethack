@@ -2183,8 +2183,8 @@ void selftouch(const char *arg)
 	if (uwep && uwep->otyp == CORPSE && touch_petrifies(&mons[uwep->corpsenm])
 			&& !Stone_resistance) {
 		pline("%s touch the %s corpse.", arg,
-		        mons[uwep->corpsenm].mname);
-		sprintf(kbuf, "%s corpse", an(mons[uwep->corpsenm].mname));
+		        mons_mname(&mons[uwep->corpsenm]));
+		sprintf(kbuf, "%s corpse", an(mons_mname(&mons[uwep->corpsenm])));
 		instapetrify(kbuf);
 		if (!Stone_resistance)
 		    uwepgone();
@@ -2193,8 +2193,8 @@ void selftouch(const char *arg)
 	if (u.twoweap && uswapwep && uswapwep->otyp == CORPSE &&
 			touch_petrifies(&mons[uswapwep->corpsenm]) && !Stone_resistance){
 		pline("%s touch the %s corpse.", arg,
-		        mons[uswapwep->corpsenm].mname);
-		sprintf(kbuf, "%s corpse", an(mons[uswapwep->corpsenm].mname));
+		        mons_mname(&mons[uswapwep->corpsenm]));
+		sprintf(kbuf, "%s corpse", an(mons_mname(&mons[uswapwep->corpsenm])));
 		instapetrify(kbuf);
 		if (!Stone_resistance)
 		    uswapwepgone();
@@ -2209,7 +2209,7 @@ void mselftouch(struct monst *mon, const char *arg, boolean byplayer)
 		if (cansee(mon->mx, mon->my)) {
 			pline("%s%s touches the %s corpse.",
 			    arg ? arg : "", arg ? mon_nam(mon) : Monnam(mon),
-			    mons[mwep->corpsenm].mname);
+			    mons_mname(&mons[mwep->corpsenm]));
 		}
 		minstapetrify(mon, byplayer);
 	}
@@ -3244,7 +3244,7 @@ static int help_monster_out(struct monst *mtmp, struct trap *ttmp)
 	/* is it a cockatrice?... */
 	if (touch_petrifies(mtmp->data) && !uarmg && !Stone_resistance) {
 		pline("You grab the trapped %s using your bare %s.",
-				mtmp->data->mname, makeplural(body_part(HAND)));
+				mons_mname(mtmp->data), makeplural(body_part(HAND)));
 
 		if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
 			win_pause_output(P_MESSAGE);
@@ -3252,7 +3252,7 @@ static int help_monster_out(struct monst *mtmp, struct trap *ttmp)
 			char kbuf[BUFSZ];
 
 			sprintf(kbuf, "trying to help %s out of a pit",
-					an(mtmp->data->mname));
+					an(mons_mname(mtmp->data)));
 			instapetrify(kbuf);
 			return 1;
 		}
@@ -3262,7 +3262,7 @@ static int help_monster_out(struct monst *mtmp, struct trap *ttmp)
 	    if (can_disint && (!(uarmg) || !oresist_disintegration(uarmg))) {
 		char kbuf[BUFSZ];
 		sprintf(kbuf, "trying to help %s out of a pit",
-			an(mtmp->data->mname));
+			an(mons_mname(mtmp->data)));
 		pline("You try to grab %s, but...", mon_nam(mtmp));
 		if (uarmg) {
 		    destroy_arm(uarmg);
@@ -3287,7 +3287,7 @@ static int help_monster_out(struct monst *mtmp, struct trap *ttmp)
 	if (can_disint) {
 	    char kbuf[BUFSZ];
 	    sprintf(kbuf, "trying to help %s out of a pit",
-		    an(mtmp->data->mname));
+		    an(mons_mname(mtmp->data)));
 	    if (uarmg) {
 		if (!oresist_disintegration(uarmg)) {
 		    destroy_arm(uarmg);

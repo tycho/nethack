@@ -442,7 +442,7 @@ int peffects(struct obj *otmp)
 			exercise(A_CON, FALSE);
 			if (u.ulycn >= LOW_PM) {
 			    pline("Your affinity to %s disappears!",
-				 makeplural(mons[u.ulycn].mname));
+				 makeplural(mons_mname(&mons[u.ulycn])));
 			    if (youmonst.data == &mons[u.ulycn])
 				you_unwere(FALSE);
 			    u.ulycn = NON_PM;	/* cure lycanthropy */

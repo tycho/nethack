@@ -710,7 +710,7 @@ void paygd(void)
 	    gy = level->rooms[EGD(grd)->vroom].ly + rn2(2);
 	    sprintf(buf,
 		"To Croesus: here's the gold recovered from %s the %s.",
-		plname, mons[u.umonster].mname);
+		plname, mons_mname(&mons[u.umonster]));
 	    make_grave(level, gx, gy, buf);
 	}
 

@@ -453,7 +453,7 @@ char *x_monnam(const struct monst *mtmp,
 	    strcat(buf, " the ");
 	    if (do_invis)
 		strcat(buf, "invisible ");
-	    strcat(buf, mdat->mname);
+	    strcat(buf, mons_mname(mdat));
 	    return buf;
 	}
 
@@ -484,7 +484,7 @@ char *x_monnam(const struct monst *mtmp,
 		sprintf(eos(buf), "%s ghost", s_suffix(name));
 		name_at_start = TRUE;
 	    } else if (called) {
-		sprintf(eos(buf), "%s called %s", mdat->mname, name);
+		sprintf(eos(buf), "%s called %s", mons_mname(mdat), name);
 		name_at_start = (boolean)type_is_pname(mdat);
 	    } else if (is_mplayer(mdat) && (bp = strstri(name, " the ")) != 0) {
 		/* <name> the <adjective> <invisible> <saddled> <rank> */
@@ -513,7 +513,7 @@ char *x_monnam(const struct monst *mtmp,
 	    strcat(buf, "Rider");
 	    name_at_start = FALSE;
 	} else {
-	    strcat(buf, mdat->mname);
+	    strcat(buf, mons_mname(mdat));
 	    name_at_start = (boolean)type_is_pname(mdat);
 	}
 
@@ -786,7 +786,7 @@ const char *rndmonnam(void)
 	    (type_is_pname(&mons[name]) || (mons[name].geno & G_NOGEN)));
 
 	if (name >= SPECIAL_PM) return bogusmons[name - SPECIAL_PM];
-	return mons[name].mname;
+	return mons_mname(&mons[name]);
 }
 
 

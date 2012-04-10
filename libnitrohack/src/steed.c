@@ -77,7 +77,7 @@ int use_saddle(struct obj *otmp)
 
 	    pline("You touch %s.", mon_nam(mtmp));
 	    if (!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-		sprintf(kbuf, "attempting to saddle %s", an(mtmp->data->mname));
+		sprintf(kbuf, "attempting to saddle %s", an(mons_mname(mtmp->data)));
 		instapetrify(kbuf);
 	    }
 	}
@@ -260,7 +260,7 @@ boolean mount_steed(struct monst *mtmp,	/* The animal */
 	    char kbuf[BUFSZ];
 
 	    pline("You touch %s.", mon_nam(mtmp));
-	    sprintf(kbuf, "attempting to ride %s", an(mtmp->data->mname));
+	    sprintf(kbuf, "attempting to ride %s", an(mons_mname(mtmp->data)));
 	    instapetrify(kbuf);
 	}
 	if (!mtmp->mtame || mtmp->isminion) {
@@ -503,7 +503,7 @@ void dismount_steed(int reason)
 		}
 		if (!mtmp->mnamelth) {
 			pline("You've been through the dungeon on %s with no name.",
-				an(mtmp->data->mname));
+				an(mons_mname(mtmp->data)));
 			if (Hallucination)
 				pline("It felt good to get out of the rain.");
 		} else

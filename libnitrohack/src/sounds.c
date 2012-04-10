@@ -496,7 +496,7 @@ static int domonnoise(struct monst *mtmp)
 	    			verbl_msg = verbuf;
 			    } else if (vampindex == 1) {
 				sprintf(verbuf, vampmsg[vampindex],
-					Upolyd ? an(mons[u.umonnum].mname) : an(racenoun));
+					Upolyd ? an(mons_mname(&mons[u.umonnum])) : an(racenoun));
 	    			verbl_msg = verbuf;
 		    	    } else
 			    	verbl_msg = vampmsg[vampindex];
@@ -801,7 +801,7 @@ static int dochat(void)
     schar dx, dy, dz;
 
     if (is_silent(youmonst.data)) {
-	pline("As %s, you cannot speak.", an(youmonst.data->mname));
+	pline("As %s, you cannot speak.", an(mons_mname(youmonst.data)));
 	return 0;
     }
     if (Strangled) {

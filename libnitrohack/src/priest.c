@@ -221,7 +221,7 @@ void priestini(struct level *lev, struct mkroom *sroom, int sx, int sy,
 char *priestname(const struct monst *mon,
 		 char *pname)	/* caller-supplied output buffer */
 {
-	const char *what = Hallucination ? rndmonnam() : mon->data->mname;
+	const char *what = Hallucination ? rndmonnam() : mons_mname(mon->data);
 
 	strcpy(pname, "the ");
 	if (mon->minvis) strcat(pname, "invisible ");

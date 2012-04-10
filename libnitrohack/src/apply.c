@@ -166,7 +166,7 @@ static boolean its_dead(int rx, int ry, int *resp, struct obj *tobj)
 	    } else {
 		ttmp = t_at(level, rx, ry);
 		pline("%s appears to be in %s health for a statue.",
-		      The(mons[otmp->corpsenm].mname),
+		      The(mons_mname(&mons[otmp->corpsenm])),
 		      (ttmp && ttmp->ttyp == STATUE_TRAP) ?
 			"extraordinary" : "excellent");
 	    }
@@ -1321,12 +1321,12 @@ static void use_tinning_kit(struct obj *obj)
 
 	    if (poly_when_stoned(youmonst.data))
 		pline("You tin %s without wearing gloves.",
-			an(mons[corpse->corpsenm].mname));
+			an(mons_mname(&mons[corpse->corpsenm])));
 	    else {
 		pline("Tinning %s without wearing gloves is a fatal mistake...",
-			an(mons[corpse->corpsenm].mname));
+			an(mons_mname(&mons[corpse->corpsenm])));
 		sprintf(kbuf, "trying to tin %s without gloves",
-			an(mons[corpse->corpsenm].mname));
+			an(mons_mname(&mons[corpse->corpsenm])));
 	    }
 	    instapetrify(kbuf);
 	}
@@ -2182,7 +2182,7 @@ static int use_whip(struct obj *obj)
 			char kbuf[BUFSZ];
 
 			sprintf(kbuf, "%s corpse",
-				an(mons[otmp->corpsenm].mname));
+				an(mons_mname(&mons[otmp->corpsenm])));
 			pline("Snatching %s is a fatal mistake.", kbuf);
 			instapetrify(kbuf);
 		    }
