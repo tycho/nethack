@@ -360,7 +360,7 @@ static void shuffle_alignments(void)
 {
 	int i;
 	aligntyp atmp;
-	/* shuffle 3 alignments; can't use sp_lev_shuffle() aligntyp's */
+	/* shuffle 3 alignments; can't use sp_lev_shuffle() on aligntyp's */
 	ralign[0] = init_ralign[0]; ralign[1] = init_ralign[1]; ralign[2] = init_ralign[2];
 	i = rn2(3);   atmp = ralign[2]; ralign[2] = ralign[i]; ralign[i] = atmp;
 	if (rn2(2)) { atmp = ralign[1]; ralign[1] = ralign[0]; ralign[0] = atmp; }
@@ -2061,11 +2061,11 @@ static void fill_empty_maze(struct level *lev)
 	    maze1xy(lev, &mm, WET|DRY);
 	    makemon(NULL, lev, mm.x, mm.y, NO_MM_FLAGS);
 	}
-	for (x = rnd((int)(15 * mapfact) / 100); x; x--) {
+	for (x = rn2((int)(15 * mapfact) / 100); x; x--) {
 	    maze1xy(lev, &mm, DRY);
 	    mkgold(0L, lev, mm.x, mm.y);
 	}
-	for (x = rnd((int)(15 * mapfact) / 100); x; x--) {
+	for (x = rn2((int)(15 * mapfact) / 100); x; x--) {
 	    int trytrap;
 
 	    maze1xy(lev, &mm, DRY);
@@ -2222,7 +2222,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 		Fread(tmpstr, 1, n, fd);
 		tmpstr[n] = '\0';
 		opdat = tmpstr;
-	    } else panic("sp_level_loader: rn_mons idx out-of-bounds (%i)", n);
+	    } else panic("sp_level_loader: rnd_mons idx out-of-bounds (%i)", n);
 	    break;
 	case SPO_DRAWBRIDGE:
 	    opdat = malloc(sizeof(drawbridge));

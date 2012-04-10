@@ -1099,7 +1099,13 @@ void zap_dig(schar dx, schar dy, schar dz)
 		if (is_animal(mtmp->data))
 		    pline("You pierce %s %s wall!",
 			s_suffix(mon_nam(mtmp)), mbodypart(mtmp, STOMACH));
-		mtmp->mhp = 1;		/* almost dead */
+
+		/* Juiblex takes less damage from a wand of digging. */
+		if (mtmp->data == &mons[PM_JUIBLEX])
+		    mtmp->mhp = (mtmp->mhp + 1) / 2;
+		else
+		    mtmp->mhp = 1;		/* almost dead */
+
 		expels(mtmp, mtmp->data, !is_animal(mtmp->data));
 	    }
 	    return;
