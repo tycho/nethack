@@ -401,8 +401,8 @@ static void display_monster(
 	if (worm_tail) {
 	    monnum = PM_LONG_WORM_TAIL;
 	} else {
-	    /* Fix color of random dragons by faking their index. */
-	    monnum = rndndx_dragon(monsndx(mon->data));
+	    /* vis_monsndx accounts for e.g. shuffled dragon appearances */
+	    monnum = vis_monsndx(mon->data);
 	}
 	
 	if (sightflags == DETECTED)
@@ -922,8 +922,8 @@ void swallowed(int first)
 	dbuf_set(lastx, lasty, 0,0,0,0,0,0,0,0); /* remove hero symbol */
     }
 
-    /* Fix color of random dragons by faking their index. */
-    swallower = rndndx_dragon(monsndx(u.ustuck->data));
+    /* vis_monsndx accounts for e.g. shuffled dragon appearances */
+    swallower = vis_monsndx(u.ustuck->data);
     /* assume isok(u.ux,u.uy) */
     left_ok = isok(u.ux-1,u.uy);
     rght_ok = isok(u.ux+1,u.uy);

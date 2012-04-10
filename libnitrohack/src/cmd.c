@@ -770,12 +770,12 @@ void enlightenment(int final)
 	if (Polymorph) you_are(&menu, "polymorphing");
 	if (Polymorph_control) you_have(&menu, "polymorph control");
 	if (u.ulycn >= LOW_PM) {
-		strcpy(buf, an(mons[u.ulycn].mname));
+		strcpy(buf, an(mons_mname(&mons[u.ulycn])));
 		you_are(&menu, buf);
 	}
 	if (Upolyd) {
 	    if (u.umonnum == u.ulycn) strcpy(buf, "in beast form");
-	    else sprintf(buf, "polymorphed into %s", an(youmonst.data->mname));
+	    else sprintf(buf, "polymorphed into %s", an(mons_mname(youmonst.data)));
 	    if (wizard) sprintf(eos(buf), " (%d)", u.mtimedone);
 	    you_are(&menu, buf);
 	}
@@ -924,7 +924,7 @@ static boolean minimal_enlightenment(void)
 	/* Current name, race, role, gender */
 	set_menuitem(&items[i++], 0, MI_NORMAL, "", 0, FALSE);
 	set_menuitem(&items[i++], 0, MI_HEADING, "Current", 0, FALSE);
-	sprintf(buf, fmtstr, "race", Upolyd ? youmonst.data->mname : urace.noun);
+	sprintf(buf, fmtstr, "race", Upolyd ? mons_mname(youmonst.data) : urace.noun);
 	set_menuitem(&items[i++], 0, MI_NORMAL, buf, 0, FALSE);
 	if (Upolyd)
 	    sprintf(buf, fmtstr, "role (base)",

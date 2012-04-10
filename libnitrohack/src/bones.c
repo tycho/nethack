@@ -264,7 +264,7 @@ make_bones:
 		mtmp = christen_monst(mtmp, plname);
 		newsym(u.ux, u.uy);
 		pline("Your body rises from the dead as %s...",
-			an(mons[u.ugrave_arise].mname));
+			an(mons_mname(&mons[u.ugrave_arise])));
 		win_pause_output(P_MESSAGE);
 		drop_upon_death(mtmp, NULL);
 		m_dowear(mtmp, TRUE);

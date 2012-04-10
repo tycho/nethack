@@ -1002,6 +1002,7 @@ extern int num_horns(const struct permonst *);
 extern boolean dmgtype(const struct permonst *,int);
 extern int max_passive_dmg(struct monst *,struct monst *);
 extern int monsndx(const struct permonst *);
+extern int vis_monsndx(const struct permonst *);
 extern int name_to_mon(const char *);
 extern int gender(struct monst *);
 extern int pronoun_gender(struct monst *);
@@ -1012,6 +1013,7 @@ extern const char *locomotion(const struct permonst *,const char *);
 extern const char *stagger(const struct permonst *,const char *);
 extern const char *on_fire(const struct permonst *, const struct attack *);
 extern const struct permonst *raceptr(struct monst *);
+extern const char *mons_mname(const struct permonst *);
 
 /* ### monmove.c ### */
 
@@ -1091,8 +1093,6 @@ extern void restnames(struct memfile *mf);
 extern void discover_object(int,boolean,boolean);
 extern void undiscover_object(int);
 extern int dodiscovered(void);
-extern void dragons_init(void);
-extern int rndndx_dragon(int);
 
 /* ### objnam.c ### */
 

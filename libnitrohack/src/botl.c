@@ -158,7 +158,7 @@ static void make_player_info(struct nh_player_info *pi)
 		char mbot[BUFSZ];
 		int k = 0;
 
-		strcpy(mbot, mons[u.umonnum].mname);
+		strcpy(mbot, mons_mname(&mons[u.umonnum]));
 		while (mbot[k] != 0) {
 		    if ((k == 0 || (k > 0 && mbot[k-1] == ' ')) &&
 					'a' <= mbot[k] && mbot[k] <= 'z')

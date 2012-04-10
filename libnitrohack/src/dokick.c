@@ -154,7 +154,7 @@ static void kick_monster(xchar x, xchar y, schar dx, schar dy)
 			char kbuf[BUFSZ];
 			int dis_dmg;
 			sprintf(kbuf, "barefootedly kicking %s",
-				an(mon->data->mname));
+				an(mons_mname(mon->data)));
 			dis_dmg = instadisintegrate(kbuf);
 			break;
 		    }

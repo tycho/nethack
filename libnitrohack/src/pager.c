@@ -164,7 +164,7 @@ static void mon_vision_summary(const struct monst *mtmp, char *outbuf)
 		    strcat(outbuf, "paranoid delusion");
 	    else {
 		    sprintf(wbuf, "warned of %s",
-			    makeplural(mtmp->data->mname));
+			    makeplural(mons_mname(mtmp->data)));
 		    strcat(outbuf, wbuf);
 	    }
 	    if (ways_seen-- > 1) strcat(outbuf, ", ");
@@ -280,7 +280,7 @@ static void describe_mon(int x, int y, int monnum, char *buf)
 	sprintf(buf, "%s%s%s called %s",
 		Invis ? "invisible " : "",
 		race,
-		mons[u.umonnum].mname,
+		mons_mname(&mons[u.umonnum]),
 		plname);
 	
 	if (u.usteed) {
@@ -418,7 +418,7 @@ static void checkfile(const char *inp, struct permonst *pm, boolean user_typed_n
      * user_typed_name and picked name.
      */
     if (pm != NULL && !user_typed_name)
-	dbase_str = strcpy(newstr, pm->mname);
+	dbase_str = strcpy(newstr, mons_mname(pm));
     else dbase_str = strcpy(newstr, inp);
     lcase(dbase_str);
 

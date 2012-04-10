@@ -178,7 +178,7 @@ static const char *food_xname(struct obj *food, boolean the_pfx)
 	    char *bufp = xname(food);
 	    sprintf(bufp, "%s%s corpse",
 		    (the_pfx && !type_is_pname(&mons[mnum])) ? "the " : "",
-		    s_suffix(mons[mnum].mname));
+		    s_suffix(mons_mname(&mons[mnum])));
 	    result = bufp;
 	} else {
 	    /* the ordinary case */
@@ -394,7 +394,7 @@ static void cprefx(int pm)
 	if (touch_petrifies(&mons[pm]) || pm == PM_MEDUSA) {
 	    if (!Stone_resistance &&
 		!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-		sprintf(killer_buf, "tasting %s meat", mons[pm].mname);
+		sprintf(killer_buf, "tasting %s meat", mons_mname(&mons[pm]));
 		killer_format = KILLED_BY;
 		killer = killer_buf;
 		pline("You turn to stone.");
@@ -413,7 +413,7 @@ static void cprefx(int pm)
 	    case PM_HOUSECAT:
 	    case PM_LARGE_CAT:
 		if (!CANNIBAL_ALLOWED()) {
-		    pline("You feel that eating the %s was a bad idea.", mons[pm].mname);
+		    pline("You feel that eating the %s was a bad idea.", mons_mname(&mons[pm]));
 		    HAggravate_monster |= FROMOUTSIDE;
 		}
 		break;
@@ -426,7 +426,7 @@ static void cprefx(int pm)
 		{ char buf[BUFSZ];
 		    pline("Eating that is instantly fatal.");
 		    sprintf(buf, "unwisely ate the body of %s",
-			    mons[pm].mname);
+			    mons_mname(&mons[pm]));
 		    killer = buf;
 		    killer_format = NO_KILLER_PREFIX;
 		    done(DIED);
@@ -707,7 +707,7 @@ static void cpostfx(int pm)	/* called after completely consuming a corpse */
 		    sprintf(buf, Hallucination ?
 			"You suddenly dread being peeled and mimic %s again!" :
 			"You now prefer mimicking %s again.",
-			an(Upolyd ? youmonst.data->mname : urace.noun));
+			an(Upolyd ? mons_mname(youmonst.data) : urace.noun));
 		    eatmbuf = strcpy(malloc(strlen(buf) + 1), buf);
 		    nomovemsg = eatmbuf;
 		    afternmv = eatmdone;
@@ -885,7 +885,7 @@ static int opentin(void) /* called during each move whilst opening a tin */
 	    if (Hallucination) {
 		what = rndmonnam();
 	    } else {
-		what = mons[tin.tin->corpsenm].mname;
+		what = mons_mname(&mons[tin.tin->corpsenm]);
 		if (mons[tin.tin->corpsenm].geno & G_UNIQ)
 		    which = type_is_pname(&mons[tin.tin->corpsenm]) ? 1 : 2;
 	    }
@@ -902,7 +902,7 @@ static int opentin(void) /* called during each move whilst opening a tin */
 	    victual.fullwarn = victual.eating = victual.doreset = FALSE;
 
 	    pline("You consume %s %s.", tintxts[r].txt,
-			mons[tin.tin->corpsenm].mname);
+			mons_mname(&mons[tin.tin->corpsenm]));
 
 	    /* KMH, conduct */
 	    u.uconduct.food++;
@@ -1099,7 +1099,7 @@ static int eatcorpse(struct obj *otmp)
 			else
 			    sprintf(buf, "%s%s rotted corpse",
 				    !type_is_pname(&mons[mnum]) ? "the " : "",
-				    s_suffix(mons[mnum].mname));
+				    s_suffix(mons_mname(&mons[mnum])));
 			make_sick(sick_time, buf, TRUE, SICK_VOMITABLE);
 		}
 		if (carried(otmp)) useup(otmp);
@@ -1511,7 +1511,7 @@ static void fpostfx(struct obj *otmp)
 			!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
 			if (!Stoned) Stoned = 5;
 			killer_format = KILLED_BY_AN;
-			sprintf(killer_buf, "%s egg", mons[otmp->corpsenm].mname);
+			sprintf(killer_buf, "%s egg", mons_mname(&mons[otmp->corpsenm]));
 			delayed_killer = killer_buf;
 		    }
 		}

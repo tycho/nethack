@@ -336,7 +336,7 @@ int mattacku(struct monst *mtmp)
 			newsym(u.ux,u.uy);
 		    } else {
 			pline("%s is killed by a falling %s (you)!",
-					Monnam(mtmp), youmonst.data->mname);
+					Monnam(mtmp), mons_mname(youmonst.data));
 			killed(mtmp);
 			newsym(u.ux,u.uy);
 			if (mtmp->mhp > 0) return 0;
@@ -380,10 +380,10 @@ int mattacku(struct monst *mtmp)
 			    }
 			    if (youmonst.data->mlet == S_EEL)
 		pline("Wait, %s!  There's a hidden %s named %s there!",
-				m_monnam(mtmp), youmonst.data->mname, plname);
+				m_monnam(mtmp), mons_mname(youmonst.data), plname);
 			    else
 	     pline("Wait, %s!  There's a %s named %s hiding under %s!",
-				m_monnam(mtmp), youmonst.data->mname, plname,
+				m_monnam(mtmp), mons_mname(youmonst.data), plname,
 				doname(level->objects[u.ux][u.uy]));
 			    if (obj) obj->spe = save_spe;
 			} else
@@ -397,7 +397,7 @@ int mattacku(struct monst *mtmp)
 		    !range2 && foundyou && !u.uswallow) {
 		if (!youseeit) pline("It gets stuck on you.");
 		else pline("Wait, %s!  That's a %s named %s!",
-			   m_monnam(mtmp), youmonst.data->mname, plname);
+			   m_monnam(mtmp), mons_mname(youmonst.data), plname);
 		u.ustuck = mtmp;
 		youmonst.m_ap_type = M_AP_NOTHING;
 		youmonst.mappearance = 0;
@@ -414,12 +414,12 @@ int mattacku(struct monst *mtmp)
 	    else pline("Wait, %s!  That %s is really %s named %s!",
 			m_monnam(mtmp),
 			mimic_obj_name(&youmonst),
-			an(mons[u.umonnum].mname),
+			an(mons_mname(&mons[u.umonnum])),
 			plname);
 	    if (multi < 0) {	/* this should always be the case */
 		char buf[BUFSZ];
 		sprintf(buf, "You appear to be %s again.",
-			Upolyd ? (const char *) an(youmonst.data->mname) :
+			Upolyd ? (const char *) an(mons_mname(youmonst.data)) :
 			    (const char *) "yourself");
 		unmul(buf);	/* immediately stop mimicking */
 	    }
@@ -728,7 +728,7 @@ static boolean diseasemu(const struct permonst *mdat)
 		return FALSE;
 	} else {
 		make_sick(Sick ? Sick/3L + 1L : (long)rn1(ACURR(A_CON), 20),
-			mdat->mname, TRUE, SICK_NONVOMITABLE);
+			mons_mname(mdat), TRUE, SICK_NONVOMITABLE);
 		return TRUE;
 	}
 }
@@ -888,7 +888,7 @@ static int hitmu(struct monst *mtmp, const struct attack  *mattk)
 				&& touch_petrifies(&mons[otmp->corpsenm])) {
 			    dmg = 1;
 			    pline("%s hits you with the %s corpse.",
-				Monnam(mtmp), mons[otmp->corpsenm].mname);
+				Monnam(mtmp), mons_mname(&mons[otmp->corpsenm]));
 			    if (!Stoned)
 				goto do_stone;
 			}
@@ -1007,7 +1007,7 @@ dopois:
 		if (uncancelled && !rn2(8)) {
 		    sprintf(buf, "%s %s",
 			    s_suffix(Monnam(mtmp)), mpoisons_subj(mtmp, mattk));
-		    poisoned(buf, ptmp, mdat->mname, 30);
+		    poisoned(buf, ptmp, mons_mname(mdat), 30);
 		}
 		break;
 	    case AD_DRIN:
@@ -1161,7 +1161,7 @@ dopois:
 				    && !(poly_when_stoned(youmonst.data) &&
 					polymon(PM_STONE_GOLEM))) {
 				Stoned = 5;
-				delayed_killer = mtmp->data->mname;
+				delayed_killer = mons_mname(mtmp->data);
 				if (mtmp->data->geno & G_UNIQ) {
 				    if (!type_is_pname(mtmp->data)) {
 					static char kbuf[BUFSZ];
@@ -1208,7 +1208,7 @@ dopois:
 			    killer_format = KILLED_BY_AN;
 			    sprintf(buf, "%s by %s",
 				    moat ? "moat" : "pool of water",
-				    an(mtmp->data->mname));
+				    an(mons_mname(mtmp->data)));
 			    killer = buf;
 			    done(DROWNING);
 			} else if (mattk->aatyp == AT_HUGS)
@@ -1499,7 +1499,7 @@ dopois:
 		    Slimed = 10L;
 		    iflags.botl = 1;
 		    killer_format = KILLED_BY_AN;
-		    delayed_killer = mtmp->data->mname;
+		    delayed_killer = mons_mname(mtmp->data);
 		} else
 		    pline("Yuck!");
 		break;
@@ -1586,7 +1586,7 @@ dopois:
 			destroy_arm(destroyme);
 			dmg = 0;
 		    } else if (touched) {
-			int recip_damage = instadisintegrate(mtmp->data->mname);
+			int recip_damage = instadisintegrate(mons_mname(mtmp->data));
 			if (recip_damage) {
 			    dmg = 0;
 			    mtmp->mhp -= recip_damage;
@@ -1978,7 +1978,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 			break;
 		    pline("You turn to stone...");
 		    killer_format = KILLED_BY;
-		    killer = mtmp->data->mname;
+		    killer = mons_mname(mtmp->data);
 		    done(STONING);
 		}
 		break;
@@ -2501,7 +2501,7 @@ static int passiveum(const struct permonst *olduasmon, struct monst *mtmp,
 				(perceives(mtmp->data) || !Invis)) {
 			if (Blind)
 			    pline("As a blind %s, you cannot defend yourself.",
-							youmonst.data->mname);
+							mons_mname(youmonst.data));
 		        else {
 			    if (mon_reflects(mtmp,
 					    "Your gaze is reflected by %s %s."))

@@ -348,7 +348,38 @@ int monsndx(const struct permonst *ptr)
 	return i;
 }
 
+/* Return visible mons index, accounting for e.g. shuffled dragons
+ * apperances, so names and colors are correctly obfuscated.
+ * For non-display purposes, use monsndx instead.
+ */
+int vis_monsndx(const struct permonst *ptr)
+{
+	boolean is_dragon = FALSE;
+	boolean is_baby_dragon = FALSE;
 
+	int ndx = monsndx(ptr);
+
+	/* Without objects, this function is the same as monsndx. */
+	/*
+	if (!objects)
+	    return ndx;
+	*/
+
+	if (ndx >= PM_GRAY_DRAGON && ndx <= PM_YELLOW_DRAGON)
+	    is_dragon = TRUE;
+	if (ndx >= PM_BABY_GRAY_DRAGON && ndx <= PM_BABY_YELLOW_DRAGON)
+	    is_baby_dragon = TRUE;
+
+	/* account for shuffled dragon appearances */
+	if (is_dragon || is_baby_dragon) {
+	    int dragon_offset = is_baby_dragon ?
+		    PM_BABY_GRAY_DRAGON : PM_GRAY_DRAGON ;
+	    return objects[ndx - dragon_offset + GRAY_DRAGON_SCALES].oc_name_idx -
+		    GRAY_DRAGON_SCALES + dragon_offset;
+	}
+
+	return ndx;
+}
 
 int name_to_mon(const char *in_str)
 {
@@ -435,8 +466,8 @@ int name_to_mon(const char *in_str)
     }
 
 	for (len = 0, i = LOW_PM; i < NUMMONS; i++) {
-	    int m_i_len = strlen(mons[i].mname);
-	    if (m_i_len > len && !strncmpi(mons[i].mname, str, m_i_len)) {
+	    int m_i_len = strlen(mons_mname(&mons[i]));
+	    if (m_i_len > len && !strncmpi(mons_mname(&mons[i]), str, m_i_len)) {
 		if (m_i_len == slen) return i;	/* exact match */
 		else if (slen > m_i_len &&
 			(str[m_i_len] == ' ' ||
@@ -653,6 +684,14 @@ const char *on_fire(const struct permonst *mptr, const struct attack *mattk)
 	break;
     }
     return what;
+}
+
+/* return the name of the monster type, accounting for e.g.
+ * shuffled dragon appearances
+ */
+const char *mons_mname(const struct permonst *pm)
+{
+	return mons[vis_monsndx(pm)].mname;
 }
 
 

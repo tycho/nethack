@@ -129,7 +129,7 @@ const char *ldrname(void)
 
 	sprintf(nambuf, "%s%s",
 		type_is_pname(&mons[i]) ? "" : "the ",
-		mons[i].mname);
+		mons_mname(&mons[i]));
 	return nambuf;
 }
 
@@ -151,7 +151,7 @@ static const char *neminame(void)
 
 	sprintf(nambuf, "%s%s",
 		type_is_pname(&mons[i]) ? "" : "the ",
-		mons[i].mname);
+		mons_mname(&mons[i]));
 	return nambuf;
 }
 
@@ -160,7 +160,7 @@ static const char *guardname(void)
 {
 	int i = urole.guardnum;
 
-	return mons[i].mname;
+	return mons_mname(&mons[i]);
 }
 
 /* return your role leader's location */

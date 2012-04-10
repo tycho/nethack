@@ -321,7 +321,7 @@ int polymon(int mntmp)
 	int mlvl;
 
 	if (mvitals[mntmp].mvflags & G_GENOD) {	/* allow G_EXTINCT */
-		pline("You feel rather %s-ish.",mons[mntmp].mname);
+		pline("You feel rather %s-ish.", mons_mname(&mons[mntmp]));
 		exercise(A_WIS, TRUE);
 		return 0;
 	}
@@ -363,12 +363,12 @@ int polymon(int mntmp)
 		    (u.umonnum != mntmp) ? "turn into a" : "feel like a new",
 		    (is_male(&mons[mntmp]) || is_female(&mons[mntmp])) ? "" :
 			flags.female ? "female " : "male ",
-		    mons[mntmp].mname);
+		    mons_mname(&mons[mntmp]));
 	} else {
 		if (u.umonnum != mntmp)
-			pline("You turn into %s!", an(mons[mntmp].mname));
+			pline("You turn into %s!", an(mons_mname(&mons[mntmp])));
 		else
-			pline("You feel like a new %s!", mons[mntmp].mname);
+			pline("You feel like a new %s!", mons_mname(&mons[mntmp]));
 	}
 	if (Stoned && poly_when_stoned(&mons[mntmp])) {
 		/* poly_when_stoned already checked stone golem genocide */
@@ -464,7 +464,7 @@ int polymon(int mntmp)
 
 	    	pline("No longer petrifying-resistant, you touch %s.",
 	    			mon_nam(u.usteed));
-	    	sprintf(buf, "riding %s", an(u.usteed->data->mname));
+	    	sprintf(buf, "riding %s", an(mons_mname(u.usteed->data)));
 	    	instapetrify(buf);
  	    }
 	    if (!can_ride(u.usteed)) dismount_steed(DISMOUNT_POLY);
