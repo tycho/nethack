@@ -83,7 +83,7 @@ char *lev_message = 0;
 lev_region *lregions = 0;
 int num_lregions = 0;
 
-void flip_drawbridge_horizontal(struct rm *loc)
+static void flip_drawbridge_horizontal(struct rm *loc)
 {
 	if (IS_DRAWBRIDGE(loc->typ)) {
 	    if ((loc->drawbridgemask & DB_DIR) == DB_WEST) {
@@ -96,7 +96,7 @@ void flip_drawbridge_horizontal(struct rm *loc)
 	}
 }
 
-void flip_drawbridge_vertical(struct rm *loc)
+static void flip_drawbridge_vertical(struct rm *loc)
 {
 	if (IS_DRAWBRIDGE(loc->typ)) {
 	    if ((loc->drawbridgemask & DB_DIR) == DB_NORTH) {
@@ -109,7 +109,7 @@ void flip_drawbridge_vertical(struct rm *loc)
 	}
 }
 
-void flip_level(struct level *lev, int flp)
+static void flip_level(struct level *lev, int flp)
 {
 	int x2 = COLNO - 1;
 	int y2 = ROWNO - 1;
@@ -333,7 +333,7 @@ void flip_level(struct level *lev, int flp)
 	wall_extends(lev, 1, 0, COLNO - 1, ROWNO - 1);
 }
 
-void flip_level_rnd(struct level *lev, int flp)
+static void flip_level_rnd(struct level *lev, int flp)
 {
 	int c = 0;
 	if ((flp & 1) && rn2(2)) c |= 1;
@@ -839,7 +839,7 @@ static boolean create_subroom(struct level *lev, struct mkroom *proom, xchar x, 
 static void create_door(struct level *lev, room_door *dd, struct mkroom *broom)
 {
 	int	x = 0, y = 0;
-	int	trycnt = 0, walltry = 0, wtry = 0;
+	int	trycnt = 0;
 
 	if (dd->secret == -1)
 	    dd->secret = rn2(2);
@@ -1461,7 +1461,7 @@ static void create_feature(struct level *lev, int fx, int fy, struct mkroom *cro
 	lev->locations[x][y].typ = typ;
 }
 
-void replace_terrain(struct level *lev, replaceterrain *terr, struct mkroom *croom)
+static void replace_terrain(struct level *lev, replaceterrain *terr, struct mkroom *croom)
 {
 	schar x, y, x1, y1, x2, y2;
 
@@ -1484,7 +1484,7 @@ void replace_terrain(struct level *lev, replaceterrain *terr, struct mkroom *cro
 	}
 }
 
-void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
+static void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
 {
 	schar x, y, x1, y1, x2, y2;
 
@@ -1973,7 +1973,7 @@ err_out:
 	fprintf(stderr, "read error in load_one_room\n");
 }
 
-void wallify_map(struct level *lev)
+static void wallify_map(struct level *lev)
 {
 	int x, y, xx, yy, lo_xx, lo_yy, hi_xx, hi_yy;
 
@@ -2114,12 +2114,14 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	    break;
 	case SPO_MESSAGE:
 	    Fread(&n, 1, sizeof(n), fd);
-	    if (n) {
+	    if (n > 0) {
 		char *msg;
 		opdat = malloc(n + 1);
 		Fread(opdat, 1, n, fd);
 		msg = (char *)opdat;
-		msg[n] = '\0';
+		msg[(unsigned)n] = '\0';
+	    } else if (n < 0) {
+		panic("sp_level_loader: message length is negative (%i)", n);
 	    }
 	    break;
 	case SPO_MONSTER:
@@ -2203,7 +2205,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 		opdat = malloc(n+1);
 		Fread(opdat, 1, n, fd);
 		msg = (char *)opdat;
-		msg[n] = '\0';
+		msg[(unsigned)n] = '\0';
 	    } else panic("sp_level_loader: rnd_objs idx out-of-bounds (%i)", n);
 	    break;
 	case SPO_RANDOM_PLACES:
@@ -2211,7 +2213,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	    if (n > 0 && n <= (2 * MAX_REGISTERS)) {
 		char *tmpstr = malloc(n+1);
 		Fread(tmpstr, 1, n, fd);
-		tmpstr[n] = '\0';
+		tmpstr[(unsigned)n] = '\0';
 		opdat = tmpstr;
 	    } else panic("sp_level_loader: rnd_places idx out-of-bounds (%i)", n);
 	    break;
@@ -2220,7 +2222,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	    if (n > 0 && n <= MAX_REGISTERS) {
 		char *tmpstr = malloc(n+1);
 		Fread(tmpstr, 1, n, fd);
-		tmpstr[n] = '\0';
+		tmpstr[(unsigned)n] = '\0';
 		opdat = tmpstr;
 	    } else panic("sp_level_loader: rnd_mons idx out-of-bounds (%i)", n);
 	    break;
@@ -2445,7 +2447,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
     boolean prefilled, room_not_needed;
 
     char n = '\0';
-    char halign, valign;
+    schar halign, valign;
 
     int xi, dir;
     int tmpi;
