@@ -133,6 +133,7 @@ static struct {
 	{ "tool shop",	 TOOLSHOP },
 	{ "book shop",	 BOOKSHOP },
 	{ "candle shop", CANDLESHOP },
+	{ "black market", BLACKSHOP },
 	{ 0, 0 }
 };
 

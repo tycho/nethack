@@ -1884,6 +1884,13 @@ void m_respond(struct monst *mtmp)
 void setmangry(struct monst *mtmp)
 {
 	mtmp->mstrategy &= ~STRAT_WAITMASK;
+
+	/* Even if the black marketeer is already angry he may not have called
+	 * for his assistants if he or his staff have not been assaulted yet.
+	 */
+	if (Is_blackmarket(&u.uz) && !mtmp->mpeaceful && mtmp->isshk)
+	    blkmar_guards(mtmp);
+
 	if (!mtmp->mpeaceful) return;
 	if (mtmp->mtame) return;
 	mtmp->mpeaceful = 0;
@@ -1896,6 +1903,20 @@ void setmangry(struct monst *mtmp)
 		if (humanoid(mtmp->data) || mtmp->isshk || mtmp->isgd)
 		    pline("%s gets angry!", Monnam(mtmp));
 		else if (flags.verbose && flags.soundok) growl(mtmp);
+	}
+
+	/* Don't misbehave in the Black Market or else... */
+	if (Is_blackmarket(&u.uz)) {
+	    if (mtmp->isshk) {
+		blkmar_guards(mtmp);
+	    } else if (NAME(mtmp) && *NAME(mtmp)) {
+		/* non-tame named monsters are presumably
+		 * black marketeer's assistants */
+		struct monst *shkp = shop_keeper(level,
+			inside_shop(level, mtmp->mx, mtmp->my));
+		if (shkp)
+		    wakeup(shkp);
+	    }
 	}
 
 	/* attacking your own quest leader will anger his or her guardians */

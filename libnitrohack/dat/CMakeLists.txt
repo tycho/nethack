@@ -4,6 +4,7 @@ set (LEVEL_DESCRIPTIONS
     ${LNH_DAT}/Arch.des
     ${LNH_DAT}/Barb.des
     ${LNH_DAT}/bigroom.des
+    ${LNH_DAT}/blkmar.des
     ${LNH_DAT}/castle.des
     ${LNH_DAT}/Caveman.des
     ${LNH_DAT}/endgame.des
@@ -33,7 +34,7 @@ set (COMPILED_LEVELS
     air.lev      Arc-fila.lev Arc-filb.lev Arc-goal.lev
     Arc-loca.lev Arc-strt.lev asmodeus.lev astral.lev
     baalz.lev    Bar-fila.lev Bar-filb.lev Bar-goal.lev
-    Bar-loca.lev Bar-strt.lev
+    Bar-loca.lev Bar-strt.lev blkmar.lev
     bigrm-1.lev  bigrm-2.lev  bigrm-3.lev  bigrm-4.lev
     bigrm-5.lev  bigrm-6.lev  bigrm-7.lev  bigrm-8.lev
     bigrm-9.lev  bigrm-10.lev bigrm-11.lev

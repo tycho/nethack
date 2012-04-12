@@ -428,7 +428,8 @@ toofar:
 	if (!nearby || mtmp->mflee || scared ||
 	   mtmp->mconf || mtmp->mstun || (mtmp->minvis && !rn2(3)) ||
 	   (mdat->mlet == S_LEPRECHAUN && !ygold && (lepgold || rn2(2))) ||
-	   (is_wanderer(mdat) && !rn2(4)) || (Conflict && !mtmp->iswiz) ||
+	   (is_wanderer(mdat) && !rn2(4)) ||
+	   (Conflict && !mtmp->iswiz && !Is_blackmarket(&u.uz)) ||
 	   (!mtmp->mcansee && !rn2(4)) || mtmp->mpeaceful) {
 		/* Possibly cast an undirected spell if not attacking you */
 		/* note that most of the time castmu() will pick a directed
@@ -487,7 +488,8 @@ toofar:
 /*	Now, attack the player if possible - one attack set per monst	*/
 
 	if (!mtmp->mpeaceful ||
-	    (Conflict && !resist(mtmp, RING_CLASS, 0, 0))) {
+	    (Conflict && !resist(mtmp, RING_CLASS, 0, 0) &&
+	     !Is_blackmarket(&u.uz))) {
 	    if (inrange && !noattacks(mdat) && u.uhp > 0 && !scared && tmp != 3)
 		if (mattacku(mtmp)) return 1; /* monster died (e.g. exploded) */
 

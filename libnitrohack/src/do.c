@@ -893,7 +893,14 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	u.ustuck = 0;				/* idem */
 	u.uinwater = 0;
 	u.uundetected = 0;	/* not hidden, even if means are available */
-	keepdogs(FALSE);
+
+	if (Is_blackmarket(newlevel))
+	    keepdogs(2, "can't follow you into the Black Market.");
+	else if (Is_blackmarket(&u.uz))
+	    keepdogs(2, "can't follow you through the portal.");
+	else
+	    keepdogs(0, NULL);
+
 	if (u.uswallow)				/* idem */
 		u.uswldtim = u.uswallow = 0;
 	/*

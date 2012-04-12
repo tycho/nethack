@@ -434,14 +434,17 @@ void mon_catchup_elapsed_time(struct monst *mtmp, long nmv)
 }
 
 
-/* called when you move to another level 
- * pets_only: true for ascension or final escape */
-void keepdogs(boolean pets_only)
+/* called when you move to another level
+ * exclude == 0 -> normal follow behaviour
+ *         == 1 -> pets_only == TRUE, for ascension or final escape
+ *         == 2 -> exclude pets, use pet_msg_suffix */
+void keepdogs(int exclude, const char *pet_msg_suffix)
 {
 	struct monst *mtmp, *mtmp2;
 	struct obj *obj;
 	int num_segs;
 	boolean stay_behind;
+	boolean pets_only = (exclude == 1) ? TRUE : FALSE;
 
 	for (mtmp = level->monlist; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;
@@ -463,6 +466,11 @@ void keepdogs(boolean pets_only)
 		if (mtmp->mtame && mtmp->meating) {
 			if (canseemon(mtmp))
 			    pline("%s is still eating.", Monnam(mtmp));
+			stay_behind = TRUE;
+		} else if (mtmp->mtame && exclude == 2) {
+			if (pet_msg_suffix == NULL)
+			    pet_msg_suffix = "remains behind.";
+			pline("%s %s", Monnam(mtmp), pet_msg_suffix);
 			stay_behind = TRUE;
 		} else if (mon_has_amulet(mtmp)) {
 			if (canseemon(mtmp))

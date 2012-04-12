@@ -6,7 +6,8 @@
 #include "hack.h"
 #include "eshk.h"
 
-static void mkshobj_at(const struct shclass *shp, struct level *lev, int sx, int sy);
+static struct obj *mkshobj_at(const struct shclass *shp, struct level *lev,
+			      int sx, int sy);
 static void nameshk(struct monst *shk, const char * const *nlp, struct level *lev);
 static int  shkinit(const struct shclass *shp, struct level *lev,
 		    struct mkroom *sroom);
@@ -144,6 +145,21 @@ static const char * const shkgeneral[] = {
     0
 };
 
+static const char * const shkblack[] = {
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
+  0
+};
+
 /*
  * To add new shop types, all that is necessary is to edit the shtypes[] array.
  * See mkroom.h for the structure definition.  Typically, you'll have to lower
@@ -196,18 +212,21 @@ const struct shclass shtypes[] = {
 	{"lighting store", TOOL_CLASS, 0, D_SHOP,
 	    {{32, -WAX_CANDLE}, {50, -TALLOW_CANDLE},
 	     {5, -BRASS_LANTERN}, {10, -OIL_LAMP}, {3, -MAGIC_LAMP}}, shklight},
+	{"black market", RANDOM_CLASS, 0, D_SHOP,
+	    {{100, RANDOM_CLASS}, {0, 0}, {0, 0}}, shkblack},
 	{NULL, 0, 0, 0, {{0, 0}, {0, 0}, {0, 0}}, 0}
 };
 
 
 /* make an object of the appropriate type for a shop square */
-static void mkshobj_at(const struct shclass *shp, struct level *lev, int sx, int sy)
+static struct obj *mkshobj_at(const struct shclass *shp, struct level *lev,
+			      int sx, int sy)
 {
 	struct monst *mtmp;
 	int atype;
 	const struct permonst *ptr;
 
-	if (rn2(100) < depth(&lev->z) &&
+	if (rn2(100) < depth(&lev->z) && !Is_blackmarket(&lev->z) &&
 		!MON_AT(lev, sx, sy) && (ptr = mkclass(&lev->z, S_MIMIC,0)) &&
 		(mtmp = makemon(ptr,lev,sx,sy,NO_MM_FLAGS)) != 0) {
 	    /* note: makemon will set the mimic symbol to a shop item */
@@ -215,12 +234,13 @@ static void mkshobj_at(const struct shclass *shp, struct level *lev, int sx, int
 		mtmp->m_ap_type = M_AP_OBJECT;
 		mtmp->mappearance = STRANGE_OBJECT;
 	    }
+	    return NULL;
 	} else {
 	    atype = get_shop_item(shp - shtypes);
 	    if (atype < 0)
-		mksobj_at(-atype, lev, sx, sy, TRUE, TRUE);
+		return mksobj_at(-atype, lev, sx, sy, TRUE, TRUE);
 	    else
-		mkobj_at(atype, lev, sx, sy, TRUE);
+		return mkobj_at(atype, lev, sx, sy, TRUE);
 	}
 }
 
@@ -238,6 +258,10 @@ static void nameshk(struct monst *shk, const char * const *nlp, struct level *le
 	    /* special-case minetown lighting shk */
 	    shname = "Izchak";
 	    shk->female = FALSE;
+	} else if (nlp == shkblack) {
+	    /* special-case black marketeer */
+	    shname = "One-eyed Sam";
+	    shk->female = shk->data->mflags2 & M2_MALE ? FALSE : TRUE;
 	} else {
 	    /* We want variation from game to game, without needing the save
 	       and restore support which would be necessary for randomization;
@@ -288,6 +312,7 @@ static int shkinit(const struct shclass	*shp, struct level *lev, struct mkroom *
 {
 	int sh, sx, sy;
 	struct monst *shk;
+	long shkmoney;
 
 	/* place the shopkeeper in the given room */
 	sh = sroom->fdoor;
@@ -319,8 +344,13 @@ shk_failed:
 	if (MON_AT(lev, sx, sy)) rloc(m_at(lev, sx, sy), FALSE); /* insurance */
 
 	/* now initialize the shopkeeper monster structure */
-	if (!(shk = makemon(&mons[PM_SHOPKEEPER], lev, sx, sy, NO_MM_FLAGS)))
+	shk = NULL;
+	if (Is_blackmarket(&lev->z))
+	    shk = makemon(&mons[PM_BLACK_MARKETEER], lev, sx, sy, NO_MM_FLAGS);
+	if (!shk) {
+	    if (!(shk = makemon(&mons[PM_SHOPKEEPER], lev, sx, sy, NO_MM_FLAGS)))
 		return -1;
+	}
 	shk->isshk = shk->mpeaceful = 1;
 	set_malign(shk);
 	shk->msleeping = 0;
@@ -340,10 +370,47 @@ shk_failed:
 	ESHK(shk)->following = 0;
 	ESHK(shk)->cheapskate = (rn2(3) == 0) ? TRUE : FALSE;
 	ESHK(shk)->billct = 0;
-        mkmonmoney(shk, 1000L + 30L*(long)rnd(100));	/* initial capital */
+
+	shkmoney = 1000L + 30L * (long)rnd(100);	/* initial capital */
+
 	if (shp->shknms == shkrings)
 	    mongets(shk, TOUCHSTONE);
 	nameshk(shk, shp->shknms, lev);
+
+	if (Is_blackmarket(&lev->z))
+	    shkmoney = 7 * shkmoney + rn2(3 * shkmoney);
+	mkmonmoney(shk, shkmoney);
+
+	/* Arm the Black Marketeer. */
+	if (Is_blackmarket(&lev->z)) {
+	    struct obj *otmp;
+
+	    otmp = mksobj(lev, LONG_SWORD, FALSE, FALSE);
+	    otmp = oname(otmp, artiname(ART_THIEFBANE));
+	    mpickobj(shk, otmp);
+	    if (otmp->spe < 5) otmp->spe += rnd(5);
+
+	    otmp = mksobj(lev, SHIELD_OF_REFLECTION, FALSE, FALSE);
+	    mpickobj(shk, otmp);
+	    if (otmp->spe < 5) otmp->spe += rnd(5);
+
+	    otmp = mksobj(lev, GRAY_DRAGON_SCALE_MAIL, FALSE, FALSE);
+	    mpickobj(shk, otmp);
+	    if (otmp->spe < 5) otmp->spe += rnd(5);
+
+	    otmp = mksobj(lev, SPEED_BOOTS, FALSE, FALSE);
+	    mpickobj(shk, otmp);
+	    if (otmp->spe < 5) otmp->spe += rnd(5);
+
+	    otmp = mksobj(lev, AMULET_OF_LIFE_SAVING, FALSE, FALSE);
+	    mpickobj(shk, otmp);
+
+	    /* wear armor and amulet*/
+	    m_dowear(shk, TRUE);
+
+	    otmp = mksobj(lev, SKELETON_KEY, FALSE, FALSE);
+	    mpickobj(shk, otmp);
+	}
 
 	return sh;
 }
@@ -393,18 +460,37 @@ void stock_room(int shp_indx, struct level *lev, struct mkroom *sroom)
 	    make_engr_at(lev, m, n, buf, 0L, DUST);
     }
 
-    for (sx = sroom->lx; sx <= sroom->hx; sx++)
+    for (sx = sroom->lx; sx <= sroom->hx; sx++) {
 	for (sy = sroom->ly; sy <= sroom->hy; sy++) {
+	    struct obj *otmp;
+
 	    if (sroom->irregular) {
-		if (lev->locations[sx][sy].edge || (int) lev->locations[sx][sy].roomno != rmno ||
-		   distmin(sx, sy, lev->doors[sh].x, lev->doors[sh].y) <= 1)
+		if (lev->locations[sx][sy].edge ||
+		    (int)lev->locations[sx][sy].roomno != rmno ||
+		    distmin(sx, sy, lev->doors[sh].x, lev->doors[sh].y) <= 1)
 		    continue;
 	    } else if ((sx == sroom->lx && lev->doors[sh].x == sx-1) ||
-		      (sx == sroom->hx && lev->doors[sh].x == sx+1) ||
-		      (sy == sroom->ly && lev->doors[sh].y == sy-1) ||
-		      (sy == sroom->hy && lev->doors[sh].y == sy+1)) continue;
-	    mkshobj_at(shp, lev, sx, sy);
+		       (sx == sroom->hx && lev->doors[sh].x == sx+1) ||
+		       (sy == sroom->ly && lev->doors[sh].y == sy-1) ||
+		       (sy == sroom->hy && lev->doors[sh].y == sy+1) ||
+		       (Is_blackmarket(&lev->z) && rn2(3)))
+		continue;
+
+	    otmp = mkshobj_at(shp, lev, sx, sy);
+
+	    if (otmp) {
+		if (Is_blackmarket(&lev->z)) {
+		    /* drain wishes from Black Market stock */
+		    if (otmp->otyp == WAN_WISHING) {
+			otmp->spe = 0;
+			otmp->recharged = 1;
+		    } else if (otmp->otyp == MAGIC_LAMP) {
+			otmp->spe = 0;
+		    }
+		}
+	    }
 	}
+    }
 
     /*
      * Special monster placements (if any) should go here: that way,
@@ -413,7 +499,6 @@ void stock_room(int shp_indx, struct level *lev, struct mkroom *sroom)
 
     lev->flags.has_shop = TRUE;
 }
-
 
 /* does shkp's shop stock this item type? */
 boolean saleable(struct monst *shkp, struct obj *obj)

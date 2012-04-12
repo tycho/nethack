@@ -584,7 +584,7 @@ static void forget(int howmuch)
 /* monster is hit by scroll of taming's effect */
 static void maybe_tame(struct monst *mtmp, struct obj *sobj)
 {
-	if (sobj->cursed) {
+	if (sobj->cursed || Is_blackmarket(&u.uz)) {
 	    setmangry(mtmp);
 	} else {
 	    if (mtmp->isshk)

@@ -622,6 +622,7 @@ struct level_map {
 	{ "fire",	&fire_level },
 	{ "juiblex",	&juiblex_level },
 	{ "knox",	&knox_level },
+	{ "blkmar",	&blackmarket_level },
 	{ "medusa",	&medusa_level },
 	{ "oracle",	&oracle_level },
 	{ "orcus",	&orcus_level },
@@ -1767,6 +1768,12 @@ static void overview_scan(const struct level *lev, struct overview_info *oi)
 			if (rnum < ROOMOFFSET)
 			    break;
 			
+			/* Black Market implies the shop, so
+			 * there's no need to record it here.
+			 */
+			if (Is_blackmarket(&lev->z))
+			    break;
+			
 			rtyp = lev->rooms[rnum - ROOMOFFSET].rtype;
 			if (rtyp >= SHOPBASE && !seen_shop[rnum]) {
 			    seen_shop[rnum] = TRUE;
@@ -1793,9 +1800,13 @@ static void overview_print_dun(char *buf, const struct level *lev)
 {
 	int dnum = lev->z.dnum;
 	int depthstart = dungeons[dnum].depth_start;
-	if (dnum == quest_dnum || dnum == knox_level.dnum)
-	    /* The quest and knox should appear to be level 1 to match other text. */
+	if (dnum == quest_dnum || dnum == knox_level.dnum ||
+		dnum == blackmarket_level.dnum) {
+	    /* The quest, knox and blackmarket should appear to be
+	     * level 1 to match other text.
+	     */
 	    depthstart = 1;
+	}
 	
 	/* Sokoban lies about dunlev_ureached and we should suppress
 	 * the negative numbers in the endgame. */
@@ -1813,9 +1824,13 @@ static void overview_print_lev(char *buf, const struct level *lev)
 	int i, depthstart;
 	
 	depthstart = dungeons[lev->z.dnum].depth_start;
-	if (lev->z.dnum == quest_dnum || lev->z.dnum == knox_level.dnum)
-	    /* The quest and knox should appear to be level 1 to match other text. */
+	if (lev->z.dnum == quest_dnum || lev->z.dnum == knox_level.dnum ||
+		lev->z.dnum == blackmarket_level.dnum) {
+	    /* The quest, knox and blackmarket should appear to be
+	     * level 1 to match other text.
+	     */
 	    depthstart = 1;
+	}
 	
 	/* calculate level number */
 	i = depthstart + lev->z.dlevel - 1;
@@ -1860,7 +1875,7 @@ static char *seen_string(xchar x, const char *obj)
 	sprintf(eos(buf), "%s%s " nam "%s", COMMA, seen_string((var), (nam)), \
 	((var) != 1 ? "s" : "")); }
 
-#if MAXRTYPE != CANDLESHOP
+#if MAXRTYPE != BLACKSHOP
 # warning you must extend the shopnames array!
 #endif
 static const char *const shopnames[] = {
@@ -1873,7 +1888,8 @@ static const char *const shopnames[] = {
 	/* RINGSHOP */	"a jewelry store",
 	/* WANDSHOP */	"a wand shop",
 	/* BOOKSHOP */	"a bookstore",
-	/* CANDLESHOP */"a lighting shop"
+	/* CANDLESHOP */"a lighting shop",
+	/* BLACKSHOP */	"the Black Market"
 };
 
 static void overview_print_info(char *buf, const struct overview_info *oi)

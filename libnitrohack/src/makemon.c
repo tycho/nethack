@@ -1151,6 +1151,8 @@ const struct permonst *rndmonst(const d_level *dlev)
 		if (elemlevel && wrong_elem_type(dlev, ptr)) continue;
 		if (uncommon(dlev, mndx)) continue;
 		if (In_hell(dlev) && (ptr->geno & G_NOHELL)) continue;
+		/* SWD: pets are not allowed in the black market */
+		if (is_domestic(ptr) && Is_blackmarket(dlev)) continue;
 		ct = (int)(ptr->geno & G_FREQ) + align_shift(dlev, ptr);
 		if (ct < 0 || ct > 127)
 		    panic("rndmonst: bad count [#%d: %d]", mndx, ct);

@@ -328,7 +328,7 @@ extern void update_mlstmv(void);
 extern void losedogs(void);
 extern void mon_arrive(struct monst *,boolean);
 extern void mon_catchup_elapsed_time(struct monst *,long);
-extern void keepdogs(boolean);
+extern void keepdogs(int,const char *);
 extern void migrate_to_level(struct monst *,xchar,xchar,coord *);
 extern int dogfood(struct monst *,struct obj *);
 extern struct monst *tamedog(struct monst *,struct obj *);
@@ -1429,6 +1429,7 @@ extern void check_unpaid(struct obj *);
 extern void costly_gold(xchar,xchar,long);
 extern boolean block_door(xchar,xchar);
 extern boolean block_entry(xchar,xchar);
+extern void blkmar_guards(struct monst *);
 extern char *shk_your(char *, const struct obj *);
 extern char *Shk_Your(char *, const struct obj *);
 
@@ -1518,6 +1519,8 @@ extern boolean enexto(coord *cc, struct level *lev, xchar xx, xchar yy,
 	              const struct permonst *mdat);
 extern boolean enexto_core(coord *cc, struct level *lev, xchar xx, xchar yy,
 		           const struct permonst *mdat, unsigned entflags);
+extern int epathto(coord *cc, int nc, struct level *lev, xchar xx, xchar yy,
+		   const struct permonst *mdat);
 extern void teleds(int,int,boolean);
 extern boolean safe_teleds(boolean);
 extern boolean teleport_pet(struct monst *,boolean);

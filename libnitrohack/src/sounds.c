@@ -241,6 +241,15 @@ void dosounds(void)
 	}
 	return;
     }
+    if (!Is_blackmarket(&u.uz) && at_dgn_entrance(&u.uz, "One-eyed Sam's Market") &&
+	!rn2(200)) {
+	static const char *blkmar_msg[3] = {
+	    "You hear someone complaining about the prices.",
+	    "Somebody whispers: \"Food rations? Only 900 zorkmids.\"",
+	    "You feel like searching for more gold.",
+	};
+	pline(blkmar_msg[rn2(2)+hallu]);
+    }
 }
 
 

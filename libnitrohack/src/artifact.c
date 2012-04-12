@@ -455,6 +455,9 @@ int touch_artifact(struct obj *obj, struct monst *mon)
 
     if (!oart) return 1;
 
+    /* [ALI] Thiefbane has a special affinity with shopkeepers */
+    if (mon->isshk && obj->oartifact == ART_THIEFBANE) return 1;
+
     yours = (mon == &youmonst);
     /* all quest artifacts are self-willed; it this ever changes, `badclass'
        will have to be extended to explicitly include quest artifacts */
@@ -1138,6 +1141,7 @@ boolean artifact_hit(
 	    otmp->oartifact == ART_DEMONBANE ||
 	    otmp->oartifact == ART_WEREBANE ||
 	    otmp->oartifact == ART_TROLLSBANE ||
+	    otmp->oartifact == ART_THIEFBANE ||
 	    otmp->oartifact == ART_OGRESMASHER) {
 		if (dieroll < 4) {
 		    if (realizes_damage) {
@@ -1269,6 +1273,13 @@ static int arti_invoke(struct obj *obj)
 	    d_level newlev;
 	    extern int n_dgns; /* from dungeon.c */
 	    struct nh_menuitem *items;
+
+	    /* Prevent branchporting from the Black Market shop. */
+	    if (Is_blackmarket(&u.uz) && *u.ushops) {
+		pline("You feel very disoriented for a moment.");
+		break;
+	    }
+
 	    items = malloc(n_dgns * sizeof(struct nh_menuitem));
 
 	    num_ok_dungeons = 0;

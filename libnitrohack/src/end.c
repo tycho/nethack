@@ -567,7 +567,7 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	    /* count the points for artifacts */
 	    artifact_score(invent, TRUE, &menu);
 
-	    keepdogs(TRUE);
+	    keepdogs(1, NULL);	/* only pets follow you */
 	    viz_array[0][0] |= IN_SIGHT; /* need visibility for naming */
 	    mtmp = mydogs;
 	    if (!done_stopprint) strcpy(pbuf, "You");

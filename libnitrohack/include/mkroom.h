@@ -69,7 +69,8 @@ struct shclass {
 #define BOOKSHOP	(SHOPBASE+ 9)
 #define UNIQUESHOP	(SHOPBASE+10)	/* shops here & above not randomly gen'd. */
 #define CANDLESHOP	(UNIQUESHOP)
-#define MAXRTYPE	(UNIQUESHOP)	/* maximum valid room type */
+#define BLACKSHOP	(UNIQUESHOP+1)
+#define MAXRTYPE	(UNIQUESHOP+1)	/* maximum valid room type */
 
 /* Special type for search_special() */
 #define ANY_TYPE	(-1)
