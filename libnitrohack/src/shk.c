@@ -1180,16 +1180,19 @@ proceed:
 		     * door broken, attacked, etc. */
 		    pline("%s is after your hide, not your money!",
 			  Monnam(shkp));
-		    if (umoney < 1000L) {
+		    /* black market shopkeeper is not easily pacified */
+		    long peace_offering = (shkp->data == &mons[PM_BLACK_MARKETEER]) ?
+					  5000L : 1000L;
+		    if (umoney < peace_offering) {
 			if (!umoney)
 			    pline(no_money, stashed_gold ? " seem to" : "");
 			else pline(not_enough_money, mhim(shkp));
 			return 1;
 		    }
-		    pline("You try to appease %s by giving %s 1000 gold pieces.",
+		    pline("You try to appease %s by giving %s %ld gold pieces.",
 			x_monnam(shkp, ARTICLE_THE, "angry", 0, FALSE),
-			mhim(shkp));
-		    pay(1000L,shkp);
+			mhim(shkp), peace_offering);
+		    pay(peace_offering, shkp);
 		    if (strncmp(eshkp->customer, plname, PL_NSIZ) || rn2(3))
 			make_happy_shk(shkp, FALSE);
 		    else
