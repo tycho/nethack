@@ -482,7 +482,7 @@ extern int doengrave(struct obj *otmp);
 extern void free_engravings(struct level *lev);
 extern void save_engravings(struct memfile *mf, struct level *lev);
 extern void rest_engravings(struct memfile *mf, struct level *lev);
-extern void del_engr(struct engr *);
+extern void del_engr(struct level *, struct engr *);
 extern void rloc_engr(struct engr *);
 extern void make_grave(struct level *lev, int x, int y, const char *str);
 

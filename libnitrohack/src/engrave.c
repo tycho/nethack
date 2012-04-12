@@ -275,7 +275,7 @@ void wipe_engr_at(struct level *lev, xchar x, xchar y, xchar cnt)
 		wipeout_text(ep->engr_txt, (int)cnt, 0);
 		while (ep->engr_txt[0] == ' ')
 			ep->engr_txt++;
-		if (!ep->engr_txt[0]) del_engr(ep);
+		if (!ep->engr_txt[0]) del_engr(lev, ep);
 	    }
 	}
 }
@@ -359,7 +359,7 @@ void make_engr_at(struct level *lev, int x, int y,
 	struct engr *ep;
 
 	if ((ep = engr_at(lev, x,y)) != 0)
-	    del_engr(ep);
+	    del_engr(lev, ep);
 	ep = newengr(strlen(s) + 1);
 	memset(ep, 0, sizeof(struct engr) + strlen(s) + 1);
 	ep->nxt_engr = lev->lev_engr;
@@ -382,7 +382,7 @@ void del_engr_at(struct level *lev, int x, int y)
 {
 	struct engr *ep = engr_at(lev, x, y);
 
-	if (ep) del_engr(ep);
+	if (ep) del_engr(lev, ep);
 }
 
 /*
@@ -851,7 +851,7 @@ int doengrave(struct obj *otmp)
 	}
 
 	if (dengr) {
-	    del_engr(oep);
+	    del_engr(level, oep);
 	    oep = NULL;
 	}
 
@@ -909,7 +909,7 @@ int doengrave(struct obj *otmp)
 			    ((oep->engr_type == DUST)  ? "written in the dust" :
 			    ((oep->engr_type == ENGR_BLOOD) ? "scrawled in blood"   :
 							 "written")));
-			del_engr(oep);
+			del_engr(level, oep);
 			oep = NULL;
 		    } else
 		   /* Don't delete engr until after we *know* we're engraving */
@@ -1013,7 +1013,7 @@ int doengrave(struct obj *otmp)
 
 	/* Previous engraving is overwritten */
 	if (eow) {
-	    del_engr(oep);
+	    del_engr(level, oep);
 	    oep = NULL;
 	}
 
@@ -1184,14 +1184,14 @@ void rest_engravings(struct memfile *mf, struct level *lev)
 	}
 }
 
-void del_engr(struct engr *ep)
+void del_engr(struct level *lev, struct engr *ep)
 {
-	if (ep == level->lev_engr) {
-		level->lev_engr = ep->nxt_engr;
+	if (ep == lev->lev_engr) {
+		lev->lev_engr = ep->nxt_engr;
 	} else {
 		struct engr *ept;
 
-		for (ept = level->lev_engr; ept; ept = ept->nxt_engr)
+		for (ept = lev->lev_engr; ept; ept = ept->nxt_engr)
 		    if (ept->nxt_engr == ep) {
 			ept->nxt_engr = ep->nxt_engr;
 			break;
