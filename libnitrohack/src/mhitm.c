@@ -675,7 +675,6 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		    weight_dmg(mass);
 		tmp = mass;
 	    } else {
-		struct obj *lifesave = mlifesaver(magr);
 		mass += magr->data->cwt;
 		weight_dmg(mass);
 		if (mass)

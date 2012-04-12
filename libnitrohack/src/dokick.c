@@ -152,10 +152,9 @@ static void kick_monster(xchar x, xchar y, schar dx, schar dy)
 			}
 		    } else {
 			char kbuf[BUFSZ];
-			int dis_dmg;
 			sprintf(kbuf, "barefootedly kicking %s",
 				an(mons_mname(mon->data)));
-			dis_dmg = instadisintegrate(kbuf);
+			instadisintegrate(kbuf);
 			break;
 		    }
 		} else if (mon->data == &mons[PM_SHADE] &&

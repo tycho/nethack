@@ -2152,7 +2152,7 @@ int instadisintegrate(const char *str)
 	u.ugrave_arise = -3;
 	done(DISINTEGRATED);
 
-	return (result);
+	return result;
 }
 
 int minstadisintegrate(struct monst *mon)
