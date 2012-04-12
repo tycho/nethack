@@ -62,8 +62,8 @@
 #define CRUSHING	 7
 #define STONING		 8
 #define TURNED_SLIME	 9
-#define GENOCIDED	10
-#define DISINTEGRATED	11
+#define DISINTEGRATED	10
+#define GENOCIDED	11
 #define PANICKED	12
 #define TRICKED		13
 #define QUIT		14

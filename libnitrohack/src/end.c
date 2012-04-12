@@ -44,7 +44,7 @@ static const char *const deaths[] = {		/* the array of death */
 	"died", "choked", "poisoned", "starvation", "drowning",
 	"burning", "dissolving under the heat and pressure",
 	"crushed", "turned to stone", "turned into slime",
-	"genocided", "disintegrated", "panic", "trickery",
+	"disintegrated", "genocided", "panic", "trickery",
 	"quit", "escaped", "ascended"
 };
 
@@ -52,7 +52,7 @@ static const char *const ends[] = {		/* "when you..." */
 	"died", "choked", "were poisoned", "starved", "drowned",
 	"burned", "dissolved in the lava",
 	"were crushed", "turned to stone", "turned into slime",
-	"were genocided", "were disintegrated", "panicked", "were tricked",
+	"were disintegrated", "were genocided", "panicked", "were tricked",
 	"quit", "escaped", "ascended"
 };
 
