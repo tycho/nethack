@@ -30,6 +30,8 @@ static void makerooms(struct level *lev);
 static void finddpos(struct level *lev, coord *,xchar,xchar,xchar,xchar);
 static void mkinvpos(xchar,xchar,int);
 static void mk_knox_portal(struct level *lev, xchar,xchar);
+static void place_random_engraving(struct level *lev, const char *const engravings[],
+				   const int size);
 static void place_random_engravings(struct level *lev);
 
 #define create_vault(lev)	create_room(lev, -1, -1, 2, 2, -1, -1, VAULT, TRUE)
@@ -1442,7 +1444,8 @@ static void mk_knox_portal(struct level *lev, xchar x, xchar y)
  * Places a random engraving from an array of engravings into
  * a random room on the current level.
  */
-void place_random_engraving(struct level *lev, const char *const engravings[], const int size)
+static void place_random_engraving(struct level *lev, const char *const engravings[],
+				   const int size)
 {
 	struct mkroom *some_room;
 	xchar sx, sy;
@@ -1471,7 +1474,7 @@ void place_random_engraving(struct level *lev, const char *const engravings[], c
 /*
  * Places dungeon level dependent engravings on the current level.
  */
-void place_random_engravings(struct level *lev)
+static void place_random_engravings(struct level *lev)
 {
 	switch (depth(&u.uz)) {
 	    case 23: place_random_engraving(lev, illuminati_engravings, SIZE(illuminati_engravings)); break;
