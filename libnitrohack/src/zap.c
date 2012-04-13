@@ -778,6 +778,24 @@ void cancel_item(struct obj *obj)
 				iflags.botl = 1;
 			}
 			break;
+		case RIN_GAIN_INTELLIGENCE:
+			if ((obj->owornmask & W_RING) && u_ring) {
+				ABON(A_INT) -= obj->spe;
+				iflags.botl = 1;
+			}
+			break;
+		case RIN_GAIN_WISDOM:
+			if ((obj->owornmask & W_RING) && u_ring) {
+				ABON(A_WIS) -= obj->spe;
+				iflags.botl = 1;
+			}
+			break;
+		case RIN_GAIN_DEXTERITY:
+			if ((obj->owornmask & W_RING) && u_ring) {
+				ABON(A_DEX) -= obj->spe;
+				iflags.botl = 1;
+			}
+			break;
 		case RIN_ADORNMENT:
 			if ((obj->owornmask & W_RING) && u_ring) {
 				ABON(A_CHA) -= obj->spe;
@@ -889,6 +907,24 @@ boolean drain_item(struct obj *obj)
 	case RIN_GAIN_CONSTITUTION:
 	    if ((obj->owornmask & W_RING) && u_ring) {
 	    	ABON(A_CON)--;
+	    	iflags.botl = 1;
+	    }
+	    break;
+	case RIN_GAIN_INTELLIGENCE:
+	    if ((obj->owornmask & W_RING) && u_ring) {
+	    	ABON(A_INT)--;
+	    	iflags.botl = 1;
+	    }
+	    break;
+	case RIN_GAIN_WISDOM:
+	    if ((obj->owornmask & W_RING) && u_ring) {
+	    	ABON(A_WIS)--;
+	    	iflags.botl = 1;
+	    }
+	    break;
+	case RIN_GAIN_DEXTERITY:
+	    if ((obj->owornmask & W_RING) && u_ring) {
+	    	ABON(A_DEX)--;
 	    	iflags.botl = 1;
 	    }
 	    break;

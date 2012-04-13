@@ -656,6 +656,18 @@ void calc_attr_bonus(void)
 			    ABON(A_CON) += spe;
 			    break;
 			    
+			case RIN_GAIN_INTELLIGENCE:
+			    ABON(A_INT) += spe;
+			    break;
+			    
+			case RIN_GAIN_WISDOM:
+			    ABON(A_WIS) += spe;
+			    break;
+			    
+			case RIN_GAIN_DEXTERITY:
+			    ABON(A_DEX) += spe;
+			    break;
+			    
 			case RIN_ADORNMENT:
 			    ABON(A_CHA) += spe;
 			    break;
