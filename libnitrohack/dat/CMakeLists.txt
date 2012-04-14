@@ -14,6 +14,7 @@ set (LEVEL_DESCRIPTIONS
     ${LNH_DAT}/knox.des
     ${LNH_DAT}/medusa.des
     ${LNH_DAT}/mines.des
+    ${LNH_DAT}/nymph.des
     ${LNH_DAT}/Monk.des
     ${LNH_DAT}/oracle.des
     ${LNH_DAT}/Priest.des
@@ -53,7 +54,8 @@ set (COMPILED_LEVELS
     minetn-2.lev minetn-3.lev minetn-4.lev minetn-5.lev
     minetn-6.lev minetn-7.lev minetn-8.lev
     Mon-fila.lev Mon-filb.lev
-    Mon-goal.lev Mon-loca.lev Mon-strt.lev oracle.lev
+    Mon-goal.lev Mon-loca.lev Mon-strt.lev
+    nymph.lev    oracle.lev
     orcus.lev    Pri-fila.lev Pri-filb.lev Pri-goal.lev
     Pri-loca.lev Pri-strt.lev Ran-fila.lev Ran-filb.lev
     Ran-goal.lev Ran-loca.lev Ran-strt.lev Rog-fila.lev
