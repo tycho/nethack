@@ -143,7 +143,7 @@ extern boolean is_db_wall(int,int);
 extern boolean find_drawbridge(int *,int*);
 extern boolean create_drawbridge(struct level *lev, int x, int y, int dir, boolean flag);
 extern void open_drawbridge(int,int);
-extern void close_drawbridge(int,int);
+extern boolean close_drawbridge(int,int);
 extern void destroy_drawbridge(int,int);
 
 /* ### decl.c ### */

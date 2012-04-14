@@ -2624,7 +2624,12 @@ struct monst *beam_hit(int ddx, int ddy, int range,	/* direction and range */
 			if ((cansee(x,y) || cansee(bhitpos.x, bhitpos.y))
 			    && level->locations[x][y].typ == DRAWBRIDGE_DOWN)
 			    makeknown(obj->otyp);
-			close_drawbridge(x,y);
+			if (!close_drawbridge(x, y)) {
+			    /* Stop the ray to prevent a door being made
+			     * in the drawbridge's doorway.
+			     */
+			    return NULL;
+			}
 			break;
 		    case WAN_STRIKING:
 		    case SPE_FORCE_BOLT:

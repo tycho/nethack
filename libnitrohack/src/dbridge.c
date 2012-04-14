@@ -589,19 +589,28 @@ static void do_entity(struct entity *etmp)
 }
 
 /*
- * Close the drawbridge located at x,y
+ * Close the drawbridge located at x,y.
+ * Returns TRUE if the drawbridge was closed, FALSE otherwise.
  */
-void close_drawbridge(int x, int y)
+boolean close_drawbridge(int x, int y)
 {
 	struct rm *loc1, *loc2;
+	struct monst *m;
 	struct trap *t;
 	int x2, y2;
 
 	loc1 = &level->locations[x][y];
-	if (loc1->typ != DRAWBRIDGE_DOWN) return;
+	if (loc1->typ != DRAWBRIDGE_DOWN) return FALSE;
+	/* A huge monster will block the drawbridge. */
+	if ((m = m_at(level, x, y)) && hugemonst(m->data)) {
+	    pline("%s blocks the drawbridge with %s weight!",
+		  canseemon(m) ? Amonnam(m) : "Something",
+		  canseemon(m) ? mhis(m) : "its");
+	    return FALSE;
+	}
 	if (rn2(5) == 0) {
 	    pline("The mechanism seems to have something stuck in it and won't close.");
-	    return;
+	    return FALSE;
 	}
 	x2 = x; y2 = y;
 	get_wall_for_db(&x2,&y2);
@@ -639,6 +648,7 @@ void close_drawbridge(int x, int y)
 	newsym(x, y);
 	newsym(x2, y2);
 	block_point(x2,y2);	/* vision */
+	return TRUE;
 }
 
 /*
