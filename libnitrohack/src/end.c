@@ -427,22 +427,34 @@ static boolean check_survival(int how, char *kilbuf)
 		makeknown(AMULET_OF_LIFE_SAVING);
 		pline("Your medallion %s!",
 		      !Blind ? "begins to glow" : "feels warm");
-		if (how == CHOKING) pline("You vomit ...");
-		if (how == DISINTEGRATED) pline("You reconstitute!");
-		else pline("You feel much better!");
-		pline("The medallion crumbles to dust!");
-		if (uamul) useup(uamul);
+		/* Keep it blessed, or this might happen! */
+		if (uamul && uamul->cursed && rn2(4) > 0) {
+			pline("But... the chain on your medallion breaks and it "
+			      "falls to the %s!", surface(u.ux,u.uy));
+			You_hear("homeric laughter!");
+			/* It already started to work.
+			 * Too bad you couldn't hold onto it.
+			 */
+			useup(uamul);
+		} else  {
+			if (how == CHOKING) pline("You vomit ...");
+			if (how == DISINTEGRATED) pline("You reconstitute!");
+			else pline("You feel much better!");
+			pline("The medallion crumbles to dust!");
+			if (uamul) useup(uamul);
 
-		adjattrib(A_CON, -1, TRUE);
-		if (u.uhpmax <= 0) u.uhpmax = 10;	/* arbitrary */
-		savelife(how);
-		if (how == GENOCIDED)
-			pline("Unfortunately you are still genocided...");
-		else {
-			killer = 0;
-			killer_format = 0;
-			historic_event(FALSE, "were saved from death by your amulet of life saving!");
-			return TRUE;
+			adjattrib(A_CON, -1, TRUE);
+			if (u.uhpmax <= 0) u.uhpmax = 10;	/* arbitrary */
+			savelife(how);
+			if (how == GENOCIDED)
+				pline("Unfortunately you are still genocided...");
+			else {
+				killer = 0;
+				killer_format = 0;
+				historic_event(FALSE, "were saved from death by "
+						      "your amulet of life saving!");
+				return TRUE;
+			}
 		}
 	}
 	if ((wizard || discover) && (how <= GENOCIDED)) {
