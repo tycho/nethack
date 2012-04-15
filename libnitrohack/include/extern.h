@@ -532,6 +532,8 @@ extern void drinksink(void);
 
 /* ### hack.c ### */
 
+extern void dgn_growths(struct level *, boolean, boolean);
+extern void catchup_dgn_growths(struct level *, int);
 extern boolean revive_nasty(int,int,const char*);
 extern void movobj(struct obj *,xchar,xchar);
 extern boolean may_dig(struct level *lev, xchar x, xchar y);

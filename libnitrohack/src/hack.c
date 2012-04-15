@@ -15,6 +15,318 @@ static void move_update(boolean);
 #define IS_SHOP(x)	(level->rooms[x].rtype >= SHOPBASE)
 
 
+/* guaranteed to return a valid coord */
+static void rndmappos(xchar *x, xchar *y)
+{
+	if (*x >= COLNO) *x = COLNO;
+	else if (*x == -1) *x = rn2(COLNO - 1) + 1;
+	else if (*x < 1) *x = 1;
+
+	if (*y >= ROWNO) *y = ROWNO;
+	else if (*y == -1) *y = rn2(ROWNO);
+	else if (*y < 0) *y = 0;
+}
+
+/* to limit excessive farming */
+#define HERB_GROWTH_LIMIT	3
+
+static const struct herb_info {
+	int herb;
+	boolean in_water;
+} herb_info[] = {
+	{ SPRIG_OF_WOLFSBANE,	FALSE },
+	{ CLOVE_OF_GARLIC,	FALSE },
+	{ CARROT,		FALSE },
+	{ KELP_FROND,		TRUE  }
+};
+
+static long count_herbs_at(struct level *lev, xchar x, xchar y, boolean watery)
+{
+	int dd;
+	long count = 0;
+
+	if (isok(x, y)) {
+	    for (dd = 0; dd < SIZE(herb_info); dd++) {
+		if (watery == herb_info[dd].in_water) {
+		    struct obj *otmp = sobj_at(herb_info[dd].herb, lev, x, y);
+		    if (otmp)
+			count += otmp->quan;
+		}
+	    }
+	}
+	return count;
+}
+
+/* Returns TRUE if a herb can grow at (x, y). */
+static boolean herb_can_grow_at(struct level *lev, xchar x, xchar y, boolean watery)
+{
+	struct rm *loc = &lev->locations[x][y];
+	if (inside_shop(lev, x, y))
+	    return FALSE;
+	if (watery)
+	    return IS_POOL(loc->typ) &&
+		   count_herbs_at(lev, x, y, watery) < HERB_GROWTH_LIMIT;
+	return loc->lit &&
+	       (loc->typ == ROOM || loc->typ == CORR ||
+		(IS_DOOR(loc->typ) &&
+		 (loc->doormask == D_NODOOR ||
+		  loc->doormask == D_ISOPEN ||
+		  loc->doormask == D_BROKEN))) &&
+	       count_herbs_at(lev, x, y, watery) < HERB_GROWTH_LIMIT;
+}
+
+/* Grow herbs in water. Return TRUE if something was done. */
+static boolean grow_water_herbs(int herb, struct level *lev, xchar x, xchar y)
+{
+	struct obj *otmp;
+
+	rndmappos(&x, &y);
+	otmp = sobj_at(herb, lev, x, y);
+	if (otmp && herb_can_grow_at(lev, x, y, TRUE)) {
+	    otmp->quan++;
+	    otmp->owt = weight(otmp);
+	    return TRUE;
+	    /* There's no need to start growing these on the neighboring
+	     * mapgrids, as they move around (see water_current())
+	     */
+	}
+	return FALSE;
+}
+
+/* Grow herb on ground at (x,y), or maybe spread out.
+ * Return true if did something.
+ */
+static boolean grow_herbs(int herb, struct level *lev, xchar x, xchar y,
+			   boolean showmsg, boolean update)
+{
+	struct obj *otmp;
+
+	rndmappos(&x, &y);
+	otmp = sobj_at(herb, lev, x, y);
+	if (otmp && herb_can_grow_at(lev, x, y, FALSE)) {
+	    if (otmp->quan <= rn2(HERB_GROWTH_LIMIT)) {
+		otmp->quan++;
+		otmp->owt = weight(otmp);
+		return TRUE;
+	    } else {
+		int dd, dofs = rn2(8);
+		/* check surroundings, maybe grow there? */
+		for (dd = 0; dd < 8; dd++) {
+		    coord pos;
+
+		    dtoxy(&pos, (dd + dofs) % 8);
+		    pos.x += x;
+		    pos.y += y;
+		    if (isok(pos.x, pos.y) &&
+			    herb_can_grow_at(lev, pos.x, pos.y, FALSE)) {
+			otmp = sobj_at(herb, lev, pos.x, pos.y);
+			if (otmp) {
+			    if (otmp->quan <= rn2(HERB_GROWTH_LIMIT)) {
+				otmp->quan++;
+				otmp->owt = weight(otmp);
+				return TRUE;
+			    }
+			} else {
+			    otmp = mksobj(lev, herb, TRUE, FALSE);
+			    otmp->quan = 1;
+			    otmp->owt = weight(otmp);
+			    place_object(otmp, lev, pos.x, pos.y);
+			    if (update)
+				newsym(pos.x, pos.y);
+			    if (cansee(pos.x, pos.y)) {
+				if (showmsg && flags.verbose) {
+				    const char *what;
+				    if (herb == CLOVE_OF_GARLIC)
+					what = "some garlic";
+				    else
+					what = an(xname(otmp));
+				    Norep("Suddenly you notice %s growing on the %s.",
+					  what, surface(pos.x, pos.y));
+				}
+			    }
+			    return TRUE;
+			}
+		    }
+		}
+	    }
+	}
+	return FALSE;
+}
+
+/* Moves topmost object in water at (x,y) to dir.
+ * waterforce = strength of the water current.
+ * Returns TRUE if something was done.
+ */
+static boolean water_current(struct level *lev, xchar x, xchar y, int dir,
+			      unsigned waterforce, boolean showmsg, boolean update)
+{
+	struct obj *otmp;
+	coord pos;
+
+	rndmappos(&x, &y);
+	dtoxy(&pos, dir);
+	pos.x += x;
+	pos.y += y;
+	if (isok(pos.x, pos.y) && IS_POOL(lev->locations[x][y].typ) &&
+		IS_POOL(lev->locations[pos.x][pos.y].typ)) {
+	    otmp = lev->objects[x][y];
+	    if (otmp && otmp->where == OBJ_FLOOR) {
+		if (otmp->quan > 1)
+		    otmp = splitobj(otmp, otmp->quan - 1);
+		if (otmp->owt <= waterforce) {
+		    if (showmsg && Underwater &&
+			    (cansee(pos.x, pos.y) || cansee(x, y))) {
+			Norep("%s floats%s in%s the murky water.",
+			      An(xname(otmp)),
+			      (cansee(x,y) && cansee(pos.x,pos.y)) ? "" :
+				(cansee(x,y) ? " away from you" : " towards you"),
+			      flags.verbose ? " the currents of" : "");
+		    }
+		    obj_extract_self(otmp);
+		    place_object(otmp, lev, pos.x, pos.y);
+		    stackobj(otmp);
+		    if (update) {
+			newsym(x, y);
+			newsym(pos.x, pos.y);
+		    }
+		    return TRUE;
+		} else {
+		    /* the object didn't move, put it back */
+		    stackobj(otmp);
+		}
+	    }
+	}
+	return FALSE;
+}
+
+/* A tree at (x,y) spontaneously drops a ripe fruit. */
+static boolean drop_ripe_treefruit(struct level *lev, xchar x, xchar y,
+				    boolean showmsg, boolean update)
+{
+	struct rm *loc;
+
+	rndmappos(&x, &y);
+	loc = &lev->locations[x][y];
+	if (IS_TREE(loc->typ) && !(loc->looted & TREE_LOOTED) && may_dig(lev, x, y)) {
+	    coord pos;
+	    int dir, dofs = rn2(8);
+	    for (dir = 0; dir < 8; dir++) {
+		dtoxy(&pos, (dir + dofs) % 8);
+		pos.x += x;
+		pos.y += y;
+		if (!isok(pos.x, pos.y))
+		    return FALSE;
+		loc = &lev->locations[pos.x][pos.y];
+		if (SPACE_POS(loc->typ) || IS_POOL(loc->typ)) {
+		    struct obj *otmp;
+		    otmp = rnd_treefruit_at(pos.x, pos.y);
+		    if (otmp) {
+			otmp->quan = 1;
+			otmp->owt = weight(otmp);
+			obj_extract_self(otmp);
+			if (showmsg) {
+			    if (cansee(pos.x, pos.y) || cansee(x, y)) {
+				Norep("%s falls from %s%s.",
+				    cansee(pos.x,pos.y)? An(xname(otmp)) : "Something",
+				    cansee(x,y) ? "the tree" : "somewhere",
+				    (cansee(x,y) && IS_POOL(loc->typ)) ?
+					" into the water" : "");
+			    } else if (distu(pos.x, pos.y) < 9 &&
+				       otmp->otyp != EUCALYPTUS_LEAF) {
+				/* A leaf is too light to make a sound. */
+				You_hear("a %s!",
+				    (IS_POOL(loc->typ) || IS_FOUNTAIN(loc->typ)) ?
+					"plop" : "splut"); /* rainforesty sounds */
+			    }
+			}
+			place_object(otmp, lev, pos.x, pos.y);
+			stackobj(otmp);
+			if (rn2(6))
+			    lev->locations[x][y].looted |= TREE_LOOTED;
+			if (update)
+			    newsym(pos.x, pos.y);
+			return TRUE;
+		    }
+		}
+	    }
+	}
+	return FALSE;
+}
+
+/* Tree at (x,y) seeds. returns TRUE if a new tree was created.
+ * Creates a kind of forest, with (hopefully) most places available.
+ */
+static boolean seed_tree(struct level *lev, xchar x, xchar y)
+{
+	coord pos, pos2;
+	struct rm *loc;
+
+	rndmappos(&x, &y);
+	if (IS_TREE(lev->locations[x][y].typ) && may_dig(lev, x, y)) {
+	    int dir = rn2(8);
+	    dtoxy(&pos, dir);
+	    pos.x += x;
+	    pos.y += y;
+	    if (!rn2(3)) {
+		dtoxy(&pos2, (dir + rn2(2)) % 8);
+		pos.x += pos2.x;
+		pos.y += pos2.y;
+	    }
+	    if (!isok(pos.x,pos.y))
+		return FALSE;
+	    loc = &lev->locations[pos.x][pos.y];
+	    if (loc->lit && !cansee(pos.x, pos.y) &&
+		    !inside_shop(lev, pos.x, pos.y) &&
+		    (loc->typ == ROOM || loc->typ == CORR) &&
+		    !(u.ux == pos.x && u.uy == pos.y) &&
+		    !m_at(lev, pos.x, pos.y) &&
+		    !t_at(lev, pos.x, pos.y) &&
+		    !OBJ_AT(pos.x,pos.y)) {
+		int nogrow = 0;
+		int dx, dy;
+		for (dx = pos.x - 1; dx <= pos.x + 1; dx++) {
+		    for (dy = pos.y - 1; dy <= pos.y + 1; dy++) {
+			if (!isok(dx, dy) ||
+			    (isok(dx, dy) &&
+			     !SPACE_POS(lev->locations[dx][dy].typ)))
+			    nogrow++;
+		    }
+		}
+		if (nogrow < 3) {
+		    loc->typ = TREE;
+		    loc->looted &= ~TREE_LOOTED;
+		    block_point(pos.x, pos.y);
+		    return TRUE;
+		}
+	    }
+	}
+	return FALSE;
+}
+
+/* Grow trees and herbs, drop fruit from trees and float water herbs. */
+void dgn_growths(struct level *lev, boolean showmsg, boolean update)
+{
+	int herbnum = rn2(SIZE(herb_info));
+	seed_tree(lev, -1, -1);
+	if (herb_info[herbnum].in_water)
+	    grow_water_herbs(herb_info[herbnum].herb, lev, -1, -1);
+	else
+	    grow_herbs(herb_info[herbnum].herb, lev, -1, -1, showmsg, update);
+	if (!rn2(30))
+	    drop_ripe_treefruit(lev, -1, -1, showmsg, update);
+	water_current(lev, -1, -1, rn2(8),
+		      Is_waterlevel(&lev->z) ? 200 : 25, showmsg, update);
+}
+
+/* catch up with growths when returning to a previously visited level */
+void catchup_dgn_growths(struct level *lev, int mvs)
+{
+	if (mvs < 0) mvs = 0;
+	else if (mvs > LARGEST_INT) mvs = LARGEST_INT;
+	while (mvs-- > 0)
+	    dgn_growths(lev, FALSE, FALSE);
+}
+
 boolean revive_nasty(int x, int y, const char *msg)
 {
     struct obj *otmp, *otmp2;

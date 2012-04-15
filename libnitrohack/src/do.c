@@ -960,6 +960,9 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 			   them is different now */
 			restore_cham(mtmp);
 		}
+
+		/* grow herbs and/or trees while on another level */
+		catchup_dgn_growths(level, (moves - level->lastmoves) / 5);
 	}
 	
 	/* some timers and lights might need to be transferred to the new level

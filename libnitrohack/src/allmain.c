@@ -448,6 +448,7 @@ static void you_moved(void)
 	    if (Glib) glibr();
 	    nh_timeout();
 	    run_regions(level);
+	    dgn_growths(level, TRUE, TRUE);
 
 	    if (u.ublesscnt)  u.ublesscnt--;
 	    iflags.botl = 1;
