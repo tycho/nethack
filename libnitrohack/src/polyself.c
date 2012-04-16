@@ -998,7 +998,8 @@ int dogaze(void)
 		     * effect would be too weird.
 		     */
 		    if (!DEADMONSTER(mtmp) &&
-			    (mtmp->data == &mons[PM_MEDUSA]) && !mtmp->mcan) {
+			    (mtmp->data == &mons[PM_MEDUSA]) &&
+			     !mtmp->mcan && !Hallucination) {
 			pline(
 			 "Gazing at the awake %s is not a very good idea.",
 			    l_monnam(mtmp));

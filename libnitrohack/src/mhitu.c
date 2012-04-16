@@ -1936,10 +1936,11 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 {
 	switch(mattk->adtyp) {
 	    case AD_STON:
-		if (mtmp->mcan || !mtmp->mcansee) {
+		if (mtmp->mcan || !mtmp->mcansee || Hallucination) {
 		    if (!canseemon(mtmp)) break;	/* silently */
 		    pline("%s %s.", Monnam(mtmp),
-			  (mtmp->data == &mons[PM_MEDUSA] && mtmp->mcan) ?
+			  (mtmp->data == &mons[PM_MEDUSA] &&
+			   (mtmp->mcan || Hallucination)) ?
 				"doesn't look all that ugly" :
 				"gazes ineffectually");
 		    break;
