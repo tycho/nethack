@@ -198,7 +198,7 @@ int dosit(void)
 			pline("A voice echoes:");
 			verbalize("By thy Imperious order, %s...",
 				  flags.female ? "Dame" : "Sire");
-			do_genocide(5);	/* REALLY|ONTHRONE, see do_genocide() */
+			do_genocide(5, FALSE);	/* REALLY|ONTHRONE, see do_genocide() */
 			break;
 		    case 9:
 			pline("A voice echoes:");

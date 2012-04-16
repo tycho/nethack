@@ -2456,6 +2456,26 @@ void kill_genocided_monsters(void)
 	kill_eggs(level->buriedobjlist);
 }
 
+/*
+ * Kills every member of the specified monster species on the current
+ * level.
+ *
+ * mndx = monster index number
+ */
+void kill_monster_on_level(int mndx)
+{
+	struct monst *mtmp;
+	struct monst *mtmp2;
+	int tmp_mndx;
+
+	for (mtmp = level->monlist; mtmp; mtmp = mtmp2) {
+	    mtmp2 = mtmp->nmon;
+	    if (DEADMONSTER(mtmp)) continue;
+	    tmp_mndx = monsndx(mtmp->data);
+	    if (mndx == tmp_mndx)
+		mondead(mtmp);
+	}
+}
 
 void golemeffects(struct monst *mon, int damtype, int dam)
 {
