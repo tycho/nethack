@@ -408,8 +408,13 @@ static void fixup_special(struct level *lev)
 		/* Sokoban top levels have no random, burned engravings */
 		if (ep && ep->engr_txt[0] && ep->engr_type == BURN &&
 		    !strcmp(ep->engr_txt, "Elbereth")) {
-		    mksobj_at(rn2(2) ? BAG_OF_HOLDING : AMULET_OF_REFLECTION,
-			      lev, x, y, TRUE, FALSE);
+		    if (!rn2(3)) {
+			/* Somebody beat you to it. */
+			make_engr_at(lev, x, y, "IOU", 0L, MARK);
+		    } else {
+			mksobj_at(rn2(2) ? BAG_OF_HOLDING : AMULET_OF_REFLECTION,
+				  lev, x, y, TRUE, FALSE);
+		    }
 		}
 	    }
 	}
