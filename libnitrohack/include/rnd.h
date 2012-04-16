@@ -70,6 +70,12 @@ static inline int rnz(int i)
 	return (int)x;
 }
 
+/* returns true numerator out of denominator times */
+static inline int rnf(int numerator, int denominator)
+{
+	return rn2(denominator) < numerator;
+}
+
 #undef RND
 
 #endif
