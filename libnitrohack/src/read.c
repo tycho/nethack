@@ -1408,6 +1408,21 @@ void do_genocide(int how, boolean only_on_level)
 		    } else return;
 		}
 
+		if (wizard && buf[0] == '*') {
+		    /* to aid in topology testing; remove pesky monsters */
+		    struct monst *mtmp, *mtmp2;
+
+		    int gonecnt = 0;
+		    for (mtmp = level->monlist; mtmp; mtmp = mtmp2) {
+			mtmp2 = mtmp->nmon;
+			if (DEADMONSTER(mtmp)) continue;
+			mongone(mtmp);
+			gonecnt++;
+		    }
+		    pline("Eliminated %d monster%s.", gonecnt, plur(gonecnt));
+		    return;
+		}
+
 		mndx = name_to_mon(buf);
 		if (mndx == NON_PM || (mvitals[mndx].mvflags & G_GENOD)) {
 			pline("Such creatures %s exist in this world.",
