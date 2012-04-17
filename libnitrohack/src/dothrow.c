@@ -843,7 +843,7 @@ void throwit(struct obj *obj,
 		dx = rn2(3)-1;
 		dy = rn2(3)-1;
 		if (!dx && !dy)
-		    dz = 1;
+		    dz = rnf(1,3) ? -1 : 1;
 		impaired = TRUE;
 	    }
 	}
