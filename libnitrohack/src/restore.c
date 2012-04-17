@@ -726,17 +726,18 @@ struct level *getlev(struct memfile *mf, xchar levnum, boolean ghostly)
 	lev->flags.has_beehive = (lflags >> 26) & 1;
 	lev->flags.has_barracks = (lflags >> 25) & 1;
 	lev->flags.has_temple	= (lflags >> 24) & 1;
-	lev->flags.has_swamp	= (lflags >> 23) & 1;
-	lev->flags.noteleport	= (lflags >> 22) & 1;
-	lev->flags.hardfloor	= (lflags >> 21) & 1;
-	lev->flags.nommap	= (lflags >> 20) & 1;
-	lev->flags.hero_memory = (lflags >> 19) & 1;
-	lev->flags.shortsighted = (lflags >> 18) & 1;
-	lev->flags.graveyard	= (lflags >> 17) & 1;
-	lev->flags.is_maze_lev = (lflags >> 16) & 1;
-	lev->flags.is_cavernous_lev = (lflags >> 15) & 1;
-	lev->flags.arboreal	= (lflags >> 14) & 1;
-	lev->flags.forgotten	= (lflags >> 13) & 1;
+	lev->flags.has_lemurepit = (lflags >> 23) & 1;
+	lev->flags.has_swamp	= (lflags >> 22) & 1;
+	lev->flags.noteleport	= (lflags >> 21) & 1;
+	lev->flags.hardfloor	= (lflags >> 20) & 1;
+	lev->flags.nommap	= (lflags >> 19) & 1;
+	lev->flags.hero_memory = (lflags >> 18) & 1;
+	lev->flags.shortsighted = (lflags >> 17) & 1;
+	lev->flags.graveyard	= (lflags >> 16) & 1;
+	lev->flags.is_maze_lev = (lflags >> 15) & 1;
+	lev->flags.is_cavernous_lev = (lflags >> 14) & 1;
+	lev->flags.arboreal	= (lflags >> 13) & 1;
+	lev->flags.forgotten	= (lflags >> 12) & 1;
 	
 	mread(mf, lev->doors, sizeof(lev->doors));
 	rest_rooms(mf, lev);	/* No joke :-) */

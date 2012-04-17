@@ -33,8 +33,9 @@ set (LEVEL_DESCRIPTIONS
 # the compiled levels that will be added to nhdat
 set (COMPILED_LEVELS
     air.lev      Arc-fila.lev Arc-filb.lev Arc-goal.lev
-    Arc-loca.lev Arc-strt.lev asmodeus.lev astral.lev
-    baalz.lev    Bar-fila.lev Bar-filb.lev Bar-goal.lev
+    Arc-loca.lev Arc-strt.lev asmod-1.lev  asmod-2.lev
+    astral.lev   baalz-1.lev  baalz-2.lev
+    Bar-fila.lev Bar-filb.lev Bar-goal.lev
     Bar-loca.lev Bar-strt.lev blkmar.lev
     bigrm-1.lev  bigrm-2.lev  bigrm-3.lev  bigrm-4.lev
     bigrm-5.lev  bigrm-6.lev  bigrm-7.lev  bigrm-8.lev
@@ -55,8 +56,8 @@ set (COMPILED_LEVELS
     minetn-6.lev minetn-7.lev minetn-8.lev
     Mon-fila.lev Mon-filb.lev
     Mon-goal.lev Mon-loca.lev Mon-strt.lev
-    nymph.lev    oracle.lev
-    orcus.lev    Pri-fila.lev Pri-filb.lev Pri-goal.lev
+    nymph.lev    oracle.lev   orcus-1.lev  orcus-2.lev
+    Pri-fila.lev Pri-filb.lev Pri-goal.lev
     Pri-loca.lev Pri-strt.lev Ran-fila.lev Ran-filb.lev
     Ran-goal.lev Ran-loca.lev Ran-strt.lev Rog-fila.lev
     Rog-filb.lev Rog-goal.lev Rog-loca.lev Rog-strt.lev
@@ -74,7 +75,8 @@ set (COMPILED_LEVELS
     tower2.lev   tower3.lev
     town-1.lev   town-2.lev
     Val-fila.lev Val-filb.lev
-    Val-goal.lev valley.lev   Val-loca.lev Val-strt.lev
+    Val-goal.lev valley-1.lev valley-2.lev
+    Val-loca.lev Val-strt.lev
     water.lev    wizard1.lev  wizard2.lev  wizard3.lev
     Wiz-fila.lev Wiz-filb.lev Wiz-goal.lev Wiz-loca.lev
     Wiz-strt.lev

@@ -305,12 +305,12 @@ void savelev(struct memfile *mf, xchar levnum)
 	         (lev->flags.has_zoo << 29) | (lev->flags.has_court << 28) |
 	         (lev->flags.has_morgue << 27) | (lev->flags.has_beehive << 26) |
 	         (lev->flags.has_barracks << 25) | (lev->flags.has_temple << 24) |
-	         (lev->flags.has_swamp << 23) | (lev->flags.noteleport << 22) |
-	         (lev->flags.hardfloor << 21) | (lev->flags.nommap << 20) |
-	         (lev->flags.hero_memory << 19) | (lev->flags.shortsighted << 18) |
-	         (lev->flags.graveyard << 17) | (lev->flags.is_maze_lev << 16) |
-	         (lev->flags.is_cavernous_lev << 15) | (lev->flags.arboreal << 14) |
-	         (lev->flags.forgotten << 13);
+	         (lev->flags.has_lemurepit << 23) | (lev->flags.has_swamp << 22) |
+	         (lev->flags.noteleport << 21) | (lev->flags.hardfloor << 20) |
+	         (lev->flags.nommap << 19) | (lev->flags.hero_memory << 18) |
+	         (lev->flags.shortsighted << 17) | (lev->flags.graveyard << 16) |
+	         (lev->flags.is_maze_lev << 15) | (lev->flags.is_cavernous_lev << 14) |
+	         (lev->flags.arboreal << 13) | (lev->flags.forgotten << 12);
 	mwrite32(mf, lflags);
 	mwrite(mf, lev->doors, sizeof(lev->doors));
 	save_rooms(mf, lev);	/* no dynamic memory to reclaim */

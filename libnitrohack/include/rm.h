@@ -421,6 +421,7 @@ struct levelflags {
 	unsigned has_beehive:1;
 	unsigned has_barracks:1;
 	unsigned has_temple:1;
+	unsigned has_lemurepit:1;
 
 	unsigned has_swamp:1;
 	unsigned noteleport:1;

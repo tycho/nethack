@@ -1992,6 +1992,9 @@ void check_special_room(boolean newlev)
 		case BEEHIVE:
 		    pline("You enter a giant beehive!");
 		    break;
+		case LEMUREPIT:
+		    pline("You enter a put of screaming lemures!");
+		    break;
 		case COCKNEST:
 		    pline("You enter a disgusting nest!");
 		    break;
@@ -2050,6 +2053,9 @@ void check_special_room(boolean newlev)
 				break;
 			    case BEEHIVE:
 				level->flags.has_beehive = 0;
+				break;
+			    case LEMUREPIT:
+				level->flags.has_lemurepit = 0;
 				break;
 			}
 		}

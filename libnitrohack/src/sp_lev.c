@@ -1806,6 +1806,7 @@ void fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 		case COURT:
 		case ZOO:
 		case BEEHIVE:
+		case LEMUREPIT:
 		case MORGUE:
 		case BARRACKS:
 		    fill_zoo(lev, croom);
@@ -1830,6 +1831,9 @@ void fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 		break;
 	    case BEEHIVE:
 		lev->flags.has_beehive = TRUE;
+		break;
+	    case LEMUREPIT:
+		lev->flags.has_lemurepit = TRUE;
 		break;
 	    case BARRACKS:
 		lev->flags.has_barracks = TRUE;
