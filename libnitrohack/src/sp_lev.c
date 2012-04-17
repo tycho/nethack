@@ -3029,6 +3029,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
     /* disable level flipping for some levels */
     if (!Is_astralevel(&lev->z) &&
+	!Is_blackmarket(&lev->z) &&
 	!Is_knox(&lev->z) &&
 	!Is_oracle_level(&lev->z) &&
 	!Is_minetown_level(&lev->z) &&
