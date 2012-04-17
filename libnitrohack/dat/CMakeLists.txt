@@ -10,6 +10,7 @@ set (LEVEL_DESCRIPTIONS
     ${LNH_DAT}/endgame.des
     ${LNH_DAT}/gehennom.des
     ${LNH_DAT}/Healer.des
+    ${LNH_DAT}/heck.des
     ${LNH_DAT}/Knight.des
     ${LNH_DAT}/knox.des
     ${LNH_DAT}/medusa.des
@@ -45,6 +46,17 @@ set (COMPILED_LEVELS
     Cav-strt.lev earth.lev    fakewiz1.lev fakewiz2.lev
     fire.lev     Hea-fila.lev Hea-filb.lev Hea-goal.lev
     Hea-loca.lev Hea-strt.lev
+    heck-a-1.lev heck-a-2.lev heck-a-3.lev heck-a-4.lev
+    heck-a-5.lev heck-a-6.lev heck-a-7.lev heck-b-1.lev
+    heck-b-2.lev heck-b-3.lev heck-b-4.lev heck-b-5.lev
+    heck-b-6.lev heck-b-7.lev heck-b-8.lev heck-c-1.lev
+    heck-c-2.lev heck-c-3.lev heck-c-4.lev heck-c-5.lev
+    heck-c-6.lev heck-c-7.lev heck-c-8.lev heck-c-9.lev
+    heck-d-1.lev heck-d-2.lev heck-d-3.lev heck-d-4.lev
+    heck-d-5.lev heck-d-6.lev heck-d-7.lev heck-d-8.lev
+    heck-d-9.lev heck-e-1.lev heck-e-2.lev heck-e-3.lev
+    heck-e-4.lev heck-e-5.lev heck-e-6.lev heck-e-7.lev
+    heck-e-8.lev heck-e-9.lev
     hellfill.lev
     juiblex.lev  Kni-fila.lev
     Kni-filb.lev Kni-goal.lev Kni-loca.lev Kni-strt.lev
@@ -80,17 +92,6 @@ set (COMPILED_LEVELS
     water.lev    wizard1.lev  wizard2.lev  wizard3.lev
     Wiz-fila.lev Wiz-filb.lev Wiz-goal.lev Wiz-loca.lev
     Wiz-strt.lev
-    heck-a-1.lev heck-a-2.lev heck-a-3.lev heck-a-4.lev
-    heck-a-5.lev heck-a-6.lev heck-a-7.lev heck-b-1.lev
-    heck-b-2.lev heck-b-3.lev heck-b-4.lev heck-b-5.lev
-    heck-b-6.lev heck-b-7.lev heck-b-8.lev heck-c-1.lev
-    heck-c-2.lev heck-c-3.lev heck-c-4.lev heck-c-5.lev
-    heck-c-6.lev heck-c-7.lev heck-c-8.lev heck-c-9.lev
-    heck-d-1.lev heck-d-2.lev heck-d-3.lev heck-d-4.lev
-    heck-d-5.lev heck-d-6.lev heck-d-7.lev heck-d-8.lev
-    heck-d-9.lev heck-e-1.lev heck-e-2.lev heck-e-3.lev
-    heck-e-4.lev heck-e-5.lev heck-e-6.lev heck-e-7.lev
-    heck-e-8.lev heck-e-9.lev
     )
 
 set (NHDAT_SRC dungeon quest.dat rumors oracles ${COMPILED_LEVELS} history data)
