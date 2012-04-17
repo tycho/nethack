@@ -70,6 +70,10 @@ static const char *const random_mesg[] = {
 	"Time flies like an arrow.",
 	"All Your Base Are Belong To Us!", /* Zero Wing */
 	"Numa Numa", /* Internet meme */
+	"I want to believe!", /* X-Files */
+	"Trust No One", /* X-Files */
+	"The Truth is Out There", /* X-Files */
+	"Look behind you, a Three-Headed Monkey!", /* Monkey Island */
 };
 
 char *random_engraving(char *outbuf)
