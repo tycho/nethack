@@ -802,6 +802,8 @@ SCROLL(NULL,                    "HZLRC KSTSBD MPFNG",   1,   0, 100),
 SCROLL(NULL,                    "EIRIS SAZUN IDISI",    1,   0, 100), /* Merseburg Incantations */
 SCROLL(NULL,                    "PHOL ENDE WODAN",      1,   0, 100), /* Merseburg Incantations */
 SCROLL(NULL,                    "GHOTI",                1,   0, 100), /* pronounced as 'fish', George Bernard Shaw */
+SCROLL(NULL,                    "MAPIRO MAHAMA DIROMAT",1,   0, 100), /* Wizardry */
+SCROLL(NULL,                    "VAS CORP BET MANI",    1,   0, 100), /* Ultima */
 /* these must come last because they have special descriptions */
 SCROLL("blank paper",           "unlabeled",        0,  28,  60),
 #undef SCROLL
