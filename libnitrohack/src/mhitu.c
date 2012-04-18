@@ -1825,6 +1825,35 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		case AD_DISE:
 		    if (!diseasemu(mtmp->data)) tmp = 0;
 		    break;
+		case AD_DISN:
+		    if (!mtmp->mcan && rn2(2) && u.uswldtim < 2) {
+			tmp = 0;
+			if (Disint_resistance) {
+			    shieldeff(u.ux, u.uy);
+			    pline("You feel a mild tickle.");
+			    tmp = 0;
+			    break;
+			} else if (uarms) {
+			    /* destroy shield; other possessions are safe */
+			    destroy_arm(uarms);
+			    break;
+			} else if (uarm) {
+			    /* destroy suit; if present, cloak goes too */
+			    if (uarmc) destroy_arm(uarmc);
+			    destroy_arm(uarm);
+			    break;
+			}
+			/* no shield or suit, you're dead; wipe out cloak
+			   and/or shirt in case of life-saving or bones */
+			if (uarmc) destroy_arm(uarmc);
+			if (uarmu) destroy_arm(uarmu);
+			pline("You are disintegrated!");
+			tmp = u.uhp;
+			if (Half_physical_damage) tmp *= 2; /* sorry */
+		    } else {
+			tmp = 0;
+		    }
+		    break;
 		default:
 		    tmp = 0;
 		    break;
