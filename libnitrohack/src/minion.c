@@ -6,7 +6,7 @@
 #include "epri.h"
 
 /* mon summons a monster */
-void msummon(struct monst *mon)
+void msummon(struct monst *mon, const d_level *dlev)
 {
 	const struct permonst *ptr;
 	int dtype = NON_PM, cnt = 0;
@@ -23,20 +23,20 @@ void msummon(struct monst *mon)
 	    ptr = &mons[PM_WIZARD_OF_YENDOR];
 	    atyp = (ptr->maligntyp==A_NONE) ? A_NONE : sgn(ptr->maligntyp);
 	}
-	    
+
 	if (is_dprince(ptr) || (ptr == &mons[PM_WIZARD_OF_YENDOR])) {
 	    dtype = (!rn2(20)) ? dprince(atyp) :
-				 (!rn2(4)) ? dlord(atyp) : ndemon(&mon->dlevel->z, atyp);
+				 (!rn2(4)) ? dlord(atyp) : ndemon(dlev, atyp);
 	    cnt = (!rn2(4) && is_ndemon(&mons[dtype])) ? 2 : 1;
 	} else if (is_dlord(ptr)) {
 	    dtype = (!rn2(50)) ? dprince(atyp) :
-				 (!rn2(20)) ? dlord(atyp) : ndemon(&mon->dlevel->z, atyp);
+				 (!rn2(20)) ? dlord(atyp) : ndemon(dlev, atyp);
 	    cnt = (!rn2(4) && is_ndemon(&mons[dtype])) ? 2 : 1;
 	} else if (is_ndemon(ptr)) {
 	    dtype = (!rn2(20)) ? dlord(atyp) :
-				 (!rn2(6)) ? ndemon(&mon->dlevel->z, atyp) : monsndx(ptr);
+				 (!rn2(6)) ? ndemon(dlev, atyp) : monsndx(ptr);
 	    cnt = 1;
-	} else if (is_lminion(mon)) {
+	} else if (mon && is_lminion(mon)) {
 	    dtype = (is_lord(ptr) && !rn2(20)) ? llord() :
 		     (is_lord(ptr) || !rn2(6)) ? lminion() : monsndx(ptr);
 	    cnt = (!rn2(4) && !is_lord(&mons[dtype])) ? 2 : 1;
@@ -49,7 +49,7 @@ void msummon(struct monst *mon)
 		    break;
 		case A_CHAOTIC:
 		case A_NONE:
-		    dtype = ndemon(&mon->dlevel->z, atyp);
+		    dtype = ndemon(dlev, atyp);
 		    break;
 		}
 	    } else {
@@ -67,7 +67,7 @@ void msummon(struct monst *mon)
 	 * could get this far with an extinct dtype), try another.
 	 */
 	if (mvitals[dtype].mvflags & G_GONE) {
-	    dtype = ndemon(&mon->dlevel->z, atyp);
+	    dtype = ndemon(dlev, atyp);
 	    if (dtype == NON_PM) return;
 	}
 

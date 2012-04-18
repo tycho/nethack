@@ -389,7 +389,7 @@ int nasty(struct monst *mcast)
     int count=0;
 
     if (!rn2(10) && Inhell) {
-	msummon(NULL);	/* summons like WoY */
+	msummon(NULL, &level->z);	/* summons like WoY */
 	count++;
     } else {
 	tmp = (u.ulevel > 3) ? u.ulevel/3 : 1; /* just in case -- rph */
