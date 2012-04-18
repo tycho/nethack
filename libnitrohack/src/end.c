@@ -422,7 +422,7 @@ static boolean check_survival(int how, char *kilbuf)
 	killer = kilbuf;
 
 	if (how < PANICKED) u.umortality++;
-	if (Lifesaved && (how <= GENOCIDED)) {
+	if (Lifesaved && (how <= MAX_SURVIVABLE_DEATH)) {
 		pline("But wait...");
 		makeknown(AMULET_OF_LIFE_SAVING);
 		pline("Your medallion %s!",
@@ -457,11 +457,13 @@ static boolean check_survival(int how, char *kilbuf)
 			}
 		}
 	}
-	if ((wizard || discover) && (how <= GENOCIDED)) {
+	if ((wizard || discover) && (how <= MAX_SURVIVABLE_DEATH)) {
 		if (yn("Die?") == 'y')
 		    return FALSE;
 		pline("OK, so you don't %s.",
-			(how == CHOKING) ? "choke" : "die");
+			(how == CHOKING) ? "choke" :
+			(how == DISINTEGRATED) ? "disintegrate" :
+			"die");
 		if (u.uhpmax <= 0)
 		    u.uhpmax = u.ulevel * 8;	/* arbitrary */
 		savelife(how);
