@@ -227,13 +227,13 @@ void add_region(struct level *lev, struct region *reg)
 	    /* Some lev->regions can cross the level boundaries */
 	    if (!isok(i,j))
 		continue;
-	    if (MON_AT(level, i, j) && inside_region(reg, i, j))
-		add_mon_to_reg(reg, level->monsters[i][j]);
+	    if (MON_AT(lev, i, j) && inside_region(reg, i, j))
+		add_mon_to_reg(reg, lev->monsters[i][j]);
 	    if (reg->visible && cansee(i, j))
 		newsym(i, j);
 	}
     /* Check for player now... */
-    if (inside_region(reg, u.ux, u.uy)) 
+    if (inside_region(reg, u.ux, u.uy))
 	set_hero_inside(reg);
     else
 	clear_hero_inside(reg);
