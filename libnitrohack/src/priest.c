@@ -187,11 +187,6 @@ void priestini(struct level *lev, struct mkroom *sroom, int sx, int sy,
 		priest->msleeping = 0;
 		set_malign(priest); /* mpeaceful may have changed */
 
-		/* now his/her goodies... */
-		if (sanctum && EPRI(priest)->shralign == A_NONE &&
-		     on_level(&sanctum_level, &lev->z)) {
-			mongets(priest, AMULET_OF_YENDOR);
-		}
 		/* 2 to 4 spellbooks */
 		for (cnt = rn1(3,2); cnt > 0; --cnt) {
 		    mpickobj(priest, mkobj(level, SPBOOK_CLASS, FALSE));
@@ -307,8 +302,7 @@ void intemple(int roomno)
 	if (!temple_occupied(u.urooms0)) {
 	    if (tended) {
 		shrined = has_shrine(priest);
-		sanctum = (priest->data == &mons[PM_HIGH_PRIEST] &&
-			   (Is_sanctum(&u.uz) || In_endgame(&u.uz)));
+		sanctum = (Is_sanctum(&u.uz) || In_endgame(&u.uz));
 		can_speak = (priest->mcanmove && !priest->msleeping &&
 			     flags.soundok);
 		if (can_speak) {

@@ -1385,6 +1385,23 @@ boolean corpse_chance(struct monst *mon,
 		(2 + ((int)(mdat->geno & G_FREQ)<2) + verysmall(mdat))));
 }
 
+/* Create Cthulhu's death message and death cloud. */
+static void cthulhu_dies(struct monst *mon)
+{
+	/* really dead? */
+	if (mon->mhp <= 0) {
+		/* Cthulhu deliquesces... */
+		if (cansee(mon->mx, mon->my)) {
+			pline("%s body deliquesces into a cloud of noxious gas!",
+			      s_suffix(Monnam(mon)));
+		} else {
+			You_hear("hissing and bubbling!");
+		}
+		/* ...into a stinking cloud... */
+		create_cthulhu_death_cloud(level, mon->mx, mon->my, 3, 8);
+	}
+}
+
 /* drop (perhaps) a cadaver and remove monster */
 void mondied(struct monst *mdef)
 {
@@ -1507,6 +1524,9 @@ void monkilled(struct monst *mdef, const char *fltxt, int how)
 	else
 	    mondied(mdef);
 
+	if (mdef->data == &mons[PM_CTHULHU])
+	    cthulhu_dies(mdef);
+
 	if (be_sad && mdef->mhp <= 0) {
 	    if (kenny || (Hallucination && !rn2(4))) {
 		verbalize("Oh my god, they killed Kenny!");
@@ -1611,6 +1631,9 @@ void xkilled(struct monst *mtmp, int dest)
 
 	mdat = mtmp->data; /* note: mondead can change mtmp->data */
 	mndx = monsndx(mdat);
+
+	if (mdat == &mons[PM_CTHULHU])
+	    cthulhu_dies(mtmp);
 
 	if (stoned) {
 		stoned = FALSE;

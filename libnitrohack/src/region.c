@@ -14,6 +14,7 @@
 
 static boolean inside_gas_cloud(void *,void *);
 static boolean expire_gas_cloud(void *,void *);
+static boolean revive_cthulhu(void *,void *);
 static boolean inside_rect(struct nhrect *,int,int);
 static boolean inside_region(struct region *,int,int);
 static struct region *create_region(struct nhrect *,int);
@@ -33,7 +34,9 @@ static const callback_proc callbacks[] = {
 #define INSIDE_GAS_CLOUD 0
     inside_gas_cloud,
 #define EXPIRE_GAS_CLOUD 1
-    expire_gas_cloud
+    expire_gas_cloud,
+#define REVIVE_CTHULHU 2	/* Cthulhu comes back... */
+    revive_cthulhu
 };
 
 /* Should be inlined. */
@@ -658,6 +661,35 @@ boolean expire_gas_cloud(void *p1, void *p2)
     return TRUE;		/* OK, it's gone, you can free it! */
 }
 
+boolean revive_cthulhu(void *p1, void *p2)
+{
+    boolean ret = expire_gas_cloud(p1, p2);
+    if (ret) {
+	/* Bring back Cthulhu! */
+	int cx, cy;
+	struct region *reg = (struct region *) p1;
+	struct monst *cthulhu = NULL;
+	coord cc;
+
+	cx = (reg->bounding_box.lx + reg->bounding_box.hx) / 2;
+	cy = (reg->bounding_box.ly + reg->bounding_box.hy) / 2;
+
+	if (enexto(&cc, level, cx, cy, &mons[PM_CTHULHU])) {
+	    cx = cc.x;
+	    cy = cc.y;
+	} else {
+	    cx = cy = 0;	/* Place Cthulhu randomly */
+	}
+
+	/* Make sure Cthulhu doesn't get the Amulet again! :-) */
+	cthulhu = makemon(&mons[PM_CTHULHU], level, cx, cy,
+			  MM_NOCOUNTBIRTH | NO_MINVENT);
+	if (cthulhu && canseemon(cthulhu))
+	    pline("%s reforms!", Monnam(cthulhu));
+    }
+    return ret;
+}
+
 boolean inside_gas_cloud(void * p1, void * p2)
 {
     struct region *reg;
@@ -707,6 +739,17 @@ boolean inside_gas_cloud(void * p1, void * p2)
 	}
     }
     return FALSE;		/* Monster is still alive */
+}
+
+struct region *create_cthulhu_death_cloud(struct level *lev, xchar x, xchar y, int radius, int damage)
+{
+    struct region *cloud;
+
+    cloud = create_gas_cloud(lev, x, y, radius, damage);
+    if (cloud)
+	cloud->expire_f = REVIVE_CTHULHU;
+
+    return cloud;
 }
 
 struct region *create_gas_cloud(struct level *lev, xchar x, xchar y, int radius, int damage)

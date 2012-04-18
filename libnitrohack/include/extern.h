@@ -1329,6 +1329,8 @@ extern void free_regions(struct level *lev);
 extern void save_regions(struct memfile *mf, struct level *lev);
 extern void rest_regions(struct memfile *mf, struct level *lev, boolean ghostly);
 extern struct region* create_gas_cloud(struct level *lev, xchar, xchar, int, int);
+extern struct region* create_cthulhu_death_cloud(struct level *lev, xchar x, xchar y,
+						 int radius, int damage);
 
 /* ### restore.c ### */
 

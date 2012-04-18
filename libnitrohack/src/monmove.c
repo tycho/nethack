@@ -99,6 +99,7 @@ boolean onscary(int x, int y, struct monst *mtmp)
 	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
 	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
 	    is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
+	    mtmp->data == &mons[PM_CTHULHU] ||
 	    /* Vlad ignores Elbereth/scare monster/garlic */
 	    mtmp->data == &mons[PM_VLAD_THE_IMPALER] ||
 	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
@@ -348,7 +349,8 @@ int dochug(struct monst *mtmp)
 	if (mdat == &mons[PM_WATCHMAN] || mdat == &mons[PM_WATCH_CAPTAIN])
 		watch_on_duty(mtmp);
 
-	else if (is_mind_flayer(mdat) && !rn2(20)) {
+	/* [DS] Cthulhu also uses psychic blasts. */
+	else if ((is_mind_flayer(mdat) || mdat == &mons[PM_CTHULHU]) && !rn2(20)) {
 		struct monst *m2, *nmon = NULL;
 
 		if (canseemon(mtmp))
@@ -369,7 +371,9 @@ int dochug(struct monst *mtmp)
 				pline("It locks on to your %s!",
 					m_sen ? "telepathy" :
 					Blind_telepat ? "latent telepathy" : "mind");
-				dmg = rnd(15);
+				dmg = (mdat == &mons[PM_CTHULHU]) ?
+					rn1(10, 10) :
+					rn1(4, 4);
 				if (Half_spell_damage) dmg = (dmg+1) / 2;
 				losehp(dmg, "psychic blast", KILLED_BY_AN);
 			}

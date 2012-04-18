@@ -600,6 +600,14 @@ static void m_initinv(struct monst *mtmp)
 			mongets(mtmp, WAN_FIRE);
 		}
 		break;
+	    case S_HUMANOID:
+		/* [DS] Cthulhu isn't fully integrated yet, and he won't be
+		   until Moloch's Sanctum is rearranged */
+		if (ptr == &mons[PM_CTHULHU]) {
+		    mongets(mtmp, AMULET_OF_YENDOR);
+		    mongets(mtmp, WAN_DEATH);
+		    mongets(mtmp, POT_FULL_HEALING);
+		}
 	    default:
 		break;
 	}
