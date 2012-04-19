@@ -138,7 +138,10 @@ struct obj zeroobj;
 char dogname[PL_PSIZ];
 char catname[PL_PSIZ];
 char horsename[PL_PSIZ];
-char preferred_pet;	/* '\0', 'c', 'd', 'n' (none) */
+char monkeyname[PL_PSIZ];
+char wolfname[PL_PSIZ];
+char crocname[PL_PSIZ];
+char preferred_pet;	/* '\0', 'c', 'd', 'e', 'n' (none) */
 /* monsters that went down/up together with @ */
 struct monst *mydogs;
 /* monsters that are moving to another dungeon level */
@@ -236,6 +239,9 @@ void init_data(void)
     memset(dogname, 0, sizeof(dogname));
     memset(catname, 0, sizeof(catname));
     memset(horsename, 0, sizeof(horsename));
+    memset(monkeyname, 0, sizeof(monkeyname));
+    memset(wolfname, 0, sizeof(wolfname));
+    memset(crocname, 0, sizeof(crocname));
     memset(&youmonst, 0, sizeof(youmonst));
     memset(&zeroobj, 0, sizeof(zeroobj));
     memset(mvitals, 0, sizeof(mvitals));

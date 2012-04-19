@@ -1353,7 +1353,16 @@ int thitmonst(struct monst *mon, struct obj *obj)
 	    return 1;
 
 	} else if (befriend_with_obj(mon->data, obj) ||
-		   (mon->mtame && dogfood(mon, obj) <= ACCFOOD)) {
+		   (mon->mtame && dogfood(mon, obj) <= ACCFOOD) ||
+		   (obj->oclass == FOOD_CLASS &&
+		    ((Role_if(PM_ROGUE) &&
+		       mon->data == &mons[PM_MONKEY] &&
+		      (obj->otyp == BANANA || !rn2(2))) ||
+		     (Role_if(PM_TOURIST) &&
+		      (mon->data == &mons[PM_CROCODILE] ||
+		       mon->data == &mons[PM_BABY_CROCODILE])) ||
+		     ((Role_if(PM_RANGER) || Role_if(PM_CAVEMAN)) &&
+		       mon->data == &mons[PM_WINTER_WOLF_CUB])))) {
 	    if (tamedog(mon, obj))
 		return 1;           	/* obj is gone */
 	    else {

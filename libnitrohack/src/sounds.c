@@ -598,7 +598,22 @@ static int domonnoise(struct monst *mtmp)
 		break;
 	    } /* else FALLTHRU */
 	case MS_GROWL:
-	    pline_msg = mtmp->mpeaceful ? "snarls." : "growls!";
+	    if (mtmp->mtame &&
+		(mtmp->data == &mons[PM_MONKEY] ||
+		 mtmp->data == &mons[PM_APE] ||
+		 mtmp->data == &mons[PM_CARNIVOROUS_APE])) {
+		if (mtmp->mconf || mtmp->mflee || mtmp->mtrapped ||
+		    moves > EDOG(mtmp)->hungrytime || mtmp->mtame < 5) {
+		    pline_msg = "shrieks.";
+		    wake_nearto(mtmp->mx, mtmp->my, 8*8);
+		} else if (EDOG(mtmp)->hungrytime > moves + 1000) {
+		    pline_msg = "chatters.";
+		} else {
+		    pline_msg = "hoots.";
+		}
+	    } else {
+		pline_msg = mtmp->mpeaceful ? "snarls." : "growls!";
+	    }
 	    break;
 	case MS_ROAR:
 	    pline_msg = mtmp->mpeaceful ? "snarls." : "roars!";

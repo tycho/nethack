@@ -150,6 +150,9 @@ extern char plname[PL_NSIZ];
 extern char dogname[];
 extern char catname[];
 extern char horsename[];
+extern char monkeyname[];
+extern char wolfname[];
+extern char crocname[];
 extern char preferred_pet;
 extern const char *occtxt;			/* defined when occupation != NULL */
 extern const char *nomovemsg;

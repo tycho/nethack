@@ -35,6 +35,15 @@ static int pet_type(void)
 	    return PM_KITTEN;
 	else if (preferred_pet == 'd')
 	    return PM_LITTLE_DOG;
+	else if (Role_if(PM_ROGUE) &&
+		 (preferred_pet == 'e' || !rn2(3)))
+	    return PM_MONKEY;
+	else if ((Role_if(PM_RANGER) || Role_if(PM_CAVEMAN)) &&
+		 (preferred_pet == 'e' || !rn2(3)))
+	    return rn2(4) ? PM_WOLF : PM_WINTER_WOLF_CUB;
+	else if (Role_if(PM_TOURIST) &&
+		 (preferred_pet == 'e' || !rn2(3)))
+	    return PM_BABY_CROCODILE;
 	else
 	    return rn2(2) ? PM_KITTEN : PM_LITTLE_DOG;
 }
@@ -131,6 +140,12 @@ struct monst *makedog(void)
 		petname = dogname;
 	else if (pettype == PM_PONY)
 		petname = horsename;
+	else if (pettype == PM_MONKEY)
+		petname = monkeyname;
+	else if (pettype == PM_WOLF || pettype == PM_WINTER_WOLF_CUB)
+		petname = wolfname;
+	else if (pettype == PM_BABY_CROCODILE)
+		petname = crocname;
 	else
 		petname = catname;
 
@@ -144,6 +159,17 @@ struct monst *makedog(void)
 	}
 
 	mtmp = makemon(&mons[pettype], level, u.ux, u.uy, MM_EDOG);
+
+	/* Keep the exotic pets from being higher-level than normal starting
+	 * pets.  (makedog is only called once, during game setup, so this
+	 * is the place to put it.) */
+	if (pettype == PM_WOLF ||
+	    pettype == PM_WINTER_WOLF_CUB ||
+	    pettype == PM_MONKEY ||
+	    pettype == PM_BABY_CROCODILE) {
+	    mtmp->m_lev  = 1;
+	    mtmp->mhpmax = mtmp->mhp = dice(1,8);
+	}
 
 	/* Horses already wear a saddle */
 	if (pettype == PM_PONY && !!(otmp = mksobj(level, SADDLE, TRUE, FALSE))) {
