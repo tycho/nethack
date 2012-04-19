@@ -227,7 +227,7 @@ void map_object(struct obj *obj, int show)
 	    if (Hallucination)
 		monnum = random_monster();
 	    else
-		monnum = obj->corpsenm;
+		monnum = obfuscate_monster(obj->corpsenm);
 	}
 	
 	level->locations[x][y].mem_obj = objtyp + 1;
@@ -401,8 +401,8 @@ static void display_monster(
 	if (worm_tail) {
 	    monnum = PM_LONG_WORM_TAIL;
 	} else {
-	    /* vis_monsndx accounts for e.g. shuffled dragon appearances */
-	    monnum = vis_monsndx(mon->data);
+	    /* Account for e.g. shuffled dragon appearances. */
+	    monnum = obfuscate_monster(monsndx(mon->data));
 	}
 	
 	if (sightflags == DETECTED)
@@ -922,8 +922,8 @@ void swallowed(int first)
 	dbuf_set(lastx, lasty, 0,0,0,0,0,0,0,0); /* remove hero symbol */
     }
 
-    /* vis_monsndx accounts for e.g. shuffled dragon appearances */
-    swallower = vis_monsndx(u.ustuck->data);
+    /* Account for e.g. shuffled dragon appearances. */
+    swallower = obfuscate_monster(monsndx(u.ustuck->data));
     /* assume isok(u.ux,u.uy) */
     left_ok = isok(u.ux-1,u.uy);
     rght_ok = isok(u.ux+1,u.uy);
@@ -1252,6 +1252,29 @@ int obfuscate_object(int otyp)
     return objects[otyp].oc_descr_idx + 1;
 }
 
+/* Account for e.g. shuffled dragon appearances, so names and colors
+ * are correctly obfuscated. For display purposes only.
+ */
+int obfuscate_monster(int mndx)
+{
+    boolean is_dragon = FALSE;
+    boolean is_baby_dragon = FALSE;
+
+    if (mndx >= PM_GRAY_DRAGON && mndx <= PM_YELLOW_DRAGON)
+	is_dragon = TRUE;
+    if (mndx >= PM_BABY_GRAY_DRAGON && mndx <= PM_BABY_YELLOW_DRAGON)
+	is_baby_dragon = TRUE;
+
+    /* account for shuffled dragon appearances */
+    if (is_dragon || is_baby_dragon) {
+	int dragon_offset = is_baby_dragon ?
+		PM_BABY_GRAY_DRAGON : PM_GRAY_DRAGON ;
+	return objects[mndx - dragon_offset + GRAY_DRAGON_SCALES].oc_name_idx -
+		GRAY_DRAGON_SCALES + dragon_offset;
+    }
+
+    return mndx;
+}
 
 void dbuf_set_effect(int x, int y, int eglyph)
 {

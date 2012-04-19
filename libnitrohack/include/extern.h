@@ -214,6 +214,7 @@ extern void see_traps(void);
 extern void display_self(void);
 extern int doredraw(void);
 extern int obfuscate_object(int otyp);
+extern int obfuscate_monster(int mndx);
 extern void dbuf_set(int x, int y, int bg, int trap, int obj, int obj_mn,
 		   boolean invis, int mon, int monflags, int effect);
 extern void dbuf_set_effect(int x, int y, int eglyph);
@@ -1005,7 +1006,6 @@ extern int num_horns(const struct permonst *);
 extern boolean dmgtype(const struct permonst *,int);
 extern int max_passive_dmg(struct monst *,struct monst *);
 extern int monsndx(const struct permonst *);
-extern int vis_monsndx(const struct permonst *);
 extern int name_to_mon(const char *);
 extern int gender(struct monst *);
 extern int pronoun_gender(struct monst *);

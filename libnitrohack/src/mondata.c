@@ -348,33 +348,6 @@ int monsndx(const struct permonst *ptr)
 	return i;
 }
 
-/* Return visible mons index, accounting for e.g. shuffled dragons
- * apperances, so names and colors are correctly obfuscated.
- * For non-display purposes, use monsndx instead.
- */
-int vis_monsndx(const struct permonst *ptr)
-{
-	boolean is_dragon = FALSE;
-	boolean is_baby_dragon = FALSE;
-
-	int ndx = monsndx(ptr);
-
-	if (ndx >= PM_GRAY_DRAGON && ndx <= PM_YELLOW_DRAGON)
-	    is_dragon = TRUE;
-	if (ndx >= PM_BABY_GRAY_DRAGON && ndx <= PM_BABY_YELLOW_DRAGON)
-	    is_baby_dragon = TRUE;
-
-	/* account for shuffled dragon appearances */
-	if (is_dragon || is_baby_dragon) {
-	    int dragon_offset = is_baby_dragon ?
-		    PM_BABY_GRAY_DRAGON : PM_GRAY_DRAGON ;
-	    return objects[ndx - dragon_offset + GRAY_DRAGON_SCALES].oc_name_idx -
-		    GRAY_DRAGON_SCALES + dragon_offset;
-	}
-
-	return ndx;
-}
-
 int name_to_mon(const char *in_str)
 {
 	/* Be careful.  We must check the entire string in case it was
@@ -685,7 +658,7 @@ const char *on_fire(const struct permonst *mptr, const struct attack *mattk)
  */
 const char *mons_mname(const struct permonst *pm)
 {
-	return mons[vis_monsndx(pm)].mname;
+	return mons[obfuscate_monster(monsndx(pm))].mname;
 }
 
 
