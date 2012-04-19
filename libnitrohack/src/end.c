@@ -45,7 +45,7 @@ static const char *const deaths[] = {		/* the array of death */
 	"burning", "dissolving under the heat and pressure",
 	"crushed", "turned to stone", "turned into slime",
 	"disintegrated", "genocided", "panic", "trickery",
-	"quit", "escaped", "ascended"
+	"quit", "escaped", "defied the gods and escaped", "ascended"
 };
 
 static const char *const ends[] = {		/* "when you..." */
@@ -53,7 +53,7 @@ static const char *const ends[] = {		/* "when you..." */
 	"burned", "dissolved in the lava",
 	"were crushed", "turned to stone", "turned into slime",
 	"were disintegrated", "were genocided", "panicked", "were tricked",
-	"quit", "escaped", "ascended"
+	"quit", "escaped", "defied the gods and escaped", "ascended"
 };
 
 static char killbuf[BUFSZ];
@@ -496,7 +496,7 @@ static long calc_score(int how)
 	u.urscore += 50L * (long)(deepest - 1);
 	if (deepest > 20)
 	    u.urscore += 1000L * (long)((deepest > 30) ? 10 : deepest - 20);
-	if (how == ASCENDED) u.urscore *= 2L;
+	if (how == ASCENDED || DEFIED) u.urscore *= 2L;
 	
 	return umoney;
 }
@@ -559,7 +559,7 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	    add_menutext(&menu, "");
 	}
 
-	if (how == ESCAPED || how == ASCENDED) {
+	if (how == ESCAPED || how == DEFIED || how == ASCENDED) {
 	    struct monst *mtmp;
 	    struct obj *otmp;
 	    const struct val_list *val;
@@ -601,6 +601,7 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	    if (!done_stopprint) {
 		sprintf(eos(pbuf), "%s with %d point%s,",
 			how==ASCENDED ? "went to your reward" :
+			how==DEFIED   ? "defied the gods and escaped" :
 					"escaped from the dungeon",
 			u.urscore, plur(u.urscore));
 		add_menutext(&menu, pbuf);
@@ -762,7 +763,7 @@ void done(int how)
 			strcpy(killbuf, "quit while already on Charon's boat");
 		}
 	}
-	if (how == ESCAPED)
+	if (how == ESCAPED || how == DEFIED)
 		killer_format = NO_KILLER_PREFIX;
 	
 	fd = logfile;

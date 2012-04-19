@@ -686,7 +686,7 @@ static enum obj_use_status object_selection_checks(struct obj *otmp,
 		    (otmp->oclass == GEM_CLASS && !is_graystone(otmp))))
                  || (!strncmp(word, "invoke", 6) &&
 		(!otmp->oartifact && !objects[otyp].oc_unique &&
-		    (otyp != FAKE_AMULET_OF_YENDOR || otmp->known) &&
+		     otyp != FAKE_AMULET_OF_YENDOR &&
                      otmp->oclass != WAND_CLASS && /* V for breaking wands */
                      ((otmp->oclass == TOOL_CLASS && /* V for rubbing */
                        otyp != OIL_LAMP && otyp != MAGIC_LAMP &&

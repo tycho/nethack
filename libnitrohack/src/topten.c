@@ -56,7 +56,7 @@ const char * const killed_by_prefix[] = {
     "killed by ", "choked on ", "poisoned by ", "died of ", "drowned in ",
     "burned by ", "dissolved in ", "crushed to death by ", "petrified by ",
     "turned to slime by ", "killed by ", "disintegrated by ",
-    "", "", "", "", ""
+    "", "", "", "", "", ""
 };
 
 static int end_how;
@@ -404,7 +404,11 @@ static void topten_death_description(struct toptenentry *in, char *outbuf)
 
     sprintf(eos(outbuf), "%.16s %s-%s-%s-%s ", in->name, in->plrole, in->plrace, in->plgend, in->plalign);
 
-    if (!strncmp("escaped", in->death, 7)) {
+    if (!strncmp("defied", in->death, 6)) {
+	sprintf(eos(outbuf), "defied the Gods and escaped the dungeon %s",
+		!strncmp(" (", in->death + 7, 2) ? in->death + 7 + 2 : "");
+	second_line = FALSE;
+    } else if (!strncmp("escaped", in->death, 7)) {
 	sprintf(eos(outbuf), "escaped the dungeon %s[max level %d]",
 		!strncmp(" (", in->death + 7, 2) ? in->death + 7 + 2 : "",
 		in->maxlvl);

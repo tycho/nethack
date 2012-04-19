@@ -51,6 +51,8 @@ char msgbuf[BUFSZ];
 
 static const char comestibles[] = { FOOD_CLASS, 0 };
 
+static const char sacrifice_types[] = { AMULET_CLASS, FOOD_CLASS, 0 };
+
 static const char allobj[] = {
 	COIN_CLASS, WEAPON_CLASS, ARMOR_CLASS, POTION_CLASS, SCROLL_CLASS,
 	WAND_CLASS, RING_CLASS, AMULET_CLASS, FOOD_CLASS, TOOL_CLASS,
@@ -2168,6 +2170,7 @@ struct obj *floorfood(/* get food from floor or pack */
 	char qbuf[QBUFSZ];
 	char c;
 	boolean feeding = (!strcmp(verb, "eat"));
+	boolean sacrificing = (!strcmp(verb, "sacrifice"));
 
 	/* if we can't touch floor objects then use invent food only */
 	if (!can_reach_floor() ||
@@ -2212,6 +2215,22 @@ struct obj *floorfood(/* get food from floor or pack */
 	    }
 	}
 
+	if (sacrificing) {
+	    for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
+		if (otmp->otyp == AMULET_OF_YENDOR ||
+		    otmp->otyp == FAKE_AMULET_OF_YENDOR) {
+		    sprintf(qbuf, "There %s %s here; %s %s?",
+			    otense(otmp, "are"),
+			    doname(otmp), verb,
+			    "it");
+		    if ((c = yn_function(qbuf,ynqchars,'n')) == 'y')
+			return otmp;
+		    else if(c == 'q')
+			return NULL;
+		}
+	    }
+	}
+
 	/* Is there some food (probably a heavy corpse) here on the ground? */
 	for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
 		if (corpsecheck ?
@@ -2233,13 +2252,17 @@ struct obj *floorfood(/* get food from floor or pack */
 	/* We cannot use ALL_CLASSES since that causes getobj() to skip its
 	 * "ugly checks" and we need to check for inedible items.
 	 */
-	otmp = getobj(feeding ? (const char *)allobj :
-				(const char *)comestibles, verb);
-	if (corpsecheck && otmp)
-	    if (otmp->otyp != CORPSE || (corpsecheck == 2 && !tinnable(otmp))) {
+	otmp = getobj(sacrificing ? (const char *)sacrifice_types :
+		      feeding     ? (const char *)allobj :
+				    (const char *)comestibles, verb);
+	if (corpsecheck && otmp) {
+	    if ((otmp->otyp != AMULET_OF_YENDOR &&
+		 otmp->otyp != FAKE_AMULET_OF_YENDOR) &&
+		(otmp->otyp != CORPSE || (corpsecheck == 2 && !tinnable(otmp)))) {
 		pline("You can't %s that!", verb);
 		return NULL;
 	    }
+	}
 	return otmp;
 }
 

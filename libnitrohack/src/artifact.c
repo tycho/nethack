@@ -1186,6 +1186,11 @@ static int arti_invoke(struct obj *obj)
             return dorub(obj);
 	else if (obj->otyp == CRYSTAL_BALL)
 	    use_crystal_ball(obj);
+	else if (obj->otyp == AMULET_OF_YENDOR ||
+		 obj->otyp == FAKE_AMULET_OF_YENDOR)
+	    /* The Amulet is not technically an artifact
+	     * in the usual sense... */
+	    return invoke_amulet(obj);
 	else
 	    pline("Nothing happens.");
 	return 1;
