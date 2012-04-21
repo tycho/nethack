@@ -841,10 +841,11 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 		newlevel->dlevel = dunlevs_in_dungeon(newlevel);
 	if (newdungeon && In_endgame(newlevel)) { /* 1st Endgame Level !!! */
 		if (u.uhave.amulet) {
+		    s_level *first_plane = get_first_elemental_plane();
 		    pline("Well done, mortal!");
 		    pline("But now thou must face the final Test...");
 		    pline("Prove thyself worthy or perish!");
-		    assign_level(newlevel, get_first_elemental_plane());
+		    assign_level(newlevel, first_plane ? &first_plane->dlevel : NULL);
 		} else
 		    return;
 	}

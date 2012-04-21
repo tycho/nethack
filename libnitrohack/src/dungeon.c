@@ -251,31 +251,31 @@ s_level *get_next_elemental_plane(const d_level *lev)
 {
 	if (!In_endgame(lev)) {
 	    pline("get_next_elemental_plane not in Endgame.");
-	    return (s_level *)0;
+	    return NULL;
 	}
 
 	s_level *curr = find_level("astral"),
-		*plane = (s_level *)0;
+		*plane = NULL;
 	for (curr = sp_levchn; curr; curr = curr->next) {
 	    if (on_level(lev, &(curr->dlevel)))
 		return plane;
 	    plane = curr;
 	}
-	return (s_level *)0;
+	return NULL;
 }
 
 /*
  * Returns the first elemental plane of the endgame.
  */
-d_level *get_first_elemental_plane(void)
+s_level *get_first_elemental_plane(void)
 {
 	s_level *curr,
 		*dummy = find_level("dummy");
 	for (curr = find_level("astral"); curr; curr = curr->next) {
 	    if (curr->next == dummy)
-		return &curr->dlevel;
+		return curr;
 	}
-	return (d_level *)0;
+	return NULL;
 }
 
 /* Find the branch that links the named dungeon. */
@@ -1834,19 +1834,26 @@ static void overview_print_lev(char *buf, const struct level *lev)
 	
 	/* calculate level number */
 	i = depthstart + lev->z.dlevel - 1;
-	if (Is_astralevel(&lev->z))
+	if (Is_astralevel(&lev->z)) {
 		sprintf(buf, "Astral Plane");
-	else if (In_endgame(&lev->z))
-	    /* Negative numbers are mildly confusing, since they are never
-	     * shown to the player, except in wizard mode.  We could show
-	     * "Level -1" for the earth plane, for example.  Instead,
-	     * show "Plane 1" for the earth plane to differentiate from
-	     * level 1.  There's not much to show, but maybe the player
-	     * wants to #annotate them for some bizarre reason.
-	     */
-	    sprintf(buf, "Plane %i", -i);
-	else
+	} else if (In_endgame(&lev->z)) {
+	    if      (Is_earthlevel(&lev->z))	sprintf(buf, "Plane of Earth");
+	    else if (Is_airlevel(&lev->z))	sprintf(buf, "Plane of Air");
+	    else if (Is_firelevel(&lev->z))	sprintf(buf, "Plane of Fire");
+	    else if (Is_waterlevel(&lev->z))	sprintf(buf, "Plane of Water");
+	    else {
+		/* Negative numbers are mildly confusing, since they are never
+		 * shown to the player, except in wizard mode.  We could show
+		 * "Level -1" for the earth plane, for example.  Instead,
+		 * show "Plane 1" for the earth plane to differentiate from
+		 * level 1.  There's not much to show, but maybe the player
+		 * wants to #annotate them for some bizarre reason.
+		 */
+		sprintf(buf, "Plane %i", -i);
+	    }
+	} else {
 	    sprintf(buf, "Level %d", i);
+	}
 	
 	if (*lev->levname)
 	    sprintf(eos(buf), " (%s)", lev->levname);
@@ -1928,6 +1935,24 @@ static void overview_print_branch(char *buf, const struct overview_info *oi)
 }
 
 
+static void overview_add_lev_info(struct menulist *menu,
+				  const struct overview_info *oinfo)
+{
+	char buf[BUFSZ];
+
+	/* "some fountains, an altar" */
+	overview_print_info(buf, oinfo);
+	if (*buf)
+	    add_menutext(menu, buf);
+
+	/* "Stairs to the Gnomish Mines" */
+	if (oinfo->branch || oinfo->portal) {
+	    overview_print_branch(buf, oinfo);
+	    add_menutext(menu, buf);
+	}
+}
+
+
 /* print a dungeon overview */
 int dooverview(void)
 {
@@ -1947,7 +1972,6 @@ int dooverview(void)
 	dnum = -1;
 	for (i = 0; i < maxledgerno(); i++) {
 	    if (!levels[i]) continue;
-	    overview_scan(levels[i], &oinfo);
 	    
 	    if (levels[i]->z.dnum != dnum) {
 		if (i > 0)
@@ -1955,25 +1979,60 @@ int dooverview(void)
 		overview_print_dun(buf, levels[i]);
 		add_menuheading(&menu, buf);
 		dnum = levels[i]->z.dnum;
+		
+		/* List the randomized Planes in the right order. */
+		if (dnum == astral_level.dnum) {
+		    s_level *astral, *curr, *elemental_planes[4];
+		    int el_i, el_num = 0;
+		    for (curr = get_first_elemental_plane();
+			 curr && el_num < 4;
+			 curr = get_next_elemental_plane(&curr->dlevel)) {
+			elemental_planes[el_num] = curr;
+			el_num++;
+		    }
+		    
+		    /* Output from Astral to the first plane. */
+		    astral = find_level("astral");
+		    el_i = ledger_no(&astral->dlevel);
+		    if (levels[el_i]) {
+			/* level name (+ annotation) */
+			overview_print_lev(buf, levels[el_i]);
+			add_menuitem(&menu, el_i+1, buf, 0, FALSE);
+			
+			/* level info */
+			overview_scan(levels[el_i], &oinfo);
+			if (overview_is_interesting(levels[el_i], &oinfo))
+			    overview_add_lev_info(&menu, &oinfo);
+		    }
+		    /* Go backwards over elemental planes. */
+		    for (el_num = 3; el_num >= 0; el_num--) {
+			el_i = ledger_no(&elemental_planes[el_num]->dlevel);
+			if (levels[el_i]) {
+			    /* level name (+ annotation) */
+			    overview_print_lev(buf, levels[el_i]);
+			    add_menuitem(&menu, el_i+1, buf, 0, FALSE);
+			    
+			    /* level info */
+			    overview_scan(levels[el_i], &oinfo);
+			    if (overview_is_interesting(levels[el_i], &oinfo))
+				overview_add_lev_info(&menu, &oinfo);
+			}
+		    }
+		    
+		    /* Resume non-Plane listing, -1 for outer loop's i++. */
+		    i += 5 - 1;
+		    continue;
+		}
 	    }
 	    
 	    /* "Level 3 (my level name)" */
 	    overview_print_lev(buf, levels[i]);
 	    add_menuitem(&menu, i+1, buf, 0, FALSE);
 	    
-	    if (!overview_is_interesting(levels[i], &oinfo))
-		continue;
-	    
-	    /* "some fountains, an altar" */
-	    overview_print_info(buf, &oinfo);
-	    if (*buf)
-		add_menutext(&menu, buf);
-	    
-	    /* "Stairs to the Gnomish Mines" */
-	    if (oinfo.branch || oinfo.portal) {
-		overview_print_branch(buf, &oinfo);
-		add_menutext(&menu, buf);
-	    }
+	    /* level info */
+	    overview_scan(levels[i], &oinfo);
+	    if (overview_is_interesting(levels[i], &oinfo))
+		overview_add_lev_info(&menu, &oinfo);
 	}
 	
 	n = display_menu(menu.items, menu.icount, "Dungeon overview:", PICK_ONE, selected);

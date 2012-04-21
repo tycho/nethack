@@ -717,6 +717,7 @@ void level_tele(void)
 			newlevel.dnum = destdnum;
 			newlevel.dlevel = destlev;
 			if (In_endgame(&newlevel) && !In_endgame(&u.uz)) {
+				s_level *first_plane = get_first_elemental_plane();
 				sprintf(buf,
 				    "Destination is first elemental plane");
 				if (!u.uhave.amulet) {
@@ -728,7 +729,7 @@ void level_tele(void)
 						strcat(buf, " with the amulet");
 					}
 				}
-				assign_level(&newlevel, get_first_elemental_plane());
+				assign_level(&newlevel, first_plane ? &first_plane->dlevel : NULL);
 				pline("%s.", buf);
 			}
 			force_dest = TRUE;

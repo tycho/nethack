@@ -736,8 +736,10 @@ int peffects(struct obj *otmp)
 				Can_rise_up(u.ux, u.uy, &u.uz)) {
 			    const char *riseup ="You rise up, through the %s!";
 			    if (ledger_no(&u.uz) == 1) {
+				s_level *first_plane = get_first_elemental_plane();
 				pline(riseup, ceiling(u.ux,u.uy));
-				goto_level(get_first_elemental_plane(), FALSE, FALSE, FALSE);
+				goto_level(first_plane ? &first_plane->dlevel : NULL,
+					   FALSE, FALSE, FALSE);
 			    } else {
 			        int newlev = depth(&u.uz)-1;
 				d_level newlevel;
