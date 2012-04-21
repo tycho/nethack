@@ -940,10 +940,21 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	assign_level(&u.uz, newlevel);
 	assign_level(&u.utolev, newlevel);
 	u.utotype = 0;
-	if (dunlev_reached(&u.uz) < dunlev(&u.uz)) {
-		dunlev_reached(&u.uz) = dunlev(&u.uz);
+
+	/*
+	 * Record history of:
+	 * 1. deeper dungeon levels (TODO: track upward branches too, see below)
+	 * 2. entering the first of the Elemental Planes
+	 * 3. entering the Astral Plane
+	 */
+	if ((!In_endgame(&u.uz) && dunlev_reached(&u.uz) < dunlev(&u.uz)) ||
+	    (newdungeon && In_endgame(&u.uz)) ||
+	    Is_astralevel(&u.uz))
 		historic_event(FALSE, "reached %s.", hist_lev_name(&u.uz, FALSE));
-	}
+
+	/* TODO: Track upward dungeons correctly, e.g. Sokoban. */
+	if (dunlev_reached(&u.uz) < dunlev(&u.uz))
+		dunlev_reached(&u.uz) = dunlev(&u.uz);
 	reset_rndmonst(NON_PM);   /* u.uz change affects monster generation */
 
 	origlev = level;

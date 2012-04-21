@@ -109,13 +109,12 @@ const char *hist_lev_name(const d_level *l, boolean in_or_on)
     char *bufptr;
     
     if (In_endgame(l)) {
-	switch (l->dlevel) {
-	    case -5: strcpy(hlnbuf, "on the Astral Plane"); break;
-	    case -4: strcpy(hlnbuf, "on the Plane of Water"); break;
-	    case -3: strcpy(hlnbuf, "on the Plane of Fire"); break;
-	    case -2: strcpy(hlnbuf, "on the Plane of Air"); break;
-	    case -1: strcpy(hlnbuf, "on the Plane of Earth"); break;
-	}
+	if      (Is_astralevel(l))	strcpy(hlnbuf, "on the Astral Plane");
+	else if (Is_earthlevel(l))	strcpy(hlnbuf, "on the Astral Plane");
+	else if (Is_airlevel(l))	strcpy(hlnbuf, "on the Plane of Air");
+	else if (Is_firelevel(l))	strcpy(hlnbuf, "on the Plane of Fire");
+	else if (Is_waterlevel(l))	strcpy(hlnbuf, "on the Plane of Water");
+	else sprintf(hlnbuf, "on the Plane of %d", l->dlevel);
     }
     else if (Is_knox(l))
 	strcpy(hlnbuf, "in Fort Knox");
