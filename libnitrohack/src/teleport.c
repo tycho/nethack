@@ -544,7 +544,9 @@ void tele(void)
 	/* don't show trap if "Sorry..." */
 	if (!Blinded) make_blinded(0L,FALSE);
 
-	if ((u.uhave.amulet || On_W_tower_level(&u.uz)) && !rn2(3)) {
+	if ((u.uhave.amulet || On_W_tower_level(&u.uz) ||
+	     (u.usteed && mon_has_amulet(u.usteed))) &&
+	    !wizard) {
 	    pline("You feel disoriented for a moment.");
 	    return;
 	}
