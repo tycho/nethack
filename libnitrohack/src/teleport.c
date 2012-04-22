@@ -565,7 +565,8 @@ void tele(void)
 			return;	/* abort */
 		    /* possible extensions: introduce a small error if
 		       magic power is low; allow transfer to solid rock */
-		    if (teleok(cc.x, cc.y, FALSE)) {
+		    if (teleok(cc.x, cc.y, FALSE) ||
+			(wizard && yn("Force teleport?") == 'y')) {
 			teleds(cc.x, cc.y, FALSE);
 			return;
 		    }
