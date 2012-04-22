@@ -1731,12 +1731,18 @@ static void overview_scan(const struct level *lev, struct overview_info *oi)
 		    continue;
 		
 		switch (lev->locations[x][y].mem_bg) {
-		    case S_upstair: case S_dnstair: case S_upladder: case S_dnladder:
-                    case S_upsstair: case S_dnsstair:
+		    case S_upstair: case S_dnstair:
+		    case S_upladder: case S_dnladder:
+		    case S_upsstair: case S_dnsstair:
 			if (lev->sstairs.sx == x && lev->sstairs.sy == y &&
-			    levels[ledger_no(&lev->sstairs.tolev)]) {
+			    lev->sstairs.tolev.dnum != lev->z.dnum) {
 			    oi->branch = TRUE;
-			    oi->branch_dst = lev->sstairs.tolev;
+			    if (levels[ledger_no(&lev->sstairs.tolev)]) {
+				oi->branch_dst_known = TRUE;
+				oi->branch_dst = lev->sstairs.tolev;
+			    } else {
+				oi->branch_dst_known = FALSE;
+			    }
 			}
 			break;
 		    
@@ -1788,11 +1794,18 @@ static void overview_scan(const struct level *lev, struct overview_info *oi)
 	}
 	
 	/* find the magic portal, if it exists */
-	for (trap = lev->lev_traps; trap; trap = trap->ntrap)
-	    if (trap->tseen && trap->ttyp == MAGIC_PORTAL && levels[ledger_no(&trap->dst)]) {
+	for (trap = lev->lev_traps; trap; trap = trap->ntrap) {
+	    if (trap->tseen && trap->ttyp == MAGIC_PORTAL &&
+		trap->dst.dnum != lev->z.dnum) {
 		oi->portal = TRUE;
-		oi->portal_dst = trap->dst;
+		if (levels[ledger_no(&trap->dst)]) {
+		    oi->portal_dst_known = TRUE;
+		    oi->portal_dst = trap->dst;
+		} else {
+		    oi->portal_dst_known = FALSE;
+		}
 	    }
+	}
 }
 
 
@@ -1928,10 +1941,22 @@ static void overview_print_info(char *buf, const struct overview_info *oi)
 
 static void overview_print_branch(char *buf, const struct overview_info *oi)
 {
-	if (oi->portal)
-	    sprintf(buf, "      Portal to %s", dungeons[oi->portal_dst.dnum].dname);
-	if (oi->branch)
-	    sprintf(buf, "      Stairs to %s", dungeons[oi->branch_dst.dnum].dname);
+	if (oi->portal) {
+	    if (oi->portal_dst_known) {
+		sprintf(buf, "      portal to %s",
+			dungeons[oi->portal_dst.dnum].dname);
+	    } else {
+		sprintf(buf, "      a magic portal");
+	    }
+	}
+	if (oi->branch) {
+	    if (oi->branch_dst_known) {
+		sprintf(buf, "      stairs to %s",
+			dungeons[oi->branch_dst.dnum].dname);
+	    } else {
+		sprintf(buf, "      a long staircase");
+	    }
+	}
 }
 
 
