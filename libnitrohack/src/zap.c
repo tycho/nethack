@@ -1804,7 +1804,8 @@ int dozap(struct obj *obj)
 
 	/* zappable addition done by GAN 11/03/86 */
 	if (!zappable(obj)) pline("Nothing happens.");
-	else if (obj->cursed && !rn2(100)) {
+	/* PM 2008-04-16: 50% chance of blowing up, if zapped 20 times */
+	else if (obj->cursed && !rn2(30)) {
 		backfire(obj);	/* the wand blows up in your face! */
 		exercise(A_STR, FALSE);
 		return 1;
