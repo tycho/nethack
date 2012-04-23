@@ -267,6 +267,10 @@ int tactics(struct monst *mtmp)
 {
 	long strat = strategy(mtmp);
 
+	/* Cthulhu doesn't need to heal; he can't die! */
+	if (mtmp->data == &mons[PM_CTHULHU] && strat == STRAT_HEAL)
+	    strat = STRAT_NONE;
+
 	mtmp->mstrategy = (mtmp->mstrategy & STRAT_WAITMASK) | strat;
 
 	switch (strat) {
