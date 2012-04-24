@@ -102,6 +102,7 @@ boolean onscary(int x, int y, struct monst *mtmp)
 	    mtmp->data == &mons[PM_CTHULHU] ||
 	    /* Vlad ignores Elbereth/scare monster/garlic */
 	    mtmp->data == &mons[PM_VLAD_THE_IMPALER] ||
+	    mtmp->mnum == quest_info(MS_NEMESIS) ||
 	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
 		return FALSE;
 
