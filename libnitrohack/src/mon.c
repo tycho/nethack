@@ -1650,8 +1650,10 @@ void xkilled(struct monst *mtmp, int dest)
 	    if (wasinside) spoteffects(TRUE);
 	} else if (x != u.ux || y != u.uy) {
 		/* might be here after swallowed */
-		if (!rn2(6) && !(mvitals[mndx].mvflags & G_NOCORPSE)
-					&& mdat->mlet != S_KOP) {
+		if (!rn2(6) && !(mvitals[mndx].mvflags & G_NOCORPSE) &&
+		    /* disable death drops for puddings */
+		    mdat->mlet != S_PUDDING &&
+		    mdat->mlet != S_KOP) {
 			int typ;
 
 			otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE);
