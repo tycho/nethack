@@ -1178,6 +1178,8 @@ void impact_drop(struct obj *missile, xchar x, xchar y, xchar dlev)
 		/* number of objects in the pile */
 		oct += obj->quan;
 		if (obj == uball || obj == uchain) continue;
+		/* sokoprize never falls */
+		if (Is_sokoprize(obj)) continue;
 		/* boulders can fall too, but rarely & never due to rocks */
 		if ((isrock && obj->otyp == BOULDER) ||
 		   rn2(obj->otyp == BOULDER ? 30 : 3)) continue;
@@ -1265,7 +1267,7 @@ boolean ship_object(struct obj *otmp, xchar x, xchar y, boolean shop_floor_obj)
 
 	/* objects other than attached iron ball always fall down ladder,
 	   but have a chance of staying otherwise */
-	nodrop = (otmp == uball) || (otmp == uchain) ||
+	nodrop = (otmp == uball) || (otmp == uchain) || Is_sokoprize(otmp) ||
 		(toloc != MIGR_LADDER_UP && rn2(3));
 
 	container = Has_contents(otmp);

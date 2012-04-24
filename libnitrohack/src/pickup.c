@@ -24,6 +24,7 @@ static int in_or_out_menu(const char *,struct obj *, boolean, boolean);
 static int container_at(int, int, boolean);
 static boolean able_to_loot(int, int);
 static boolean mon_beside(int, int);
+static void del_sokoprizes(void);
 
 /* define for query_objlist() and autopickup() */
 #define FOLLOW(curr, flags) \
@@ -1013,6 +1014,13 @@ int pickup_object(struct obj *obj, long count,
 	prinv(nearload == SLT_ENCUMBER ? moderateloadmsg : NULL,
 	      obj, count);
 	mrg_to_wielded = FALSE;
+
+	if (Is_sokoprize(obj)) {
+	    makeknown(obj->otyp);	/* obj is already known */
+	    obj->sokoprize = FALSE;	/* reset sokoprize flag */
+	    del_sokoprizes();		/* delete other sokoprizes */
+	}
+
 	return 1;
 }
 
@@ -1891,6 +1899,42 @@ static int in_or_out_menu(const char *prompt, struct obj *obj,
 	n = selection[0];
     
     return n;
+}
+
+static void del_sokoprizes(void)
+{
+	int x, y, cnt = 0;
+	struct obj *otmp, *onext;
+
+	/* check objs on floor */
+	for (otmp = level->objlist; otmp; otmp = onext) {
+	    onext = otmp->nobj; /* otmp may be destroyed */
+	    if (Is_sokoprize(otmp)) {
+		x = otmp->ox;
+		y = otmp->oy;
+		obj_extract_self(otmp);
+		if (cansee(x, y)) {
+		    pline("You see %s vanishing.", an(xname(otmp)));
+		    newsym(x, y);
+		} else {
+		    cnt++;
+		}
+		obfree(otmp, NULL);
+	    }
+	}
+
+	/* check buried objs... do we need this? */
+	for (otmp = level->buriedobjlist; otmp; otmp = onext) {
+	    onext = otmp->nobj; /* otmp may be destroyed */
+	    if (Is_sokoprize(otmp)) {
+		obj_extract_self(otmp);
+		cnt++;
+		obfree(otmp, NULL);
+	    }
+	}
+
+	if (cnt && flags.soundok)
+	    You_hear("something popping.");
 }
 
 /*pickup.c*/

@@ -289,7 +289,9 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 	char *buf;
 	int typ = obj->otyp;
 	struct objclass *ocl = &objects[typ];
-	int nn = ocl->oc_name_known;
+	int nn = ocl->oc_name_known ||
+		 /* only reveal Sokoban prizes when in sight */
+		 (Is_sokoprize(obj) && cansee(obj->ox, obj->oy));
 	const char *actualn = OBJ_NAME(*ocl);
 	const char *dn = OBJ_DESCR(*ocl);
 	const char *un = ocl->oc_uname;

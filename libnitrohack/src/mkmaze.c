@@ -400,21 +400,34 @@ static void fixup_special(struct level *lev)
     if (In_sokoban(&lev->z)) {
 	sokoban_detect(lev);
 
-	/* randomize Sokoban prize */
-	int x, y;
-	for (x = 1; x < COLNO; x++) {
-	    for (y = 1; y < ROWNO; y++) {
-		struct engr *ep = engr_at(lev, x, y);
+	/* Create random Sokoban prizes. */
+	if (dunlev(&lev->z) == 1) {
+	    struct engr *ep;
+	    int prize = 0;
+	    for (ep = lev->lev_engr; ep; ep = ep->nxt_engr) {
 		/* Sokoban top levels have no random, burned engravings */
-		if (ep && ep->engr_txt[0] && ep->engr_type == BURN &&
+		if (ep->engr_txt[0] && ep->engr_type == BURN &&
 		    !strcmp(ep->engr_txt, "Elbereth")) {
-		    if (!rn2(3)) {
-			/* Somebody beat you to it. */
-			make_engr_at(lev, x, y, "IOU", 0L, MARK);
-		    } else {
-			mksobj_at(rn2(2) ? BAG_OF_HOLDING : AMULET_OF_REFLECTION,
-				  lev, x, y, TRUE, FALSE);
+		    int prize_obj = STRANGE_OBJECT;
+		    struct obj *otmp;
+		    switch (prize) {
+		    case 0:
+			prize_obj = BAG_OF_HOLDING;
+			break;
+		    case 1:
+			prize_obj = rn2(2) ? CLOAK_OF_MAGIC_RESISTANCE :
+					     CLOAK_OF_DISPLACEMENT;
+			break;
+		    case 2:
+			prize_obj = !rn2(3) ? AMULET_OF_LIFE_SAVING :
+				     rn2(2) ? AMULET_OF_ESP :
+					      AMULET_OF_REFLECTION;
+			break;
 		    }
+		    otmp = mksobj_at(prize_obj, lev, ep->engr_x, ep->engr_y,
+				     TRUE, FALSE);
+		    otmp->sokoprize = TRUE;
+		    prize++;
 		}
 	    }
 	}

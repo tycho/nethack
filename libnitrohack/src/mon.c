@@ -648,6 +648,8 @@ int meatobj(struct monst *mtmp)
 		if (otmp->otyp == AMULET_OF_STRANGULATION ||
 				otmp->otyp == RIN_SLOW_DIGESTION)
 		    continue;
+		if (Is_sokoprize(otmp))
+		    continue;
 		++count;
 		if (cansee(mtmp->mx,mtmp->my) && flags.verbose)
 		    pline("%s eats %s!", Monnam(mtmp),
@@ -689,7 +691,8 @@ int meatobj(struct monst *mtmp)
 		if (ptr != &mons[PM_GELATINOUS_CUBE])
 		    return !ptr ? 2 : 1;
 	    } else if (otmp->oclass != ROCK_CLASS &&
-				    otmp != uball && otmp != uchain) {
+		       otmp != uball && otmp != uchain &&
+		       !Is_sokoprize(otmp)) {
 		++ecount;
 		if (ecount == 1) {
 			sprintf(buf, "%s engulfs %s.", Monnam(mtmp),
@@ -756,6 +759,7 @@ boolean mpickstuff(struct monst *mtmp, const char *str)
 #ifdef INVISIBLE_OBJECTS
 		if (otmp->oinvis && !perceives(mtmp->data)) continue;
 #endif
+		if (Is_sokoprize(otmp)) continue;
 		if (cansee(mtmp->mx,mtmp->my) && flags.verbose)
 			pline("%s picks up %s.", Monnam(mtmp),
 			      (distu(mtmp->mx, mtmp->my) <= 5) ?
