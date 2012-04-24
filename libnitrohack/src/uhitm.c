@@ -7,6 +7,7 @@ static boolean known_hitum(struct monst *,int *, const struct attack *, schar, s
 static void steal_it(struct monst *, const struct attack *);
 static boolean hitum(struct monst *, int, const struct attack *, schar, schar);
 static boolean hmon_hitmon(struct monst *,struct obj *,int);
+static void noisy_hit(struct monst *,struct obj *,int);
 static int joust(struct monst *,struct obj *);
 static void demonpet(void);
 static boolean m_slips_free(struct monst *mtmp, const struct attack *mattk);
@@ -498,11 +499,18 @@ boolean hmon(struct monst *mon, struct obj *obj, int thrown)
 			    (mon->ispriest || mon->isshk ||
 			     mon->data == &mons[PM_WATCHMAN] ||
 			     mon->data == &mons[PM_WATCH_CAPTAIN]));
+
+	/* check to see if what we're doing would wake up nearby critters */
+	noisy_hit(mon, obj, thrown);
+
+	/* go ahead and 'hit' the monster */
 	result = hmon_hitmon(mon, obj, thrown);
+
 	if (mon->ispriest && !rn2(2))
 	    ghod_hitsu(mon);
 	if (anger_guards)
 	    angry_guards(!flags.soundok);
+
 	return result;
 }
 
@@ -1145,6 +1153,60 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 	}
 
 	return (boolean)(destroyed ? FALSE : TRUE);
+}
+
+/* It's always seemed a bit odd that you can chop up a throne room,
+ * piece by piece, and nothing ever wakes up, yes?  Let's curb
+ * that behavior a bit; fighting is noisy!  This is a place to
+ * drop any special noise effects you may want to occur when a
+ * particular monster is hit.  */
+static void noisy_hit(struct monst *mtmp, struct obj *otmp, int thrown)
+{
+	struct monst *mtmp2;
+	int noiserange;
+	schar skilltype = P_NONE;
+
+	if (otmp && otmp->oclass == WEAPON_CLASS)
+	    skilltype = objects[otmp->otyp].oc_skill;
+
+	/* properly fired missiles shouldn't make much noise on impact,
+	 * and thrown darts, shuriken, and knives are by definition sneaky */
+	if (otmp && thrown) {
+	    if ((ammo_and_launcher(otmp, uwep) && rn2(3)) ||
+		otmp->otyp == DART ||
+		otmp->otyp == SHURIKEN ||
+		skilltype == P_KNIFE) {
+		return;
+	    }
+	}
+
+	/* If you're stealthy, you can slit throats with knives */
+	if (otmp && Stealth && skilltype == P_KNIFE)
+	    return;
+
+	/* Stealth will reduce the amount of noise made while fighting,
+	 * but won't reduce it entirely to zero */
+	noiserange = Stealth ? 9 : 64;
+
+	/* Some things are just never sneaky.
+	 * For example, smacking things with lightning is loud.
+	 * (TODO: add wand sounds for loud wands) */
+	if (otmp &&
+	    (otmp->oclass != WEAPON_CLASS ||
+	     otmp->oartifact == ART_MJOLLNIR ||
+	     otmp->otyp == BULLWHIP)) {
+	    noiserange = 64;
+	}
+
+	/* Check and see who was close enough to hear it */
+	for (mtmp2 = level->monlist; mtmp2; mtmp2 = mtmp2->nmon) {
+	    if (dist2(mtmp->mx, mtmp->my, mtmp2->mx, mtmp2->my) < noiserange) {
+		/* Rogues get a bit of a bonus for knowing how to kill
+		 * in nice, quiet ways */
+		if (rn2(Role_if(PM_ROGUE) ? 3 : 5))
+		    mtmp2->msleeping = 0;
+	    }
+	}
 }
 
 static boolean shade_aware(struct obj *obj)
