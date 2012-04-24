@@ -1449,10 +1449,9 @@ static void place_random_engraving(struct level *lev, const char *const engravin
 {
 	struct mkroom *some_room;
 	xchar sx, sy;
-	int tries;
+	int tries = 0;
 	char const *engraving = engravings[rn2(size)];
 
-	tries = 0;
 	do {
 	    if (Inhell || lev->nroom <= 1) {
 		/* random placement in Gehennom or levels with no rooms */
@@ -1464,11 +1463,10 @@ static void place_random_engraving(struct level *lev, const char *const engravin
 		sx = somex(some_room);
 		sy = somey(some_room);
 	    }
-	    tries++;
-	} while (occupied(lev, sx, sy) && tries < 100);
+	} while (occupied(lev, sx, sy) && tries++ < 100);
 
 	if (tries < 100)
-	    make_engr_at(lev, sx, sy, engraving, 0L, MARK);
+	    make_engr_at(lev, sx, sy, engraving, 0L, BURN);
 }
 
 /*
