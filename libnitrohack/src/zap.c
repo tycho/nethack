@@ -3966,8 +3966,9 @@ void makewish(boolean magical)
 	nothing = zeroobj;  /* lint suppression; only its address matters */
 	if (flags.verbose) pline("You may wish for an object.");
 retry:
-	getlin("For what do you wish?", buf);
-	if (buf[0] == '\033') buf[0] = 0;
+	do {
+	    getlin("For what do you wish?", buf);
+	} while (buf[0] == '\033'); /* prevent accidental cancelling of a wish */
 
 	/*
 	 *  WORKAROUND: Wishing for a random non-magical item is not easily done
