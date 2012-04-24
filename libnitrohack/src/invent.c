@@ -676,6 +676,7 @@ static enum obj_use_status object_selection_checks(struct obj *otmp,
 		    /* Picks, axes, pole-weapons, bullwhips */
 		((otmp->oclass == WEAPON_CLASS && !is_pick(otmp) &&
 		    !is_axe(otmp) && !is_pole(otmp) && otyp != BULLWHIP) ||
+		    otmp->oclass == COIN_CLASS ||
 		    (otmp->oclass == POTION_CLASS &&
 		    /* only applicable potion is oil, and it will only
 		    be offered as a choice when already discovered */
@@ -786,8 +787,18 @@ struct obj *getobj(const char *let, const char *word)
 	    } else {
 
 		/* "ugly check" for reading fortune cookies, part 2 */
-		if ((!strcmp(word, "read") &&
-		    (otmp->otyp == FORTUNE_COOKIE || otmp->otyp == T_SHIRT)))
+		if (!strcmp(word, "read") &&
+		    (otmp->otyp == FORTUNE_COOKIE ||
+		     otmp->otyp == T_SHIRT ||
+		     otmp->otyp == TIN ||
+		     otmp->otyp == CAN_OF_GREASE ||
+		     otmp->otyp == CANDY_BAR ||
+		     otmp->otyp == CREDIT_CARD ||
+		     otmp->otyp == MAGIC_MARKER ||
+		     otmp->otyp == COIN_CLASS ||
+		     otmp->oartifact == ART_ORB_OF_FATE ||
+		     (OBJ_DESCR(objects[otmp->otyp]) &&
+		      !strncmp(OBJ_DESCR(objects[otmp->otyp]), "runed", 5))))
 			allowall = TRUE;
 	    }
 
