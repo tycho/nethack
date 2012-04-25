@@ -397,12 +397,25 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	}
 	if (spfx & SPFX_WARN) {
 	    if (spec_m2(otmp)) {
-	    	if (on) {
+		if (on) {
 			EWarn_of_mon |= wp_mask;
 			flags.warntype |= spec_m2(otmp);
-	    	} else {
+		} else {
 			EWarn_of_mon &= ~wp_mask;
-	    		flags.warntype &= ~spec_m2(otmp);
+			flags.warntype &= ~spec_m2(otmp);
+		}
+		see_monsters();
+	    } else {
+		if (on) EWarning |= wp_mask;
+		else EWarning &= ~wp_mask;
+	    }
+	}
+	if (spfx & SPFX_WARN_S) {
+	    if (oart->mtype) {
+		if (on) {
+		    EWarn_of_mon |= wp_mask;
+		} else {
+		    EWarn_of_mon &= ~wp_mask;
 		}
 		see_monsters();
 	    } else {
@@ -1454,6 +1467,42 @@ long arti_cost(const struct obj *otmp)
 	    return artilist[(int) otmp->oartifact].cost;
 	else
 	    return 100L * (long)objects[otmp->otyp].oc_cost;
+}
+
+boolean match_warn_of_mon(const struct monst *mon)
+{
+	/* warned of S_MONSTER? */
+	if (uwep && uwep->oartifact) {
+	    const struct artifact *arti = get_artifact(uwep);
+	    if (arti->spfx & SPFX_WARN_S &&
+		arti->mtype && arti->mtype == mon->data->mlet) {
+		return TRUE;
+	    }
+	}
+
+	return Warn_of_mon && flags.warntype &&
+	       (flags.warntype & mon->data->mflags2);
+}
+
+/* Return the plural name of the monster the player is warned about
+ * with SPFX_WARN_S.
+ */
+const char *get_warned_of_monster(const struct obj *otmp)
+{
+	if (otmp && otmp->oartifact) {
+	    const struct artifact *arti = get_artifact(otmp);
+	    if (arti->spfx & SPFX_WARN_S && arti->mtype) {
+		switch (arti->mtype) {
+		case S_TROLL: return "trolls"; break;
+		case S_DRAGON: return "dragons"; break;
+		case S_OGRE: return "ogres"; break;
+		case S_JABBERWOCK: return "jabberwocks"; break;
+		default: return "something"; break;
+		}
+	    }
+	}
+
+	return NULL;
 }
 
 /*artifact.c*/

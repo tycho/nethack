@@ -442,7 +442,7 @@ static void display_warning(struct monst *mon)
 	    wl = rn1(WARNCOUNT-1,1);
 	monnum = 1 + NUMMONS + wl;
         mflag = MON_WARNING;
-    } else if (MATCH_WARN_OF_MON(mon)) {
+    } else if (match_warn_of_mon(mon)) {
 	monnum = dbuf_monid(mon);
 	mflag = 0;
     } else {
@@ -595,7 +595,7 @@ void feel_location(xchar x, xchar y)
     /* draw monster on top if we can sense it */
     if ((x != u.ux || y != u.uy) && (mon = m_at(level, x,y)) && sensemon(mon))
 	display_monster(x, y, mon,
-		(tp_sensemon(mon) || MATCH_WARN_OF_MON(mon)) ? PHYSICALLY_SEEN : DETECTED,
+		(tp_sensemon(mon) || match_warn_of_mon(mon)) ? PHYSICALLY_SEEN : DETECTED,
 		is_worm_tail(mon));
 }
 
@@ -657,7 +657,7 @@ void newsym(int x, int y)
 	    worm_tail = is_worm_tail(mon);
 	    see_it = mon && (worm_tail
 		? (!mon->minvis || See_invisible)
-		: (mon_visible(mon)) || tp_sensemon(mon) || MATCH_WARN_OF_MON(mon));
+		: (mon_visible(mon)) || tp_sensemon(mon) || match_warn_of_mon(mon));
 	    if (mon && (see_it || (!worm_tail && Detect_monsters))) {
 		if (mon->mtrapped) {
 		    struct trap *trap = t_at(level, x, y);
@@ -694,7 +694,7 @@ void newsym(int x, int y)
 		display_self();
 	}
 	else if ((mon = m_at(level, x,y))
-		&& ((see_it = (tp_sensemon(mon) || MATCH_WARN_OF_MON(mon)
+		&& ((see_it = (tp_sensemon(mon) || match_warn_of_mon(mon)
 		    		|| (see_with_infrared(mon) && mon_visible(mon))))
 		    || Detect_monsters)
 		&& !is_worm_tail(mon)) {

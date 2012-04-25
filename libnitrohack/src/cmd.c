@@ -682,8 +682,16 @@ void enlightenment(int final)
 		sprintf(buf, "aware of the presence of %s",
 			(flags.warntype & M2_ORC) ? "orcs" :
 			(flags.warntype & M2_DEMON) ? "demons" :
+			(flags.warntype & M2_GIANT) ? "giants" :
+			(flags.warntype & M2_WERE) ? "were creatures" :
 			"something");
 		you_are(&menu, buf);
+	} else if (Warn_of_mon && uwep) {
+		const char *monster_name = get_warned_of_monster(uwep);
+		if (monster_name) {
+			sprintf(buf, "aware of the presence of %s", monster_name);
+			you_are(&menu, buf);
+		}
 	}
 	if (Undead_warning) you_are(&menu, "warned of undead");
 	if (Searching) you_have(&menu, "automatic searching");

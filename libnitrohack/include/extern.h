@@ -73,6 +73,8 @@ extern void arti_speak(struct obj *);
 extern boolean artifact_light(struct obj *);
 extern boolean artifact_has_invprop(struct obj *, uchar);
 extern long arti_cost(const struct obj *);
+extern boolean match_warn_of_mon(const struct monst *);
+extern const char *get_warned_of_monster(const struct obj *);
 
 /* ### attrib.c ### */
 

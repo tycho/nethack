@@ -126,7 +126,7 @@ static void mon_vision_summary(const struct monst *mtmp, char *outbuf)
 	ways_seen++;
     if (Detect_monsters)
 	ways_seen++;
-    if (MATCH_WARN_OF_MON(mtmp))
+    if (match_warn_of_mon(mtmp))
 	ways_seen++;
 
     if (ways_seen > 1 || !normal) {
@@ -158,7 +158,7 @@ static void mon_vision_summary(const struct monst *mtmp, char *outbuf)
 	    strcat(outbuf, "monster detection");
 	    if (ways_seen-- > 1) strcat(outbuf, ", ");
 	}
-	if (MATCH_WARN_OF_MON(mtmp)) {
+	if (match_warn_of_mon(mtmp)) {
 	    char wbuf[BUFSZ];
 	    if (Hallucination)
 		    strcat(outbuf, "paranoid delusion");
