@@ -683,7 +683,8 @@ void enlightenment(int final)
 			(flags.warntype & M2_ORC) ? "orcs" :
 			(flags.warntype & M2_DEMON) ? "demons" :
 			(flags.warntype & M2_GIANT) ? "giants" :
-			(flags.warntype & M2_WERE) ? "were creatures" :
+			(flags.warntype & M2_WERE) ? "lycanthropes" :
+			(flags.warntype & M2_UNDEAD) ? "undead" :
 			"something");
 		you_are(&menu, buf);
 	} else if (Warn_of_mon && uwep) {
