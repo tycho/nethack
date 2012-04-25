@@ -1233,8 +1233,11 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	/* the message from your quest leader */
 	if (!In_quest(&u.uz0) && at_dgn_entrance(&u.uz, "The Quest") &&
 		!(u.uevent.qexpelled || u.uevent.qcompleted || quest_status.leader_is_dead)) {
-
-		if (u.uevent.qcalled) {
+		if (BTelepat) {
+			if (uarmh)
+			    pline("You sense something being blocked by %s.",
+				  yname(uarmh));
+		} else if (u.uevent.qcalled) {
 			com_pager(Role_if (PM_ROGUE) ? 4 : 3);
 		} else {
 			com_pager(2);

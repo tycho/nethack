@@ -357,6 +357,13 @@ int dochug(struct monst *mtmp)
 
 		if (canseemon(mtmp))
 			pline("%s concentrates.", Monnam(mtmp));
+
+		if (BTelepat) {
+			if (uarmh)
+				pline("You sense something being blocked by %s.",
+				      yname(uarmh));
+			goto toofar;
+		}
 		if (distu(mtmp->mx, mtmp->my) > BOLT_LIM * BOLT_LIM) {
 			pline("You sense a faint wave of psychic energy.");
 			goto toofar;
@@ -380,12 +387,19 @@ int dochug(struct monst *mtmp)
 				losehp(dmg, "psychic blast", KILLED_BY_AN);
 			}
 		}
+toofar:
 		for (m2=level->monlist; m2; m2 = nmon) {
 			nmon = m2->nmon;
 			if (DEADMONSTER(m2)) continue;
 			if (m2->mpeaceful == mtmp->mpeaceful) continue;
 			if (mindless(m2->data)) continue;
 			if (m2 == mtmp) continue;
+			if (dist2(mtmp->mx, mtmp->my, m2->mx, m2->my) >
+			    BOLT_LIM * BOLT_LIM)
+				continue;
+			if (which_armor(m2, W_ARMH) &&
+			    which_armor(m2, W_ARMH)->otyp == TINFOIL_HAT)
+				continue;
 			if ((telepathic(m2->data) &&
 			    (rn2(2) || m2->mblinded)) || !rn2(10)) {
 				if (cansee(m2->mx, m2->my))
@@ -398,7 +412,6 @@ int dochug(struct monst *mtmp)
 			}
 		}
 	}
-toofar:
 
 	/* If monster is nearby you, and has to wield a weapon, do so.   This
 	 * costs the monster a move, of course.

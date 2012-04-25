@@ -1787,7 +1787,7 @@ extern void mon_adjust_speed(struct monst *,int,struct obj *);
 extern void update_mon_intrinsics(struct monst *,struct obj *,boolean,boolean);
 extern int find_mac(struct monst *);
 extern void m_dowear(struct monst *,boolean);
-extern struct obj *which_armor(struct monst *,long);
+extern struct obj *which_armor(const struct monst *,long);
 extern void mon_break_armor(struct monst *,boolean);
 extern void bypass_obj(struct obj *);
 extern void clear_bypasses(void);

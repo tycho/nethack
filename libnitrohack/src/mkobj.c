@@ -519,6 +519,7 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 		   otmp->otyp == LEVITATION_BOOTS ||
 		   otmp->otyp == HELM_OF_OPPOSITE_ALIGNMENT ||
 		   otmp->otyp == GAUNTLETS_OF_FUMBLING ||
+		   otmp->otyp == TINFOIL_HAT ||
 		   !rn2(11))) {
 			curse(otmp);
 			otmp->spe = -rne(3);

@@ -613,9 +613,16 @@ static void givit(int type, const struct permonst *ptr)
 
 	    case TELEPAT:
 		if (!(HTelepat & FROMOUTSIDE)) {
-			pline(Hallucination ?
-			    "You feel in touch with the cosmos." :
-			    "You feel a strange mental acuity.");
+			if (!BTelepat) {
+			    pline(Hallucination ?
+				"You feel in touch with the cosmos." :
+				"You feel a strange mental acuity.");
+			} else {
+			    pline(Hallucination ?
+				"You feel a strange mental acuity." :
+				"You feel a dull aching inside your head.");
+			}
+
 			HTelepat |= FROMOUTSIDE;
 			/* If blind, make sure monsters show up. */
 			if (Blind) see_monsters();

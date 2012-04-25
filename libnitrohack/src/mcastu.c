@@ -438,6 +438,11 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 	    shieldeff(u.ux, u.uy);
 	    dmg = (dmg + 1) / 2;
 	}
+	if (uarmh && uarmh->otyp == TINFOIL_HAT) {
+	    pline("The spell is blocked by %s%s", yname(uarmh),
+		  dmg > 5 ? "!" : ".");
+	    return;
+	}
 	if (dmg <= 5)
 	    pline("You get a slight %sache.", body_part(HEAD));
 	else if (dmg <= 10)
