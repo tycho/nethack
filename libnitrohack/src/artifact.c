@@ -383,9 +383,9 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	    else ETelepat &= ~wp_mask;
 	    see_monsters();
 	}
-	if (spfx & SPFX_STLTH) {
-	    if (on) EStealth |= wp_mask;
-	    else EStealth &= ~wp_mask;
+	if (spfx & SPFX_DISPL) {
+	    if (on) EDisplaced |= wp_mask;
+	    else EDisplaced &= ~wp_mask;
 	}
 	if (spfx & SPFX_REGEN) {
 	    if (on) ERegeneration |= wp_mask;
