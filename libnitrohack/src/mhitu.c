@@ -445,7 +445,8 @@ int mattacku(struct monst *mtmp)
 	if (!mtmp->cham && is_demon(mdat) && !range2
 	   && mtmp->data != &mons[PM_BALROG]
 	   && mtmp->data != &mons[PM_SUCCUBUS]
-	   && mtmp->data != &mons[PM_INCUBUS])
+	   && mtmp->data != &mons[PM_INCUBUS]
+	   && (!uwep || uwep->oartifact != ART_DEMONBANE))
 	    if (!mtmp->mcan && !rn2(13))	msummon(mtmp, &mtmp->dlevel->z);
 
 /*	Special lycanthrope handling code */
