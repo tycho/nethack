@@ -1078,12 +1078,13 @@ static int percent_success(int spell)
 
 	if (uarmh && is_metallic(uarmh) && uarmh->otyp != HELM_OF_BRILLIANCE)
 		splcaster += uarmhbon;
+	if (uarmh && uarmh->otyp == TINFOIL_HAT)
+		splcaster += uarmhbon;
 	if (uarmg && is_metallic(uarmg)) splcaster += uarmgbon;
 	if (uarmf && is_metallic(uarmf)) splcaster += uarmfbon;
 
 	if (spellid(spell) == urole.spelspec)
 		splcaster += urole.spelsbon;
-
 
 	/* `healing spell' bonus */
 	if (spellid(spell) == SPE_HEALING ||
