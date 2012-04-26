@@ -1240,7 +1240,7 @@ dopois:
 
 	    case AD_SITM:	/* for now these are the same */
 	    case AD_SEDU:
-		if (is_animal(mtmp->data)) {
+		if (is_robber(mtmp->data)) {
 			hitmsg(mtmp, mattk);
 			if (mtmp->mcan) break;
 			/* Continue below */
@@ -1272,9 +1272,9 @@ dopois:
 		  case 0:
 			break;
 		  default:
-			if (!is_animal(mtmp->data) && !tele_restrict(mtmp))
+			if (!is_robber(mtmp->data) && !tele_restrict(mtmp))
 			    rloc(mtmp, FALSE);
-			if (is_animal(mtmp->data) && *buf) {
+			if (is_robber(mtmp->data) && *buf) {
 			    if (canseemon(mtmp))
 				pline("%s tries to %s away with %s.",
 				      Monnam(mtmp),
