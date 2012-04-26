@@ -1926,7 +1926,6 @@ int invoke_amulet(struct obj *otmp)
 	    change_luck(-1);
 	    adjalign(-10);
 	    gods_upset(u.ualign.type);
-	    return 1;
 	} else {
 	    /* Not very wise, to defy the gods with a *known* fake. */
 	    pline("You feel foolish!");
@@ -1936,6 +1935,7 @@ int invoke_amulet(struct obj *otmp)
 	    adjalign(-12);
 	    gods_upset(u.ualign.type);
 	}
+	return 1;
     } /* fake Amulet */
 
     return 0;
