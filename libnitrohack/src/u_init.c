@@ -663,7 +663,7 @@ void u_init_inv_skills(void)
 		ini_inv(trobj_list, nclist);
 		if (!rn2(25)) ini_inv(Tinopener, nclist);
 		else if (!rn2(25)) ini_inv(Leash, nclist);
-		else if (!rn2(25)) ini_inv(Towel, nclist);
+		else if (!rn2(25) && !towelday()) ini_inv(Towel, nclist);
 		else if (!rn2(25)) ini_inv(Magicmarker, nclist);
 		skill_init(Skill_T);
 		break;
@@ -763,6 +763,10 @@ void u_init_inv_skills(void)
 
 	if (trobj_list)
 	    free(trobj_list);
+
+	/* Towel Day (May 25th): In Memoriam Douglas Adams */
+	if (towelday())
+		ini_inv(Towel, nclist);
 
 	if (discover)
 		ini_inv(Wishing, nclist);

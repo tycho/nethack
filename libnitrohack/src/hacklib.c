@@ -40,10 +40,13 @@ NitroHack, except that rounddiv may call panic().
 	boolean		fuzzymatch	(const char *,const char *,const char *,boolean)
 	void		setrandom	(void)
 	int		getyear		(void)
+	int		getmonth	(void)
+	int		getmday		(void)
 	char *		yymmdd		(time_t)
 	long		yyyymmdd	(time_t)
 	int		phase_of_the_moon	(void)
 	boolean		friday_13th	(void)
+	boolean		towelday	(void)
 	int		night		(void)
 	int		midnight	(void)
 =*/
@@ -360,6 +363,18 @@ int getyear(void)
 	return 1900 + getlt()->tm_year;
 }
 
+/* the current month (1-12, 1 = January) */
+int getmonth(void)
+{
+	return 1 + getlt()->tm_mon;
+}
+
+/* the current day of the month (1-31) */
+int getmday(void)
+{
+	return getlt()->tm_mday;
+}
+
 long yyyymmdd(time_t date)
 {
 	long datenum;
@@ -415,6 +430,11 @@ boolean friday_13th(void)
 	struct tm *lt = getlt();
 
 	return (boolean)(lt->tm_wday == 5 /* friday */ && lt->tm_mday == 13);
+}
+
+boolean towelday(void)
+{
+	return (boolean)(getmday() == 25 && getmonth() == 5);
 }
 
 int night(void)

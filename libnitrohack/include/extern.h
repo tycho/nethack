@@ -600,9 +600,12 @@ extern char *strstri(const char *,const char *);
 #endif
 extern boolean fuzzymatch(const char *,const char *,const char *,boolean);
 extern int getyear(void);
+extern int getmonth(void);
+extern int getmday(void);
 extern long yyyymmdd(time_t);
 extern int phase_of_the_moon(void);
 extern boolean friday_13th(void);
+extern boolean towelday(void);
 extern int night(void);
 extern int midnight(void);
 extern unsigned int get_seedval(void);
