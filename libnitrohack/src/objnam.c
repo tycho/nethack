@@ -1709,8 +1709,6 @@ static const struct alt_spellings {
 	{ "saber", SILVER_SABER },
 	{ "silver sabre", SILVER_SABER },
 	{ "smooth shield", SHIELD_OF_REFLECTION },
-	{ "grey dragon scale mail", GRAY_DRAGON_SCALE_MAIL },
-	{ "grey dragon scales", GRAY_DRAGON_SCALES },
 	{ "enchant armour", SCR_ENCHANT_ARMOR },
 	{ "destroy armour", SCR_DESTROY_ARMOR },
 	{ "scroll of enchant armour", SCR_ENCHANT_ARMOR },
