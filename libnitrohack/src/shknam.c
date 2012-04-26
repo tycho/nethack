@@ -379,6 +379,8 @@ shk_failed:
 
 	if (Is_blackmarket(&lev->z))
 	    shkmoney = 7 * shkmoney + rn2(3 * shkmoney);
+	else if (Is_town_level(&lev->z))	/* it's a poor town */
+	    shkmoney /= 4;
 	mkmonmoney(shk, shkmoney);
 
 	/* Arm the Black Marketeer. */
