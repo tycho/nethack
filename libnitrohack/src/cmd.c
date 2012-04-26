@@ -617,7 +617,7 @@ void enlightenment(int final)
 	else if (u.ualign.record >= -8)	you_have(&menu, "sinned");
 	else you_have(&menu, "transgressed");
 	if (wizard) {
-		sprintf(buf, " %d", u.ualign.record);
+		sprintf(buf, " %d / %ld", u.ualign.record, ALIGNLIM);
 		enl_msg(&menu, "Your alignment ", "is", "was", buf);
 	}
 
