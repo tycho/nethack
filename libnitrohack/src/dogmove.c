@@ -110,7 +110,7 @@ int dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 	struct edog *edog = EDOG(mtmp);
 	boolean poly = FALSE, grow = FALSE, heal = FALSE;
 	int nutrit;
-	boolean vampiric = is_vampire(mtmp->data);
+	boolean vampiric = is_vampiric(mtmp->data);
 
 	if (edog->hungrytime < moves)
 	    edog->hungrytime = moves;
