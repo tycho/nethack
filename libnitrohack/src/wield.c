@@ -675,7 +675,7 @@ int chwepon(struct obj *otmp, int amount)
 		return 1;
 	}
 
-	if (amount < 0 && uwep->oartifact && restrict_name(uwep, ONAME(uwep))) {
+	if (amount < 0 && uwep->oartifact && restrict_name(uwep, ONAME(uwep), TRUE)) {
 	    if (!Blind)
 		pline("Your %s %s.", aobjnam(uwep, "faintly glow"), color);
 	    return 1;

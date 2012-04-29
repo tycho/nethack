@@ -116,7 +116,7 @@ static void do_oname(struct obj *obj)
 	if (obj->oartifact) {
 		pline("The artifact seems to resist the attempt.");
 		return;
-	} else if (restrict_name(obj, buf) || exist_artifact(obj->otyp, buf)) {
+	} else if (restrict_name(obj, buf, FALSE) || exist_artifact(obj->otyp, buf)) {
 		int n = rn2((int)strlen(buf));
 		char c1, c2;
 

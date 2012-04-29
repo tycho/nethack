@@ -254,7 +254,8 @@ boolean arti_reflects(struct obj *obj)
 }
 
 
-boolean restrict_name(struct obj *otmp, const char *name)  /* returns 1 if name is restricted for otmp->otyp */
+/* returns 1 if name is restricted */
+boolean restrict_name(struct obj *otmp, const char *name, boolean restrict_typ)
 {
 	const struct artifact *a;
 	const char *aname;
@@ -267,7 +268,7 @@ boolean restrict_name(struct obj *otmp, const char *name)  /* returns 1 if name 
 		   Bug fix:  don't name multiple elven daggers "Sting".
 		 */
 	for (a = artilist+1; a->otyp; a++) {
-	    if (a->otyp != otmp->otyp) continue;
+	    if (restrict_typ && a->otyp != otmp->otyp) continue;
 	    aname = a->name;
 	    if (!strncmpi(aname, "the ", 4)) aname += 4;
 	    if (!strcmp(aname, name))
