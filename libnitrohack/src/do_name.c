@@ -57,9 +57,7 @@ int do_mname(void)
 		mtmp = u.usteed;
 	    else {
 		pline("This %s creature is called %s and cannot be renamed.",
-		ACURR(A_CHA) > 14 ?
-		(flags.female ? "beautiful" : "handsome") :
-		"ugly",
+		beautiful(),
 		plname);
 		return 0;
 	    }

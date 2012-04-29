@@ -594,15 +594,10 @@ static int use_mirror(struct obj *obj)
 			pline(look_str, "peaked");
 		    else if (u.uhs >= WEAK)
 			pline(look_str, "undernourished");
-		    else pline("You look as %s as ever.",
-				ACURR(A_CHA) > 14 ?
-				(poly_gender()==1 ? "beautiful" : "handsome") :
-				"ugly");
+		    else pline("You look as %s as ever.", beautiful());
 		} else {
 			pline("You can't see your %s %s.",
-				ACURR(A_CHA) > 14 ?
-				(poly_gender()==1 ? "beautiful" : "handsome") :
-				"ugly",
+				beautiful(),
 				body_part(FACE));
 		}
 		return 1;
