@@ -103,7 +103,7 @@ boolean rust_dmg(struct obj *otmp, const char *ostr, int type,
 	boolean vulnerable = FALSE;
 	boolean grprot = FALSE;
 	boolean is_primary = TRUE;
-	boolean vismon = (victim != &youmonst) && canseemon(victim);
+	boolean vismon = (victim != &youmonst) && canseemon(level, victim);
 	int erosion;
 
 	if (!otmp) return FALSE;
@@ -181,7 +181,7 @@ boolean rust_dmg(struct obj *otmp, const char *ostr, int type,
 void grease_protect(struct obj *otmp, const char *ostr, struct monst *victim)
 {
 	static const char txt[] = "protected by the layer of grease!";
-	boolean vismon = victim && (victim != &youmonst) && canseemon(victim);
+	boolean vismon = victim && (victim != &youmonst) && canseemon(level, victim);
 
 	if (ostr) {
 	    if (victim == &youmonst)
@@ -418,7 +418,7 @@ struct monst *animate_statue(struct obj *statue, xchar x, xchar y, int cause,
 			 * check the field before calling newcham().
 			 */
 			if (mon->cham == CHAM_DOPPELGANGER)
-				newcham(mon, mptr, FALSE, FALSE);
+				newcham(level, mon, mptr, FALSE, FALSE);
 		}
 	    } else
 		mon = makemon(mptr, level, x, y, (cause == ANIMATE_SPELL) ?
@@ -457,20 +457,20 @@ struct monst *animate_statue(struct obj *statue, xchar x, xchar y, int cause,
 					"moves" : "comes to life"; 
 	    if (cause == ANIMATE_SPELL)
 	    	pline("%s %s!", upstart(statuename),
-	    		canspotmon(mon) ? comes_to_life : "disappears");
+	    		canspotmon(level, mon) ? comes_to_life : "disappears");
 	    else
 		pline("The statue %s!",
-			canspotmon(mon) ? comes_to_life : "disappears");
+			canspotmon(level, mon) ? comes_to_life : "disappears");
 	    if (historic) {
 		    pline("You feel guilty that the historic statue is now gone.");
 		    adjalign(-1);
 	    }
 	} else if (cause == ANIMATE_SHATTER)
 	    pline("Instead of shattering, the statue suddenly %s!",
-		canspotmon(mon) ? "comes to life" : "disappears");
+		canspotmon(level, mon) ? "comes to life" : "disappears");
 	else { /* cause == ANIMATE_NORMAL */
 	    pline("You find %s posing as a statue.",
-		canspotmon(mon) ? a_monnam(mon) : "something");
+		canspotmon(level, mon) ? a_monnam(mon) : "something");
 	    stop_occupation();
 	}
 	/* avoid hiding under nothing */
@@ -499,7 +499,7 @@ struct monst *activate_statue_trap(struct trap *trap, xchar x, xchar y,
 	 * actually create something or the failure cause is not because
 	 * the mon was unique.
 	 */
-	deltrap(trap);
+	deltrap(level, trap);
 	while (otmp) {
 	    mtmp = animate_statue(otmp, x, y,
 		    shatter ? ANIMATE_SHATTER : ANIMATE_NORMAL, &fail_reason);
@@ -595,7 +595,7 @@ void dotrap(struct trap *trap, unsigned trflags)
 	    case ARROW_TRAP:
 		if (trap->once && trap->tseen && !rn2(15)) {
 		    You_hear("a loud click!");
-		    deltrap(trap);
+		    deltrap(level, trap);
 		    newsym(u.ux,u.uy);
 		    break;
 		}
@@ -620,7 +620,7 @@ void dotrap(struct trap *trap, unsigned trflags)
 	    case DART_TRAP:
 		if (trap->once && trap->tseen && !rn2(15)) {
 		    You_hear("a soft click.");
-		    deltrap(trap);
+		    deltrap(level, trap);
 		    newsym(u.ux,u.uy);
 		    break;
 		}
@@ -647,7 +647,7 @@ void dotrap(struct trap *trap, unsigned trflags)
 		if (trap->once && trap->tseen && !rn2(15)) {
 		    pline("A trap door in %s opens, but nothing falls out!",
 			  the(ceiling(u.ux,u.uy)));
-		    deltrap(trap);
+		    deltrap(level, trap);
 		    newsym(u.ux,u.uy);
 		} else {
 		    int dmg = dice(2,6); /* should be std ROCK dmg? */
@@ -908,7 +908,7 @@ glovecheck:		rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 			    pline("You %s %s spider web!",
 				(u.umonnum == PM_FIRE_ELEMENTAL) ? "burn" : "dissolve",
 				a_your[trap->madeby_u]);
-			deltrap(trap);
+			deltrap(level, trap);
 			newsym(u.ux,u.uy);
 			break;
 		    }
@@ -980,7 +980,7 @@ glovecheck:		rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 			u.utrap = 0;
 			if (webmsgok)
 			    pline("You tear through %s web!", a_your[trap->madeby_u]);
-			deltrap(trap);
+			deltrap(level, trap);
 			newsym(u.ux,u.uy);	/* get rid of trap symbol */
 		    }
 		}
@@ -993,7 +993,7 @@ glovecheck:		rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 	    case MAGIC_TRAP:	    /* A magic trap. */
 		seetrap(trap);
 		if (!rn2(30)) {
-		    deltrap(trap);
+		    deltrap(level, trap);
 		    newsym(u.ux,u.uy);	/* update position */
 		    pline("You are caught in a magical explosion!");
 		    losehp(rnd(10), "magical explosion", KILLED_BY_AN);
@@ -1030,7 +1030,7 @@ glovecheck:		rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		    /* Trap did nothing; don't remove it --KAA */
 		} else {
 		    steedintrap(trap, NULL);
-		    deltrap(trap);	/* delete trap before polymorph */
+		    deltrap(level, trap);	/* delete trap before polymorph */
 		    newsym(u.ux,u.uy);	/* get rid of trap symbol */
 		    pline("You feel a change coming over you.");
 		    polyself(FALSE);
@@ -1091,7 +1091,7 @@ glovecheck:		rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		pline("Click! You trigger a rolling boulder trap!");
 		if (!launch_obj(BOULDER, trap->launch.x, trap->launch.y,
 		      trap->launch2.x, trap->launch2.y, style)) {
-		    deltrap(trap);
+		    deltrap(level, trap);
 		    newsym(u.ux,u.uy);	/* get rid of trap symbol */
 		    pline("Fortunately for you, no boulder was released.");
 		}
@@ -1182,8 +1182,8 @@ static int steedintrap(struct trap *trap, struct obj *otmp)
 		case POLY_TRAP: 
 		    if (!resists_magm(mtmp)) {
 			if (!resist(mtmp, WAND_CLASS, 0, NOTELL)) {
-			newcham(mtmp, NULL,
-				       FALSE, FALSE);
+				newcham(level, mtmp, NULL,
+					       FALSE, FALSE);
 			if (!can_saddle(mtmp) || !can_ride(mtmp)) {
 				dismount_steed(DISMOUNT_POLY);
 			} else {
@@ -1362,7 +1362,7 @@ int launch_obj(short otyp, int x1, int y1, int x2, int y2, int style)
 				  "KAABLAMM!!!%s",
 				  cansee(bhitpos.x, bhitpos.y) ?
 					" The rolling boulder triggers a land mine." : "");
-				deltrap(t);
+				deltrap(level, t);
 				del_engr_at(level, bhitpos.x,bhitpos.y);
 				place_object(singleobj, level, bhitpos.x, bhitpos.y);
 				singleobj->otrapped = 0;
@@ -1569,7 +1569,7 @@ int mintrap(struct monst *mtmp)
 	    mtmp->mtrapped = 0;	/* perhaps teleported? */
 	} else if (mtmp->mtrapped) {	/* is currently in the trap */
 	    if (!trap->tseen &&
-		cansee(mtmp->mx, mtmp->my) && canseemon(mtmp) &&
+		cansee(mtmp->mx, mtmp->my) && canseemon(level, mtmp) &&
 		(trap->ttyp == SPIKED_PIT || trap->ttyp == BEAR_TRAP ||
 		 trap->ttyp == HOLE || trap->ttyp == PIT ||
 		 trap->ttyp == WEB)) {
@@ -1584,7 +1584,7 @@ int mintrap(struct monst *mtmp)
 			(trap->ttyp == PIT || trap->ttyp == SPIKED_PIT)) {
 		    if (!rn2(2)) {
 			mtmp->mtrapped = 0;
-			if (canseemon(mtmp))
+			if (canseemon(level, mtmp))
 			    pline("%s pulls free...", Monnam(mtmp));
 			fill_pit(level, mtmp->mx, mtmp->my);
 		    }
@@ -1593,13 +1593,13 @@ int mintrap(struct monst *mtmp)
 		}
 	    } else if (metallivorous(mptr)) {
 		if (trap->ttyp == BEAR_TRAP) {
-		    if (canseemon(mtmp))
+		    if (canseemon(level, mtmp))
 			pline("%s eats a bear trap!", Monnam(mtmp));
-		    deltrap(trap);
+		    deltrap(level, trap);
 		    mtmp->meating = 5;
 		    mtmp->mtrapped = 0;
 		} else if (trap->ttyp == SPIKED_PIT) {
-		    if (canseemon(mtmp))
+		    if (canseemon(level, mtmp))
 			pline("%s munches on some spikes!", Monnam(mtmp));
 		    trap->ttyp = PIT;
 		    mtmp->meating = 5;
@@ -1628,7 +1628,7 @@ int mintrap(struct monst *mtmp)
 	       unreasonable; everybody has their own style. */
 	    if (trap->madeby_u && rnl(5)) setmangry(mtmp);
 
-	    in_sight = canseemon(mtmp);
+	    in_sight = canseemon(level, mtmp);
 	    see_it = cansee(mtmp->mx, mtmp->my);
 
 	    /* assume hero can tell what's going on for the steed */
@@ -1640,7 +1640,7 @@ int mintrap(struct monst *mtmp)
 			    if (in_sight && see_it)
 				pline("%s triggers a trap but nothing happens.",
 				      Monnam(mtmp));
-			    deltrap(trap);
+			    deltrap(level, trap);
 			    newsym(mtmp->mx, mtmp->my);
 			    break;
 			}
@@ -1657,7 +1657,7 @@ int mintrap(struct monst *mtmp)
 			    if (in_sight && see_it)
 				pline("%s triggers a trap but nothing happens.",
 				      Monnam(mtmp));
-			    deltrap(trap);
+			    deltrap(level, trap);
 			    newsym(mtmp->mx, mtmp->my);
 			    break;
 			}
@@ -1674,7 +1674,7 @@ int mintrap(struct monst *mtmp)
 			    if (in_sight && see_it)
 				pline("A trap door above %s opens, but nothing falls out!",
 				      mon_nam(mtmp));
-			    deltrap(trap);
+			    deltrap(level, trap);
 			    newsym(mtmp->mx, mtmp->my);
 			    break;
 			}
@@ -1712,7 +1712,7 @@ int mintrap(struct monst *mtmp)
 				    pline("%s beartrap disintegrates!",
 					  A_Your[trap->madeby_u]);
 				}
-				deltrap(trap);
+				deltrap(level, trap);
 				newsym(mtmp->mx, mtmp->my);
 				mtmp->mhp -= rnd(2); /* beartrap weighs 200 */
 			    } else {
@@ -1942,7 +1942,7 @@ mfiretrap:
 				pline("%s spider web disintegrates in a green twinkling!",
 				      A_Your[trap->madeby_u]);
 			    }
-			    deltrap(trap);
+			    deltrap(level, trap);
 			    newsym(mtmp->mx, mtmp->my);
 			    break;
 			} else if (amorphous(mptr) || is_whirly(mptr) || unsolid(mptr)){
@@ -1955,7 +1955,7 @@ mfiretrap:
 					  (mptr == &mons[PM_FIRE_ELEMENTAL]) ?
 					    "burns" : "dissolves",
 					  a_your[trap->madeby_u]);
-				deltrap(trap);
+				deltrap(level, trap);
 				newsym(mtmp->mx, mtmp->my);
 				break;
 			    }
@@ -2008,7 +2008,7 @@ mfiretrap:
 			    if (in_sight)
 				pline("%s tears through %s spider web!",
 				      Monnam(mtmp), a_your[trap->madeby_u]);
-			    deltrap(trap);
+			    deltrap(level, trap);
 			    newsym(mtmp->mx, mtmp->my);
 			}
 			break;
@@ -2077,7 +2077,7 @@ mfiretrap:
 		    if (resists_magm(mtmp)) {
 			shieldeff(mtmp->mx, mtmp->my);
 		    } else if (!resist(mtmp, WAND_CLASS, 0, NOTELL)) {
-			newcham(mtmp, NULL,
+			newcham(level, mtmp, NULL,
 				       FALSE, FALSE);
 			if (in_sight) seetrap(trap);
 		    }
@@ -2097,7 +2097,7 @@ mfiretrap:
 			    if (in_sight) trap->tseen = TRUE;
 			    if (mtmp->mhp <= 0) trapkilled = TRUE;
 			} else {
-			    deltrap(trap);
+			    deltrap(level, trap);
 			    newsym(mtmp->mx,mtmp->my);
 			}
 		    }
@@ -2166,10 +2166,10 @@ int minstadisintegrate(struct monst *mon)
 	int result = mon->data->cwt;
 	if (resists_disint(mon) || !rn2(20)) return 0;
 	weight_dmg(result);
-	if (canseemon(mon))
+	if (canseemon(level, mon))
 	    pline("%s disintegrates!", Monnam(mon));
 	if (is_rider(mon->data)) {
-	    if (canseemon(mon)) {
+	    if (canseemon(level, mon)) {
 		pline("%s body reintegrates before your %s!",
 		      s_suffix(Monnam(mon)),
 		      (eyecount(youmonst.data) == 1) ?
@@ -2975,7 +2975,7 @@ static void cnv_trap_obj(int otyp, int cnt, struct trap *ttmp)
 	if (ttmp->madeby_u) sellobj(otmp, ttmp->tx, ttmp->ty);
 	stackobj(otmp);
 	newsym(ttmp->tx, ttmp->ty);
-	deltrap(ttmp);
+	deltrap(level, ttmp);
 }
 
 /* while attempting to disarm an adjacent trap, we've fallen into it */
@@ -3126,7 +3126,7 @@ static int disarm_holdingtrap(struct trap *ttmp, schar dx, schar dy)
 			cnv_trap_obj(BEARTRAP, 1, ttmp);
 		} else /* if (ttmp->ttyp == WEB) */ {
 			pline("You succeed in removing %s web.", the_your[ttmp->madeby_u]);
-			deltrap(ttmp);
+			deltrap(level, ttmp);
 		}
 	}
 	newsym(u.ux + dx, u.uy + dy);
@@ -3171,7 +3171,7 @@ static int disarm_squeaky_board(struct trap *ttmp, schar dx, schar dy)
 	    makeknown(POT_OIL);
 	}
 	pline("You repair the squeaky board.");	/* no madeby_u */
-	deltrap(ttmp);
+	deltrap(level, ttmp);
 	newsym(u.ux + dx, u.uy + dy);
 	more_experienced(1, 1, 5);
 	newexplevel();
@@ -3719,14 +3719,14 @@ struct trap *t_at(struct level *lev, int x, int y)
 }
 
 
-void deltrap(struct trap *trap)
+void deltrap(struct level *lev, struct trap *trap)
 {
 	struct trap *ttmp;
 
-	if (trap == level->lev_traps)
-		level->lev_traps = level->lev_traps->ntrap;
+	if (trap == lev->lev_traps)
+		lev->lev_traps = lev->lev_traps->ntrap;
 	else {
-		for (ttmp = level->lev_traps; ttmp->ntrap != trap; ttmp = ttmp->ntrap) ;
+		for (ttmp = lev->lev_traps; ttmp->ntrap != trap; ttmp = ttmp->ntrap) ;
 		ttmp->ntrap = trap->ntrap;
 	}
 	dealloc_trap(trap);
@@ -3757,7 +3757,7 @@ boolean delfloortrap(struct trap *ttmp)
 	    } else if ((mtmp = m_at(level, ttmp->tx, ttmp->ty)) != 0) {
 		mtmp->mtrapped = 0;
 	    }
-	    deltrap(ttmp);
+	    deltrap(level, ttmp);
 	    return TRUE;
 	} else
 	    return FALSE;

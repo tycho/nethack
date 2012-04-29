@@ -285,7 +285,7 @@ static boolean put_lregion_here(struct level *lev,
 	    struct trap *t = t_at(lev, x, y);
 
 	    if (t && t->ttyp != MAGIC_PORTAL &&
-                t->ttyp != VIBRATING_SQUARE) deltrap(t);
+                t->ttyp != VIBRATING_SQUARE) deltrap(lev, t);
 	    if (bad_location(lev, x, y, nlx, nly, nhx, nhy)) return FALSE;
 	}
     }
@@ -296,7 +296,7 @@ static boolean put_lregion_here(struct level *lev,
 	/* "something" means the player in this case */
 	if (MON_AT(lev, x, y)) {
 	    /* move the monster if no choice, or just try again */
-	    if (oneshot) rloc(m_at(lev, x,y), FALSE);
+	    if (oneshot) rloc(lev, m_at(lev, x, y), FALSE);
 	    else return FALSE;
 	}
 	u_on_newpos(x, y);

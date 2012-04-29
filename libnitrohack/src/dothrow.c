@@ -1122,7 +1122,7 @@ static void tmiss(struct obj *obj, struct monst *mon)
        An attentive player will still notice that this is different from
        an arrow just landing short of any target (no message in that case),
        so will realize that there is a valid target here anyway. */
-    if (!canseemon(mon) || (mon->m_ap_type && mon->m_ap_type != M_AP_MONSTER))
+    if (!canseemon(level, mon) || (mon->m_ap_type && mon->m_ap_type != M_AP_MONSTER))
 	pline("%s %s.", The(missile), otense(obj, "miss"));
     else
 	miss(missile, mon);
@@ -1467,7 +1467,7 @@ static int gem_accept(struct monst *mon, struct obj *obj)
 
 nopick:
 	if (!Blind) pline("%s", buf);
-	if (!tele_restrict(mon)) rloc(mon, FALSE);
+	if (!tele_restrict(mon)) rloc(level, mon, FALSE);
 	return ret;
 }
 

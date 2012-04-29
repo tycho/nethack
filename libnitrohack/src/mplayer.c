@@ -108,7 +108,7 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 		return NULL;
 
 	if (MON_AT(lev, x, y))
-		rloc(m_at(lev, x, y), FALSE); /* insurance */
+		rloc(lev, m_at(lev, x, y), FALSE); /* insurance */
 
 	if (!In_endgame(&u.uz)) special = FALSE;
 

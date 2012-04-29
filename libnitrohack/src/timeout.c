@@ -490,7 +490,7 @@ void hatch_egg(void *arg, long timeout)
 		case OBJ_MINVENT:
 		    if (cansee_hatchspot) {
 			/* egg carring monster might be invisible */
-			if (canseemon(egg->ocarry)) {
+			if (canseemon(level, egg->ocarry)) {
 			    sprintf(carriedby, "%s pack",
 				     s_suffix(a_monnam(egg->ocarry)));
 			    knows_egg = TRUE;

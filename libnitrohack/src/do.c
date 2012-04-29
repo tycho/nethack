@@ -164,7 +164,7 @@ boolean flooreffects(struct obj *obj, int x, int y, const char *verb)
 				    "fills a pit");
 			}
 		}
-		deltrap(t);
+		deltrap(level, t);
 		obfree(obj, NULL);
 		bury_objs(x, y);
 		newsym(x,y);
@@ -587,7 +587,7 @@ void dropy(struct obj *obj)
 		mpickobj(u.ustuck,obj);
 		if (is_animal(u.ustuck->data)) {
 		    if (could_poly || could_slime) {
-			newcham(u.ustuck,
+			newcham(level, u.ustuck,
 				       could_poly ? NULL :
 				       &mons[PM_GREEN_SLIME],
 				       FALSE, could_slime);
@@ -1152,7 +1152,7 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 
 	    if ((mtmp = m_at(level, u.ux, u.uy)) != 0) {
 		impossible("mnexto failed (do.c)?");
-		rloc(mtmp, FALSE);
+		rloc(level, mtmp, FALSE);
 	    }
 	}
 
@@ -1369,7 +1369,7 @@ void deferred_goto(void)
 		struct trap *t = t_at(level, u.ux, u.uy);
 
 		if (t) {
-		    deltrap(t);
+		    deltrap(level, t);
 		    newsym(u.ux, u.uy);
 		}
 	    }
@@ -1430,7 +1430,7 @@ boolean revive_corpse(struct obj *corpse)
 
 	    case OBJ_MINVENT:		/* probably a nymph's */
 		if (cansee(mtmp->mx, mtmp->my)) {
-		    if (canseemon(mcarry))
+		    if (canseemon(level, mcarry))
 			pline("Startled, %s drops %s as it revives!",
 			      mon_nam(mcarry), an(cname));
 		    else
@@ -1440,7 +1440,7 @@ boolean revive_corpse(struct obj *corpse)
 		break;
 	   case OBJ_CONTAINED:
 		if (container_where == OBJ_MINVENT && cansee(mtmp->mx, mtmp->my) &&
-		    mcarry && canseemon(mcarry) && container) {
+		    mcarry && canseemon(level, mcarry) && container) {
 		        char sackname[BUFSZ];
 		        sprintf(sackname, "%s %s", s_suffix(mon_nam(mcarry)),
 				xname(container)); 

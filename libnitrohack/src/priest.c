@@ -171,7 +171,7 @@ void priestini(struct level *lev, struct mkroom *sroom, int sx, int sy,
 	int cnt;
 
 	if (MON_AT(lev, sx+1, sy))
-		rloc(m_at(lev, sx+1, sy), FALSE); /* insurance */
+		rloc(lev, m_at(lev, sx+1, sy), FALSE); /* insurance */
 
 	priest = makemon(&mons[sanctum ? PM_HIGH_PRIEST : PM_ALIGNED_PRIEST],
 			 lev, sx + 1, sy, NO_MM_FLAGS);
@@ -312,7 +312,7 @@ void intemple(int roomno)
 		       Moloch so suppress the "of Moloch" for him here too */
 		    if (sanctum && !Hallucination) priest->ispriest = 0;
 		    pline("%s intones:",
-			canseemon(priest) ? Monnam(priest) : "A nearby voice");
+			canseemon(level, priest) ? Monnam(priest) : "A nearby voice");
 		    priest->ispriest = save_priest;
 		}
 		msg2 = 0;
@@ -394,7 +394,7 @@ void priest_talk(struct monst *priest)
 
 	    if (!priest->mcanmove || priest->msleeping) {
 		pline("%s breaks out of %s reverie!",
-		      Monnam(priest), mhis(priest));
+		      Monnam(priest), mhis(level, priest));
 		priest->mfrozen = priest->msleeping = 0;
 		priest->mcanmove = 1;
 	    }
@@ -478,7 +478,7 @@ struct monst *mk_roamer(const struct permonst *ptr, aligntyp alignment,
 	if (ptr != &mons[PM_ALIGNED_PRIEST] && ptr != &mons[PM_ANGEL])
 		return NULL;
 	
-	if (MON_AT(lev, x, y)) rloc(m_at(lev, x, y), FALSE);	/* insurance */
+	if (MON_AT(lev, x, y)) rloc(lev, m_at(lev, x, y), FALSE);	/* insurance */
 
 	if (!(roamer = makemon(ptr, lev, x, y, NO_MM_FLAGS)))
 		return NULL;

@@ -412,7 +412,7 @@ static int moverock(schar dx, schar dy)
 			 !(ttmp && ((ttmp->ttyp == PIT) ||
 				    (ttmp->ttyp == SPIKED_PIT))))) {
 		if (Blind) feel_location(sx, sy);
-		if (canspotmon(mtmp))
+		if (canspotmon(level, mtmp))
 		    pline("There's %s on the other side.", a_monnam(mtmp));
 		else {
 		    You_hear("a monster behind %s.", the(xname(otmp)));
@@ -468,7 +468,7 @@ static int moverock(schar dx, schar dy)
 			  otense(otmp, "plug"),
 			  (ttmp->ttyp == TRAPDOOR) ? "trap door" : "hole",
 			  surface(rx, ry));
-		    deltrap(ttmp);
+		    deltrap(level, ttmp);
 		    delobj(otmp);
 		    bury_objs(rx, ry);
 		    if (cansee(rx,ry)) newsym(rx,ry);
@@ -1315,7 +1315,7 @@ int domove(schar dx, schar dy, schar dz)
 	     * attack_check(), which still wastes a turn, but prints a
 	     * different message and makes the player remember the monster.		     */
 	    if (flags.nopick &&
-		  (canspotmon(mtmp) || level->locations[x][y].mem_invis)){
+		  (canspotmon(level, mtmp) || level->locations[x][y].mem_invis)){
 		if (mtmp->m_ap_type && !Protection_from_shape_changers
 						    && !sensemon(mtmp))
 		    stumble_onto_mimic(mtmp, dx, dy);
@@ -1327,7 +1327,7 @@ int domove(schar dx, schar dy, schar dz)
 	    }
 	    if (flags.forcefight || !mtmp->mundetected || sensemon(mtmp) ||
 		    ((hides_under(mtmp->data) || mtmp->data->mlet == S_EEL) &&
-			!is_safepet(mtmp))){
+			!is_safepet(level, mtmp))){
 		gethungry();
 		if (wtcap >= HVY_ENCUMBER && moves%3) {
 		    if (Upolyd && u.mh > 1) {
@@ -1533,7 +1533,7 @@ int domove(schar dx, schar dy, schar dz)
 	 * Ceiling-hiding pets are skipped by this section of code, to
 	 * be caught by the normal falling-monster code.
 	 */
-	if (is_safepet(mtmp) && !(is_hider(mtmp->data) && mtmp->mundetected)) {
+	if (is_safepet(level, mtmp) && !(is_hider(mtmp->data) && mtmp->mundetected)) {
 	    /* if trapped, there's a chance the pet goes wild */
 	    if (mtmp->mtrapped) {
 		if (!rn2(mtmp->mtame)) {
@@ -2287,7 +2287,7 @@ int monster_nearby(void)
 		   !noattacks(mtmp->data) &&
 		   mtmp->mcanmove && !mtmp->msleeping &&  /* aplvax!jcn */
 		   !onscary(u.ux, u.uy, mtmp) &&
-		   canspotmon(mtmp))
+		   canspotmon(level, mtmp))
 			return 1;
 	}
 	return 0;

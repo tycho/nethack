@@ -152,7 +152,7 @@ static void expulsion(boolean seal)
 	   yet will now miss out on a chance to wander through it... */
 	for (t = level->lev_traps; t; t = t->ntrap)
 	    if (t->ttyp == MAGIC_PORTAL) break;
-	if (t) deltrap(t);	/* (display might be briefly out of sync) */
+	if (t) deltrap(level, t);	/* (display might be briefly out of sync) */
 	else if (!reexpelled) impossible("quest portal already gone?");
     }
 }
@@ -311,7 +311,7 @@ static void prisoner_speaks(struct monst *mtmp)
 	if (mtmp->data == &mons[PM_PRISONER] &&
 			(mtmp->mstrategy & STRAT_WAITMASK)) {
 	    /* Awaken the prisoner */
-	    if (canseemon(mtmp))
+	    if (canseemon(level, mtmp))
 	    	pline("%s speaks:", Monnam(mtmp));
 	    verbalize("I'm finally free!");
 	    mtmp->mstrategy &= ~STRAT_WAITMASK;

@@ -259,7 +259,7 @@ boolean ghitm(struct monst *mtmp, struct obj *gold)
 		wakeup(mtmp);
 	} else if (!mtmp->mcanmove) {
 		/* too light to do real damage */
-		if (canseemon(mtmp)) {
+		if (canseemon(level, mtmp)) {
 		    pline("The %s harmlessly %s %s.", xname(gold),
 			      otense(gold, "hit"), mon_nam(mtmp));
 		    msg_given = TRUE;
@@ -282,7 +282,7 @@ boolean ghitm(struct monst *mtmp, struct obj *gold)
 				if (robbed < 0) robbed = 0;
 				pline("The amount %scovers %s recent losses.",
 				      !robbed ? "" : "partially ",
-				      mhis(mtmp));
+				      mhis(level, mtmp));
 				ESHK(mtmp)->robbed = robbed;
 				if (!robbed)
 					make_happy_shk(mtmp, FALSE);
@@ -725,13 +725,13 @@ int dokick(void)
 
 		mtmp = m_at(level, x, y);
 		mdat = mtmp->data;
-		if (!mtmp->mpeaceful || !canspotmon(mtmp))
+		if (!mtmp->mpeaceful || !canspotmon(level, mtmp))
 		    flags.forcefight = TRUE; /* attack even if invisible */
 		kick_monster(x, y, dx, dy);
 		flags.forcefight = FALSE;
 		/* see comment in attack_checks() */
 		if (!DEADMONSTER(mtmp) &&
-		    !canspotmon(mtmp) &&
+		    !canspotmon(level, mtmp) &&
 		    /* check x and y; a monster that evades your kick by
 		       jumping to an unseen square doesn't leave an I behind */
 		    mtmp->mx == x && mtmp->my == y &&
@@ -1062,7 +1062,7 @@ dumb:
 			mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
 			couldsee(mtmp->mx, mtmp->my) &&
 			mtmp->mpeaceful) {
-			if (canspotmon(mtmp))
+			if (canspotmon(level, mtmp))
 			    pline("%s yells:", Amonnam(mtmp));
 			else
 			    You_hear("someone yell:");
@@ -1081,7 +1081,7 @@ dumb:
 		    if ((mtmp->data == &mons[PM_WATCHMAN] ||
 				mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
 			    mtmp->mpeaceful && couldsee(mtmp->mx, mtmp->my)) {
-			if (canspotmon(mtmp))
+			if (canspotmon(level, mtmp))
 			    pline("%s yells:", Amonnam(mtmp));
 			else
 			    You_hear("someone yell:");

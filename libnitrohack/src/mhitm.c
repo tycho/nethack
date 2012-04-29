@@ -40,7 +40,7 @@ static char *mon_nam_too(char *outbuf, struct monst *mon, struct monst *other_mo
 {
 	strcpy(outbuf, mon_nam(mon));
 	if (mon == other_mon)
-	    switch (pronoun_gender(mon)) {
+	    switch (pronoun_gender(level, mon)) {
 	    case 0:	strcpy(outbuf, "himself");  break;
 	    case 1:	strcpy(outbuf, "herself");  break;
 	    default:	strcpy(outbuf, "itself"); break;
@@ -67,9 +67,9 @@ static void missmm(struct monst *magr, struct monst *mdef, const struct attack *
 	char buf[BUFSZ], mdef_name[BUFSZ];
 
 	if (vis) {
-		if (!canspotmon(magr))
+		if (!canspotmon(level, magr))
 		    map_invisible(magr->mx, magr->my);
-		if (!canspotmon(mdef))
+		if (!canspotmon(level, mdef))
 		    map_invisible(mdef->mx, mdef->my);
 		if (mdef->m_ap_type) seemimic(mdef);
 		if (magr->m_ap_type) seemimic(magr);
@@ -209,7 +209,7 @@ int mattackm(struct monst *magr, struct monst *mdef)
     if (mdef->mundetected) {
 	mdef->mundetected = 0;
 	newsym(mdef->mx, mdef->my);
-	if (canseemon(mdef) && !sensemon(mdef)) {
+	if (canseemon(level, mdef) && !sensemon(mdef)) {
 	    if (u.usleep) pline("You dream of %s.",
 				(mdef->data->geno & G_UNIQ) ?
 				a_monnam(mdef) : makeplural(m_monnam(mdef)));
@@ -222,7 +222,7 @@ int mattackm(struct monst *magr, struct monst *mdef)
 
 
     /* Set up the visibility of action */
-    vis = (cansee(magr->mx,magr->my) && cansee(mdef->mx,mdef->my) && (canspotmon(magr) || canspotmon(mdef)));
+    vis = (cansee(magr->mx,magr->my) && cansee(mdef->mx,mdef->my) && (canspotmon(level, magr) || canspotmon(level, mdef)));
 
     /*	Set flag indicating monster has moved this turn.  Necessary since a
      *	monster might get an attack out of sequence (i.e. before its move) in
@@ -371,9 +371,9 @@ static int hitmm(struct monst *magr, struct monst *mdef, const struct attack *ma
 		int compat;
 		char buf[BUFSZ], mdef_name[BUFSZ];
 
-		if (!canspotmon(magr))
+		if (!canspotmon(level, magr))
 		    map_invisible(magr->mx, magr->my);
-		if (!canspotmon(mdef))
+		if (!canspotmon(level, mdef))
 		    map_invisible(mdef->mx, mdef->my);
 		if (mdef->m_ap_type) seemimic(mdef);
 		if (magr->m_ap_type) seemimic(magr);
@@ -437,24 +437,24 @@ static int gazemm(struct monst *magr, struct monst *mdef, const struct attack *m
 	}
 	/* call mon_reflects 2x, first test, then, if visible, print message */
 	if (magr->data == &mons[PM_MEDUSA] && mon_reflects(mdef, NULL)) {
-	    if (canseemon(mdef))
+	    if (canseemon(level, mdef))
 		mon_reflects(mdef,
 				    "The gaze is reflected away by %s %s.");
 	    if (mdef->mcansee) {
 		if (mon_reflects(magr, NULL)) {
-		    if (canseemon(magr))
+		    if (canseemon(level, magr))
 			mon_reflects(magr,
 					"The gaze is reflected away by %s %s.");
 		    return MM_MISS;
 		}
 		if (mdef->minvis && !perceives(magr->data)) {
-		    if (canseemon(magr)) {
+		    if (canseemon(level, magr)) {
 			pline("%s doesn't seem to notice that %s gaze was reflected.",
-			      Monnam(magr), mhis(magr));
+			      Monnam(magr), mhis(level, magr));
 		    }
 		    return MM_MISS;
 		}
-		if (canseemon(magr))
+		if (canseemon(level, magr))
 		    pline("%s is turned to stone!", Monnam(magr));
 		monstone(magr);
 		if (magr->mhp > 0) return MM_MISS;
@@ -573,7 +573,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		case (W_ARMC|W_ARMG):
 		    if ((otch = which_armor(magr, W_ARMG))) {
 			if (!oresist_disintegration(otch)) {
-			    if (canseemon(magr))
+			    if (canseemon(level, magr))
 				pline("%s %s disintegrates!",
 				      s_suffix(Monnam(magr)),
 				      distant_name(otch, xname));
@@ -585,7 +585,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		    } else touched = 1;
 		    if ((otch = which_armor(magr, W_ARMC))) {
 			if (!oresist_disintegration(otch)) {
-			    if (canseemon(magr))
+			    if (canseemon(level, magr))
 				pline("%s %s disintegrates!",
 				      s_suffix(Monnam(magr)),
 				      distant_name(otch, xname));
@@ -597,7 +597,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		    if (!(magr->misc_worn_check & W_ARMC) &&
 			    (otch = which_armor(magr, W_ARM)) &&
 			    (!oresist_disintegration(otch))) {
-			if (canseemon(magr))
+			if (canseemon(level, magr))
 			    pline("%s %s disintegrates!",
 				  s_suffix(Monnam(magr)),
 				  distant_name(otch, xname));
@@ -607,7 +607,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		    if (!(magr->misc_worn_check & (W_ARMC|W_ARM)) &&
 			    (otch = which_armor(magr, W_ARMU)) &&
 			    (!oresist_disintegration(otch))) {
-			if (canseemon(magr))
+			if (canseemon(level, magr))
 			    pline("%s %s disintegrates!",
 				  s_suffix(Monnam(magr)),
 				  distant_name(otch, xname));
@@ -618,7 +618,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		case (W_ARMG):
 		    if (otmp) {
 			if (!oresist_disintegration(otmp)) {
-			    if (canseemon(magr))
+			    if (canseemon(level, magr))
 				pline("%s %s disintegrates!",
 				      s_suffix(Monnam(magr)),
 				      distant_name(otmp, xname));
@@ -628,7 +628,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 			}
 		    } else if ((otch = which_armor(magr, W_ARMG))) {
 			if (!oresist_disintegration(otch)) {
-			    if (canseemon(magr))
+			    if (canseemon(level, magr))
 				pline("%s %s disintegrates!",
 				      s_suffix(Monnam(magr)),
 				      distant_name(otch, xname));
@@ -641,7 +641,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		case (W_ARMH):
 		    if ((otch = which_armor(magr, W_ARMH))) {
 			if (!oresist_disintegration(otch)) {
-			    if (canseemon(magr))
+			    if (canseemon(level, magr))
 				pline("%s %s disintegrates!",
 				      s_suffix(Monnam(magr)),
 				      distant_name(otch, xname));
@@ -654,7 +654,7 @@ static int defdisintagr(struct monst *magr, struct monst *mdef,
 		case (W_ARMF):
 		    if ((otch = which_armor(magr, W_ARMF))) {
 			if (!oresist_disintegration(otch)) {
-			    if (canseemon(magr))
+			    if (canseemon(level, magr))
 				pline("%s %s disintegrates!",
 				      s_suffix(Monnam(magr)),
 				      distant_name(otch, xname));
@@ -794,7 +794,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		break;
 	    case AD_STUN:
 		if (magr->mcan) break;
-		if (canseemon(mdef))
+		if (canseemon(level, mdef))
 		    pline("%s %s for a moment.", Monnam(mdef),
 			  makeplural(stagger(mdef->data, "stagger")));
 		mdef->mstun = 1;
@@ -999,8 +999,8 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		       we'll get "it" in the suddenly disappears message */
 		    if (vis) strcpy(mdef_Monnam, Monnam(mdef));
 		    mdef->mstrategy &= ~STRAT_WAITFORU;
-		    rloc(mdef, FALSE);
-		    if (vis && !canspotmon(mdef) && mdef != u.usteed)
+		    rloc(level, mdef, FALSE);
+		    if (vis && !canspotmon(level, mdef) && mdef != u.usteed)
 			pline("%s suddenly disappears!", mdef_Monnam);
 		}
 		break;
@@ -1114,8 +1114,8 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		    pline("%s steals some gold from %s.", buf, mon_nam(mdef));
 		}
 		if (!tele_restrict(magr)) {
-		    rloc(magr, FALSE);
-		    if (vis && !canspotmon(magr))
+		    rloc(level, magr, FALSE);
+		    if (vis && !canspotmon(level, magr))
 			pline("%s suddenly disappears!", buf);
 		}
 		break;
@@ -1177,8 +1177,8 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 							0 : MM_AGR_DIED));
 			if (magr->data->mlet == S_NYMPH &&
 			    !tele_restrict(magr)) {
-			    rloc(magr, FALSE);
-			    if (vis && !canspotmon(magr))
+			    rloc(level, magr, FALSE);
+			    if (vis && !canspotmon(level, magr))
 				pline("%s suddenly disappears!", buf);
 			}
 		}
@@ -1216,7 +1216,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 			strcpy(buf, s_suffix(Monnam(mdef)));
 			pline("%s helmet blocks %s attack to %s head.",
 				buf, s_suffix(mon_nam(magr)),
-				mhis(mdef));
+				mhis(level, mdef));
 		    }
 		    break;
 		}
@@ -1238,7 +1238,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		if (cancelled) break;	/* physical damage only */
 		if (!rn2(4) && !flaming(mdef->data) &&
 				mdef->data != &mons[PM_GREEN_SLIME]) {
-		    newcham(mdef, &mons[PM_GREEN_SLIME], FALSE, vis);
+		    newcham(level, mdef, &mons[PM_GREEN_SLIME], FALSE, vis);
 		    mdef->mstrategy &= ~STRAT_WAITFORU;
 		    tmp = 0;
 		}
@@ -1277,7 +1277,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		    } else if (otch) {
 			recip_dam = otch->owt;
 			weight_dmg(recip_dam);
-			if (canseemon(mdef))
+			if (canseemon(level, mdef))
 			    pline("%s %s disintegrates!",
 				  s_suffix(Monnam(mdef)), distant_name(otch, xname));
 			m_useup(mdef, otch);
@@ -1308,9 +1308,9 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		/* various checks similar to dog_eat and meatobj.
 		 * after monkilled() to provide better message ordering */
 		if (mdef->cham != CHAM_ORDINARY) {
-		    newcham(magr, NULL, FALSE, TRUE);
+		    newcham(level, magr, NULL, FALSE, TRUE);
 		} else if (mdef->data == &mons[PM_GREEN_SLIME]) {
-		    newcham(magr, &mons[PM_GREEN_SLIME], FALSE, TRUE);
+		    newcham(level, magr, &mons[PM_GREEN_SLIME], FALSE, TRUE);
 		} else if (mdef->data == &mons[PM_WRAITH]) {
 		    grow_up(magr, NULL);
 		    /* don't grow up twice */
@@ -1407,7 +1407,7 @@ static void mswingsm(struct monst *magr, struct monst *mdef, struct obj *otemp)
 	strcpy(buf, mon_nam(mdef));
 	pline("%s %s %s %s at %s.", Monnam(magr),
 	      (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-	      mhis(magr), singular(otemp, xname), buf);
+	      mhis(level, magr), singular(otemp, xname), buf);
 }
 
 /*
@@ -1439,11 +1439,11 @@ static int passivemm(struct monst *magr, struct monst *mdef,
 	    case AD_ACID:
 		if (mhit && !rn2(2)) {
 		    strcpy(buf, Monnam(magr));
-		    if (canseemon(magr))
+		    if (canseemon(level, magr))
 			pline("%s is splashed by %s acid!",
 			      buf, s_suffix(mon_nam(mdef)));
 		    if (resists_acid(magr)) {
-			if (canseemon(magr))
+			if (canseemon(level, magr))
 			    pline("%s is not affected.", Monnam(magr));
 			tmp = 0;
 		    }
@@ -1471,10 +1471,10 @@ static int passivemm(struct monst *magr, struct monst *mdef,
 			sprintf(buf, "%s gaze is reflected by %%s %%s.",
 				s_suffix(mon_nam(mdef)));
 			if (mon_reflects(magr,
-					 canseemon(magr) ? buf : NULL))
+					 canseemon(level, magr) ? buf : NULL))
 				return mdead|mhit;
 			strcpy(buf, Monnam(magr));
-			if (canseemon(magr))
+			if (canseemon(level, magr))
 			    pline("%s is frozen by %s gaze!",
 				  buf, s_suffix(mon_nam(mdef)));
 			magr->mcanmove = 0;
@@ -1483,7 +1483,7 @@ static int passivemm(struct monst *magr, struct monst *mdef,
 		    }
 		} else { /* gelatinous cube */
 		    strcpy(buf, Monnam(magr));
-		    if (canseemon(magr))
+		    if (canseemon(level, magr))
 			pline("%s is frozen by %s.", buf, mon_nam(mdef));
 		    magr->mcanmove = 0;
 		    magr->mfrozen = tmp;
@@ -1492,14 +1492,14 @@ static int passivemm(struct monst *magr, struct monst *mdef,
 		return 1;
 	    case AD_COLD:
 		if (resists_cold(magr)) {
-		    if (canseemon(magr)) {
+		    if (canseemon(level, magr)) {
 			pline("%s is mildly chilly.", Monnam(magr));
 			golemeffects(magr, AD_COLD, tmp);
 		    }
 		    tmp = 0;
 		    break;
 		}
-		if (canseemon(magr))
+		if (canseemon(level, magr))
 		    pline("%s is suddenly very cold!", Monnam(magr));
 		mdef->mhp += tmp / 2;
 		if (mdef->mhpmax < mdef->mhp) mdef->mhpmax = mdef->mhp;
@@ -1509,7 +1509,7 @@ static int passivemm(struct monst *magr, struct monst *mdef,
 	    case AD_STUN:
 		if (!magr->mstun) {
 		    magr->mstun = 1;
-		    if (canseemon(magr))
+		    if (canseemon(level, magr))
 			pline("%s %s...", Monnam(magr),
 			      makeplural(stagger(magr->data, "stagger")));
 		}
@@ -1517,26 +1517,26 @@ static int passivemm(struct monst *magr, struct monst *mdef,
 		break;
 	    case AD_FIRE:
 		if (resists_fire(magr)) {
-		    if (canseemon(magr)) {
+		    if (canseemon(level, magr)) {
 			pline("%s is mildly warmed.", Monnam(magr));
 			golemeffects(magr, AD_FIRE, tmp);
 		    }
 		    tmp = 0;
 		    break;
 		}
-		if (canseemon(magr))
+		if (canseemon(level, magr))
 		    pline("%s is suddenly very hot!", Monnam(magr));
 		break;
 	    case AD_ELEC:
 		if (resists_elec(magr)) {
-		    if (canseemon(magr)) {
+		    if (canseemon(level, magr)) {
 			pline("%s is mildly tingled.", Monnam(magr));
 			golemeffects(magr, AD_ELEC, tmp);
 		    }
 		    tmp = 0;
 		    break;
 		}
-		if (canseemon(magr))
+		if (canseemon(level, magr))
 		    pline("%s is jolted with electricity!", Monnam(magr));
 		break;
 	    default: tmp = 0;

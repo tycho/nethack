@@ -1005,7 +1005,7 @@ void potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 		    angermon = FALSE;
 		    if (mon->mhp < mon->mhpmax) {
 			mon->mhp = mon->mhpmax;
-			if (canseemon(mon))
+			if (canseemon(level, mon))
 			    pline("%s looks sound and hale again.", Monnam(mon));
 		    }
 		    break;
@@ -1014,7 +1014,7 @@ void potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 		    if (dmgtype(mon->data, AD_DISE) ||
 			       dmgtype(mon->data, AD_PEST) || /* won't happen, see prior goto */
 			       resists_poison(mon)) {
-			if (canseemon(mon))
+			if (canseemon(level, mon))
 			    pline("%s looks unharmed.", Monnam(mon));
 			break;
 		    }
@@ -1024,7 +1024,7 @@ void potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 		    if ((mon->mhp > 2) && !resist(mon, POTION_CLASS, 0, NOTELL))
 			    mon->mhp /= 2;
 		    if (mon->mhp > mon->mhpmax) mon->mhp = mon->mhpmax;
-		    if (canseemon(mon))
+		    if (canseemon(level, mon))
 			pline("%s looks rather ill.", Monnam(mon));
 		    break;
 	    case POT_CONFUSION:
@@ -1077,7 +1077,7 @@ void potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 				new_were(mon);	/* revert to human */
 			} else if (obj->cursed) {
 			    angermon = FALSE;
-			    if (canseemon(mon))
+			    if (canseemon(level, mon))
 				pline("%s looks healthier.", Monnam(mon));
 			    mon->mhp += dice(2,6);
 			    if (mon->mhp > mon->mhpmax) mon->mhp = mon->mhpmax;
@@ -1089,7 +1089,7 @@ void potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 			angermon = FALSE;
 			split_mon(mon, NULL);
 		    } else if (mon->data == &mons[PM_IRON_GOLEM]) {
-			if (canseemon(mon))
+			if (canseemon(level, mon))
 			    pline("%s rusts.", Monnam(mon));
 			mon->mhp -= dice(1,6);
 			/* should only be by you */
@@ -1965,7 +1965,7 @@ struct monst *split_mon(struct monst *mon,	/* monster being split */
 	    if (mtmp2) {
 		mtmp2->mhpmax = mon->mhpmax / 2;
 		mon->mhpmax -= mtmp2->mhpmax;
-		if (canspotmon(mon))
+		if (canspotmon(level, mon))
 		    pline("%s multiplies%s!", Monnam(mon), reason);
 	    }
 	}

@@ -43,7 +43,7 @@ extern const char * const flash_types[];	/* from zap.c */
 /* feedback when frustrated monster couldn't cast a spell */
 static void cursetxt(struct monst *mtmp, boolean undirected)
 {
-	if (canseemon(mtmp) && couldsee(mtmp->mx, mtmp->my)) {
+	if (canseemon(level, mtmp) && couldsee(mtmp->mx, mtmp->my)) {
 	    const char *point_msg;  /* spellcasting monsters are impolite */
 
 	    if (undirected)
@@ -208,7 +208,7 @@ int castmu(struct monst *mtmp,
 	if (!foundyou && thinks_it_foundyou &&
 		!is_undirected_spell(mattk->adtyp, spellnum)) {
 	    pline("%s casts a spell at %s!",
-		canseemon(mtmp) ? Monnam(mtmp) : "Something",
+		canseemon(level, mtmp) ? Monnam(mtmp) : "Something",
 		level->locations[mtmp->mux][mtmp->muy].typ == WATER
 		    ? "empty water" : "thin air");
 	    return 0;
@@ -216,13 +216,13 @@ int castmu(struct monst *mtmp,
 
 	nomul(0, NULL);
 	if (rn2(ml*10) < (mtmp->mconf ? 100 : 20)) {	/* fumbled attack */
-	    if (canseemon(mtmp) && flags.soundok)
+	    if (canseemon(level, mtmp) && flags.soundok)
 		pline("The air crackles around %s.", mon_nam(mtmp));
 	    return 0;
 	}
-	if (canspotmon(mtmp) || !is_undirected_spell(mattk->adtyp, spellnum)) {
+	if (canspotmon(level, mtmp) || !is_undirected_spell(mattk->adtyp, spellnum)) {
 	    pline("%s casts a spell%s!",
-		  canspotmon(mtmp) ? Monnam(mtmp) : "Something",
+		  canspotmon(level, mtmp) ? Monnam(mtmp) : "Something",
 		  is_undirected_spell(mattk->adtyp, spellnum) ? "" :
 		  (Invisible && !perceives(mtmp->data) && 
 		   (mtmp->mux != u.ux || mtmp->muy != u.uy)) ?
@@ -311,7 +311,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 
     switch (spellnum) {
     case MGC_DEATH_TOUCH:
-	pline("Oh no, %s's using the touch of death!", mhe(mtmp));
+	pline("Oh no, %s's using the touch of death!", mhe(level, mtmp));
 	if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
 	    pline("You seem no deader than before.");
 	} else if (!Antimagic && rn2(mtmp->m_lev) > 12) {
@@ -395,7 +395,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 	break;
     case MGC_DISAPPEAR:		/* makes self invisible */
 	if (!mtmp->minvis && !mtmp->invis_blkd) {
-	    if (canseemon(mtmp))
+	    if (canseemon(level, mtmp))
 		pline("%s suddenly %s!", Monnam(mtmp),
 		      !See_invisible ? "disappears" : "becomes transparent");
 	    mon_set_minvis(mtmp);
@@ -423,7 +423,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 	break;
     case MGC_CURE_SELF:
 	if (mtmp->mhp < mtmp->mhpmax) {
-	    if (canseemon(mtmp))
+	    if (canseemon(level, mtmp))
 		pline("%s looks better.", Monnam(mtmp));
 	    /* note: player healing does 6d4; this used to do 1d8 */
 	    if ((mtmp->mhp += dice(3,6)) > mtmp->mhpmax)
@@ -610,7 +610,7 @@ static void cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
 	break;
     case CLC_CURE_SELF:
 	if (mtmp->mhp < mtmp->mhpmax) {
-	    if (canseemon(mtmp))
+	    if (canseemon(level, mtmp))
 		pline("%s looks better.", Monnam(mtmp));
 	    /* note: player healing does 6d4; this used to do 1d8 */
 	    if ((mtmp->mhp += dice(3,6)) > mtmp->mhpmax)
@@ -742,7 +742,7 @@ int buzzmu(struct monst *mtmp, const struct attack  *mattk)
 	if (lined_up(mtmp) && rn2(3)) {
 	    nomul(0, NULL);
 	    if (mattk->adtyp && (mattk->adtyp < 11)) { /* no cf unsigned >0 */
-		if (canseemon(mtmp))
+		if (canseemon(level, mtmp))
 		    pline("%s zaps you with a %s!", Monnam(mtmp),
 			  flash_types[ad_to_typ(mattk->adtyp)]);
 		buzz(-ad_to_typ(mattk->adtyp), (int)mattk->damn,

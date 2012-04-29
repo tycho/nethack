@@ -363,7 +363,7 @@ void mon_arrive(struct monst *mtmp, boolean with_you)
 	if (xlocale)
 	    mnearto(mtmp, xlocale, ylocale, FALSE);
 	else {
-	    if (!rloc(mtmp,TRUE)) {
+	    if (!rloc(level, mtmp, TRUE)) {
 		/*
 		 * Failed to place migrating monster,
 		 * probably because the level is full.
@@ -490,7 +490,7 @@ void keepdogs(int exclude, const char *pet_msg_suffix)
 		&& !(mtmp->mstrategy & STRAT_WAITFORU)) {
 		stay_behind = FALSE;
 		if (mtmp->mtame && mtmp->meating) {
-			if (canseemon(mtmp))
+			if (canseemon(level, mtmp))
 			    pline("%s is still eating.", Monnam(mtmp));
 			stay_behind = TRUE;
 		} else if (mtmp->mtame && exclude == 2) {
@@ -499,12 +499,12 @@ void keepdogs(int exclude, const char *pet_msg_suffix)
 			pline("%s %s", Monnam(mtmp), pet_msg_suffix);
 			stay_behind = TRUE;
 		} else if (mon_has_amulet(mtmp)) {
-			if (canseemon(mtmp))
+			if (canseemon(level, mtmp))
 			    pline("%s seems very disoriented for a moment.",
 				Monnam(mtmp));
 			stay_behind = TRUE;
 		} else if (mtmp->mtame && mtmp->mtrapped) {
-			if (canseemon(mtmp))
+			if (canseemon(level, mtmp))
 			    pline("%s is still trapped.", Monnam(mtmp));
 			stay_behind = TRUE;
 		}
@@ -749,7 +749,7 @@ struct monst *tamedog(struct monst *mtmp, struct obj *obj)
 		((tasty = dogfood(mtmp, obj)) == DOGFOOD ||
 		 (tasty <= ACCFOOD && EDOG(mtmp)->hungrytime <= moves))) {
 		/* pet will "catch" and eat this thrown food */
-		if (canseemon(mtmp)) {
+		if (canseemon(level, mtmp)) {
 		    boolean big_corpse = (obj->otyp == CORPSE &&
 					  obj->corpsenm >= LOW_PM &&
 				mons[obj->corpsenm].msize > mtmp->data->msize);

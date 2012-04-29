@@ -100,13 +100,13 @@ static int append_str(char *buf, const char *new_str, int is_plur)
 static void mon_vision_summary(const struct monst *mtmp, char *outbuf)
 {
     int ways_seen = 0, normal = 0, xraydist;
-    boolean useemon = (boolean) canseemon(mtmp);
+    boolean useemon = (boolean) canseemon(level, mtmp);
     
     outbuf[0] = '\0';
 
     xraydist = (u.xray_range<0) ? -1 : u.xray_range * u.xray_range;
     /* normal vision */
-    if ((mtmp->wormno ? worm_known(mtmp) : cansee(mtmp->mx, mtmp->my)) &&
+    if ((mtmp->wormno ? worm_known(level, mtmp) : cansee(mtmp->mx, mtmp->my)) &&
 	    mon_visible(mtmp) && !mtmp->minvis) {
 	ways_seen++;
 	normal++;

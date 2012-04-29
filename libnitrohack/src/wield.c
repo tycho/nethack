@@ -570,7 +570,7 @@ void erode_obj(struct obj *target, /* object (e.g. weapon or armor) to erode */
 	    return;
 	victim = carried(target) ? &youmonst :
 	    mcarried(target) ? target->ocarry : NULL;
-	vismon = victim && (victim != &youmonst) && canseemon(victim);
+	vismon = victim && (victim != &youmonst) && canseemon(level, victim);
 	visobj = !victim && cansee(bhitpos.x, bhitpos.y); /* assume thrown */
 
 	erosion = acid_dmg ? target->oeroded2 : target->oeroded;

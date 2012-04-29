@@ -585,14 +585,14 @@ int mon_wield_item(struct monst *mon)
 		 * Still....
 		 */
 		if (mw_tmp && mw_tmp->cursed && mw_tmp->otyp != CORPSE) {
-		    if (canseemon(mon)) {
+		    if (canseemon(level, mon)) {
 			char welded_buf[BUFSZ];
 			const char *mon_hand = mbodypart(mon, HAND);
 
 			if (bimanual(mw_tmp)) mon_hand = makeplural(mon_hand);
 			sprintf(welded_buf, "%s welded to %s %s",
 				otense(mw_tmp, "are"),
-				mhis(mon), mon_hand);
+				mhis(level, mon), mon_hand);
 
 			if (obj->otyp == PICK_AXE) {
 			    pline("Since %s weapon%s %s,",
@@ -615,7 +615,7 @@ int mon_wield_item(struct monst *mon)
 		mon->mw = obj;		/* wield obj */
 		setmnotwielded(mon, mw_tmp);
 		mon->weapon_check = NEED_WEAPON;
-		if (canseemon(mon)) {
+		if (canseemon(level, mon)) {
 		    pline("%s wields %s!", Monnam(mon), doname(obj));
 		    if (obj->cursed && obj->otyp != CORPSE) {
 			pline("%s %s to %s %s!",
@@ -627,7 +627,7 @@ int mon_wield_item(struct monst *mon)
 		}
 		if (artifact_light(obj) && !obj->lamplit) {
 		    begin_burn(obj, FALSE);
-		    if (canseemon(mon))
+		    if (canseemon(level, mon))
 			pline("%s brilliantly in %s %s!",
 			    Tobjnam(obj, "glow"), 
 			    s_suffix(mon_nam(mon)), mbodypart(mon,HAND));
@@ -1213,7 +1213,7 @@ void setmnotwielded(struct monst *mon, struct obj *obj)
     if (!obj) return;
     if (artifact_light(obj) && obj->lamplit) {
 	end_burn(obj, FALSE);
-	if (canseemon(mon))
+	if (canseemon(level, mon))
 	    pline("%s in %s %s %s glowing.", The(xname(obj)),
 		  s_suffix(mon_nam(mon)), mbodypart(mon,HAND),
 		  otense(obj, "stop"));

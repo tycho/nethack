@@ -250,7 +250,7 @@ static void set_entity(int x, int y, struct entity *etmp)
 }
 
 #define is_u(etmp) (etmp->emon == &youmonst)
-#define e_canseemon(etmp) (is_u(etmp) ? (boolean)TRUE : canseemon(etmp->emon))
+#define e_canseemon(lev, etmp) (is_u(etmp) ? (boolean)TRUE : canseemon(lev, etmp->emon))
 
 /*
  * e_strg is a utility routine which is not actually in use anywhere, since
@@ -435,7 +435,7 @@ static void do_entity(struct entity *etmp)
 	if (!etmp->edata)
 		return;
 
-	e_inview = e_canseemon(etmp);
+	e_inview = e_canseemon(level, etmp);
 	oldx = etmp->ex;
 	oldy = etmp->ey;
 	at_portcullis = is_db_wall(oldx, oldy);
@@ -533,7 +533,7 @@ static void do_entity(struct entity *etmp)
 		}
 		etmp->ex = newx;
 		etmp->ey = newy;
-		e_inview = e_canseemon(etmp);
+		e_inview = e_canseemon(level, etmp);
 	}
 	if (is_db_wall(etmp->ex, etmp->ey)) {
 		if (e_inview) {
@@ -604,8 +604,8 @@ boolean close_drawbridge(int x, int y)
 	/* A huge monster will block the drawbridge. */
 	if ((m = m_at(level, x, y)) && hugemonst(m->data)) {
 	    pline("%s blocks the drawbridge with %s weight!",
-		  canseemon(m) ? Amonnam(m) : "Something",
-		  canseemon(m) ? mhis(m) : "its");
+		  canseemon(level, m) ? Amonnam(m) : "Something",
+		  canseemon(level, m) ? mhis(level, m) : "its");
 	    return FALSE;
 	}
 	if (rn2(5) == 0) {
@@ -643,8 +643,8 @@ boolean close_drawbridge(int x, int y)
 	revive_nasty(x2,y2,NULL);
 	delallobj(x, y);
 	delallobj(x2, y2);
-	if ((t = t_at(level, x, y)) != 0) deltrap(t);
-	if ((t = t_at(level, x2, y2)) != 0) deltrap(t);
+	if ((t = t_at(level, x, y)) != 0) deltrap(level, t);
+	if ((t = t_at(level, x2, y2)) != 0) deltrap(level, t);
 	newsym(x, y);
 	newsym(x2, y2);
 	block_point(x2,y2);	/* vision */
@@ -678,8 +678,8 @@ void open_drawbridge(int x, int y)
 	do_entity(&(occupants[1]));
 	revive_nasty(x,y,NULL);
 	delallobj(x, y);
-	if ((t = t_at(level, x, y)) != 0) deltrap(t);
-	if ((t = t_at(level, x2, y2)) != 0) deltrap(t);
+	if ((t = t_at(level, x, y)) != 0) deltrap(level, t);
+	if ((t = t_at(level, x2, y2)) != 0) deltrap(level, t);
 	newsym(x, y);
 	newsym(x2, y2);
 	unblock_point(x2,y2);	/* vision */
@@ -739,8 +739,8 @@ void destroy_drawbridge(int x, int y)
 	wake_nearto(x, y, 500);
 	loc2->typ = DOOR;
 	loc2->doormask = D_NODOOR;
-	if ((t = t_at(level, x, y)) != 0) deltrap(t);
-	if ((t = t_at(level, x2, y2)) != 0) deltrap(t);
+	if ((t = t_at(level, x, y)) != 0) deltrap(level, t);
+	if ((t = t_at(level, x2, y2)) != 0) deltrap(level, t);
 	newsym(x,y);
 	newsym(x2,y2);
 	if (!does_block(level,x2,y2)) unblock_point(x2,y2);	/* vision */
@@ -748,7 +748,7 @@ void destroy_drawbridge(int x, int y)
 
 	set_entity(x2, y2, etmp2); /* currently only automissers can be here */
 	if (etmp2->edata) {
-		e_inview = e_canseemon(etmp2);
+		e_inview = e_canseemon(level, etmp2);
 		if (!automiss(etmp2)) {
 			if (e_inview)
 				pline("%s blown apart by flying debris.",
@@ -760,7 +760,7 @@ void destroy_drawbridge(int x, int y)
 	}
 	set_entity(x, y, etmp1);
 	if (etmp1->edata) {
-		e_inview = e_canseemon(etmp1);
+		e_inview = e_canseemon(level, etmp1);
 		if (!e_missed(etmp1, TRUE)) {
 			if (e_inview) {
 			    if (!is_u(etmp1) && Hallucination)

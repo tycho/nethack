@@ -366,7 +366,7 @@ void blkmar_guards(struct monst *shkp)
 		mt != shkp && inside_shop(level, mt->mx, mt->my) == eshkp->shoproom) {
 		if (!mesg_given) {
 		    pline("%s calls for %s assistants!",
-			    noit_Monnam(shkp), mhis(shkp));
+			    noit_Monnam(shkp), mhis(level, shkp));
 		    mesg_given = TRUE;
 		}
 		wakeup(mt);
@@ -902,7 +902,7 @@ static void rouse_shk(struct monst *shkp, boolean verbosely)
 {
 	if (!shkp->mcanmove || shkp->msleeping) {
 	    /* greed induced recovery... */
-	    if (verbosely && canspotmon(shkp))
+	    if (verbosely && canspotmon(level, shkp))
 		pline("%s %s.", Monnam(shkp),
 		      shkp->msleeping ? "wakes up" : "can move again");
 	    shkp->msleeping = 0;
@@ -923,13 +923,13 @@ void make_happy_shk(struct monst *shkp, boolean silentkops)
 		adjalign(sgn(u.ualign.type));
 	if (!inhishop(shkp)) {
 		char shk_nam[BUFSZ];
-		boolean vanished = canseemon(shkp);
+		boolean vanished = canseemon(level, shkp);
 
 		strcpy(shk_nam, mon_nam(shkp));
 		if (on_level(&eshkp->shoplevel, &shkp->dlevel->z)) {
 			home_shk(shkp, FALSE);
 			/* didn't disappear if shk can still be seen */
-			if (canseemon(shkp)) vanished = FALSE;
+			if (canseemon(level, shkp)) vanished = FALSE;
 		} else {
 			/* if sensed, does disappear regardless whether seen */
 			if (sensemon(shkp)) vanished = TRUE;
@@ -1032,7 +1032,7 @@ int dopay(void)
 		shkp; shkp = next_shkp(shkp->nmon, FALSE)) {
 	    sk++;
 	    if (ANGRY(shkp) && distu(shkp->mx, shkp->my) <= 2) nxtm = shkp;
-	    if (canspotmon(shkp)) seensk++;
+	    if (canspotmon(level, shkp)) seensk++;
 	    if (inhishop(shkp) && (*u.ushops == ESHK(shkp)->shoproom))
 		resident = shkp;
 	}
@@ -1062,7 +1062,7 @@ int dopay(void)
 	if (seensk == 1) {
 		for (shkp = next_shkp(level->monlist, FALSE);
 			shkp; shkp = next_shkp(shkp->nmon, FALSE))
-		    if (canspotmon(shkp)) break;
+		    if (canspotmon(level, shkp)) break;
 		if (shkp != resident && distu(shkp->mx, shkp->my) > 2) {
 		    pline("%s is not near enough to receive your payment.",
 					     Monnam(shkp));
@@ -1135,7 +1135,7 @@ proceed:
 		} else {
 		    if (umoney > ltmp) {
 			pline("You give %s the %ld gold piece%s %s asked for.",
-			    mon_nam(shkp), ltmp, plur(ltmp), mhe(shkp));
+			    mon_nam(shkp), ltmp, plur(ltmp), mhe(level, shkp));
 			pay(ltmp, shkp);
 		    } else {
 			pline("You give %s all your%s gold.", mon_nam(shkp),
@@ -1145,7 +1145,7 @@ proceed:
 		    }
 		    if ((umoney < ltmp/2L) || (umoney < ltmp && stashed_gold))
 			pline("Unfortunately, %s doesn't look satisfied.",
-			      mhe(shkp));
+			      mhe(level, shkp));
 		    else
 			make_happy_shk(shkp, FALSE);
 		}
@@ -1165,14 +1165,14 @@ proceed:
 		    if (umoney < ltmp/2L || (umoney < ltmp && stashed_gold)) {
 			if (!umoney)
 			    pline(no_money, stashed_gold ? " seem to" : "");
-			else pline(not_enough_money, mhim(shkp));
+			else pline(not_enough_money, mhim(level, shkp));
 			return 1;
 		    }
 		    pline("But since %s shop has been robbed recently,",
-			  mhis(shkp));
+			  mhis(level, shkp));
 		    pline("you %scompensate %s for %s losses.",
 			  (umoney < ltmp) ? "partially " : "",
-			  mon_nam(shkp), mhis(shkp));
+			  mon_nam(shkp), mhis(level, shkp));
 		    pay(umoney < ltmp ? umoney : ltmp, shkp);
 		    make_happy_shk(shkp, FALSE);
 		} else {
@@ -1186,12 +1186,12 @@ proceed:
 		    if (umoney < peace_offering) {
 			if (!umoney)
 			    pline(no_money, stashed_gold ? " seem to" : "");
-			else pline(not_enough_money, mhim(shkp));
+			else pline(not_enough_money, mhim(level, shkp));
 			return 1;
 		    }
 		    pline("You try to appease %s by giving %s %ld gold pieces.",
 			x_monnam(shkp, ARTICLE_THE, "angry", 0, FALSE),
-			mhim(shkp), peace_offering);
+			mhim(level, shkp), peace_offering);
 		    pay(peace_offering, shkp);
 		    if (strncmp(eshkp->customer, plname, PL_NSIZ) || rn2(3))
 			make_happy_shk(shkp, FALSE);
@@ -2676,7 +2676,7 @@ struct monst *shkcatch(struct obj *obj, xchar x, xchar y)
 			  Monnam(shkp),
 			  (x == shkp->mx && y == shkp->my) ? "" : " reaches over and",
 			  the(xname(obj)));
-		    if (!canspotmon(shkp))
+		    if (!canspotmon(level, shkp))
 			map_invisible(x, y);
 		    win_delay_output();
 		}
@@ -2858,7 +2858,7 @@ int repair_damage(struct level *lev, struct monst *shkp, struct damage *tmp_dam,
 		otmp->owt = weight(otmp);
 		mpickobj(shkp, otmp);
 	    }
-	    deltrap(ttmp);
+	    deltrap(lev, ttmp);
 	    if (IS_DOOR(tmp_dam->typ)) {
 		lev->locations[x][y].doormask = D_CLOSED; /* arbitrary */
 		block_point(x, y);
@@ -3496,7 +3496,7 @@ void shk_chat(struct monst *shkp)
 	eshk = ESHK(shkp);
 	if (ANGRY(shkp))
 		pline("%s mentions how much %s dislikes %s customers.",
-			shkname(shkp), mhe(shkp),
+			shkname(shkp), mhe(level, shkp),
 			eshk->robbed ? "non-paying" : "rude");
 	else if (eshk->following) {
 		if (strncmp(eshk->customer, plname, PL_NSIZ)) {
@@ -3513,7 +3513,7 @@ void shk_chat(struct monst *shkp)
 		      shkname(shkp), total, currency(total));
 	} else if (eshk->debit)
 		pline("%s reminds you that you owe %s %ld %s.",
-		      shkname(shkp), mhim(shkp),
+		      shkname(shkp), mhim(level, shkp),
 		      eshk->debit, currency(eshk->debit));
 	else if (eshk->credit)
 		pline("%s encourages you to use your %ld %s of credit.",
@@ -3543,7 +3543,7 @@ static void kops_gone(boolean silent)
 	for (mtmp = level->monlist; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;
 	    if (mtmp->data->mlet == S_KOP) {
-		if (canspotmon(mtmp)) cnt++;
+		if (canspotmon(level, mtmp)) cnt++;
 		mongone(mtmp);
 	    }
 	}

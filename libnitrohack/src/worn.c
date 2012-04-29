@@ -185,7 +185,7 @@ void mon_adjust_speed(struct monst *mon,
     else
 	mon->mspeed = mon->permspeed;
 
-    if (give_msg && (mon->mspeed != oldspeed || petrify) && canseemon(mon)) {
+    if (give_msg && (mon->mspeed != oldspeed || petrify) && canseemon(level, mon)) {
 	/* fast to slow (skipping intermediate state) or vice versa */
 	const char *howmuch = (mon->mspeed + oldspeed == MFAST + MSLOW) ?
 				"much " : "";
@@ -216,7 +216,7 @@ void update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
     struct obj *otmp;
     int which = (int) objects[obj->otyp].oc_oprop;
 
-    unseen = !canseemon(mon);
+    unseen = !canseemon(level, mon);
 
     if (Is_gold_dragon_armor(obj)) {
 	if (on)
@@ -326,7 +326,7 @@ void update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
 	    dismount_steed(DISMOUNT_FELL);
 
     /* if couldn't see it but now can, or vice versa, update display */
-    if (!silently && (unseen ^ !canseemon(mon)))
+    if (!silently && (unseen ^ !canseemon(level, mon)))
 	newsym(mon->mx, mon->my);
 }
 
@@ -399,7 +399,7 @@ static void m_dowear_type(struct monst *mon, long flag, boolean creation,
 {
 	struct obj *old, *best, *obj;
 	int m_delay = 0;
-	int unseen = !canseemon(mon);
+	int unseen = !canseemon(level, mon);
 	char nambuf[BUFSZ];
 
 	if (mon->mfrozen) return; /* probably putting previous item on */
@@ -472,7 +472,7 @@ outer_break:
 	if (old) /* do this first to avoid "(being worn)" */
 	    old->owornmask = 0L;
 	if (!creation) {
-	    if (canseemon(mon)) {
+	    if (canseemon(level, mon)) {
 		char buf[BUFSZ];
 
 		if (old)
@@ -492,7 +492,7 @@ outer_break:
 	best->owornmask |= flag;
 	update_mon_intrinsics(mon, best, TRUE, creation);
 	/* if couldn't see it but now can, or vice versa, */
-	if (!creation && (unseen ^ !canseemon(mon))) {
+	if (!creation && (unseen ^ !canseemon(level, mon))) {
 		if (mon->minvis && !See_invisible) {
 			pline("Suddenly you cannot see %s.", nambuf);
 			makeknown(best->otyp);
@@ -561,14 +561,14 @@ void bypass_obj(struct obj *obj)
 	flags.bypasses = TRUE;
 }
 
-void mon_break_armor(struct monst *mon, boolean polyspot)
+void mon_break_armor(struct level *lev, struct monst *mon, boolean polyspot)
 {
 	struct obj *otmp;
 	const struct permonst *mdat = mon->data;
 	boolean vis = cansee(mon->mx, mon->my);
 	boolean handless_or_tiny = (nohands(mdat) || verysmall(mdat));
-	const char *pronoun = mhim(mon),
-			*ppronoun = mhis(mon);
+	const char *pronoun = mhim(lev, mon),
+		   *ppronoun = mhis(lev, mon);
 
 	if (breakarm(mdat)) {
 	    if ((otmp = which_armor(mon, W_ARM)) != 0) {

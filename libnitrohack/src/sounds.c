@@ -272,7 +272,7 @@ void dosounds(void)
 	    if (!DEADMONSTER(mtmp) && mtmp->data == &mons[PM_ORACLE])
 		break;
 	/* and don't produce silly effects when she's clearly visible */
-	if (mtmp && (hallu || !canseemon(mtmp))) {
+	if (mtmp && (hallu || !canseemon(level, mtmp))) {
 	    static const char * const ora_msg[5] = {
 		    "a strange wind.",		/* Jupiter at Dodona */
 		    "convulsive ravings.",	/* Apollo at Delphi */
@@ -441,7 +441,7 @@ void beg(struct monst *mtmp)
     if (!is_silent(mtmp->data) && mtmp->data->msound <= MS_ANIMAL)
 	domonnoise(mtmp);
     else if (mtmp->data->msound >= MS_HUMANOID) {
-	if (!canspotmon(mtmp))
+	if (!canspotmon(level, mtmp))
 	    map_invisible(mtmp->mx, mtmp->my);
 	verbalize("I'm hungry.");
     }
@@ -467,7 +467,7 @@ static int domonnoise(struct monst *mtmp)
     /* be sure to do this before talking; the monster might teleport away, in
      * which case we want to check its pre-teleport position
      */
-    if (!canspotmon(mtmp))
+    if (!canspotmon(level, mtmp))
 	map_invisible(mtmp->mx, mtmp->my);
 
     switch (ptr->msound) {
@@ -559,7 +559,7 @@ static int domonnoise(struct monst *mtmp)
 	case MS_WERE:
 	    if (flags.moonphase == FULL_MOON && (night() ^ !rn2(13))) {
 		pline("%s throws back %s head and lets out a blood curdling %s!",
-		      Monnam(mtmp), mhis(mtmp),
+		      Monnam(mtmp), mhis(level, mtmp),
 		      ptr == &mons[PM_HUMAN_WERERAT] ? "shriek" : "howl");
 		wake_nearto(mtmp->mx, mtmp->my, 11*11);
 	    } else
@@ -692,7 +692,7 @@ static int domonnoise(struct monst *mtmp)
 	    if (!mtmp->mpeaceful) {
 		switch (rn2(4)) {
 		case 0: pline("%s boasts about %s gem collection.",
-			      Monnam(mtmp), mhis(mtmp));
+			      Monnam(mtmp), mhis(level, mtmp));
 			break;
 		case 1: pline_msg = "complains about a diet of mutton.";
 			break;
@@ -940,7 +940,7 @@ static int dochat(void)
     if ((!mtmp->mcanmove || mtmp->msleeping) && !mtmp->ispriest) {
 	/* If it is unseen, the player can't tell the difference between
 	   not noticing him and just not existing, so skip the message. */
-	if (canspotmon(mtmp))
+	if (canspotmon(level, mtmp))
 	    pline("%s seems not to notice you.", Monnam(mtmp));
 	return 0;
     }
@@ -949,7 +949,7 @@ static int dochat(void)
     mtmp->mstrategy &= ~STRAT_WAITMASK;
 
     if (mtmp->mtame && mtmp->meating) {
-	if (!canspotmon(mtmp))
+	if (!canspotmon(level, mtmp))
 	    map_invisible(mtmp->mx, mtmp->my);
 	pline("%s is eating noisily.", Monnam(mtmp));
 	return 0;

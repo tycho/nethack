@@ -1282,22 +1282,22 @@ int seffects(struct obj *sobj, boolean *known)
 				if (cansee(mtmp->mx, mtmp->my)) {
 				    pline("%s is hit by %s!", Monnam(mtmp),
 						doname(otmp2));
-				    if (mtmp->minvis && !canspotmon(mtmp))
+				    if (mtmp->minvis && !canspotmon(level, mtmp))
 					map_invisible(mtmp->mx, mtmp->my);
 				}
 				mdmg = dmgval(otmp2, mtmp) * otmp2->quan;
 				if (helmet) {
 				    if (is_metallic(helmet)) {
-					if (canspotmon(mtmp))
+					if (canspotmon(level, mtmp))
 					    pline("Fortunately, %s is wearing a hard helmet.", mon_nam(mtmp));
 					else if (flags.soundok)
 					    You_hear("a clanging sound.");
 					if (mdmg > 2) mdmg = 2;
 				    } else {
-					if (canspotmon(mtmp))
+					if (canspotmon(level, mtmp))
 					    pline("%s's %s does not protect %s.",
 						Monnam(mtmp), xname(helmet),
-						mhim(mtmp));
+						mhim(level, mtmp));
 				    }
 				}
 				mtmp->mhp -= mdmg;

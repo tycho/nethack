@@ -50,7 +50,7 @@ static void dowaterdemon(void) /* Water demon */
 	/* Give those on low levels a (slightly) better chance of survival */
 	    if (rnd(100) > (80 + level_difficulty(&u.uz))) {
 		pline("Grateful for %s release, %s grants you a wish!",
-		      mhis(mtmp), mhe(mtmp));
+		      mhis(level, mtmp), mhe(level, mtmp));
 		makewish(FALSE);
 		mongone(mtmp);
 	    } else if (t_at(level, mtmp->mx, mtmp->my))
@@ -502,7 +502,7 @@ void drinksink(void)
 				mtmp = makemon(&mons[PM_SEWER_RAT], level,
 						u.ux, u.uy, NO_MM_FLAGS);
 				if (mtmp) pline("Eek!  There's %s in the sink!",
-					(Blind || !canspotmon(mtmp)) ?
+					(Blind || !canspotmon(level, mtmp)) ?
 					"something squirmy" :
 					a_monnam(mtmp));
 			}

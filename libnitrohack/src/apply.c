@@ -262,7 +262,7 @@ static int use_stethoscope(struct obj *obj)
 			mtmp->mundetected = 0;
 			if (cansee(rx, ry)) newsym(mtmp->mx, mtmp->my);
 		}
-		if (!canspotmon(mtmp))
+		if (!canspotmon(level, mtmp))
 			map_invisible(rx, ry);
 		return res;
 	}
@@ -321,7 +321,7 @@ static void use_magic_whistle(struct obj *obj)
 			    fill_pit(level, mtmp->mx, mtmp->my);
 			}
 			mnexto(mtmp);
-			if (canspotmon(mtmp)) ++pet_cnt;
+			if (canspotmon(level, mtmp)) ++pet_cnt;
 			if (mintrap(mtmp) == 2) change_luck(-1);
 		    }
 		}
@@ -359,8 +359,8 @@ void m_unleash(struct monst *mtmp, boolean feedback)	/* mtmp is about to die, or
 	struct obj *otmp;
 
 	if (feedback) {
-	    if (canseemon(mtmp))
-		pline("%s pulls free of %s leash!", Monnam(mtmp), mhis(mtmp));
+	    if (canseemon(level, mtmp))
+		pline("%s pulls free of %s leash!", Monnam(mtmp), mhis(level, mtmp));
 	    else
 		pline("Your leash falls slack.");
 	}
@@ -414,7 +414,7 @@ static void use_leash(struct obj *obj)
 		return;
 	}
 
-	spotmon = canspotmon(mtmp);
+	spotmon = canspotmon(level, mtmp);
 got_target:
 
 	if (!mtmp->mtame) {
@@ -628,7 +628,7 @@ static int use_mirror(struct obj *obj)
 	if (!mtmp || !haseyes(mtmp->data))
 		return 1;
 
-	vis = canseemon(mtmp);
+	vis = canseemon(level, mtmp);
 	mlet = mtmp->data->mlet;
 	if (mtmp->msleeping) {
 		if (vis)
@@ -674,7 +674,7 @@ static int use_mirror(struct obj *obj)
 		setnotworn(obj); /* in case mirror was wielded */
 		freeinv(obj);
 		mpickobj(mtmp,obj);
-		if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+		if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 	} else if (!is_unicorn(mtmp->data) && !humanoid(mtmp->data) &&
 			(!mtmp->minvis || perceives(mtmp->data)) && rn2(5)) {
 		if (vis)
@@ -689,7 +689,7 @@ static int use_mirror(struct obj *obj)
 			Monnam(mtmp));
 		else
 		    pline("%s ignores %s reflection.",
-			  Monnam(mtmp), mhis(mtmp));
+			  Monnam(mtmp), mhis(level, mtmp));
 	}
 	return 1;
 }
@@ -1250,7 +1250,7 @@ int jump(
 		    break;
 		case TT_WEB:
 		    pline("You tear the web apart as you pull yourself free!");
-		    deltrap(t_at(level, u.ux,u.uy));
+		    deltrap(level, t_at(level, u.ux,u.uy));
 		    break;
 		case TT_LAVA:
 		    pline("You pull yourself above the lava!");
@@ -1566,7 +1566,7 @@ void fig_transform(void *arg, long timeout)
 			struct monst *mon;
 			mon = figurine->ocarry;
 			/* figurine carring monster might be invisible */
-			if (canseemon(figurine->ocarry)) {
+			if (canseemon(level, figurine->ocarry)) {
 			    sprintf(carriedby, "%s pack",
 				     s_suffix(a_monnam(mon)));
 			}
@@ -2129,7 +2129,7 @@ static int use_whip(struct obj *obj)
 	} else pline(msg_snap);
 
     } else if (mtmp) {
-	if (!canspotmon(mtmp) &&
+	if (!canspotmon(level, mtmp) &&
 		!level->locations[rx][ry].mem_invis) {
 	   pline("A monster is there that you couldn't see.");
 	   map_invisible(rx, ry);
@@ -2152,7 +2152,7 @@ static int use_whip(struct obj *obj)
 	    if (gotit && otmp->cursed) {
 		pline("%s welded to %s %s%c",
 		      (otmp->quan == 1L) ? "It is" : "They are",
-		      mhis(mtmp), mon_hand,
+		      mhis(level, mtmp), mon_hand,
 		      !otmp->bknown ? '!' : '.');
 		otmp->bknown = 1;
 		gotit = FALSE;	/* can't pull it free */
@@ -2272,7 +2272,7 @@ static int use_pole (struct obj *obj)
 	    return res;
 	} else if (!cansee(cc.x, cc.y) &&
 		   ((mtmp = m_at(level, cc.x, cc.y)) == NULL ||
-		    !canseemon(mtmp))) {
+		    !canseemon(level, mtmp))) {
 	    pline(cant_see_spot);
 	    return res;
 	} else if (!couldsee(cc.x, cc.y)) { /* Eyes of the Overworld */

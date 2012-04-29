@@ -280,7 +280,7 @@ int tactics(struct monst *mtmp)
 		mtmp->mavenge = 1; /* covetous monsters attack while fleeing */
 		if (In_W_tower(mtmp->mx, mtmp->my, &u.uz) ||
 			(mtmp->iswiz && !level->upstair.sx && !mon_has_amulet(mtmp))) {
-		    if (!rn2(3 + mtmp->mhp/10)) rloc(mtmp, FALSE);
+		    if (!rn2(3 + mtmp->mhp/10)) rloc(level, mtmp, FALSE);
 		} else if (level->upstair.sx &&
 			 (mtmp->mx != level->upstair.sx || mtmp->my != level->upstair.sy)) {
 		    mnearto(mtmp, level->upstair.sx, level->upstair.sy, TRUE);

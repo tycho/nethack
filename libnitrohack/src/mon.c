@@ -156,7 +156,7 @@ static struct obj *make_corpse(struct monst *mtmp)
 	    case PM_GRAY_UNICORN:
 	    case PM_BLACK_UNICORN:
 		if (mtmp->mrevived && rn2(20)) {
-			if (canseemon(mtmp))
+			if (canseemon(level, mtmp))
 			   pline("%s recently regrown horn crumbles to dust.",
 				s_suffix(Monnam(mtmp)));
 		} else
@@ -342,7 +342,7 @@ int minliquid(struct monst *mtmp)
 	    if (mtmp->mhp > 0) {
 		fire_damage(mtmp->minvent, FALSE, FALSE,
 						mtmp->mx, mtmp->my);
-		rloc(mtmp, FALSE);
+		rloc(level, mtmp, FALSE);
 		return 0;
 	    }
 	    return 1;
@@ -365,7 +365,7 @@ int minliquid(struct monst *mtmp)
 	    }
 	    mondead(mtmp);
 	    if (mtmp->mhp > 0) {
-		rloc(mtmp, FALSE);
+		rloc(level, mtmp, FALSE);
 		water_damage(mtmp->minvent, FALSE, FALSE);
 		return 0;
 	    }
@@ -427,7 +427,7 @@ void mcalcdistress(void)
 
 	/* possibly polymorph shapechangers and lycanthropes */
 	if (mtmp->cham && !rn2(6))
-	    newcham(mtmp, NULL, FALSE, FALSE);
+	    newcham(level, mtmp, NULL, FALSE, FALSE);
 	were_change(mtmp);
 
 	/* gradually time out temporary problems */
@@ -554,7 +554,7 @@ int meatmetal(struct monst *mtmp)
 	    if (is_metallic(otmp) && !obj_resists(otmp, 5, 95) &&
 		touch_artifact(otmp,mtmp)) {
 		if (mtmp->data == &mons[PM_RUST_MONSTER] && otmp->oerodeproof) {
-		    if (canseemon(mtmp) && flags.verbose) {
+		    if (canseemon(level, mtmp) && flags.verbose) {
 			pline("%s eats %s!",
 				Monnam(mtmp),
 				distant_name(otmp,doname));
@@ -562,7 +562,7 @@ int meatmetal(struct monst *mtmp)
 		    /* The object's rustproofing is gone now */
 		    otmp->oerodeproof = 0;
 		    mtmp->mstun = 1;
-		    if (canseemon(mtmp) && flags.verbose) {
+		    if (canseemon(level, mtmp) && flags.verbose) {
 			pline("%s spits %s out in disgust!",
 			      Monnam(mtmp), distant_name(otmp,doname));
 		    }
@@ -593,7 +593,7 @@ int meatmetal(struct monst *mtmp)
 			delobj(otmp);
 			ptr = mtmp->data;
 			if (poly) {
-			    if (newcham(mtmp, NULL,
+			    if (newcham(level, mtmp, NULL,
 					FALSE, FALSE))
 				ptr = mtmp->data;
 			} else if (grow) {
@@ -603,7 +603,7 @@ int meatmetal(struct monst *mtmp)
 				mon_to_stone(mtmp);
 				ptr = mtmp->data;
 			    } else if (!resists_ston(mtmp)) {
-				if (canseemon(mtmp))
+				if (canseemon(level, mtmp))
 				    pline("%s turns to stone!", Monnam(mtmp));
 				monstone(mtmp);
 				ptr = NULL;
@@ -680,7 +680,7 @@ int meatobj(struct monst *mtmp)
 		delobj(otmp);		/* munch */
 		ptr = mtmp->data;
 		if (poly) {
-		    if (newcham(mtmp, NULL, FALSE, FALSE))
+		    if (newcham(level, mtmp, NULL, FALSE, FALSE))
 			ptr = mtmp->data;
 		} else if (grow) {
 		    ptr = grow_up(mtmp, NULL);
@@ -1217,7 +1217,7 @@ static void lifesaved_monster(struct monst *mtmp, int adtyp)
 			    || attacktype(mtmp->data, AT_BOOM)
 			    || adtyp == AD_DISN)
 				pline("%s reconstitutes!", Monnam(mtmp));
-			else if (canseemon(mtmp))
+			else if (canseemon(level, mtmp))
 				pline("%s looks much better!", Monnam(mtmp));
 			else
 				pline("%s seems much better!", Monnam(mtmp));
@@ -1356,9 +1356,9 @@ boolean corpse_chance(struct monst *mon,
 			magr->mhp -= tmp;
 			if (magr->mhp < 1) mondied(magr);
 			if (magr->mhp < 1) { /* maybe lifesaved */
-			    if (canspotmon(magr))
+			    if (canspotmon(level, magr))
 				pline("%s rips open!", Monnam(magr));
-			} else if (canseemon(magr))
+			} else if (canseemon(level, magr))
 			    pline("%s seems to have indigestion.",
 				  Monnam(magr));
 		    }
@@ -1512,7 +1512,7 @@ void monkilled(struct monst *mdef, const char *fltxt, int how)
 	boolean be_sad = FALSE;		/* true if unseen pet is killed */
 	boolean kenny = !strcmp(m_monnam(mdef), "Kenny");
 
-	if ((mdef->wormno ? worm_known(mdef) : cansee(mdef->mx, mdef->my))
+	if ((mdef->wormno ? worm_known(level, mdef) : cansee(mdef->mx, mdef->my))
 		&& fltxt)
 	    pline("%s is %s%s%s!", Monnam(mdef),
 			nonliving(mdef->data) ? "destroyed" : "killed",
@@ -1585,7 +1585,7 @@ void xkilled(struct monst *mtmp, int dest)
 	if (dest & 1) {
 	    const char *verb = nonliving(mtmp->data) ? "destroy" : "kill";
 
-	    if (!wasinside && !canspotmon(mtmp))
+	    if (!wasinside && !canspotmon(level, mtmp))
 		pline("You %s it!", verb);
 	    else {
 		pline("You %s %s!", verb,
@@ -1740,13 +1740,13 @@ void mon_to_stone(struct monst *mtmp)
 {
     if (mtmp->data->mlet == S_GOLEM) {
 	/* it's a golem, and not a stone golem */
-	if (canseemon(mtmp))
+	if (canseemon(level, mtmp))
 	    pline("%s solidifies...", Monnam(mtmp));
-	if (newcham(mtmp, &mons[PM_STONE_GOLEM], FALSE, FALSE)) {
-	    if (canseemon(mtmp))
+	if (newcham(level, mtmp, &mons[PM_STONE_GOLEM], FALSE, FALSE)) {
+	    if (canseemon(level, mtmp))
 		pline("Now it's %s.", an(mons_mname(mtmp->data)));
 	} else {
-	    if (canseemon(mtmp))
+	    if (canseemon(level, mtmp))
 		pline("... and returns to normal.");
 	}
     } else
@@ -1958,7 +1958,7 @@ void setmangry(struct monst *mtmp)
 	    for (mon = level->monlist; mon; mon = mon->nmon)
 		if (!DEADMONSTER(mon) && mon->data == &pm_guardian && mon->mpeaceful) {
 		    mon->mpeaceful = 0;
-		    if (canseemon(mon)) ++got_mad;
+		    if (canseemon(level, mon)) ++got_mad;
 		}
 	    if (got_mad && !Hallucination)
 		pline("The %s appear%s to be angry too...",
@@ -2039,7 +2039,7 @@ void resistcham(void)
 		mcham = (int) mtmp->cham;
 		if (mcham) {
 			mtmp->cham = CHAM_ORDINARY;
-			newcham(mtmp, &mons[cham_to_pm[mcham]],
+			newcham(level, mtmp, &mons[cham_to_pm[mcham]],
 				       FALSE, FALSE);
 		}
 		if (is_were(mtmp->data) && mtmp->data->mlet != S_HUMAN)
@@ -2080,7 +2080,7 @@ void restore_cham(struct monst *mon)
 	    mcham = (int) mon->cham;
 	    if (mcham) {
 		mon->cham = CHAM_ORDINARY;
-		newcham(mon, &mons[cham_to_pm[mcham]], FALSE, FALSE);
+		newcham(level, mon, &mons[cham_to_pm[mcham]], FALSE, FALSE);
 	    } else if (is_were(mon->data) && !is_human(mon->data)) {
 		new_were(mon);
 	    }
@@ -2192,7 +2192,8 @@ static int select_newcham_form(struct monst *mon)
 }
 
 /* make a chameleon look like a new monster; returns 1 if it actually changed */
-int newcham(struct monst *mtmp,
+int newcham(struct level *lev,
+	    struct monst *mtmp,
 	    const struct permonst *mdat,
 	    boolean polyspot,	/* change is the result of wand or spell of polymorph */
 	    boolean msg)	/* "The oldmon turns into a newmon!" */
@@ -2337,7 +2338,7 @@ int newcham(struct monst *mtmp,
 	}
 
 	possibly_unwield(mtmp, polyspot);	/* might lose use of weapon */
-	mon_break_armor(mtmp, polyspot);
+	mon_break_armor(lev, mtmp, polyspot);
 	if (!(mtmp->misc_worn_check & W_ARMG))
 	    mselftouch(mtmp, "No longer petrify-resistant, ",
 			!flags.mon_moving);
@@ -2473,7 +2474,7 @@ void kill_genocided_monsters(void)
 	    mndx = mtmp->mnum;
 	    if ((mvitals[mndx].mvflags & G_GENOD) || kill_cham[mtmp->cham]) {
 		if (mtmp->cham && !kill_cham[mtmp->cham])
-		    newcham(mtmp, NULL, FALSE, FALSE);
+		    newcham(level, mtmp, NULL, FALSE, FALSE);
 		else
 		    mondead(mtmp);
 	    }

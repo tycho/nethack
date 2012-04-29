@@ -71,7 +71,7 @@ static void watch_on_duty(struct monst *mtmp)
 int dochugw(struct monst *mtmp)
 {
 	int x = mtmp->mx, y = mtmp->my;
-	boolean already_saw_mon = !occupation ? 0 : canspotmon(mtmp);
+	boolean already_saw_mon = !occupation ? 0 : canspotmon(level, mtmp);
 	int rd = dochug(mtmp);
 
 	/* a similar check is in monster_nearby() in hack.c */
@@ -84,7 +84,7 @@ int dochugw(struct monst *mtmp)
 	    (!already_saw_mon || !couldsee(x,y) ||
 		distu(x,y) > (BOLT_LIM+1)*(BOLT_LIM+1)) &&
 	    /* can see it now, or sense it and would normally see it */
-	    (canseemon(mtmp) ||
+	    (canseemon(level, mtmp) ||
 		(sensemon(mtmp) && couldsee(mtmp->mx,mtmp->my))) &&
 	    mtmp->mcanmove &&
 	    !noattacks(mtmp->data) && !onscary(u.ux, u.uy, mtmp))
@@ -184,7 +184,7 @@ void monflee(struct monst *mtmp, int fleetime, boolean first, boolean fleemsg)
 		if (fleetime == 1) fleetime++;
 		mtmp->mfleetim = min(fleetime, 127);
 	    }
-	    if (!mtmp->mflee && fleemsg && canseemon(mtmp) && !mtmp->mfrozen) {
+	    if (!mtmp->mflee && fleemsg && canseemon(level, mtmp) && !mtmp->mfrozen) {
 		if (mtmp->data->mlet != S_MIMIC)
 		    pline("%s turns to flee!", (Monnam(mtmp)));
 		else
@@ -293,7 +293,7 @@ int dochug(struct monst *mtmp)
 	/* some monsters teleport */
 	if (mtmp->mflee && !rn2(40) && can_teleport(mdat) && !mtmp->iswiz &&
 	    !level->flags.noteleport) {
-		rloc(mtmp, FALSE);
+		rloc(level, mtmp, FALSE);
 		return 0;
 	}
 	if (mdat->msound == MS_SHRIEK && !um_dist(mtmp->mx, mtmp->my, 1))
@@ -336,7 +336,7 @@ int dochug(struct monst *mtmp)
 
 			if (is_demon(youmonst.data)) {
 			  /* "Good hunting, brother" */
-			    if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+			    if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 			} else {
 			    mtmp->minvis = mtmp->perminvis = 0;
 			    /* Why?  For the same reason in real demon talk */
@@ -355,7 +355,7 @@ int dochug(struct monst *mtmp)
 	else if ((is_mind_flayer(mdat) || mdat == &mons[PM_CTHULHU]) && !rn2(20)) {
 		struct monst *m2, *nmon = NULL;
 
-		if (canseemon(mtmp))
+		if (canseemon(level, mtmp))
 			pline("%s concentrates.", Monnam(mtmp));
 
 		if (BTelepat) {
@@ -645,7 +645,7 @@ int m_move(struct monst *mtmp, int after)
 	if (ptr == &mons[PM_TENGU] && !rn2(5) && !mtmp->mcan &&
 	   !tele_restrict(mtmp)) {
 	    if (mtmp->mhp < 7 || mtmp->mpeaceful || rn2(2))
-		rloc(mtmp, FALSE);
+		rloc(level, mtmp, FALSE);
 	    else
 		mnexto(mtmp);
 	    mmoved = 1;
@@ -976,7 +976,7 @@ not_special:
 	    if (mtmp->wormno) worm_move(mtmp);
 	} else {
 	    if (is_unicorn(ptr) && rn2(2) && !tele_restrict(mtmp)) {
-		rloc(mtmp, FALSE);
+		rloc(level, mtmp, FALSE);
 		return 1;
 	    }
 	    if (mtmp->wormno) worm_nomove(mtmp);
@@ -1002,7 +1002,7 @@ postmov:
 		    boolean btrapped = (here->doormask & D_TRAPPED);
 
 		    if (here->doormask & (D_LOCKED|D_CLOSED) && amorphous(ptr)) {
-			if (flags.verbose && canseemon(mtmp))
+			if (flags.verbose && canseemon(level, mtmp))
 			    pline("%s %s under the door.", Monnam(mtmp),
 				  (ptr == &mons[PM_FOG_CLOUD] ||
 				   ptr == &mons[PM_YELLOW_LIGHT])
@@ -1066,7 +1066,7 @@ postmov:
 			    add_damage(mtmp->mx, mtmp->my, 0L);
 		    }
 		} else if (level->locations[mtmp->mx][mtmp->my].typ == IRONBARS) {
-			if (flags.verbose && canseemon(mtmp))
+			if (flags.verbose && canseemon(level, mtmp))
 			    Norep("%s %s %s the iron bars.", Monnam(mtmp),
 				  /* pluralization fakes verb conjugation */
 				  makeplural(locomotion(ptr, "pass")),

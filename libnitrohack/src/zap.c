@@ -170,7 +170,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 		       (unless protection from shapechangers is interfering
 		       with their metabolism...) */
 		    if (mtmp->cham == CHAM_ORDINARY && !rn2(25)) {
-			if (canseemon(mtmp)) {
+			if (canseemon(level, mtmp)) {
 			    pline("%s shudders!", Monnam(mtmp));
 			    makeknown(otyp);
 			}
@@ -180,9 +180,9 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 			/* flags.bypasses = TRUE; ## for make_corpse() */
 			/* no corpse after system shock */
 			xkilled(mtmp, 3);
-		    } else if (newcham(mtmp, NULL,
+		    } else if (newcham(level, mtmp, NULL,
 				       (otyp != POT_POLYMORPH), FALSE)) {
-			if (!Hallucination && canspotmon(mtmp))
+			if (!Hallucination && canspotmon(level, mtmp))
 			    makeknown(otyp);
 		    }
 		}
@@ -251,7 +251,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 		    mtmp->mblinded = 0;
 		    mtmp->mcansee = 1;
 		}
-		if (canseemon(mtmp)) {
+		if (canseemon(level, mtmp)) {
 		    if (disguised_mimic) {
 			if (mtmp->m_ap_type == M_AP_OBJECT &&
 			    mtmp->mappearance == STRANGE_OBJECT) {
@@ -290,11 +290,11 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 		if (monsndx(mtmp->data) == PM_STONE_GOLEM) {
 		    char *name = Monnam(mtmp);
 		    /* turn into flesh golem */
-		    if (newcham(mtmp, &mons[PM_FLESH_GOLEM], FALSE, FALSE)) {
-			if (canseemon(mtmp))
+		    if (newcham(level, mtmp, &mons[PM_FLESH_GOLEM], FALSE, FALSE)) {
+			if (canseemon(level, mtmp))
 			    pline("%s turns to flesh!", name);
 		    } else {
-			if (canseemon(mtmp))
+			if (canseemon(level, mtmp))
 			    pline("%s looks rather fleshy for a moment.",
 				  name);
 		    }
@@ -316,7 +316,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 			xkilled(mtmp, 1);
 		    else {
 			mtmp->m_lev--;
-			if (canseemon(mtmp))
+			if (canseemon(level, mtmp))
 			    pline("%s suddenly seems weaker!", Monnam(mtmp));
 		    }
 		}
@@ -339,7 +339,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 	 */
 	if (reveal_invis) {
 	    if (mtmp->mhp > 0 && cansee(bhitpos.x, bhitpos.y) &&
-							!canspotmon(mtmp))
+							!canspotmon(level, mtmp))
 		map_invisible(bhitpos.x, bhitpos.y);
 	}
 	return 0;
@@ -614,7 +614,7 @@ struct monst *revive(struct obj *obj)
 				    x2 = ghost->mx; y2 = ghost->my;
 				    if (ghost->mtame)
 					savetame = ghost->mtame;
-				    if (canseemon(ghost))
+				    if (canseemon(level, ghost))
 					pline("%s is suddenly drawn into its former body!",
 						Monnam(ghost));
 				    mondead(ghost);
@@ -699,7 +699,7 @@ int unturn_dead(struct monst *mon)
 	boolean youseeit;
 	int once = 0, res = 0;
 
-	youseeit = (mon == &youmonst) ? TRUE : canseemon(mon);
+	youseeit = (mon == &youmonst) ? TRUE : canseemon(level, mon);
 	otmp2 = (mon == &youmonst) ? invent : mon->minvent;
 
 	while ((otmp = otmp2) != 0) {
@@ -718,7 +718,7 @@ int unturn_dead(struct monst *mon)
 					(mon == &youmonst) ? "Your" :
 					s_suffix(Monnam(mon)));
 		    pline("%s %s suddenly comes alive!", owner, corpse);
-		} else if (canseemon(mtmp2))
+		} else if (canseemon(level, mtmp2))
 		    pline("%s suddenly appears!", Amonnam(mtmp2));
 	    }
 	}
@@ -2224,7 +2224,7 @@ boolean cancel_monst(struct monst *mdef, struct obj *obj, boolean youattack,
 		were_change(mdef);
 
 	    if (mdef->data == &mons[PM_CLAY_GOLEM]) {
-		if (canseemon(mdef))
+		if (canseemon(level, mdef))
 		    pline(writing_vanishes, s_suffix(mon_nam(mdef)));
 
 		if (allow_cancel_kill) {
@@ -2321,7 +2321,7 @@ static boolean zap_updown(struct obj *obj, schar dz)
 		} else {
 			You_hear("a twang followed by a thud.");
 		}
-		deltrap(ttmp);
+		deltrap(level, ttmp);
 		ttmp = NULL;
 		newsym(x, y);
 	    }
@@ -2515,7 +2515,7 @@ const char *exclam(int force)
 void hit(const char *str, struct monst *mtmp,
 	 const char *force)	/* usually either "." or "!" */
 {
-	if ((!cansee(bhitpos.x,bhitpos.y) && !canspotmon(mtmp) &&
+	if ((!cansee(bhitpos.x,bhitpos.y) && !canspotmon(level, mtmp) &&
 	     !(u.uswallow && mtmp == u.ustuck))
 	   || !flags.verbose)
 	    pline("%s %s it.", The(str), vtense(str, "hit"));
@@ -2526,7 +2526,7 @@ void hit(const char *str, struct monst *mtmp,
 void miss(const char *str, struct monst *mtmp)
 {
 	pline("%s %s %s.", The(str), vtense(str, "miss"),
-	      ((cansee(bhitpos.x,bhitpos.y) || canspotmon(mtmp))
+	      ((cansee(bhitpos.x,bhitpos.y) || canspotmon(level, mtmp))
 	       && flags.verbose) ?
 	      mon_nam(mtmp) : "it");
 }
@@ -2646,7 +2646,7 @@ struct monst *beam_hit(int ddx, int ddy, int range,	/* direction and range */
 		if (weapon != FLASHED_LIGHT) {
 			if (weapon != ZAPPED_WAND) {
 			    if (weapon != INVIS_BEAM) tmp_at(DISP_END, 0);
-			    if (cansee(bhitpos.x,bhitpos.y) && !canspotmon(mtmp)) {
+			    if (cansee(bhitpos.x,bhitpos.y) && !canspotmon(level, mtmp)) {
 				if (weapon != INVIS_BEAM) {
 				    map_invisible(bhitpos.x, bhitpos.y);
 				    return mtmp;
@@ -3214,7 +3214,7 @@ void buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy)
 	    mon = m_at(level, sx, sy);
 	    if (cansee(sx,sy)) {
 		/* reveal/unreveal invisible monsters before tmp_at() */
-		if (mon && !canspotmon(mon))
+		if (mon && !canspotmon(level, mon))
 		    map_invisible(sx, sy);
 		else if (!mon && level->locations[sx][sy].mem_invis) {
 		    unmap_object(sx, sy);
@@ -3251,7 +3251,7 @@ buzzmonst:
 		    int tmp = zap_hit_mon(mon, type, nd, &otmp);
 
 		    if (is_rider(mon->data) && abs(type) == ZT_BREATH(ZT_DEATH)) {
-			if (canseemon(mon)) {
+			if (canseemon(level, mon)) {
 			    hit(fltxt, mon, ".");
 			    pline("%s disintegrates.", Monnam(mon));
 			    pline("%s body reintegrates before your %s!",
@@ -3264,7 +3264,7 @@ buzzmonst:
 			break; /* Out of while loop */
 		    }
 		    if (mon->data == &mons[PM_DEATH] && abstype == ZT_DEATH) {
-			if (canseemon(mon)) {
+			if (canseemon(level, mon)) {
 			    hit(fltxt, mon, ".");
 			    pline("%s absorbs the deadly %s!", Monnam(mon),
 				  type == ZT_BREATH(ZT_DEATH) ?
@@ -3277,7 +3277,7 @@ buzzmonst:
 		    if (tmp == MAGIC_COOKIE) { /* disintegration */
 			struct obj *otmp2, *m_amulet = mlifesaver(mon);
 
-			if (canseemon(mon)) {
+			if (canseemon(level, mon)) {
 			    if (!m_amulet)
 				pline("%s is disintegrated!", Monnam(mon));
 			    else
@@ -3320,7 +3320,7 @@ buzzmonst:
 			    hit(fltxt, mon, exclam(tmp));
 			} else {
 			    /* some armor was destroyed; no damage done */
-			    if (canseemon(mon))
+			    if (canseemon(level, mon))
 				pline("%s %s is disintegrated!",
 				      s_suffix(Monnam(mon)),
 				      distant_name(otmp, xname));
@@ -3830,7 +3830,7 @@ int destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
 	    return 0;	/* arbitrary; value doesn't matter to artifact_hit() */
 	}
 
-	vis = canseemon(mtmp);
+	vis = canseemon(level, mtmp);
 	for (obj = mtmp->minvent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
 	    if (obj->oclass != osym) continue; /* test only objs of type osym */

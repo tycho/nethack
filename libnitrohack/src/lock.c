@@ -370,7 +370,7 @@ int pick_lock(struct obj *pick, int rx, int ry)
 	    }
 
 	    door = &level->locations[cc.x][cc.y];
-	    if ((mtmp = m_at(level, cc.x, cc.y)) && canseemon(mtmp)
+	    if ((mtmp = m_at(level, cc.x, cc.y)) && canseemon(level, mtmp)
 			&& mtmp->m_ap_type != M_AP_FURNITURE
 			&& mtmp->m_ap_type != M_AP_OBJECT) {
 		if (picktyp == CREDIT_CARD &&
@@ -611,9 +611,9 @@ static boolean obstructed(int x, int y)
 
 	if (mtmp && mtmp->m_ap_type != M_AP_FURNITURE) {
 		if (mtmp->m_ap_type == M_AP_OBJECT) goto objhere;
-		pline("%s stands in the way!", !canspotmon(mtmp) ?
+		pline("%s stands in the way!", !canspotmon(level, mtmp) ?
 			"Some creature" : Monnam(mtmp));
-		if (!canspotmon(mtmp))
+		if (!canspotmon(level, mtmp))
 		    map_invisible(mtmp->mx, mtmp->my);
 		return TRUE;
 	}

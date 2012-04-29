@@ -956,7 +956,7 @@ struct monst *makemon(const struct permonst *ptr,
 			mtmp->cham = CHAM_ORDINARY;
 		else {
 			mtmp->cham = mcham;
-			newcham(mtmp, rndmonst(&lev->z), FALSE, FALSE);
+			newcham(lev, mtmp, rndmonst(&lev->z), FALSE, FALSE);
 		}
 	} else if (mndx == PM_WIZARD_OF_YENDOR) {
 		mtmp->iswiz = TRUE;
@@ -1069,7 +1069,7 @@ boolean create_critters(int cnt,
 		x = c.x,  y = c.y;
 
 	    mon = makemon(mptr, level, x, y, NO_MM_FLAGS);
-	    if (mon && canspotmon(mon)) known = TRUE;
+	    if (mon && canspotmon(level, mon)) known = TRUE;
 	}
 	return known;
 }
@@ -1370,7 +1370,7 @@ const struct permonst *grow_up(struct monst *mtmp, /* `mtmp' might "grow up" int
 	    if (mvitals[newtype].mvflags & G_GENOD) {	/* allow G_EXTINCT */
 		if (sensemon(mtmp))
 		    pline("As %s grows up into %s, %s %s!", mon_nam(mtmp),
-			an(mons_mname(ptr)), mhe(mtmp),
+			an(mons_mname(ptr)), mhe(level, mtmp),
 			nonliving(ptr) ? "expires" : "dies");
 		set_mon_data(mtmp, ptr, -1);	/* keep mvitals[] accurate */
 		mondied(mtmp);

@@ -684,7 +684,7 @@ boolean revive_cthulhu(void *p1, void *p2)
 	/* Make sure Cthulhu doesn't get the Amulet again! :-) */
 	cthulhu = makemon(&mons[PM_CTHULHU], level, cx, cy,
 			  MM_NOCOUNTBIRTH | NO_MINVENT);
-	if (cthulhu && canseemon(cthulhu))
+	if (cthulhu && canseemon(level, cthulhu))
 	    pline("%s reforms!", Monnam(cthulhu));
     }
     return ret;

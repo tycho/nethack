@@ -810,12 +810,12 @@ int dospinweb(void)
 	if (ttmp) switch (ttmp->ttyp) {
 		case PIT:
 		case SPIKED_PIT: pline("You spin a web, covering up the pit.");
-			deltrap(ttmp);
+			deltrap(level, ttmp);
 			bury_objs(u.ux, u.uy);
 			newsym(u.ux, u.uy);
 			return 1;
 		case SQKY_BOARD: pline("The squeaky board is muffled.");
-			deltrap(ttmp);
+			deltrap(level, ttmp);
 			newsym(u.ux, u.uy);
 			return 1;
 		case TELEP_TRAP:
@@ -830,12 +830,12 @@ int dospinweb(void)
 		case TRAPDOOR:
 			pline("You web over the %s.",
 			    (ttmp->ttyp == TRAPDOOR) ? "trap door" : "hole");
-			deltrap(ttmp);
+			deltrap(level, ttmp);
 			newsym(u.ux, u.uy);
 			return 1;
 		case ROLLING_BOULDER_TRAP:
 			pline("You spin a web, jamming the trigger.");
-			deltrap(ttmp);
+			deltrap(level, ttmp);
 			newsym(u.ux, u.uy);
 			return 1;
 		case ARROW_TRAP:
@@ -922,7 +922,7 @@ int dogaze(void)
 
 	for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
 	    if (DEADMONSTER(mtmp)) continue;
-	    if (canseemon(mtmp) && couldsee(mtmp->mx, mtmp->my)) {
+	    if (canseemon(level, mtmp) && couldsee(mtmp->mx, mtmp->my)) {
 		looked++;
 		if (Invis && !perceives(mtmp->data))
 		    pline("%s seems not to notice your gaze.", Monnam(mtmp));

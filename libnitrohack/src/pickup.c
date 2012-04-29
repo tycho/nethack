@@ -1650,7 +1650,7 @@ static void observe_quantum_cat(struct obj *box)
     if (livecat) {
 	livecat->mpeaceful = 1;
 	set_malign(livecat);
-	if (!canspotmon(livecat))
+	if (!canspotmon(level, livecat))
 	    pline("You think something brushed your %s.", body_part(FOOT));
 	else
 	    pline("%s inside the box is still alive!", Monnam(livecat));

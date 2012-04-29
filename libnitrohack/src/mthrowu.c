@@ -202,7 +202,7 @@ int ohitmon(struct monst *mtmp,	/* accidental target */
 	    if (mtmp->mhp < 1) {
 		if (vis || verbose)
 		    pline("%s is %s!", Monnam(mtmp),
-			(nonliving(mtmp->data) || !canspotmon(mtmp))
+			(nonliving(mtmp->data) || !canspotmon(level, mtmp))
 			? "destroyed" : "killed");
 		/* don't blame hero for unknown rolling boulder trap */
 		if (!flags.mon_moving &&
@@ -272,7 +272,7 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 	singleobj->owornmask = 0; /* threw one of multiple weapons in hand? */
 
 	if (singleobj->cursed && (dx || dy) && !rn2(7)) {
-	    if (canseemon(mon) && flags.verbose) {
+	    if (canseemon(level, mon) && flags.verbose) {
 		if (is_ammo(singleobj))
 		    pline("%s misfires!", Monnam(mon));
 		else
@@ -487,7 +487,7 @@ void thrwmu(struct monst *mtmp)
 		    !couldsee(mtmp->mx, mtmp->my))
 		return;	/* Out of range, or intervening wall */
 
-	    if (canseemon(mtmp)) {
+	    if (canseemon(level, mtmp)) {
 		onm = xname(otmp);
 		pline("%s thrusts %s.", Monnam(mtmp),
 		      obj_is_pname(otmp) ? the(onm) : an(onm));
@@ -557,7 +557,7 @@ void thrwmu(struct monst *mtmp)
 	    else multishot = rnd(multishot);
 	}
 
-	if (canseemon(mtmp)) {
+	if (canseemon(level, mtmp)) {
 	    char onmbuf[BUFSZ];
 
 	    if (multishot > 1) {
@@ -615,7 +615,7 @@ int spitmu(struct monst *mtmp, const struct attack *mattk)
 			break;
 		}
 		if (!rn2(BOLT_LIM-distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy))) {
-		    if (canseemon(mtmp))
+		    if (canseemon(level, mtmp))
 			pline("%s spits venom!", Monnam(mtmp));
 		    m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),
 			distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy), otmp);
@@ -636,7 +636,7 @@ int breamu(struct monst *mtmp, const struct attack *mattk)
 
 	    if (mtmp->mcan) {
 		if (flags.soundok) {
-		    if (canseemon(mtmp))
+		    if (canseemon(level, mtmp))
 			pline("%s coughs.", Monnam(mtmp));
 		    else
 			You_hear("a cough.");
@@ -647,7 +647,7 @@ int breamu(struct monst *mtmp, const struct attack *mattk)
 
 		if ((typ >= AD_MAGM) && (typ <= AD_ACID)) {
 
-		    if (canseemon(mtmp))
+		    if (canseemon(level, mtmp))
 			pline("%s breathes %s!", Monnam(mtmp),
 			      breathwep[typ-1]);
 		    buzz((int) (-20 - (typ-1)), (int)mattk->damn,

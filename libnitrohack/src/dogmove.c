@@ -156,7 +156,7 @@ int dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 	    /* The object's rustproofing is gone now */
 	    obj->oerodeproof = 0;
 	    mtmp->mstun = 1;
-	    if (canseemon(mtmp) && flags.verbose) {
+	    if (canseemon(level, mtmp) && flags.verbose) {
 		pline("%s spits %s out in disgust!",
 		      Monnam(mtmp), distant_name(obj,doname));
 	    }
@@ -172,7 +172,7 @@ int dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 	    delobj(obj);
 
 	if (poly) {
-	    newcham(mtmp, NULL, FALSE,
+	    newcham(level, mtmp, NULL, FALSE,
 			   cansee(mtmp->mx, mtmp->my));
 	}
 	/* limit "instant" growth to prevent potential abuse */
@@ -500,7 +500,7 @@ int dog_move(struct monst *mtmp,
 		/* Guardian angel refuses to be conflicted; rather,
 		 * it disappears, angrily, and sends in some nasties
 		 */
-		if (canspotmon(mtmp)) {
+		if (canspotmon(level, mtmp)) {
 		    pline("%s rebukes you, saying:", Monnam(mtmp));
 		    verbalize("Since you desire conflict, have some more!");
 		}
@@ -667,7 +667,7 @@ newdogpos:
 		if (info[chi] & ALLOW_U) {
 			if (mtmp->mleashed) { /* play it safe */
 				pline("%s breaks loose of %s leash!",
-				      Monnam(mtmp), mhis(mtmp));
+				      Monnam(mtmp), mhis(level, mtmp));
 				m_unleash(mtmp, FALSE);
 			}
 			mattacku(mtmp);

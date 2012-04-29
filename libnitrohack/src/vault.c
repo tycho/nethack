@@ -39,7 +39,7 @@ static boolean clear_fcorr(struct monst *grd, boolean forceshow)
 			if (mtmp->isgd) return FALSE;
 			else if (!in_fcorridor(grd, u.ux, u.uy)) {
 			    if (mtmp->mtame) yelp(mtmp);
-			    rloc(mtmp, FALSE);
+			    rloc(level, mtmp, FALSE);
 			}
 		}
 		level->locations[fcx][fcy].typ = EGD(grd)->fakecorr[fcbeg].ftyp;
@@ -221,7 +221,7 @@ fnd:
 	EGD(guard)->warncnt = 0;
 
 	reset_faint();			/* if fainted - wake up */
-	if (canspotmon(guard))
+	if (canspotmon(level, guard))
 	    pline("Suddenly one of the Vault's %s enters!",
 		  makeplural(g_monnam(guard)));
 	else
@@ -232,7 +232,7 @@ fnd:
 			youmonst.mappearance != GOLD_PIECE)
 	    	verbalize("Hey! Who left that %s in here?", mimic_obj_name(&youmonst));
 	    /* You're mimicking some object or you're hidden. */
-	    pline("Puzzled, %s turns around and leaves.", mhe(guard));
+	    pline("Puzzled, %s turns around and leaves.", mhe(level, guard));
 	    mongone(guard);
 	    return;
 	}
@@ -355,14 +355,14 @@ static void wallify_vault(struct monst *grd)
 		if (!IS_WALL(level->locations[x][y].typ) && !in_fcorridor(grd, x, y)) {
 		    if ((mon = m_at(level, x, y)) != 0 && mon != grd) {
 			if (mon->mtame) yelp(mon);
-			rloc(mon, FALSE);
+			rloc(level, mon, FALSE);
 		    }
 		    if ((gold = gold_at(level, x, y)) != 0) {
 			move_gold(gold, EGD(grd)->vroom);
 			movedgold = TRUE;
 		    }
 		    if ((trap = t_at(level, x, y)) != 0)
-			deltrap(trap);
+			deltrap(level, trap);
 		    if (x == lox)
 			typ = (y == loy) ? TLCORNER :
 			      (y == hiy) ? BLCORNER : VWALL;
@@ -430,7 +430,7 @@ int gd_move(struct monst *grd)
 	       (grd_in_vault ||
 		(in_fcorridor(grd, grd->mx, grd->my) &&
 		 !in_fcorridor(grd, u.ux, u.uy)))) {
-		rloc(grd, FALSE);
+		rloc(level, grd, FALSE);
 		wallify_vault(grd);
 		clear_fcorr(grd, TRUE);
 		goto letknow;
@@ -470,7 +470,7 @@ int gd_move(struct monst *grd)
 		if (u_carry_gold) {	/* player teleported */
 		    m = grd->mx;
 		    n = grd->my;
-		    rloc(grd, FALSE);
+		    rloc(level, grd, FALSE);
 		    level->locations[m][n].typ = egrd->fakecorr[0].ftyp;
 		    newsym(m,n);
 		    grd->mpeaceful = 0;
@@ -541,7 +541,7 @@ letknow:
 		    /* just for insurance... */
 		    if (MON_AT(level, m, n) && m != grd->mx && n != grd->my) {
 			verbalize("Out of my way, scum!");
-			rloc(m_at(level, m, n), FALSE);
+			rloc(level, m_at(level, m, n), FALSE);
 		    }
 		    remove_monster(level, grd->mx, grd->my);
 		    newsym(grd->mx, grd->my);
@@ -657,7 +657,7 @@ newpos:
 cleanup:
 		x = grd->mx; y = grd->my;
 
-		see_guard = canspotmon(grd);
+		see_guard = canspotmon(level, grd);
 		wallify_vault(grd);
 		remove_monster(level, grd->mx, grd->my);
 		newsym(grd->mx,grd->my);

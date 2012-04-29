@@ -3,10 +3,10 @@
 
 #include "hack.h"
 
-static boolean tele_jump_ok(int,int,int,int);
+static boolean tele_jump_ok(const struct level *,int,int,int,int);
 static boolean teleok(int,int,boolean);
 static void vault_tele(void);
-static boolean rloc_pos_ok(int,int,struct monst *);
+static boolean rloc_pos_ok(struct level *,int,int,struct monst *);
 static void mvault_tele(struct monst *);
 
 /*
@@ -333,32 +333,32 @@ int epathto(coord *cc, int nc, struct level *lev, xchar xx, xchar yy,
  * need to be augmented to allow deliberate passage in wizard mode, but
  * only for explicitly chosen destinations.)
  */
-static boolean tele_jump_ok(int x1, int y1, int x2, int y2)
+static boolean tele_jump_ok(const struct level *lev, int x1, int y1, int x2, int y2)
 {
-	if (level->dndest.nlx > 0) {
+	if (lev->dndest.nlx > 0) {
 	    /* if inside a restricted region, can't teleport outside */
-	    if (within_bounded_area(x1, y1, level->dndest.nlx, level->dndest.nly,
-						level->dndest.nhx, level->dndest.nhy) &&
-		!within_bounded_area(x2, y2, level->dndest.nlx, level->dndest.nly,
-						level->dndest.nhx, level->dndest.nhy))
+	    if (within_bounded_area(x1, y1, lev->dndest.nlx, lev->dndest.nly,
+						lev->dndest.nhx, lev->dndest.nhy) &&
+		!within_bounded_area(x2, y2, lev->dndest.nlx, lev->dndest.nly,
+						lev->dndest.nhx, lev->dndest.nhy))
 		return FALSE;
 	    /* and if outside, can't teleport inside */
-	    if (!within_bounded_area(x1, y1, level->dndest.nlx, level->dndest.nly,
-						level->dndest.nhx, level->dndest.nhy) &&
-		within_bounded_area(x2, y2, level->dndest.nlx, level->dndest.nly,
-						level->dndest.nhx, level->dndest.nhy))
+	    if (!within_bounded_area(x1, y1, lev->dndest.nlx, lev->dndest.nly,
+						lev->dndest.nhx, lev->dndest.nhy) &&
+		within_bounded_area(x2, y2, lev->dndest.nlx, lev->dndest.nly,
+						lev->dndest.nhx, lev->dndest.nhy))
 		return FALSE;
 	}
-	if (level->updest.nlx > 0) {		/* ditto */
-	    if (within_bounded_area(x1, y1, level->updest.nlx, level->updest.nly,
-						level->updest.nhx, level->updest.nhy) &&
-		!within_bounded_area(x2, y2, level->updest.nlx, level->updest.nly,
-						level->updest.nhx, level->updest.nhy))
+	if (lev->updest.nlx > 0) {		/* ditto */
+	    if (within_bounded_area(x1, y1, lev->updest.nlx, lev->updest.nly,
+						lev->updest.nhx, lev->updest.nhy) &&
+		!within_bounded_area(x2, y2, lev->updest.nlx, lev->updest.nly,
+						lev->updest.nhx, lev->updest.nhy))
 		return FALSE;
-	    if (!within_bounded_area(x1, y1, level->updest.nlx, level->updest.nly,
-						level->updest.nhx, level->updest.nhy) &&
-		within_bounded_area(x2, y2, level->updest.nlx, level->updest.nly,
-						level->updest.nhx, level->updest.nhy))
+	    if (!within_bounded_area(x1, y1, lev->updest.nlx, lev->updest.nly,
+						lev->updest.nhx, lev->updest.nhy) &&
+		within_bounded_area(x2, y2, lev->updest.nlx, lev->updest.nly,
+						lev->updest.nhx, lev->updest.nhy))
 		return FALSE;
 	}
 	return TRUE;
@@ -368,7 +368,7 @@ static boolean teleok(int x, int y, boolean trapok)
 {
 	if (!trapok && t_at(level, x, y)) return FALSE;
 	if (!goodpos(level, x, y, &youmonst, 0)) return FALSE;
-	if (!tele_jump_ok(u.ux, u.uy, x, y)) return FALSE;
+	if (!tele_jump_ok(level, u.ux, u.uy, x, y)) return FALSE;
 	if (!in_out_region(level, x, y)) return FALSE;
 	return TRUE;
 }
@@ -591,7 +591,7 @@ int dotele(void)
 			if (yn("Jump in?") == 'n')
 				trap = 0;
 			else {
-				deltrap(trap);
+				deltrap(level, trap);
 				newsym(u.ux, u.uy);
 			}
 		}
@@ -942,7 +942,7 @@ void tele_trap(struct trap *trap)
 	} else if (!next_to_u()) {
 		pline("You shudder for a moment.");
 	} else if (trap->once) {
-		deltrap(trap);
+		deltrap(level, trap);
 		newsym(u.ux,u.uy);	/* get rid of trap symbol */
 		vault_tele();
 	} else
@@ -965,18 +965,19 @@ void level_tele_trap(struct trap *trap)
 	    pline("You are momentarily blinded by a flash of light.");
 	else
 	    pline("You are momentarily disoriented.");
-	deltrap(trap);
+	deltrap(level, trap);
 	newsym(u.ux,u.uy);	/* get rid of trap symbol */
 	level_tele();
 }
 
 /* check whether monster can arrive at location <x,y> via Tport (or fall) */
-static boolean rloc_pos_ok(int x, int y, /* coordinates of candidate location */
+static boolean rloc_pos_ok(struct level *lev,
+			   int x, int y, /* coordinates of candidate location */
 			   struct monst *mtmp)
 {
 	int xx, yy;
 
-	if (!goodpos(level, x, y, mtmp, 0)) return FALSE;
+	if (!goodpos(lev, x, y, mtmp, 0)) return FALSE;
 	/*
 	 * Check for restricted areas present in some special levels.
 	 *
@@ -988,25 +989,25 @@ static boolean rloc_pos_ok(int x, int y, /* coordinates of candidate location */
 	yy = mtmp->my;
 	if (!xx) {
 	    /* no current location (migrating monster arrival) */
-	    if (level->dndest.nlx && On_W_tower_level(&u.uz))
+	    if (lev->dndest.nlx && On_W_tower_level(&u.uz))
 		return ((yy & 2) != 0) ^	/* inside xor not within */
-		       !within_bounded_area(x, y, level->dndest.nlx, level->dndest.nly,
-						  level->dndest.nhx, level->dndest.nhy);
-	    if (level->updest.lx && (yy & 1) != 0)	/* moving up */
-		return (within_bounded_area(x, y, level->updest.lx, level->updest.ly,
-						  level->updest.hx, level->updest.hy) &&
-		       (!level->updest.nlx ||
-			!within_bounded_area(x, y, level->updest.nlx, level->updest.nly,
-						   level->updest.nhx, level->updest.nhy)));
-	    if (level->dndest.lx && (yy & 1) == 0)	/* moving down */
-		return (within_bounded_area(x, y, level->dndest.lx, level->dndest.ly,
-						  level->dndest.hx, level->dndest.hy) &&
-		       (!level->dndest.nlx ||
-			!within_bounded_area(x, y, level->dndest.nlx, level->dndest.nly,
-						   level->dndest.nhx, level->dndest.nhy)));
+		       !within_bounded_area(x, y, lev->dndest.nlx, lev->dndest.nly,
+						  lev->dndest.nhx, lev->dndest.nhy);
+	    if (lev->updest.lx && (yy & 1) != 0)	/* moving up */
+		return (within_bounded_area(x, y, lev->updest.lx, lev->updest.ly,
+						  lev->updest.hx, lev->updest.hy) &&
+		       (!lev->updest.nlx ||
+			!within_bounded_area(x, y, lev->updest.nlx, lev->updest.nly,
+						   lev->updest.nhx, lev->updest.nhy)));
+	    if (lev->dndest.lx && (yy & 1) == 0)	/* moving down */
+		return (within_bounded_area(x, y, lev->dndest.lx, lev->dndest.ly,
+						  lev->dndest.hx, lev->dndest.hy) &&
+		       (!lev->dndest.nlx ||
+			!within_bounded_area(x, y, lev->dndest.nlx, lev->dndest.nly,
+						   lev->dndest.nhx, lev->dndest.nhy)));
 	} else {
 	    /* current location is <xx,yy> */
-	    if (!tele_jump_ok(xx, yy, x, y)) return FALSE;
+	    if (!tele_jump_ok(lev, xx, yy, x, y)) return FALSE;
 	}
 	/* <x,y> is ok */
 	return TRUE;
@@ -1063,7 +1064,8 @@ void rloc_to(struct monst *mtmp, int x, int y)
 
 /* place a monster at a random location, typically due to teleport */
 /* return TRUE if successful, FALSE if not */
-boolean rloc(struct monst *mtmp, /* mx==0 implies migrating monster arrival */
+boolean rloc(struct level *lev,
+	     struct monst *mtmp, /* mx==0 implies migrating monster arrival */
 	     boolean suppress_impossible)
 {
 	int x, y, trycount;
@@ -1075,15 +1077,15 @@ boolean rloc(struct monst *mtmp, /* mx==0 implies migrating monster arrival */
 
 	if (mtmp->iswiz && mtmp->mx) {	/* Wizard, not just arriving */
 	    if (!In_W_tower(u.ux, u.uy, &u.uz))
-		x = level->upstair.sx,  y = level->upstair.sy;
-	    else if (!level->dnladder.sx)	/* bottom level of tower */
-		x = level->upladder.sx,  y = level->upladder.sy;
+		x = lev->upstair.sx,  y = lev->upstair.sy;
+	    else if (!lev->dnladder.sx)	/* bottom level of tower */
+		x = lev->upladder.sx,  y = lev->upladder.sy;
 	    else
-		x = level->dnladder.sx,  y = level->dnladder.sy;
+		x = lev->dnladder.sx,  y = lev->dnladder.sy;
 	    /* if the wiz teleports away to heal, try the up staircase,
 	       to block the player's escaping before he's healed
 	       (deliberately use `goodpos' rather than `rloc_pos_ok' here) */
-	    if (goodpos(level, x, y, mtmp, 0))
+	    if (goodpos(lev, x, y, mtmp, 0))
 		goto found_xy;
 	}
 
@@ -1091,15 +1093,15 @@ boolean rloc(struct monst *mtmp, /* mx==0 implies migrating monster arrival */
 	do {
 	    x = rn1(COLNO-3,2);
 	    y = rn2(ROWNO);
-	    if ((trycount < 500) ? rloc_pos_ok(x, y, mtmp)
-				 : goodpos(level, x, y, mtmp, 0))
+	    if ((trycount < 500) ? rloc_pos_ok(lev, x, y, mtmp)
+				 : goodpos(lev, x, y, mtmp, 0))
 		goto found_xy;
 	} while (++trycount < 1000);
 
 	/* last ditch attempt to find a good place */
 	for (x = 2; x < COLNO - 1; x++)
 	    for (y = 0; y < ROWNO; y++)
-		if (goodpos(level, x, y, mtmp, 0))
+		if (goodpos(lev, x, y, mtmp, 0))
 		    goto found_xy;
 
 	/* level either full of monsters or somehow faulty */
@@ -1122,13 +1124,13 @@ static void mvault_tele(struct monst *mtmp)
 		rloc_to(mtmp, c.x, c.y);
 		return;
 	}
-	rloc(mtmp, FALSE);
+	rloc(level, mtmp, FALSE);
 }
 
 boolean tele_restrict(struct monst *mon)
 {
 	if (level->flags.noteleport) {
-		if (canseemon(mon))
+		if (canseemon(level, mon))
 		    pline("A mysterious force prevents %s from teleporting!",
 			mon_nam(mon));
 		return TRUE;
@@ -1150,10 +1152,10 @@ void mtele_trap(struct monst *mtmp, struct trap *trap, int in_sight)
 	     * the guard isn't going to come for it...
 	     */
 	    if (trap->once) mvault_tele(mtmp);
-	    else rloc(mtmp, FALSE);
+	    else rloc(level, mtmp, FALSE);
 
 	    if (in_sight) {
-		if (canseemon(mtmp))
+		if (canseemon(level, mtmp))
 		    pline("%s seems disoriented.", monname);
 		else
 		    pline("%s suddenly disappears!", monname);
@@ -1351,12 +1353,12 @@ boolean u_teleport_mon(struct monst *mtmp, boolean give_feedback)
 	    if (give_feedback)
 		pline("You are no longer inside %s!", mon_nam(mtmp));
 	    unstuck(mtmp);
-	    rloc(mtmp, FALSE);
+	    rloc(level, mtmp, FALSE);
 	} else if (is_rider(mtmp->data) && rn2(13) &&
 		   enexto(&cc, level, u.ux, u.uy, mtmp->data))
 	    rloc_to(mtmp, cc.x, cc.y);
 	else
-	    rloc(mtmp, FALSE);
+	    rloc(level, mtmp, FALSE);
 	return TRUE;
 }
 

@@ -73,7 +73,7 @@ static void hitmsg(struct monst *mtmp, const struct attack *mattk)
 /* monster missed you */
 static void missmu(struct monst *mtmp, boolean nearmiss, const struct attack *mattk)
 {
-	if (!canspotmon(mtmp))
+	if (!canspotmon(level, mtmp))
 	    map_invisible(mtmp->mx, mtmp->my);
 
 	if (could_seduce(mtmp, &youmonst, mattk) && !mtmp->mcan)
@@ -94,7 +94,7 @@ static void mswings(struct monst *mtmp, struct obj *otemp)
 		return;
 	pline("%s %s %s %s.", Monnam(mtmp),
 	      (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-	      mhis(mtmp), singular(otemp, xname));
+	      mhis(level, mtmp), singular(otemp, xname));
 }
 
 /* return how a poison attack was delivered */
@@ -281,7 +281,7 @@ int mattacku(struct monst *mtmp)
 		/* Does it think it's near you?  Affects its actions */
 	boolean foundyou = (mtmp->mux==u.ux && mtmp->muy==u.uy);
 		/* Is it attacking you or your image? */
-	boolean youseeit = canseemon(mtmp);
+	boolean youseeit = canseemon(level, mtmp);
 		/* Might be attacking your image around the corner, or
 		 * invisible, or you might be blind....
 		 */
@@ -827,7 +827,7 @@ static int hitmu(struct monst *mtmp, const struct attack  *mattk)
 	    mattk = &noseduce;
 	}
 
-	if (!canspotmon(mtmp))
+	if (!canspotmon(level, mtmp))
 	    map_invisible(mtmp->mx, mtmp->my);
 
 /*	If the monster is undetected & hits you, you should know where
@@ -1250,7 +1250,7 @@ dopois:
 			pline("%s %s.", Monnam(mtmp), mtmp->minvent ?
 		    "brags about the goods some dungeon explorer provided" :
 		    "makes some remarks about how difficult theft is lately");
-			if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+			if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 			return 3;
 		} else if (mtmp->mcan) {
 		    if (!Blind) {
@@ -1260,7 +1260,7 @@ dopois:
 			    flags.female ? "unaffected" : "uninterested");
 		    }
 		    if (rn2(3)) {
-			if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+			if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 			return 3;
 		    }
 		    break;
@@ -1273,9 +1273,9 @@ dopois:
 			break;
 		  default:
 			if (!is_robber(mtmp->data) && !tele_restrict(mtmp))
-			    rloc(mtmp, FALSE);
+			    rloc(level, mtmp, FALSE);
 			if (is_robber(mtmp->data) && *buf) {
-			    if (canseemon(mtmp))
+			    if (canseemon(level, mtmp))
 				pline("%s tries to %s away with %s.",
 				      Monnam(mtmp),
 				      locomotion(mtmp->data, "run"),
@@ -1374,7 +1374,7 @@ dopois:
 			mongone(mtmp);
 			return 2;
 		    } else if (!rn2(33)) {
-			if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+			if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 			monflee(mtmp, dice(3, 6), TRUE, FALSE);
 			return 3;
 		    }
@@ -1886,7 +1886,7 @@ static int explmu(struct monst *mtmp, const struct attack *mattk, boolean ufound
 
     if (!ufound)
 	pline("%s explodes at a spot in %s!",
-	    canseemon(mtmp) ? Monnam(mtmp) : "It",
+	    canseemon(level, mtmp) ? Monnam(mtmp) : "It",
 	    level->locations[mtmp->mux][mtmp->muy].typ == WATER
 		? "empty water" : "thin air");
     else {
@@ -1967,7 +1967,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 	switch(mattk->adtyp) {
 	    case AD_STON:
 		if (mtmp->mcan || !mtmp->mcansee || Hallucination) {
-		    if (!canseemon(mtmp)) break;	/* silently */
+		    if (!canseemon(level, mtmp)) break;	/* silently */
 		    pline("%s %s.", Monnam(mtmp),
 			  (mtmp->data == &mons[PM_MEDUSA] &&
 			   (mtmp->mcan || Hallucination)) ?
@@ -1978,7 +1978,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		if (Reflecting && couldsee(mtmp->mx, mtmp->my) &&
 			mtmp->data == &mons[PM_MEDUSA]) {
 		    /* hero has line of sight to Medusa and she's not blind */
-		    boolean useeit = canseemon(mtmp);
+		    boolean useeit = canseemon(level, mtmp);
 
 		    if (useeit)
 			ureflects("%s gaze is reflected by your %s.",
@@ -1990,7 +1990,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 			if (useeit)
 			    pline(
 		      "%s doesn't seem to notice that %s gaze was reflected.",
-				  Monnam(mtmp), mhis(mtmp));
+				  Monnam(mtmp), mhis(level, mtmp));
 			break;
 		    }
 		    if (useeit)
@@ -2001,7 +2001,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		    if (mtmp->mhp > 0) break;
 		    return 2;
 		}
-		if (canseemon(mtmp) && couldsee(mtmp->mx, mtmp->my) &&
+		if (canseemon(level, mtmp) && couldsee(mtmp->mx, mtmp->my) &&
 		    !Stone_resistance) {
 		    pline("You meet %s gaze.", s_suffix(mon_nam(mtmp)));
 		    stop_occupation();
@@ -2014,7 +2014,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		}
 		break;
 	    case AD_CONF:
-		if (!mtmp->mcan && canseemon(mtmp) &&
+		if (!mtmp->mcan && canseemon(level, mtmp) &&
 		   couldsee(mtmp->mx, mtmp->my) &&
 		   mtmp->mcansee && !mtmp->mspec_used && rn2(5)) {
 		    int conf = dice(3,4);
@@ -2030,7 +2030,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		}
 		break;
 	    case AD_STUN:
-		if (!mtmp->mcan && canseemon(mtmp) &&
+		if (!mtmp->mcan && canseemon(level, mtmp) &&
 		   couldsee(mtmp->mx, mtmp->my) &&
 		   mtmp->mcansee && !mtmp->mspec_used && rn2(5)) {
 		    int stun = dice(2,6);
@@ -2042,7 +2042,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		}
 		break;
 	    case AD_BLND:
-		if (!mtmp->mcan && canseemon(mtmp) && !resists_blnd(&youmonst)
+		if (!mtmp->mcan && canseemon(level, mtmp) && !resists_blnd(&youmonst)
 			&& distu(mtmp->mx,mtmp->my) <= BOLT_LIM*BOLT_LIM) {
 		    int blnd = dice((int)mattk->damn, (int)mattk->damd);
 
@@ -2058,7 +2058,7 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		}
 		break;
 	    case AD_FIRE:
-		if (!mtmp->mcan && canseemon(mtmp) &&
+		if (!mtmp->mcan && canseemon(level, mtmp) &&
 			couldsee(mtmp->mx, mtmp->my) &&
 			mtmp->mcansee && !mtmp->mspec_used && rn2(5)) {
 		    int dmg = dice(2,6);
@@ -2207,7 +2207,7 @@ int doseduce(struct monst *mon)
 
 	if (mon->mcan || mon->mspec_used) {
 		pline("%s acts as though %s has got a %sheadache.",
-		      Monnam(mon), mhe(mon),
+		      Monnam(mon), mhe(level, mon),
 		      mon->mcan ? "severe " : "");
 		return 0;
 	}
@@ -2306,7 +2306,7 @@ int doseduce(struct monst *mon)
 	if (uarm || uarmc) {
 		verbalize("You're such a %s; I wish...",
 				flags.female ? "sweet lady" : "nice guy");
-		if (!tele_restrict(mon)) rloc(mon, FALSE);
+		if (!tele_restrict(mon)) rloc(level, mon, FALSE);
 		return 1;
 	}
 	if (u.ualign.type == A_CHAOTIC)
@@ -2390,7 +2390,7 @@ int doseduce(struct monst *mon)
 	else if (rn2(20) < ACURR(A_CHA)) {
 		pline("%s demands that you pay %s, but you refuse...",
 			noit_Monnam(mon),
-			Blind ? (fem ? "her" : "him") : mhim(mon));
+			Blind ? (fem ? "her" : "him") : mhim(level, mon));
 	} else if (u.umonnum == PM_LEPRECHAUN)
 		pline("%s tries to take your money, but fails...",
 				noit_Monnam(mon));
@@ -2416,7 +2416,7 @@ int doseduce(struct monst *mon)
 		}
 	}
 	if (!rn2(25)) mon->mcan = 1; /* monster is worn out */
-	if (!tele_restrict(mon)) rloc(mon, FALSE);
+	if (!tele_restrict(mon)) rloc(level, mon, FALSE);
 	return 1;
 }
 

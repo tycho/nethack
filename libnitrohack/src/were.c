@@ -13,7 +13,7 @@ void were_change(struct monst *mon)
 		!rn2(night() ? (flags.moonphase == FULL_MOON ?  3 : 30)
 			     : (flags.moonphase == FULL_MOON ? 10 : 50))) {
 		new_were(mon);		/* change into animal form */
-		if (flags.soundok && !canseemon(mon)) {
+		if (flags.soundok && !canseemon(level, mon)) {
 		    const char *howler;
 
 		    switch (mon->mnum) {
@@ -56,7 +56,7 @@ void new_were(struct monst *mon)
 	    return;
 	}
 
-	if (canseemon(mon) && !Hallucination)
+	if (canseemon(level, mon) && !Hallucination)
 	    pline("%s changes into a %s.", Monnam(mon),
 			is_human(&mons[pm]) ? "human" :
 			mons_mname(&mons[pm])+4);
@@ -71,7 +71,7 @@ void new_were(struct monst *mon)
 	/* regenerate by 1/4 of the lost hit points */
 	mon->mhp += (mon->mhpmax - mon->mhp) / 4;
 	newsym(mon->mx,mon->my);
-	mon_break_armor(mon, FALSE);
+	mon_break_armor(level, mon, FALSE);
 	possibly_unwield(mon, FALSE);
 }
 
@@ -111,7 +111,7 @@ int were_summon(const struct permonst *ptr, boolean yours,
 	    mtmp = makemon(&mons[typ], level, u.ux, u.uy, NO_MM_FLAGS);
 	    if (mtmp) {
 		total++;
-		if (canseemon(mtmp)) *visible += 1;
+		if (canseemon(level, mtmp)) *visible += 1;
 	    }
 	    if (yours && mtmp)
 		tamedog(mtmp, NULL);

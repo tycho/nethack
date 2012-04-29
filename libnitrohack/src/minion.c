@@ -155,7 +155,7 @@ int demon_talk(struct monst *mtmp)
 	if (youmonst.data->mlet == S_DEMON) {	/* Won't blackmail their own. */
 	    pline("%s says, \"Good hunting, %s.\"",
 		  Amonnam(mtmp), flags.female ? "Sister" : "Brother");
-	    if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+	    if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 	    return 1;
 	}
 

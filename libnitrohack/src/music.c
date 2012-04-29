@@ -93,10 +93,10 @@ static void charm_snakes(int distance)
 		was_peaceful = mtmp->mpeaceful;
 		mtmp->mpeaceful = 1;
 		mtmp->mavenge = 0;
-		could_see_mon = canseemon(mtmp);
+		could_see_mon = canseemon(level, mtmp);
 		mtmp->mundetected = 0;
 		newsym(mtmp->mx, mtmp->my);
-		if (canseemon(mtmp)) {
+		if (canseemon(level, mtmp)) {
 		    if (!could_see_mon)
 			pline("You notice %s, swaying with the music.",
 			    a_monnam(mtmp));
@@ -123,7 +123,7 @@ static void calm_nymphs(int distance)
 		mtmp->msleeping = 0;
 		mtmp->mpeaceful = 1;
 		mtmp->mavenge = 0;
-		if (canseemon(mtmp))
+		if (canseemon(level, mtmp))
 		    pline(
 		     "%s listens cheerfully to the music, then seems quieter.",
 			  Monnam(mtmp));
@@ -142,7 +142,7 @@ void awaken_soldiers(void)
 			is_mercenary(mtmp->data) && mtmp->data != &mons[PM_GUARD]) {
 		mtmp->mpeaceful = mtmp->msleeping = mtmp->mfrozen = 0;
 		mtmp->mcanmove = 1;
-		if (canseemon(mtmp))
+		if (canseemon(level, mtmp))
 		    pline("%s is now ready for battle!", Monnam(mtmp));
 		else
 		    Norep("You hear the rattle of battle gear being readied.");

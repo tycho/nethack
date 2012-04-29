@@ -80,7 +80,7 @@
  * routines.  Like mon_visible(), but it checks to see if the hero sees the
  * location instead of assuming it.  (And also considers worms.)
  */
-#define canseemon(mon) ((mon->wormno ? worm_known(mon) : \
+#define canseemon(lev, mon) ((mon->wormno ? worm_known(lev, mon) : \
 	    (cansee(mon->mx, mon->my) || see_with_infrared(mon))) \
 	&& mon_visible(mon))
 
@@ -92,8 +92,8 @@
  * telepathy, and is what you usually call for monsters about which nothing is
  * known.
  */
-#define canspotmon(mon) \
-	(canseemon(mon) || sensemon(mon))
+#define canspotmon(lev, mon) \
+	(canseemon(lev, mon) || sensemon(mon))
 
 /* knowninvisible(mon)
  * This one checks to see if you know a monster is both there and invisible.
@@ -120,8 +120,8 @@
  * A special case check used in attack() and domove().	Placing the
  * definition here is convenient.
  */
-#define is_safepet(mon) \
-	(mon && mon->mtame && canspotmon(mon) && flags.safe_dog \
+#define is_safepet(lev, mon) \
+	(mon && mon->mtame && canspotmon(lev, mon) && flags.safe_dog \
 		&& !Confusion && !Hallucination && !Stunned)
 
 

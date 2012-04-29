@@ -82,7 +82,7 @@ int done2(void)
 void done_in_by(struct monst *mtmp)
 {
 	char buf[BUFSZ];
-	boolean distorted = (boolean)(Hallucination && canspotmon(mtmp));
+	boolean distorted = (boolean)(Hallucination && canspotmon(level, mtmp));
 
 	pline("You die...");
 	buf[0] = '\0';

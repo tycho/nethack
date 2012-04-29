@@ -60,7 +60,7 @@ int use_saddle(struct obj *otmp)
 	}
 	if (!isok(u.ux+dx, u.uy+dy) ||
 			!(mtmp = m_at(level, u.ux+dx, u.uy+dy)) ||
-			!canspotmon(mtmp)) {
+			!canspotmon(level, mtmp)) {
 	    pline("I see nobody there.");
 	    return 1;
 	}
@@ -271,7 +271,7 @@ boolean mount_steed(struct monst *mtmp,	/* The animal */
 	    struct trap *t = t_at(level, mtmp->mx, mtmp->my);
 
 	    pline("You can't mount %s while %s's trapped in %s.",
-		     mon_nam(mtmp), mhe(mtmp),
+		     mon_nam(mtmp), mhe(level, mtmp),
 		     an(trapexplain[t->ttyp-1]));
 	    return FALSE;
 	}
@@ -366,7 +366,7 @@ void kick_steed(void)
 	    /* We assume a message has just been output of the form
 	     * "You kick <steed>."
 	     */
-	    strcpy(He, mhe(u.usteed));
+	    strcpy(He, mhe(level, u.usteed));
 	    *He = highc(*He);
 	    if ((u.usteed->mcanmove || u.usteed->mfrozen) && !rn2(2)) {
 		if (u.usteed->mcanmove)
@@ -380,7 +380,7 @@ void kick_steed(void)
 		if (u.usteed->msleeping || !u.usteed->mcanmove)
 		    pline("%s stirs.", He);
 		else
-		    pline("%s rouses %sself!", He, mhim(u.usteed));
+		    pline("%s rouses %sself!", He, mhim(level, u.usteed));
 	    } else
 		pline("%s does not respond.", He);
 	    return;
@@ -526,7 +526,7 @@ void dismount_steed(int reason)
 	    if (enexto(&cc, level, u.ux, u.uy, mtmp->data))
 		rloc_to(mtmp, cc.x, cc.y);
 	    else	/* evidently no room nearby; move steed elsewhere */
-		rloc(mtmp, FALSE);
+		rloc(level, mtmp, FALSE);
 	    return;
 	}
 	if (!DEADMONSTER(mtmp)) {

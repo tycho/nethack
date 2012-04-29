@@ -120,7 +120,7 @@ boolean attack_checks(struct monst *mtmp,
 	 * happening two turns in a row.  The latter shows a glyph on
 	 * the screen, so you know something is there.
 	 */
-	if (!canspotmon(mtmp) &&
+	if (!canspotmon(level, mtmp) &&
 		    !warning_at(u.ux+dx, u.uy+dy) &&
 		    !level->locations[u.ux+dx][u.uy+dy].mem_invis &&
 		    !(!Blind && mtmp->mundetected && hides_under(mtmp->data))) {
@@ -152,7 +152,7 @@ boolean attack_checks(struct monst *mtmp,
 		return TRUE;
 	}
 
-	if (mtmp->mundetected && !canseemon(mtmp) &&
+	if (mtmp->mundetected && !canseemon(level, mtmp) &&
 		!warning_at(u.ux+dx, u.uy+dy) &&
 		(hides_under(mtmp->data) || mtmp->data->mlet == S_EEL)) {
 	    mtmp->mundetected = mtmp->msleeping = 0;
@@ -189,7 +189,7 @@ boolean attack_checks(struct monst *mtmp,
 			override_confirmation = TRUE;
 			return FALSE;
 		}
-		if (canspotmon(mtmp)) {
+		if (canspotmon(level, mtmp)) {
 			sprintf(qbuf, "Really attack %s?", mon_nam(mtmp));
 			if (yn(qbuf) != 'y') {
 				flags.move = 0;
@@ -313,7 +313,7 @@ boolean attack(struct monst *mtmp, schar dx, schar dy)
 	 * you'll usually just swap places if this is a movement command
 	 */
 	/* Intelligent chaotic weapons (Stormbringer) want blood */
-	if (is_safepet(mtmp) && !flags.forcefight) {
+	if (is_safepet(level, mtmp) && !flags.forcefight) {
 	    if (!uwep || uwep->oartifact != ART_STORMBRINGER) {
 		/* there are some additional considerations: this won't work
 		 * if in a shop or Punished or you miss a random roll or
@@ -408,7 +408,7 @@ atk_done:
 	 * and it returned 0 (it's okay to attack), and the monster didn't
 	 * evade.
 	 */
-	if (flags.forcefight && mtmp->mhp > 0 && !canspotmon(mtmp) &&
+	if (flags.forcefight && mtmp->mhp > 0 && !canspotmon(level, mtmp) &&
 	    !level->locations[u.ux+dx][u.uy+dy].mem_invis &&
 	    !(u.uswallow && mtmp == u.ustuck))
 		map_invisible(u.ux+dx, u.uy+dy);
@@ -576,7 +576,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 			pline("You hit it.");
 		    } else {
 			pline("You %s %s%s", Role_if(PM_BARBARIAN) ? "smite" : "hit",
-			      mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+			      mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 		    }
 		    dis_dmg = instadisintegrate(unconventional);
 		    tmp = min(dis_dmg, tmp);
@@ -593,7 +593,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 			pline("You hit it.");
 		    } else {
 			pline("You %s %s%s", Role_if(PM_BARBARIAN) ? "smite" : "hit",
-			      mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+			      mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 		    }
 		    hittxt = TRUE;
 		    destroy_arm(uarmg);
@@ -1013,14 +1013,14 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 	    } else if (u.usteed && !thrown && tmp > 0 &&
 		    weapon_type(obj) == P_LANCE && mon != u.ustuck && joust(mon,obj)) {
 		pline("You joust %s%s",
-		      mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+		      mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 		pline("Your %s vanishes on impact!", xname(obj));
 		hittxt = TRUE;
 	    }
 	} else if (jousting) {
 	    tmp += dice(2, (obj == uwep) ? 10 : 2);	/* [was in dmgval()] */
 	    pline("You joust %s%s",
-			 mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+			 mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 	    if (jousting < 0) {
 		pline("Your %s shatters on impact!", xname(obj));
 		/* (must be either primary or secondary weapon to get here) */
@@ -1044,7 +1044,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 	if (unarmed && tmp > 1 && !thrown && !obj && !Upolyd) {
 	    if (rnd(100) < P_SKILL(P_BARE_HANDED_COMBAT) &&
 			!bigmonst(mdat) && !thick_skinned(mdat)) {
-		if (canspotmon(mon))
+		if (canspotmon(level, mon))
 		    pline("%s %s from your powerful strike!", Monnam(mon),
 			  makeplural(stagger(mon->data, "stagger")));
 		/* avoid migrating a dead monster */
@@ -1091,7 +1091,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 		if (thrown) hit(mshot_xname(obj), mon, exclam(tmp));
 		else if (!flags.verbose) pline("You hit it.");
 		else pline("You %s %s%s", Role_if (PM_BARBARIAN) ? "smite" : "hit",
-			 mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
+			 mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 	}
 
 	if (disint_obj && obj) {
@@ -1117,7 +1117,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 		char *whom = mon_nam(mon);
 		char silverobjbuf[BUFSZ];
 
-		if (canspotmon(mon)) {
+		if (canspotmon(level, mon)) {
 		    if (barehand_silver_rings == 1)
 			fmt = "Your silver ring sears %s!";
 		    else if (barehand_silver_rings == 2)
@@ -1154,7 +1154,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 		if (!mon->mconf && !resist(mon, SPBOOK_CLASS, 0, NOTELL)) {
 			mon->mconf = 1;
 			if (!mon->mstun && mon->mcanmove && !mon->msleeping &&
-				canseemon(mon))
+				canseemon(level, mon))
 			    pline("%s appears confused.", Monnam(mon));
 		}
 	}
@@ -1365,7 +1365,7 @@ static void steal_it(struct monst *mdef, const struct attack *mattk)
 		    mon_nam(mdef));
 	    else
 		pline("You seduce %s and %s starts to take off %s clothes.",
-		    mon_nam(mdef), mhe(mdef), mhis(mdef));
+		    mon_nam(mdef), mhe(level, mdef), mhis(level, mdef));
 	}
 
 	while ((otmp = mdef->minvent) != 0) {
@@ -1383,7 +1383,7 @@ static void steal_it(struct monst *mdef, const struct attack *mattk)
 
 		if (otmp == stealoid)	/* special message for final item */
 		    pline("%s finishes taking off %s suit.",
-			  Monnam(mdef), mhis(mdef));
+			  Monnam(mdef), mhis(level, mdef));
 	    }
 	    /* give the object to the character */
 	    otmp = hold_another_object(otmp, "You snatched but dropped %s.",
@@ -1574,12 +1574,12 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		if (tmp <= 0) tmp = 1;
 		if (!negated && tmp < mdef->mhp) {
 		    char nambuf[BUFSZ];
-		    boolean u_saw_mon = canseemon(mdef) ||
+		    boolean u_saw_mon = canseemon(level, mdef) ||
 					(u.uswallow && u.ustuck == mdef);
 		    /* record the name before losing sight of monster */
 		    strcpy(nambuf, Monnam(mdef));
 		    if (u_teleport_mon(mdef, FALSE) &&
-			    u_saw_mon && !canseemon(mdef))
+			    u_saw_mon && !canseemon(level, mdef))
 			pline("%s suddenly disappears!", nambuf);
 		}
 		break;
@@ -1675,7 +1675,7 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 
 		if ((mdef->misc_worn_check & W_ARMH) && rn2(8)) {
 		    pline("%s helmet blocks your attack to %s head.",
-			  s_suffix(Monnam(mdef)), mhis(mdef));
+			  s_suffix(Monnam(mdef)), mhis(level, mdef));
 		    break;
 		}
 
@@ -1755,7 +1755,7 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		if (!rn2(4) && !flaming(mdef->data) &&
 				mdef->data != &mons[PM_GREEN_SLIME]) {
 		    pline("You turn %s into slime.", mon_nam(mdef));
-		    newcham(mdef, &mons[PM_GREEN_SLIME], FALSE, FALSE);
+		    newcham(level, mdef, &mons[PM_GREEN_SLIME], FALSE, FALSE);
 		    tmp = 0;
 		}
 		break;
@@ -1768,13 +1768,13 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		    unsigned int oldspeed = mdef->mspeed;
 
 		    mon_adjust_speed(mdef, -1, NULL);
-		    if (mdef->mspeed != oldspeed && canseemon(mdef))
+		    if (mdef->mspeed != oldspeed && canseemon(level, mdef))
 			pline("%s slows down.", Monnam(mdef));
 		}
 		break;
 	    case AD_CONF:
 		if (!mdef->mconf) {
-		    if (canseemon(mdef))
+		    if (canseemon(level, mdef))
 			pline("%s looks confused.", Monnam(mdef));
 		    mdef->mconf = 1;
 		}
@@ -2058,7 +2058,7 @@ void missum(struct monst *mdef, const struct attack *mattk)
 {
 	if (could_seduce(&youmonst, mdef, mattk))
 		pline("You pretend to be friendly to %s.", mon_nam(mdef));
-	else if (canspotmon(mdef) && flags.verbose)
+	else if (canspotmon(level, mdef) && flags.verbose)
 		pline("You miss %s.", mon_nam(mdef));
 	else
 		pline("You miss it.");
@@ -2415,7 +2415,7 @@ int passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
 
 	      case AD_PLYS:
 		if (ptr == &mons[PM_FLOATING_EYE]) {
-		    if (!canseemon(mon)) {
+		    if (!canseemon(level, mon)) {
 			break;
 		    }
 		    if (mon->mcansee) {
@@ -2612,7 +2612,7 @@ static void nohandglow(struct monst *mon)
 int flash_hits_mon(struct monst *mtmp,
 		   struct obj *otmp)	/* source of flash */
 {
-	int tmp, amt, res = 0, useeit = canseemon(mtmp);
+	int tmp, amt, res = 0, useeit = canseemon(level, mtmp);
 
 	if (mtmp->msleeping) {
 	    mtmp->msleeping = 0;
@@ -2638,7 +2638,7 @@ int flash_hits_mon(struct monst *mtmp,
 			    monkilled(mtmp, NULL, AD_BLND);
 			else
 			    killed(mtmp);
-		    } else if (cansee(mtmp->mx,mtmp->my) && !canspotmon(mtmp)){
+		    } else if (cansee(mtmp->mx,mtmp->my) && !canspotmon(level, mtmp)){
 			map_invisible(mtmp->mx, mtmp->my);
 		    }
 		}

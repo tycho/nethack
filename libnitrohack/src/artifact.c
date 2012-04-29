@@ -764,7 +764,7 @@ static boolean magicbane_hit(
 		  vtense(NULL, verb), hittee);
 	/* assume probing has some sort of noticeable feedback
 	   even if it is being done by one monster to another */
-	if (attack_indx == MB_INDEX_PROBE && !canspotmon(mdef))
+	if (attack_indx == MB_INDEX_PROBE && !canspotmon(level, mdef))
 	    map_invisible(mdef->mx, mdef->my);
     }
 

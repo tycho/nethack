@@ -53,7 +53,7 @@ int do_mname(void)
 	cy = cc.y;
 
 	if (cx == u.ux && cy == u.uy) {
-	    if (u.usteed && canspotmon(u.usteed))
+	    if (u.usteed && canspotmon(level, u.usteed))
 		mtmp = u.usteed;
 	    else {
 		pline("This %s creature is called %s and cannot be renamed.",
@@ -397,7 +397,7 @@ char *x_monnam(const struct monst *mtmp,
 
 	do_hallu = Hallucination && !(suppress & SUPPRESS_HALLUCINATION);
 	do_invis = mtmp->minvis && !(suppress & SUPPRESS_INVISIBLE);
-	do_it = !canspotmon(mtmp) && 
+	do_it = !canspotmon(level, mtmp) &&
 	    article != ARTICLE_YOUR &&
 	    !program_state.gameover &&
 	    mtmp != u.usteed &&

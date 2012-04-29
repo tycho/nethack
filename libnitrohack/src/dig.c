@@ -55,7 +55,7 @@ static void mkcavepos(xchar x, xchar y, int dist, boolean waslit, boolean rockit
 	if (IS_ROCK(loc->typ)) return;
 	if (t_at(level, x, y)) return; /* don't cover the portal */
 	if ((mtmp = m_at(level, x, y)) != 0)	/* make sure crucial monsters survive */
-	    if (!passes_walls(mtmp->data)) rloc(mtmp, FALSE);
+	    if (!passes_walls(mtmp->data)) rloc(level, mtmp, FALSE);
     } else if (loc->typ == ROOM) return;
 
     unblock_point(x,y);	/* make sure vision knows this location is open */
@@ -514,7 +514,7 @@ void digactualhole(int x, int y, struct monst *madeby, int ttyp)
 	    if (madeby_u) {
 		pline("You dig a pit in the %s.", surface_type);
 		if (shopdoor) pay_for_damage("ruin", FALSE);
-	    } else if (!madeby_obj && canseemon(madeby))
+	    } else if (!madeby_obj && canseemon(level, madeby))
 		pline("%s digs a pit in the %s.", Monnam(madeby), surface_type);
 	    else if (cansee(x, y) && flags.verbose)
 		pline("A pit appears in the %s.", surface_type);
@@ -531,7 +531,7 @@ void digactualhole(int x, int y, struct monst *madeby, int ttyp)
 			pickup(1);	/* detects pit */
 	    } else if (mtmp) {
 		if (is_flyer(mtmp->data) || is_floater(mtmp->data)) {
-		    if (canseemon(mtmp))
+		    if (canseemon(level, mtmp))
 			pline("%s %s over the pit.", Monnam(mtmp),
 						     (is_flyer(mtmp->data)) ?
 						     "flies" : "floats");
@@ -542,7 +542,7 @@ void digactualhole(int x, int y, struct monst *madeby, int ttyp)
 
 	    if (madeby_u)
 		pline("You dig a hole through the %s.", surface_type);
-	    else if (!madeby_obj && canseemon(madeby))
+	    else if (!madeby_obj && canseemon(level, madeby))
 		pline("%s digs a hole through the %s.",
 		      Monnam(madeby), surface_type);
 	    else if (cansee(x, y) && flags.verbose)
@@ -602,7 +602,7 @@ void digactualhole(int x, int y, struct monst *madeby, int ttyp)
 			if (Is_stronghold(&u.uz)) {
 			    assign_level(&tolevel, &valley_level);
 			} else if (Is_botlevel(&u.uz)) {
-			    if (canseemon(mtmp))
+			    if (canseemon(level, mtmp))
 				pline("%s avoids the trap.", Monnam(mtmp));
 			    return;
 			} else {

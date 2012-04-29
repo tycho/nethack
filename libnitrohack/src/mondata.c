@@ -473,9 +473,9 @@ int gender(struct monst *mtmp)
 
 /* Like gender(), but lower animals and such are still "it". */
 /* This is the one we want to use when printing messages. */
-int pronoun_gender(struct monst *mtmp)
+int pronoun_gender(const struct level *lev, struct monst *mtmp)
 {
-	if (is_neuter(mtmp->data) || !canspotmon(mtmp)) return 2;
+	if (is_neuter(mtmp->data) || !canspotmon(lev, mtmp)) return 2;
 	return (humanoid(mtmp->data) || (mtmp->data->geno & G_UNIQ) ||
 		type_is_pname(mtmp->data)) ? (int)mtmp->female : 2;
 }

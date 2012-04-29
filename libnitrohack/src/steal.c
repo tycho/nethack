@@ -64,7 +64,7 @@ void stealgold(struct monst *mtmp)
 	    pline("%s quickly snatches some gold from between your %s!",
 		    Monnam(mtmp), makeplural(body_part(FOOT)));
 	    if (!ygold || !rn2(5)) {
-		if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+		if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 		monflee(mtmp, 0, FALSE, FALSE);
 	    }
 	} else if (ygold) {
@@ -75,7 +75,7 @@ void stealgold(struct monst *mtmp)
             freeinv(ygold);
             add_to_minv(mtmp, ygold);
 	    pline("Your purse feels lighter.");
-	    if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+	    if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 	    monflee(mtmp, 0, FALSE, FALSE);
 	    iflags.botl = 1;
 	}
@@ -106,7 +106,7 @@ static int stealarm(void)
 			/* Implies seduction, "you gladly hand over ..."
 			   so we don't set mavenge bit here. */
 			monflee(mtmp, 0, FALSE, FALSE);
-			if (!tele_restrict(mtmp)) rloc(mtmp, FALSE);
+			if (!tele_restrict(mtmp)) rloc(level, mtmp, FALSE);
 		        break;
 		    }
 		}
@@ -298,7 +298,7 @@ gotobj:
 		    } else {
 			int curssv = otmp->cursed;
 			int slowly;
-			boolean seen = canspotmon(mtmp);
+			boolean seen = canspotmon(level, mtmp);
 
 			otmp->cursed = 0;
 			/* can't charm you without first waking you */
@@ -429,7 +429,7 @@ void stealamulet(struct monst *mtmp)
 	mpickobj(mtmp,otmp);	/* may merge and free otmp */
 	pline("%s stole %s!", Monnam(mtmp), doname(otmp));
 	if (can_teleport(mtmp->data) && !tele_restrict(mtmp))
-	    rloc(mtmp, FALSE);
+	    rloc(level, mtmp, FALSE);
     }
 }
 

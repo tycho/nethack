@@ -935,7 +935,7 @@ static void findone(int zx, int zy, void *num)
 			newsym(zx, zy);
 			(*(int*)num)++;
 		}
-		if (!canspotmon(mtmp) && !level->locations[zx][zy].mem_invis)
+		if (!canspotmon(level, mtmp) && !level->locations[zx][zy].mem_invis)
 			map_invisible(zx, zy);
 	} else if (level->locations[zx][zy].mem_invis) {
 		unmap_object(zx, zy);
@@ -1095,7 +1095,7 @@ int dosearch0(int aflag)
 			    if (mtmp->m_ap_type) {
 				seemimic(mtmp);
 		find:		exercise(A_WIS, TRUE);
-				if (!canspotmon(mtmp)) {
+				if (!canspotmon(level, mtmp)) {
 				    if (level->locations[x][y].mem_invis) {
 					/* found invisible monster in a square
 					 * which already has an 'I' in it.
@@ -1113,7 +1113,7 @@ int dosearch0(int aflag)
 				    pline("You find %s.", a_monnam(mtmp));
 				return 1;
 			    }
-			    if (!canspotmon(mtmp)) {
+			    if (!canspotmon(level, mtmp)) {
 				if (mtmp->mundetected &&
 				   (is_hider(mtmp->data) || mtmp->data->mlet == S_EEL))
 					mtmp->mundetected = 0;

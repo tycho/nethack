@@ -341,7 +341,7 @@ shk_failed:
 	    return -1;
 	}
 
-	if (MON_AT(lev, sx, sy)) rloc(m_at(lev, sx, sy), FALSE); /* insurance */
+	if (MON_AT(lev, sx, sy)) rloc(lev, m_at(lev, sx, sy), FALSE); /* insurance */
 
 	/* now initialize the shopkeeper monster structure */
 	shk = NULL;
