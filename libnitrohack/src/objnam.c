@@ -751,15 +751,25 @@ ring:
 		}
 		break;
 	case FOOD_CLASS:
-		if (obj->oeaten)
-		    strcat(prefix, "partly eaten ");
+		if (obj->otyp == CORPSE && obj->odrained) {
+		    if (wizard && obj->oeaten < drainlevel(obj))
+			strcpy(tmpbuf, "over-drained ");
+		    else
+			sprintf(tmpbuf, "%sdrained ",
+				(obj->oeaten > drainlevel(obj)) ? "partly " : "");
+		} else if (obj->oeaten) {
+		    strcpy(tmpbuf, "partly eaten ");
+		} else {
+		    tmpbuf[0] = '\0';
+		}
+		strcat(prefix, tmpbuf);
 		if (obj->otyp == CORPSE) {
 		    if (mons[obj->corpsenm].geno & G_UNIQ) {
 			sprintf(prefix, "%s%s ",
 				(type_is_pname(&mons[obj->corpsenm]) ?
 					"" : "the "),
 				s_suffix(mons_mname(&mons[obj->corpsenm])));
-			if (obj->oeaten) strcat(prefix, "partly eaten ");
+			strcat(prefix, tmpbuf);
 		    } else {
 			strcat(prefix, mons_mname(&mons[obj->corpsenm]));
 			strcat(prefix, " ");
@@ -1745,12 +1755,12 @@ struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user)
 	int i;
 	struct obj *otmp;
 	int cnt, spe, spesgn, typ, very, rechrg;
-	int blessed, uncursed, iscursed, ispoisoned, isgreased;
+	int blessed, uncursed, iscursed, ispoisoned, isgreased, isdrained;
 	int eroded, eroded2, erodeproof;
 #ifdef INVISIBLE_OBJECTS
 	int isinvisible;
 #endif
-	int halfeaten, mntmp, contents;
+	int halfeaten, halfdrained, mntmp, contents;
 	int islit, unlabeled, ishistoric, isdiluted;
 	const struct alt_spellings *as = spellings;
 	struct fruit *f;
@@ -1776,7 +1786,7 @@ struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user)
 	const char *name=0;
 
 	cnt = spe = spesgn = typ = very = rechrg =
-		blessed = uncursed = iscursed =
+		blessed = uncursed = iscursed = isdrained = halfdrained =
 #ifdef INVISIBLE_OBJECTS
 		isinvisible =
 #endif
@@ -1870,6 +1880,12 @@ struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user)
 			   !strncmpi(bp, "rotted ", l=7)) {
 			eroded2 = 1 + very;
 			very = 0;
+		} else if (!strncmpi(bp, "partly drained ", l=15)) {
+			isdrained = 1;
+			halfdrained = 1;
+		} else if (!strncmpi(bp, "drained ", l=8)) {
+			isdrained = 1;
+			halfdrained = 0;
 		} else if (!strncmpi(bp, "partly eaten ", l=13)) {
 			halfeaten = 1;
 		} else if (!strncmpi(bp, "historic ", l=9)) {
@@ -2629,6 +2645,18 @@ typfnd:
 		else otmp->oeaten = objects[otmp->otyp].oc_nutrition;
 		/* (do this adjustment before setting up object's weight) */
 		consume_oeaten(otmp, 1);
+	}
+	if (isdrained && otmp->otyp == CORPSE && mons[otmp->corpsenm].cnutrit) {
+		int amt;
+		otmp->odrained = 1;
+		amt = mons[otmp->corpsenm].cnutrit - drainlevel(otmp);
+		if (halfdrained) {
+			amt /= 2;
+			if (amt == 0)
+				amt++;
+		}
+		/* (do this adjustment before setting up object's weight) */
+		consume_oeaten(otmp, -amt);
 	}
 	otmp->owt = weight(otmp);
 	if (very && otmp->otyp == HEAVY_IRON_BALL) otmp->owt += 160;

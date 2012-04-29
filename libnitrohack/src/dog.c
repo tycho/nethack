@@ -643,6 +643,15 @@ int dogfood(struct monst *mon, struct obj *obj)
 			peek_at_iced_corpse_age(obj) + 50L <= moves) ?
 				DOGFOOD : TABU;
 
+	    /* Vampires only "eat" very fresh corpses ... */
+	    /* Assume meat -> blood */
+	    if (is_vampire(mon->data)) {
+		return (obj->otyp == CORPSE &&
+			has_blood(&mons[obj->corpsenm]) && !obj->oeaten &&
+			peek_at_iced_corpse_age(obj) + 5 >= moves) ?
+		       DOGFOOD : TABU;
+	    }
+
 	    if (!carni && !herbi)
 		    return obj->cursed ? UNDEF : APPORT;
 

@@ -110,6 +110,7 @@ int dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 	struct edog *edog = EDOG(mtmp);
 	boolean poly = FALSE, grow = FALSE, heal = FALSE;
 	int nutrit;
+	boolean vampiric = is_vampire(mtmp->data);
 
 	if (edog->hungrytime < moves)
 	    edog->hungrytime = moves;
@@ -121,6 +122,13 @@ int dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 	    if (mtmp->meating > 1) mtmp->meating /= 2;
 	    if (nutrit > 1) nutrit = (nutrit * 3) / 4;
 	}
+
+	/* vampires only get 1/5 normal nutrition */
+	if (vampiric) {
+	    mtmp->meating = (mtmp->meating + 4) / 5;
+	    nutrit = (nutrit + 4) / 5;
+	}
+
 	edog->hungrytime += nutrit;
 	mtmp->mconf = 0;
 	if (edog->mhpmax_penalty) {
@@ -143,7 +151,7 @@ int dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 	   sight locations should not. */
 	if (cansee(x, y) || cansee(mtmp->mx, mtmp->my))
 	    pline("%s %s %s.", mon_visible(mtmp) ? noit_Monnam(mtmp) : "It",
-		  devour ? "devours" : "eats",
+		  vampiric ? "drains" : devour ? "devours" : "eats",
 		  (obj->oclass == FOOD_CLASS) ?
 			singular(obj, doname) : doname(obj));
 	/* It's a reward if it's DOGFOOD and the player dropped/threw it. */
@@ -160,6 +168,26 @@ int dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 		pline("%s spits %s out in disgust!",
 		      Monnam(mtmp), distant_name(obj,doname));
 	    }
+	} else if (vampiric) {
+	    /* split object */
+	    if (obj->quan > 1L) {
+		if (!carried(obj)) {
+		    splitobj(obj, 1L);
+		} else  {
+		    /* carried */
+		    obj = splitobj(obj, obj->quan - 1L);
+
+		    freeinv(obj);
+		    if (inv_cnt() >= 52 && !merge_choice(invent, obj))
+			dropy(obj);
+		    else
+			obj = addinv(obj);	/* unlikely but a merge is possible */
+		}
+	    }
+
+	    /* take away blood nutrition */
+	    obj->oeaten = drainlevel(obj);
+	    obj->odrained = 1;
 	} else if (obj == uball) {
 	    unpunish();
 	    delobj(obj);

@@ -3,6 +3,7 @@
 
 #include "hack.h"
 #include "artifact.h"
+#include "edog.h"
 
 static struct obj *otmp;
 
@@ -1084,10 +1085,16 @@ dopois:
 		break;
 	    case AD_DRLI:
 		hitmsg(mtmp, mattk);
-		if ((uncancelled || mdat == &mons[PM_VLAD_THE_IMPALER]) &&
-			!rn2(3) && !Drain_resistance) {
-		    losexp("life drainage");
+		/* if vampire biting (and also a pet) */
+		if (is_vampire(mtmp->data) && mattk->aatyp == AT_BITE &&
+		    has_blood(youmonst.data)) {
+		    pline("Your blood is being drained!");
+		    /* Get 1/20th of full corpse value so 4 bites == 1 drink. */
+		    if (mtmp->mtame && !mtmp->isminion)
+			EDOG(mtmp)->hungrytime += youmonst.data->cnutrit / 20 + 1;
 		}
+		if (uncancelled && !rn2(3) && !Drain_resistance)
+		    losexp("life drainage");
 		break;
 	    case AD_LEGS:
 		{ long side = rn2(2) ? RIGHT_SIDE : LEFT_SIDE;

@@ -133,7 +133,7 @@ void done_in_by(struct monst *mtmp)
 		u.ugrave_arise = PM_WRAITH;
 	else if (mtmp->data->mlet == S_MUMMY && urace.mummynum != NON_PM)
 		u.ugrave_arise = urace.mummynum;
-	else if (mtmp->data->mlet == S_VAMPIRE && Race_if (PM_HUMAN))
+	else if (is_vampire(mtmp->data) && Race_if (PM_HUMAN))
 		u.ugrave_arise = PM_VAMPIRE;
 	else if (mtmp->data == &mons[PM_GHOUL])
 		u.ugrave_arise = PM_GHOUL;

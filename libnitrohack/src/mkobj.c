@@ -370,6 +370,7 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 		    otmp = mk_artifact(otmp, (aligntyp)A_NONE);
 		break;
 	case FOOD_CLASS:
+	    otmp->odrained = 0;
 	    otmp->oeaten = 0;
 	    switch(otmp->otyp) {
 	    case CORPSE:
@@ -1441,6 +1442,7 @@ struct obj *restore_obj(struct memfile *mf)
     otmp->in_use	= (oflags >>  8) & 1;
     otmp->was_thrown	= (oflags >>  7) & 1;
     otmp->bypass	= (oflags >>  6) & 1;
+    otmp->odrained	= (oflags >>  5) & 1;
     
     if (otmp->onamelth)
 	mread(mf, ONAME(otmp), otmp->onamelth);
@@ -1463,13 +1465,28 @@ void save_obj(struct memfile *mf, struct obj *obj)
 {
     unsigned int oflags;
     
-    oflags = (obj->cursed << 31) | (obj->blessed << 30) | (obj->unpaid << 29) |
-	     (obj->no_charge << 28) | (obj->known << 27) | (obj->dknown << 26) |
-	     (obj->bknown << 25) | (obj->rknown << 24) | (obj->oeroded << 22) |
-	     (obj->oeroded2 << 20) | (obj->oerodeproof << 19) | (obj->olocked << 18) |
-	     (obj->obroken << 17) | (obj->otrapped << 16) | (obj->recharged << 13) |
-	     (obj->lamplit << 12) | (obj->greased << 11) | (obj->oattached << 9) |
-	     (obj->in_use << 8) | (obj->was_thrown << 7) | (obj->bypass << 6);
+    oflags = (obj->cursed	<< 31) |
+	     (obj->blessed	<< 30) |
+	     (obj->unpaid	<< 29) |
+	     (obj->no_charge	<< 28) |
+	     (obj->known	<< 27) |
+	     (obj->dknown	<< 26) |
+	     (obj->bknown	<< 25) |
+	     (obj->rknown	<< 24) |
+	     (obj->oeroded	<< 22) |
+	     (obj->oeroded2	<< 20) |
+	     (obj->oerodeproof	<< 19) |
+	     (obj->olocked	<< 18) |
+	     (obj->obroken	<< 17) |
+	     (obj->otrapped	<< 16) |
+	     (obj->recharged	<< 13) |
+	     (obj->lamplit	<< 12) |
+	     (obj->greased	<< 11) |
+	     (obj->oattached	<<  9) |
+	     (obj->in_use	<<  8) |
+	     (obj->was_thrown	<<  7) |
+	     (obj->bypass	<<  6) |
+	     (obj->odrained	<<  5);
     
     mfmagic_set(mf, OBJ_MAGIC);
     

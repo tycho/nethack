@@ -583,7 +583,7 @@ static int use_mirror(struct obj *obj)
 				"Yikes!  You've frozen yourself!");
 			    nomul(-rnd((MAXULEV+6) - u.ulevel), "gazing into a mirror");
 			} else pline("You stiffen momentarily under your gaze.");
-		    } else if (youmonst.data->mlet == S_VAMPIRE)
+		    } else if (is_vampire(youmonst.data))
 			pline("You don't have a reflection.");
 		    else if (u.umonnum == PM_UMBER_HULK) {
 			pline("Huh?  That doesn't look like you!");
@@ -633,7 +633,7 @@ static int use_mirror(struct obj *obj)
 	    if (vis)
 		pline("%s can't see anything right now.", Monnam(mtmp));
 	/* some monsters do special things */
-	} else if (mlet == S_VAMPIRE || mlet == S_GHOST) {
+	} else if (is_vampire(mtmp->data) || mlet == S_GHOST) {
 	    if (vis)
 		pline ("%s doesn't have a reflection.", Monnam(mtmp));
 	} else if (!mtmp->mcan && !mtmp->minvis &&
@@ -1289,7 +1289,9 @@ int jump(
 
 boolean tinnable(struct obj *corpse)
 {
+	if (corpse->otyp != CORPSE) return 0;
 	if (corpse->oeaten) return 0;
+	if (corpse->odrained) return 0;
 	if (!mons[corpse->corpsenm].cnutrit) return 0;
 	return 1;
 }
@@ -1306,7 +1308,7 @@ static void use_tinning_kit(struct obj *obj)
 		return;
 	}
 	if (!(corpse = floorfood("tin", 2))) return;
-	if (corpse->oeaten) {
+	if (corpse->otyp == CORPSE && (corpse->oeaten || corpse->odrained)) {
 		pline("You cannot tin something which is partly eaten.");
 		return;
 	}

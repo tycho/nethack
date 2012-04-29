@@ -79,6 +79,8 @@
 #define polyok(ptr)		(((ptr)->mflags2 & M2_NOPOLY) == 0L)
 #define is_undead(ptr)		(((ptr)->mflags2 & M2_UNDEAD) != 0L)
 #define is_were(ptr)		(((ptr)->mflags2 & M2_WERE) != 0L)
+#define is_vampire(ptr)		((ptr)->mlet == S_VAMPIRE || \
+				 (ptr) == &mons[PM_VAMPIRE_BAT])
 #define is_elf(ptr)		(((ptr)->mflags2 & M2_ELF) != 0L)
 #define is_dwarf(ptr)		(((ptr)->mflags2 & M2_DWARF) != 0L)
 #define is_gnome(ptr)		(((ptr)->mflags2 & M2_GNOME) != 0L)
@@ -193,6 +195,11 @@
 #define vegetarian(ptr)		(vegan(ptr) || \
 				((ptr)->mlet == S_PUDDING &&         \
 				 (ptr) != &mons[PM_BLACK_PUDDING]))
+
+/* For vampires */
+#define has_blood(ptr)		(!vegetarian(ptr) && \
+				 (ptr)->mlet != S_GOLEM && \
+				 (!is_undead(ptr) || is_vampire(ptr)))
 
 #define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
 				     is_domestic(ptr))

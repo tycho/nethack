@@ -1120,6 +1120,11 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		}
 		break;
 	    case AD_DRLI:
+		if (!cancelled && magr->mtame && !magr->isminion &&
+		    is_vampire(pa) && mattk->aatyp == AT_BITE &&
+		    has_blood(pd))
+			EDOG(magr)->hungrytime += mdef->data->cnutrit / 20 + 1;
+
 		if (!cancelled && !rn2(3) && !resists_drli(mdef)) {
 			tmp = dice(2,6);
 			if (vis)

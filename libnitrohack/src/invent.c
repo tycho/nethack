@@ -1828,6 +1828,7 @@ static boolean mergable(struct obj *otmp, struct obj *obj)
 	    return FALSE;
 
 	if (obj->oclass == FOOD_CLASS && (obj->oeaten != otmp->oeaten ||
+					  obj->odrained != otmp->odrained ||
 					  obj->orotten != otmp->orotten))
 	    return FALSE;
 

@@ -109,7 +109,7 @@ boolean onscary(int x, int y, struct monst *mtmp)
 
 	return (boolean)(sobj_at(SCR_SCARE_MONSTER, level, x, y)
 			 || (sengr_at("Elbereth", x, y) && flags.elbereth_enabled)
-			 || (mtmp->data->mlet == S_VAMPIRE
+			 || (is_vampire(mtmp->data)
 			     && IS_ALTAR(level->locations[x][y].typ)));
 }
 
