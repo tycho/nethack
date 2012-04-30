@@ -12,6 +12,7 @@ static long itimeout(long);
 static long itimeout_incr(long,int);
 static void ghost_from_bottle(void);
 static short mixtype(struct obj *,struct obj *);
+static int dip(struct obj *,struct obj *);
 
 /* force `val' to be within valid range for intrinsic timeout value */
 static long itimeout(long val)
@@ -1568,15 +1569,14 @@ boolean get_wet(struct obj *obj)
 }
 
 
+/* User command for dipping objects. */
 int dodip(struct obj *potion)
 {
 	struct obj *obj;
-	struct obj *singlepotion;
 	const char *tmp;
 	uchar here;
 	char allowall[2] = {ALL_CLASSES, 0};
-	short mixture;
-	char qbuf[QBUFSZ], Your_buf[BUFSZ];
+	char qbuf[QBUFSZ];
 
 	if (potion && !validate_object(potion, beverages, "dip into"))
 		return 0;
@@ -1616,6 +1616,19 @@ int dodip(struct obj *potion)
 		pline("That is a potion bottle, not a Klein bottle!");
 		return 0;
 	}
+
+	return dip(potion, obj);
+}
+
+
+/* Dip an arbitrary object into a potion. */
+int dip(struct obj *potion, struct obj *obj)
+{
+	struct obj *singlepotion;
+	const char *tmp;
+	short mixture;
+	char Your_buf[BUFSZ];
+
 	potion->in_use = TRUE;		/* assume it will be used up */
 	if (potion->otyp == POT_WATER) {
 		boolean useeit = !Blind;
