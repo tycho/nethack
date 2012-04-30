@@ -30,6 +30,7 @@ enum monuse {
 	MUSE_UNICORN_HORN,
 	MUSE_POT_FULL_HEALING,
 	MUSE_LIZARD_CORPSE,
+	MUSE_POT_VAMPIRE_BLOOD,
 /*	MUSE_INNATE_TPT 9999
  * We cannot use this.  Since monsters get unlimited teleportation, if they
  * were allowed to teleport at will you could never catch them.  Instead,

@@ -290,6 +290,12 @@ boolean find_defensive(struct monst *mtmp, struct musable *m)
 		    m->has_defense = MUSE_POT_HEALING;
 		    return TRUE;
 		}
+		if (is_vampire(mtmp->data) &&
+		    (obj = m_carrying(mtmp, POT_VAMPIRE_BLOOD)) != 0) {
+		    m->defensive = obj;
+		    m->has_defense = MUSE_POT_VAMPIRE_BLOOD;
+		    return TRUE;
+		}
 	    }
 	    return FALSE;
 	}
@@ -440,6 +446,11 @@ boolean find_defensive(struct monst *mtmp, struct musable *m)
 		if (obj->otyp == POT_HEALING) {
 			m->defensive = obj;
 			m->has_defense = MUSE_POT_HEALING;
+		}
+		nomore(MUSE_POT_VAMPIRE_BLOOD);
+		if (is_vampire(mtmp->data) && obj->otyp == POT_VAMPIRE_BLOOD) {
+			m->defensive = obj;
+			m->has_defense = MUSE_POT_VAMPIRE_BLOOD;
 		}
 	    } else {	/* Pestilence */
 		nomore(MUSE_POT_FULL_HEALING);
@@ -823,6 +834,18 @@ mon_tele:
 		}
 		if (vismon) pline("%s looks completely healed.", Monnam(mtmp));
 		if (oseen) makeknown(otmp->otyp);
+		m_useup(mtmp, otmp);
+		return 2;
+	case MUSE_POT_VAMPIRE_BLOOD:
+		mquaffmsg(mtmp, otmp);
+		if (!otmp->cursed) {
+		    i = rnd(8) + rnd(2);
+		    mtmp->mhp += i;
+		    mtmp->mhpmax += i;
+		    if (vismon) pline("%s looks full of life.", Monnam(mtmp));
+		} else if (vismon)
+		    pline("%s discards the congealed blood in disgust.", Monnam(mtmp));
+		if (oseen) makeknown(POT_VAMPIRE_BLOOD);
 		m_useup(mtmp, otmp);
 		return 2;
 	case MUSE_LIZARD_CORPSE:
@@ -1792,6 +1815,8 @@ boolean searches_for_item(struct monst *mon, struct obj *obj)
 		return TRUE;
 	    break;
 	case POTION_CLASS:
+	    if (typ == POT_VAMPIRE_BLOOD)
+		return is_vampire(mon->data);
 	    if (typ == POT_HEALING ||
 		    typ == POT_EXTRA_HEALING ||
 		    typ == POT_FULL_HEALING ||

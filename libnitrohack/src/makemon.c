@@ -590,6 +590,14 @@ static void m_initinv(struct monst *mtmp)
 	    case S_LEPRECHAUN:
 		mkmonmoney(mtmp, (long) dice(level_difficulty(&mtmp->dlevel->z), 30));
 		break;
+	    case S_VAMPIRE:
+		if (rn2(2)) {
+		    if (mtmp->m_lev > rn2(30))
+			mongets(mtmp, POT_VAMPIRE_BLOOD);
+		    else
+			mongets(mtmp, POT_BLOOD);
+		}
+		break;
 	    case S_DEMON:
 	    	/* moved here from m_initweap() because these don't
 		   have AT_WEAP so m_initweap() is not called for them */
