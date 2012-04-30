@@ -1692,6 +1692,22 @@ void bagotricks(struct obj *bag)
     }
 }
 
+/* May create a camera demon emerging from camera around position x,y. */
+void create_camera_demon(struct obj *camera, int x, int y)
+{
+	struct monst *mtmp;
+
+	if (!rn2(3) &&
+	    (mtmp = makemon(&mons[PM_HOMUNCULUS], level, x, y, NO_MM_FLAGS)) != 0) {
+	    pline("%s is released!",
+		  !canspotmon(level, mtmp) ? "Something" :
+		  Hallucination ? An(rndmonnam()) :
+		  "The picture-painting demon");
+	    mtmp->mpeaceful = !camera->cursed;
+	    set_malign(mtmp);
+	}
+}
+
 
 static void restore_shkbill(struct memfile *mf, struct bill_x *b)
 {

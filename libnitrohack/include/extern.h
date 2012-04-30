@@ -774,6 +774,7 @@ extern void mimic_hit_msg(struct monst *,short);
 extern void mkmonmoney(struct monst *, long);
 extern void bagotricks(struct obj *);
 extern boolean propagate(int,boolean,boolean);
+extern void create_camera_demon(struct obj *,int,int);
 extern struct monst *restore_mon(struct memfile *mf);
 extern void save_mon(struct memfile *mf, const struct monst *mon);
 

@@ -770,6 +770,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 			case EXPENSIVE_CAMERA:
 			    pline("You succeed in destroying %s camera.  Congratulations!",
 				    shk_your(yourbuf, obj));
+			    create_camera_demon(obj, u.ux, u.uy);
 			    useup(obj);
 			    return TRUE;
 			    /*NOTREACHED*/

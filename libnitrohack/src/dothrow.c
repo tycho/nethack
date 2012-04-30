@@ -1593,6 +1593,9 @@ static void breakobj(struct obj *obj,
 			}
 			/* monster breathing isn't handled... [yet?] */
 			break;
+		case EXPENSIVE_CAMERA:
+			create_camera_demon(obj, x, y);
+			break;
 		case EGG:
 			/* breaking your own eggs is bad luck */
 			if (hero_caused && obj->spe && obj->corpsenm >= LOW_PM)
