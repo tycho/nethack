@@ -919,8 +919,17 @@ int peffects(struct obj *otmp)
 			adjalign(-3);
 		    }
 		    exercise(A_CON, FALSE);
-		    if (!Unchanging && polymon(PM_VAMPIRE))
-			u.mtimedone = 0;	/* "permament" change */
+		    if (!Unchanging) {
+			int successful_polymorph = 0;
+			if (otmp->blessed)
+			    successful_polymorph = polymon(PM_VAMPIRE_LORD);
+			else if (otmp->cursed)
+			    successful_polymorph = polymon(PM_VAMPIRE_BAT);
+			else
+			    successful_polymorph = polymon(PM_VAMPIRE);
+			if (successful_polymorph)
+			    u.mtimedone = 0;	/* "permament" change */
+		    }
 		} else {
 		    violated_vegetarian();
 		    pline("Ugh.  That was vile.");
