@@ -341,7 +341,7 @@ boolean revive_nasty(int x, int y, const char *msg)
 	     otmp->corpsenm == PM_WIZARD_OF_YENDOR)) {
 	    /* move any living monster already at that location */
 	    if ((mtmp = m_at(level, x,y)) && enexto(&cc, level, x, y, mtmp->data))
-		rloc_to(mtmp, cc.x, cc.y);
+		rloc_to(mtmp, level, cc.x, cc.y);
 	    if (msg) Norep("%s", msg);
 	    revived = revive_corpse(otmp);
 	}
@@ -352,7 +352,7 @@ boolean revive_nasty(int x, int y, const char *msg)
 	mtmp = m_at(level, x,y);
 	if (mtmp && !goodpos(level, x, y, mtmp, 0) &&
 	    enexto(&cc, level, x, y, mtmp->data)) {
-	    rloc_to(mtmp, cc.x, cc.y);
+	    rloc_to(mtmp, level, cc.x, cc.y);
 	}
 	/* else impossible? */
     }

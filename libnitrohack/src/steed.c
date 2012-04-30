@@ -524,7 +524,7 @@ void dismount_steed(int reason)
 	if (reason == DISMOUNT_BONES) {
 	    /* move the steed to an adjacent square */
 	    if (enexto(&cc, level, u.ux, u.uy, mtmp->data))
-		rloc_to(mtmp, cc.x, cc.y);
+		rloc_to(mtmp, level, cc.x, cc.y);
 	    else	/* evidently no room nearby; move steed elsewhere */
 		rloc(level, mtmp, FALSE);
 	    return;
@@ -585,7 +585,7 @@ void dismount_steed(int reason)
 	    /* Couldn't... try placing the steed */
 	    } else if (enexto(&cc, level, u.ux, u.uy, mtmp->data)) {
 		/* Keep player here, move the steed to cc */
-		rloc_to(mtmp, cc.x, cc.y);
+		rloc_to(mtmp, level, cc.x, cc.y);
 		/* Player stays put */
 	    /* Otherwise, kill the steed */
 	    } else {

@@ -271,7 +271,7 @@ void mon_arrive(struct monst *mtmp, boolean with_you)
 	       when there is a monster there too. */
 	    if (!MON_AT(level, u.ux, u.uy) &&
 		    !rn2(mtmp->mtame ? 10 : mtmp->mpeaceful ? 5 : 2))
-		rloc_to(mtmp, u.ux, u.uy);
+		rloc_to(mtmp, level, u.ux, u.uy);
 	    else
 		mnexto(mtmp);
 	    return;

@@ -2415,7 +2415,7 @@ static int use_grapple (struct obj *obj)
 			enexto(&cc, level, u.ux, u.uy, NULL)) {
 		pline("You pull in %s!", mon_nam(mtmp));
 		mtmp->mundetected = 0;
-		rloc_to(mtmp, cc.x, cc.y);
+		rloc_to(mtmp, level, cc.x, cc.y);
 		return 1;
 	    } else if ((!bigmonst(mtmp->data) && !strongmonst(mtmp->data)) ||
 		       rn2(4)) {

@@ -316,7 +316,7 @@ int tactics(struct monst *mtmp)
 		if (where == STRAT_GROUND) {
 		    if (!MON_AT(level, tx, ty) || (mtmp->mx == tx && mtmp->my == ty)) {
 			/* teleport to it and pick it up */
-			rloc_to(mtmp, tx, ty);	/* clean old pos */
+			rloc_to(mtmp, level, tx, ty);	/* clean old pos */
 
 			if ((otmp = on_ground(which_arti(targ))) != 0) {
 			    if (cansee(mtmp->mx, mtmp->my))

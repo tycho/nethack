@@ -1766,7 +1766,7 @@ void mnexto(struct monst *mtmp)
 	}
 
 	if (!enexto(&mm, level, u.ux, u.uy, mtmp->data)) return;
-	rloc_to(mtmp, mm.x, mm.y);
+	rloc_to(mtmp, level, mm.x, mm.y);
 	return;
 }
 
@@ -1805,7 +1805,7 @@ boolean mnearto(struct monst *mtmp,
 		newx = mm.x; newy = mm.y;
 	}
 
-	rloc_to(mtmp, newx, newy);
+	rloc_to(mtmp, level, newx, newy);
 
 	if (move_other && othermon) {
 	    othermon->mx = othermon->my = 0;

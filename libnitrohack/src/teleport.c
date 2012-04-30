@@ -1022,7 +1022,7 @@ static boolean rloc_pos_ok(struct level *lev,
  * migrating_mon.  Worm tails are always placed randomly around the head of
  * the worm.
  */
-void rloc_to(struct monst *mtmp, int x, int y)
+void rloc_to(struct monst *mtmp, struct level *lev, int x, int y)
 {
 	int oldx = mtmp->mx, oldy = mtmp->my;
 	boolean resident_shk = mtmp->isshk && inhishop(mtmp);
@@ -1034,7 +1034,7 @@ void rloc_to(struct monst *mtmp, int x, int y)
 	    if (mtmp->wormno)
 		remove_worm(mtmp);
 	    else {
-		remove_monster(level, oldx, oldy);
+		remove_monster(lev, oldx, oldy);
 		newsym(oldx, oldy);		/* update old location */
 	    }
 	}
@@ -1110,7 +1110,7 @@ boolean rloc(struct level *lev,
 	return FALSE;
 
  found_xy:
-	rloc_to(mtmp, x, y);
+	rloc_to(mtmp, lev, x, y);
 	return TRUE;
 }
 
@@ -1121,7 +1121,7 @@ static void mvault_tele(struct monst *mtmp)
 
 	if (croom && somexy(level, croom, &c) &&
 				goodpos(level, c.x, c.y, mtmp, 0)) {
-		rloc_to(mtmp, c.x, c.y);
+		rloc_to(mtmp, level, c.x, c.y);
 		return;
 	}
 	rloc(level, mtmp, FALSE);
@@ -1356,7 +1356,7 @@ boolean u_teleport_mon(struct monst *mtmp, boolean give_feedback)
 	    rloc(level, mtmp, FALSE);
 	} else if (is_rider(mtmp->data) && rn2(13) &&
 		   enexto(&cc, level, u.ux, u.uy, mtmp->data))
-	    rloc_to(mtmp, cc.x, cc.y);
+	    rloc_to(mtmp, level, cc.x, cc.y);
 	else
 	    rloc(level, mtmp, FALSE);
 	return TRUE;

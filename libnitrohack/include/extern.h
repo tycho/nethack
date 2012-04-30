@@ -1545,7 +1545,7 @@ extern void level_tele(void);
 extern void domagicportal(struct trap *);
 extern void tele_trap(struct trap *);
 extern void level_tele_trap(struct trap *);
-extern void rloc_to(struct monst *,int,int);
+extern void rloc_to(struct monst *,struct level *,int,int);
 extern boolean rloc(struct level *,struct monst *, boolean);
 extern boolean tele_restrict(struct monst *);
 extern void mtele_trap(struct monst *, struct trap *,int);
