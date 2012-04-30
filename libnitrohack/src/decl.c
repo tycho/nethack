@@ -74,6 +74,8 @@ struct dig_info digging;
 
 int stetho_last_used_move, stetho_last_used_movement;
 
+boolean alchemy_init_done;
+
 int branch_id;
 dungeon dungeons[MAXDUNGEON];	/* ini'ed by init_dungeon() */
 s_level *sp_levchn;
@@ -274,6 +276,7 @@ void init_data(void)
     artilist = NULL;
     stetho_last_used_movement = 0;
     stetho_last_used_move = -1;
+    alchemy_init_done = FALSE;
     branch_id = 0;
     histevents = NULL;
     histcount = 0;

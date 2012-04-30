@@ -174,6 +174,8 @@ extern struct dig_info {		/* apply.c, hack.c */
 
 extern int stetho_last_used_move, stetho_last_used_movement;
 
+extern boolean alchemy_init_done;
+
 extern unsigned int moves;
 extern long wailmsg;
 
