@@ -15,6 +15,7 @@
 static void Fread(void *,int,int,dlb *);
 static struct qtmsg * construct_qtlist(long);
 static const char * intermed(void);
+static const char * creatorname(void);
 static const char * neminame(void);
 static const char * guardname(void);
 static const char * homebase(void);
@@ -205,6 +206,8 @@ static void convert_arg(char c)
 			break;
 	    case 'o':	str = the(artiname(urole.questarti));
 			break;
+	    case 'm':	str = creatorname();
+			break;
 	    case 'n':	str = neminame();
 			break;
 	    case 'g':	str = guardname();
@@ -381,6 +384,38 @@ const struct permonst *qt_montype(const d_level *dlev)
 	if (qpm != NON_PM && rn2(5) && !(mvitals[qpm].mvflags & G_GENOD))
 	    return &mons[qpm];
 	return mkclass(dlev, urole.enemy2sym, 0);
+}
+
+/* The names of creator deities from different cultures. */
+static const char *creator_names[] = {
+	"Marduk", /* Babylonian */
+	"Apsu", /* Babylonian */
+	"Aeon", /* Greek */
+	"Gaia", /* Greek */
+	"Khronos", /* Greek */
+	"Atum", /* Egyptian */
+	"Khepri", /* Egyptian */
+	"Kamui", /* Ainu */
+	"Mbombo", /* Bakuba */
+	"Unkulunkulu", /* Zulu */
+	"Vishvakarman", /* Vedic */
+	"Brahma", /* Hindu */
+	"Coatlique", /* Aztec */
+	"Viracocha", /* Inca */
+	"Tepeu", /* Maya */
+	"Pangu", /* Chinese */
+	"Bulaing", /* Australian */
+	"Ahura Mazda", /* Zoroastrian */
+	"Demiourgos", /* Platon */
+};
+
+/*
+ * Return the name of the creator deity.
+ * The name stays the same for the running game.
+ */
+static const char *creatorname(void)
+{
+	return creator_names[u.ubirthday % SIZE(creator_names)];
 }
 
 /*questpgr.c*/
