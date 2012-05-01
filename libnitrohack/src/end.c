@@ -826,8 +826,8 @@ static void container_contents(struct obj *list,
 
 	for (box = list; box; box = box->nobj) {
 	    if (Is_container(box) || box->otyp == STATUE) {
-		if (box->otyp == BAG_OF_TRICKS) {
-		    continue;	/* wrong type of container */
+		if (box->otyp == BAG_OF_TRICKS && box->spe) {
+		    continue;	/* charged bag of tricks can't contain anything */
 		} else if (box->cobj) {
 		    /* count contained objects */
 		    icount = 0;

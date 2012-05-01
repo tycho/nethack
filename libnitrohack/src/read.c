@@ -488,8 +488,36 @@ void recharge(struct obj *obj, int curse_bless)
 		    } else pline("Nothing happens.");
 		}
 		break;
-	    case HORN_OF_PLENTY:
 	    case BAG_OF_TRICKS:
+		/* if there are any objects inside the bag, devour them */
+		if (!is_cursed) {
+		    struct obj *curr, *otmp;
+		    struct monst *shkp;
+		    int lcnt = 0;
+		    long loss = 0L;
+
+		    makeknown(BAG_OF_TRICKS);
+		    for (curr = obj->cobj; curr; curr = otmp) {
+			otmp = curr->nobj;
+			obj_extract_self(curr);
+			lcnt++;
+			if (*u.ushops && (shkp = shop_keeper(level, *u.ushops)) != 0) {
+			    if (curr->unpaid)
+				loss += stolen_value(curr, u.ux, u.uy,
+						     (boolean)shkp->mpeaceful, TRUE);
+			}
+			/* obfree() will free all contained objects */
+			obfree(curr, NULL);
+		    }
+
+		    if (lcnt)
+			You_hear("loud crunching sounds from inside %s.", yname(obj));
+		    if (lcnt && loss)
+			pline("You owe %ld %s for lost item%s.",
+			      loss, currency(loss), lcnt > 1 ? "s" : "");
+		}
+		/* fall through */
+	    case HORN_OF_PLENTY:
 	    case CAN_OF_GREASE:
 		if (is_cursed) stripspe(obj);
 		else if (is_blessed) {
