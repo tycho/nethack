@@ -70,6 +70,7 @@ struct obj {
 	unsigned oerodeproof:1; /* erodeproof weapon/armor */
 	unsigned olocked:1;	/* object is locked */
 #define sokoprize olocked	/* special flag for sokoban prize */
+#define orecursive olocked	/* special flag for preventing recursive calls */
 	unsigned obroken:1;	/* lock has been broken */
 	unsigned otrapped:1;	/* container is trapped */
 				/* or accidental tripped rolling boulder trap */
