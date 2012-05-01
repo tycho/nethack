@@ -26,6 +26,7 @@ static int zap_hit_mon(struct monst *,int,int,struct obj **);
 static void zap_hit_u(int,int,const char *,xchar,xchar);
 static void revive_egg(struct obj *);
 static boolean zap_steed(struct obj *);
+static boolean cancellable(const struct obj *);
 static void cancel_item(struct obj *);
 static boolean obj_shudders(struct obj *);
 static void do_osshock(struct obj *);
@@ -759,6 +760,17 @@ static void costly_cancel(struct obj *obj)
 	}
 }
 
+boolean cancellable(const struct obj *obj)
+{
+	return objects[obj->otyp].oc_magic ||
+	       (obj->spe &&
+		(obj->oclass == ARMOR_CLASS ||
+		 obj->oclass == WEAPON_CLASS ||
+		 is_weptool(obj))) ||
+	       obj->otyp == POT_ACID ||
+	       obj->otyp == POT_SICKNESS;
+}
+
 /* cancel obj, possibly carried by you or a monster */
 void cancel_item(struct obj *obj)
 {
@@ -825,6 +837,35 @@ void cancel_item(struct obj *obj)
 			break;
 		/* case RIN_PROTECTION:  not needed */
 	}
+
+	/* MRKR: Cancelled *DSM reverts to scales.  */
+	/*       Suggested by Daniel Morris in RGRN */
+
+	if (obj->otyp >= GRAY_DRAGON_SCALE_MAIL &&
+	    obj->otyp <= YELLOW_DRAGON_SCALE_MAIL) {
+		/* dragon scale mail reverts to dragon scales */
+		boolean worn = (obj == uarm);
+
+		if (!Blind) {
+			char buf[BUFSZ];
+			pline("%s %s reverts to its natural form!",
+			      Shk_Your(buf, obj), xname(obj));
+		} else if (worn) {
+			pline("Your armor feels looser.");
+		}
+		costly_cancel(obj);
+
+		if (worn)
+			setworn(NULL, W_ARM);
+
+		/* assumes same order */
+		obj->otyp = GRAY_DRAGON_SCALES +
+			    obj->otyp - GRAY_DRAGON_SCALE_MAIL;
+
+		if (worn)
+			setworn(obj, W_ARM);
+	}
+
 	if (objects[obj->otyp].oc_magic
 	    || (obj->spe && (obj->oclass == ARMOR_CLASS ||
 			     obj->oclass == WEAPON_CLASS || is_weptool(obj)))
@@ -2205,6 +2246,35 @@ boolean cancel_monst(struct monst *mdef, struct obj *obj, boolean youattack,
 	    if (youdefend) {
 		iflags.botl = 1;	/* potential AC change */
 		find_ac();
+	    }
+	} else {
+	    /* select one random item to cancel */
+	    struct obj *otmp;
+	    int count = 0;
+
+	    for (otmp = (youdefend ? invent : mdef->minvent);
+		 otmp; otmp = otmp->nobj) {
+		if (cancellable(otmp))
+		    count++;
+	    }
+
+	    if (count > 0) {
+		int o = rnd(count);
+
+		for (otmp = (youdefend ? invent : mdef->minvent);
+		     otmp; otmp = otmp->nobj) {
+		    if (cancellable(otmp)) {
+			o--;
+			if (o == 0) {
+			    cancel_item(otmp);
+			    break;
+			}
+		    }
+		}
+		if (youdefend) {
+		    iflags.botl = 1;	/* potential AC change */
+		    find_ac();
+		}
 	    }
 	}
 
