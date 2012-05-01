@@ -766,9 +766,14 @@ static const char * const bogusmons[] = {
 	"Qwerty Uiop", "troglotroll",		/* Zamonien */
 	"wolpertinger", "elwedritsche", "skvader",
 	"Nessie", "tatzelwurm", "dahu",		/* european cryptids */
-	"three-headed monkey",                  /* Monkey Island */
-	"little green man",                     /* modern folklore */
-	"weighted Companion Cube",              /* Portal */
+	"three-headed monkey",			/* Monkey Island */
+	"little green man",			/* modern folklore */
+	"weighted Companion Cube",		/* Portal */
+	"/b/tard",				/* /b/ */
+	"manbearpig",				/* South Park */
+	"ceiling cat", "basement cat",
+	"monorail cat",				/* the Internet is made for cat pix */
+	"rape golem",				/* schnippi */
 };
 
 
