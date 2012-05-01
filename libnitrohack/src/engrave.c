@@ -62,6 +62,7 @@ static const char *const random_mesg[] = {
 	/* From UnNetHack */
 	"She's watching you!", /* Portal */
 	"The cake is a lie!", /* Portal */
+	"cjohnson/tier3", /* Portal */
 	"What's the sitch?", /* Kim Possible */
 	"So not the drama.", /* Kim Possible */
 	"Sudden decompression sucks!", /* Space Quest 3 death message */
@@ -74,6 +75,7 @@ static const char *const random_mesg[] = {
 	"Trust No One", /* X-Files */
 	"The Truth is Out There", /* X-Files */
 	"Look behind you, a Three-Headed Monkey!", /* Monkey Island */
+	"Ifnkovhgroghprm", /* Kings Quest I */
 };
 
 char *random_engraving(char *outbuf)
