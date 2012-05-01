@@ -127,6 +127,7 @@ static const struct { const char *txt; int nut; } tintxts[] = {
 	{"candied",      100},
 	{"boiled",       50},
 	{"dried",        55},
+#define SZECHUAN_TIN 10
 	{"szechuan",     70},
 #define FRENCH_FRIED_TIN 11
 	{"french fried", 40},
@@ -972,6 +973,18 @@ static int opentin(void) /* called during each move whilst opening a tin */
 
 	    pline("You consume %s %s.", tintxts[r].txt,
 			mons_mname(&mons[tin.tin->corpsenm]));
+
+	    /* SZECHUAN_TIN might have free fortune cookie */
+	    if (r == SZECHUAN_TIN && rn2(2)) {
+		struct obj *cookie = mksobj(level, FORTUNE_COOKIE, FALSE, FALSE);
+		cookie->blessed = tin.tin->blessed;
+		cookie->cursed = tin.tin->cursed;
+#ifdef INVISIBLE_OBJECTS
+		cookie->oinvis = tin.tin->oinvis;
+#endif
+		pline("There is a free fortune cookie inside!");
+		hold_another_object(cookie, "It falls to the floor.", NULL, NULL);
+	    }
 
 	    /* KMH, conduct */
 	    u.uconduct.food++;
