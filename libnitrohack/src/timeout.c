@@ -1024,7 +1024,7 @@ void begin_burn(struct obj *obj, boolean already_lit)
 		    obj->lamplit = 1;
 		    do_timer = FALSE;
 		    radius = 2;
-		} else if (Is_gold_dragon_armor(obj)) {
+		} else if (Is_gold_dragon_armor(obj->otyp)) {
 		    obj->lamplit = 1;
 		    do_timer = FALSE;
 		} else {

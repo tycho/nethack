@@ -218,7 +218,7 @@ void update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
 
     unseen = !canseemon(level, mon);
 
-    if (Is_gold_dragon_armor(obj)) {
+    if (Is_gold_dragon_armor(obj->otyp)) {
 	if (on)
 	    begin_burn(obj, FALSE);
 	else
@@ -572,9 +572,9 @@ void mon_break_armor(struct level *lev, struct monst *mon, boolean polyspot)
 
 	if (breakarm(mdat)) {
 	    if ((otmp = which_armor(mon, W_ARM)) != 0) {
-		if ((Is_dragon_scales(otmp) &&
+		if ((Is_dragon_scales(otmp->otyp) &&
 			mdat == Dragon_scales_to_pm(otmp)) ||
-		    (Is_dragon_mail(otmp) && mdat == Dragon_mail_to_pm(otmp)))
+		    (Is_dragon_mail(otmp->otyp) && mdat == Dragon_mail_to_pm(otmp)))
 		    ;	/* no message here;
 			   "the dragon merges with his scaly armor" is odd
 			   and the monster's previous form is already gone */

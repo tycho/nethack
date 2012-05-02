@@ -357,11 +357,7 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			mons_mname(&mons[obj->corpsenm]));
 		break;
 	    case ARMOR_CLASS:
-		/* depends on order of the dragon scales objects */
-		if (typ >= GRAY_DRAGON_SCALES && typ <= YELLOW_DRAGON_SCALES) {
-			sprintf(buf, "set of %s", actualn);
-			break;
-		}
+		if (Is_dragon_scales(typ)) strcat(buf, "set of ");
 		if (is_boots(obj) || is_gloves(obj)) strcpy(buf,"pair of ");
 
 		if (obj->otyp >= ELVEN_SHIELD && obj->otyp <= ORCISH_SHIELD

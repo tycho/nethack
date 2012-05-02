@@ -484,7 +484,7 @@ int Shirt_off(void)
  */
 static int Armor_on(void)
 {
-    if (Is_gold_dragon_armor(uarm)) {
+    if (uarm && Is_gold_dragon_armor(uarm->otyp)) {
 	begin_burn(uarm, FALSE);
 	if (!Blind)
 	    pline("%s to glow.", Tobjnam(uarm, "begin"));
@@ -494,7 +494,7 @@ static int Armor_on(void)
 
 int Armor_off(void)
 {
-    if (Is_gold_dragon_armor(uarm)) {
+    if (uarm && Is_gold_dragon_armor(uarm->otyp)) {
 	end_burn(uarm, FALSE);
 	if (!Blind)
 	    pline("%s glowing.", Tobjnam(uarm, "stop"));
@@ -510,7 +510,7 @@ int Armor_off(void)
  */
 int Armor_gone(void)
 {
-    if (Is_gold_dragon_armor(uarm))
+    if (uarm && Is_gold_dragon_armor(uarm->otyp))
 	end_burn(uarm, FALSE);
     takeoff_mask &= ~W_ARM;
     setnotworn(uarm);
@@ -998,7 +998,7 @@ int dotakeoff(struct obj *otmp)
 	}
         if (otmp == uskin) {
 	        pline("The %s merged with your skin!",
-		      uskin->otyp >= GRAY_DRAGON_SCALES ?
+		      Is_dragon_scales(uskin->otyp) ?
                       "dragon scales are" : "dragon scale mail is");
         }
 	if (((otmp == uarm) && uarmc) ||

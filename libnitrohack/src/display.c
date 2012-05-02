@@ -1269,7 +1269,7 @@ int obfuscate_monster(int mndx)
     if (is_dragon || is_baby_dragon) {
 	int dragon_offset = is_baby_dragon ?
 		PM_BABY_GRAY_DRAGON : PM_GRAY_DRAGON ;
-	return objects[mndx - dragon_offset + GRAY_DRAGON_SCALES].oc_name_idx -
+	return objects[mndx - dragon_offset + GRAY_DRAGON_SCALES].oc_descr_idx -
 		GRAY_DRAGON_SCALES + dragon_offset;
     }
 
