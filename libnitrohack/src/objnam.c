@@ -1781,6 +1781,9 @@ struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user)
 	char *un, *dn, *actualn;
 	const char *name=0;
 
+	/* true if object has been found by its actual name */
+	boolean found_by_actualn = FALSE;
+
 	cnt = spe = spesgn = typ = very = rechrg =
 		blessed = uncursed = iscursed = isdrained = halfdrained =
 #ifdef INVISIBLE_OBJECTS
@@ -2193,6 +2196,7 @@ srch:
 		if (actualn && (zn = OBJ_NAME(objects[i])) != 0 &&
 			    wishymatch(actualn, zn, TRUE)) {
 			typ = i;
+			found_by_actualn = TRUE;
 			goto typfnd;
 		}
 		if (dn && (zn = OBJ_DESCR(objects[i])) != 0 &&
@@ -2401,6 +2405,18 @@ any:
 	if (!oclass) oclass = wrpsym[rn2((int)sizeof(wrpsym))];
 typfnd:
 	if (typ) oclass = objects[typ].oc_class;
+
+	/* return a random dragon armor if user asks for an unknown
+	   dragon armor with its actual name */
+	if (typ && from_user && found_by_actualn &&
+	    Is_dragon_armor(typ) && !wizard &&
+	    !objects[typ].oc_name_known) {
+	    typ = rn2(YELLOW_DRAGON_SCALES - GRAY_DRAGON_SCALES);
+	    if (Is_dragon_scales(typ))
+		typ += GRAY_DRAGON_SCALES;
+	    else
+		typ += GRAY_DRAGON_SCALE_MAIL;
+	}
 
 	/* check for some objects that are not allowed */
 	if (typ && objects[typ].oc_unique) {

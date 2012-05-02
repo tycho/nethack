@@ -232,8 +232,8 @@ struct obj {
 				 (idx) <= YELLOW_DRAGON_SCALE_MAIL)
 #define Is_dragon_armor(idx)	(Is_dragon_scales(idx) || Is_dragon_mail(idx))
 #define Is_gold_dragon_armor(idx) (Is_dragon_armor(idx) && \
-				   OBJ_NAME(objects[idx]) && \
-				   !strncmp(OBJ_NAME(objects[idx]), "gold ", 5))
+				   OBJ_DESCR(objects[idx]) && \
+				   !strncmp(OBJ_DESCR(objects[idx]), "gold ", 5))
 #define Dragon_scales_to_mail(idx) ((idx) - GRAY_DRAGON_SCALES + GRAY_DRAGON_SCALE_MAIL)
 #define Dragon_mail_to_scales(idx) ((idx) - GRAY_DRAGON_SCALE_MAIL + GRAY_DRAGON_SCALES)
 #define Dragon_scales_to_pm(obj) &mons[PM_GRAY_DRAGON + (obj)->otyp \
