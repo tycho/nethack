@@ -1283,8 +1283,7 @@ static int eatcorpse(struct obj *otmp)
 	    mons[mnum].mlet != S_SNAKE && mons[mnum].mlet != S_NAGA &&
 	    mons[mnum].mlet != S_MIMIC && rnf(1,5)) {
 	    pline("Eating this %s corpse makes your %s %s slippery.",
-		  (slithy(&mons[mnum]) && mons[mnum].mlet != S_EEL) ?
-		    "oily" : "slimy",
+		  amorphous(&mons[mnum]) ? "glibbery" : "slimy",
 		  makeplural(body_part(FINGER)),
 		  Glib ? "even more" : "very");
 	    incr_itimeout(&Glib, rnd(15));
