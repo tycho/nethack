@@ -613,7 +613,6 @@ static void m_initinv(struct monst *mtmp)
 		   until Moloch's Sanctum is rearranged */
 		if (ptr == &mons[PM_CTHULHU]) {
 		    mongets(mtmp, AMULET_OF_YENDOR);
-		    mongets(mtmp, AMULET_OF_REFLECTION);
 		    mongets(mtmp, POT_FULL_HEALING);
 		}
 	    default:
