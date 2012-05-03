@@ -466,7 +466,7 @@ static void fixup_special(struct level *lev)
     } else if (Is_wiz1_level(&lev->z)) {
 	croom = search_special(lev, MORGUE);
 
-	create_secret_door(lev, croom, W_SOUTH|W_EAST|W_WEST);
+	create_secret_door(lev, croom, W_EAST|W_WEST);
     } else if (Is_knox(&lev->z)) {
 	/* using an unfilled morgue for rm id */
 	croom = search_special(lev, MORGUE);
