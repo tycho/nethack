@@ -341,7 +341,7 @@ int monsndx(const struct permonst *ptr)
 	    else if (ptr == &pm_you_male || ptr == &pm_you_female)
 		return u.umonnum;
 	    
-	    panic("monsndx - could not index monster (%p)", ptr);
+	    panic("monsndx - could not index monster (ptr:%p, num:%d)", ptr, i);
 	    return NON_PM;		/* will not get here */
 	}
 
