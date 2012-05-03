@@ -911,11 +911,14 @@ struct obj *getobj(const char *let, const char *word)
 	    if (cnt == 0) return NULL;
 	    if (cnt != otmp->quan) {
 		/* don't split a stack of cursed loadstones */
-		if (otmp->otyp == LOADSTONE && otmp->cursed)
+		if (otmp->otyp == LOADSTONE && otmp->cursed) {
 		    /* kludge for canletgo()'s can't-drop-this message */
 		    otmp->corpsenm = (int) cnt;
-		else
+		} else if (welded(otmp)) {
+		    /* don't split a stack of wielded, cursed weapons */
+		} else {
 		    otmp = splitobj(otmp, cnt);
+		}
 	    }
 	}
 	return otmp;
