@@ -616,9 +616,17 @@ void enlightenment(int final)
 	else if (u.ualign.record >= -3)	you_have(&menu, "strayed");
 	else if (u.ualign.record >= -8)	you_have(&menu, "sinned");
 	else you_have(&menu, "transgressed");
+
 	if (wizard) {
 		sprintf(buf, " %d / %ld", u.ualign.record, ALIGNLIM);
 		enl_msg(&menu, "Your alignment ", "is", "was", buf);
+
+		sprintf(buf, " %d - %d",
+			min_monster_difficulty(&u.uz),
+			max_monster_difficulty(&u.uz));
+		enl_msg(&menu, "Monster difficulty range ", "is", "was", buf);
+		sprintf(buf, " %d", level_difficulty(&u.uz));
+		enl_msg(&menu, "Level difficulty ", "is", "was", buf);
 	}
 
 	/*** Resistances to troubles ***/

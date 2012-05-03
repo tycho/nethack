@@ -775,6 +775,8 @@ extern void mkmonmoney(struct monst *, long);
 extern int bagotricks(struct obj *);
 extern boolean propagate(int,boolean,boolean);
 extern void create_camera_demon(struct obj *,int,int);
+extern int min_monster_difficulty(const d_level *dlev);
+extern int max_monster_difficulty(const d_level *dlev);
 extern struct monst *restore_mon(struct memfile *mf);
 extern void save_mon(struct memfile *mf, const struct monst *mon);
 

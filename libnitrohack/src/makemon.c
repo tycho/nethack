@@ -1132,7 +1132,7 @@ const struct permonst *rndmonst(const d_level *dlev)
 	    return ptr;
 
 	if (rndmonst_state.choice_count < 0) {	/* need to recalculate */
-	    int zlevel, minmlev, maxmlev;
+	    int minmlev, maxmlev;
 	    boolean elemlevel;
 	    boolean upper;
 
@@ -1146,11 +1146,8 @@ const struct permonst *rndmonst(const d_level *dlev)
 		/* evidently they've all been exterminated */
 		return NULL;
 	    } /* else `mndx' now ready for use below */
-	    zlevel = level_difficulty(dlev);
-	    /* determine the level of the weakest monster to make. */
-	    minmlev = zlevel / 6;
-	    /* determine the level of the strongest monster to make. */
-	    maxmlev = (zlevel + u.ulevel) / 2;
+	    minmlev = min_monster_difficulty(dlev);
+	    maxmlev = max_monster_difficulty(dlev);
 	    upper = Is_rogue_level(dlev);
 	    elemlevel = In_endgame(dlev) && !Is_astralevel(dlev);
 
@@ -1818,6 +1815,30 @@ void create_camera_demon(struct obj *camera, int x, int y)
 		  "The picture-painting demon");
 	    mtmp->mpeaceful = !camera->cursed;
 	    set_malign(mtmp);
+	}
+}
+
+/* Return the level of the weakest monster to make. */
+int min_monster_difficulty(const d_level *dlev)
+{
+	int zlevel = level_difficulty(dlev);
+	if (u.uevent.udemigod) {
+	    /* all hell breaks loose */
+	    return zlevel / 4;
+	} else {
+	    return zlevel / 6;
+	}
+}
+
+/* Return the level of the strongest monster to make. */
+int max_monster_difficulty(const d_level *dlev)
+{
+	int zlevel = level_difficulty(dlev);
+	if (u.uevent.udemigod) {
+	    /* all hell breaks loose */
+	    return monstr[PM_DEMOGORGON];
+	} else {
+	    return (zlevel + u.ulevel) / 2;
 	}
 }
 
