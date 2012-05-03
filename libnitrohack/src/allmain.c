@@ -18,6 +18,7 @@ static const char *const copyright_banner[] =
 
 static void wd_message(void);
 static void pre_move_tasks(boolean didmove);
+static void interrupt_multi(const char *,int,int);
 
 static void newgame(void);
 static void welcome(boolean);
@@ -477,6 +478,7 @@ static void you_moved(void)
 			    (wtcap < MOD_ENCUMBER && !(moves%20))) {
 		    iflags.botl = 1;
 		    u.mh++;
+		    interrupt_multi("Hit points", u.mh, u.mhmax);
 		}
 	    } else if (u.uhp < u.uhpmax &&
 		    (wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)) {
@@ -493,11 +495,13 @@ static void you_moved(void)
 		    u.uhp += heal;
 		    if (u.uhp > u.uhpmax)
 			u.uhp = u.uhpmax;
+		    interrupt_multi("Hit points", u.uhp, u.uhpmax);
 		} else if (Regeneration ||
 			(u.ulevel <= 9 &&
 			!(moves % ((MAXULEV+12) / (u.ulevel+2) + 1)))) {
 		    iflags.botl = 1;
 		    u.uhp++;
+		    interrupt_multi("Hit points", u.uhp, u.uhpmax);
 		}
 	    }
 
@@ -524,6 +528,7 @@ static void you_moved(void)
 		u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1,1);
 		if (u.uen > u.uenmax)  u.uen = u.uenmax;
 		iflags.botl = 1;
+		interrupt_multi("Magic energy", u.uen, u.uenmax);
 	    }
 
 	    if (!u.uinvulnerable) {
@@ -684,6 +689,17 @@ static void pre_move_tasks(boolean didmove)
     
     update_inventory();
     update_location(FALSE);
+}
+
+
+/* Interrupt a multiturn action if current_points is equal to max_points. */
+static void interrupt_multi(const char *points, int current_points, int max_points)
+{
+    if (multi > 0 && current_points == max_points) {
+	nomul(0, NULL);
+	if (flags.verbose)
+	    pline("%s restored.", points);
+    }
 }
 
 
