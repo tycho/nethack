@@ -1054,12 +1054,18 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 		    if (newdungeon) {
 			if (Is_stronghold(&u.uz)) {
 			    xchar x, y;
+			    const dest_area *udst = &level->updest;
+			    int trycnt = 0;
 
 			    do {
-				x = (COLNO - 2 - rnd(5));
-				y = rn1(ROWNO - 4, 3);
-			    } while (occupied(level, x, y) ||
-				    IS_WALL(level->locations[x][y].typ));
+				do {
+				    x = rn1((udst->hx - udst->lx) + 1, udst->lx);
+				    y = rn1((udst->hy - udst->ly) + 1, udst->ly);
+				} while ((x < udst->nlx || x > udst->nhx) &&
+					 (y < udst->nly || y > udst->nhy));
+			    } while ((occupied(level, x, y) ||
+				      IS_WALL(level->locations[x][y].typ)) &&
+				      trycnt++ < 300);
 			    u_on_newpos(x, y);
 			} else u_on_sstairs();
 		    } else u_on_dnstairs();
