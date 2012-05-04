@@ -678,6 +678,7 @@ extern void useupf(struct obj *,long);
 extern char *let_to_name(char,boolean);
 extern void free_invbuf(void);
 extern int doorganize(void);
+extern int count_objects(const struct obj *);
 extern int count_unpaid(struct obj *);
 extern int count_buc(struct obj *,int);
 extern void carry_obj_effects(struct obj *);

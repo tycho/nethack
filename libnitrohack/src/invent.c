@@ -1305,6 +1305,24 @@ void update_inventory(void)
 
 
 /*
+ * Return the number of items within the given list including
+ * contained objects.
+ */
+int count_objects(const struct obj *list)
+{
+	int count = 0;
+
+	while (list) {
+	    count++;
+	    if (Has_contents(list))
+		count += count_objects(list->cobj);
+	    list = list->nobj;
+	}
+	return count;
+}
+
+
+/*
  * Returns the number of unpaid items within the given list.  This includes
  * contained objects.
  */
