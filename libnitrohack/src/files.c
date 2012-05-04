@@ -300,8 +300,9 @@ void paniclog(const char *type,   /* panic, impossible, trickery */
 		program_state.in_paniclog = 1;
 		lfile = fopen_datafile(PANICLOG, "a", TROUBLEPREFIX);
 		if (lfile) {
-		    fprintf(lfile, "%s %08ld: %s %s\n",
+		    fprintf(lfile, "%s %08ld, %ld %s: %s %s\n",
 				   version_string(buf), yyyymmdd((time_t)0L),
+				   u.ubirthday, (plname[0] ? plname : "(none)"),
 				   type, reason);
 		    fclose(lfile);
 		}
