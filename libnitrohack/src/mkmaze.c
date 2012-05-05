@@ -331,7 +331,6 @@ static void fixup_special(struct level *lev)
 	u.uinwater = 0;
 	free_waterlevel();
     } else if (Is_waterlevel(&lev->z)) {
-	lev->flags.hero_memory = 0;
 	was_waterlevel = TRUE;
 	/* water level is an odd beast - it has to be set up
 	   before calling place_lregions etc. */
@@ -398,8 +397,6 @@ static void fixup_special(struct level *lev)
 
     /* KMH -- Sokoban levels */
     if (In_sokoban(&lev->z)) {
-	sokoban_detect(lev);
-
 	/* Create random Sokoban prizes. */
 	if (dunlev(&lev->z) == 1) {
 	    struct engr *ep;
@@ -585,7 +582,7 @@ void makemaz(struct level *lev, const char *s)
 			lev->locations[x][y].typ = ((x % 2) && (y % 2)) ? STONE : HWALL;
 
 	maze0xy(&mm);
-	walkfrom(lev, mm.x, mm.y);
+	walkfrom(lev, mm.x, mm.y, 0);
 	/* put a boulder at the maze center */
 	mksobj_at(BOULDER, lev, (int) mm.x, (int) mm.y, TRUE, FALSE);
 
@@ -666,14 +663,16 @@ void makemaz(struct level *lev, const char *s)
 }
 
 
-void walkfrom(struct level *lev, int x, int y)
+void walkfrom(struct level *lev, int x, int y, schar typ)
 {
 	int q,a,dir;
 	int dirs[4];
 
+	if (!typ) typ = ROOM;
+
 	if (!IS_DOOR(lev->locations[x][y].typ)) {
 	    /* might still be on edge of MAP, so don't overwrite */
-	    lev->locations[x][y].typ = ROOM;
+	    lev->locations[x][y].typ = typ;
 	    lev->locations[x][y].flags = 0;
 	    SpLev_Map[x][y] = 1;
 	}
@@ -685,11 +684,11 @@ void walkfrom(struct level *lev, int x, int y)
 		if (!q) return;
 		dir = dirs[rn2(q)];
 		move(&x,&y,dir);
-		lev->locations[x][y].typ = ROOM;
+		lev->locations[x][y].typ = typ;
 		SpLev_Map[x][y] = 1;
 		move(&x,&y,dir);
 		SpLev_Map[x][y] = 1;
-		walkfrom(lev, x,y);
+		walkfrom(lev, x, y, typ);
 	}
 }
 

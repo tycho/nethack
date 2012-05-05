@@ -40,9 +40,10 @@
 # Demo
 #
 
-MAZE:"heck-a-1",random
-FLAGS:nommap,noteleport
-GEOMETRY:center,center
+LEVEL: "heck-a-1"
+FLAGS: nommap, noteleport, mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  -.........................- 
 --.........................--
@@ -81,8 +82,10 @@ OBJECT:'`',"statue",(16,10)
 # Dispater
 #
 
-MAZE:"heck-a-2",random
-GEOMETRY:center,center
+LEVEL: "heck-a-2"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
 .- - - - - - - - - - - - - -
 -----------------------------
@@ -165,9 +168,10 @@ MONSTER:random,random,(24,10)
 # Flayers
 #
 
-MAZE:"heck-a-3",random
-FLAGS:nommap
-GEOMETRY:right,bottom
+LEVEL: "heck-a-3"
+FLAGS: nommap, mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: right, bottom
 MAP
 -----------
 -----------
@@ -254,8 +258,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Geryon
 #
 
-MAZE:"heck-a-4",random
-GEOMETRY:left,center
+LEVEL: "heck-a-4"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: left, center
 MAP
 -....................................|
 .------------------------------------|
@@ -329,8 +335,9 @@ OBJECT:'%',"egg",random,"scorpion",0
 # Iron
 #
 
-MAZE:"heck-a-5",' '
-GEOMETRY:center,center
+LEVEL: "heck-a-5"
+FLAGS: mazelevel
+GEOMETRY: center, center
 MAP
 
  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -458,8 +465,10 @@ OBJECT:')',"silver spear",random
 # Liches
 #
 
-MAZE:"heck-a-6",random
-GEOMETRY:center,center
+LEVEL: "heck-a-6"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
 .- - - - - -...- 
 ------.....-...--
@@ -509,8 +518,10 @@ STAIR:levregion(1,0,79,20),(0,0,16,12),up
 # Yeenoghu's Hangout
 #
 
-MAZE:"heck-a-7",random
-GEOMETRY:right,center
+LEVEL: "heck-a-7"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: right, center
 MAP
 .......................................
 .................................---...
@@ -581,8 +592,10 @@ TRAP:random,random
 # Cross
 #
 
-MAZE:"heck-b-1",random
-GEOMETRY:center,center
+LEVEL: "heck-b-1"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ------------------------------------------------------------------.--------
@@ -627,8 +640,10 @@ STAIR:levregion(1,14,79,20),(0,0,0,0),down
 # Hall
 #
 
-MAZE:"heck-b-2",random
-GEOMETRY:center,center
+LEVEL: "heck-b-2"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ------------------+-----------------+------------------
@@ -691,8 +706,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Lava
 #
 
-MAZE:"heck-b-3",random
-GEOMETRY:center,center
+LEVEL: "heck-b-3"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 ---------------------------------------------------------------------------
@@ -756,9 +773,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Lava2
 #
 
-MAZE:"heck-b-4",'L'
-INIT_MAP:'.','L',false,false,unlit,false
-GEOMETRY:left,center
+LEVEL: "heck-b-4"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', 'L', true, true, unlit, false
+GEOMETRY: left, center
 MAP
 .-.-.-.-.-.
 -----------
@@ -879,8 +897,10 @@ OBJECT:'/',"cold",random
 # Pool
 #
 
-MAZE:"heck-b-5",random
-GEOMETRY:half-left,center
+LEVEL: "heck-b-5"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: half-left, center
 MAP
 .............
 .....}}}.....
@@ -905,8 +925,10 @@ STAIR:levregion(1,0,79,20),(0,0,12,4),down
 # Teeth
 #
 
-MAZE:"heck-b-6",random
-GEOMETRY:center,center
+LEVEL: "heck-b-6"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  - - - - - - - - - - - - - - 
 --.-.-.-.-.-.-.-.-.-.-.-.-.--
@@ -944,8 +966,10 @@ GOLD:random,random
 # Voids
 #
 
-MAZE:"heck-b-7",random
-GEOMETRY:center,center
+LEVEL: "heck-b-7"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  - - - -
 ---------
@@ -1018,8 +1042,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Chambers
 #
 
-MAZE:"heck-c-1",random
-GEOMETRY:center,center
+LEVEL: "heck-c-1"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  -.............................- 
 --.............................--
@@ -1088,8 +1114,10 @@ TRAP:random,random
 # Hsplit
 #
 
-MAZE:"heck-c-2",random
-GEOMETRY:left,center
+LEVEL: "heck-c-2"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: left, center
 MAP
 .........- - - - - - -.........- - - - - - -...........- - - - - - - -.....
 .........-------------.-------.-------------...........---------------.....
@@ -1125,8 +1153,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Pillars2
 #
 
-MAZE:"heck-c-3",random
-GEOMETRY:center,center
+LEVEL: "heck-c-3"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
 .-.........................-
 --.........................--
@@ -1191,8 +1221,10 @@ TRAP:random,random
 # Pits
 #
 
-MAZE:"heck-c-4",random
-GEOMETRY:left,top
+LEVEL: "heck-c-4"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: left, top
 MAP
 .....
 .....
@@ -1297,8 +1329,10 @@ STAIR:levregion(1,11,79,20),(0,0,0,0),down
 # Pods
 #
 
-MAZE:"heck-c-5",random
-GEOMETRY:half-right,center
+LEVEL: "heck-c-5"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: half-right, center
 MAP
  - - - - - - - - 
 --------.--------
@@ -1369,8 +1403,10 @@ STAIR:levregion(40,0,79,20),(0,0,0,0),down
 # Rooms
 #
 
-MAZE:"heck-c-6",random
-GEOMETRY:right,center
+LEVEL: "heck-c-6"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: right, center
 MAP
  - - - - - - - 
 ---------------
@@ -1464,8 +1500,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Rooms2
 #
 
-MAZE:"heck-c-7",random
-GEOMETRY:center,center
+LEVEL: "heck-c-7"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 ---------------------------------------------------------------------------
@@ -1623,8 +1661,10 @@ OBJECT:random,random,random
 # Vsplit
 #
 
-MAZE:"heck-c-8",random
-GEOMETRY:half-left,center
+LEVEL: "heck-c-8"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: half-left, center
 MAP
 .|...
 +-...
@@ -1705,8 +1745,10 @@ MONSTER:random,random,random
 # Basic
 #
 
-MAZE:"heck-d-1",random
-GEOMETRY:center,center
+LEVEL: "heck-d-1"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  - - - - 
 ----.----
@@ -1741,8 +1783,10 @@ STAIR:levregion(40,0,79,20),(0,0,0,0),down
 # Basic2
 #
 
-MAZE:"heck-d-2",random
-GEOMETRY:center,center
+LEVEL: "heck-d-2"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
  - - - - - - - - - - - - - 
 ---------------------------
@@ -1789,8 +1833,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Chambers2
 #
 
-MAZE:"heck-d-3",random
-GEOMETRY:half-left,top
+LEVEL: "heck-d-3"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: half-left, top
 MAP
  - - - - - - - - 
 --------.--------
@@ -1852,9 +1898,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Checkers
 #
 
-MAZE:"heck-d-4",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:half-right,center
+LEVEL: "heck-d-4"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: half-right, center
 MAP
 .- - - -.. - - 
 ---------------
@@ -1990,9 +2037,10 @@ TRAP:random,random
 # Frame
 #
 
-MAZE:"heck-d-5",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:center,top
+LEVEL: "heck-d-5"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: center, top
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 ---------------------------------------------------------------------------
@@ -2136,9 +2184,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Frame3
 #
 
-MAZE:"heck-d-6",random
-INIT_MAP:'.','-',false,true,unlit,false
-GEOMETRY:center,top
+LEVEL: "heck-d-6"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', false, true, unlit, false
+GEOMETRY: center, top
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 ----------------------------------------------------------------------------
@@ -2219,9 +2268,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Hbar
 #
 
-MAZE:"heck-d-7",random
-INIT_MAP:'.','-',false,true,unlit,false
-GEOMETRY:half-left,center
+LEVEL: "heck-d-7"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', false, true, unlit, false
+GEOMETRY: half-left, center
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 ---------------------------------------------------------------------------
@@ -2291,8 +2341,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Pillars
 #
 
-MAZE:"heck-d-8",random
-GEOMETRY:center,center
+LEVEL: "heck-d-8"
+FLAGS: mazelevel
+INIT_MAP: mazegrid, '-'
+GEOMETRY: center, center
 MAP
 ....................................---....................................
 ..................---...............---...........---.................---..
@@ -2373,9 +2425,10 @@ TRAP[50%]:random,random
 # Vbars4
 #
 
-MAZE:"heck-d-9",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:left,top
+LEVEL: "heck-d-9"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: left, top
 MAP
 .-.-.-.-.-.-.-.-.-.-.
 ---------------------
@@ -2561,9 +2614,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # M
 #
 
-MAZE:"heck-e-1",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:right,bottom
+LEVEL: "heck-e-1"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: right, bottom
 MAP
 .-.-.-.-.-.-.-.
 ---------------
@@ -2738,10 +2792,11 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # N
 #
 
-MAZE:"heck-e-2",random
-INIT_MAP:'.','-',true,true,unlit,false
+LEVEL: "heck-e-2"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
 
-GEOMETRY:right,bottom
+GEOMETRY: right, bottom
 MAP
 .-.-.-.-.-.
 -----------
@@ -2914,9 +2969,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # W
 #
 
-MAZE:"heck-e-3",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:right,top
+LEVEL: "heck-e-3"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: right, top
 MAP
 .-.-.-.-.-.-.-.
 ---------------
@@ -3092,9 +3148,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Frame2
 #
 
-MAZE:"heck-e-4",random
-INIT_MAP:'.','-',false,true,unlit,false
-GEOMETRY:center,top
+LEVEL: "heck-e-4"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', false, true, unlit, false
+GEOMETRY: center, top
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
 ----------------------------------------------------------------------------
@@ -3155,9 +3212,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Lattice
 #
 
-MAZE:"heck-e-5",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:center,center
+LEVEL: "heck-e-5"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: center, center
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 ---------------------------------------------------------------------------
@@ -3377,9 +3435,10 @@ MAZEWALK:(2,2),south
 # Lattice2
 #
 
-MAZE:"heck-e-6",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:center,top
+LEVEL: "heck-e-6"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: center, top
 MAP
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ---------------------------------------------------------------------------
@@ -3566,9 +3625,10 @@ MAZEWALK:(2,2),east
 # Vbars
 #
 
-MAZE:"heck-e-7",random
-INIT_MAP:'.','-',false,true,unlit,false
-GEOMETRY:right,center
+LEVEL: "heck-e-7"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', false, true, unlit, false
+GEOMETRY: right, center
 MAP
 .-.-.-.-.
 ---------
@@ -3811,9 +3871,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Vbars2
 #
 
-MAZE:"heck-e-8",random
-INIT_MAP:'.','-',true,true,unlit,false
-GEOMETRY:center,center
+LEVEL: "heck-e-8"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', true, true, unlit, false
+GEOMETRY: center, center
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.
 -------------------------
@@ -4009,9 +4070,10 @@ STAIR:levregion(1,0,79,20),(0,0,0,0),down
 # Vbars3
 #
 
-MAZE:"heck-e-9",random
-INIT_MAP:'.','-',false,true,unlit,false
-GEOMETRY:left,top
+LEVEL: "heck-e-9"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', '-', false, true, unlit, false
+GEOMETRY: left, top
 MAP
 .-.-.-.-.-.-.-.
 ---------------

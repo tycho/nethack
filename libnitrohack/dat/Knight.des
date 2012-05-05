@@ -7,11 +7,11 @@
 #	Here you meet your (besieged) class leader, King Arthur
 #	and receive your quest assignment.
 #
-MAZE: "Kni-strt",'.'
-FLAGS: noteleport,hardfloor
+LEVEL: "Kni-strt"
+FLAGS: noteleport, hardfloor, mazelevel
 # This is a kludge to init the level as a lit field.
-INIT_MAP: '.' , '.' , false , false , lit , false
-GEOMETRY:center,center
+INIT_MAP: mines, '.', '.', false, false, lit, false
+GEOMETRY: center, center
 MAP
 ..................................................
 .-----......................................-----.
@@ -104,10 +104,10 @@ MONSTER: 'i',"quasit",(36,00),hostile
 #	further towards your assigned quest.
 #
 
-MAZE: "Kni-loca",' '
-FLAGS: hardfloor
-INIT_MAP: '.' , 'P' , false , true , lit , false
-GEOMETRY:center,center
+LEVEL: "Kni-loca"
+FLAGS: hardfloor, mazelevel
+INIT_MAP: mines, '.', 'P', false, true, lit, false
+GEOMETRY: center, center
 MAP
 ...PPP.........PPPP..............PPPP...
 .PPPP...........PP................PPPP..
@@ -243,8 +243,10 @@ MONSTER:'j',random,random,hostile
 #	been assigned to retrieve.
 #
 
-MAZE: "Kni-goal", ' '
-GEOMETRY:center,center
+LEVEL: "Kni-goal"
+FLAGS: mazelevel
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 MAP
 ....PPPP..PPP..                                                             
 .PPPPP...PP..     ..........     .................................          
@@ -345,8 +347,9 @@ MONSTER:'j',random,random,hostile
 #	and goal levels.
 #
 
-MAZE: "Kni-fila" , '.'
-INIT_MAP: '.' , 'P' , false , true , lit , false
+LEVEL: "Kni-fila"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', 'P', false, true, lit, false
 NOMAP
 #
 STAIR: random, up
@@ -373,8 +376,9 @@ TRAP: random, random
 TRAP: random, random
 TRAP: random, random
 
-MAZE: "Kni-filb" , '.'
-INIT_MAP: '.' , 'P' , false , true , lit , false
+LEVEL: "Kni-filb"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', 'P', false, true, lit, false
 NOMAP
 #
 STAIR: random, up

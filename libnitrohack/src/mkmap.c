@@ -468,7 +468,7 @@ void mkmap(struct level *lev, lev_init *init_lev)
 	 * doesn't _have_ to be stone, say, for hell.  so if the player
 	 * defined a maze filler originally, go ahead and backfill the
 	 * background in with that filler - DSR */
-	if (walled && join) {
+	if (walled && join && init_lev->filling > -1) {
 	    lev->flags.is_maze_lev = FALSE;
 	    lev->flags.is_cavernous_lev = TRUE;
 	    backfill(lev, bg_typ, init_lev->filling);

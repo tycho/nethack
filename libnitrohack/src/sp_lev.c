@@ -83,6 +83,26 @@ char *lev_message = 0;
 lev_region *lregions = 0;
 int num_lregions = 0;
 
+static void lvlfill_maze_grid(struct level *lev, int x1, int y1, int x2, int y2,
+			      schar filling)
+{
+	int x, y;
+
+	for (x = x1; x <= x2; x++)
+	    for (y = y1; y <= y2; y++)
+		lev->locations[x][y].typ =
+			(y < 2 || (x % 2 && y % 2)) ? STONE : filling;
+}
+
+static void lvlfill_solid(struct level *lev, schar filling)
+{
+	int x,y;
+
+	for (x = 2; x <= x_maze_max; x++)
+	    for (y = 0; y <= y_maze_max; y++)
+		lev->locations[x][y].typ = filling;
+}
+
 static void flip_drawbridge_horizontal(struct rm *loc)
 {
 	if (IS_DRAWBRIDGE(loc->typ)) {
@@ -839,7 +859,7 @@ static boolean create_subroom(struct level *lev, struct mkroom *proom, xchar x, 
 static void create_door(struct level *lev, room_door *dd, struct mkroom *broom)
 {
 	int	x = 0, y = 0;
-	int	trycnt = 0;
+	int	trycnt = 0, walltry = 0, wtry = 0;
 
 	if (dd->secret == -1)
 	    dd->secret = rn2(2);
@@ -875,33 +895,40 @@ static void create_door(struct level *lev, room_door *dd, struct mkroom *broom)
 
 		dpos = dd->pos;
 		if (dpos == -1)	/* The position is RANDOM */
-		    dpos = rn2((dwall == W_WEST || dwall == W_EAST) ?
-			    (broom->hy - broom->ly) : (broom->hx - broom->lx));
+		    dpos = rn2(((dwall & (W_WEST|W_EAST)) ? 2 : 1) ?
+			       (broom->hy - broom->ly) : (broom->hx - broom->lx));
 
 		/* Convert wall and pos into an absolute coordinate! */
-
-		switch (dwall) {
-		      case W_NORTH:
-			y = broom->ly - 1;
-			x = broom->lx + dpos;
-			break;
-		      case W_SOUTH:
-			y = broom->hy + 1;
-			x = broom->lx + dpos;
-			break;
-		      case W_WEST:
-			x = broom->lx - 1;
-			y = broom->ly + dpos;
-			break;
-		      case W_EAST:
-			x = broom->hx + 1;
-			y = broom->ly + dpos;
-			break;
-		      default:
-			x = y = 0;
-			panic("create_door: No wall for door!");
-			break;
+		wtry = rn2(4);
+		for (walltry = 0; walltry < 4; walltry++) {
+		    switch ((wtry + walltry) % 4) {
+			case 0:
+			    if (!(dwall & W_NORTH)) break;
+			    y = broom->ly - 1;
+			    x = broom->lx + dpos;
+			    goto outdirloop;
+			case 1:
+			    if (!(dwall & W_SOUTH)) break;
+			    y = broom->hy + 1;
+			    x = broom->lx + dpos;
+			    goto outdirloop;
+			case 2:
+			    if (!(dwall & W_WEST)) break;
+			    x = broom->lx - 1;
+			    y = broom->ly + dpos;
+			    goto outdirloop;
+			case 3:
+			    if (!(dwall & W_EAST)) break;
+			    x = broom->hx + 1;
+			    y = broom->ly + dpos;
+			    goto outdirloop;
+			default:
+			    x = y = 0;
+			    panic("create_door: No wall for door!");
+			    goto outdirloop;
+		    }
 		}
+outdirloop:
 		if (okdoor(lev, x, y))
 		    break;
 	} while (++trycnt <= 100);
@@ -2544,6 +2571,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
     struct trap *badtrap;
     boolean has_bounds = FALSE;
+    boolean premapped = FALSE;
 
     prevstair.x = prevstair.y = 0;
     tmproom = tmpsubroom = NULL;
@@ -2552,29 +2580,39 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
     memset(&SpLev_Map[0][0], 0, sizeof(SpLev_Map));
 
-    lev->flags.is_maze_lev = lvl->init_lev.levtyp == SP_LEV_MAZE;
+    lev->flags.is_maze_lev = 0;
 
-    if (lvl->init_lev.init_present) {
-	if (lvl->init_lev.lit < 0)
-	    lvl->init_lev.lit = rn2(2);
-	mkmap(lev, &(lvl->init_lev));
-    } else {
-	for (x = 2; x <= x_maze_max; x++) {
-	    for (y = 0; y <= y_maze_max; y++) {
-		if (lvl->init_lev.filling == -1) {
-		    lev->locations[x][y].typ =
-			    (y < 2 || ((x % 2) && (y % 2))) ? STONE : HWALL;
-		} else {
-		    lev->locations[x][y].typ = lvl->init_lev.filling;
-		}
-	    }
-	}
-
-	/* ensure the whole level is marked as mapped area */
-	xstart = 1;
-	ystart = 0;
-	xsize = COLNO - 1;
-	ysize = ROWNO;
+    switch (lvl->init_lev.init_style) {
+	case LVLINIT_NONE:
+	    break;
+	case LVLINIT_SOLIDFILL:
+	    lvlfill_solid(lev, lvl->init_lev.filling);
+	    xstart = 1;
+	    ystart = 0;
+	    xsize = COLNO - 1;
+	    ysize = ROWNO;
+	    break;
+	case LVLINIT_MAZEGRID:
+	    lvlfill_maze_grid(lev, 2,0, x_maze_max,y_maze_max, lvl->init_lev.filling);
+	    xstart = 1;
+	    ystart = 0;
+	    xsize = COLNO - 1;
+	    ysize = ROWNO;
+	    break;
+	case LVLINIT_MINES:
+	    if (lvl->init_lev.lit < 0)
+		lvl->init_lev.lit = rn2(2);
+	    if (lvl->init_lev.filling > -1)
+		lvlfill_solid(lev, lvl->init_lev.filling);
+	    mkmap(lev, &(lvl->init_lev));
+	    xstart = 1;
+	    ystart = 0;
+	    xsize = COLNO - 1;
+	    ysize = ROWNO;
+	    break;
+	default:
+	    impossible("Unrecognized level init style.");
+	    break;
     }
 
     if (lvl->init_lev.flags & NOTELEPORT)   lev->flags.noteleport = 1;
@@ -2584,6 +2622,9 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
     if (lvl->init_lev.flags & ARBOREAL)	    lev->flags.arboreal = 1;
     if (lvl->init_lev.flags & NOFLIPX)	    allow_flips &= ~1;
     if (lvl->init_lev.flags & NOFLIPY)	    allow_flips &= ~2;
+    if (lvl->init_lev.flags & MAZELEVEL)    lev->flags.is_maze_lev = 1;
+    if (lvl->init_lev.flags & PREMAPPED)    premapped = TRUE;
+    if (lvl->init_lev.flags & SHROUD)	    lev->flags.hero_memory = 0;
 
     while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
 	int opcode = lvl->opcodes[n_opcode].opcode;
@@ -2908,6 +2949,9 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	    x = (xchar)tmpwalk->x;  y = (xchar)tmpwalk->y;
 	    dir = tmpwalk->dir;
 
+	    if (tmpwalk->typ < 1)
+		tmpwalk->typ = ROOM;
+
 	    /* don't use move() - it doesn't use W_NORTH, etc. */
 	    switch (dir) {
 	    case W_NORTH: --y; break;
@@ -2918,7 +2962,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	    }
 
 	    if (!IS_DOOR(lev->locations[x][y].typ)) {
-		lev->locations[x][y].typ = ROOM;
+		lev->locations[x][y].typ = tmpwalk->typ;
 		lev->locations[x][y].flags = 0;
 	    }
 
@@ -2934,7 +2978,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    x--;
 
 		/* no need for IS_DOOR check; out of map bounds */
-		lev->locations[x][y].typ = ROOM;
+		lev->locations[x][y].typ = tmpwalk->typ;
 		lev->locations[x][y].flags = 0;
 	    }
 
@@ -2945,7 +2989,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    y--;
 	    }
 
-	    walkfrom(lev, x, y);
+	    walkfrom(lev, x, y, tmpwalk->typ);
 	    if (tmpwalk->stocked) fill_empty_maze(lev);
 	    break;
 	case SPO_NON_DIGGABLE:
@@ -3058,7 +3102,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    panic("reading special level with ysize too large");
 	    }
 
-	    if (lvl->init_lev.init_present && xsize <= 1 && ysize <= 1) {
+	    if (xsize <= 1 && ysize <= 1) {
 		xstart = 1;
 		ystart = 0;
 		xsize = COLNO - 1;
@@ -3104,7 +3148,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 			}
 		    }
 		}
-		if (lvl->init_lev.init_present && lvl->init_lev.joined)
+		if (lvl->init_lev.joined)
 		    remove_rooms(lev, xstart, ystart, xstart + xsize, ystart + ysize);
 	    }
 
@@ -3168,6 +3212,8 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
     }
 
     count_features(lev);
+
+    if (premapped) sokoban_detect(lev);
 
     return TRUE;
 }

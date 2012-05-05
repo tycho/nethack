@@ -1167,12 +1167,18 @@ void sokoban_detect(struct level *lev)
 	/* Map the background and boulders */
 	for (x = 1; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++) {
-		lev->locations[x][y].seenv = SVALL;
-		lev->locations[x][y].waslit = TRUE;
-		lev->locations[x][y].mem_bg = back_to_cmap(lev, x, y);
+		struct rm *loc = &lev->locations[x][y];
+		if (IS_WALL(loc->typ))
+		    loc->seenv = SVALL;
+		else if (loc->typ == SDOOR)
+		    loc->typ = DOOR;
+		else if (loc->typ == SCORR)
+		    loc->typ = CORR;
+		loc->waslit = (loc->typ != CORR) ? TRUE : loc->lit;
+		loc->mem_bg = back_to_cmap(lev, x, y);
 		for (obj = lev->objects[x][y]; obj; obj = obj->nexthere)
 		    if (obj->otyp == BOULDER)
-			lev->locations[x][y].mem_obj = what_obj(BOULDER) + 1;
+			loc->mem_obj = what_obj(BOULDER) + 1;
 	    }
 
 	/* Map the traps */

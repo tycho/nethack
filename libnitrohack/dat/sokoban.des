@@ -31,9 +31,10 @@
 
 
 ### Bottom (first) level of Sokoban ###
-MAZE:"soko4-1",' '
-FLAGS:noteleport,hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-1"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
 ------  ----- 
@@ -94,9 +95,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko4-2",' '
-FLAGS:noteleport,hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-2"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
 -------- ------
@@ -159,9 +161,10 @@ OBJECT:'/',random,random
 
 
 ### Second level ###
-MAZE:"soko3-1",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko3-1"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
 -----------       -----------
@@ -235,9 +238,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko3-2",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko3-2"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
  ----          -----------
@@ -304,9 +308,10 @@ OBJECT:'/',random,random
 
 
 ### Third level ###
-MAZE:"soko2-1",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko2-1"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
 --------------------
@@ -369,9 +374,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko2-2",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko2-2"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
   --------          
@@ -436,9 +442,10 @@ OBJECT:'/',random,random
 
 
 ### Top (last) level of Sokoban ###
-MAZE:"soko1-1",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko1-1"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
 --------------------------
@@ -530,9 +537,10 @@ ENGRAVING:place[1],burn,"Elbereth"
 ENGRAVING:place[2],burn,"Elbereth"
 
 
-MAZE:"soko1-2",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko1-2"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
 MAP
   ------------------------
@@ -629,9 +637,10 @@ ENGRAVING:place[2],burn,"Elbereth"
 # Following Sokoban levels heavily modified for NetHack by Pasi Kallinen
 # The original authors are listed just before the maps
 #
-MAZE:"soko4-3",' '
-FLAGS:noteleport, hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-3"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
 MAP
      -------
@@ -682,9 +691,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko4-4",' '
-FLAGS:noteleport, hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-4"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
   -------------
@@ -743,9 +753,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko4-5",' '
-FLAGS:noteleport, hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-5"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Thinking Rabbit"
 MAP
 ----
@@ -804,9 +815,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko4-6",' '
-FLAGS:noteleport, hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-6"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
 -----------------
@@ -858,9 +870,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko4-7",' '
-FLAGS:noteleport, hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-7"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
 MAP
 -----------------------------
@@ -956,9 +969,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko4-8",' '
-FLAGS:noteleport, hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-8"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Thinking Rabbit"
 MAP
  --------
@@ -1003,9 +1017,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko4-9",' '
-FLAGS:noteleport, hardfloor
-GEOMETRY:center,center
+LEVEL: "soko4-9"
+FLAGS: noteleport, hardfloor, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
        -----------
@@ -1051,9 +1066,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko3-3",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko3-3"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Thinking Rabbit"
 MAP
 -----------------
@@ -1103,9 +1119,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko3-4",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko3-4"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Thinking Rabbit"
 MAP
           ----
@@ -1164,9 +1181,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko3-5",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko3-5"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
 -------       --------
@@ -1220,9 +1238,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko3-6",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko3-6"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
 ----------------
@@ -1289,9 +1308,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko3-7",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko3-7"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
             ---------
@@ -1346,9 +1366,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko2-3",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko2-3"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Thinking Rabbit"
 MAP
        ------------
@@ -1409,9 +1430,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko2-4",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko2-4"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
          ----------
@@ -1467,9 +1489,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko2-5",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko2-5"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Joseph L Traub"
 MAP
     ------------------
@@ -1528,9 +1551,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko2-6",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko2-6"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Thinking Rabbit"
 MAP
         ---------
@@ -1592,9 +1616,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko2-7",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko2-7"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "Thinking Rabbit"
 MAP
            ----
@@ -1646,9 +1671,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-MAZE:"soko1-3",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko1-3"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
 MAP
             ---------
@@ -1723,9 +1749,10 @@ ENGRAVING:place[1],burn,"Elbereth"
 ENGRAVING:place[2],burn,"Elbereth"
 
 
-MAZE:"soko1-4",' '
-FLAGS:noteleport
-GEOMETRY:center,center
+LEVEL: "soko1-4"
+FLAGS: noteleport, mazelevel, premapped
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
 MAP
 ------------

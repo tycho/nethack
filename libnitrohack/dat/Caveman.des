@@ -7,9 +7,10 @@
 #	Here you meet your (besieged) class leader, Shaman Karnov
 #	and receive your quest assignment.
 #
-MAZE: "Cav-strt",' '
-FLAGS: noteleport,hardfloor
-GEOMETRY:center,center
+LEVEL: "Cav-strt"
+FLAGS: noteleport, hardfloor, mazelevel
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 MAP
                                                                             
   ......     ..........................       ...        ....  ......       
@@ -94,9 +95,10 @@ WALLIFY
 #	further towards your assigned quest.
 #
 
-MAZE: "Cav-loca",' '
-FLAGS: hardfloor
-GEOMETRY:center,center
+LEVEL: "Cav-loca"
+FLAGS: noteleport, hardfloor, mazelevel
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 MAP
                                                                             
     .............                     ...........                           
@@ -190,8 +192,10 @@ WALLIFY
 #	been assigned to retrieve.
 #
 
-MAZE: "Cav-goal", ' '
-GEOMETRY:center,center
+LEVEL: "Cav-goal"
+FLAGS: mazelevel
+INIT_MAP: solidfill, ' '
+GEOMETRY: center, center
 MAP
                                                                             
                           .....................                             
@@ -252,8 +256,9 @@ WALLIFY
 #	and goal levels.
 #
 
-MAZE: "Cav-fila" , ' '
-INIT_MAP: '.' , ' ' , true , true , random , true
+LEVEL: "Cav-fila"
+FLAGS: noteleport, hardfloor, mazelevel
+INIT_MAP: mines, '.', ' ', true, true, random, true
 NOMAP
 #
 STAIR: random, up
@@ -280,8 +285,9 @@ MONSTER: 'h', "bugbear", random, hostile
 MONSTER: 'h', random, random, hostile
 MONSTER: 'H', "hill giant", random, hostile
 
-MAZE: "Cav-filb" , ' '
-INIT_MAP: '.' , ' ' , true , true , random , true
+LEVEL: "Cav-filb"
+FLAGS: mazelevel
+INIT_MAP: mines, '.', ' ', true, true, random, true
 NOMAP
 #
 STAIR: random, up
