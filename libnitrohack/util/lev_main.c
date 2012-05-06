@@ -142,6 +142,7 @@ const char *fname = "(stdin)";
 static char *outprefix = "";
 int fatal_error = 0;
 int want_warnings = 0;
+int be_verbose = 0;
 
 extern unsigned int max_x_map, max_y_map;
 
@@ -176,8 +177,11 @@ int main(int argc, char **argv)
 		    if (!strcmp(fname, "-w")) {
 			want_warnings++;
 			continue;
+		    } else if (!strcmp(fname, "-v")) {
+			be_verbose++;
+			continue;
 		    }
-		    
+
 		    fin = freopen(fname, "r", stdin);
 		    if (!fin) {
 			fprintf(stderr,"Can't open \"%s\" for input.\n",
@@ -817,6 +821,10 @@ boolean write_level_file(char *filename, sp_lev *lvl)
 	if (fout < 0) return FALSE;
 
 	if (!lvl) panic("write_level_file");
+
+	if (be_verbose)
+	    fprintf(stdout, "File: '%s', opcodes: %li\n",
+		    lbuf, lvl->init_lev.n_opcodes);
 
 	if (!write_maze(fout, lvl))
 	    return FALSE;
