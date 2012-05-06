@@ -2296,7 +2296,7 @@ int newcham(struct level *lev,
 	    mtmp->perminvis = pm_invisible(mdat);
 	mtmp->minvis = mtmp->invis_blkd ? 0 : mtmp->perminvis;
 	if (!(hides_under(mdat) && OBJ_AT_LEV(mtmp->dlevel, mtmp->mx, mtmp->my)) &&
-			!(mdat->mlet == S_EEL && is_pool(level, mtmp->mx, mtmp->my)))
+			!(mdat->mlet == S_EEL && is_pool(lev, mtmp->mx, mtmp->my)))
 		mtmp->mundetected = 0;
 	if (u.ustuck == mtmp) {
 		if (u.uswallow) {
@@ -2362,7 +2362,7 @@ int newcham(struct level *lev,
 		    obj_extract_self(otmp);
 		    /* probably ought to give some "drop" message here */
 		    if (flooreffects(otmp, mtmp->mx, mtmp->my, "")) continue;
-		    place_object(otmp, level, mtmp->mx, mtmp->my);
+		    place_object(otmp, lev, mtmp->mx, mtmp->my);
 		}
 	    }
 	}
