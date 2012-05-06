@@ -937,8 +937,9 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 		otmp->dknown = TRUE;
 		return TRUE;
 	}
-    } else if (otmp->oartifact == ART_VORPAL_BLADE &&
-	       (dieroll == 1 || mdef->data->mlet == S_JABBERWOCK)) {
+    } else if ((otmp->oartifact == ART_VORPAL_BLADE &&
+		(dieroll == 1 || mdef->data->mlet == S_JABBERWOCK)) ||
+	       (otmp->oartifact == ART_THIEFBANE && dieroll < 3)) {
 	static const char * const behead_msg[2] = {
 		"%s beheads %s!",
 		"%s decapitates %s!"
@@ -946,7 +947,7 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 
 	if (youattack && u.uswallow && mdef == u.ustuck)
 		return FALSE;
-	wepdesc = artilist[ART_VORPAL_BLADE].name;
+	wepdesc = artilist[(int)otmp->oartifact].name;
 	if (!youdefend) {
 		if (!has_head(mdef->data) || notonhead || u.uswallow) {
 			if (youattack)
@@ -1135,13 +1136,15 @@ boolean artifact_hit(
 	    return magicbane_hit(magr, mdef, otmp, dmgptr, dieroll, vis, hittee);
 	}
 	
-	if (!spec_dbon_applies) {
-	    /* since damage bonus didn't apply, nothing more to do;  
-	       no further attacks have side-effects on inventory */
-	    return FALSE;
+	if (otmp->oartifact != ART_THIEFBANE || !youdefend) {
+	    if (!spec_dbon_applies) {
+		/* since damage bonus didn't apply, nothing more to do;
+		   no further attacks have side-effects on inventory */
+		return FALSE;
+	    }
 	}
 	
-	/* Tsurugi of Muramasa, Vorpal Blade */
+	/* Thiefbane, Tsurugi of Muramasa, Vorpal Blade */
 	if (spec_ability(otmp, SPFX_BEHEAD))
 		return artifact_hit_behead(magr, mdef, otmp, dmgptr, dieroll);
 	
