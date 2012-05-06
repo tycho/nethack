@@ -357,6 +357,9 @@ void blkmar_guards(struct monst *shkp)
 	if (rlock) return;
 	rlock = TRUE;
 
+	/* allow black marketeer to leave his shop */
+	hot_pursuit(shkp);
+
 	/* wake up assistants */
 	for (mt = level->monlist; mt; mt = mt->nmon) {
 	    if (DEADMONSTER(mt)) continue;
