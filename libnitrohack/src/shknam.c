@@ -388,7 +388,7 @@ shk_failed:
 	if (Is_blackmarket(&lev->z)) {
 	    struct obj *otmp;
 
-	    otmp = mksobj(lev, LONG_SWORD, FALSE, FALSE);
+	    otmp = mksobj(lev, TWO_HANDED_SWORD, FALSE, FALSE);
 	    otmp = oname(otmp, artiname(ART_THIEFBANE));
 	    mpickobj(shk, otmp);
 	    if (otmp->spe < 5) otmp->spe += rnd(5);
