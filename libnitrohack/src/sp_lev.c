@@ -83,6 +83,10 @@ char *lev_message = 0;
 lev_region *lregions = 0;
 int num_lregions = 0;
 
+struct obj *container_obj[MAX_CONTAINMENT];
+int container_idx = 0;
+
+
 static void lvlfill_maze_grid(struct level *lev, int x1, int y1, int x2, int y2,
 			      schar filling)
 {
@@ -1309,22 +1313,27 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	if (named)
 	    otmp = oname(otmp, o->name.str);
 
-	switch(o->containment) {
-	    static struct obj *container = 0;
-
+	switch (o->containment) {
 	    /* contents */
 	    case 1:
-		if (!container) {
+		if (!container_idx) {
 		    impossible("create_object: no container");
 		    break;
 		}
 		remove_object(otmp);
-		add_to_container(container, otmp);
+		add_to_container(container_obj[container_idx - 1], otmp);
 		return;		/* don't stack */
 	    /* container */
 	    case 2:
 		delete_contents(otmp);
-		container = otmp;
+		if (container_idx < MAX_CONTAINMENT) {
+		    if (container_idx) {
+			remove_object(otmp);
+			add_to_container(container_obj[container_idx - 1], otmp);
+		    }
+		    container_obj[container_idx] = otmp;
+		    container_idx++;
+		} else impossible("create_object: containers nested too deeply.");
 		break;
 	    /* nothing */
 	    case 0: break;
@@ -2213,6 +2222,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	opdat = NULL;
 
 	switch (opcode) {
+	case SPO_POP_CONTAINER:
 	case SPO_NULL:
 	case SPO_EXIT:
 	case SPO_WALLIFY:
@@ -2431,6 +2441,7 @@ static boolean sp_level_free(sp_lev *lvl)
 	case SPO_JG:
 	case SPO_NULL:
 	case SPO_EXIT:
+	case SPO_POP_CONTAINER:
 	case SPO_MESSAGE:
 	case SPO_DOOR:
 	case SPO_ENDROOM:
@@ -2578,6 +2589,10 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
     shuffle_alignments();
 
+    for (xi = 0; xi < MAX_CONTAINMENT; xi++)
+	container_obj[xi] = NULL;
+    container_idx = 0;
+
     memset(&SpLev_Map[0][0], 0, sizeof(SpLev_Map));
 
     lev->flags.is_maze_lev = 0;
@@ -2648,6 +2663,12 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	    break;
 	case SPO_EXIT:
 	    exit_script = TRUE;
+	    break;
+	case SPO_POP_CONTAINER:
+	    if (container_idx > 0) {
+		container_idx--;
+		container_obj[container_idx] = NULL;
+	    }
 	    break;
 	case SPO_MESSAGE:
 	    if (opdat) {
