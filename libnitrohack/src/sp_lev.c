@@ -2203,7 +2203,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
     long n_opcode = 0;
     long i, j;
     void *opdat;
-    char n;
+    unsigned char n;
     int size, opcode;
     lev_region *tmplregion;
     mazepart *tmpmazepart;
@@ -2230,14 +2230,12 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	    break;
 	case SPO_MESSAGE:
 	    Fread(&n, 1, sizeof(n), fd);
-	    if (n > 0) {
+	    if (n) {
 		char *msg;
 		opdat = malloc(n + 1);
 		Fread(opdat, 1, n, fd);
 		msg = (char *)opdat;
-		msg[(unsigned)n] = '\0';
-	    } else if (n < 0) {
-		panic("sp_level_loader: message length is negative (%i)", n);
+		msg[n] = '\0';
 	    }
 	    break;
 	case SPO_MONSTER:
@@ -2321,7 +2319,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 		opdat = malloc(n+1);
 		Fread(opdat, 1, n, fd);
 		msg = (char *)opdat;
-		msg[(unsigned)n] = '\0';
+		msg[n] = '\0';
 	    } else panic("sp_level_loader: rnd_objs idx out-of-bounds (%i)", n);
 	    break;
 	case SPO_RANDOM_PLACES:
@@ -2329,7 +2327,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	    if (n > 0 && n <= (2 * MAX_REGISTERS)) {
 		char *tmpstr = malloc(n+1);
 		Fread(tmpstr, 1, n, fd);
-		tmpstr[(unsigned)n] = '\0';
+		tmpstr[n] = '\0';
 		opdat = tmpstr;
 	    } else panic("sp_level_loader: rnd_places idx out-of-bounds (%i)", n);
 	    break;
@@ -2338,7 +2336,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 	    if (n > 0 && n <= MAX_REGISTERS) {
 		char *tmpstr = malloc(n+1);
 		Fread(tmpstr, 1, n, fd);
-		tmpstr[(unsigned)n] = '\0';
+		tmpstr[n] = '\0';
 		opdat = tmpstr;
 	    } else panic("sp_level_loader: rnd_mons idx out-of-bounds (%i)", n);
 	    break;
