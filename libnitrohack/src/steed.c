@@ -149,7 +149,7 @@ int use_saddle(struct obj *otmp)
 	    mtmp->misc_worn_check |= W_SADDLE;
 	    otmp->owornmask = W_SADDLE;
 	    otmp->leashmon = mtmp->m_id;
-	    update_mon_intrinsics(mtmp, otmp, TRUE, FALSE);
+	    update_mon_intrinsics(level, mtmp, otmp, TRUE, FALSE);
 	} else
 	    pline("%s resists!", Monnam(mtmp));
 	return 1;

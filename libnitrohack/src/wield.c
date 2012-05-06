@@ -166,7 +166,7 @@ static int ready_weapon(struct obj *wep)
 	    arti_speak(wep);
 
 	    if (artifact_light(wep) && !wep->lamplit) {
-		begin_burn(wep, FALSE);
+		begin_burn(level, wep, FALSE);
 		if (!Blind)
 		    pline("%s to glow brilliantly!", Tobjnam(wep, "begin"));
 	    }

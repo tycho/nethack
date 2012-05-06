@@ -446,7 +446,7 @@ struct monst *animate_statue(struct obj *statue, xchar x, xchar y, int cause,
 	    obj_extract_self(item);
 	    add_to_minv(mon, item);
 	}
-	m_dowear(mon, TRUE);
+	m_dowear(level, mon, TRUE);
 	delobj(statue);
 
 	/* mimic statue becomes seen mimic; other hiders won't be hidden */

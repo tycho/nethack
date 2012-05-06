@@ -703,7 +703,7 @@ void burn_object(void *arg, long timeout)
 
 	    } else {
 		obj->age -= how_long;
-		begin_burn(obj, TRUE);
+		begin_burn(level, obj, TRUE);
 	    }
 	    return;
 	}
@@ -811,7 +811,7 @@ void burn_object(void *arg, long timeout)
 		}
 
 		if (obj->age)
-		    begin_burn(obj, TRUE);
+		    begin_burn(level, obj, TRUE);
 
 		break;
 
@@ -928,7 +928,7 @@ void burn_object(void *arg, long timeout)
 		}
 
 		if (obj && obj->age)
-		    begin_burn(obj, TRUE);
+		    begin_burn(level, obj, TRUE);
 
 		break;
 
@@ -970,7 +970,7 @@ void burn_object(void *arg, long timeout)
  *
  * This is a "silent" routine - it should not print anything out.
  */
-void begin_burn(struct obj *obj, boolean already_lit)
+void begin_burn(struct level *lev, struct obj *obj, boolean already_lit)
 {
 	int radius = 3;
 	long turns = 0;
@@ -1053,7 +1053,7 @@ void begin_burn(struct obj *obj, boolean already_lit)
 	    xchar x, y;
 
 	    if (get_obj_location(obj, &x, &y, CONTAINED_TOO|BURIED_TOO))
-		new_light_source(level, x, y, radius, LS_OBJECT, obj);
+		new_light_source(lev, x, y, radius, LS_OBJECT, obj);
 	    else
 		impossible("begin_burn: can't get obj position");
 	}

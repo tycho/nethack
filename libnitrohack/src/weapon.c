@@ -626,7 +626,7 @@ int mon_wield_item(struct monst *mon)
 		    }
 		}
 		if (artifact_light(obj) && !obj->lamplit) {
-		    begin_burn(obj, FALSE);
+		    begin_burn(level, obj, FALSE);
 		    if (canseemon(level, mon))
 			pline("%s brilliantly in %s %s!",
 			    Tobjnam(obj, "glow"), 

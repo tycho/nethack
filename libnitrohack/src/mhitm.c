@@ -1163,7 +1163,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 				if (otmp->owornmask & W_WEP)
 				    setmnotwielded(mdef,otmp);
 				otmp->owornmask = 0L;
-				update_mon_intrinsics(mdef, otmp, FALSE, FALSE);
+				update_mon_intrinsics(level, mdef, otmp, FALSE, FALSE);
 			}
 			/* add_to_minv() might free otmp [if it merges] */
 			if (vis)

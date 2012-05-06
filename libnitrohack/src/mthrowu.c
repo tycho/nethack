@@ -453,7 +453,7 @@ void m_useup(struct monst *mon, struct obj *obj)
 		possibly_unwield(mon, FALSE);
 		if (obj->owornmask) {
 		    mon->misc_worn_check &= ~obj->owornmask;
-		    update_mon_intrinsics(mon, obj, FALSE, FALSE);
+		    update_mon_intrinsics(level, mon, obj, FALSE, FALSE);
 		}
 		obfree(obj, NULL);
 	}

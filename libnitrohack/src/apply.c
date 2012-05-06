@@ -836,7 +836,7 @@ static void use_candelabrum(struct obj *obj)
 		}
 		obj->known = 1;
 	}
-	begin_burn(obj, FALSE);
+	begin_burn(level, obj, FALSE);
 }
 
 static void use_candle(struct obj **optr)
@@ -978,7 +978,7 @@ boolean catch_lit(struct obj *obj)
 				Yname2(obj), obj->quan == 1 ? "itself" : "themselves");
 		bill_dummy_object(obj);
 	    }
-	    begin_burn(obj, FALSE);
+	    begin_burn(level, obj, FALSE);
 	    return TRUE;
 	}
 	return FALSE;
@@ -1029,7 +1029,7 @@ static void use_lamp(struct obj *obj)
 			bill_dummy_object(obj);
 		    }
 		}
-		begin_burn(obj, FALSE);
+		begin_burn(level, obj, FALSE);
 	}
 }
 
@@ -1072,13 +1072,13 @@ static void light_cocktail(struct obj *obj) /* obj is a potion of oil */
 
 	if (obj->quan > 1L) {
 	    obj = splitobj(obj, 1L);
-	    begin_burn(obj, FALSE);	/* burn before free to get position */
-	    obj_extract_self(obj);	/* free from inv */
+	    begin_burn(level, obj, FALSE);	/* burn before free to get position */
+	    obj_extract_self(obj);		/* free from inv */
 
 	    /* shouldn't merge */
 	    hold_another_object(obj, "You drop %s!", doname(obj), NULL);
 	} else
-	    begin_burn(obj, FALSE);
+	    begin_burn(level, obj, FALSE);
 }
 
 static const char cuddly[] = { TOOL_CLASS, GEM_CLASS, 0 };
@@ -1111,7 +1111,7 @@ int dorub(struct obj *obj)
 		uwep->otyp = OIL_LAMP;
 		uwep->spe = 0; /* for safety */
 		uwep->age = rn1(500,1000);
-		if (uwep->lamplit) begin_burn(uwep, TRUE);
+		if (uwep->lamplit) begin_burn(level, uwep, TRUE);
 		update_inventory();
 	    } else if (rn2(2) && !Blind)
 		pline("You see a puff of smoke.");

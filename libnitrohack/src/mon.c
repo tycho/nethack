@@ -769,7 +769,7 @@ boolean mpickstuff(struct monst *mtmp, const char *str)
 		if (otmp->otyp == BOULDER)
 		    unblock_point(otmp->ox,otmp->oy);	/* vision */
 		mpickobj(mtmp, otmp);	/* may merge and free otmp */
-		m_dowear(mtmp, FALSE);
+		m_dowear(level, mtmp, FALSE);
 		newsym(mtmp->mx, mtmp->my);
 		return TRUE;			/* pick only one object */
 	    }
@@ -1456,7 +1456,7 @@ void monstone(struct monst *mdef)
 		while ((obj = mdef->minvent) != 0) {
 		    obj_extract_self(obj);
 		    if (obj->owornmask)
-			update_mon_intrinsics(mdef, obj, FALSE, TRUE);
+			update_mon_intrinsics(level, mdef, obj, FALSE, TRUE);
 		    obj_no_longer_held(obj);
 		    if (obj->owornmask & W_WEP)
 			setmnotwielded(mdef,obj);
@@ -2342,7 +2342,7 @@ int newcham(struct level *lev,
 	if (!(mtmp->misc_worn_check & W_ARMG))
 	    mselftouch(mtmp, "No longer petrify-resistant, ",
 			!flags.mon_moving);
-	m_dowear(mtmp, FALSE);
+	m_dowear(lev, mtmp, FALSE);
 
 	/* This ought to re-test can_carry() on each item in the inventory
 	 * rather than just checking ex-giants & boulders, but that'd be

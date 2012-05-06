@@ -405,7 +405,7 @@ shk_failed:
 	    mpickobj(shk, otmp);
 
 	    /* wear armor and amulet*/
-	    m_dowear(shk, TRUE);
+	    m_dowear(lev, shk, TRUE);
 
 	    otmp = mksobj(lev, POT_FULL_HEALING, FALSE, FALSE);
 	    mpickobj(shk, otmp);

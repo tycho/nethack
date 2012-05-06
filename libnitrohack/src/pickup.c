@@ -1344,7 +1344,7 @@ int loot_mon(struct monst *mtmp, int *passed_info, boolean *prev_loot)
 		if ((unwornmask = otmp->owornmask) != 0L) {
 		    mtmp->misc_worn_check &= ~unwornmask;
 		    otmp->owornmask = 0L;
-		    update_mon_intrinsics(mtmp, otmp, FALSE, FALSE);
+		    update_mon_intrinsics(level, mtmp, otmp, FALSE, FALSE);
 		}
 		hold_another_object(otmp, "You drop %s!", doname(otmp),
 					NULL);

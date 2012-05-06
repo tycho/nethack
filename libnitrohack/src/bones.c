@@ -299,7 +299,7 @@ make_bones:
 			an(mons_mname(&mons[u.ugrave_arise])));
 		win_pause_output(P_MESSAGE);
 		drop_upon_death(mtmp, NULL);
-		m_dowear(mtmp, TRUE);
+		m_dowear(level, mtmp, TRUE);
 	}
 	if (mtmp) {
 		mtmp->m_lev = (u.ulevel ? u.ulevel : 1);

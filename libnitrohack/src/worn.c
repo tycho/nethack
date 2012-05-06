@@ -3,8 +3,8 @@
 
 #include "hack.h"
 
-static void m_lose_armor(struct monst *,struct obj *);
-static void m_dowear_type(struct monst *,long, boolean, boolean);
+static void m_lose_armor(struct monst *, struct obj *);
+static void m_dowear_type(struct level *, struct monst *,long, boolean, boolean);
 static int extra_pref(struct monst *, struct obj *);
 
 const struct worn {
@@ -208,19 +208,19 @@ void mon_adjust_speed(struct monst *mon,
 }
 
 /* armor put on or taken off; might be magical variety */
-void update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
-			   boolean silently)
+void update_mon_intrinsics(struct level *lev, struct monst *mon, struct obj *obj,
+			   boolean on, boolean silently)
 {
     int unseen;
     uchar mask;
     struct obj *otmp;
     int which = (int) objects[obj->otyp].oc_oprop;
 
-    unseen = !canseemon(level, mon);
+    unseen = !canseemon(lev, mon);
 
     if (Is_gold_dragon_armor(obj->otyp)) {
 	if (on)
-	    begin_burn(obj, FALSE);
+	    begin_burn(lev, obj, FALSE);
 	else
 	    end_burn(obj, FALSE);
 	if (!unseen && !silently)
@@ -326,7 +326,7 @@ void update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
 	    dismount_steed(DISMOUNT_FELL);
 
     /* if couldn't see it but now can, or vice versa, update display */
-    if (!silently && (unseen ^ !canseemon(level, mon)))
+    if (!silently && (unseen ^ !canseemon(lev, mon)))
 	newsym(mon->mx, mon->my);
 }
 
@@ -359,7 +359,7 @@ int find_mac(struct monst *mon)
  * players to influence what gets worn.  Putting on a shirt underneath
  * already worn body armor is too obviously buggy...
  */
-void m_dowear(struct monst *mon, boolean creation)
+void m_dowear(struct level *lev, struct monst *mon, boolean creation)
 {
 #define RACE_EXCEPTION TRUE
 	/* Note the restrictions here are the same as in dowear in do_wear.c
@@ -374,32 +374,32 @@ void m_dowear(struct monst *mon, boolean creation)
 	    (mon->data->mlet != S_MUMMY && mon->data != &mons[PM_SKELETON])))
 		return;
 
-	m_dowear_type(mon, W_AMUL, creation, FALSE);
+	m_dowear_type(lev, mon, W_AMUL, creation, FALSE);
 	/* can't put on shirt if already wearing suit */
 	if (!cantweararm(mon->data) || (mon->misc_worn_check & W_ARM))
-	    m_dowear_type(mon, W_ARMU, creation, FALSE);
+	    m_dowear_type(lev, mon, W_ARMU, creation, FALSE);
 	/* treating small as a special case allows
 	   hobbits, gnomes, and kobolds to wear cloaks */
 	if (!cantweararm(mon->data) || mon->data->msize == MZ_SMALL)
-	    m_dowear_type(mon, W_ARMC, creation, FALSE);
-	m_dowear_type(mon, W_ARMH, creation, FALSE);
+	    m_dowear_type(lev, mon, W_ARMC, creation, FALSE);
+	m_dowear_type(lev, mon, W_ARMH, creation, FALSE);
 	if (!MON_WEP(mon) || !bimanual(MON_WEP(mon)))
-	    m_dowear_type(mon, W_ARMS, creation, FALSE);
-	m_dowear_type(mon, W_ARMG, creation, FALSE);
+	    m_dowear_type(lev, mon, W_ARMS, creation, FALSE);
+	m_dowear_type(lev, mon, W_ARMG, creation, FALSE);
 	if (!slithy(mon->data) && mon->data->mlet != S_CENTAUR)
-	    m_dowear_type(mon, W_ARMF, creation, FALSE);
+	    m_dowear_type(lev, mon, W_ARMF, creation, FALSE);
 	if (!cantweararm(mon->data))
-	    m_dowear_type(mon, W_ARM, creation, FALSE);
+	    m_dowear_type(lev, mon, W_ARM, creation, FALSE);
 	else
-	    m_dowear_type(mon, W_ARM, creation, RACE_EXCEPTION);
+	    m_dowear_type(lev, mon, W_ARM, creation, RACE_EXCEPTION);
 }
 
-static void m_dowear_type(struct monst *mon, long flag, boolean creation,
-			  boolean racialexception)
+static void m_dowear_type(struct level *lev, struct monst *mon, long flag,
+			  boolean creation, boolean racialexception)
 {
 	struct obj *old, *best, *obj;
 	int m_delay = 0;
-	int unseen = !canseemon(level, mon);
+	int unseen = !canseemon(lev, mon);
 	char nambuf[BUFSZ];
 
 	if (mon->mfrozen) return; /* probably putting previous item on */
@@ -472,7 +472,7 @@ outer_break:
 	if (old) /* do this first to avoid "(being worn)" */
 	    old->owornmask = 0L;
 	if (!creation) {
-	    if (canseemon(level, mon)) {
+	    if (canseemon(lev, mon)) {
 		char buf[BUFSZ];
 
 		if (old)
@@ -487,12 +487,12 @@ outer_break:
 	    if (mon->mfrozen) mon->mcanmove = 0;
 	}
 	if (old)
-	    update_mon_intrinsics(mon, old, FALSE, creation);
+	    update_mon_intrinsics(lev, mon, old, FALSE, creation);
 	mon->misc_worn_check |= flag;
 	best->owornmask |= flag;
-	update_mon_intrinsics(mon, best, TRUE, creation);
+	update_mon_intrinsics(lev, mon, best, TRUE, creation);
 	/* if couldn't see it but now can, or vice versa, */
-	if (!creation && (unseen ^ !canseemon(level, mon))) {
+	if (!creation && (unseen ^ !canseemon(lev, mon))) {
 		if (mon->minvis && !See_invisible) {
 			pline("Suddenly you cannot see %s.", nambuf);
 			makeknown(best->otyp);
@@ -515,7 +515,7 @@ static void m_lose_armor(struct monst *mon, struct obj *obj)
 {
 	mon->misc_worn_check &= ~obj->owornmask;
 	if (obj->owornmask)
-	    update_mon_intrinsics(mon, obj, FALSE, FALSE);
+	    update_mon_intrinsics(level, mon, obj, FALSE, FALSE);
 	obj->owornmask = 0L;
 
 	obj_extract_self(obj);

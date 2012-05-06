@@ -1025,7 +1025,7 @@ struct monst *makemon(const struct permonst *ptr,
 	    if (is_armed(ptr))
 		m_initweap(mtmp);	/* equip with weapons / armor */
 	    m_initinv(mtmp);  /* add on a few special items incl. more armor */
-	    m_dowear(mtmp, TRUE);
+	    m_dowear(lev, mtmp, TRUE);
 	} else {
 	    /* no initial inventory is allowed */
 	    if (mtmp->minvent) discard_minvent(mtmp);

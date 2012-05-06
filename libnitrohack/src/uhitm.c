@@ -1380,7 +1380,7 @@ static void steal_it(struct monst *mdef, const struct attack *mattk)
 		    MON_NOWEP(mdef);
 		}
 		otmp->owornmask = 0L;
-		update_mon_intrinsics(mdef, otmp, FALSE, FALSE);
+		update_mon_intrinsics(level, mdef, otmp, FALSE, FALSE);
 
 		if (otmp == stealoid)	/* special message for final item */
 		    pline("%s finishes taking off %s suit.",

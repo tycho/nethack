@@ -127,7 +127,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 	case SPE_SLOW_MONSTER:
 		if (!resist(mtmp, otmp->oclass, 0, NOTELL)) {
 			mon_adjust_speed(mtmp, -1, otmp);
-			m_dowear(mtmp, FALSE); /* might want speed boots */
+			m_dowear(level, mtmp, FALSE); /* might want speed boots */
 			if (u.uswallow && (mtmp == u.ustuck) &&
 			    is_whirly(mtmp->data)) {
 				pline("You disrupt %s!", mon_nam(mtmp));
@@ -139,7 +139,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 	case WAN_SPEED_MONSTER:
 		if (!resist(mtmp, otmp->oclass, 0, NOTELL)) {
 			mon_adjust_speed(mtmp, 1, otmp);
-			m_dowear(mtmp, FALSE); /* might want speed boots */
+			m_dowear(level, mtmp, FALSE); /* might want speed boots */
 		}
 		break;
 	case WAN_UNDEAD_TURNING:
@@ -232,7 +232,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 			expels(mtmp, mtmp->data, TRUE);
 		} else if (!!(obj = which_armor(mtmp, W_SADDLE))) {
 			mtmp->misc_worn_check &= ~obj->owornmask;
-			update_mon_intrinsics(mtmp, obj, FALSE, FALSE);
+			update_mon_intrinsics(level, mtmp, obj, FALSE, FALSE);
 			obj->owornmask = 0L;
 			obj_extract_self(obj);
 			place_object(obj, level, mtmp->mx, mtmp->my);
@@ -3371,7 +3371,7 @@ buzzmonst:
 				 * case it is lifesaved. */
 				if (otmp->owornmask && otmp->otyp == SADDLE)
 				    mon->misc_worn_check &= ~W_SADDLE;
-				update_mon_intrinsics(mon, otmp, FALSE, TRUE);
+				update_mon_intrinsics(level, mon, otmp, FALSE, TRUE);
 				obj_extract_self(otmp);
 				obfree(otmp, NULL);
 			    }

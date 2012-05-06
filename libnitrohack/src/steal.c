@@ -443,7 +443,7 @@ static void mdrop_obj(struct monst *mon, struct obj *obj, boolean verbosely)
 	/* perform worn item handling if the monster is still alive */
 	if (mon->mhp > 0) {
 	    mon->misc_worn_check &= ~obj->owornmask;
-	    update_mon_intrinsics(mon, obj, FALSE, TRUE);
+	    update_mon_intrinsics(level, mon, obj, FALSE, TRUE);
 	 /* obj_no_longer_held(obj); -- done by place_object */
 	    if (obj->owornmask & W_WEP) setmnotwielded(mon, obj);
 	/* don't charge for an owned saddle on dead steed */

@@ -1340,7 +1340,7 @@ static void final_level(void)
 		    if ((otmp = which_armor(mtmp, W_ARMS)) == 0 ||
 			    otmp->otyp != SHIELD_OF_REFLECTION) {
 			mongets(mtmp, AMULET_OF_REFLECTION);
-			m_dowear(mtmp, TRUE);
+			m_dowear(level, mtmp, TRUE);
 		    }
 		}
 	    }

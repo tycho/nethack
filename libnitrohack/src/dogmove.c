@@ -301,7 +301,7 @@ static int dog_invent(struct monst *mtmp, struct edog *edog, int udist)
 				mtmp->weapon_check = NEED_HTH_WEAPON;
 				mon_wield_item(mtmp);
 			    }
-			    m_dowear(mtmp, FALSE);
+			    m_dowear(level, mtmp, FALSE);
 			}
 		    }
 		}

@@ -183,7 +183,7 @@ struct monst *makedog(void)
 	    otmp->dknown = otmp->bknown = otmp->rknown = 1;
 	    otmp->owornmask = W_SADDLE;
 	    otmp->leashmon = mtmp->m_id;
-	    update_mon_intrinsics(mtmp, otmp, TRUE, TRUE);
+	    update_mon_intrinsics(level, mtmp, otmp, TRUE, TRUE);
 	}
 
 	if (*petname)

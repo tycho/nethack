@@ -485,7 +485,7 @@ int Shirt_off(void)
 static int Armor_on(void)
 {
     if (uarm && Is_gold_dragon_armor(uarm->otyp)) {
-	begin_burn(uarm, FALSE);
+	begin_burn(level, uarm, FALSE);
 	if (!Blind)
 	    pline("%s to glow.", Tobjnam(uarm, "begin"));
     }
