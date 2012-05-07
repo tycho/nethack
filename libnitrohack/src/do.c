@@ -119,7 +119,7 @@ boolean flooreffects(struct obj *obj, int x, int y, const char *verb)
 	struct monst *mtmp;
 
 	if (obj->where != OBJ_FREE)
-	    panic("flooreffects: obj not free");
+	    panic("flooreffects: obj not free (%d)", obj->where);
 
 	/* make sure things like water_damage() have no pointers to follow */
 	obj->nobj = obj->nexthere = NULL;

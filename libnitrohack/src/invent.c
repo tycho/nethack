@@ -268,7 +268,7 @@ struct obj *addinv(struct obj *obj)
 	struct obj *otmp;
 
 	if (obj->where != OBJ_FREE)
-	    panic("addinv: obj not free");
+	    panic("addinv: obj not free (%d)", obj->where);
 	obj->no_charge = 0;	/* not meaningful for invent */
 	obj->was_thrown = 0;
 
