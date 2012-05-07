@@ -931,6 +931,13 @@ static boolean minimal_enlightenment(void)
 	sprintf(buf, fmtstr, "alignment", align_str(u.ualign.type));
 	set_menuitem(&items[i++], 0, MI_NORMAL, buf, 0, FALSE);
 
+	/* Current position of hero */
+	if (wizard) {
+	    sprintf(buf2, "(%2d,%2d)", u.ux, u.uy);
+	    sprintf(buf, fmtstr, "position", buf2);
+	    set_menuitem(&items[i++], 0, MI_NORMAL, buf, 0, FALSE);
+	}
+
 	/* Deity list */
 	set_menuitem(&items[i++], 0, MI_NORMAL, "", 0, FALSE);
 	set_menuitem(&items[i++], 0, MI_HEADING, "Deities", 0, FALSE);
