@@ -692,15 +692,16 @@ int peffects(struct obj *otmp)
 		    unkn++;
 		} else if (Fixed_abil) {
 		    nothing++;
-		} else {      /* If blessed, increase all; if not, try up to */
-		    int itmp; /* 6 times to find one which can be increased. */
+		} else {      /* If blessed, try very hard to find an ability */
+		              /* that can be increased; if not, try up to */
+		    int itmp; /* 3 times to find one which can be increased. */
 		    i = -1;		/* increment to 0 */
-		    for (ii = A_MAX; ii > 0; ii--) {
-			i = (otmp->blessed ? i + 1 : rn2(A_MAX));
+		    for (ii = (otmp->blessed ? 1000 : A_MAX / 2); ii > 0; ii--) {
+			i = rn2(A_MAX);
 			/* only give "your X is already as high as it can get"
-			   message on last attempt (except blessed potions) */
-			itmp = (otmp->blessed || ii == 1) ? 0 : -1;
-			if (adjattrib(i, 1, itmp) && !otmp->blessed)
+			   message on last attempt */
+			itmp = (ii == 1) ? 0 : -1;
+			if (adjattrib(i, 1, itmp))
 			    break;
 		    }
 		}
@@ -1225,7 +1226,7 @@ void potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 /* vapors are inhaled or get in your eyes */
 void potionbreathe(struct obj *obj)
 {
-	int i, ii, isdone, kn = 0;
+	int i, ii, kn = 0;
 
 	switch(obj->otyp) {
 	case POT_RESTORE_ABILITY:
@@ -1242,11 +1243,9 @@ void potionbreathe(struct obj *obj)
 		    break;
 		} else {
 		    i = rn2(A_MAX);		/* start at a random point */
-		    for (isdone = ii = 0; !isdone && ii < A_MAX; ii++) {
+		    for (ii = 0; ii < A_MAX; ii++) {
 			if (ABASE(i) < AMAX(i)) {
 			    ABASE(i)++;
-			    /* only first found if not blessed */
-			    isdone = !(obj->blessed);
 			    iflags.botl = 1;
 			}
 			if (++i >= A_MAX) i = 0;
