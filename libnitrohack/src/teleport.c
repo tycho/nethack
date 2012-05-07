@@ -167,6 +167,13 @@ boolean enexto(coord *cc, struct level *lev, xchar xx, xchar yy,
 boolean enexto_core(coord *cc, struct level *lev, xchar xx, xchar yy,
 		    const struct permonst *mdat, unsigned entflags)
 {
+	return enexto_core_range(cc, lev, xx, yy, mdat, entflags, 1);
+}
+
+boolean enexto_core_range(coord *cc, struct level *lev, xchar xx, xchar yy,
+			  const struct permonst *mdat, unsigned entflags,
+			  int start_range) /* distance to begin tile check (>= 1) */
+{
 #define MAX_GOOD 15
     coord good[MAX_GOOD], *good_ptr;
     int x, y, range, i;
@@ -180,7 +187,7 @@ boolean enexto_core(coord *cc, struct level *lev, xchar xx, xchar yy,
     
     fakemon.data = mdat;	/* set up for goodpos */
     good_ptr = good;
-    range = 1;
+    range = start_range;
     /*
      * Walk around the border of the square with center (xx,yy) and
      * radius range.  Stop when we find at least one valid position.
@@ -1354,6 +1361,10 @@ boolean u_teleport_mon(struct monst *mtmp, boolean give_feedback)
 		pline("You are no longer inside %s!", mon_nam(mtmp));
 	    unstuck(mtmp);
 	    rloc(level, mtmp, FALSE);
+	} else if (mtmp->data == &mons[PM_BLACK_MARKETEER] && rn2(13) &&
+		   enexto_core_range(&cc, level, u.ux, u.uy, mtmp->data, 0,
+				     rnf(1,10) ? 4 : 3)) {
+	    rloc_to(mtmp, level, cc.x, cc.y);
 	} else if (is_rider(mtmp->data) && rn2(13) &&
 		   enexto(&cc, level, u.ux, u.uy, mtmp->data))
 	    rloc_to(mtmp, level, cc.x, cc.y);

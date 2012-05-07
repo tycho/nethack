@@ -1536,7 +1536,10 @@ extern boolean goodpos(struct level *lev, int,int,struct monst *,unsigned);
 extern boolean enexto(coord *cc, struct level *lev, xchar xx, xchar yy,
 	              const struct permonst *mdat);
 extern boolean enexto_core(coord *cc, struct level *lev, xchar xx, xchar yy,
-		           const struct permonst *mdat, unsigned entflags);
+			   const struct permonst *mdat, unsigned entflags);
+extern boolean enexto_core_range(coord *cc, struct level *lev, xchar xx, xchar yy,
+				 const struct permonst *mdat, unsigned entflags,
+				 int start_range);
 extern int epathto(coord *cc, int nc, struct level *lev, xchar xx, xchar yy,
 		   const struct permonst *mdat);
 extern void teleds(int,int,boolean);
