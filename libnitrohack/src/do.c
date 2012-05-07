@@ -1064,8 +1064,11 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 				} while ((x < udst->nlx || x > udst->nhx) &&
 					 (y < udst->nly || y > udst->nhy));
 			    } while ((occupied(level, x, y) ||
-				      IS_WALL(level->locations[x][y].typ)) &&
-				      trycnt++ < 300);
+				      IS_STWALL(level->locations[x][y].typ)) &&
+				     trycnt++ < 1000);
+			    /* TODO: change impossible() to warning() */
+			    if (trycnt >= 1000)
+				impossible("Castle: placement failed to find good pos");
 			    u_on_newpos(x, y);
 			} else u_on_sstairs();
 		    } else u_on_dnstairs();
