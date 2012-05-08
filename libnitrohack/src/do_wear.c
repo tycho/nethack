@@ -1928,8 +1928,8 @@ int destroy_arm(struct obj *atmp)
 		useup(otmp);
 	} else if (DESTROY_ARM(uarm)) {
 		if (donning(otmp)) cancel_don();
-		pline("Your armor turns to dust and falls to the %s!",
-			surface(u.ux,u.uy));
+		pline("%s turns to dust and falls to the %s!",
+		      Ysimple_name2(otmp), surface(u.ux,u.uy));
 		Armor_gone();
 		useup(otmp);
 	} else if (DESTROY_ARM(uarmu)) {

@@ -174,6 +174,7 @@ boolean rust_dmg(struct obj *otmp, const char *ostr, int type,
 			  Monnam(victim), ostr,
 			  vtense(ostr, "look"), msg[type]);
 	    }
+	    destroy_arm(otmp);
 	}
 	return TRUE;
 }

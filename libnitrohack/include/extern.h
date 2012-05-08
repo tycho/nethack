@@ -1141,6 +1141,7 @@ extern char *Doname2(const struct obj *);
 extern char *yname(const struct obj *);
 extern char *Yname2(const struct obj *);
 extern char *ysimple_name(const struct obj *);
+extern char *Ysimple_name2(const struct obj *);
 extern char *makeplural(const char *);
 extern char *makesingular(const char *);
 extern struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user);
