@@ -520,7 +520,7 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	    if (how < GENOCIDED && flags.tombstone && show_endwin) {
 		/* Put together death description */
 		switch (killer_format) {
-			default: impossible("bad killer format?");
+			default: warning("bad killer format?");
 			case KILLED_BY_AN:
 				strcpy(outrip_buf, killed_by_prefix[how]);
 				strcat(outrip_buf, an(killer));

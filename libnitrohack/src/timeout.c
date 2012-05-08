@@ -504,7 +504,7 @@ void hatch_egg(void *arg, long timeout)
 		    }
 		    break;
 		default:
-		    impossible("egg hatched where? (%d)", (int)egg->where);
+		    warning("egg hatched where? (%d)", (int)egg->where);
 		    break;
 	    }
 
@@ -933,7 +933,7 @@ void burn_object(void *arg, long timeout)
 		break;
 
 	    default:
-		impossible("burn_object: unexpeced obj %s", xname(obj));
+		warning("burn_object: unexpeced obj %s", xname(obj));
 		break;
 	}
 	if (need_newsym) newsym(x, y);
@@ -1028,7 +1028,7 @@ void begin_burn(struct level *lev, struct obj *obj, boolean already_lit)
 		    obj->lamplit = 1;
 		    do_timer = FALSE;
 		} else {
-		    impossible("begin burn: unexpected %s", xname(obj));
+		    warning("begin burn: unexpected %s", xname(obj));
 		    turns = obj->age;
 		}
 		break;
@@ -1055,7 +1055,7 @@ void begin_burn(struct level *lev, struct obj *obj, boolean already_lit)
 	    if (get_obj_location(obj, &x, &y, CONTAINED_TOO|BURIED_TOO))
 		new_light_source(lev, x, y, radius, LS_OBJECT, obj);
 	    else
-		impossible("begin_burn: can't get obj position");
+		warning("begin_burn: can't get obj position");
 	}
 }
 
@@ -1066,7 +1066,7 @@ void begin_burn(struct level *lev, struct obj *obj, boolean already_lit)
 void end_burn(struct obj *obj, boolean timer_attached)
 {
 	if (!obj->lamplit) {
-	    impossible("end_burn: obj %s not lit", xname(obj));
+	    warning("end_burn: obj %s not lit", xname(obj));
 	    return;
 	}
 
@@ -1080,7 +1080,7 @@ void end_burn(struct obj *obj, boolean timer_attached)
 	    if (obj->where == OBJ_INVENT)
 		update_inventory();
 	} else if (!stop_timer(obj->olev, BURN_OBJECT, obj))
-	    impossible("end_burn: obj %s not timed!", xname(obj));
+	    warning("end_burn: obj %s not timed!", xname(obj));
 }
 
 
@@ -1091,7 +1091,7 @@ static void cleanup_burn(void *arg, long expire_time)
 {
     struct obj *obj = (struct obj *)arg;
     if (!obj->lamplit) {
-	impossible("cleanup_burn: obj %s not lit", xname(obj));
+	warning("cleanup_burn: obj %s not lit", xname(obj));
 	return;
     }
 

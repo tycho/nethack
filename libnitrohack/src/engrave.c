@@ -339,7 +339,7 @@ void read_engr_at(int x, int y)
 		}
 		break;
 	    default:
-		impossible("Something is written in a very strange way.");
+		warning("Something is written in a very strange way.");
 		sensed = 1;
 	    }
 	    if (sensed) {
@@ -827,7 +827,7 @@ int doengrave(struct obj *otmp)
 		    break;
 		}
 	    case ILLOBJ_CLASS:
-		impossible("You're engraving with an illegal object!");
+		warning("You're engraving with an illegal object!");
 		break;
 	}
 
@@ -1203,7 +1203,7 @@ void del_engr(struct level *lev, struct engr *ep)
 			break;
 		    }
 		if (!ept) {
-		    impossible("Error in del_engr?");
+		    warning("Error in del_engr?");
 		    return;
 		}
 	}

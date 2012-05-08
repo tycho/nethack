@@ -204,7 +204,7 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 		    if (rn2(4)) helm = HELM_OF_BRILLIANCE;
 		    shield = STRANGE_OBJECT;
 		    break;
-		default: impossible("bad mplayer monster");
+		default: warning("bad mplayer monster");
 		    weapon = 0;
 		    break;
 	    }

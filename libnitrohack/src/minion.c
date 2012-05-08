@@ -98,7 +98,7 @@ void summon_minion(aligntyp alignment, boolean talk)
 	    mnum = ndemon(&u.uz, alignment);
 	    break;
 	default:
-	    impossible("unaligned player?");
+	    warning("unaligned player?");
 	    mnum = ndemon(&u.uz, A_NONE);
 	    break;
     }

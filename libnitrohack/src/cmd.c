@@ -859,7 +859,7 @@ void enlightenment(int final)
 	} else {		/* game ended in character's death */
 	    p = "are dead";
 	    switch (u.umortality) {
-	    case 0:  impossible("dead without dying?");
+	    case 0:  warning("dead without dying?");
 	    case 1:  break;			/* just "are dead" */
 	    default: sprintf(buf, " (%d%s time!)", u.umortality,
 			     ordin(u.umortality));

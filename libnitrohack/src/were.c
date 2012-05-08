@@ -52,7 +52,7 @@ void new_were(struct monst *mon)
 
 	pm = counter_were(monsndx(mon->data));
 	if (!pm) {
-	    impossible("unknown lycanthrope %s.", mons_mname(mon->data));
+	    warning("unknown lycanthrope %s.", mons_mname(mon->data));
 	    return;
 	}
 

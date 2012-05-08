@@ -51,7 +51,7 @@ static int cost(struct obj *otmp)
 /*		break; */
 	case SCR_BLANK_PAPER:
 	default:
-		impossible("You can't write such a weird scroll!");
+		warning("You can't write such a weird scroll!");
 	}
 	return 1000;
 }

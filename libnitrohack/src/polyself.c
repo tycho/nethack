@@ -725,7 +725,7 @@ int dobreathe(void)
 
 	mattk = attacktype_fordmg(youmonst.data, AT_BREA, AD_ANY);
 	if (!mattk)
-	    impossible("bad breath attack?");	/* mouthwash needed... */
+	    warning("bad breath attack?");	/* mouthwash needed... */
 	else
 	    buzz((int) (20 + mattk->adtyp-1), (int)mattk->damn,
 		u.ux, u.uy, dx, dy);
@@ -778,7 +778,7 @@ int dospinweb(void)
 				if (u.ustuck->data->mattk[i].aatyp == AT_ENGL)
 					break;
 			if (i == NATTK)
-			       impossible("Swallower has no engulfing attack?");
+			       warning("Swallower has no engulfing attack?");
 			else {
 				char sweep[30];
 
@@ -853,7 +853,7 @@ int dospinweb(void)
 			dotrap(ttmp, 0);
 			return 1;
 		default:
-			impossible("Webbing over trap type %d?", ttmp->ttyp);
+			warning("Webbing over trap type %d?", ttmp->ttyp);
 			return 0;
 		}
 	else if (On_stairs(u.ux, u.uy)) {
@@ -904,7 +904,7 @@ int dogaze(void)
 	    }
 	}
 	if (adtyp != AD_CONF && adtyp != AD_FIRE) {
-	    impossible("gaze attack %d?", adtyp);
+	    warning("gaze attack %d?", adtyp);
 	    return 0;
 	}
 

@@ -95,7 +95,7 @@ static int stealarm(void)
 	    if (otmp->o_id == stealoid) {
 		for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
 		    if (mtmp->m_id == stealmid) {
-			if (DEADMONSTER(mtmp)) impossible("stealarm(): dead monster stealing"); 
+			if (DEADMONSTER(mtmp)) warning("stealarm(): dead monster stealing");
 			if (!dmgtype(mtmp->data, AD_SITM)) /* polymorphed */
 			    goto botm;
 			if (otmp->unpaid)
@@ -129,7 +129,7 @@ void remove_worn_item(struct obj *obj,
 
 	if (obj->owornmask & W_ARMOR) {
 	    if (obj == uskin) {
-		impossible("Removing embedded scales?");
+		warning("Removing embedded scales?");
 		skinback(TRUE);		/* uarm = uskin; uskin = 0; */
 	    }
 	    if (obj == uarm) Armor_off();
@@ -228,7 +228,7 @@ nothing_to_steal:
 			(W_ARMOR | W_RING | W_AMUL | W_TOOL)) ? 5 : 1)) < 0)
 			break;
 	if (!otmp) {
-		impossible("Steal fails!");
+		warning("Steal fails!");
 		return 0;
 	}
 	/* can't steal gloves while wielding - so steal the wielded item. */
@@ -335,8 +335,8 @@ gotobj:
 		    }
 		    break;
 		default:
-		    impossible("Tried to steal a strange worn thing. [%d]",
-			       otmp->oclass);
+		    warning("Tried to steal a strange worn thing. [%d]",
+			    otmp->oclass);
 		}
 	}
 	else if (otmp->owornmask)

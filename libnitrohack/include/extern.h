@@ -1196,6 +1196,7 @@ extern const char *safe_qbuf(const char *,unsigned,
 
 extern void pline(const char *,...);
 extern void impossible(const char *,...);
+extern void warning(const char *,...);
 extern void Norep(const char *,...);
 extern void free_youbuf(void);
 extern void You_hear(const char *,...);

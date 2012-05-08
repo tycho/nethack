@@ -181,7 +181,7 @@ int castmu(struct monst *mtmp,
 		    if (!is_undirected_spell(mattk->adtyp, spellnum) ||
 			spell_would_be_useless(mtmp, mattk->adtyp, spellnum)) {
 			if (foundyou)
-			    impossible("spellcasting monster found you and doesn't know it?");
+			    warning("spellcasting monster found you and doesn't know it?");
 			return 0;
 		    }
 		    break;
@@ -239,7 +239,7 @@ int castmu(struct monst *mtmp,
 	if (!foundyou) {
 	    dmg = 0;
 	    if (mattk->adtyp != AD_SPEL && mattk->adtyp != AD_CLRC) {
-		impossible(
+		warning(
 	      "%s casting non-hand-to-hand version of hand-to-hand spell %d?",
 			   Monnam(mtmp), mattk->adtyp);
 		return 0;
@@ -305,7 +305,7 @@ int castmu(struct monst *mtmp,
 static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 {
     if (dmg == 0 && !is_undirected_spell(AD_SPEL, spellnum)) {
-	impossible("cast directed wizard spell (%d) with dmg=0?", spellnum);
+	warning("cast directed wizard spell (%d) with dmg=0?", spellnum);
 	return;
     }
 
@@ -334,7 +334,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 	    clonewiz();
 	    dmg = 0;
 	} else
-	    impossible("bad wizard cloning?");
+	    warning("bad wizard cloning?");
 	break;
     case MGC_SUMMON_MONS:
     {
@@ -401,7 +401,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 	    mon_set_minvis(mtmp);
 	    dmg = 0;
 	} else
-	    impossible("no reason for monster to cast disappear spell?");
+	    warning("no reason for monster to cast disappear spell?");
 	break;
     case MGC_STUN_YOU:
 	if (Antimagic || Free_action) {
@@ -453,7 +453,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 	    pline("Your %s suddenly aches very painfully!", body_part(HEAD));
 	break;
     default:
-	impossible("mcastu: invalid magic spell (%d)", spellnum);
+	warning("mcastu: invalid magic spell (%d)", spellnum);
 	dmg = 0;
 	break;
     }
@@ -464,7 +464,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 static void cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
 {
     if (dmg == 0 && !is_undirected_spell(AD_CLRC, spellnum)) {
-	impossible("cast directed cleric spell (%d) with dmg=0?", spellnum);
+	warning("cast directed cleric spell (%d) with dmg=0?", spellnum);
 	return;
     }
 
@@ -574,7 +574,7 @@ static void cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
 	    if (!Blind) pline("Your vision quickly clears.");
 	    dmg = 0;
 	} else
-	    impossible("no reason for monster to cast blindness spell?");
+	    warning("no reason for monster to cast blindness spell?");
 	break;
     case CLC_PARALYZE:
 	if (Antimagic || Free_action) {
@@ -633,7 +633,7 @@ static void cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
 	    pline("Your body is covered with painful wounds!");
 	break;
     default:
-	impossible("mcastu: invalid clerical spell (%d)", spellnum);
+	warning("mcastu: invalid clerical spell (%d)", spellnum);
 	dmg = 0;
 	break;
     }

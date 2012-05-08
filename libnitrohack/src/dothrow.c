@@ -1188,7 +1188,7 @@ int thitmonst(struct monst *mon, struct obj *obj)
 	    case GAUNTLETS_OF_DEXTERITY:
 		break;
 	    default:
-		impossible("Unknown type of gloves (%d)", uarmg->otyp);
+		warning("Unknown type of gloves (%d)", uarmg->otyp);
 		break;
 	    }
 	}
@@ -1662,7 +1662,7 @@ static void breakmsg(struct obj *obj, boolean in_view)
 	switch (obj->oclass == POTION_CLASS ? POT_WATER : obj->otyp) {
 		default: /* glass or crystal wand or ring */
 		    if (obj->oclass != WAND_CLASS && obj->oclass != RING_CLASS)
-			impossible("breaking odd object?");
+			warning("breaking odd object?");
 		case CRYSTAL_PLATE_MAIL:
 		case LENSES:
 		case MIRROR:

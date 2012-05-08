@@ -472,7 +472,7 @@ static void m_initinv(struct monst *mtmp)
 			case PM_CAPTAIN: mac = -3; break;
 			case PM_WATCHMAN: mac = 3; break;
 			case PM_WATCH_CAPTAIN: mac = -2; break;
-			default: impossible("odd mercenary %d?", monsndx(ptr));
+			default: warning("odd mercenary %d?", monsndx(ptr));
 				mac = 0;
 				break;
 		    }
@@ -1190,7 +1190,7 @@ const struct permonst *rndmonst(const d_level *dlev)
 	    if ((ct -= (int)rndmonst_state.mchoices[mndx]) <= 0) break;
 
 	if (mndx == SPECIAL_PM || uncommon(dlev, mndx)) {	/* shouldn't happen */
-	    impossible("rndmonst: bad `mndx' [#%d]", mndx);
+	    warning("rndmonst: bad `mndx' [#%d]", mndx);
 	    return NULL;
 	}
 	return &mons[mndx];
@@ -1239,7 +1239,7 @@ const struct permonst *mkclass(const d_level *dlev, char class, int spc)
 
 	maxmlev = level_difficulty(dlev) >> 1;
 	if (class < 1 || class >= MAXMCLASSES) {
-	    impossible("mkclass called with bad class!");
+	    warning("mkclass called with bad class!");
 	    return NULL;
 	}
 /*	Assumption #1:	monsters of a given class are contiguous in the
@@ -1670,7 +1670,7 @@ assign_sym:
 int bagotricks(struct obj *bag)
 {
 	if (!bag || bag->otyp != BAG_OF_TRICKS) {
-	    impossible("bad bag o' tricks");
+	    warning("bad bag o' tricks");
 	} else if (bag->spe < 1) {
 	    pline("Nothing happens.");
 	    return use_container(bag, 1);

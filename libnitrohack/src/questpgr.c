@@ -118,7 +118,7 @@ short quest_info(int typ)
 	    case MS_LEADER:	return urole.ldrnum;
 	    case MS_NEMESIS:	return urole.neminum;
 	    case MS_GUARDIAN:	return urole.guardnum;
-	    default:		impossible("quest_info(%d)", typ);
+	    default:		warning("quest_info(%d)", typ);
 	}
 	return 0;
 }
@@ -344,7 +344,7 @@ void com_pager(int msgnum)
 	struct qtmsg *qt_msg;
 
 	if (!(qt_msg = msg_in(qt_list.common, msgnum))) {
-		impossible("com_pager: message %d not found.", msgnum);
+		warning("com_pager: message %d not found.", msgnum);
 		return;
 	}
 
@@ -359,7 +359,7 @@ void qt_pager(int msgnum)
 	struct qtmsg *qt_msg;
 
 	if (!(qt_msg = msg_in(qt_list.chrole, msgnum))) {
-		impossible("qt_pager: message %d not found.", msgnum);
+		warning("qt_pager: message %d not found.", msgnum);
 		return;
 	}
 

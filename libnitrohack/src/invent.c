@@ -218,22 +218,22 @@ void addinv_core1(struct obj *obj)
 	if (obj->oclass == COIN_CLASS) {
 		iflags.botl = 1;
 	} else if (obj->otyp == AMULET_OF_YENDOR) {
-		if (u.uhave.amulet) impossible("already have amulet?");
+		if (u.uhave.amulet) warning("already have amulet?");
 		u.uhave.amulet = 1;
 		historic_event(!obj->known, "gained the Amulet of Yendor!");
 	} else if (obj->otyp == CANDELABRUM_OF_INVOCATION) {
-		if (u.uhave.menorah) impossible("already have candelabrum?");
+		if (u.uhave.menorah) warning("already have candelabrum?");
 		u.uhave.menorah = 1;
 	} else if (obj->otyp == BELL_OF_OPENING) {
-		if (u.uhave.bell) impossible("already have silver bell?");
+		if (u.uhave.bell) warning("already have silver bell?");
 		u.uhave.bell = 1;
 	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
-		if (u.uhave.book) impossible("already have the book?");
+		if (u.uhave.book) warning("already have the book?");
 		u.uhave.book = 1;
 	} else if (obj->oartifact) {
 		if (is_quest_artifact(obj)) {
 		    if (u.uhave.questart)
-			impossible("already have quest artifact?");
+			warning("already have quest artifact?");
 		    u.uhave.questart = 1;
 		    artitouch();
 		}
@@ -434,25 +434,25 @@ void freeinv_core(struct obj *obj)
 		iflags.botl = 1;
 		return;
 	} else if (obj->otyp == AMULET_OF_YENDOR) {
-		if (!u.uhave.amulet) impossible("don't have amulet?");
+		if (!u.uhave.amulet) warning("don't have amulet?");
 		u.uhave.amulet = 0;
 		/* Minor information leak about the Amulet of Yendor (vs fakes).
 		 * You don't get any more info than you do by turning on
 		 * show_uncursed though. */
 		historic_event(!obj->known, "lost the Amulet of Yendor.");
 	} else if (obj->otyp == CANDELABRUM_OF_INVOCATION) {
-		if (!u.uhave.menorah) impossible("don't have candelabrum?");
+		if (!u.uhave.menorah) warning("don't have candelabrum?");
 		u.uhave.menorah = 0;
 	} else if (obj->otyp == BELL_OF_OPENING) {
-		if (!u.uhave.bell) impossible("don't have silver bell?");
+		if (!u.uhave.bell) warning("don't have silver bell?");
 		u.uhave.bell = 0;
 	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
-		if (!u.uhave.book) impossible("don't have the book?");
+		if (!u.uhave.book) warning("don't have the book?");
 		u.uhave.book = 0;
 	} else if (obj->oartifact) {
 		if (is_quest_artifact(obj)) {
 		    if (!u.uhave.questart)
-			impossible("don't have quest artifact?");
+			warning("don't have quest artifact?");
 		    u.uhave.questart = 0;
 		}
 		set_artifact_intrinsic(obj, 0, W_ART);

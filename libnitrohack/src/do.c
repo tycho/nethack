@@ -40,7 +40,7 @@ int dodrop(struct obj *obj)
 boolean boulder_hits_pool(struct obj *otmp, int rx, int ry, boolean pushing)
 {
 	if (!otmp || otmp->otyp != BOULDER)
-	    impossible("Not a boulder?");
+	    warning("Not a boulder?");
 	else if (!Is_waterlevel(&u.uz) && (is_pool(level, rx,ry) || is_lava(level, rx,ry))) {
 	    boolean lava = is_lava(level, rx,ry), fills_up;
 	    const char *what = waterbody_name(rx,ry);
@@ -1066,9 +1066,8 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 			    } while ((occupied(level, x, y) ||
 				      IS_STWALL(level->locations[x][y].typ)) &&
 				     trycnt++ < 1000);
-			    /* TODO: change impossible() to warning() */
 			    if (trycnt >= 1000)
-				impossible("Castle: placement failed to find good pos");
+				warning("Castle: placement failed to find good pos");
 			    u_on_newpos(x, y);
 			} else u_on_sstairs();
 		    } else u_on_dnstairs();

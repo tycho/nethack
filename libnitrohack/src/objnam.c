@@ -112,7 +112,7 @@ static char *strprepend(char *s, const char *pref)
 	int i = (int)strlen(pref);
 
 	if (i > PREFIX) {
-		impossible("PREFIX too short (for %d).", i);
+		warning("PREFIX too short (for %d).", i);
 		return s;
 	}
 	s -= i;
@@ -398,7 +398,7 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 					break;
 				}
 			}
-			if (!f) impossible("Bad fruit #%d?", obj->spe);
+			if (!f) warning("Bad fruit #%d?", obj->spe);
 			break;
 		}
 
@@ -1295,7 +1295,7 @@ char *makeplural(const char *oldstr)
 
 	while (*oldstr==' ') oldstr++;
 	if (!*oldstr) {
-		impossible("plural of null?");
+		warning("plural of null?");
 		strcpy(str, "s");
 		return str;
 	}
@@ -1548,7 +1548,7 @@ char *makesingular(const char *oldstr)
 	char *str = nextobuf();
 
 	if (!oldstr || !*oldstr) {
-		impossible("singular of null?");
+		warning("singular of null?");
 		str[0] = 0;
 		return str;
 	}

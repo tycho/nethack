@@ -206,7 +206,7 @@ static void fill_topten_entry(struct toptenentry *newtt, int how)
     newtt->name[NAMSZ] = '\0';
     newtt->death[0] = '\0';
     switch (killer_format) {
-	default: impossible("bad killer format?");
+	default: warning("bad killer format?");
 	case KILLED_BY_AN:
 	    strcat(newtt->death, killed_by_prefix[how]);
 	    strncat(newtt->death, an(killer),
@@ -319,7 +319,7 @@ static int classmon(char *plch, boolean fem)
 		return PM_HUMAN;
 	}
 
-    impossible("What weird role is this? (%s)", plch);
+    warning("What weird role is this? (%s)", plch);
     return PM_HUMAN_MUMMY;
 }
 

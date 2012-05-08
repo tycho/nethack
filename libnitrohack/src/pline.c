@@ -160,6 +160,21 @@ void impossible (const char *s, ...)
 	va_end(the_args);
 }
 
+void warning(const char *s, ...)
+{
+	char str[BUFSZ];
+	va_list the_args;
+	va_start(the_args, s);
+	{
+	    char pbuf[BUFSZ];
+	    vsprintf(pbuf, s, the_args);
+	    paniclog("warning", pbuf);
+	}
+	vsprintf(str, s, the_args);
+	pline("Warning: %s\n", str);
+	va_end(the_args);
+}
+
 const char * align_str(aligntyp alignment)
 {
     switch ((int)alignment) {

@@ -344,7 +344,7 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 			int dam, hitv;
 			case EGG:
 			    if (!touch_petrifies(&mons[singleobj->corpsenm])) {
-				impossible("monster throwing egg type %d",
+				warning("monster throwing egg type %d",
 					singleobj->corpsenm);
 				hitu = 0;
 				break;
@@ -608,7 +608,7 @@ int spitmu(struct monst *mtmp, const struct attack *mattk)
 			otmp = mksobj(level, BLINDING_VENOM, TRUE, FALSE);
 			break;
 		    default:
-			impossible("bad attack type in spitmu");
+			warning("bad attack type in spitmu");
 				/* fall through */
 		    case AD_ACID:
 			otmp = mksobj(level, ACID_VENOM, TRUE, FALSE);
@@ -660,7 +660,7 @@ int breamu(struct monst *mtmp, const struct attack *mattk)
 			mtmp->mspec_used = 10+rn2(20);
 		    if (typ == AD_SLEE && !Sleep_resistance)
 			mtmp->mspec_used += rnd(20);
-		} else impossible("Breath weapon %d used", typ-1);
+		} else warning("Breath weapon %d used", typ-1);
 	    }
 	}
 	return 1;

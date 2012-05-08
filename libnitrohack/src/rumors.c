@@ -105,7 +105,7 @@ char *getrumor(int truth, /* 1=true, -1=false, 0=either */
 			    tidbit = mt_random() % false_rumor_size;
 			break;
 		  default:
-			    impossible("strange truth value for rumor");
+			    warning("strange truth value for rumor");
 			return strcpy(rumor_buf, "Oops...");
 		}
 		dlb_fseek(rumors, beginning + tidbit, SEEK_SET);
@@ -121,7 +121,7 @@ char *getrumor(int truth, /* 1=true, -1=false, 0=either */
 	    } while (count++ < 50 && exclude_cookie && (strstri(rumor_buf, "fortune") || strstri(rumor_buf, "pity")));
 	    dlb_fclose(rumors);
 	    if (count >= 50)
-		impossible("Can't find non-cookie rumor?");
+		warning("Can't find non-cookie rumor?");
 	    else
 		exercise(A_WIS, (adjtruth > 0));
 	} else {

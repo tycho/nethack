@@ -1358,7 +1358,7 @@ static void use_tinning_kit(struct obj *obj)
 	    }
 	    hold_another_object(can, "You make, but cannot pick up, %s.",
 				doname(can), NULL);
-	} else impossible("Tinning failed.");
+	} else warning("Tinning failed.");
 }
 
 /* Formerly known as use_unicorn_horn. attr_point = num attr pts we might fix. */
@@ -1577,8 +1577,8 @@ void fig_transform(void *arg, long timeout)
 		    break;
 
 		default:
-		    impossible("figurine came to life where? (%d)",
-				(int)figurine->where);
+		    warning("figurine came to life where? (%d)",
+			    (int)figurine->where);
 		break;
 	    }
 	}

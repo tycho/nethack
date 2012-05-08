@@ -255,7 +255,7 @@ int pick_lock(struct obj *pick, int rx, int ry)
 		picktyp != STETHOSCOPE &&
 		picktyp != CREDIT_CARD &&
 		picktyp != SKELETON_KEY) {
-		impossible("picking lock with object %d?", picktyp);
+		warning("picking lock with object %d?", picktyp);
 		return 0;
 	}
 	ch = 0;		/* lint suppression */
@@ -884,7 +884,7 @@ boolean doorlock(struct obj *otmp, int x, int y)
 		loudness = 20;
 	    } else res = FALSE;
 	    break;
-	default: impossible("magic (%d) attempted on door.", otmp->otyp);
+	default: warning("magic (%d) attempted on door.", otmp->otyp);
 	    break;
 	}
 	if (msg && cansee(x,y)) pline(msg);

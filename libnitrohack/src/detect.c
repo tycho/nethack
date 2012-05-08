@@ -360,7 +360,7 @@ int object_detect(struct obj *detector, /* object doing the detecting */
     int uw = u.uinwater;
 
     if (class < 0 || class >= MAXOCLASSES) {
-	impossible("object_detect:  illegal class %d", class);
+	warning("object_detect:  illegal class %d", class);
 	class = 0;
     }
 

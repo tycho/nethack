@@ -446,10 +446,10 @@ static void display_warning(struct monst *mon)
 	monnum = dbuf_monid(mon);
 	mflag = 0;
     } else {
-    	impossible("display_warning did not match warning type?");
-        return;
+	warning("display_warning did not match warning type?");
+	return;
     }
-    
+
     dbuf_set(x, y, level->locations[x][y].mem_bg,
 		level->locations[x][y].mem_trap,
 		level->locations[x][y].mem_obj,
@@ -1530,7 +1530,7 @@ static int swallow_to_effect(int mnum, int loc)
 int zapdir_to_effect(int dx, int dy, int beam_type)
 {
     if (beam_type >= NUM_ZAP) {
-	impossible("zapdir_to_effect:  illegal beam type");
+	warning("zapdir_to_effect:  illegal beam type");
 	beam_type = 0;
     }
     dx = (dx == dy) ? 2 : (dx && dy) ? 3 : dx ? 1 : 0;
