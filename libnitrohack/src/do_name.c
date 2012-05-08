@@ -506,7 +506,11 @@ char *x_monnam(const struct monst *mtmp,
 				 monsndx(mdat), (boolean)mtmp->female));
 	    strcat(buf, lcase(pbuf));
 	    name_at_start = FALSE;
-	} else if (is_rider(mtmp->data) && distu(mtmp->mx, mtmp->my) > 2) {
+	} else if (is_rider(mtmp->data) &&
+		   distu(mtmp->mx, mtmp->my) > 2 &&
+		   !canseemon(level, mtmp) &&
+		   /* for livelog reporting */
+		   !(suppress & SUPPRESS_IT)) {
 	    /* prevent the three horsemen from being identified from afar */
 	    strcat(buf, "Rider");
 	    name_at_start = FALSE;
