@@ -1670,23 +1670,47 @@ int domove(schar dx, schar dy, schar dz)
 
 void invocation_message(void)
 {
-	/* a special clue-msg when on the Invocation position */
-	if (invocation_pos(&u.uz, u.ux, u.uy) && !On_stairs(u.ux, u.uy)) {
-	    char buf[BUFSZ];
-	    struct obj *otmp = carrying(CANDELABRUM_OF_INVOCATION);
+	/* a special clue-msg when near the Invocation position */
+	if (Invocation_lev(&u.uz)) {
+	    const char *strange_vibration;
+	    int dist_invocation_pos = distu(inv_pos.x, inv_pos.y);
 
-	    nomul(0, NULL);		/* stop running or travelling */
-	    if (u.usteed)
-		    sprintf(buf, "beneath %s", y_monnam(u.usteed));
-	    else if (Levitation || Flying)
-		    strcpy(buf, "beneath you");
+	    /* different message depending on the distance to the vibrating square
+	       ..f..
+	       .www.
+	       fwswf
+	       .www.
+	       ..f..
+	     */
+	    if (dist_invocation_pos == 0)
+		strange_vibration = "strange vibration";
+	    else if (dist_invocation_pos <= 2)
+		strange_vibration = "weak trembling";
 	    else
-		    sprintf(buf, "under your %s", makeplural(body_part(FOOT)));
+		strange_vibration = "faint trembling";
 
-	    pline("You feel a strange vibration %s.", buf);
-	    if (otmp && otmp->spe == 7 && otmp->lamplit)
-		pline("%s %s!", The(xname(otmp)),
-		    Blind ? "throbs palpably" : "glows with a strange light");
+	    /* within close proximity of the vibrating square */
+	    if (dist_invocation_pos <= 4 && !On_stairs(inv_pos.x, inv_pos.y)) {
+		char buf[BUFSZ];
+		struct obj *otmp = carrying(CANDELABRUM_OF_INVOCATION);
+
+		nomul(0, NULL);		/* stop running or travelling */
+
+		if (u.usteed)
+		    sprintf(buf, "beneath %s", y_monnam(u.usteed));
+		else if (Levitation || Flying)
+		    strcpy(buf, "beneath you");
+		else
+		    sprintf(buf, "under your %s", makeplural(body_part(FOOT)));
+		pline("You feel a %s %s.", strange_vibration, buf);
+
+		/* only report if on the vibrating square */
+		if (invocation_pos(&u.uz, u.ux, u.uy) &&
+		    otmp && otmp->spe == 7 && otmp->lamplit) {
+		    pline("%s %s!", The(xname(otmp)),
+			Blind ? "throbs palpably" : "glows with a strange light");
+		}
+	    }
 	}
 }
 
