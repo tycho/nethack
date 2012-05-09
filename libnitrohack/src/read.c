@@ -1274,10 +1274,10 @@ int seffects(struct obj *sobj, boolean *known)
 		return 1;
 	case SCR_EARTH:
 	    /* TODO: handle steeds */
-	    if (
-		!Is_rogue_level(&u.uz) && 
-	    	 (!In_endgame(&u.uz) || Is_earthlevel(&u.uz))) {
-	    	int x, y;
+	    if (!Is_rogue_level(&u.uz) &&
+		(!In_endgame(&u.uz) || Is_earthlevel(&u.uz))) {
+		int x, y;
+		int boulder_created = 0;
 
 		/* Identify the scroll */
 		pline("The %s rumbles %s you!", ceiling(u.ux,u.uy),
@@ -1294,6 +1294,8 @@ int seffects(struct obj *sobj, boolean *known)
 			if (isok(x, y) && !closed_door(level, x, y) &&
 					!IS_ROCK(level->locations[x][y].typ) &&
 					!IS_AIR(level->locations[x][y].typ) &&
+					/* make less boulders in Black Market */
+					!(Is_blackmarket(&u.uz) && rn2(2)) &&
 					(x != u.ux || y != u.uy)) {
 			    struct obj *otmp2;
 			    struct monst *mtmp;
@@ -1302,6 +1304,7 @@ int seffects(struct obj *sobj, boolean *known)
 			    otmp2 = mksobj(level, confused ? ROCK : BOULDER,
 					FALSE, FALSE);
 			    if (!otmp2) continue;  /* Shouldn't happen */
+			    boulder_created++;
 			    otmp2->quan = confused ? rn1(5,2) : 1;
 			    otmp2->owt = weight(otmp2);
 
@@ -1384,6 +1387,8 @@ int seffects(struct obj *sobj, boolean *known)
 		    }
 		    if (dmg) losehp(dmg, "scroll of earth", KILLED_BY_AN);
 		}
+		if (boulder_created == 0)
+		    pline("But nothing else happens.");
 	    } else if (In_endgame(&u.uz)) {
 		You_hear("the %s rumbling below you!", surface(u.ux, u.uy));
 	    }
