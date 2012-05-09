@@ -246,7 +246,8 @@ static int enter_explore_mode(void)
 {
 	if (!discover && !wizard) {
 		pline("Beware!  From explore mode there will be no return to normal game.");
-		if (yn("Do you want to enter explore mode?") == 'y') {
+		if (paranoid_yn("Do you want to enter explore mode?",
+				iflags.paranoid_quit) == 'y') {
 			pline("You are now in non-scoring explore mode.");
 			discover = TRUE;
 		}

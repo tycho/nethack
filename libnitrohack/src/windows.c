@@ -94,6 +94,26 @@ char yn_function(const char *query,const char *resp, char def)
 }
 
 
+/*
+ *   Ask the player a yes/no question if paranoid is true.
+ *   This calls getlin or yn, so this needs no special log support.
+ *   Returns 'y' or 'n'.
+ */
+char paranoid_yn(const char *query, boolean paranoid)
+{
+	if (paranoid) {
+	    char buf[BUFSZ];
+	    char query_yesno[2 * BUFSZ];
+	    /* put [yes/no] between question and question mark? */
+	    sprintf(query_yesno, "%s [yes/no]", query);
+	    getlin(query_yesno, buf);
+	    lcase(buf);
+	    return !(strcmp (buf, "yes")) ? 'y' : 'n';
+	} else
+	    return yn(query);
+}
+
+
 int display_menu(struct nh_menuitem *items, int icount, const char *title,
 		 int how, int *results)
 {

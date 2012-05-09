@@ -1751,6 +1751,7 @@ extern void unwield_weapons_silently(void);
 
 extern int getpos(coord *cc, boolean, const char *);
 extern char yn_function(const char *query, const char *resp, char def);
+extern char paranoid_yn(const char *query, boolean paranoid);
 extern int getdir(const char *, schar *dx, schar *dy, schar *dz);
 extern char query_key(const char *query, int *count);
 extern void getlin(const char *query, char *bufp);

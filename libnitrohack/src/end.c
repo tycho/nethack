@@ -64,7 +64,7 @@ extern const char * const killed_by_prefix[];	/* from topten.c */
 /* "#quit" command or keyboard interrupt */
 int done2(void)
 {
-	if (yn("Really quit?") == 'n') {
+	if (paranoid_yn("Really quit?", iflags.paranoid_quit) == 'n') {
 		flush_screen();
 		if (multi > 0) nomul(0, NULL);
 		if (multi == 0) {
@@ -793,7 +793,7 @@ void done(int how)
 	umoney = calc_score(how);
 
 	if (bones_ok) {
-	    if (!wizard || yn("Save bones?") == 'y')
+	    if (!wizard || paranoid_yn("Save bones?", iflags.paranoid_quit) == 'y')
 		savebones(corpse);
 	    /* corpse may be invalid pointer now so
 		ensure that it isn't used again */

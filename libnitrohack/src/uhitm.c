@@ -191,7 +191,7 @@ boolean attack_checks(struct monst *mtmp,
 		}
 		if (canspotmon(level, mtmp)) {
 			sprintf(qbuf, "Really attack %s?", mon_nam(mtmp));
-			if (yn(qbuf) != 'y') {
+			if (paranoid_yn(qbuf, iflags.paranoid_hit) != 'y') {
 				flags.move = 0;
 				return TRUE;
 			}

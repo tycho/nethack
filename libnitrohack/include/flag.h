@@ -126,6 +126,9 @@ struct instance_flags {
 	coord    travelcc;	/* coordinates for travel_cache */
 	boolean  mon_polycontrol;	/* debug: control monster polymorphs */
 
+	boolean paranoid_hit;	/* Ask for 'yes' when hitting peacefuls */
+	boolean paranoid_quit;	/* Ask for 'yes' when quitting */
+
 	/* Items which belong in flags, but are here to allow save compatibility */
 	boolean  show_uncursed;	/* always show uncursed items as such */
 	boolean  showrace;	/* show hero glyph by race rather than by role */
