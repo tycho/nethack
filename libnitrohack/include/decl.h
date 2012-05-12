@@ -96,6 +96,7 @@ extern s_level *sp_levchn;
 
 #include "quest.h"
 extern struct q_score quest_status;
+#include "qtext.h"
 
 extern char pl_character[PL_CSIZ];
 extern char pl_race;		/* character's race */

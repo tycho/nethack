@@ -780,6 +780,9 @@ void done(int how)
 
 	win_pause_output(P_MESSAGE);
 
+	if (how < PANICKED)
+	    check_tutorial_message(QT_T_DEATH);
+
 	if (flags.end_disclose != DISCLOSE_NO_WITHOUT_PROMPT)
 	    disclose(how, taken);
     

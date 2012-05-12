@@ -671,6 +671,8 @@ static int do_look(boolean quick)
 	} else {
 	    pline("I've never heard of such things.");
 	}
+
+	if (quick) check_tutorial_farlook(cc.x, cc.y);
     } while (!quick && ans != LOOK_ONCE);
 
     flags.verbose = save_verbose;
@@ -686,6 +688,7 @@ int dowhatis(void)
 
 int doquickwhatis(void)
 {
+	check_tutorial_message(QT_T_CURSOR_NUMPAD);
 	return do_look(TRUE);
 }
 

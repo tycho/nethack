@@ -398,6 +398,9 @@ static void restgamestate(struct memfile *mf)
 	restore_spellbook(mf);
 	restore_artifacts(mf);
 	restore_oracles(mf);
+
+	restore_tutorial(mf);
+
 	mread(mf, pl_character, sizeof(pl_character));
 
 	mread(mf, pl_fruit, sizeof pl_fruit);
@@ -471,6 +474,7 @@ void restore_flags(struct memfile *mf, struct flag *f)
 	f->confirm = mread8(mf);
 	f->debug = mread8(mf);
 	f->explore = mread8(mf);
+	f->tutorial = mread8(mf);
 	f->female = mread8(mf);
 	f->forcefight = mread8(mf);
 	f->friday13 = mread8(mf);

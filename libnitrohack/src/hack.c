@@ -2041,6 +2041,7 @@ void check_special_room(boolean newlev)
 		    if (monstinroom(&mons[PM_ORACLE], roomno))
 			verbalize("%s, %s, welcome to Delphi!",
 					Hello(NULL), plname);
+		    check_tutorial_message(QT_T_ORACLE);
 		    break;
 		case TEMPLE:
 		    intemple(roomno + ROOMOFFSET);

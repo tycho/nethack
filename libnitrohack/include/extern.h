@@ -1254,6 +1254,7 @@ extern const char *bottlename(void);
 
 /* ### pray.c ### */
 
+extern int in_trouble(void);
 extern int dosacrifice(struct obj *otmp);
 extern boolean can_pray(boolean);
 extern int dopray(void);
@@ -1307,6 +1308,7 @@ extern void load_qtlist(void);
 extern void unload_qtlist(void);
 extern short quest_info(int);
 extern boolean is_quest_artifact(struct obj*);
+extern void qt_com_firstline(int msgnum, char *msgbuf);
 extern void com_pager(int);
 extern void qt_pager(int);
 extern const struct permonst *qt_montype(const d_level *dlev);
@@ -1642,6 +1644,18 @@ extern boolean unconscious(void);
 extern boolean lava_effects(void);
 extern void blow_up_landmine(struct trap *);
 
+/* ### tutorial.c ### */
+
+extern void init_tutorial(void);
+extern void save_tutorial(struct memfile *mf);
+extern void restore_tutorial(struct memfile *mf);
+extern boolean check_tutorial_message(int msgnum);
+extern boolean check_tutorial_oclass(int oclass);
+extern void check_tutorial_farlook(int x, int y);
+extern void check_tutorial_command(int command, const struct nh_cmd_arg *arg);
+extern void maybe_tutorial(void);
+extern void tutorial_redisplay(void);
+
 /* ### u_init.c ### */
 
 extern void u_init(void);
@@ -1696,6 +1710,7 @@ extern void do_clear_area(int,int,int, void (*)(int,int,void *),void *);
 /* ### weapon.c ### */
 
 extern boolean can_advance(int, boolean);
+extern boolean can_advance_something(void);
 extern int hitval(struct obj *,struct monst *);
 extern int dmgval(struct obj *,struct monst *);
 extern struct obj *select_rwep(struct monst *);

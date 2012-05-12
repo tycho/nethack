@@ -22,6 +22,7 @@ struct flag {
 #define wizard	 flags.debug
 	boolean  explore;	/* in exploration mode */
 #define discover flags.explore
+	boolean  tutorial;	/* in tutorial mode */
 	boolean  female;
 	boolean  forcefight;
 	boolean  friday13;	/* it's Friday the 13th */

@@ -6,7 +6,6 @@
 
 static int prayer_done(void);
 static struct obj *worst_cursed_item(void);
-static int in_trouble(void);
 static void fix_worst_trouble(int);
 static void angrygods(aligntyp);
 static void at_your_feet(const char *);
@@ -124,7 +123,7 @@ but that's really hard.
 #define STARVED		6
 
 
-static int in_trouble(void)
+int in_trouble(void)
 {
 	struct obj *otmp;
 	int i, j, count=0;

@@ -139,6 +139,7 @@ void startup_common(const char *name, int playmode)
 {
     /* (re)init all global data */
     init_data();
+    init_tutorial();
     reset_food(); /* zero out victual and tin */
     reset_steal();
     reset_dig_status();
@@ -171,6 +172,8 @@ void startup_common(const char *name, int playmode)
 	*/
     vision_init();
     
+    if (playmode == MODE_TUTORIAL)
+	flags.tutorial = TRUE;
     if (playmode == MODE_EXPLORE)
 	discover = TRUE;
     else if (playmode == MODE_WIZARD)
@@ -759,9 +762,11 @@ int command_input(int cmdidx, int rep, struct nh_cmd_arg *arg)
     /* prepare for the next move */
     flags.move = 1;
     pre_move_tasks(didmove);
-    if (multi == 0 && !occupation)
+    if (multi == 0 && !occupation) {
 	flush_screen(); /* Flush screen buffer */
-	
+	maybe_tutorial();
+    }
+    
     return -1;
 }
 

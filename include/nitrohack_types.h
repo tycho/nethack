@@ -144,6 +144,7 @@ enum nh_path_prefix {
 
 enum nh_game_modes {
     MODE_NORMAL,
+    MODE_TUTORIAL,
     MODE_EXPLORE,
     MODE_WIZARD
 };

@@ -220,7 +220,7 @@ void rungame(void)
 
 void describe_game(char *buf, enum nh_log_status status, struct nh_game_info *gi)
 {
-    const char *mode_desc[] = {"", "\t[explore]", "\t[wizard]"};
+    const char *mode_desc[] = {"", "\t[tutorial]", "\t[explore]", "\t[wizard]"};
     switch (status) {
 	case LS_CRASHED:
 	    snprintf(buf, BUFSZ, "%s\t%3.3s-%3.3s-%3.3s-%3.3s  (crashed)\t%s",

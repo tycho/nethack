@@ -13,7 +13,7 @@ set (LIBNITROHACK_SRC
     polyself.c potion.c   pray.c     priest.c   quest.c   questpgr.c read.c
     rect.c     region.c   restore.c  role.c     rumors.c  save.c
     shk.c      shknam.c   sit.c      sounds.c   spell.c   sp_lev.c   symclass.c
-    steal.c    steed.c    teleport.c timeout.c  topten.c  track.c    trap.c
+    steal.c    steed.c    teleport.c timeout.c  topten.c  track.c    trap.c    tutorial.c
     uhitm.c    u_init.c   vault.c    version.c  vision.c  weapon.c   were.c
     wield.c    windows.c  wizard.c   worm.c     worn.c    write.c    xmalloc.c zap.c
     )

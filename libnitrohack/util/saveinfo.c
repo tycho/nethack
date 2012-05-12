@@ -306,7 +306,9 @@ int main(int argc, char *argv[])
 	namebuf, tokens[12], tokens[11], tokens[10], tokens[9], tokens[11][0] == 'f' ? "her" : "his");
     
     if (mode > 0)
-	printf(" in %s mode", mode == 1 ? "discover" : "wizard");
+	printf(" in %s mode", mode == 1 ? "tutorial" :
+			      mode == 2 ? "discover" :
+					  "wizard");
     printf("\n");
     
     tnum = 14;

@@ -734,6 +734,16 @@ boolean can_advance(int skill, boolean speedy)
 	    && u.weapon_slots >= slots_required(skill)));
 }
 
+/* return true if any skill can be advanced */
+boolean can_advance_something(void)
+{
+    int i;
+    for (i = 0; i < P_NUM_SKILLS; i++)
+	if (can_advance(i, FALSE))
+	    return TRUE;
+    return FALSE;
+}
+
 /* return true if this skill could be advanced if more slots were available */
 static boolean could_advance(int skill)
 {

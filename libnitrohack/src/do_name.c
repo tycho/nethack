@@ -299,6 +299,7 @@ void docall(struct obj *obj)
 	char **str1;
 
 	if (!obj->dknown) return; /* probably blind */
+	check_tutorial_message(QT_T_CALLITEM);
 	otemp = *obj;
 	otemp.quan = 1L;
 	otemp.onamelth = 0;

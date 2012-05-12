@@ -339,6 +339,22 @@ static void deliver_by_window(struct qtmsg *qt_msg)
 	free(menu.items);
 }
 
+void qt_com_firstline(int msgnum, char *msgbuf)
+{
+	struct qtmsg *qt_msg;
+
+	if (!(qt_msg = msg_in(qt_list.common, msgnum))) {
+		warning("qt_com_firstline: message %d not found.", msgnum);
+		*msgbuf = 0;
+		return;
+	}
+
+	dlb_fseek(msg_file, qt_msg->offset, SEEK_SET);
+	dlb_fgets(in_line, 80, msg_file);
+	convert_line();
+	strcpy(msgbuf, out_line);
+}
+
 void com_pager(int msgnum)
 {
 	struct qtmsg *qt_msg;

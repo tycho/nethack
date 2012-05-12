@@ -119,6 +119,7 @@ static void save_flags(struct memfile *mf)
 	mwrite8(mf, flags.confirm);
 	mwrite8(mf, flags.debug);
 	mwrite8(mf, flags.explore);
+	mwrite8(mf, flags.tutorial);
 	mwrite8(mf, flags.female);
 	mwrite8(mf, flags.forcefight);
 	mwrite8(mf, flags.friday13);
@@ -220,7 +221,9 @@ static void savegamestate(struct memfile *mf)
 	save_spellbook(mf);
 	save_artifacts(mf);
 	save_oracles(mf);
-	
+
+	save_tutorial(mf);
+
 	mwrite(mf, pl_character, sizeof pl_character);
 	mwrite(mf, pl_fruit, sizeof pl_fruit);
 	mwrite32(mf, current_fruit);

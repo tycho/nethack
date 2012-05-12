@@ -23,6 +23,7 @@ nh_bool random_player = FALSE;
 
 enum menuitems {
     NEWGAME = 1,
+    TUTORIAL,
     LOAD,
     REPLAY,
     OPTIONS,
@@ -33,6 +34,7 @@ enum menuitems {
 
 struct nh_menuitem mainmenu_items[] = {
     {NEWGAME, MI_NORMAL, "new game", 'n'},
+    {TUTORIAL, MI_NORMAL, "new game (tutorial mode)", 't'},
     {LOAD, MI_NORMAL, "load game", 'l'},
     {REPLAY, MI_NORMAL, "view replay", 'v'},
     {OPTIONS, MI_NORMAL, "set options", 'o'},
@@ -208,6 +210,11 @@ static void mainmenu(void)
 	
 	switch (menuresult[0]) {
 	    case NEWGAME:
+		rungame();
+		break;
+		
+	    case TUTORIAL:
+		ui_flags.playmode = MODE_TUTORIAL;
 		rungame();
 		break;
 		

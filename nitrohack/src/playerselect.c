@@ -193,6 +193,131 @@ static void validate_character_presets(const struct nh_roles_info *ri,
 }
 
 
+static nh_bool find_role(const struct nh_roles_info *ri,
+			 const char *role_str, int *out_role)
+{
+    int i;
+
+    for (i = 0; i < ri->num_roles; i++) {
+	if (!strcmp(role_str, ri->rolenames_m[i]) ||
+	    (ri->rolenames_f[i] && !strcmp(role_str, ri->rolenames_f[i]))) {
+	    *out_role = i;
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
+
+static nh_bool find_race(const struct nh_roles_info *ri,
+			 const char *race_str, int *out_race)
+{
+    int i;
+
+    for (i = 0; i < ri->num_races; i++) {
+	if (!strcmp(race_str, ri->racenames[i])) {
+	    *out_race = i;
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
+
+static nh_bool find_gend(const struct nh_roles_info *ri,
+			 const char *gend_str, int *out_gend)
+{
+    int i;
+
+    for (i = 0; i < ri->num_genders; i++) {
+	if (!strcmp(gend_str, ri->gendnames[i])) {
+	    *out_gend = i;
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
+
+static nh_bool find_align(const struct nh_roles_info *ri,
+			  const char *align_str, int *out_align)
+{
+    int i;
+
+    for (i = 0; i < ri->num_aligns; i++) {
+	if (!strcmp(align_str, ri->alignnames[i])) {
+	    *out_align = i;
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
+
+static nh_bool tutorial_player_selection(int *out_role, int *out_race,
+					 int *out_gend, int *out_align)
+{
+    const struct nh_roles_info *ri;
+    struct nh_menuitem items[4];	/* 3 options + quit */
+    int pick_list[2];
+    int result;
+
+    ri = nh_get_roles();
+    if (!ri)
+	return FALSE;
+
+    set_menuitem(&items[0], 1, MI_NORMAL,
+		 "lawful female dwarf Valkyrie (uses melee and thrown weapons)",
+		 'v', 0);
+    set_menuitem(&items[1], 2, MI_NORMAL,
+		 "chaotic male elf Wizard      (relies mostly on spells)",
+		 'w', 0);
+    set_menuitem(&items[2], 3, MI_NORMAL,
+		 "neutral female human Ranger  (good with ranged combat)",
+		 'R', 0);
+    set_menuitem(&items[3], 4, MI_NORMAL,
+		 "quit",
+		 'q', 0);
+
+    result = curses_display_menu(items, 4, "Choose a character", PICK_ONE, pick_list);
+    if (result == -1 || pick_list[0] == -1)
+	return FALSE;
+
+    switch (pick_list[0]) {
+    case 1:
+	if (!find_role(ri, "Valkyrie", out_role) ||
+	    !find_race(ri, "dwarf", out_race) ||
+	    !find_gend(ri, "female", out_gend) ||
+	    !find_align(ri, "lawful", out_align))
+	    return FALSE;
+	break;
+    case 2:
+	if (!find_role(ri, "Wizard", out_role) ||
+	    !find_race(ri, "elf", out_race) ||
+	    !find_gend(ri, "male", out_gend) ||
+	    !find_align(ri, "chaotic", out_align))
+	    return FALSE;
+	break;
+    case 3:
+	if (!find_role(ri, "Ranger", out_role) ||
+	    !find_race(ri, "human", out_race) ||
+	    !find_gend(ri, "female", out_gend) ||
+	    !find_align(ri, "neutral", out_align))
+	    return FALSE;
+	break;
+    case 4:
+    default:
+	return FALSE;
+	break;
+    }
+
+    if (!is_valid_character(ri, *out_role, *out_race, *out_gend, *out_align))
+	return FALSE;
+
+    return TRUE;
+}
+
+
 nh_bool player_selection(int *out_role, int *out_race, int *out_gend,
 			 int *out_align, int randomall)
 {
@@ -206,6 +331,9 @@ nh_bool player_selection(int *out_role, int *out_race, int *out_gend,
     int pick_list[2];
     int initrole, initrace, initgend, initalign;
     const struct nh_roles_info *ri = nh_get_roles();
+    
+    if (ui_flags.playmode == MODE_TUTORIAL)
+	return tutorial_player_selection(out_role, out_race, out_gend, out_align);
     
     initrole = *out_role; initrace = *out_race;
     initalign = *out_align; initgend = *out_gend;

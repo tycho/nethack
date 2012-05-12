@@ -820,6 +820,7 @@ struct obj *getobj(const char *let, const char *word)
 		cnt = 0;
 		if (allowcnt == 2)
 		    allowcnt = 1;  /* abort previous count */
+		check_tutorial_message(QT_T_CHOOSEITEM);
 		if (!buf[0]) {
 			sprintf(qbuf, "What do you want to %s? [*]", word);
 		} else {
@@ -1515,7 +1516,9 @@ int dotypeinv(void)
 		pline("You are not carrying any unpaid objects.");
 	    return 0;
 	}
-	
+
+	check_tutorial_oclass(this_type);
+
 	if (query_objlist(NULL, invent, USE_INVLET | INVORDER_SORT,
 		    &dummy, PICK_NONE, this_type_only) > 0)
 	    free(dummy);

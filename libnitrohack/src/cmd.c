@@ -25,7 +25,7 @@ static int wiz_where(void);
 static int wiz_detect(void);
 static int wiz_panic(void);
 static int wiz_polyself(void);
-static int wiz_level_tele(void);
+static int wiz_levport_or_tut_rev(void);
 static int wiz_level_change(void);
 static int wiz_show_seenv(void);
 static int wiz_show_vision(void);
@@ -125,6 +125,7 @@ const struct cmd_desc cmdlist[] = {
 	{"togglepickup", "toggle the autopickup option", '@', 0, TRUE, dotogglepickup, CMD_ARG_NONE},
 	{"travel", "walk until a given square is reached", '_', 0, TRUE, dotravel, CMD_ARG_NONE | CMD_ARG_POS},
 	{"turn", "turn undead", M('t'), 0, TRUE, doturn, CMD_ARG_NONE | CMD_EXT},
+	{"tutorialreview", "view shown tutorial messages again", C('v'), 0, TRUE, wiz_levport_or_tut_rev, CMD_HELP | CMD_ARG_NONE | CMD_NOTIME},
 	{"twoweapon", "toggle two-weapon combat", M('2'), 'X', FALSE, dotwoweapon, CMD_ARG_NONE | CMD_EXT},
 	{"untrap", "untrap something", M('u'), 'u', FALSE, dountrap, CMD_ARG_NONE | CMD_EXT},
 	{"version", "displays the version number", 0, 0, TRUE, doversion, CMD_HELP | CMD_ARG_NONE | CMD_NOTIME | CMD_EXT},
@@ -146,7 +147,7 @@ const struct cmd_desc cmdlist[] = {
 	{"create monster", "(DEBUG) create a monster", C('g'), 0, TRUE, wiz_genesis, CMD_ARG_NONE | CMD_DEBUG},
 	{"detect", "(DEBUG) detect monsters", C('e'), 0, TRUE, wiz_detect, CMD_ARG_NONE | CMD_DEBUG},
 	{"identify", "(DEBUG) identify all items in the inventory", C('i'), 0, TRUE, wiz_identify, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT},
-	{"levelteleport", "(DEBUG) telport to a different level", C('v'), 0, TRUE, wiz_level_tele, CMD_ARG_NONE | CMD_DEBUG},
+	{"levelteleport", "(DEBUG) telport to a different level", 0, 0, TRUE, wiz_levport_or_tut_rev, CMD_ARG_NONE | CMD_DEBUG},
 	{"levelchange", "(DEBUG) change experience level", 0, 0, TRUE, wiz_level_change, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT},
 	{"lightsources", "(DEBUG) show mobile light sources", 0, 0, TRUE, wiz_light_sources, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT | CMD_NOTIME},
 	{"mazewalkmap", "(DEBUG) show MAZEWALK paths", 0, 0, TRUE, wiz_mazewalkmap, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT | CMD_NOTIME},
@@ -327,11 +328,15 @@ static int wiz_detect(void)
 	return 0;
 }
 
-/* ^V command - level teleport */
-static int wiz_level_tele(void)
+/* ^V command - level teleport (wizard), or tutorial review */
+static int wiz_levport_or_tut_rev(void)
 {
-	if (wizard)	level_tele();
-	else		pline("Unavailable command '^V'.");
+	if (wizard)
+	    level_tele();
+	else if (flags.tutorial)
+	    tutorial_redisplay();
+	else
+	    pline("Tutorial review is only available in tutorial mode.");
 	return 0;
 }
 
@@ -1555,6 +1560,10 @@ int do_command(int command, int repcount, boolean firsttime, struct nh_cmd_arg *
 	
 	if (command == -1)
 	    return COMMAND_UNKNOWN;
+	
+	/* Collect commands to show suitable ambient tutorial messages. */
+	if (firsttime)
+	    check_tutorial_command(command, arg);
 	
 	/* in some cases, a command function will accept either it's proper argument
 	 * type or no argument; we're looking for the possible type of the argument here */

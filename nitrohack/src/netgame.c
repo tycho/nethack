@@ -6,6 +6,7 @@
 
 enum menuids {
     NEWGAME = 1,
+    TUTORIAL,
     LOAD,
     REPLAY,
     OPTIONS,
@@ -456,6 +457,7 @@ static void netgame_mainmenu(struct server_info *server)
 
     static struct nh_menuitem netmenu_items[] = {
 	{NEWGAME, MI_NORMAL, "new game", 'n'},
+	{TUTORIAL, MI_NORMAL, "new game (tutorial mode)", 't'},
 	{LOAD, MI_NORMAL, "load game", 'l'},
 	{REPLAY, MI_NORMAL, "view replay", 'v'},
 	{OPTIONS, MI_NORMAL, "set options", 'o'},
@@ -495,6 +497,11 @@ static void netgame_mainmenu(struct server_info *server)
 	
 	switch (menuresult[0]) {
 	    case NEWGAME:
+		net_rungame();
+		break;
+		
+	    case TUTORIAL:
+		ui_flags.playmode = MODE_TUTORIAL;
 		net_rungame();
 		break;
 		
