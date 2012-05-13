@@ -62,6 +62,7 @@ static struct Bool_Opt
 #else
 	{"BIOS", (boolean *)0, FALSE, SET_IN_FILE},
 #endif
+	{"botl_updates", &iflags.botl_updates, TRUE, SET_IN_GAME},
 	{"bones", &iflags.bones, TRUE, SET_IN_GAME},
 #ifdef INSURANCE
 	{"checkpoint", &flags.ins_chkpt, TRUE, SET_IN_GAME},

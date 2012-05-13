@@ -1923,6 +1923,7 @@ struct ext_func_tab extcmdlist[] = {
 	{"inventory", "show your inventory", ddoinv, IFBURIED},
 	{"quaff", "quaff (drink) something", dodrink, !IFBURIED},
 	{"#", "perform an extended command", doextcmd, IFBURIED},
+	{"updatestatus", "update status lines", force_bot, IFBURIED},
 	{"travel", "Travel to a specific location", dotravel, !IFBURIED},
 	{"eat", "eat something", doeat, !IFBURIED},
 	{"engrave", "engrave writing on the floor", doengrave, !IFBURIED},

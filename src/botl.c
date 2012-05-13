@@ -388,9 +388,22 @@ bot2()
 void
 bot()
 {
+	if (!iflags.botl_updates) {
+	  flags.botl = flags.botlx = 0;
+	  return;
+	}
 	bot1();
 	bot2();
 	flags.botl = flags.botlx = 0;
+}
+
+int
+force_bot()
+{
+	bot1();
+	bot2();
+	flags.botl = flags.botlx = 0;
+	return 0;
 }
 
 #endif /* OVL0 */
