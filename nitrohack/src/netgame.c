@@ -497,12 +497,11 @@ static void netgame_mainmenu(struct server_info *server)
 	
 	switch (menuresult[0]) {
 	    case NEWGAME:
-		net_rungame();
+		net_rungame(FALSE);
 		break;
 		
 	    case TUTORIAL:
-		ui_flags.playmode = MODE_TUTORIAL;
-		net_rungame();
+		net_rungame(TRUE);
 		break;
 		
 	    case LOAD:

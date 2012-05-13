@@ -319,7 +319,7 @@ static nh_bool tutorial_player_selection(int *out_role, int *out_race,
 
 
 nh_bool player_selection(int *out_role, int *out_race, int *out_gend,
-			 int *out_align, int randomall)
+			 int *out_align, int randomall, nh_bool tutorial)
 {
     struct nh_menuitem *items;
     int icount, size;
@@ -332,7 +332,7 @@ nh_bool player_selection(int *out_role, int *out_race, int *out_gend,
     int initrole, initrace, initgend, initalign;
     const struct nh_roles_info *ri = nh_get_roles();
     
-    if (ui_flags.playmode == MODE_TUTORIAL)
+    if (tutorial)
 	return tutorial_player_selection(out_role, out_race, out_gend, out_align);
     
     initrole = *out_role; initrace = *out_race;

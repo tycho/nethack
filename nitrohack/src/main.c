@@ -210,12 +210,11 @@ static void mainmenu(void)
 	
 	switch (menuresult[0]) {
 	    case NEWGAME:
-		rungame();
+		rungame(FALSE);
 		break;
 		
 	    case TUTORIAL:
-		ui_flags.playmode = MODE_TUTORIAL;
-		rungame();
+		rungame(TRUE);
 		break;
 		
 	    case LOAD:

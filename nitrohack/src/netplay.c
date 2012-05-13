@@ -4,13 +4,13 @@
 #include "nhcurses.h"
 
 
-void net_rungame(void)
+void net_rungame(nh_bool tutorial)
 {
     char plname[BUFSZ];
     int role = initrole, race = initrace, gend = initgend, align = initalign;
     int ret;
     
-    if (!player_selection(&role, &race, &gend, &align, random_player))
+    if (!player_selection(&role, &race, &gend, &align, random_player, tutorial))
 	return;
     
     strncpy(plname, settings.plname, PL_NSIZ);
@@ -25,7 +25,8 @@ void net_rungame(void)
 	return;
     
     create_game_windows();
-    if (!nhnet_start_game(plname, role, race, gend, align, ui_flags.playmode)) {
+    if (!nhnet_start_game(plname, role, race, gend, align,
+			  tutorial ? MODE_TUTORIAL : ui_flags.playmode)) {
 	destroy_game_windows();
 	return;
     }

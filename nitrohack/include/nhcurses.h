@@ -346,7 +346,7 @@ extern void curses_notify_level_changed(int dmode);
 
 /* playerselect.c */
 extern nh_bool player_selection(int *out_role, int *out_race, int *out_gend,
-				int *out_align, int randomall);
+				int *out_align, int randomall, nh_bool tutorial);
 
 /* replay.c */
 extern void replay(void);
@@ -356,7 +356,7 @@ extern void replay_commandloop(int fd);
 /* rungame.c */
 extern nh_bool get_gamedir(enum game_dirs dirtype, fnchar *buf);
 extern int commandloop(void);
-extern void rungame(void);
+extern void rungame(nh_bool tutorial);
 extern nh_bool loadgame(void);
 extern fnchar **list_gamefiles(fnchar *dir, int *count);
 
@@ -394,7 +394,7 @@ extern void curses_delay_output(void);
 extern void netgame(void);
 
 /* netplay.c */
-extern void net_rungame(void);
+extern void net_rungame(nh_bool tutorial);
 extern void net_loadgame(void);
 extern void net_replay(void);
 #endif

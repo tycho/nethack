@@ -160,7 +160,7 @@ static void game_ended(int status, fnchar *filename)
 }
 
 
-void rungame(void)
+void rungame(nh_bool tutorial)
 {
     int ret, role = initrole, race = initrace, gend = initgend, align = initalign;
     int fd = -1;
@@ -174,7 +174,7 @@ void rungame(void)
 	return;
     }
     
-    if (!player_selection(&role, &race, &gend, &align, random_player))
+    if (!player_selection(&role, &race, &gend, &align, random_player, tutorial))
 	return;
     
     strncpy(plname, settings.plname, PL_NSIZ);
@@ -201,7 +201,8 @@ void rungame(void)
     }
     
     create_game_windows();
-    if (!nh_start_game(fd, plname, role, race, gend, align, ui_flags.playmode)) {
+    if (!nh_start_game(fd, plname, role, race, gend, align,
+		       tutorial ? MODE_TUTORIAL : ui_flags.playmode)) {
 	destroy_game_windows();
 	close(fd);
 	return;
