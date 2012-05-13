@@ -308,6 +308,8 @@ struct instance_flags {
 					 * to represent black object */
 
   boolean botl_updates;
+  boolean hp_notify;
+  char *hp_notify_fmt;
   boolean old_C_behaviour;
         boolean show_buc;
 	boolean show_obj_sym;
