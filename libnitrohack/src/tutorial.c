@@ -692,12 +692,45 @@ void tutorial_redisplay(void)
 	struct menulist menu;
 	int i, n;
 	int selected[1];
+	int last_section = 0;
 
 	init_menulist(&menu);
 	for (i = QT_T_FIRST; i <= QT_T_MAX; i++) {
 	    if (pl_tutorial[i - QT_T_FIRST] > 0) {
 		char namebuf[80];
 		char *name;
+
+		/* Add a header if it belongs in a new section.
+		   The values checked are the first after each section
+		   in qtext.h. */
+		int section = (i < QT_T_LOOK_TAME) ? 1 : /* Introduction */
+			      (i < QT_T_DOORS) ? 2 : /* Monsters */
+			      (i < QT_T_FARMOVE_VIKEYS) ? 3 : /* Dungeon Features */
+			      (i < QT_T_VIEWTUTORIAL) ? 4 : /* Interface Hints */
+			      (i < QT_T_SPELLS) ? 5 : /* General Advice */
+			      (i < QT_T_ITEM_GOLD) ? 6 : /* Combat Advice */
+			      (i < QT_T_LEVELUP) ? 7 : /* Items */
+			      (i < QT_T_SHOPENTRY) ? 8 : /* Events (needs work) */
+			      (i < QT_T_MAX) ? 9 : /* Places */
+			      0; /* what? */
+		if (section != last_section) {
+		    switch (section) {
+		    case 1: add_menuheading(&menu, "Introduction"); break;
+		    case 2: add_menuheading(&menu, "Monsters"); break;
+		    case 3: add_menuheading(&menu, "Dungeon Features"); break;
+		    case 4: add_menuheading(&menu, "Interface Hints"); break;
+		    case 5: add_menuheading(&menu, "General Advice"); break;
+		    case 6: add_menuheading(&menu, "Combat Advice"); break;
+		    case 7: add_menuheading(&menu, "Items"); break;
+		    case 8: add_menuheading(&menu, "Events"); break;
+		    case 9: add_menuheading(&menu, "Places"); break;
+		    default:
+			warning("tutorial entry outside of section");
+			break;
+		    }
+		    last_section = section;
+		}
+
 		qt_com_firstline(i, namebuf);
 		/* add 10 to namebuf to remove the 'Tutorial: ' at the start */
 		name = *namebuf ? namebuf + 10 : "(not found)";
