@@ -299,6 +299,7 @@ void check_tutorial_command(int command, const struct nh_cmd_arg *arg)
 
 	boolean travel = TRUE;
 	boolean farmove = TRUE;
+	boolean diagonal = TRUE;
 	boolean repeat = TRUE;
 	boolean massunequip = TRUE;
 	boolean look_reminder = TRUE;
@@ -323,6 +324,7 @@ void check_tutorial_command(int command, const struct nh_cmd_arg *arg)
 	    if (lc != c) repeat = FALSE;
 	    if (c != 'y' && c != 'b' && c != 'G') travel = FALSE;
 	    if (c != 'y' && c != 'b') farmove = FALSE;
+	    if (c == 'y') diagonal = FALSE;
 	    if (c != 'R' && c != 'T') massunequip = FALSE;
 	    if (c == ';') look_reminder = FALSE;
 	    if (c == 'w') secondwield++;
@@ -336,7 +338,7 @@ void check_tutorial_command(int command, const struct nh_cmd_arg *arg)
 		check_tutorial_command_message = QT_T_TRAVEL;
 		break;
 	    }
-	    if (moves > 80 && r > 20 && c == 'b') {
+	    if (moves > 80 && r > 20 && diagonal && c == 'b') {
 		check_tutorial_command_message = QT_T_DIAGONALS_NUM;
 		break;
 	    }
