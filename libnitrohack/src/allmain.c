@@ -912,6 +912,7 @@ static void newgame(void)
 
     /* Success! */
     welcome(TRUE);
+    maybe_tutorial();
     return;
 }
 
