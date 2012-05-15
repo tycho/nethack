@@ -373,9 +373,9 @@ static struct nh_cmd_desc* show_help(void)
     items = malloc(size * sizeof(struct nh_menuitem));
     icount = 0;
     
-    add_menu_item(items, size, icount, 1, "List of game commands.", 0, FALSE);
-    add_menu_item(items, size, icount, 2, "Information what a given key does.", 0, FALSE);
-    add_menu_item(items, size, icount, 3, "List of options.", 0, FALSE);
+    add_menu_item(items, size, icount, 1, "describe game commands", 0, FALSE);
+    add_menu_item(items, size, icount, 2, "describe what a key does", 0, FALSE);
+    add_menu_item(items, size, icount, 3, "describe options", 0, FALSE);
     
     for (i = 0; i < cmdcount; i++)
 	if (commandlist[i].flags & CMD_HELP)
