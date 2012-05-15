@@ -4378,7 +4378,7 @@ The most common way of using a weapon is to wield it with the w key.
 With the #enhance command, you can see if your character is good with
 the weapon ('basic' or higher), needs practice ('unskilled') or can't
 learn how to use it at all.  Without basic skill in a weapon, your
-character will have a very hard time hitting with it at all.
+character will have a very hard time hitting with it.
 
 Weapons can also be thrown by pressing the t key (good with darts and
 daggers, you can only hit a monster when lined up), or applied with
