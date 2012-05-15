@@ -81,6 +81,9 @@ boolean check_tutorial_message(int msgnum)
 	/* Show matching vi-keys message in tutorial review menu
 	   when a numpad tutorial message is shown. */
 	switch (msgnum) {
+	case QT_T_CURSOR_NUMPAD:
+	    pl_tutorial[QT_T_CURSOR_VIKEYS - QT_T_FIRST] = 1;
+	    break;
 	case QT_T_FARMOVE_NUMPAD:
 	    pl_tutorial[QT_T_FARMOVE_VIKEYS - QT_T_FIRST] = 1;
 	    break;
