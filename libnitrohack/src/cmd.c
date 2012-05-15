@@ -1147,6 +1147,8 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	if (!obj)
 	    return NULL;
 	
+	check_tutorial_oclass(obj->oclass);
+	
 	for (i = 0; cmdlist[i].name; i++)
 	    if (cmdlist[i].flags & CMD_ARG_OBJ)
 		cmdcount++;
