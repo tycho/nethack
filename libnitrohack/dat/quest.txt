@@ -3761,9 +3761,6 @@ for secret doors and corridors (see Secret Doors and Corridors).
 Much, much later, some special levels may not have stairs forward at
 all, requiring you to do something different to progress.
 
-The stairs up from level 1 lead out of the dungeon; the game ends if
-you use them.
-
         <    go up stairs
         >    go down stairs
 %E
@@ -4668,7 +4665,7 @@ the game will refer to it as "a dagger named cursed".
 
 To view your discoveries, press the \ key.
 
-        C    call (also #name) items, kinds of items and other things
+        C    (also #name) call items, kinds of items and other things
         \    list discovered (known) items
 %E
 %Cm - 00320
