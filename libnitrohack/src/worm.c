@@ -324,7 +324,7 @@ void cutworm(struct monst *worm, xchar x, xchar y, struct obj *weap)
     while ( (curr->wx != x) || (curr->wy != y) ) {
 	curr = curr->nseg;
 	if (!curr) {
-	    impossible("cutworm: no segment at (%d,%d)", (int) x, (int) y);
+	    warning("cutworm: no segment at (%d,%d)", x, y);
 	    return;
 	}
     }
@@ -565,7 +565,7 @@ void place_worm_tail_randomly(struct monst *worm, xchar x, xchar y)
 /*  if (!wnum) return;  bullet proofing */
 
     if (wnum && (!lev->wtails[wnum] || !lev->wheads[wnum]) ) {
-	impossible("place_worm_tail_randomly: wormno is set without a tail!");
+	warning("place_worm_tail_randomly: wormno is set without a tail!");
 	return;
     }
 
