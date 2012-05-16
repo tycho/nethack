@@ -3532,15 +3532,14 @@ Welcome to NitroHack!  These tutorial messages will help you learn how
 to play the game.  To view any of these messages again, enter the help
 menu by pressing the ? key.
 
-The screen contains game messages at the top, the map in the middle,
-character info at the top and inventory to the right
+The screen shows game messages at the top, the map in the middle, character
+info at the top and inventory to the right
 
-Each symbol represents something; you are the @ sign, and the screen
-shows what you see and remember.  Generally, letters (and some symbols
-like ' : ; & and @) are creatures (friendly or hostile), and
-punctuation marks are dungeon features (like - and | for walls, # for
-sinks and . for the floor) or items (like $ for gold).  You can press
-/ to ask what a symbol means, or ; to describe something on the map.
+Each symbol represents something; you are the @ sign.  Generally,
+letters (and some symbols like ' : ; & and @) are creatures, and
+punctuation marks are dungeon features (like - and | for walls, and .
+for floor) or items (like $ for gold).  You can press / to ask what a
+symbol means, or ; to describe something on the map.
 
 Now press space to close this, then ; to look around.
 
@@ -3597,11 +3596,12 @@ looking at a monster (letter).
 Tutorial: Pets
 
 You enter the dungeon with a tame kitten (f), little dog (d) or pony
-(u), which follows you and fights monsters with you.  It will mostly
-take care of itself, eating corpses when hungry and avoiding fights it
-thinks it will lose.  With practice, it may grow larger and stronger.
-It may start off better at combat than weaker characters; keep it
-close if you're inexperienced.
+(u), which follows you and fights monsters with you.
+
+Your pet will mostly take care of itself, eating corpses when hungry
+and avoiding fights it thinks it will lose.  With practice, it may
+grow larger and stronger.  It may start off better at combat than
+weaker characters; keep it close if you're inexperienced.
 
 Your pet can only follow you up or down stairs if it is next to you,
 otherwise it may be stranded and in time grow wild.
@@ -3613,9 +3613,8 @@ move, or use ; to look at other things around you.
 Tutorial: Monsters
 
 That's a hostile monster, one of many threats in the Mazes of Menace.
-Monsters are only displayed if your character can see them, so it's a
-good idea to line yourself up to get the best view of what's ahead,
-and be careful in dark corridors!
+Be careful in dark corridors; monsters are only shown if you can see
+them!
 
 You can run away from monsters, though this can leave you backed into
 a corner, and if it's faster than you it will catch up and attack you.
@@ -3630,16 +3629,16 @@ Tutorial: Peaceful Monsters and Alignment
 
 Not all monsters will try to kill you on sight; such monsters are
 referred to as 'peaceful'.  However, accidentally hurting them will
-anger them, and can be very dangerous when angry, so it's often best
-to leave them alone.  If one blocks your path, wait a few turns (press
-. to wait) for them to move out of your way.  You can also chat to
+anger them, and they can be very dangerous when angry, so they're
+often best left alone.  If one blocks your path, wait a few turns for
+them to move out of your way (press . to wait).  You can also chat to
 them (press c) for various effects, shown at the top of the screen.
 
-One of the biggest factors of how monsters react to you is alignment
-(Lawful, Neutral or Chaotic); monsters who share your alignment are
-more likely to be peaceful.  You can see your alignment at the bottom
-of the screen.  You can also see alignment, as well as your religion,
-by pressing Ctrl-X (each alignment has a god).
+The biggest factor of how monsters react to you is alignment (Lawful,
+Neutral or Chaotic); monsters who share your alignment are more likely
+to be peaceful.  You can see your alignment at the bottom of the
+screen.  You can also see alignment, as well as your religion, by
+pressing Ctrl-X (each alignment has a god).
 
          .    wait a turn
          c    chat to monster (also #chat)
@@ -3651,12 +3650,11 @@ by pressing Ctrl-X (each alignment has a god).
 Tutorial: Invisible Monsters
 
 Wait!  There's a monster near you that you can't see!  You may have
-been blinded, or the monster is hidden or even invisible.
+been blinded, or the monster is hidden or even invisible!
 
 Unlike most letters, the letter I is special: it shows where you felt
 a nearby unseen monster.  If you think it's still there, you can fight
-this spot by walking into it as usual, but it may have moved, making
-you miss and waste your time.
+this space by walking into it as usual, but it may have moved since.
 
 To always fight a spot, press F and the direction.  If you know an
 unseen monster has moved from a spot marked I, press m and the
@@ -3682,7 +3680,7 @@ close doors with o as well.  Closed doors can be useful to shut out
 hostile monsters.
 
          o    open or close a door
-    Ctrl-D    kick
+    Ctrl-D    kick (e.g. to break down a door)
 %E
 # OK, technically it's a non-Guidebook spoiler to explain that rooms
 # tend to be light and corridors tend to be dark; but I'm willing to
@@ -3690,17 +3688,13 @@ hostile monsters.
 %Cm - 00231
 Tutorial: Corridors and Lighting
 
-Spaces in many early dungeon rooms are lit, so you can see anything on
-it as long as it isn't blocked by something like a wall or boulder.
-Items, traps and dungeon features that you've seen on a space will be
-remembered if they leave your line of sight (use ; to recall what's on
-such a space), but monsters won't since they move around a lot.
+Early dungeon rooms are usually lit, meaning you can see any space in
+it that isn't blocked by something; if they are, you'll still remember
+any items, traps and dungeon features you saw.
 
-Corridors are shown as filled gray blocks, while solid rock and
-unexplored area is just shown as blank space.  Corridors are dark, so
-unless you light them yourself, you'll only be able to fully see
-squares next to you.  Be careful, monsters can easily sneak up to you
-in this darkness!
+Corridors are filled gray bocks, while solid rock and unexplored areas
+show as blank spaces.  Corridors are dark, so without a means of
+lighting them, you'll only see monsters when they're next to you!
 %E
 # Given the first time the player walks to a location where they could
 # find a secret by searching. The mention of dead-ends is a non-
@@ -3730,6 +3724,7 @@ you find it; each attempt takes time.
 Tutorial: Water
 
 Water (shown as blue wavy lines) is yet another hazard you may face.
+
 Generally, adventurers won't be able to cross large bodies of water
 without magical aid, though sometimes it's possible to move carefully
 through a swamp by avoiding water spaces (diagonal movement helps).
@@ -3757,13 +3752,9 @@ to a lava mistake!
 %Cm - 00235
 Tutorial: Stairs
 
-Most of the time, each level of the dungeon has flights of stairs
-leading up (the < symbol) and down (the > symbol).  To use them, stand
-on it and press < to go up stairs going up or press > to go down
-stairs going down (matching the up and down direction keys).
-
-If you carry too much, you may stumble and take damage going
-downstairs, and may even be unable to walk upstairs with your load.
+Generally, dungeon levels have stairs leading up (the < symbol) and
+down (the > symbol).  Use them by standing on them and pressing the
+matching key.
 
 If you can't find the stairs forward in a level, you may want to look
 for secret doors and corridors (see Secret Doors and Corridors).
@@ -3824,8 +3815,8 @@ how you use what you loot.
 Tutorial: Altars
 
 The omega symbol (or _ symbol) is an altar, usually dedicated to a
-god.  If you're standing on one and want a description of what
-god/alignment it is, press : (like ; for your current position).
+god.  If you're standing on one and want a description of what god and
+alignment it is, press : (like ; for things under you).
 
 As a reminder: your %G is %d, as you are %a.
 
@@ -3850,15 +3841,15 @@ The # symbol is a drawbridge, and acts like a big door, but they tend
 to have a more complicated mechanism for opening and closing them.
 
 Drawbridges open over the space in front of them, letting you walk
-across.  But beware, for you never want to be on a drawbridge if it
+across.  But beware, for you don't want to be on a drawbridge if it
 gets destroyed!
 %E
 %Cm - 00242
 Tutorial: Traps
 
-The ^ symbol is a trap.  Traps have a variety of effects, but most of
-them are bad so you'll want to avoid them.  You can use ; to describe
-the type of trap you've found.
+The ^ symbol is a trap.  Traps have a variety of effects, most of them
+bad, so you'll want to avoid them.  You can look at a trap find out
+what type it is.
 
 Some traps can be disarmed with the #untrap command while standing
 next to them.  This not only removes the trap, but may let you take
@@ -3875,8 +3866,8 @@ it, there are often other ways to avoid or disable it.
 Tutorial: Escaping the Dungeon
 
 The < symbol is a stairway leading up; this one is the one you entered
-the dungeon through.  Using it (with the < key) will walk you out of
-the dungeon and end your game.
+by.  Using it (with the < key) will walk you out of the dungeon and
+end your game.
 
 The aim of the game is to retrieve the Amulet of Yendor for your god,
 so leaving early isn't ideal.  However, if you hold the Amulet, using
@@ -3960,9 +3951,8 @@ north-west north north-east        up      NOTE:
        b     j     n                >      diagonally next to h, in
 south-west south south-east       down     the matching directions.
 
-Diagonal movement is a key skill.  It lets you outrun monsters, walk
-around traps, move quickly and easily through diagonal corridors and
-saves many turns.
+Diagonal movement is vital; it lets you outrun monsters, walk around
+traps, move quickly through diagonal corridors and saves turns.
 
     y u b n    move diagonally nw/ne/sw/se
 %E
@@ -3998,10 +3988,10 @@ Tired of pressing s to search that space?  Not only is it tedious, it
 can even be dangerous; holding a key can give monsters free hits on
 you before you (as a player) can even react!
 
-A safer, faster and less tedious way of repeating a command is to
-enter a number, followed by the command, e.g. 20s will search all the
-spaces around you 20 times, and 99. will wait for 99 turns.  If a
-monster approaches, these commands will stop immediately.
+A safer and faster way of repeating a command is to enter a number,
+followed by the command, e.g. 20s will search all the spaces around
+you 20 times.  If a monster approaches, these commands will stop
+immediately.
 
 You can also repeat your last command with Ctrl-A, which can be useful
 for e.g. opening a stuck door.
@@ -4016,10 +4006,10 @@ Tired of pressing s to search that space?  Not only is it tedious, it
 can even be dangerous; holding a key can give monsters free hits on
 you before you (as a player) can even react!
 
-A safer, faster and less tedious way of repeating a command is to
-enter a number, followed by the command, e.g. 20s will search all the
-spaces around you 20 times, and 99. will wait for 99 turns.  If a
-monster approaches, these commands will stop immediately.
+A safer and faster way of repeating a command is to enter a number,
+followed by the command, e.g. 20s will search all the spaces around
+you 20 times.  If a monster approaches, these commands will stop
+immediately.
 
 You can also repeat your last command with Ctrl-A, which can be useful
 for e.g. opening a stuck door.
@@ -4030,18 +4020,16 @@ for e.g. opening a stuck door.
 %Cm - 00267
 Tutorial: Item Prompts
 
-You're going to be asked to choose an item, probably because you chose
-to wear or read something, and the game needs to know which item you
-mean to act on.
+You're about to be asked to choose an item for an action you've chosen
+to perform.
 
-Each item is given a letter (case matters), so if you want to wear
-armor that's labelled q, press q at the prompt to choose it.
+Each item has a letter (case matters), so if you want to wear armor
+that's labelled q, press q at the prompt to choose it.
 
-If you don't remember what letters match which items, you can press ?
-for a list of items suitable for your action, e.g. list armor when
-choosing to wear something.  You can also press * to list all items,
-which can be useful for unusual things like wielding things that
-aren't weapons or throwing unusual items.
+You can also press ? for a list of suitable items, e.g. armor when
+choosing to wear something, and press * to list all items; useful for
+unusual actions like wielding things that aren't weapons or throwing
+odd items.
 
 Sometimes - is accepted, meaning no item or bare hands.
 %E
@@ -4053,9 +4041,7 @@ tedious way.
 
 Pressing A lets you take off armor and jewelry, unwield weapons and
 empty your quiver in a single command.  This takes no fewer turns than
-entering the commands one by one, but it can be convenient.  What's
-more, if you're interrupted but don't care about the distraction, e.g.
-a harmless monster, you can press A to continue your unequipping.
+entering the commands one by one, but it can be convenient.
 
         A    unequip multiple items and armor
 %E
@@ -4063,28 +4049,26 @@ a harmless monster, you can press A to continue your unequipping.
 Tutorial: Naming Monsters
 
 When many similar monsters are around, it can be hard to track what's
-going on; messages saying just "the jackal" or "the soldier ant"
-aren't very helpful.  In such cases, telling one monster from another
-can help you focus on attacking one monster at a time, rather than
-spreading it over multiple ones.
+going on.
 
-You can christen (call) a monster a particular name; the game's
-messages will from then on use that name for the monster.  You can't
-give a name to a monster that already has one, unless you're the one
-who named it before.
+You can call a monster a name with the C key; the game will then use
+that name to refer to the monster, letting you tell them apart from
+one another to e.g. focus on attacking one at a time.
 
-If you call your pet a name, you can track it even if you lose track
-of it and it goes wild.
+You can't name a monster that already has one, unless you're the one
+who gave it that name.
 
-        C    christen (call) a monster with a name
+If you call your pet a name, you can track it even if you get
+separated and it goes wild.
+
+        C    call a monster a name
 %E
 %Cm - 00270
 Tutorial: Dropping Multiple Items
 
-Dropping items one at a time takes a turn per item, which is slow.
-You can drop many items in a single turn by pressing D.  This lets you
-filter your inventory for items to drop, before choosing the items
-themselves in a multiple selection menu.
+Dropping items one at a time takes a turn per item.  You can drop many
+items in one turn by pressing D.  This lets you choose items to drop
+in a multiple selection menu, before dropping them all at once.
 
 Controls for multiple selection menus:
 
@@ -4095,7 +4079,7 @@ Controls for multiple selection menus:
         <    scroll a page up
         >    scroll a page down
 
-Once you're happy, press enter to drop all selected items at once.
+Once you're happy, press enter to drop all selected items.
 
         D    drop multiple items at once
 %E
@@ -4140,15 +4124,14 @@ literary quote, but sometimes it holds useful information.
 Tutorial: The Quiver
 
 If you're throwing the same weapon or firing the same missile again
-and again, there's a shortcut available called the quiver.  The quiver
-lets you throw or fire an item without having to press its inventory
-letter again and again.
+and again, you can quiver it, letting you throw or fire an item
+without having to choose it repeatedly.
 
 Press Q to set the item to go in your quiver.  Once done, instead of
 throwing with t and the letter, use the f key to fire your quivered
 item.
 
-In terms of gameplay, firing is identical to throwing except it saves
+In terms of gameplay, firing is the same as throwing except it saves
 key strokes.
 
         Q    set an item to quiver
@@ -4190,7 +4173,7 @@ You can carry at most 52 different items, excluding gold.
         ,    pick up items
         d    drop a single item
         @    toggle autopickup
-        i    show inventory (also, select items to use them)
+        i    show inventory
         I    show part of your inventory
 
 Now press I and one of the item symbols for information about it.
@@ -4210,9 +4193,9 @@ times in the attempt.
 
 For now, stay alive, gather equipment and practice combat.  You'll
 want to explore the dungeon, build up your defenses and learn what
-will get you killed.  Collecting gold, gems and other valuables goes
-towards your final score.  Aim low for the time being: you're a long
-way from the Amulet.
+will get you killed.  Collect gold, gems and other valuables to add to
+your final score.  Aim low for the time being: you're a long way from
+the Amulet.
 %E
 %Cm - 00283
 Tutorial: Saving and Quitting
@@ -4221,8 +4204,8 @@ Unlike many other games, death is final in NitroHack.  You cannot
 create a save file that can be restored more than once.
 
 However, if you need a break, press S to save and exit for now.  When
-you're up for more dungeon-delving, choose your save file from the
-menu to resume your adventure.
+you're up for more adventuring, choose your save file from the menu to
+resume your adventure.
 
 If you're fed up with your game, use the #quit command to abandon it
 forever.  This gives you a higher score than just dying, but you can't
@@ -4275,23 +4258,18 @@ For now, press Z and cast Force Bolt at a nearby hostile monster.
 %Cm - 00291
 Tutorial: Thrown Weapons
 
-Though melee will probably be your staple combat option, firing on
-monsters before they reach you can soften them up and even kill them,
-causing you to take much less damage.
+Firing on monsters can soften them up or even kill them before they
+reach you, causing you to take much less damage in melee.
 
-You can throw items at a monster by pressing the t key and choosing an
-item; good weapons include darts (for throwing) and daggers (can be
-wielded too).  You must be lined up with a monster to throw at it.
-
-Use the #enhance command to view which weapons you character is good
-with ('basic' or better), needs practice with ('unskilled') or can't
-learn at all (unlisted).
+Press the t key to pick an item to throw at a monster; good weapons
+include darts (for throwing) and daggers (can be wielded too).  You
+must be lined up with a monster to throw at it.  How well this works
+depends on your skill with the weapon.
 
 Even spellcasters may want to throw weapons, to preserve and recharge
 their magical power (Pw).
 
            t    throw an item
-    #enhance    list and enhance skills
 %E
 # A bit of tactical advice here as well as than controls advice; but
 # it's easy to forget to rewield a melee weapon, and I feel it's
@@ -4300,21 +4278,16 @@ their magical power (Pw).
 Tutorial: Projectile Weapons
 
 To use a bow, crossbow or sling with ammunition, first wield (w) the
-launcher, then throw (t) your ammunition; this should show the
-ammunition being "fired" in the messages at the top of the screen,
-instead of being "thrown".
+launcher, then throw (t) your ammunition; this fires the ammunition
+from the launcher, e.g. arrows from a bow.  How well this works
+depends on your weapon skill with the launcher.
 
 Don't forget to switch back to a melee weapon after firing; hitting a
 monster with a bow isn't very effective.  Consider switching back just
 before the monster closes on you, rather than getting one last shot.
 
-Use the #enhance command to view which weapons your character is good
-with ('basic' or better), needs practice with ('unskilled') or can't
-learn at all (unlisted).
-
            w    wield a weapon (e.g. a bow)
            t    fire ammo (e.g. arrows)
-    #enhance    list and enhance skills
 %E
 # Yes, this /is/ in the Guidebook. And it should be mentioned in any
 # self-respecting NetHack tutorial.
@@ -4346,13 +4319,16 @@ Tutorial: More about Melee
 
 When fighting monsters in melee, you hit with whatever you wield in
 your hands.  Some weapons work better than others; long swords are
-better than daggers.  However, if your character is not skilled with a
+better than daggers.  However, if you aren't skilled with a
 weapon, they'll have a hard time hitting with it without practice.
+You can view your skills with the #enhance command.
 
 Your attributes (shown at the bottom of the screen) effect how good
 you are in melee, and higher is better.  Dexterity (Dex:) lets you hit
 more often than miss, especially at range, while strength (Str:) helps
 you hit with heavier weapons and deal more damage when you do.
+
+    #enhance    list and enhance skills
 %E
 %Cm - 00300
 Tutorial: Gold $
@@ -4397,19 +4373,10 @@ Tutorial: Armor [
 A [ symbol is a piece of armor.  Armor protects you from the blows of
 your enemies.
 
-Your character has what is called AC (or Armor Class, shown at the
-bottom of the screen), describing how protected they are from attacks.
-Unlike most stats (for historical reasons), LOWER AC is better; an
-unarmored person starts at AC 10, and wearing good armor improves
-(i.e. reduces) this.  Values down to AC 0 improve your chance to avoid
-hits, while negative values will absorb some damage on top of this.
-
 Armor can be worn with W and taken off with T.  When worn, most armor
 will reveal themselves to be average (+0); some may be better (+1 and
 up) or worse (-1 and down).  Elven armor is light and strong, dwarvish
 is heavy but sturdier, but orcish is inferior and heavy.
-
-Spellcasting is hindered by wearing metallic armor or a shield.
 
         W    wear equipment (e.g. a piece of armor)
         T    take off equipment (e.g. a piece of armor)
@@ -4417,14 +4384,10 @@ Spellcasting is hindered by wearing metallic armor or a shield.
 %Cm - 00303
 Tutorial: Food %%
 
-The %% symbol is an edible item (or comestible).
-
-Food can be eaten with the e key, and is needed to live; a character
-that goes too long without eating will grow hungry, then weak, then
-eventually faint and die of starvation.  On the other hand, eating
-while satiated can cause you to choke on your food and die.  'Hungry',
-'Weak', 'Fainting' and 'Satiated' are shown at the bottom of the
-screen when they apply.
+The %% symbol is an edible item (or comestible).  Food can be eaten
+with the e key.  Food is needed to live; a character that goes without
+eating will grow hungry, then weak, then eventually faint and die of
+starvation.
 
 While some comestibles will last forever, many will spoil over time.
 Eating very old food can be very dangerous to your health.  Sometimes,
@@ -4432,8 +4395,8 @@ even good food will be a bit spoiled, though never to toxic levels.
 
 Note that killing monsters may leave a %% behind; the monster's
 corpse.  They spoil fast, but can be eaten by standing over it and
-pressing e to eat.  Some are always bad to eat, but others may grant
-special powers.  As they say, you are what you eat.
+pressing e.  Some are always bad to eat, but others may grant special
+powers.  As they say, you are what you eat.
 
         e    eat a comestible (from your inventory or the ground)
 %E
@@ -4448,18 +4411,12 @@ Press r to read a scroll; doing this will release its magic and use up
 the scroll.  Scrolls can be used by anyone and don't rely on
 spellcasting skill.
 
-The function of most scrolls is hidden to begin with, instead showing
-an obscure label.  Scrolls of the same kind are labelled the same in
-any one game, but will change across games.  Press the \ key to view
-your discoveries list to show what you know.
-
-Beware!  Though reading is one way to identify unknown scrolls, it can
-be very dangerous!  There are other ways to find out what a scroll
-does (e.g. one common scroll does exactly this); finding and learning
-these methods is the key to success!
+Beware!  Reading an unknown scroll can be very dangerous!  If you can
+find out what they do, they can be very useful.  In fact, one common
+scroll can identify other items; if you can tell this scroll from
+others, your discovery will serve you well.
 
         r    read an item (e.g. a scroll)
-        \    list discovered (known) items
 %E
 # Wand overcharging is, surprisingly, a Guidebook spoiler.
 %Cm - 00305
@@ -4471,10 +4428,6 @@ them, and they can be used as long as they have charges.  Wands can
 also be engraved with (press E), or even broken in an emergency (apply
 with a), affecting all around you.
 
-The function of most wands is hidden to begin with.  Wands of the same
-kind look the same in any one game, but will change across games.
-Press the \ key to view your discoveries list to show what you know.
-
 If you can find a wand's charges, it will be shown, as well as how
 many times it has been recharged, e.g. (3:5) denotes a wand recharged
 3 times with 5 charges left.  Beware!  A wand charged many times may
@@ -4483,7 +4436,6 @@ explode when recharged!
         z    zap a wand
         E    engrave in the floor (e.g. with a wand)
         a    apply an item (e.g. break a wand)
-        \    list discovered (known) items
 %E
 %Cm - 00306
 Tutorial: Rings =
@@ -4493,17 +4445,12 @@ the W key) on either of your ring fingers (so you can wear at most two
 at a time; take them off with the T key).  Beware!  Not all rings are
 good to wear.
 
-The function of most rings is hidden to begin with.  Rings of the same
-kind look the same in any one game, but will change across games.
-Press the \ key to view your discoveries list to show what you know.
-
 Rings are powered by the body of the wearer, so wearing rings will
 make you hungrier somewhat faster; very powerful rings speed this up
 dramatically!
 
         W    wear equipment (e.g. a ring)
         T    take off equipment (e.g. a ring)
-        \    list discovered (known) items
 %E
 # Clear = water is a guidebook spoiler, as is holy water's effect on
 # undead.
@@ -4513,10 +4460,6 @@ Tutorial: Potions !
 The ! symbol is a potion, which can be quaffed (drunk) for magical
 effects by pressing the q key.  Items can be dipped into potions with
 the #dip command, and they can even be thrown with the t key.
-
-The function of most potions is hidden to begin with.  Potions of the
-same kind look the same in any one game, but will change across games.
-Press the \ key to view your discoveries list to show what you know.
 
 Many items, potions especially, have different effects when blessed or
 cursed.  Drinking a cursed potion is nearly always a bad idea!
@@ -4528,7 +4471,6 @@ uses to be discovered.
         q    quaff a potion or from a water source
      #dip    dip an item into a liquid (e.g. a potion)
         t    throw an item (e.g. a potion)
-        \    list discovered (known) items
 %E
 %Cm - 00308
 Tutorial: Tools (
@@ -4537,9 +4479,8 @@ The ( is a tool.  There are many tools with different uses, but
 generally they can all be applied (used) by pressing the a key.  Some
 tools can even be wielded like weapons with the w key!
 
-Some tools are magical and look like mundane ones; there are ways to
-be found to tell them apart.  Press the \ key to view your discoveries
-list to show what you know.
+Some tools are magical but look like mundane ones; there are ways to
+tell them apart.
 
 Though some tools can be used without limit, others may have charges
 that are consumed each use, or over time while activated (e.g.
@@ -4550,26 +4491,24 @@ all) tools don't explode when recharged many times.
 
         a    apply an item (e.g. use a tool)
         w    wield an item (e.g. a tool)
-        \    list discovered (known) items
 %E
 %Cm - 00309
 Tutorial: Containers (
 
 Containers are special tools and as such are shown as the ( symbol.
-To put in or take out items from a container, press a to apply it if
-you carry it, or use the #loot command if its on the ground.
+To put in or take out items from a container, use the #loot command
+while standing over it, or press the a key while holding it.
 
-Containers hold other times and can get around the limit of 52
-different items of your inventory if you find one light enough to
-carry.
+If you can find a container light enough to carry, you can get around
+the limit of 52 items in your inventory.
 
 Containers can be locked or trapped.  A locked container can be
 unlocked with certain tools, forced open with your wielded weapon
-using the #force command, or even kicked open with Ctrl-D while next
-to it.  To check for and possibly disarm traps, use the #untrap
-command over a container.  Beware, for this may backfire on you!
+using the #force command, or even kicked open with Ctrl-D.  To check
+for and possibly disarm traps, use the #untrap command over a
+container; beware, this may backfire!
 
-          a    apply an item (e.g. use a container)
+          a    apply an item (e.g. a carried container)
       #loot    apply a container on the ground
      #force    force a locked container open with your wielded weapon
      Ctrl-D    kick (e.g. to open a locked container)
@@ -4582,10 +4521,6 @@ The " symbol is an amulet.  Amulets grant magical powers when worn
 around your neck (with the W key; take them off with the T key).
 Beware!  Not all amulets are good to wear.
 
-The function of most amulets is hidden to begin with.  Amulets of the
-same kind look the same in any one game, but will change across games.
-Press the \ key to view your discoveries list to show what you know.
-
 Amulets are powered by the body of the wearer, so wearing an amulet
 will make you hungrier somewhat faster than usual.
 
@@ -4594,7 +4529,6 @@ of Menace.  Good luck!
 
         W    wear equipment (e.g. an amulet)
         T    take off equipment (e.g. an amulet)
-        \    list discovered (known) items
 %E
 %Cm - 00311
 Tutorial: Gems and Rocks *
@@ -4617,23 +4551,22 @@ other items with the #rub command for whatever effect that may have.
 %Cm - 00312
 Tutorial: Statues ` and Boulders 0
 
-The ` symbol is a statue.  Some may hold surprises, but most are heavy
-and useless.  You can walk past them or break them if you have a way.
+The ` symbol is a statue.  Some hold surprises, but most are heavy and
+useless.  You can walk past them or break them if you have a way.
 
-The 0 is a boulder.  They are too heavy to lift for all but the
-largest of creatures.  Unlike statues, boulders can't be walked past,
-but they can be pushed around.  If one blocks your path, you can
+The 0 is a boulder.  They can be pushed, but not walked past or lifted
+except by the largest of creatures.  If one blocks your path, you can
 destroy it if you have the means.  If it gets stuck and you need to
-get past it, you can squeeze into its space by dropping your items and
-moving into it.
+get past it, you can also squeeze into its space by dropping your
+items and moving into it.
 %E
 %Cm - 00313
 Tutorial: Spellbooks +
 
-The + symbol is a book, usually a spellbook (when it's not a door).
-Reading one with the r key will attempt to learn the spell within;
-this is how spells are learned.  Beware!  Reading a spellbook whose
-power exceeds your intelligence can be very harmful!
+The + symbol is a book (when it's not a door), usually a spellbook.
+Reading one with the r key attempts to learn the spell within; this is
+how spells are learned.  Beware!  Reading a spellbook whose power
+exceeds your intelligence can be very harmful!
 
 Memory of a spell fades over time; reading a book refreshes it.  This
 action also releases magic from the book, so it can only be read a
@@ -4691,7 +4624,7 @@ the V key to invoke it.  A recently invoked artifact won't listen
 again for quite a while, so it's best to save it for when it's needed.
 
 Beware!  Artifacts are picky about who uses them; if you aren't the
-kind of person it expects, it will hurt you as you touch it or use it!
+kind of person it expects, it will hurt you as you touch or use it!
 Be careful of artifacts; as they are widely known, you may want to
 look up an artifact by name with the / key.
 
@@ -4704,8 +4637,7 @@ Tutorial: Random-Appearance Items
 Many magical (and some non-magical) items look different across games,
 but share a single appearance in any one game.  As such, one of the
 goals of your adventure is to try to tell what item does what so you
-can use them effectively.  The C key (or #name command) helps here,
-and can be used in two ways.
+can use them effectively.  The C key (or #name command) helps here.
 
 To name all items that share an appearance, e.g. all orange potions,
 use the C key and pick n at the prompt, then select your
@@ -4717,7 +4649,10 @@ a dagger is cursed, you can name just that one with the #name command,
 but picking y at the prompt.  Select the dagger and type "cursed", and
 the game will refer to it as "a dagger named cursed".
 
+To view your discoveries, press the \ key.
+
         C    call (also #name) items, kinds of items and other things
+        \    list discovered (known) items
 %E
 %Cm - 00320
 Tutorial: Gaining Experience Levels
@@ -4732,7 +4667,7 @@ you the more experienced you are.
 
 Gaining experience by killing monsters is the main way of gaining
 experience levels; monsters will get more powerful the deeper you go,
-so it's important to keep up in experience levels in order to survive.
+so it's important to keep up in order to survive.
 %E
 %Cm - 00321
 Tutorial: Ranks
@@ -4804,27 +4739,26 @@ levels may be named instead; this appears in the same place.
 %Cm - 00325
 Tutorial: Health
 
-Ouch!  You just lost some hit points (HP); a measure of your health.
-When it falls to zero or lower, you die, so conserve them.  If you
-find a way to restore them quickly, it will help in emergencies.
+Ouch!  You just lost some hit points (HP).  When it falls to zero or
+lower, you will die, so if you find a way to restore them quickly, it
+will help in emergencies.
 
-Hit points, current and maximum, are shown at the bottom of the
-screen, e.g. HP:8(10) means that you have 8 hit points out of a
-maximum of 10.  Hit points below maximum slowly regenerate over time.
+Hit points, are shown at the bottom of the screen, e.g. HP:8(10) means
+that you have 8 hit points out of a maximum of 10.  Hit points slowly
+regenerate over time.
 
-Your constitution (Con:) attribute (also at the bottom of the screen)
-measures how well you sustain injury; high constitution gives you more
-hit points and restores them faster over time.
+Your constitution (Con:) attribute measures how well you sustain
+injury; high constitution gives you more hit points and restores them
+faster over time.
 %E
 %Cm - 00326
 Tutorial: Magical Power
 
-You just used (or lost) some magical power (Pw), likely due to casting
-a spell.
+You just used (or lost) some magical power (Pw).
 
-Power, current and maximum, is shown at the bottom of the screen, e.g.
-Pw:3(5) means that you have 3 points of power out of a total of 8.
-Power slowly recharges over time.
+Magical power is shown at the bottom of the screen, e.g.  Pw:3(5)
+means that you have 3 points of power out of a total of 8.  Power
+slowly recharges over time.
 
 Power is spent when casting spells; powerful spells need more magical
 power to be used.  If you don't have enough, you cannot cast spells
@@ -4860,7 +4794,7 @@ Tutorial: Using Armor
 Your Armor Class (AC) has just reduced; unlike most stats, this is a
 good thing, as it improves your protection against incoming attacks.
 
-Lower AC helps you avoid attacks, and negative AC can even absorb
+Lower AC helps you avoid attacks, and negative AC will even absorb
 damage when you are hit anyway.
 
 Wearing armor has drawbacks.  A lot of armor is heavy, reducing how
@@ -4877,10 +4811,10 @@ drawbacks.  Even wizards can use some armor!
 %Cm - 00329
 Tutorial: Experience
 
-You've just gained some experience points!  Killing monsters is the
-most common way to gain experience, though many other actions grant a
-little bit of it too (a few people have won the game without killing a
-single monster: an incredibly difficult feat).
+You've just gained experience points!  Killing monsters is the most
+common way to do this, though many other actions grant a little bit of
+it too; a few very skilled players have even won without killing a
+single monster!
 
 When you get enough experience points, you will gain an experience
 level, which generally makes you stronger.  Early in the game, you'll
@@ -4909,11 +4843,11 @@ Food rations and other 'people' food keep indefinitely and can be
 eaten with relative safety.  On the other hand, food that doesn't keep
 can make you sick or even give you fatal food poisoning!
 
-You can also try eating the corpse of a freshly-slain monster while
-standing over it.  An old corpse can be tainted, so beware of eating
-any corpse you didn't recently kill.  Some corpses are always bad for
-you; many others taste "terrible" but won't harm you, and some may
-even grant you special powers; as they say, you are what you eat.
+You can also try eating the corpse of a monster while standing over
+it.  An old corpse can be tainted, so beware of eating any corpse you
+didn't recently kill.  Some corpses are always bad for you, others
+taste "terrible" but won't harm you, and some may even grant special
+powers; as they say, you are what you eat.
 
         e    eat food (inventory or beneath you)
 %E
@@ -4956,8 +4890,7 @@ Tutorial: Enhancing Skills
 
 Once you practice enough in combat, weapons or magic, you will "feel
 more confident in your skills", meaning you can choose to enhance a
-skill.  To choose a skill to enhance, use the #enhance command and
-select the skill.
+skill.  Use the #enhance command to select a skill to enhance.
 
 You are limited in how many skills you can advance, and how high.  You
 have a number of 'skill slots' equal to your experience level, and the
@@ -4968,8 +4901,7 @@ early so you can make good use of it in time.
 
 Only skills in shown in the list can be advanced at all; some
 characters may never be able to use certain skills effectively.  The
-highest that skills can be advanced also depends on your character's
-race.
+highest that skills can be advanced depends on your character's role.
 
     #enhance    list or enhance skills
 %E
@@ -4982,7 +4914,7 @@ even be able to do things you've taken for granted like open doors.
 
 Some monsters have a special ability, which you'll told when you
 change form.  Often, this is a monster ability, which can be used by
-pressing M key (or entering the #monster command).
+pressing M key (or using the #monster command).
 
 Female monsters may be able to lay eggs by using the #sit command.
 
@@ -5022,8 +4954,7 @@ predicament.
 Deities don't like being bothered too often, so prayer is usually
 reserved for emergencies.  However, it can have beneficial effects
 too, so if you want to pray again soon, you can appease your %G
-sooner by offering acceptable sacrifices at their altar with the
-#sacrifice command.
+with suitable offerings at their altar with the #sacrifice command.
 
          #pray    request divine intervention
     #sacrifice    offer something to a deity at an altar
@@ -5035,16 +4966,15 @@ You are carrying so much weight that you are now encumbered!  To
 unencumber yourself, drop items with the d key until you can move
 freely again; you can always come back for them later.
 
-Encumbrance describes how weighed down you are by the items that you
-carry and wear on you.  As you carry more and more, you'll become
-"Burdened" (at the bottom of the screen), then "Stressed", "Strained"
-and "Overtaxed" up to "Overloaded".  The more encumbered you are, the
-slower you'll move relative to enemies, and the harder it will be to
-move up or down stairs or even at all.
+As you carry more and more, you'll become "Burdened" (at the bottom of
+the screen), then "Stressed", "Strained" and "Overtaxed" up to
+"Overloaded".  The more encumbered you are, the slower you'll move
+relative to enemies, and the harder it will be to move up or down
+stairs or even at all.
 
 Your strength (Str:) and constitution (Con:) attributes determine how
-much you carry before you become encumbered; higher values enable you
-to carry more weight.
+much you carry before you become encumbered; higher values let you
+carry more weight.
 
 Now try dropping a few items with the d key.
 
@@ -5103,14 +5033,14 @@ hand motions needed to cast spells, so wearing either of those will
 increase the failure rate of spells.  You can the failure rates of
 each spell when you cast it (Z) or view the list of known spells (+).
 
-If you're very good with magic, you may have a failure rate of 0% for
+If you're very good with magic, you may have a failure rate of 0%% for
 some spells even when wearing metal armor or a shield; if those spells
 are all you need, wearing armor may be worth the trade-off.  Later on,
 you may want to cast higher-level spells, and so either swap out your
 armor for non-metallic armor or ditch it altogether.
 
 If you're not good with magic, you can choose to just ignore it
-entirely and wear whatever armor you can find.
+entirely and wear whatever you please.
 
         Z    cast a spell
         +    list or rearrange spells
@@ -5119,8 +5049,7 @@ entirely and wear whatever armor you can find.
 Tutorial: Weapon Choice
 
 You've just wielded a weapon your character isn't very good with.
-They'll have a hard time hitting and will do less damage than usual
-when they do.
+They'll have a hard time hitting and will do less damage when they do.
 
 Use the #enhance command to find out what weapons your character is
 good with ('basic' or higher), needs practice with ('unskilled') or
@@ -5138,17 +5067,17 @@ weapon your character is more comfortable with.
 %Cm - 00342
 Tutorial: Engulfed
 
-You've just been engulfed by a monster!  Some monsters choose to
-engulf, swallow or absorb their prey whole instead of fighting the
-usual ways.  Now you must fight your way out from inside.
+You've been engulfed by a monster!  Some monsters choose to engulf,
+swallow or absorb their prey whole instead of fighting the usual ways.
+Now you must fight your way out from inside.
 
 While engulfed, attacks, spells and other actions will all affect your
 engulfing foe, and you'll always hit while within it.  Zapping wands
 can help you escape too.
 
 Generally, you'll want to escape quickly; many monsters can do a lot
-of damage to you while engulfed, and some of the more dangerous ones
-can even digest and thus kill you!
+of damage to you while they engulf you, and some of the more dangerous
+ones can even fatally digest you!
 %E
 %Cm - 00359
 Tutorial: Death
