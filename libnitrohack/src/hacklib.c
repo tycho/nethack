@@ -437,6 +437,11 @@ boolean towelday(void)
 	return (boolean)(getmday() == 25 && getmonth() == 5);
 }
 
+boolean piday(void)
+{
+	return (boolean)(getmonth() == 3 && getmday() == 14);
+}
+
 int night(void)
 {
 	int hour = getlt()->tm_hour;

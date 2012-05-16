@@ -385,7 +385,8 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 					AT_SPIT : AT_WEAP), singleobj)) {
 			blindinc = rnd(25);
 			if (singleobj->otyp == CREAM_PIE) {
-			    if (!Blind) pline("Yecch!  You've been creamed.");
+			    if (!Blind) pline("Yecch!  You've been %s.",
+					      piday() ? "pied" : "creamed");
 			    else pline("There's something sticky all over your %s.",
 				       body_part(FACE));
 			} else if (singleobj->otyp == BLINDING_VENOM) {

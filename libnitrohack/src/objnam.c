@@ -400,6 +400,9 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			}
 			if (!f) warning("Bad fruit #%d?", obj->spe);
 			break;
+		} else if (typ == CREAM_PIE && piday()) {
+			strcpy(buf, "irrational pie");
+			break;
 		}
 
 		strcpy(buf, actualn);
