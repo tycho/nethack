@@ -695,6 +695,15 @@ void tutorial_redisplay(void)
 	int last_section = 0;
 
 	init_menulist(&menu);
+
+	/* If the welcome message hasn't been shown,
+	   then none of the others have either. */
+	if (!pl_tutorial[QT_T_WELCOME - QT_T_FIRST]) {
+	    add_menutext(&menu, "No tutorial messages to review yet!");
+	    display_menu(menu.items, menu.icount, NULL, PICK_NONE, NULL);
+	    return;
+	}
+
 	for (i = QT_T_FIRST; i <= QT_T_MAX; i++) {
 	    if (pl_tutorial[i - QT_T_FIRST] > 0) {
 		char namebuf[80];
