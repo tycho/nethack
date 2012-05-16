@@ -785,7 +785,7 @@ void enlightenment(int final)
 
 	    if (prot < 0)
 		you_are(&menu, "ineffectively protected");
-	    else
+	    else if (prot > 0)
 		you_are(&menu, "protected");
 	}
 	if (Protection_from_shape_changers)
