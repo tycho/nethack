@@ -31,15 +31,17 @@ enum nh_direction curses_getdir(const char *query, nh_bool restricted)
 {
     int key;
     enum nh_direction dir;
-    
+
     key = curses_msgwin(query ? query : "In what direction?");
     if (key == '.' || key == 's')
-	    return DIR_SELF;
-    
+	return DIR_SELF;
+    else if (key == '\033')
+	return DIR_NONE;
+
     dir = key_to_dir(key);
     if (dir == DIR_NONE)
 	curses_msgwin("What a strange direction!");
-    
+
     return dir;
 }
 
