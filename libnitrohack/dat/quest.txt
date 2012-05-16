@@ -5093,12 +5093,11 @@ treasure you had and the monsters you killed.  You may even make the
 high score list!  You're told what items you had, so you can figure
 out what you did wrong.
 
-If you keep dying, you can play in 'explore mode' using the
-#exploremode command, which lets you avert death when it strikes, but
-prevents your score from being added to the high score list.  Beware!
-Once you enter explore mode, your character cannot return to a normal
-scoring game.  Once you've got the ropes, return to win in normal
-mode; explore mode wins don't count!
+If you keep dying, you can play in 'explore mode' to avert death by
+using the #exploremode command, but preventing your score from being
+added to the high score list.  Beware!  Once you enter explore mode,
+your character cannot return to a normal scoring game.  Once you've got
+the ropes, return to win in normal mode; explore mode wins don't count!
 
     #exploremode    enter non-scoring invincible explore mode
 %E
