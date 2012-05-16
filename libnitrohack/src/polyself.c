@@ -1063,8 +1063,8 @@ int domindblast(void)
 		if (mtmp->mpeaceful)
 			continue;
 		u_sen = telepathic(mtmp->data) && !mtmp->mcansee;
-		if ((u_sen || (telepathic(mtmp->data) && rn2(2)) || !rn2(10)) &&
-		    (which_armor(mtmp, W_ARMH) &&
+		if (u_sen || (telepathic(mtmp->data) && rn2(2)) ||
+		    (!rn2(10) && which_armor(mtmp, W_ARMH) &&
 		     which_armor(mtmp, W_ARMH)->otyp != TINFOIL_HAT)) {
 			pline("You lock in on %s %s.", s_suffix(mon_nam(mtmp)),
 				u_sen ? "telepathy" :
