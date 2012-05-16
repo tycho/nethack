@@ -1452,6 +1452,7 @@ extern void costly_gold(xchar,xchar,long);
 extern boolean block_door(xchar,xchar);
 extern boolean block_entry(xchar,xchar);
 extern void blkmar_guards(struct monst *);
+extern void set_black_marketeer_angry(void);
 extern char *shk_your(char *, const struct obj *);
 extern char *Shk_Your(char *, const struct obj *);
 

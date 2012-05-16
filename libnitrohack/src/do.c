@@ -1276,6 +1276,9 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 		    if (!DEADMONSTER(mtmp) && mtmp->msleeping) mtmp->msleeping = 0;
 	}
 
+	if (Is_blackmarket(&u.uz) && Conflict)
+	    set_black_marketeer_angry();
+
 	if (on_level(&u.uz, &astral_level))
 	    final_level();
 	else

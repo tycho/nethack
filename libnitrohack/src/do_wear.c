@@ -643,14 +643,17 @@ void Ring_on(struct obj *obj)
 	case RIN_FIRE_RESISTANCE:
 	case RIN_COLD_RESISTANCE:
 	case RIN_SHOCK_RESISTANCE:
-	case RIN_CONFLICT:
 	case RIN_TELEPORT_CONTROL:
 	case RIN_POLYMORPH:
 	case RIN_POLYMORPH_CONTROL:
-	case RIN_FREE_ACTION:                
+	case RIN_FREE_ACTION:
 	case RIN_SLOW_DIGESTION:
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
+		break;
+	case RIN_CONFLICT:
+		if (Is_blackmarket(&u.uz))
+		    set_black_marketeer_angry();
 		break;
 	case RIN_WARNING:
 		see_monsters();

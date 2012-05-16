@@ -379,6 +379,19 @@ void blkmar_guards(struct monst *shkp)
 }
 
 
+/* Make the Black Marketeer on the current level angry. */
+void set_black_marketeer_angry(void)
+{
+	struct monst *mtmp;
+	for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
+	    if (mtmp && mtmp->isshk &&
+		mtmp->data == &mons[PM_BLACK_MARKETEER]) {
+		setmangry(mtmp);
+	    }
+	}
+}
+
+
 /* x,y is strictly inside shop */
 char inside_shop(struct level *lev, xchar x, xchar y)
 {
