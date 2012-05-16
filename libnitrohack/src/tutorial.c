@@ -497,6 +497,8 @@ void maybe_tutorial(void)
 
 	if (u.uz.dlevel >= 2)
 	    if (check_tutorial_message(QT_T_DLEVELCHANGE)) return;
+	if (u.uz.dlevel >= 10)
+	    if (check_tutorial_message(QT_T_DGN_OVERVIEW)) return;
 
 	if (u.uhp < u.uhpmax)
 	    if (check_tutorial_message(QT_T_DAMAGED)) return;

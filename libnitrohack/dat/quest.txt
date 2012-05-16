@@ -4137,6 +4137,23 @@ key strokes.
         Q    set an item to quiver
         f    fire quivered item
 %E
+%Cm - 00275
+Tutorial: Dungeon Overview
+
+By now you've ventured through many dungeon levels; it can be hard to
+keep track of them all.
+
+Press Ctrl-O for an overview of the dungeon, which records each level
+you've visited and anything special about them, like shops, altars,
+fountains and stairs to other dungeon branches.  Selecting a level
+will show what you remember of it.
+
+You can also name your current level with the #annotate command, the
+text of which appears in the dungeon overview, next to the level.
+
+       Ctrl-O    show dungeon overview
+    #annotate    label your current level for the dungeon overview
+%E
 %Cm - 00280
 Tutorial: Getting Help
 
