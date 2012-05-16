@@ -13,6 +13,7 @@ static char check_tutorial_command_buffer[CHECK_TUTORIAL_COMMAND_BUFSIZE];
 static int check_tutorial_command_pointer;
 static int check_tutorial_command_count;
 
+static int tutorial_latest_message;
 static struct attribs tutorial_old_attribs;
 #define TUTORIAL_IMPOSSIBLE_AC 300
 static int tutorial_old_ac;
@@ -29,6 +30,7 @@ void init_tutorial(void)
 	check_tutorial_command_pointer = 0;
 	check_tutorial_command_count = 0;
 
+	tutorial_latest_message = 0;
 	for (i = 0; i < A_MAX; i++)
 	    tutorial_old_attribs.a[i] = 0;
 	tutorial_old_ac = TUTORIAL_IMPOSSIBLE_AC;
@@ -46,6 +48,7 @@ void save_tutorial(struct memfile *mf)
 	mwrite32(mf, check_tutorial_command_pointer);
 	mwrite32(mf, check_tutorial_command_count);
 
+	mwrite32(mf, tutorial_latest_message);
 	for (i = 0; i < A_MAX; i++)
 	    mwrite8(mf, tutorial_old_attribs.a[i]);
 	mwrite32(mf, tutorial_old_ac);
@@ -63,6 +66,7 @@ void restore_tutorial(struct memfile *mf)
 	check_tutorial_command_pointer = mread32(mf);
 	check_tutorial_command_count = mread32(mf);
 
+	tutorial_latest_message = mread32(mf);
 	for (i = 0; i < A_MAX; i++)
 	    tutorial_old_attribs.a[i] = mread8(mf);
 	tutorial_old_ac = mread32(mf);
@@ -77,6 +81,7 @@ boolean check_tutorial_message(int msgnum)
 	if (pl_tutorial[msgnum - QT_T_FIRST] > 0) return FALSE;
 
 	pl_tutorial[msgnum - QT_T_FIRST] = 1;
+	tutorial_latest_message = msgnum;
 
 	/* Show matching vi-keys message in tutorial review menu
 	   when a numpad tutorial message is shown. */
@@ -708,6 +713,7 @@ void tutorial_redisplay(void)
 	    if (pl_tutorial[i - QT_T_FIRST] > 0) {
 		char namebuf[80];
 		char *name;
+		char entrybuf[90]; /* namebuf + " [LATEST!]" */
 
 		/* Add a header if it belongs in a new section.
 		   The values checked are the first after each section
@@ -743,7 +749,9 @@ void tutorial_redisplay(void)
 		qt_com_firstline(i, namebuf);
 		/* add 10 to namebuf to remove the 'Tutorial: ' at the start */
 		name = *namebuf ? namebuf + 10 : "(not found)";
-		add_menuitem(&menu, i, name, 0, FALSE);
+		sprintf(entrybuf, "%s%s", name,
+			(i == tutorial_latest_message) ? " [LATEST!]" : "");
+		add_menuitem(&menu, i, entrybuf, 0, FALSE);
 	    }
 	}
 	n = display_menu(menu.items, menu.icount, "Review which tutorial?",
