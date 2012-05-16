@@ -1510,12 +1510,17 @@ static short mixtype(struct obj *o1, struct obj *o2)
 		    }
 		}
 	    } else if ((i1 == ALCHEMY_WHITE && IS_DARK_COLOR(i2)) ||
-		       (i1==ALCHEMY_BLACK && IS_LIGHT_COLOR(i2))) {
+		       (i1 == ALCHEMY_BLACK && IS_LIGHT_COLOR(i2))) {
 		/* toggle light/dark bit */
 		result = i2 ^ 8;
 	    } else {
 		return 0;
 	    }
+
+	    /* don't create non-existing potions */
+	    if (OBJ_NAME(objects[alchemy_table2[result]]) == 0)
+		return 0;
+
 	    return alchemy_table2[result];
 	} else {
 	    switch (o1->otyp) {
