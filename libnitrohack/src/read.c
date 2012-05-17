@@ -24,9 +24,10 @@ static void p_glow1(struct obj *);
 static void p_glow2(struct obj *,const char *);
 static void randomize(int *, int);
 static void forget_single_object(int);
-static void forget(int);
 static void maybe_tame(struct monst *,struct obj *);
 
+static void do_flood(int,int,void *);
+static void undo_flood(int,int,void *);
 static void set_lit(int,int,void *);
 
 int doread(struct obj *scroll)
@@ -704,47 +705,6 @@ void forget_levels(int percent)
 	}
 }
 
-/*
- * Forget some things (e.g. after reading a scroll of amnesia).  When called,
- * the following are always forgotten:
- *
- *	- felt ball & chain
- *	- traps
- *	- part (6 out of 7) of the map
- *
- * Other things are subject to flags:
- *
- *	howmuch & ALL_MAP	= forget whole map
- *	howmuch & ALL_SPELLS	= forget all spells
- */
-static void forget(int howmuch)
-{
-
-	if (Punished) u.bc_felt = 0;	/* forget felt ball&chain */
-
-	forget_map(level, (howmuch & ALL_MAP));
-	forget_traps(level);
-
-	/* 1 in 3 chance of forgetting some levels */
-	if (!rn2(3)) forget_levels(rn2(25));
-
-	/* 1 in 3 chance of forgeting some objects */
-	if (!rn2(3)) forget_objects(rn2(25));
-
-	if (howmuch & ALL_SPELLS) losespells();
-	/*
-	 * Make sure that what was seen is restored correctly.  To do this,
-	 * we need to go blind for an instant --- turn off the display,
-	 * then restart it.  All this work is needed to correctly handle
-	 * walls which are stone on one side and wall on the other.  Turning
-	 * off the seen bits above will make the wall revert to stone,  but
-	 * there are cases where we don't want this to happen.  The easiest
-	 * thing to do is to run it through the vision system again, which
-	 * is always correct.
-	 */
-	doredraw();		/* this correctly will reset vision */
-}
-
 /* monster is hit by scroll of taming's effect */
 static void maybe_tame(struct monst *mtmp, struct obj *sobj)
 {
@@ -755,6 +715,55 @@ static void maybe_tame(struct monst *mtmp, struct obj *sobj)
 		make_happy_shk(mtmp, FALSE);
 	    else if (!resist(mtmp, sobj->oclass, 0, NOTELL))
 		tamedog(mtmp, NULL);
+	}
+}
+
+/* Remove water tile at (x, y). */
+static void undo_flood(int x, int y, void *roomcnt)
+{
+	struct rm *loc = &level->locations[x][y];
+
+	if (loc->typ != POOL &&
+	    loc->typ != MOAT &&
+	    loc->typ != WATER &&
+	    loc->typ != FOUNTAIN)
+	    return;
+
+	(*(int *)roomcnt)++;
+
+	/* Get rid of a pool at x, y */
+	loc->typ = ROOM;
+	newsym(x, y);
+}
+
+static void do_flood(int x, int y, void *poolcnt)
+{
+	struct monst *mtmp;
+	struct trap *ttmp;
+
+	if (nexttodoor(level, x, y) ||
+	    rn2(1 + distmin(u.ux, u.uy, x, y)) ||
+	    sobj_at(BOULDER, level, x, y) ||
+	    level->locations[x][y].typ != ROOM)
+	    return;
+
+	if ((ttmp = t_at(level, x, y)) != 0 && !delfloortrap(ttmp))
+	    return;
+
+	(*(int *)poolcnt)++;
+
+	if (!((*(int *)poolcnt) && x == u.ux && y == u.uy)) {
+	    /* Put a pool at x, y */
+	    level->locations[x][y].typ = POOL;
+	    del_engr_at(level, x, y);
+	    water_damage(level->objects[x][y], FALSE, TRUE);
+
+	    if ((mtmp = m_at(level, x, y)) != 0)
+		minliquid(mtmp);
+	    else
+		newsym(x, y);
+	} else if (x == u.ux && y == u.uy) {
+	    (*(int *)poolcnt)--;
 	}
 }
 
@@ -1225,19 +1234,46 @@ int seffects(struct obj *sobj, boolean *known)
 		    pline("Unfortunately, you can't grasp the details.");
 		}
 		break;
-	case SCR_AMNESIA:
-		*known = TRUE;
-		forget(	(!sobj->blessed ? ALL_SPELLS : 0) |
-			(!confused || sobj->cursed ? ALL_MAP : 0) );
-		if (Hallucination) /* Ommmmmm! */
-			pline("Your mind releases itself from mundane concerns.");
-		else if (!strncmpi(plname, "Maud", 4))
-			pline("As your mind turns inward on itself, you forget everything else.");
-		else if (rn2(2))
-			pline("Who was that Maud person anyway?");
-		else
-			pline("Thinking of Maud you forget everything else.");
-		exercise(A_WIS, FALSE);
+	case SCR_FLOOD:
+		if (confused) {
+		    /* remove water from vicinity of player */
+		    int maderoom = 0;
+		    do_clear_area(u.ux, u.uy, 4 + 2 * bcsign(sobj),
+				  undo_flood, &maderoom);
+		    if (maderoom) {
+			*known = TRUE;
+			pline("You are suddenly very dry!");
+		    }
+		} else {
+		    int madepool = 0;
+		    int stilldry = -1;
+		    int x, y, safe_pos = 0;
+
+		    if (!sobj->cursed)
+			do_clear_area(u.ux, u.uy, 5, do_flood, &madepool);
+
+		    /* check if there safe tiles around the player */
+		    for (x = u.ux - 1; x <= u.ux + 1; x++) {
+			for (y = u.uy - 1; y <= u.uy + 1; y++) {
+			    if (x != u.ux && y != u.uy &&
+				goodpos(level, x, y, &youmonst, 0)) {
+				safe_pos++;
+			    }
+			}
+		    }
+		    /* cursed/uncursed may put water on player's position */
+		    if (!sobj->blessed && safe_pos > 0)
+			do_flood(u.ux, u.uy, &stilldry);
+
+		    if (!madepool && stilldry)
+			break;
+		    if (madepool)
+			pline(Hallucination ? "A totally gnarly wave comes in!" :
+					      "A flood surges through the area!" );
+		    if (!stilldry && !Wwalking && !Flying && !Levitation)
+			drown();
+		    *known = TRUE;
+		}
 		break;
 	case SCR_FIRE:
 		/*
