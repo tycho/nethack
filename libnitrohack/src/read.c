@@ -1325,103 +1325,21 @@ int seffects(struct obj *sobj, boolean *known)
 		/* Loop through the surrounding squares */
 		if (!sobj->cursed) for (x = u.ux-1; x <= u.ux+1; x++) {
 		    for (y = u.uy-1; y <= u.uy+1; y++) {
-
 			/* Is this a suitable spot? */
-			if (isok(x, y) && !closed_door(level, x, y) &&
-					!IS_ROCK(level->locations[x][y].typ) &&
-					!IS_AIR(level->locations[x][y].typ) &&
-					/* make less boulders in Black Market */
-					!(Is_blackmarket(&u.uz) && rn2(2)) &&
-					(x != u.ux || y != u.uy)) {
-			    struct obj *otmp2;
-			    struct monst *mtmp;
-
-			    /* Make the object(s) */
-			    otmp2 = mksobj(level, confused ? ROCK : BOULDER,
-					FALSE, FALSE);
-			    if (!otmp2) continue;  /* Shouldn't happen */
-			    boulder_created++;
-			    otmp2->quan = confused ? rn1(5,2) : 1;
-			    otmp2->owt = weight(otmp2);
-
-			    /* Find the monster here (won't be player) */
-			    mtmp = m_at(level, x, y);
-			    if (mtmp && !amorphous(mtmp->data) &&
-					!passes_walls(mtmp->data) &&
-					!noncorporeal(mtmp->data) &&
-					!unsolid(mtmp->data)) {
-				struct obj *helmet = which_armor(mtmp, W_ARMH);
-				int mdmg;
-
-				if (cansee(mtmp->mx, mtmp->my)) {
-				    pline("%s is hit by %s!", Monnam(mtmp),
-						doname(otmp2));
-				    if (mtmp->minvis && !canspotmon(level, mtmp))
-					map_invisible(mtmp->mx, mtmp->my);
-				}
-				mdmg = dmgval(otmp2, mtmp) * otmp2->quan;
-				if (helmet) {
-				    if (is_metallic(helmet)) {
-					if (canspotmon(level, mtmp))
-					    pline("Fortunately, %s is wearing a hard helmet.", mon_nam(mtmp));
-					else if (flags.soundok)
-					    You_hear("a clanging sound.");
-					if (mdmg > 2) mdmg = 2;
-				    } else {
-					if (canspotmon(level, mtmp))
-					    pline("%s's %s does not protect %s.",
-						Monnam(mtmp), xname(helmet),
-						mhim(level, mtmp));
-				    }
-				}
-				mtmp->mhp -= mdmg;
-				if (mtmp->mhp <= 0)
-				    xkilled(mtmp, 1);
-			    }
-			    /* Drop the rock/boulder to the floor */
-			    if (!flooreffects(otmp2, x, y, "fall")) {
-				place_object(otmp2, level, x, y);
-				stackobj(otmp2);
-				newsym(x, y);  /* map the rock */
-			    }
+			if (isok(x, y) &&
+				!closed_door(level, x, y) &&
+				!IS_ROCK(level->locations[x][y].typ) &&
+				!IS_AIR(level->locations[x][y].typ) &&
+				/* make less boulders in Black Market */
+				!(Is_blackmarket(&u.uz) && rn2(2)) &&
+				(x != u.ux || y != u.uy)) {
+			    boulder_created += drop_boulder_on_monster(x, y, confused, TRUE);
 			}
 		    }
 		}
 		/* Attack the player */
 		if (!sobj->blessed) {
-		    int dmg;
-		    struct obj *otmp2;
-
-		    /* Okay, _you_ write this without repeating the code */
-		    otmp2 = mksobj(level, confused ? ROCK : BOULDER,
-				FALSE, FALSE);
-		    if (!otmp2) break;
-		    otmp2->quan = confused ? rn1(5,2) : 1;
-		    otmp2->owt = weight(otmp2);
-		    if (!amorphous(youmonst.data) &&
-				!Passes_walls &&
-				!noncorporeal(youmonst.data) &&
-				!unsolid(youmonst.data)) {
-			pline("You are hit by %s!", doname(otmp2));
-			dmg = dmgval(otmp2, &youmonst) * otmp2->quan;
-			if (uarmh && !sobj->cursed) {
-			    if (is_metallic(uarmh)) {
-				pline("Fortunately, you are wearing a hard helmet.");
-				if (dmg > 2) dmg = 2;
-			    } else if (flags.verbose) {
-				pline("Your %s does not protect you.",
-						xname(uarmh));
-			    }
-			}
-		    } else
-			dmg = 0;
-		    /* Must be before the losehp(), for bones files */
-		    if (!flooreffects(otmp2, u.ux, u.uy, "fall")) {
-			place_object(otmp2, level, u.ux, u.uy);
-			stackobj(otmp2);
-			newsym(u.ux, u.uy);
-		    }
-		    if (dmg) losehp(dmg, "scroll of earth", KILLED_BY_AN);
+		    drop_boulder_on_player(confused, !sobj->cursed);
 		} else {
 		    if (boulder_created == 0)
 			pline("But nothing else happens.");
@@ -1883,6 +1801,102 @@ boolean create_particular(void)
 	    }
 	}
 	return madeany;
+}
+
+void drop_boulder_on_player(boolean confused, boolean helmet_protects)
+{
+	int dmg;
+	struct obj *otmp2;
+
+	otmp2 = mksobj(level, confused ? ROCK : BOULDER, FALSE, FALSE);
+	if (!otmp2) return;
+	otmp2->quan = confused ? rn1(5,2) : 1;
+	otmp2->owt = weight(otmp2);
+	if (!amorphous(youmonst.data) &&
+		!Passes_walls &&
+		!noncorporeal(youmonst.data) &&
+		!unsolid(youmonst.data)) {
+	    pline("You are hit by %s!", doname(otmp2));
+	    dmg = dmgval(otmp2, &youmonst) * otmp2->quan;
+	    if (uarmh && helmet_protects) {
+		if (is_metallic(uarmh)) {
+		    pline("Fortunately, you are wearing a hard helmet.");
+		    if (dmg > 2) dmg = 2;
+		} else if (flags.verbose) {
+		    pline("Your %s does not protect you.", xname(uarmh));
+		}
+	    }
+	} else
+	    dmg = 0;
+
+	/* Must be before the losehp(), for bones files */
+	if (!flooreffects(otmp2, u.ux, u.uy, "fall")) {
+	    place_object(otmp2, level, u.ux, u.uy);
+	    stackobj(otmp2);
+	    newsym(u.ux, u.uy);
+	}
+
+	if (dmg) losehp(dmg, "scroll of earth", KILLED_BY_AN);
+}
+
+int drop_boulder_on_monster(int x, int y, boolean confused, boolean by_player)
+{
+	struct obj *otmp;
+	struct monst *mtmp;
+
+	/* Make the object(s) */
+	otmp = mksobj(level, confused ? ROCK : BOULDER, FALSE, FALSE);
+	if (!otmp) return 0;  /* Shouldn't happen */
+	otmp->quan = confused ? rn1(5,2) : 1;
+	otmp->owt = weight(otmp);
+
+	/* Find the monster here (won't be player) */
+	mtmp = m_at(level, x, y);
+	if (mtmp && !amorphous(mtmp->data) &&
+		    !passes_walls(mtmp->data) &&
+		    !noncorporeal(mtmp->data) &&
+		    !unsolid(mtmp->data)) {
+	    const struct obj *helmet = which_armor(mtmp, W_ARMH);
+	    int mdmg;
+
+	    if (cansee(mtmp->mx, mtmp->my)) {
+		pline("%s is hit by %s!", Monnam(mtmp), doname(otmp));
+		if (mtmp->minvis && !canspotmon(level, mtmp))
+		    map_invisible(mtmp->mx, mtmp->my);
+	    }
+	    mdmg = dmgval(otmp, mtmp) * otmp->quan;
+	    if (helmet) {
+		if (is_metallic(helmet)) {
+		    if (canspotmon(level, mtmp))
+			pline("Fortunately, %s is wearing a hard helmet.",
+			      mon_nam(mtmp));
+		    else if (flags.soundok)
+			You_hear("a clanging sound.");
+		    if (mdmg > 2) mdmg = 2;
+		} else {
+		    if (canspotmon(level, mtmp))
+			pline("%s's %s does not protect %s.", Monnam(mtmp),
+			      xname(helmet), mhim(level, mtmp));
+		}
+	    }
+	    mtmp->mhp -= mdmg;
+	    if (mtmp->mhp <= 0) {
+		if (by_player) {
+		    xkilled(mtmp, 1);
+		} else {
+		    pline("%s is killed.", Monnam(mtmp));
+		    mondied(mtmp);
+		}
+	    }
+	}
+	/* Drop the rock/boulder to the floor */
+	if (!flooreffects(otmp, x, y, "fall")) {
+	    place_object(otmp, level, x, y);
+	    stackobj(otmp);
+	    newsym(x, y);  /* map the rock */
+	}
+
+	return 1;
 }
 
 /*read.c*/

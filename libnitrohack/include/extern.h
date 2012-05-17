@@ -1330,6 +1330,8 @@ extern void punish(struct obj *);
 extern void unpunish(void);
 extern boolean cant_create(int *, boolean);
 extern boolean create_particular(void);
+extern void drop_boulder_on_player(boolean, boolean);
+extern int drop_boulder_on_monster(int, int, boolean, boolean);
 
 /* ### rect.c ### */
 
