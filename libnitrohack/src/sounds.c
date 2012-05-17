@@ -863,9 +863,10 @@ int dotalk(void)
 static int dochat(void)
 {
     struct monst *mtmp;
-    int tx,ty;
+    int tx, ty;
     struct obj *otmp;
     schar dx, dy, dz;
+    int mdx, mdy, mon_count;
 
     if (is_silent(youmonst.data)) {
 	pline("As %s, you cannot speak.", an(mons_mname(youmonst.data)));
@@ -896,7 +897,33 @@ static int dochat(void)
 	return 1;
     }
 
-    if (!getdir("Talk to whom? (in what direction)", &dx, &dy, &dz)) {
+    /* count the monsters around the player */
+    mon_count = 0;
+    for (mdx = -1; mdx <= 1; mdx++) {
+	for (mdy = -1; mdy <= 1; mdy++) {
+	    if (mdx == 0 && mdy == 0) {
+		/* account for steed */
+		if (u.usteed) {
+		    mon_count++;
+		    dx = 0;
+		    dy = 0;
+		    dz = 1;
+		}
+		continue;
+	    }
+
+	    mtmp = m_at(level, u.ux + mdx, u.uy + mdy);
+	    if (mtmp && canspotmon(level, mtmp)) {
+		mon_count++;
+		dx = mdx;
+		dy = mdy;
+		dz = 0;
+	    }
+	}
+    }
+
+    /* don't ask for a direction if there's only one monster around */
+    if (mon_count!=1 && !getdir("Talk to whom? (in what direction)",&dx,&dy,&dz)) {
 	/* decided not to chat */
 	return 0;
     }
