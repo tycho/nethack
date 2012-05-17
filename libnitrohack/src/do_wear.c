@@ -634,7 +634,6 @@ void Ring_on(struct obj *obj)
 
     switch(obj->otyp){
 	case RIN_TELEPORTATION:
-	case RIN_REGENERATION:
 	case RIN_SEARCHING:
 	case RIN_STEALTH:
 	case RIN_HUNGER:
@@ -650,6 +649,14 @@ void Ring_on(struct obj *obj)
 	case RIN_SLOW_DIGESTION:
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
+		break;
+	case RIN_REGENERATION:
+		if (!oldprop && !HRegeneration && !regenerates(youmonst.data)) {
+		    if (uhp() < uhpmax() && !objects[obj->otyp].oc_name_known) {
+			pline("Your wounds begin healing rapidly!");
+			makeknown(RIN_REGENERATION);
+		    }
+		}
 		break;
 	case RIN_CONFLICT:
 		if (Is_blackmarket(&u.uz))

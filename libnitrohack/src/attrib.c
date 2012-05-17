@@ -637,6 +637,18 @@ const char *beautiful(void)
 	       "ugly";
 }
 
+/* Return current hit points of your current form. */
+int uhp(void)
+{
+	return Upolyd ? u.mh : u.uhp;
+}
+
+/* Return maximum hit points of your current form. */
+int uhpmax(void)
+{
+	return Upolyd ? u.mhmax : u.uhpmax;
+}
+
 /* make sure u.abon is correct; it is dead-reckoned during the move,
  * but this produces some incorrect edge cases. */
 void calc_attr_bonus(void)

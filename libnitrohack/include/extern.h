@@ -96,6 +96,8 @@ extern schar acurrstr(void);
 extern void adjalign(int);
 extern void calc_attr_bonus(void);
 extern const char *beautiful(void);
+extern int uhp(void);
+extern int uhpmax(void);
 
 /* ### ball.c ### */
 
