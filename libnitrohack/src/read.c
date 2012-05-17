@@ -1422,9 +1422,10 @@ int seffects(struct obj *sobj, boolean *known)
 			newsym(u.ux, u.uy);
 		    }
 		    if (dmg) losehp(dmg, "scroll of earth", KILLED_BY_AN);
+		} else {
+		    if (boulder_created == 0)
+			pline("But nothing else happens.");
 		}
-		if (boulder_created == 0)
-		    pline("But nothing else happens.");
 	    } else if (In_endgame(&u.uz)) {
 		You_hear("the %s rumbling below you!", surface(u.ux, u.uy));
 	    }

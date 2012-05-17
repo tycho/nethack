@@ -1270,6 +1270,8 @@ int use_offensive(struct monst *mtmp, struct musable *m)
 			if (isok(x, y) && !closed_door(level, x, y) &&
 					!IS_ROCK(level->locations[x][y].typ) &&
 					!IS_AIR(level->locations[x][y].typ) &&
+					/* make less boulders in Black Market */
+					!(Is_blackmarket(&level->z) && rn2(2)) &&
 					(((x == mmx) && (y == mmy)) ?
 					    !otmp->blessed : !otmp->cursed) &&
 					(x != u.ux || y != u.uy)) {
