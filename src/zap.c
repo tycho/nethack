@@ -4132,9 +4132,11 @@ retry:
 
 	if (otmp != &zeroobj) {
 
-	    char llog[BUFSZ+20];
-	    Sprintf(llog, "wished for \"%s\"", mungspaces(bufcpy));
-	    livelog_write_string(llog);
+	    if (!flags.debug) {
+		char llog[BUFSZ+20];
+		Sprintf(llog, "wished for \"%s\"", mungspaces(bufcpy));
+		livelog_write_string(llog);
+	    }
 
 	    /* The(aobjnam()) is safe since otmp is unidentified -dlc */
 	    (void) hold_another_object(otmp, u.uswallow ?

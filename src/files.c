@@ -1949,6 +1949,11 @@ char		*tmp_levels;
 	    len = get_uchars(fp, buf, bufp, translate, FALSE,
 			     MAXPCHARS, "GRAPHICS");
 	    assign_graphics(translate, len, MAXPCHARS, 0);
+        } else if (match_varname(buf, "STATUSCOLOR", 11)) {
+            /* ignore statuscolor entries if not compiled in */
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+            (void) parse_status_color_options(bufp);
+#endif
 	} else if (match_varname(buf, "DUNGEON", 4)) {
 	    len = get_uchars(fp, buf, bufp, translate, FALSE,
 			     MAXDCHARS, "DUNGEON");

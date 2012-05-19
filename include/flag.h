@@ -200,6 +200,10 @@ struct instance_flags {
 #ifdef WIN_EDGE
 	boolean  win_edge;	/* are the menus aligned left&top */
 #endif
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+    boolean use_status_colors; /* use color in status line; only if wc_color */
+#endif
+    boolean hitpointbar;
 #ifdef MFLOPPY
 	boolean  checkspace;	/* check disk space before writing files */
 				/* (in iflags to allow restore after moving
@@ -238,9 +242,6 @@ struct instance_flags {
 #endif
 #ifdef SORTLOOT
 	char sortloot;          /* sort items to loot alphabetically */
-#endif
-#ifdef HPMON
-        boolean hpmon;
 #endif
 #ifdef PARANOID
 	boolean  paranoid_hit;  /* Ask for 'yes' when hitting peacefuls */

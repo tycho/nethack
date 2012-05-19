@@ -370,6 +370,8 @@ typedef unsigned char	uchar;
  */
 #endif
 
+#define STATUS_COLORS /* Shachaf & Oren Ben-Kiki */
+
 #ifdef TTY_GRAPHICS
 # define WIN_EDGE	/* windows aligned left&top */
 #endif
@@ -386,8 +388,6 @@ typedef unsigned char	uchar;
 #define SHOW_EXTINCT
 
 #define SORTLOOT /* sortloot -patch */
-
-#define HPMON /* hpmon -patch */
 
 #define SIMPLE_MAIL /* dgamelaunch simple mail */
 
