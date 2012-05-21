@@ -86,7 +86,7 @@ int doread(struct obj *scroll)
 		return 0;
 	    }
 	    if (u.roleplay.illiterate) {
-		pline("Unfortunately, you cannot read!");
+		pline("Unfortunately, you cannot read.");
 		return 0;
 	    } else {
 		violated(CONDUCT_ILLITERACY);
@@ -118,6 +118,14 @@ int doread(struct obj *scroll)
 		"Yendorian Express - Mithril Card",
 		"Yendorian Express - Platinum Card",
 	    };
+	    if (u.roleplay.illiterate) {
+		if (Blind)
+		    pline("You feel embossed writing.");
+		else if (flags.verbose)
+		    pline("There is writing on the %s.", xname(scroll));
+		pline("Unfortunately, you cannot read.");
+		return 0;
+	    }
 	    if (Blind) {
 		pline("You feel the embossed numbers:");
 	    } else {
@@ -132,7 +140,7 @@ int doread(struct obj *scroll)
 		  (scroll->o_id % 89) + 10, scroll->o_id % 4,
 		  ((scroll->o_id * 499) % 899999) + 100000, scroll->o_id % 10,
 		  !(scroll->o_id % 3), (scroll->o_id * 7) % 10);
-	    u.uconduct.literate++;
+	    violated(CONDUCT_ILLITERACY);
 	    return 1;
 	} else if (scroll->otyp == TIN ||
 		   scroll->otyp == CAN_OF_GREASE ||
@@ -145,37 +153,67 @@ int doread(struct obj *scroll)
 		pline("You can't feel any Braille writing.");
 		return 0;
 	    }
+	    if (u.roleplay.illiterate) {
+		if (flags.verbose)
+		    pline("There is writing on the %s.", xname(scroll));
+		pline("Unfortunately, you cannot read.");
+		return 0;
+	    }
 	    if (flags.verbose)
 		pline("It reads:");
 	    pline("\"Magic Marker(TM) Red Ink Marker Pen. Water Soluble.\"");
-	    u.uconduct.literate++;
+	    violated(CONDUCT_ILLITERACY);
 	    return 1;
 	} else if (scroll->oclass == COIN_CLASS) {
+	    if (u.roleplay.illiterate) {
+		if (Blind)
+		    pline("You feel the embossed words.");
+		else if (flags.verbose)
+		    pline("There is writing on the %s.", singular(scroll, xname));
+		pline("Unfortunately, you cannot read.");
+		return 0;
+	    }
 	    if (Blind)
 		pline("You feel the embossed words:");
 	    else if (flags.verbose)
 		pline("You read:");
 	    pline("\"1 Zorkmid. 857 GUE. In Frobs We Trust.\"");
-	    u.uconduct.literate++;
+	    violated(CONDUCT_ILLITERACY);
 	    return 1;
 	} else if (scroll->oartifact == ART_ORB_OF_FATE) {
+	    if (u.roleplay.illiterate) {
+		if (Blind)
+		    pline("You feel an engraved signature.");
+		else if (flags.verbose)
+		    pline("The %s is signed.", xname(scroll));
+		pline("Unfortunately, you cannot read.");
+		return 0;
+	    }
 	    if (Blind)
 		pline("You feel the engraved signature:");
 	    else
 		pline("It is signed:");
 	    pline("\"Odin.\"");
-	    u.uconduct.literate++;
+	    violated(CONDUCT_ILLITERACY);
 	    return 1;
 	} else if (OBJ_DESCR(objects[scroll->otyp]) &&
 		   !strncmp(OBJ_DESCR(objects[scroll->otyp]), "runed", 5)) {
 	    if (scroll->otyp == RUNESWORD) {
 		pline("You can't decipher the arcane runes.");
 		return 0;
-	    } if (!Race_if(PM_ELF) && !Role_if(PM_ARCHEOLOGIST)) {
+	    } else if (!Race_if(PM_ELF) && !Role_if(PM_ARCHEOLOGIST)) {
 		pline("You can't decipher the Elvish runes.");
 		return 0;
 	    }
-	    u.uconduct.literate++;
+	    if (u.roleplay.illiterate) {
+		if (Blind)
+		    pline("You feel engraved runes.");
+		else if (flags.verbose)
+		    pline("There are runes on the %s.", xname(scroll));
+		pline("Unfortunately, you cannot read.");
+		return 0;
+	    }
+	    violated(CONDUCT_ILLITERACY);
 	    if (objects[scroll->otyp].oc_merge) {
 		if (Blind)
 		    pline("You feel the engraved runes:");
