@@ -54,7 +54,35 @@ struct u_conduct {		/* number of times... */
 	unsigned int polyselfs;	/* transformed yourself */
 	unsigned int wishes;	/* used a wish */
 	unsigned int wisharti;	/* wished for an artifact */
+	unsigned int armoruses;	/* put on a piece of armor */
+	unsigned int unblinded;	/* starting non-blindfolded and removing a blindfold */
+	unsigned int robbed;	/* killed an artifact-guardian (like an ordinary robber) */
 				/* genocides already listed at end of game */
+};
+
+/* --- roleplay intrinsics ---
+ *
+ * In a lot of situations it makes sense to make special cases for
+ * conduct-characters. Here's the structure to store a character's
+ * abilities/intentions.
+ *
+ * These are allowed to change during gameplay, so e.g. it's possible
+ * to gain/lose the ability to read.
+ *
+ * It also allows stopping special treatment for characters who have
+ * obviously abandoned a selected conduct, e.g vegetarians stop feeling
+ * guilty after eating a lot of corpses.
+ */
+struct u_roleplay {		/* Your character is a/an ... */
+	boolean ascet;		/* foodless character */
+	boolean atheist;	/* atheist */
+	boolean blindfolded;	/* blindfolded character */
+	boolean illiterate;	/* illiterate character */
+	boolean pacifist;	/* pacifist */
+	boolean sadist;		/* sadist */
+	boolean nudist;		/* nudist */
+	boolean vegan;		/* vegan */
+	boolean vegetarian;	/* vegetarian */
 };
 
 
@@ -138,6 +166,7 @@ struct you {
 	struct u_event	uevent;		/* certain events have happened */
 	struct u_have	uhave;		/* you're carrying special objects */
 	struct u_conduct uconduct;	/* KMH, conduct */
+	struct u_roleplay roleplay;	/* roleplay intrinsics */
 	struct attribs	acurr,		/* your current attributes (eg. str)*/
 			aexe,		/* for gain/loss via "exercise" */
 			abon,		/* your bonus attributes (eg. str) */

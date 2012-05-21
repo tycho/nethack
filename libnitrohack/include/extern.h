@@ -446,7 +446,6 @@ extern void morehungry(int);
 extern void lesshungry(int);
 extern boolean is_fainted(void);
 extern void reset_faint(void);
-extern void violated_vegetarian(void);
 extern void newuhs(boolean);
 extern struct obj *floorfood(const char *,int);
 extern void vomit(void);
@@ -1378,6 +1377,11 @@ extern boolean validalign(int rolenum, int racenum, int alignnum);
 extern void role_init(void);
 extern const char *Hello(struct monst *);
 extern const char *Goodbye(void);
+extern void violated(int);
+extern boolean successful_cdt(int);
+extern boolean intended_cdt(int);
+extern boolean superfluous_cdt(int);
+extern boolean failed_cdt(int);
 
 /* ### rumors.c ### */
 

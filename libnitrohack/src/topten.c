@@ -416,6 +416,12 @@ static void topten_death_description(struct toptenentry *in, char *outbuf)
 	if ((bp = strchr(outbuf, ')')) != 0)
 	    *bp = (in->deathdnum == astral_level.dnum) ? '\0' : ' ';
 	second_line = FALSE;
+    } else if (!strncmp("ascended ", in->death, 9)) {
+	strcat(outbuf, "the ");
+	strcat(outbuf, in->death + 9);
+	sprintf(eos(outbuf), " ascended to demigod%s-hood",
+		(in->plgend[0] == 'F') ? "dess" : "");
+	second_line = FALSE;
     } else if (!strncmp("ascended", in->death, 8)) {
 	sprintf(eos(outbuf), "ascended to demigod%s-hood",
 		(in->plgend[0] == 'F') ? "dess" : "");
@@ -444,6 +450,7 @@ static void topten_death_description(struct toptenentry *in, char *outbuf)
 	    sprintf(eos(outbuf), " [max %d]", in->maxlvl);
 
 	/* kludge for "quit while already on Charon's boat" */
+	/* and "quit after breaking pacifist conduct" */
 	if (!strncmp(in->death, "quit ", 5))
 	    strcat(outbuf, in->death + 4);
     }

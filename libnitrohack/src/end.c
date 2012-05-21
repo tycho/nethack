@@ -74,6 +74,7 @@ int done2(void)
 		return 0;
 	}
 
+	killer = 0;
 	done(QUIT);
 	return 0;
 }
@@ -418,7 +419,9 @@ static boolean check_survival(int how, char *kilbuf)
 	/* Avoid killed by "a" burning or "a" starvation */
 	if (!killer && (how == STARVING || how == BURNING))
 		killer_format = KILLED_BY;
-	strcpy(kilbuf, (!killer || how >= PANICKED ? deaths[how] : killer));
+	/* Ignore some killer-strings, but use them for QUIT and ASCENDED */
+	strcpy(kilbuf, how == PANICKED || how == TRICKED || how == ESCAPED ||
+		       !killer ? deaths[how] : killer);
 	killer = kilbuf;
 
 	if (how < PANICKED) u.umortality++;

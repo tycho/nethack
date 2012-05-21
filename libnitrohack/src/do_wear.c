@@ -900,6 +900,7 @@ void Blindf_off(struct obj *otmp)
 {
 	boolean was_blind = Blind, changed = FALSE;
 
+	violated(CONDUCT_BLINDFOLDED);
 	takeoff_mask &= ~W_TOOL;
 	setworn(NULL, otmp->owornmask);
 	off_msg(otmp);

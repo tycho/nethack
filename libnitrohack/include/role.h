@@ -167,8 +167,52 @@ struct Align {
 	aligntyp value;		/* equivalent A_ value */
 };
 
-
 extern const struct Align aligns[];	/* table of available alignments */
+
+
+/*
+ * The following structure contains information about a conduct
+ *   - a name (e.g. for a conduct-menu at character creation)
+ *   - nouns and adjectives for the highscore
+ *   - a flag for 'worth mentioning in the highscore'
+ *   - all strings necessary for show_conduct()
+ */
+/*** Unified structure specifying conduct information ***/
+struct Conduct {
+	const char *name;		/* pacifism/nudism/...  */
+	const char *noun;		/* pacifist/nudist/...  */
+	const char *adj;		/* peaceful/nude/...    */
+
+	boolean highscore;		/* conduct appears in the highscore */
+
+	const char *prefix;		/* "You "       */
+	const char *presenttxt;		/* "have been " */
+	const char *pasttxt;		/* "were "      */
+	const char *suffix;		/* "a pacifist" */
+	const char *failtxt;		/* "pretended to be a pacifist" */
+};
+
+extern const struct Conduct conducts[];/* table of available roleplay conducts*/
+
+/*
+ * The following definitions get used to call violated(CONDUCT_XYZ),
+ * and to access the information contained in the conducts[] array.
+ */
+
+#define ROLE_CONDUCTS		10	/* number of roleplay conducts */
+
+#define FIRST_CONDUCT		0
+#define CONDUCT_PACIFISM	0
+#define CONDUCT_SADISM		1
+#define CONDUCT_ATHEISM		2
+#define CONDUCT_NUDISM		3
+#define CONDUCT_BLINDFOLDED	4
+#define CONDUCT_FOODLESS	5
+#define CONDUCT_VEGAN		6
+#define CONDUCT_VEGETARIAN	7
+#define CONDUCT_ILLITERACY	8
+#define CONDUCT_THIEVERY	9
+#define LAST_CONDUCT		(ROLE_CONDUCTS - 1)
 
 
 #endif

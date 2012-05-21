@@ -95,22 +95,46 @@ struct flag {
 	 * is initialized or restored (specifically, after role_init()
 	 * is called).
 	 */
-	
+
 	/* Default starting role, race, gender and alignment, as per the options.
 	 * The actual values in use for an ongoing game are in struct you. */
 	int	init_role; /* (index into roles[])   */
 	int	init_race; /* (index into races[])   */
 	int	init_gend; /* (index into genders[]) */
 	int	init_align;/* (index into aligns[])  */
-	
+
 	int randomall;	/* randomly assign everything not specified */
 	int pantheon;	/* deity selection for priest character */
-	
+
 	/* birth option flags */
 	boolean  elbereth_enabled; /* should the E-word repel monsters? */
 	boolean  rogue_enabled;    /* create a rogue level */
 	boolean  seduce_enabled;   /* succubus sduction */
 	boolean  bones_enabled;    /* allow loading bones levels */
+
+	/* --- initial roleplay flags ---
+	 * These flags represent the player's conduct/roleplay
+	 * intention at character creation.
+	 *
+	 * First the player can set some of these at character
+	 * creation (via configuration).
+	 * Then role_init() may set/prevent certain combinations,
+	 * e.g. Monks get the vegetarian flag, vegans should also be
+	 * vegetarians.
+	 *
+	 * After that the initial flags shouldn't be modified.
+	 * In u_init() the flags can be used to put some
+	 * roleplay-intrinsics into the u structure. Only those
+	 * should be modified during gameplay.
+	 */
+	boolean  ascet;
+	boolean  atheist;
+	boolean  blindfolded;
+	boolean  illiterate;
+	boolean  pacifist;
+	boolean  nudist;
+	boolean  vegan;
+	boolean  vegetarian;
 };
 
 

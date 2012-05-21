@@ -149,6 +149,14 @@ static void save_flags(struct memfile *mf)
 	mwrite8(mf, flags.rogue_enabled);
 	mwrite8(mf, flags.seduce_enabled);
 	mwrite8(mf, flags.bones_enabled);
+	mwrite8(mf, flags.ascet);
+	mwrite8(mf, flags.atheist);
+	mwrite8(mf, flags.blindfolded);
+	mwrite8(mf, flags.illiterate);
+	mwrite8(mf, flags.pacifist);
+	mwrite8(mf, flags.nudist);
+	mwrite8(mf, flags.vegan);
+	mwrite8(mf, flags.vegetarian);
 	
 	mwrite(mf, flags.inv_order, sizeof(flags.inv_order));
 }

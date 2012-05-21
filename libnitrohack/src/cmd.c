@@ -998,21 +998,38 @@ void show_conduct(int final)
 {
 	char buf[BUFSZ];
 	int ngenocided;
+	int cdt;
 	struct menulist menu;
 
 	/* Create the conduct window */
 	init_menulist(&menu);
-	
-	if (!u.uconduct.food)
-	    enl_msg(&menu, You_, "have gone", "went", " without food");
-	    /* But beverages are okay */
-	else if (!u.uconduct.unvegan)
-	    you_have_X(&menu, "followed a strict vegan diet");
-	else if (!u.uconduct.unvegetarian)
-	    you_have_been(&menu, "vegetarian");
 
-	if (!u.uconduct.gnostic)
-	    you_have_been(&menu, "an atheist");
+	/* List all major conducts. */
+	for (cdt = FIRST_CONDUCT; cdt <= LAST_CONDUCT; cdt++) {
+	    if (successful_cdt(cdt)) {
+		if (!superfluous_cdt(cdt)) {
+		    enl_msg(&menu,
+			    conducts[cdt].prefix,	/* "You "       */
+			    conducts[cdt].presenttxt,	/* "have been"  */
+			    conducts[cdt].pasttxt,	/* "were"       */
+			    conducts[cdt].suffix);	/* "a pacifist" */
+		}
+	    } else if (intended_cdt(cdt)) {
+		/* "pretended to be a pacifist" */
+		you_have_X(&menu, conducts[cdt].failtxt);
+	    }
+	}
+	if (failed_cdt(CONDUCT_PACIFISM) || failed_cdt(CONDUCT_SADISM)) {
+	    if (u.uconduct.killer == 0) {
+		you_have_never(&menu, "killed a creature");
+	    } else {
+		sprintf(buf, "killed %u creature%s", u.uconduct.killer,
+			plur(u.uconduct.killer));
+		you_have_X(&menu, buf);
+	    }
+	}
+
+	/* Now list the remaining statistical details. */
 
 	if (!u.uconduct.weaphit)
 	    you_have_never(&menu, "hit with a wielded weapon");
@@ -1021,14 +1038,15 @@ void show_conduct(int final)
 		    u.uconduct.weaphit, plur(u.uconduct.weaphit));
 	    you_have_X(&menu, buf);
 	}
-	if (!u.uconduct.killer)
-	    you_have_been(&menu, "a pacifist");
 
-	if (!u.uconduct.literate)
-	    you_have_been(&menu, "illiterate");
-	else if (wizard) {
+	if (wizard && u.uconduct.literate) {
 	    sprintf(buf, "read items or engraved %u time%s",
 		    u.uconduct.literate, plur(u.uconduct.literate));
+	    you_have_X(&menu, buf);
+	}
+	if (wizard && u.uconduct.armoruses) {
+	    sprintf(buf, "put on armor %u time%s",
+		    u.uconduct.armoruses, plur(u.uconduct.armoruses));
 	    you_have_X(&menu, buf);
 	}
 

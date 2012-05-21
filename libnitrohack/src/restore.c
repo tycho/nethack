@@ -504,6 +504,14 @@ void restore_flags(struct memfile *mf, struct flag *f)
 	f->rogue_enabled = mread8(mf);
 	f->seduce_enabled = mread8(mf);
 	f->bones_enabled = mread8(mf);
+	f->ascet = mread8(mf);
+	f->atheist = mread8(mf);
+	f->blindfolded = mread8(mf);
+	f->illiterate = mread8(mf);
+	f->pacifist = mread8(mf);
+	f->nudist = mread8(mf);
+	f->vegan = mread8(mf);
+	f->vegetarian = mread8(mf);
 	
 	mread(mf, f->inv_order, sizeof(f->inv_order));
 }

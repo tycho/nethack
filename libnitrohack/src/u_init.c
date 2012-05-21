@@ -531,6 +531,23 @@ void u_init(void)
 	adjabil(0,1);
 	u.ulevel = u.ulevelmax = 1;
 
+	/*
+	 * u.roleplay should be treated similar to gender and alignment
+	 *   - it gets set at character creation
+	 *   - it's hard to change in-game
+	 *     (e.g. a special NPC could teach literacy somewhere)
+	 * the initialisation has to be in front of food, alignment
+	 * and inventory.
+	 */
+	u.roleplay.ascet	= flags.ascet;
+	u.roleplay.atheist	= flags.atheist;
+	u.roleplay.blindfolded	= flags.blindfolded;
+	u.roleplay.illiterate	= flags.illiterate;
+	u.roleplay.pacifist	= flags.pacifist;
+	u.roleplay.nudist	= flags.nudist;
+	u.roleplay.vegan	= flags.vegan;
+	u.roleplay.vegetarian	= flags.vegetarian;
+
 	init_uhunger();
 	for (i = 0; i <= MAXSPELL; i++) spl_book[i].sp_id = NO_SPELL;
 	u.ublesscnt = 300;			/* no prayers just yet */
@@ -767,10 +784,19 @@ void u_init_inv_skills(void)
 
 	/* Towel Day (May 25th): In Memoriam Douglas Adams */
 	if (towelday())
-		ini_inv(Towel, nclist);
+	    ini_inv(Towel, nclist);
+
+	/*** Conduct-specific initialisation ***/
+	if (u.roleplay.blindfolded) {
+	    if (!ublindf) ini_inv(Blindfold, nclist);
+	} else {
+	    violated(CONDUCT_BLINDFOLDED);
+	}
+	if (u.roleplay.atheist)
+	    u.ugangr++;
 
 	if (discover)
-		ini_inv(Wishing, nclist);
+	    ini_inv(Wishing, nclist);
 
 	if (u.umoney0) ini_inv(Money, nclist);
 	u.umoney0 += hidden_gold();	/* in case sack has gold in it */
@@ -955,7 +981,7 @@ static void ini_inv(const struct trobj *trop, short nocreate[4])
 		/* pre-ID oil as it's easy to check anyway */
 		knows_object(POT_OIL);
 
-		if (obj->oclass == ARMOR_CLASS){
+		if (obj->oclass == ARMOR_CLASS && !u.roleplay.nudist) {
 			if (is_shield(obj) && !uarms) {
 				setworn(obj, W_ARMS);
 				if (uswapwep) setuswapwep(NULL);
@@ -977,12 +1003,15 @@ static void ini_inv(const struct trobj *trop, short nocreate[4])
 			otyp == TIN_OPENER || otyp == FLINT || otyp == ROCK) {
 		    if (is_ammo(obj) || is_missile(obj)) {
 			if (!uquiver) setuqwep(obj);
-		    } else if (!uwep) setuwep(obj);
+		    } else if (!uwep && !u.roleplay.pacifist) setuwep(obj);
 		    else if (!uswapwep) setuswapwep(obj);
 		}
 		if (obj->oclass == SPBOOK_CLASS &&
 				obj->otyp != SPE_BLANK_PAPER)
 		    initialspell(obj);
+
+		if (obj->otyp == BLINDFOLD && u.roleplay.blindfolded)
+		    setworn(obj, W_TOOL);
 
 		if (--trquan) continue;	/* make a similar object */
 		trop++;
@@ -1090,6 +1119,18 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->uconduct.polyselfs = mread32(mf);
 	y->uconduct.wishes = mread32(mf);
 	y->uconduct.wisharti = mread32(mf);
+	y->uconduct.armoruses = mread32(mf);
+	y->uconduct.unblinded = mread32(mf);
+	y->uconduct.robbed = mread32(mf);
+	y->roleplay.ascet = mread8(mf);
+	y->roleplay.atheist = mread8(mf);
+	y->roleplay.blindfolded = mread8(mf);
+	y->roleplay.illiterate = mread8(mf);
+	y->roleplay.pacifist = mread8(mf);
+	y->roleplay.sadist = mread8(mf);
+	y->roleplay.nudist = mread8(mf);
+	y->roleplay.vegan = mread8(mf);
+	y->roleplay.vegetarian = mread8(mf);
 	
 	/* at this point, ustuck and usteed are mon ids rather than pointers */
 	y->ustuck = (void*)(long)mread32(mf);
@@ -1235,10 +1276,22 @@ void save_you(struct memfile *mf, struct you *y)
 	mwrite32(mf, y->uconduct.polyselfs);
 	mwrite32(mf, y->uconduct.wishes);
 	mwrite32(mf, y->uconduct.wisharti);
-	
+	mwrite32(mf, y->uconduct.armoruses);
+	mwrite32(mf, y->uconduct.unblinded);
+	mwrite32(mf, y->uconduct.robbed);
+	mwrite8(mf, y->roleplay.ascet);
+	mwrite8(mf, y->roleplay.atheist);
+	mwrite8(mf, y->roleplay.blindfolded);
+	mwrite8(mf, y->roleplay.illiterate);
+	mwrite8(mf, y->roleplay.pacifist);
+	mwrite8(mf, y->roleplay.sadist);
+	mwrite8(mf, y->roleplay.nudist);
+	mwrite8(mf, y->roleplay.vegan);
+	mwrite8(mf, y->roleplay.vegetarian);
+
 	mwrite32(mf, y->ustuck ? y->ustuck->m_id : 0);
 	mwrite32(mf, y->usteed ? y->usteed->m_id : 0);
-	
+
 	mwrite8(mf, y->ux);
 	mwrite8(mf, y->uy);
 	mwrite8(mf, y->dx);

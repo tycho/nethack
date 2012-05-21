@@ -163,6 +163,14 @@ static const struct nh_option_desc const_birth_options[] = {
     { "monkeyname", "the name of your (first) monkey", OPTTYPE_STRING, {NULL}},
     { "wolfname", "the name of your (first) wolf", OPTTYPE_STRING, {NULL}},
     { "pettype",  "your preferred initial pet type", OPTTYPE_ENUM, {0}},
+    { "ascet",    "conduct: never eat food", OPTTYPE_BOOL, { VFALSE }},
+    { "atheist",  "conduct: adhere to atheism", OPTTYPE_BOOL, { VFALSE }},
+    { "illiterate", "conduct: never read or write", OPTTYPE_BOOL, { VFALSE }},
+    { "pacifist", "conduct: never fight", OPTTYPE_BOOL, { VFALSE }},
+    { "nudist",   "conduct: never wear armor", OPTTYPE_BOOL, { VFALSE }},
+    { "vegan",    "conduct: eat only vegan food", OPTTYPE_BOOL, { VFALSE }},
+    { "vegetarian", "conduct: eat only vegetarian food", OPTTYPE_BOOL, { VFALSE }},
+    { "zen",      "conduct: remain blindfolded", OPTTYPE_BOOL, { VFALSE }},
     
     {NULL, NULL, OPTTYPE_BOOL, { NULL }}
 };
@@ -195,6 +203,14 @@ static const struct nh_boolopt_map boolopt_map[] = {
 	{"reincarnation", &flags.rogue_enabled},
 	{"seduction", &flags.seduce_enabled},
 	{"bones", &flags.bones_enabled},
+	{"ascet", &flags.ascet},
+	{"atheist", &flags.atheist},
+	{"illiterate", &flags.illiterate},
+	{"pacifist", &flags.pacifist},
+	{"nudist", &flags.nudist},
+	{"vegan", &flags.vegan},
+	{"vegetarian", &flags.vegetarian},
+	{"zen", &flags.blindfolded},
 	{NULL, NULL}
 };
 

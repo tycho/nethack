@@ -882,7 +882,7 @@ int peffects(struct obj *otmp)
 		unkn++;
 		u.uconduct.unvegan++;
 		if (maybe_polyd(is_vampire(youmonst.data), Race_if(PM_VAMPIRE))) {
-		    violated_vegetarian();
+		    violated(CONDUCT_VEGETARIAN);
 		    if (otmp->cursed) {
 			pline("Yecch!  This %s.", Hallucination ?
 				"liquid could do with a good stir" :
@@ -910,7 +910,7 @@ int peffects(struct obj *otmp)
 		    }
 		} else if (otmp->otyp == POT_VAMPIRE_BLOOD) {
 		    /* [CWC] fix conducts for potions of (vampire) blood -
-		       doesn't use violated_vegetarian() to prevent
+		       doesn't use violated(CONDUCT_VEGETARIAN) to prevent
 		       duplicated "you feel guilty" messages */
 		    u.uconduct.unvegetarian++;
 		    if (u.ualign.type == A_LAWFUL || Role_if(PM_MONK)) {
@@ -934,7 +934,7 @@ int peffects(struct obj *otmp)
 			    u.mtimedone = 0;	/* "permament" change */
 		    }
 		} else {
-		    violated_vegetarian();
+		    violated(CONDUCT_VEGETARIAN);
 		    pline("Ugh.  That was vile.");
 		    make_vomiting(Vomiting + dice(10,8), TRUE);
 		}

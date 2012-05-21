@@ -17,6 +17,7 @@ static void fry_by_god(aligntyp);
 static void gods_angry(aligntyp);
 static void gods_upset(aligntyp);
 static void consume_offering(struct obj *);
+static void describe_final_conducts(char *);
 static boolean water_prayer(boolean);
 static boolean blocked_boulder(int,int);
 
@@ -1080,12 +1081,68 @@ static void consume_offering(struct obj *otmp)
     exercise(A_WIS, TRUE);
 }
 
+/* Compactly describe conducts adhered to for the end of the game. */
+static void describe_final_conducts(char *killerbuf)
+{
+	int conduct, cdt;
+
+	/* Check if there's a major successful conduct for the highscore.
+	 * If so, look for additional ones and put everything into the
+	 * killer-string.
+	 *
+	 * In the logfile this looks like:
+	 *       "ascended adjective adjective ... noun"
+	 *
+	 * In the highscore it looks like:
+	 *      Patito-Mon-Hum-Mal-Cha the nude vegan pacifist
+	 *      ascended to demigod-hood.
+	 */
+	conduct = FIRST_CONDUCT;
+	while (conduct <= LAST_CONDUCT) {
+	    if (successful_cdt(conduct) &&
+		conducts[conduct].highscore &&
+		!superfluous_cdt(conduct))
+		break;
+	    conduct++;
+	}
+
+	if (conduct <= LAST_CONDUCT) {
+	    /* we found a conduct */
+	    sprintf(killerbuf, "ascended ");
+
+	    /* continue to search with the next following conduct
+	     * and look for additional highscore conducts
+	     */
+	    cdt = conduct + 1;
+	    while (cdt <= LAST_CONDUCT) {
+		if (successful_cdt(cdt) &&
+		    conducts[cdt].highscore &&
+		    !superfluous_cdt(cdt)) {
+		    /* we found an additional conduct; now
+		     * add an adjective to the killer-string,
+		     * and continue the search
+		     */
+		    sprintf(eos(killerbuf), "%s ", conducts[cdt].adj);
+		}
+		cdt++;
+	    }
+
+	    /* now finally add the noun */
+	    strcat(killerbuf, conducts[conduct].noun);
+
+	    killer_format = NO_KILLER_PREFIX;
+	    killer = killerbuf;
+	} else
+	    killer = NULL;	/* no conducts found */
+}
+
 
 int dosacrifice(struct obj *otmp)
 {
     int value = 0;
     int pm;
     aligntyp altaralign = a_align(u.ux,u.uy);
+    char killerbuf[128];
 
     if (!on_altar() || u.uswallow) {
 	pline("You are not standing on an altar.");
@@ -1271,6 +1328,7 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		    flags.female ? "dess" : "");
 		historic_event(FALSE, "offered the Amulet of Yendor to %s and ascended"
 		               " to the status of Demigod%s!", u_gname(), flags.female ? "dess" : "");
+		describe_final_conducts(killerbuf);
 		done(ASCENDED);
 	    }
 	}
