@@ -144,7 +144,7 @@
 #define is_guardian(ptr)	((ptr) == &mons[PM_VLAD_THE_IMPALER] || \
 				 (ptr) == &mons[PM_WIZARD_OF_YENDOR] || \
 				 (ptr)->msound == MS_NEMESIS || \
-				 ((ptr) == &mons[PM_HIGH_PRIEST] && Is_sanctum(&u.uz)))
+				 (ptr) == &mons[PM_CTHULHU])
 #define is_placeholder(ptr)	((ptr) == &mons[PM_ORC] || \
 				 (ptr) == &mons[PM_GIANT] || \
 				 (ptr) == &mons[PM_ELF] || \
