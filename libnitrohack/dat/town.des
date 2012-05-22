@@ -54,7 +54,7 @@ ROOM: "ordinary", lit, random, random, (76,17)
     CHANCE: 66
     ROOMDOOR: false, closed, random, random
   }
-  SUBROOM: "food shop", lit, (65,13), (4,2), "town"
+  SUBROOM: "tin shop", lit, (65,13), (4,2), "town"
   {
     CHANCE: 66
     ROOMDOOR: false, closed, random, random
@@ -126,7 +126,7 @@ ROOM: "ordinary", lit, random, random, (76,17)
     CHANCE: 66
     ROOMDOOR: false, closed, random, random
   }
-  SUBROOM: "shop", lit, (31,11), (4,3), "town"
+  SUBROOM: "tin shop", lit, (31,11), (4,3), "town"
   {
     ROOMDOOR: false, closed, random, random
   }
