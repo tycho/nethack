@@ -584,23 +584,18 @@ int doopen(int dx, int dy, int dz)
 	}
 
 	/* door is known to be CLOSED */
-	if (rnl(20) < (ACURRSTR+ACURR(A_DEX)+ACURR(A_CON))/3) {
-	    pline("The door opens.");
-	    if (door->doormask & D_TRAPPED) {
-		b_trapped("door", FINGER);
-		door->doormask = D_NODOOR;
-		if (*in_rooms(level, cc.x, cc.y, SHOPBASE)) add_damage(cc.x, cc.y, 0L);
-	    } else
-		door->doormask = D_ISOPEN;
-	    if (Blind)
-		feel_location(cc.x,cc.y);	/* the hero knows she opened it  */
-	    else
-		newsym(cc.x,cc.y);
-	    unblock_point(cc.x,cc.y);		/* vision: new see through there */
-	} else {
-	    exercise(A_STR, TRUE);
-	    pline("The door resists!");
-	}
+	pline("The door opens.");
+	if (door->doormask & D_TRAPPED) {
+	    b_trapped("door", FINGER);
+	    door->doormask = D_NODOOR;
+	    if (*in_rooms(level, cc.x, cc.y, SHOPBASE)) add_damage(cc.x, cc.y, 0L);
+	} else
+	    door->doormask = D_ISOPEN;
+	if (Blind)
+	    feel_location(cc.x,cc.y);	/* the hero knows she opened it  */
+	else
+	    newsym(cc.x,cc.y);
+	unblock_point(cc.x,cc.y);	/* vision: new see through there */
 
 	return 1;
 }
