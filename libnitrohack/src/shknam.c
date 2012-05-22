@@ -172,6 +172,14 @@ static const char * const shkblack[] = {
   0
 };
 
+static const char * const shkpet[] = {
+    /* Albania */
+    "Elbasan", "Vlore", "Shkoder", "Berat", "Kavaje", "Pogradec",
+    "Sarande", "Peshkopi", "Shijak", "Librazhd", "Tepelene",
+    "Fushe-Kruje", "Rreshen",
+    0
+};
+
 static const char * const shktins[] = {
     /* Sweden */
     "Trosa", "Torshalla", "Morgongava", "Uppsala", "Norrkoping",
@@ -197,7 +205,7 @@ static const char * const shktins[] = {
  */
 
 const struct shclass shtypes[] = {
-	{"general store", RANDOM_CLASS, 42,
+	{"general store", RANDOM_CLASS, 41,
 	    D_SHOP, {{100, RANDOM_CLASS}, {0, 0}, {0, 0}}, shkgeneral},
 	{"used armor dealership", ARMOR_CLASS, 14,
 	    D_SHOP, {{90, ARMOR_CLASS}, {10, WEAPON_CLASS}, {0, 0}},
@@ -241,6 +249,9 @@ const struct shclass shtypes[] = {
 	     {10, -LEATHER_DRUM }, { 2, -DRUM_OF_EARTHQUAKE },
 	     { 5, -T_SHIRT      }, { 5, -LOCK_PICK      },
 	     {0, 0}} , shkmusic},
+	{"pet store", FOOD_CLASS, 1, D_SHOP,
+	    {{67, -FIGURINE}, {5, -LEASH}, {10, -TRIPE_RATION}, {5, -SADDLE},
+	     {10, -TIN_WHISTLE}, {3, -MAGIC_WHISTLE}}, shkpet},
 	/* Shops below this point are "unique".  That is they must all have a
 	 * probability of zero.  They are only created via the special level
 	 * loader.
