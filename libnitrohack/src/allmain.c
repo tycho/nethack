@@ -140,6 +140,7 @@ void startup_common(const char *name, int playmode)
     /* (re)init all global data */
     init_data();
     init_tutorial();
+    init_shop_selection();
     reset_food(); /* zero out victual and tin */
     reset_steal();
     reset_dig_status();

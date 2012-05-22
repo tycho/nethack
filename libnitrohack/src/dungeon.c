@@ -1909,6 +1909,7 @@ static const char *const shopnames[] = {
 	/* TOOLSHOP */	"a tool shop",
 	/* BOOKSHOP */	"a bookstore",
 	/* TINSHOP */	"a tin shop",
+	/* INSTRUMENTSHOP */	"a music store",
 	/* CANDLESHOP */"a lighting shop",
 	/* BLACKSHOP */	"the Black Market"
 };

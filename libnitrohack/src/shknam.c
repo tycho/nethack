@@ -146,6 +146,17 @@ static const char * const shkgeneral[] = {
     0
 };
 
+static const char * const shkmusic[] = {
+    "John", "Paul", "George", "Ringo"
+    "Elvis", "Mick", "Keith", "Ron", "Charlie"
+    "Joseph", "Franz", "Richard", "Ludwig", "Wolfgang Amadeus",
+    "Johann Sebastian",
+    "Karlheinz", "Gyorgy",
+    "Luciano", "Placido", "Jose", "Enrico",
+    "Falco", "_Britney", "_Christina", "_Toni", "_Brandy",
+    0
+};
+
 static const char * const shkblack[] = {
   "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
   "One-eyed Sam", "One-eyed Sam", "One-eyed Sam",
@@ -186,7 +197,7 @@ static const char * const shktins[] = {
  */
 
 const struct shclass shtypes[] = {
-	{"general store", RANDOM_CLASS, 43,
+	{"general store", RANDOM_CLASS, 42,
 	    D_SHOP, {{100, RANDOM_CLASS}, {0, 0}, {0, 0}}, shkgeneral},
 	{"used armor dealership", ARMOR_CLASS, 14,
 	    D_SHOP, {{90, ARMOR_CLASS}, {10, WEAPON_CLASS}, {0, 0}},
@@ -220,6 +231,16 @@ const struct shclass shtypes[] = {
 	     * on the shop floor
 	     */
 	    {0, -CORPSE}, {0, 0}}, shktins},
+	{"rare instruments", TOOL_CLASS, 1, D_SHOP,
+	    {{10, -TIN_WHISTLE  }, { 3, -MAGIC_WHISTLE  },
+	     {10, -WOODEN_FLUTE }, { 3, -MAGIC_FLUTE    },
+	     {10, -TOOLED_HORN  }, { 3, -FROST_HORN     },
+	     { 3, -FIRE_HORN    }, { 3, -HORN_OF_PLENTY },
+	     {10, -WOODEN_HARP  }, { 3, -MAGIC_HARP     },
+	     {10, -BELL         }, {10, -BUGLE          },
+	     {10, -LEATHER_DRUM }, { 2, -DRUM_OF_EARTHQUAKE },
+	     { 5, -T_SHIRT      }, { 5, -LOCK_PICK      },
+	     {0, 0}} , shkmusic},
 	/* Shops below this point are "unique".  That is they must all have a
 	 * probability of zero.  They are only created via the special level
 	 * loader.
@@ -231,6 +252,30 @@ const struct shclass shtypes[] = {
 	    {{100, RANDOM_CLASS}, {0, 0}, {0, 0}}, shkblack},
 	{NULL, 0, 0, 0, {{0, 0}, {0, 0}, {0, 0}}, 0}
 };
+
+
+/* validate shop probabilities */
+void init_shop_selection(void)
+{
+	int i, j, item_prob, shop_prob;
+
+	shop_prob = 0;
+
+	/* Omit null-terminating shop to prevent item_prob confusion. */
+	for (i = 0; i < SIZE(shtypes) - 1; i++) {
+	    shop_prob += shtypes[i].prob;
+
+	    item_prob = 0;
+	    for (j = 0; j < SIZE(shtypes[0].iprobs); j++)
+		item_prob += shtypes[i].iprobs[j].iprob;
+	    if (item_prob != 100)
+		panic("item probabilities total to %d for %s shops!",
+		      item_prob, shtypes[i].name);
+	}
+
+	if (shop_prob != 100)
+	    panic("shop probabilities total to %d!", shop_prob);
+}
 
 
 /* make an object of the appropriate type for a shop square */
@@ -294,6 +339,10 @@ static void nameshk(struct monst *shk, const char * const *nlp, struct level *le
 	    for (trycnt = 0; trycnt < 50; trycnt++) {
 		if (nlp == shktools) {
 		    shname = shktools[rn2(names_avail)];
+		    shk->female = (*shname == '_');
+		    if (shk->female) shname++;
+		} else if (nlp == shkmusic) {
+		    shname = shkmusic[rn2(names_avail)];
 		    shk->female = (*shname == '_');
 		    if (shk->female) shname++;
 		} else if (name_wanted < names_avail) {

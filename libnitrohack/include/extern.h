@@ -1467,6 +1467,7 @@ extern char *Shk_Your(char *, const struct obj *);
 
 /* ### shknam.c ### */
 
+extern void init_shop_selection(void);
 extern void stock_room(int shp_indx, struct level *lev, struct mkroom *sroom);
 extern boolean saleable(struct monst *,struct obj *);
 extern int get_shop_item(int);
