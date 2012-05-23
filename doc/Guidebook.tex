@@ -2502,6 +2502,16 @@ level (Unburdened, Burdened, streSsed, straiNed, overTaxed,
 or overLoaded), you will be asked if you want to continue.
 (Default `S').
 %.lp
+\item[\ib{pickup\_dropped}]
+If this boolean option is off (the default) and ``{\it autopickup\/}'' is on,
+don't pick up items that have been dropped deliberately, even if they are in
+``{\it autopickup\_rules\/}''.
+%.lp
+\item[\b{pickup\_thrown}]
+If this boolean option and ``{\it autopickup\/}'' are both on, try to pick up
+items that you threw, even if they aren't in ``{\it autopickup\_rules}''.
+Default is on.
+%.lp
 \item[\ib{pickup\_types}]
 Specify the object types to be picked up when ``{\it autopickup\/}'' 
 is on.  Default is all types.  If your copy of the game has the
