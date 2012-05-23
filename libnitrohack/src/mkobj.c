@@ -1442,9 +1442,10 @@ struct obj *restore_obj(struct memfile *mf)
     otmp->greased	= (oflags >> 11) & 1;
     otmp->oattached	= (oflags >>  9) & 3;
     otmp->in_use	= (oflags >>  8) & 1;
-    otmp->was_thrown	= (oflags >>  7) & 1;
-    otmp->bypass	= (oflags >>  6) & 1;
-    otmp->odrained	= (oflags >>  5) & 1;
+    otmp->was_dropped	= (oflags >>  7) & 1;
+    otmp->was_thrown	= (oflags >>  6) & 1;
+    otmp->bypass	= (oflags >>  5) & 1;
+    otmp->odrained	= (oflags >>  4) & 1;
     
     if (otmp->onamelth)
 	mread(mf, ONAME(otmp), otmp->onamelth);
@@ -1486,9 +1487,10 @@ void save_obj(struct memfile *mf, struct obj *obj)
 	     (obj->greased	<< 11) |
 	     (obj->oattached	<<  9) |
 	     (obj->in_use	<<  8) |
-	     (obj->was_thrown	<<  7) |
-	     (obj->bypass	<<  6) |
-	     (obj->odrained	<<  5);
+	     (obj->was_dropped	<<  7) |
+	     (obj->was_thrown	<<  6) |
+	     (obj->bypass	<<  5) |
+	     (obj->odrained	<<  4);
     
     mfmagic_set(mf, OBJ_MAGIC);
     

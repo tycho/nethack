@@ -534,6 +534,8 @@ static int drop(struct obj *obj)
 		setuswapwep(NULL);
 	}
 
+	obj->was_dropped = 1;
+
 	if (u.uswallow) {
 		/* barrier between you and the floor */
 		if (flags.verbose)

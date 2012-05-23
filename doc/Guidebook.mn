@@ -2040,6 +2040,12 @@ When you pick up an item that would exceed this encumbrance
 level (Unburdened, Burdened, streSsed, straiNed, overTaxed,
 or overLoaded), you will be asked if you want to continue.
 (Default `S').
+.lp pickup_dropped
+If this boolean option is off (the default) and
+.op autopickup
+is on, don't pick up items that have been dropped deliberately, even if they
+are in
+.op autopickup_rules .
 .lp pickup_types
 Specify the object types to be picked up when
 .op autopickup

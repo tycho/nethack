@@ -89,10 +89,11 @@ struct obj {
 #define OATTACHED_UNUSED3 3
 
 	unsigned in_use:1;	/* for magic items before useup items */
+	unsigned was_dropped:1;	/* dropped deliberately by the hero */
 	unsigned was_thrown:1;	/* thrown by the hero since last picked up */
 	unsigned bypass:1;	/* mark this as an object to be skipped by bhito() */
 	unsigned odrained:1;	/* drained corpse */
-	/* 4 free bits */
+	/* 3 free bits */
 
 	int	corpsenm;	/* type of corpse is mons[corpsenm] */
 #define leashmon  corpsenm	/* gets m_id of attached pet */

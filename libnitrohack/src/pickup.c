@@ -325,19 +325,22 @@ static int autopick(struct obj *olist,	/* the object list */
 	for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow)) {
 	    examine_object(curr);
 	    if ((iflags.pickup_thrown && curr->was_thrown) ||
-		 autopickup_match(curr))
+		((iflags.pickup_dropped || !curr->was_dropped) &&
+		 autopickup_match(curr)))
 		n++;
 	}
 
 	if (n) {
 	    *pick_list = pi = malloc(sizeof(struct object_pick) * n);
-	    for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow))
-	    if ((iflags.pickup_thrown && curr->was_thrown) ||
-		 autopickup_match(curr)) {
+	    for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow)) {
+		if ((iflags.pickup_thrown && curr->was_thrown) ||
+		    ((iflags.pickup_dropped || !curr->was_dropped) &&
+		     autopickup_match(curr))) {
 		    pi[n].obj = curr;
 		    pi[n].count = curr->quan;
 		    n++;
 		}
+	    }
 	}
 	return n;
 }
