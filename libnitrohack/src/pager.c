@@ -375,8 +375,20 @@ void nh_describe_pos(int x, int y, struct nh_desc_buf *bufs)
     
     describe_bg(x, y, level->locations[x][y].mem_bg, bufs->bgdesc);
     
-    if (level->locations[x][y].mem_trap)
-	strcpy(bufs->trapdesc, trapexplain[level->locations[x][y].mem_trap - 1]);
+    if (level->locations[x][y].mem_trap) {
+	/* Avoid "monster trapped in a web on a web" from describe_mon(). */
+	const struct monst *mtmp;
+	const struct trap *t;
+	if (!(monid &&					/* monster seen */
+		(monid - 1) < NUMMONS &&		/* not a monster warning */
+		!(u.ux == x && u.uy == y) &&		/* not the hero */
+		(mtmp = m_at(level, x, y)) &&		/* monster at location */
+		(mtmp->mtrapped && cansee(x, y)) &&	/* mon seen in trap */
+		(t = t_at(level, x, y)) &&		/* trap at location */
+		(t->ttyp == BEAR_TRAP || t->ttyp == PIT ||
+		 t->ttyp == SPIKED_PIT || t->ttyp == WEB)))
+	    strcpy(bufs->trapdesc, trapexplain[level->locations[x][y].mem_trap - 1]);
+    }
     
     bufs->objcount = describe_object(x, y, level->locations[x][y].mem_obj - 1,
 				     bufs->objdesc);
