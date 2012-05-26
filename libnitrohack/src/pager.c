@@ -346,7 +346,7 @@ static void describe_mon(int x, int y, int monnum, char *buf)
 	    /* newsym lets you know of the trap, so mention it here */
 	    if (tt == BEAR_TRAP || tt == PIT ||
 		    tt == SPIKED_PIT || tt == WEB)
-		sprintf(eos(buf), ", trapped in %s", an(trapexplain[tt]));
+		sprintf(eos(buf), ", trapped in %s", an(trapexplain[tt-1]));
 	}
 
 	mon_vision_summary(mtmp, visionbuf);
