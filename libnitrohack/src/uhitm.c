@@ -1877,11 +1877,12 @@ static void start_engulf(struct monst *mdef)
 		y = mdef->my;
 		map_location(u.ux, u.uy, TRUE);
 		
-		dbuf_set(x, y, level->locations[x][y].mem_bg, 
-		         level->locations[x][y].mem_trap,
-		         level->locations[x][y].mem_obj,
-		         level->locations[x][y].mem_obj_mn,
-		         0, dbuf_monid((&youmonst)), 0, 0);
+		dbuf_set(x, y, level->locations[x][y].mem_bg,
+			 level->locations[x][y].mem_trap,
+			 level->locations[x][y].mem_obj,
+			 level->locations[x][y].mem_obj_mn,
+			 level->locations[x][y].mem_obj_stacks,
+			 0, dbuf_monid((&youmonst)), 0, 0);
 	}
 	pline("You engulf %s!", mon_nam(mdef));
 	win_delay_output();

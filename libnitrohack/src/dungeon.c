@@ -2077,8 +2077,10 @@ int dooverview(void)
 	for (y = 0; y < ROWNO; y++)
 	    for (x = 0; x < COLNO; x++)
 		dbuf_set(x, y, lev->locations[x][y].mem_bg,
-			 lev->locations[x][y].mem_trap, lev->locations[x][y].mem_obj,
+			 lev->locations[x][y].mem_trap,
+			 lev->locations[x][y].mem_obj,
 			 lev->locations[x][y].mem_obj_mn,
+			 lev->locations[x][y].mem_obj_stacks,
 			 lev->locations[x][y].mem_invis, 0, 0, 0);
 	
 	overview_print_lev(buf, lev);

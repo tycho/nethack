@@ -462,6 +462,7 @@ struct nh_dbuf_entry {
     short monflags;
     nh_bool invis;
     nh_bool visible; /* can the hero see this location? */
+    nh_bool obj_stacks; /* is there more than one stack of objects here? */
 };
 
 #define NH_EFFECT_TYPE(e) ((enum nh_effect_types)((e) >> 16))

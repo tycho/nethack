@@ -297,6 +297,7 @@ struct rm {
 	unsigned mem_trap:5;	/* remembered trap */
 	unsigned mem_obj:10;	/* remembered object */
 	unsigned mem_obj_mn:9;	/* monnum of remembered corpses, statues, figurines */
+	unsigned mem_obj_stacks:1; /* remembered other stacks of objects */
 	unsigned mem_invis:1;	/* remembered invisible monster encounter */
 	
 	schar typ;		/* what is really there */

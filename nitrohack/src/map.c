@@ -104,7 +104,8 @@ void draw_map(int cx, int cy)
 	    symcount = mapglyph(&display_buffer[y][x], syms);
 	    attr = A_NORMAL;
 	    if (((display_buffer[y][x].monflags & MON_TAME) && settings.hilite_pet) ||
-		((display_buffer[y][x].monflags & MON_DETECTED) && settings.use_inverse))
+		(((display_buffer[y][x].monflags & MON_DETECTED) ||
+		  display_buffer[y][x].obj_stacks) && settings.use_inverse))
 		attr |= A_REVERSE;
 
 	    print_sym(mapwin, &syms[frame % symcount], attr);
