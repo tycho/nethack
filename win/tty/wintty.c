@@ -2633,6 +2633,7 @@ int
 tty_nhgetch()
 {
     int i;
+    int tmp;
 #ifdef UNIX
     /* kludge alert: Some Unix variants return funny values if getc()
      * is called, interrupted, and then called again.  There
@@ -2663,6 +2664,9 @@ tty_nhgetch()
     if (!i) i = DOESCAPE; /* map NUL to ESC since nethack doesn't expect NUL */
     if (ttyDisplay && ttyDisplay->toplin == 1)
 	ttyDisplay->toplin = 2;
+    tmp = vt_tile_current_window;
+    vt_tile_current_window++;
+    print_vt_code(AVTC_SELECT_WINDOW, tmp);
     return i;
 }
 
