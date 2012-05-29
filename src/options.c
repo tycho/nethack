@@ -160,6 +160,7 @@ static struct Bool_Opt
 #else
 	{"mouse_support", &iflags.wc_mouse_support, TRUE, DISP_IN_GAME},	/*WC*/
 #endif
+	{"msgtype_regex", &iflags.msgtype_regex, FALSE,  SET_IN_FILE},
 #ifdef NEWS
 	{"news", &iflags.news, TRUE, DISP_IN_GAME},
 #else

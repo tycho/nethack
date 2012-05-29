@@ -26,10 +26,28 @@ msgpline_add(typ, pattern)
      int typ;
      char *pattern;
 {
+    int errnum;
+    char errbuf[80];
+    const char *err = (char *)0;
     struct _plinemsg *tmp = (struct _plinemsg *) alloc(sizeof(struct _plinemsg));
     if (!tmp) return;
     tmp->msgtype = typ;
-    tmp->pattern = strdup(pattern);
+    tmp->is_regexp = iflags.msgtype_regex;
+    if (tmp->is_regexp) {
+	errnum = regcomp(&tmp->match, pattern, REG_EXTENDED | REG_NOSUB);
+	if (errnum != 0) {
+	    regerror(errnum, &tmp->match, errbuf, sizeof(errbuf));
+	    err = errbuf;
+	}
+	if (err) {
+	    raw_printf("\nMSGTYPE regex error: %s\n", err);
+	    wait_synch();
+	    free(tmp);
+	    return;
+	}
+    } else {
+	tmp->pattern = strdup(pattern);
+    }
     tmp->next = pline_msg;
     pline_msg = tmp;
 }
@@ -40,7 +58,11 @@ msgpline_free()
     struct _plinemsg *tmp = pline_msg;
     struct _plinemsg *tmp2;
     while (tmp) {
-	free(tmp->pattern);
+	if (tmp->is_regexp) {
+	    (void) regfree(&tmp->match);
+	} else {
+	    free(tmp->pattern);
+	}
 	tmp2 = tmp;
 	tmp = tmp->next;
 	free(tmp2);
@@ -54,7 +76,11 @@ msgpline_type(msg)
 {
     struct _plinemsg *tmp = pline_msg;
     while (tmp) {
-	if (pmatch(tmp->pattern, msg)) return tmp->msgtype;
+	if (tmp->is_regexp) {
+	    if (regexec(&tmp->match, msg, 0, NULL, 0) == 0) return tmp->msgtype;
+	} else {
+	    if (pmatch(tmp->pattern, msg)) return tmp->msgtype;
+	}
 	tmp = tmp->next;
     }
     return MSGTYP_NORMAL;
