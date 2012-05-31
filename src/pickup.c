@@ -609,7 +609,11 @@ boolean grab;	 /* forced pickup, rather than forced leave behind? */
 					iflags.autopickup_exceptions[AP_GRAB] :
 					iflags.autopickup_exceptions[AP_LEAVE];
 	while (ape) {
+	    if (ape->is_regexp) {
+		if (regexec(&ape->match, objdesc, 0, NULL, 0) == 0) return TRUE;
+	    } else {
 		if (pmatch(ape->pattern, objdesc)) return TRUE;
+	    }
 		ape = ape->next;
 	}
 	return FALSE;

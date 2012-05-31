@@ -56,6 +56,7 @@ static struct Bool_Opt
 #endif
 	{"autodig", &flags.autodig, FALSE, SET_IN_GAME},
 	{"autopickup", &flags.pickup, TRUE, SET_IN_GAME},
+	{"apexception_regex", &iflags.ape_regex, FALSE,  SET_IN_FILE},
 	{"autoquiver", &flags.autoquiver, FALSE, SET_IN_GAME},
 #if defined(MICRO) && !defined(AMIGA)
 	{"BIOS", &iflags.BIOS, FALSE, SET_IN_FILE},
@@ -3752,8 +3753,26 @@ const char *mapping;
 				   &iflags.autopickup_exceptions[AP_LEAVE];
 		ape = (struct autopickup_exception *)
 				alloc(sizeof(struct autopickup_exception));
-		ape->pattern = (char *) alloc(textsize+1);
-		Strcpy(ape->pattern, text2);
+		ape->is_regexp = iflags.ape_regex;
+		if (iflags.ape_regex) {
+		    int errnum;
+		    char errbuf[80];
+		    const char *err = (char *)0;
+		    errnum = regcomp(&ape->match, text2, REG_EXTENDED | REG_NOSUB);
+		    if (errnum != 0) {
+			regerror(errnum, &ape->match, errbuf, sizeof(errbuf));
+			err = errbuf;
+		    }
+		    if (err) {
+			raw_printf("\nAUTOPICKUP_EXCEPTION regex error: %s\n", err);
+			wait_synch();
+			free(ape);
+			return 0;
+		    }
+		} else {
+		    ape->pattern = (char *) alloc(textsize+1);
+		    Strcpy(ape->pattern, text2);
+		}
 		ape->grab = grab;
 		if (!*apehead) ape->next = (struct autopickup_exception *)0;
 		else ape->next = *apehead;
@@ -3778,7 +3797,11 @@ struct autopickup_exception *whichape;
 	    ape = ape->next;
 	    if (prev) prev->next = ape;
 	    else iflags.autopickup_exceptions[chain] = ape;
-	    free(freeape->pattern);
+	    if (freeape->is_regexp) {
+		(void) regfree(&freeape->match);
+	    } else {
+		free(freeape->pattern);
+	    }
 	    free(freeape);
 	} else {
 	    prev = ape;
@@ -3815,7 +3838,11 @@ free_autopickup_exceptions()
 
 	for (pass = AP_LEAVE; pass <= AP_GRAB; ++pass) {
 		while((ape = iflags.autopickup_exceptions[pass]) != 0) {
+		    if (ape->is_regexp) {
+			(void) regfree(&ape->match);
+		    } else {
 			free(ape->pattern);
+		    }
 			iflags.autopickup_exceptions[pass] = ape->next;
 			free(ape);
 		}

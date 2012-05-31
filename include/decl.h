@@ -418,7 +418,9 @@ E char *fqn_prefix_names[PREFIX_COUNT];
 #ifdef AUTOPICKUP_EXCEPTIONS
 struct autopickup_exception {
 	char *pattern;
+	regex_t match;
 	boolean grab;
+	boolean is_regexp;
 	struct autopickup_exception *next;
 };
 #endif /* AUTOPICKUP_EXCEPTIONS */

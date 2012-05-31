@@ -254,6 +254,7 @@ struct instance_flags {
 	boolean  quiver_fired;
        boolean  pickup_thrown;
     boolean msgtype_regex;
+    boolean ape_regex;
 /*
  * Window capability support.
  */
