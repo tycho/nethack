@@ -255,6 +255,7 @@ struct instance_flags {
        boolean  pickup_thrown;
     boolean msgtype_regex;
     boolean ape_regex;
+    boolean show_shop_prices;
 /*
  * Window capability support.
  */
