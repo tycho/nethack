@@ -937,17 +937,17 @@ TRAP:"anti magic",(26,18)
 TRAP:"fire",(28,13)
 TRAP:"spiked pit",(32,13)
 # Treasure room
-GOLD:500,(38,16)
-GOLD:500,(38,17)
-GOLD:500,(38,18)
-OBJECT:'"',"amulet of change",(37,16)
-OBJECT:'=',"hunger",(37,18),cursed,0
-OBJECT:'*',"diamond",(38,16),cursed,0,"The Tears of Koth"
-OBJECT:'*',"ruby",(38,17),cursed,0,"The Heart of Cassanova"
-OBJECT:'*',"emerald",(38,18),cursed,0,"The Eye of Hera"
-MONSTER:'&',random,(38,16)
-MONSTER:'&',random,(38,17)
-MONSTER:'&',random,(38,18)
+GOLD: 500, (38,16)
+GOLD: 500, (38,17)
+GOLD: 500, (38,18)
+OBJECT: '"', "amulet of change", (37,16)
+OBJECT: '=', "hunger", (37,18), cursed, 0
+OBJECT: '*', "diamond", (38,16), cursed, 0, NAME:"The Tears of Koth"
+OBJECT: '*', "ruby", (38,17), cursed, 0, NAME:"The Heart of Cassanova"
+OBJECT: '*', "emerald", (38,18), cursed, 0, NAME:"The Eye of Hera"
+MONSTER: '&', random, (38,16)
+MONSTER: '&', random, (38,17)
+MONSTER: '&', random, (38,18)
 # Outer Trap Room
 GOLD:1,(48,13)
 GOLD:1,(48,14)

@@ -138,7 +138,8 @@ add_custom_command (OUTPUT dungeon
                     DEPENDS dungeon.pdf)
 
 add_custom_command (OUTPUT nhdat
-                    COMMAND ${LEV_COMP_BIN} ${LEVEL_DESCRIPTIONS}
+                    COMMAND ${LEV_COMP_BIN}
+                    ARGS -v ${LEVEL_DESCRIPTIONS}
                     COMMAND ${DLB_BIN}
                     ARGS cf nhdat ${NHDAT_SRC}
                     DEPENDS lev_comp dungeon quest.dat rumors oracles data ${LEVEL_DESCRIPTIONS})
