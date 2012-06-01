@@ -1415,6 +1415,11 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	if (named)
 	    otmp = oname(otmp, o->name.str);
 
+	if (o->quan > 0 && objects[otmp->otyp].oc_merge) {
+	    otmp->quan = o->quan;
+	    otmp->owt = weight(otmp);
+	}
+
 	/* contents */
 	if (o->containment & SP_OBJ_CONTENT) {
 	    if (!container_idx) {
@@ -2560,6 +2565,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		tmpobj.curse_state = -1;
 		tmpobj.corpsenm = NON_PM;
 		tmpobj.name.str = NULL;
+		tmpobj.quan = -1;
 
 		if (!get_opvar_dat(&stack, &containment, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
@@ -2592,6 +2598,10 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    case SP_O_V_SPE:
 			if (parm.spovartyp == SPOVAR_INT)
 			    tmpobj.spe = parm.vardata.l;
+			break;
+		    case SP_O_V_QUAN:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.quan = parm.vardata.l;
 			break;
 		    case SP_O_V_END:
 			nparams = SP_O_V_END + 1;
