@@ -225,6 +225,8 @@ MONSTER: 'o', "goblin", random, hostile
 MONSTER: 'o', "goblin", random, hostile
 MONSTER: 'o', "goblin", random, hostile
 
+WALLIFY: levregion(1,0,70,20)
+
 
 # Minetown variant 1
 # "Frontier Town"
