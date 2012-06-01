@@ -376,7 +376,7 @@ message		: MESSAGE_ID ':' STRING
 		  }
 		;
 
-cobj_ifstatement : IF_ID '[' comparestmt ']'
+cobj_ifstatement : IF_ID comparestmt
 		  {
 			struct opvar *tmppush2 = New(struct opvar);
 
@@ -389,7 +389,7 @@ cobj_ifstatement : IF_ID '[' comparestmt ']'
 			set_opvar_int(tmppush2, -1);
 			if_list[n_if_list++] = tmppush2;
 			add_opcode(&splev, SPO_PUSH, tmppush2);
-			add_opcode(&splev, $3, NULL);
+			add_opcode(&splev, $2, NULL);
 		  }
 		 cobj_if_ending
 		  {
