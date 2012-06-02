@@ -296,6 +296,13 @@ static void flip_level(struct level *lev, int flp)
 		otmp->ox = x2 - otmp->ox;
 	}
 
+	for (otmp = lev->buriedobjlist; otmp; otmp = otmp->nobj) {
+	    if (flp & 1)
+		otmp->oy = y2 - otmp->oy;
+	    if (flp & 2)
+		otmp->ox = x2 - otmp->ox;
+	}
+
 	/* monsters */
 	for (mtmp = lev->monlist; mtmp; mtmp = mtmp->nmon) {
 	    if (flp & 1) {
