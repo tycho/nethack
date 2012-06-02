@@ -257,6 +257,7 @@ struct instance_flags {
     boolean ape_regex;
     boolean show_shop_prices;
     boolean item_use_menu;
+    boolean notice_walls;
 /*
  * Window capability support.
  */
