@@ -2445,6 +2445,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
     if (lvl->init_lev.flags & MAZELEVEL)    lev->flags.is_maze_lev = 1;
     if (lvl->init_lev.flags & PREMAPPED)    premapped = TRUE;
     if (lvl->init_lev.flags & SHROUD)	    lev->flags.hero_memory = 0;
+    if (lvl->init_lev.flags & STORMY)	    lev->flags.stormy = 1;
 
     while (n_opcode < lvl->init_lev.n_opcodes && !exit_script) {
 	int opcode = lvl->opcodes[n_opcode].opcode;

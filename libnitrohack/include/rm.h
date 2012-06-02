@@ -432,6 +432,7 @@ struct levelflags {
 	unsigned shortsighted:1;	/* monsters are shortsighted */
 	unsigned graveyard:1;		/* has_morgue, but remains set */
 	unsigned is_maze_lev:1;
+	unsigned stormy:1;		/* thunderous clouds */
 
 	unsigned is_cavernous_lev:1;
 	unsigned arboreal:1;		/* Trees replace rock */

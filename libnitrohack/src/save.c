@@ -331,9 +331,10 @@ void savelev(struct memfile *mf, xchar levnum)
 	         (lev->flags.shortsighted	<< 16) |
 	         (lev->flags.graveyard		<< 15) |
 	         (lev->flags.is_maze_lev	<< 14) |
-	         (lev->flags.is_cavernous_lev	<< 13) |
-	         (lev->flags.arboreal		<< 12) |
-	         (lev->flags.forgotten		<< 11);
+	         (lev->flags.stormy		<< 13) |
+	         (lev->flags.is_cavernous_lev	<< 12) |
+	         (lev->flags.arboreal		<< 11) |
+	         (lev->flags.forgotten		<< 10);
 	mwrite32(mf, lflags);
 	mwrite(mf, lev->doors, sizeof(lev->doors));
 	save_rooms(mf, lev);	/* no dynamic memory to reclaim */
