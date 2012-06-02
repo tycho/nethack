@@ -2179,6 +2179,8 @@ long* out_cnt;
 	anything any;
 	menu_item *selected;
 
+	if (want_reply) want_reply = iflags.item_use_menu;
+
 #ifdef DUMP_LOG
 	if (want_disp) {
 #endif
