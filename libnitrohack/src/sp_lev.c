@@ -1349,6 +1349,29 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 	    if (m->asleep >= 0) {
 		mtmp->msleeping = m->asleep;
 	    }
+
+	    if (m->seentraps) mtmp->mtrapseen = m->seentraps;
+	    if (m->female) mtmp->female = 1;
+	    if (m->cancelled) mtmp->mcan = 1;
+	    if (m->revived) mtmp->mrevived = 1;
+	    if (m->avenge) mtmp->mavenge = 1;
+	    if (m->stunned) mtmp->mstun = 1;
+	    if (m->confused) mtmp->mconf = 1;
+	    if (m->invis) {
+		mtmp->minvis = mtmp->perminvis = 1;
+	    }
+	    if (m->blinded) {
+		mtmp->mcansee = 0;
+		mtmp->mblinded = m->blinded % 127;
+	    }
+	    if (m->paralyzed) {
+		mtmp->mcanmove = 0;
+		mtmp->mfrozen = m->paralyzed % 127;
+	    }
+	    if (m->fleeing) {
+		mtmp->mflee = 1;
+		mtmp->mfleetim = m->fleeing % 127;
+	    }
 	}
 }
 
@@ -1422,6 +1445,27 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	if (named)
 	    otmp = oname(otmp, o->name.str);
 
+	if (o->eroded) {
+	    if (o->eroded < 0) {
+		otmp->oerodeproof = 1;
+	    } else {
+		otmp->oeroded = (o->eroded % 4);
+		otmp->oeroded2 = ((o->eroded >> 2) % 4);
+	    }
+	}
+	if (o->recharged) otmp->recharged = (o->recharged % 8);
+	if (o->locked) {
+	    otmp->olocked = 1;
+	} else if (o->broken) {
+	    otmp->obroken = 1;
+	    otmp->olocked = 0; /* obj generation may set */
+	}
+	if (o->trapped) otmp->otrapped = 1;
+	if (o->greased) otmp->greased = 1;
+#ifdef INVISIBLE_OBJECTS
+	if (o->invis) otmp->oinvis = 1;
+#endif
+
 	if (o->quan > 0 && objects[otmp->otyp].oc_merge) {
 	    otmp->quan = o->quan;
 	    otmp->owt = weight(otmp);
@@ -1477,6 +1521,17 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	}
 
 	stackobj(otmp);
+
+	if (o->lit) {
+	    begin_burn(lev, otmp, FALSE);
+	}
+
+	if (o->buried && !o->containment) {
+	    /* What if we'd want to bury a container?
+	     * bury_an_obj() may dealloc obj.
+	     */
+	    bury_an_obj(otmp);
+	}
 }
 
 /*
@@ -2496,7 +2551,18 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		tmpmons.name.str = NULL;
 		tmpmons.appear = 0;
 		tmpmons.appear_as.str = NULL;
-		tmpmons.align = - MAX_REGISTERS - 2;
+		tmpmons.align = -MAX_REGISTERS - 2;
+		tmpmons.female = 0;
+		tmpmons.invis = 0;
+		tmpmons.cancelled = 0;
+		tmpmons.revived = 0;
+		tmpmons.avenge = 0;
+		tmpmons.fleeing = 0;
+		tmpmons.blinded = 0;
+		tmpmons.paralyzed = 0;
+		tmpmons.stunned = 0;
+		tmpmons.confused = 0;
+		tmpmons.seentraps = 0;
 
 		if (!get_opvar_dat(&stack, &id, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &class, SPOVAR_INT) ||
@@ -2537,6 +2603,50 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 			if (parm.spovartyp == SPOVAR_INT)
 			    tmpmons.peaceful = parm.vardata.l;
 			break;
+		    case SP_M_V_FEMALE:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.female = parm.vardata.l;
+			break;
+		    case SP_M_V_INVIS:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.invis = parm.vardata.l;
+			break;
+		    case SP_M_V_CANCELLED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.cancelled = parm.vardata.l;
+			break;
+		    case SP_M_V_REVIVED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.revived = parm.vardata.l;
+			break;
+		    case SP_M_V_AVENGE:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.avenge = parm.vardata.l;
+			break;
+		    case SP_M_V_FLEEING:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.fleeing = parm.vardata.l;
+			break;
+		    case SP_M_V_BLINDED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.blinded = parm.vardata.l;
+			break;
+		    case SP_M_V_PARALYZED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.paralyzed = parm.vardata.l;
+			break;
+		    case SP_M_V_STUNNED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.stunned = parm.vardata.l;
+			break;
+		    case SP_M_V_CONFUSED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.confused = parm.vardata.l;
+			break;
+		    case SP_M_V_SEENTRAPS:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpmons.seentraps = parm.vardata.l;
+			break;
 		    case SP_M_V_END:
 			nparams = SP_M_V_END + 1;
 			break;
@@ -2573,6 +2683,15 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		tmpobj.corpsenm = NON_PM;
 		tmpobj.name.str = NULL;
 		tmpobj.quan = -1;
+		tmpobj.buried = 0;
+		tmpobj.lit = 0;
+		tmpobj.eroded = 0;
+		tmpobj.locked = 0;
+		tmpobj.trapped = 0;
+		tmpobj.recharged = 0;
+		tmpobj.invis = 0;
+		tmpobj.greased = 0;
+		tmpobj.broken = 0;
 
 		if (!get_opvar_dat(&stack, &containment, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
@@ -2609,6 +2728,42 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    case SP_O_V_QUAN:
 			if (parm.spovartyp == SPOVAR_INT)
 			    tmpobj.quan = parm.vardata.l;
+			break;
+		    case SP_O_V_BURIED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.buried = parm.vardata.l;
+			break;
+		    case SP_O_V_LIT:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.lit = parm.vardata.l;
+			break;
+		    case SP_O_V_ERODED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.eroded = parm.vardata.l;
+			break;
+		    case SP_O_V_LOCKED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.locked = parm.vardata.l;
+			break;
+		    case SP_O_V_TRAPPED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.trapped = parm.vardata.l;
+			break;
+		    case SP_O_V_RECHARGED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.recharged = parm.vardata.l;
+			break;
+		    case SP_O_V_INVIS:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.invis = parm.vardata.l;
+			break;
+		    case SP_O_V_GREASED:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.greased = parm.vardata.l;
+			break;
+		    case SP_O_V_BROKEN:
+			if (parm.spovartyp == SPOVAR_INT)
+			    tmpobj.broken = parm.vardata.l;
 			break;
 		    case SP_O_V_END:
 			nparams = SP_O_V_END + 1;
@@ -3361,6 +3516,22 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		wallify_map(lev, dx1, dy1, dx2, dy2);
 	    }
 	    break;
+	case SPO_COPY:
+	    {
+		struct opvar a = splev_stack_pop(&stack);
+		splev_stack_push(&stack, a);
+		splev_stack_push(&stack, a);
+	    }
+	    break;
+	case SPO_DEC:
+	    {
+		struct opvar a;
+		if (!get_opvar_dat(&stack, &a, SPOVAR_INT))
+		    break;
+		a.vardata.l--;
+		splev_stack_push(&stack, a);
+	    }
+	    break;
 	case SPO_CMP:
 	    {
 		struct opvar a = splev_stack_pop(&stack);
@@ -3443,6 +3614,36 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		a = oa.vardata.l;
 		c = oc.vardata.l;
 		if (c >= 0 && a >= 0 &&
+		    a < lvl->init_lev.n_opcodes &&
+		    a != n_opcode)
+		    n_opcode = a;
+	    }
+	    break;
+	case SPO_JE:
+	    {
+		struct opvar oa, oc;
+		long a, c;
+		if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
+		    !get_opvar_dat(&stack, &oc, SPOVAR_INT))
+		    break;
+		a = oa.vardata.l;
+		c = oc.vardata.l;
+		if (c == 0 && a >= 0 &&
+		    a < lvl->init_lev.n_opcodes &&
+		    a != n_opcode)
+		    n_opcode = a;
+	    }
+	    break;
+	case SPO_JNE:
+	    {
+		struct opvar oa, oc;
+		long a, c;
+		if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
+		    !get_opvar_dat(&stack, &oc, SPOVAR_INT))
+		    break;
+		a = oa.vardata.l;
+		c = oc.vardata.l;
+		if (c != 0 && a >= 0 &&
 		    a < lvl->init_lev.n_opcodes &&
 		    a != n_opcode)
 		    n_opcode = a;

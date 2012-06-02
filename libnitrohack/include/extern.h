@@ -184,6 +184,7 @@ extern int use_pick_axe2(struct obj *, schar, schar, schar);
 extern boolean mdig_tunnel(struct monst *);
 extern void watch_dig(struct monst *,xchar,xchar,boolean);
 extern void zap_dig(schar, schar, schar);
+extern struct obj *bury_an_obj(struct obj *);
 extern void bury_objs(int,int);
 extern void unearth_objs(struct level *lev, int x, int y);
 extern void rot_organic(void *, long);

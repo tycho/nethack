@@ -15,7 +15,6 @@ static int dig(void);
 static schar fillholetyp(int, int);
 static void dig_up_grave(void);
 static boolean dighole(boolean);
-static struct obj *bury_an_obj(struct obj *);
 
 /* Indices returned by dig_typ() */
 #define DIGTYP_UNDIGGABLE 0
@@ -1225,7 +1224,7 @@ void zap_dig(schar dx, schar dy, schar dz)
 
 /* move objects from level->objlist/nexthere lists to buriedobjlist, keeping position */
 /* information */
-static struct obj *bury_an_obj(struct obj *otmp)
+struct obj *bury_an_obj(struct obj *otmp)
 {
 	struct obj *otmp2;
 	boolean under_ice;
