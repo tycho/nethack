@@ -1939,10 +1939,14 @@ struct obj *obj;
 	add_menu(win, NO_GLYPH, &any, 't', 0, ATR_NONE,
 			"Throw this item", MENU_UNSELECTED);
 	/* T: unequip worn item */
-	any.a_void = (genericptr_t)dotakeoff; 
-	if ((obj->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL)))
-		add_menu(win, NO_GLYPH, &any, 'T', 0, ATR_NONE,
-				"Unequip this equipment", MENU_UNSELECTED);
+	if ((obj->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL))) {
+	    if ((obj->owornmask & (W_ARMOR)))
+		any.a_void = (genericptr_t)dotakeoff;
+	    if ((obj->owornmask & (W_RING | W_AMUL | W_TOOL)))
+		any.a_void = (genericptr_t)doremring;
+	    add_menu(win, NO_GLYPH, &any, 'T', 0, ATR_NONE,
+		     "Unequip this equipment", MENU_UNSELECTED);
+	}
 	/* V: invoke, rub, or break */
 	any.a_void = (genericptr_t)doinvoke;
 	if ((obj->otyp == FAKE_AMULET_OF_YENDOR && !obj->known) ||
@@ -1966,22 +1970,29 @@ struct obj *obj;
 		add_menu(win, NO_GLYPH, &any, 'w', 0, ATR_NONE,
 				"Hold this item in your hands", MENU_UNSELECTED);
 	/* W: Equip this item */
-	any.a_void = (genericptr_t)dowear;
-	if (obj->oclass == ARMOR_CLASS)
+	if (!(obj->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL))) {
+	    any.a_void = (genericptr_t)dowear;
+	    if (obj->oclass == ARMOR_CLASS)
 		add_menu(win, NO_GLYPH, &any, 'W', 0, ATR_NONE,
 				"Wear this armor", MENU_UNSELECTED);
-	else if (obj->oclass == RING_CLASS || obj->otyp == MEAT_RING)
+	    else if (obj->oclass == RING_CLASS || obj->otyp == MEAT_RING) {
+		any.a_void = (genericptr_t)doputon;
 		add_menu(win, NO_GLYPH, &any, 'W', 0, ATR_NONE,
 				"Put this ring on", MENU_UNSELECTED);
-	else if (obj->oclass == AMULET_CLASS)
+	    } else if (obj->oclass == AMULET_CLASS) {
+		any.a_void = (genericptr_t)doputon;
 		add_menu(win, NO_GLYPH, &any, 'W', 0, ATR_NONE,
 				"Put this amulet on", MENU_UNSELECTED);
-	else if (obj->otyp == TOWEL || obj->otyp == BLINDFOLD)
+	    } else if (obj->otyp == TOWEL || obj->otyp == BLINDFOLD) {
+		any.a_void = (genericptr_t)doputon;
 		add_menu(win, NO_GLYPH, &any, 'W', 0, ATR_NONE,
 				"Use this to blindfold yourself", MENU_UNSELECTED);
-	else if (obj->otyp == LENSES)
+	    } else if (obj->otyp == LENSES) {
+		any.a_void = (genericptr_t)doputon;
 		add_menu(win, NO_GLYPH, &any, 'W', 0, ATR_NONE,
 				"Put these lenses on", MENU_UNSELECTED);
+	    }
+	}
 	/* x: Swap main and readied weapon */
 	any.a_void = (genericptr_t)doswapweapon;
 	if (obj == uwep && uswapwep)
