@@ -352,15 +352,15 @@ switchstatement	: SWITCH_ID '[' INTEGER ']'
 		  {
 			while (n_switch_break_list) {
 			    struct opvar *tmppush = switch_break_list[--n_switch_break_list];
-			    set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			}
 			while (n_switch_case_list) {
 			    struct opvar *tmppush = switch_case_list[--n_switch_case_list];
-			    set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			}
 			while (n_switch_jump_list) {
 			    struct opvar *tmppush = switch_jump_list[--n_switch_jump_list];
-			    set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			}
 
 			/* get rid of the value in stack */
@@ -391,7 +391,7 @@ switchcase	: CASE_ID INTEGER ':'
 			if (n_switch_jump_list) {
 			    struct opvar *tmppush3;
 			    tmppush3 = switch_jump_list[--n_switch_jump_list];
-			    set_opvar_int(tmppush3, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush3, splev.init_lev.n_opcodes);
 			}
 
 			add_opvars(&splev, "oio", SPO_COPY, $2, SPO_CMP);
@@ -403,7 +403,7 @@ switchcase	: CASE_ID INTEGER ':'
 			if (n_switch_case_list) {
 			    struct opvar *tmppush4;
 			    tmppush4 = switch_case_list[--n_switch_case_list];
-			    set_opvar_int(tmppush4, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush4, splev.init_lev.n_opcodes);
 			}
 		  }
 		 breakstatements
@@ -445,7 +445,7 @@ loopstatement	: LOOP_ID '[' INTEGER ']'
 
 			add_opvars(&splev, "i", $3);
 
-			set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			if_list[n_if_list++] = tmppush;
 
 			add_opvars(&splev, "o", SPO_DEC);
@@ -491,7 +491,7 @@ if_ending	: '{' levstatements '}'
 			if (n_if_list > 0) {
 			    struct opvar *tmppush;
 			    tmppush = (struct opvar *)if_list[--n_if_list];
-			    set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			} else yyerror("IF: Huh?! No start address?");
 		  }
 		| '{' levstatements '}'
@@ -504,7 +504,7 @@ if_ending	: '{' levstatements '}'
 			    add_opcode(&splev, SPO_PUSH, tmppush);
 			    add_opcode(&splev, SPO_JMP, NULL);
 			    tmppush2 = (struct opvar *)if_list[--n_if_list];
-			    set_opvar_int(tmppush2, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush2, splev.init_lev.n_opcodes);
 			    if_list[n_if_list++] = tmppush;
 			} else yyerror("IF: Huh?! No else-part address?");
 		  }
@@ -513,7 +513,7 @@ if_ending	: '{' levstatements '}'
 			if (n_if_list > 0) {
 			    struct opvar *tmppush;
 			    tmppush = (struct opvar *)if_list[--n_if_list];
-			    set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			} else yyerror("IF: Huh?! No end address?");
 		  }
 		;
@@ -553,7 +553,7 @@ cobj_if_ending	: '{' cobj_statements '}'
 			if (n_if_list > 0) {
 			    struct opvar *tmppush;
 			    tmppush = (struct opvar *)if_list[--n_if_list];
-			    set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			} else yyerror("IF: Huh?! No start address?");
 		  }
 		| '{' cobj_statements '}'
@@ -566,7 +566,7 @@ cobj_if_ending	: '{' cobj_statements '}'
 			    add_opcode(&splev, SPO_PUSH, tmppush);
 			    add_opcode(&splev, SPO_JMP, NULL);
 			    tmppush2 = (struct opvar *)if_list[--n_if_list];
-			    set_opvar_int(tmppush2, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush2, splev.init_lev.n_opcodes);
 			    if_list[n_if_list++] = tmppush;
 			} else yyerror("IF: Huh?! No else-part address?");
 		  }
@@ -575,7 +575,7 @@ cobj_if_ending	: '{' cobj_statements '}'
 			if (n_if_list > 0) {
 			    struct opvar *tmppush;
 			    tmppush = (struct opvar *)if_list[--n_if_list];
-			    set_opvar_int(tmppush, splev.init_lev.n_opcodes - 1);
+			    set_opvar_int(tmppush, splev.init_lev.n_opcodes);
 			} else yyerror("IF: Huh?! No end address?");
 		  }
 		;
@@ -901,7 +901,7 @@ monster_detail	: MONSTER_ID chance ':' monster_desc
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional creation of monster, "
 					"but no jump point marker.");
@@ -1066,7 +1066,7 @@ cobj_detail	: OBJECT_ID chance ':' cobj_desc
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional creation of obj, "
 					"but no jump point marker.");
@@ -1087,7 +1087,7 @@ cobj_detail	: OBJECT_ID chance ':' cobj_desc
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional creation of obj, "
 					"but no jump point marker.");
@@ -1104,7 +1104,7 @@ object_detail	: OBJECT_ID chance ':' object_desc
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional creation of obj, "
 					"but no jump point marker.");
@@ -1124,7 +1124,7 @@ object_detail	: OBJECT_ID chance ':' object_desc
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional creation of obj, "
 					"but no jump point marker.");
@@ -1273,7 +1273,7 @@ trap_detail	: TRAP_ID chance ':' trap_name ',' coordinate
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else yyerror("conditional creation of trap, "
 					   "but no jump point marker.");
 			}
@@ -1501,7 +1501,7 @@ terrain_detail	: TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional terrain modification, "
 					"but no jump point marker.");
@@ -1533,7 +1533,7 @@ terrain_detail	: TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional terrain modification, "
 					"but no jump point marker.");
@@ -1557,7 +1557,7 @@ terrain_detail	: TERRAIN_ID chance ':' coordinate ',' CHAR ',' light_state
 			    if (n_if_list > 0) {
 				struct opvar *tmpjmp;
 				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes - 1);
+				set_opvar_int(tmpjmp, splev.init_lev.n_opcodes);
 			    } else {
 				yyerror("conditional terrain modification, "
 					"but no jump point marker.");

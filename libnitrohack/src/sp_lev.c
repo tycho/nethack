@@ -3566,7 +3566,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		if (!get_opvar_dat(&stack, &tmpa, SPOVAR_INT))
 		    break;
 
-		a = tmpa.vardata.l;
+		a = tmpa.vardata.l - 1;
 		if (a >= 0 && a < lvl->init_lev.n_opcodes && a != n_opcode)
                     n_opcode = a;
 	    }
@@ -3579,7 +3579,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    !get_opvar_dat(&stack, &oc, SPOVAR_INT))
 		    break;
 
-		a = oa.vardata.l;
+		a = oa.vardata.l - 1;
 		c = oc.vardata.l;
 		if (c < 0 && a >= 0 &&
 		    a < lvl->init_lev.n_opcodes &&
@@ -3595,7 +3595,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    !get_opvar_dat(&stack, &oc, SPOVAR_INT))
 		    break;
 
-		a = oa.vardata.l;
+		a = oa.vardata.l - 1;
 		c = oc.vardata.l;
 		if (c > 0 && a >= 0 &&
 		    a < lvl->init_lev.n_opcodes &&
@@ -3611,7 +3611,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    !get_opvar_dat(&stack, &oc, SPOVAR_INT))
 		    break;
 
-		a = oa.vardata.l;
+		a = oa.vardata.l - 1;
 		c = oc.vardata.l;
 		if (c >= 0 && a >= 0 &&
 		    a < lvl->init_lev.n_opcodes &&
@@ -3626,7 +3626,8 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &oc, SPOVAR_INT))
 		    break;
-		a = oa.vardata.l;
+
+		a = oa.vardata.l - 1;
 		c = oc.vardata.l;
 		if (c == 0 && a >= 0 &&
 		    a < lvl->init_lev.n_opcodes &&
@@ -3641,7 +3642,8 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		if (!get_opvar_dat(&stack, &oa, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &oc, SPOVAR_INT))
 		    break;
-		a = oa.vardata.l;
+
+		a = oa.vardata.l - 1;
 		c = oc.vardata.l;
 		if (c != 0 && a >= 0 &&
 		    a < lvl->init_lev.n_opcodes &&
