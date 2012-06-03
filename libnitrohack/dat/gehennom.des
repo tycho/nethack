@@ -523,7 +523,9 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 # The resident nasty
-MONSTER:'&',"Orcus",(33,15)
+MONSTER: '&', "Orcus", (33,15) {
+  OBJECT: '/', "death"
+}
 # And its preferred companions
 MONSTER:'Z',"human zombie",(32,15)
 MONSTER:' ',"shade",(32,14)
@@ -654,7 +656,9 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT[50%]:random,random,random
 # The resident nasty
-MONSTER:'&',"Orcus",(71,04)
+MONSTER: '&', "Orcus", (71,04) {
+  OBJECT: '/', "death"
+}
 # And its preferred companions
 MONSTER:'Z',"human zombie",(69,03)
 MONSTER:' ',"shade",(67,06)
@@ -757,7 +761,10 @@ NON_DIGGABLE:(00,00,20,11)
 # Entire main area
 REGION:(01,01,20,10),unlit,"ordinary"
 # The fellow in residence
-MONSTER:'&',"Asmodeus",(12,07)
+MONSTER: '&', "Asmodeus", (12,07) {
+  OBJECT: '/', "cold"
+  OBJECT: '/', "fire"
+}
 # Some random weapons and armor.
 OBJECT:'[',random,random
 OBJECT:'[',random,random
@@ -877,7 +884,10 @@ REGION:(25,07,29,10),unlit,"lemurepit"
 REGION:(48,03,58,09),lit,"ordinary"
 REGION:(06,15,16,18),lit,"ordinary"
 # The fellow in residence
-MONSTER:'&',"Asmodeus",(11,16)
+MONSTER: '&', "Asmodeus", (11,16) {
+  OBJECT: '/', "cold"
+  OBJECT: '/', "fire"
+}
 # His close friends
 MONSTER:'&',"marilith",(08,16),asleep
 MONSTER:'&',"marilith",(09,17),asleep
@@ -1278,16 +1288,19 @@ MONSTER:'&',"erinys",(10,04),hostile
 MONSTER:'&',"marilith",(07,09),hostile
 MONSTER:'&',"nalfeshnee",(27,08),hostile
 # Moloch's horde
-MONSTER:'h',"Cthulhu",(18,09),asleep,hostile
-MONSTER:'@',"aligned priest",(20,03),noalign,hostile
-MONSTER:'@',"aligned priest",(15,04),noalign,hostile
-MONSTER:'@',"aligned priest",(11,05),noalign,hostile
-MONSTER:'@',"aligned priest",(11,07),noalign,hostile
-MONSTER:'@',"aligned priest",(11,09),noalign,hostile
-MONSTER:'@',"aligned priest",(11,12),noalign,hostile
-MONSTER:'@',"aligned priest",(15,13),noalign,hostile
-MONSTER:'@',"aligned priest",(17,13),noalign,hostile
-MONSTER:'@',"aligned priest",(21,13),noalign,hostile
+MONSTER: 'h', "Cthulhu", (18,09), asleep, hostile {
+  OBJECT: '"', "Amulet of Yendor"
+  OBJECT: '!', "full healing"
+}
+MONSTER: '@', "aligned priest", (20,03), noalign, hostile
+MONSTER: '@', "aligned priest", (15,04), noalign, hostile
+MONSTER: '@', "aligned priest", (11,05), noalign, hostile
+MONSTER: '@', "aligned priest", (11,07), noalign, hostile
+MONSTER: '@', "aligned priest", (11,09), noalign, hostile
+MONSTER: '@', "aligned priest", (11,12), noalign, hostile
+MONSTER: '@', "aligned priest", (15,13), noalign, hostile
+MONSTER: '@', "aligned priest", (17,13), noalign, hostile
+MONSTER: '@', "aligned priest", (21,13), noalign, hostile
 # Cthulhu's followers
 MONSTER: 'h', "mind flayer", (17,03), hostile
 MONSTER: 'h', "mind flayer", (17,15), hostile

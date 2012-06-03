@@ -30,12 +30,14 @@ MAP
 ----------------------------------------------------------------------------
 ENDMAP
 # Non diggable walls
-NON_DIGGABLE:(00,00,75,19)
+NON_DIGGABLE: (00,00,75,19)
 # Portal arrival point
-BRANCH:(08,16,08,16),(0,0,0,0)
+BRANCH: (08,16,08,16), (0,0,0,0)
 #   Throne room, with Croesus on the throne
-REGION:(37,08,46,11),lit,"throne"
-MONSTER:'@',"Croesus",(43,10),hostile
+REGION: (37,08,46,11), lit, "throne"
+MONSTER: '@', "Croesus", (43,10), hostile {
+  OBJECT: ')', "two-handed sword"
+}
 #   The Vault
 #   Using unfilled morgue for
 #   identification in mkmaze.c
@@ -133,12 +135,14 @@ MAP
 ----------------------}}}----III--------------------------------------------
 ENDMAP
 # Non diggable walls
-NON_DIGGABLE:(00,00,75,19)
+NON_DIGGABLE: (00,00,75,19)
 # Portal arrival point
-BRANCH:(08,16,08,16),(0,0,0,0)
+BRANCH: (08,16,08,16), (0,0,0,0)
 #   Throne room, with Croesus on the throne
-REGION:(57,06,66,09),lit,"throne"
-MONSTER:'@',"Croesus",(63,08),hostile
+REGION: (57,06,66,09), lit, "throne"
+MONSTER: '@', "Croesus", (63,08), hostile {
+  OBJECT: ')', "two-handed sword"
+}
 #   The Vault
 #   Using unfilled morgue for
 #   identification in mkmaze.c
@@ -240,14 +244,16 @@ MAP
 ----------------------------------------------------------------------------
 ENDMAP
 # Non diggable walls
-NON_DIGGABLE:(00,00,75,19)
+NON_DIGGABLE: (00,00,75,19)
 # everything's lit
-REGION:(00,00,75,19),lit,"ordinary"
+REGION: (00,00,75,19), lit, "ordinary"
 # Portal arrival point
-BRANCH:(06,16,06,16),(0,0,0,0)
+BRANCH: (06,16,06,16), (0,0,0,0)
 #   Throne room, with Croesus on the throne
-REGION:(62,12,75,15),lit,"throne"
-MONSTER:'@',"Croesus",(66,14),hostile
+REGION: (62,12,75,15), lit, "throne"
+MONSTER: '@', "Croesus", (66,14), hostile {
+  OBJECT: ')', "two-handed sword"
+}
 #   The Vault
 #   Using unfilled morgue for
 #   identification in mkmaze.c

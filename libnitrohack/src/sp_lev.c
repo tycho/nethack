@@ -82,6 +82,8 @@ int num_lregions = 0;
 struct obj *container_obj[MAX_CONTAINMENT];
 int container_idx = 0;
 
+struct monst *invent_carrying_monster = NULL;
+
 #define SPLEV_STACK_RESERVE 128
 
 
@@ -1372,6 +1374,11 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 		mtmp->mflee = 1;
 		mtmp->mfleetim = m->fleeing % 127;
 	    }
+
+	    if (m->has_invent) {
+		discard_minvent(mtmp);
+		invent_carrying_monster = mtmp;
+	    }
 	}
 }
 
@@ -1474,7 +1481,30 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	/* contents */
 	if (o->containment & SP_OBJ_CONTENT) {
 	    if (!container_idx) {
-		warning("create_object: no container");
+		if (!invent_carrying_monster) {
+		    warning("create_object: no container");
+		} else {
+		    int c;
+		    struct obj *objcheck = otmp;
+		    int inuse = -1;
+		    for (c = 0; c < container_idx; c++) {
+			if (container_obj[c] == objcheck)
+			    inuse = c;
+		    }
+		    remove_object(otmp);
+		    if (mpickobj(invent_carrying_monster, otmp)) {
+			if (inuse > -1) {
+			    impossible("container given to monster "
+				       "was merged or deallocated.");
+			    for (c = inuse; c < container_idx - 1; c++)
+				container_obj[c] = container_obj[c + 1];
+			    container_obj[container_idx] = NULL;
+			    container_idx--;
+			}
+			/* we lost track of it. */
+			return;
+		    }
+		}
 	    } else {
 		remove_object(otmp);
 		add_to_container(container_obj[container_idx - 1], otmp);
@@ -2425,6 +2455,8 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	container_obj[xi] = NULL;
     container_idx = 0;
 
+    invent_carrying_monster = NULL;
+
     memset(&SpLev_Map[0][0], 0, sizeof(SpLev_Map));
 
     lev->flags.is_maze_lev = 0;
@@ -2470,6 +2502,11 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	    break;
 	case SPO_EXIT:
 	    exit_script = TRUE;
+	    break;
+	case SPO_END_MONINVENT:
+	    if (invent_carrying_monster)
+		m_dowear(lev, invent_carrying_monster, TRUE);
+	    invent_carrying_monster = NULL;
 	    break;
 	case SPO_POP_CONTAINER:
 	    if (container_idx > 0) {
@@ -2545,7 +2582,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		int nparams = 0;
 
 		struct opvar varparam;
-		struct opvar id, x, y, class;
+		struct opvar id, x, y, class, has_inv;
 		monster tmpmons;
 
 		tmpmons.peaceful = -1;
@@ -2565,8 +2602,10 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		tmpmons.stunned = 0;
 		tmpmons.confused = 0;
 		tmpmons.seentraps = 0;
+		tmpmons.has_invent = 0;
 
-		if (!get_opvar_dat(&stack, &id, SPOVAR_INT) ||
+		if (!get_opvar_dat(&stack, &has_inv, SPOVAR_INT) ||
+		    !get_opvar_dat(&stack, &id, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &class, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &y, SPOVAR_INT) ||
 		    !get_opvar_dat(&stack, &x, SPOVAR_INT))
@@ -2664,6 +2703,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		tmpmons.x = x.vardata.l;
 		tmpmons.y = y.vardata.l;
 		tmpmons.class = class.vardata.l;
+		tmpmons.has_invent = has_inv.vardata.l;
 
 		create_monster(lev, &tmpmons, croom);
 

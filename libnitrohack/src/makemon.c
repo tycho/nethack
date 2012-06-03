@@ -371,17 +371,8 @@ static void m_initweap(struct monst *mtmp)
 			mongets(mtmp, BULLWHIP);
 			mongets(mtmp, BROADSWORD);
 			break;
-		    case PM_ORCUS:
-			mongets(mtmp, WAN_DEATH); /* the Wand of Orcus */
-			break;
 		    case PM_HORNED_DEVIL:
 			mongets(mtmp, rn2(4) ? TRIDENT : BULLWHIP);
-			break;
-		    case PM_DISPATER:
-			mongets(mtmp, WAN_STRIKING);
-			break;
-		    case PM_YEENOGHU:
-			mongets(mtmp, FLAIL);
 			break;
 		}
 		/* prevent djinnis and mail daemons from leaving objects when
@@ -603,18 +594,8 @@ static void m_initinv(struct monst *mtmp)
 		   have AT_WEAP so m_initweap() is not called for them */
 		if (ptr == &mons[PM_ICE_DEVIL] && !rn2(4)) {
 			mongets(mtmp, SPEAR);
-		} else if (ptr == &mons[PM_ASMODEUS]) {
-			mongets(mtmp, WAN_COLD);
-			mongets(mtmp, WAN_FIRE);
 		}
 		break;
-	    case S_HUMANOID:
-		/* [DS] Cthulhu isn't fully integrated yet, and he won't be
-		   until Moloch's Sanctum is rearranged */
-		if (ptr == &mons[PM_CTHULHU]) {
-		    mongets(mtmp, AMULET_OF_YENDOR);
-		    mongets(mtmp, POT_FULL_HEALING);
-		}
 	    default:
 		break;
 	}
@@ -976,14 +957,8 @@ struct monst *makemon(const struct permonst *ptr,
 		flags.ghost_count++;
 		if (!(mmflags & MM_NONAME))
 			mtmp = christen_monst(mtmp, rndghostname());
-	} else if (mndx == PM_VLAD_THE_IMPALER) {
-		mitem = CANDELABRUM_OF_INVOCATION;
-	} else if (mndx == PM_CROESUS) {
-		mitem = TWO_HANDED_SWORD;
 	} else if (ptr->msound == MS_NEMESIS) {
 		mitem = BELL_OF_OPENING;
-	} else if (mndx == PM_PESTILENCE) {
-		mitem = POT_SICKNESS;
 	}
 	if (mitem && allow_minvent) mongets(mtmp, mitem);
 
