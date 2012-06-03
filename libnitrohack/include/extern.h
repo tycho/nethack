@@ -762,7 +762,7 @@ extern boolean is_home_elemental(const struct d_level *dlev, const struct permon
 extern struct monst *clone_mon(struct monst *,xchar,xchar);
 extern struct monst *makemon(const struct permonst *, struct level *lev,int,int,int);
 extern boolean create_critters(int, const struct permonst *);
-extern const struct permonst *rndmonst(const d_level *dlev);
+extern const struct permonst *rndmonst(struct level *lev);
 extern void reset_rndmonst(int);
 extern void save_rndmonst_state(struct memfile *mf);
 extern void restore_rndmonst_state(struct memfile *mf);
@@ -888,7 +888,7 @@ extern const char *waterbody_name(xchar,xchar);
 extern struct obj *mkobj_at(char let, struct level *lev, int x, int y, boolean artif);
 extern struct obj *mksobj_at(int,struct level *,int,int,boolean,boolean);
 extern struct obj *mkobj(struct level *lev, char oclass, boolean artif);
-extern int rndmonnum(const d_level *dlev);
+extern int rndmonnum(struct level *lev);
 extern struct obj *splitobj(struct obj *,long);
 extern void replace_object(struct obj *,struct obj *);
 extern void bill_dummy_object(struct obj *);
@@ -1315,7 +1315,6 @@ extern boolean is_quest_artifact(struct obj*);
 extern void qt_com_firstline(int msgnum, char *msgbuf);
 extern void com_pager(int);
 extern void qt_pager(int);
-extern const struct permonst *qt_montype(const d_level *dlev);
 
 /* ### read.c ### */
 

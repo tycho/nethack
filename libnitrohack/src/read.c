@@ -1579,7 +1579,7 @@ void do_genocide(int how, boolean only_on_level)
 		if (!strcmpi(buf, "none") || !strcmpi(buf, "nothing")) {
 		    /* ... but no free pass if cursed */
 		    if (!(how & REALLY)) {
-			ptr = rndmonst(&u.uz);
+			ptr = rndmonst(level);
 			if (!ptr) return; /* no message, like normal case */
 			mndx = monsndx(ptr);
 			break;		/* remaining checks don't apply */

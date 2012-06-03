@@ -72,7 +72,7 @@ struct monst *make_familiar(struct obj *otmp, xchar x, xchar y, boolean quietly)
 	    } else if (!rn2(3)) {
 		pm = &mons[pet_type()];
 	    } else {
-		pm = rndmonst(&u.uz);
+		pm = rndmonst(level);
 		if (!pm) {
 		  if (!quietly)
 		    pline("There seems to be nothing available for a familiar.");

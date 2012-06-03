@@ -1430,7 +1430,7 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	}
 
 	/*	corpsenm is "empty" if -1, random if -2, otherwise specific */
-	if (o->corpsenm == NON_PM - 1) otmp->corpsenm = rndmonnum(&lev->z);
+	if (o->corpsenm == NON_PM - 1) otmp->corpsenm = rndmonnum(lev);
 	else if (o->corpsenm != NON_PM) otmp->corpsenm = o->corpsenm;
 
 	/* assume we wouldn't be given an egg corpsenm unless it was
@@ -1503,7 +1503,7 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	     * resistant (if they were, we'd have to reset the name as well as
 	     * setting corpsenm).
 	     */
-	    for (wastyp = otmp->corpsenm; ; wastyp = rndmonnum(&lev->z)) {
+	    for (wastyp = otmp->corpsenm; ; wastyp = rndmonnum(lev)) {
 		/* makemon without rndmonst() might create a group */
 		was = makemon(&mons[wastyp], lev, 0, 0, NO_MM_FLAGS);
 		if (!resists_ston(was)) break;
@@ -2786,6 +2786,47 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		create_object(lev, &tmpobj, croom);
 
 		free(tmpobj.name.str);
+	    }
+	    break;
+	case SPO_MON_GENERATION:
+	    {
+		struct opvar freq, n_tuples;
+		struct mon_gen_override *mg;
+		struct mon_gen_tuple *mgtuple;
+
+		if (lev->mon_gen) {
+		    impossible("Monster generation override already defined.");
+		    break;
+		}
+
+		if (!get_opvar_dat(&stack, &n_tuples, SPOVAR_INT) ||
+		    !get_opvar_dat(&stack, &freq, SPOVAR_INT))
+		    break;
+
+		mg = malloc(sizeof(*mg));
+		mg->override_chance = freq.vardata.l;
+		mg->total_mon_freq = 0;
+		mg->gen_chances = NULL;
+		while (n_tuples.vardata.l-- > 0) {
+		    struct opvar mfreq, is_sym, mon;
+		    mgtuple = malloc(sizeof(*mgtuple));
+
+		    if (!get_opvar_dat(&stack, &mfreq, SPOVAR_INT) ||
+			!get_opvar_dat(&stack, &is_sym, SPOVAR_INT) ||
+			!get_opvar_dat(&stack, &mon, SPOVAR_INT))
+			panic("Oopsie when loading mon_gen chances.");
+
+		    mgtuple->freq = mfreq.vardata.l;
+		    mgtuple->is_sym = is_sym.vardata.l;
+		    if (is_sym.vardata.l)
+			mgtuple->monid = def_char_to_monclass(mon.vardata.l);
+		    else
+			mgtuple->monid = mon.vardata.l;
+		    mgtuple->next = mg->gen_chances;
+		    mg->gen_chances = mgtuple;
+		    mg->total_mon_freq += mfreq.vardata.l;
+		}
+		lev->mon_gen = mg;
 	    }
 	    break;
 	case SPO_ENGRAVING:

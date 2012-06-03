@@ -7,6 +7,7 @@
 static void find_lev_obj(struct level *lev);
 static void restlevchn(struct memfile *mf);
 static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly);
+static struct mon_gen_override *rest_mongen_override(struct memfile *mf);
 static struct obj *restobjchn(struct memfile *mf, struct level *lev,
 			      boolean ghostly, boolean frozen);
 static struct monst *restmonchn(struct memfile *mf, struct level *lev, boolean ghostly);
@@ -153,6 +154,44 @@ static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
 	    }
 	}
 	free(tmp_dam);
+}
+
+
+static struct mon_gen_override *rest_mongen_override(struct memfile *mf)
+{
+	int marker;
+	struct mon_gen_override *or;
+	struct mon_gen_tuple *mt;
+	boolean has_gen_chances, next;
+
+	or = NULL;
+
+	mfmagic_check(mf, MONGEN_MAGIC);
+
+	marker = mread32(mf);
+	if (marker) {
+	    or = malloc(sizeof(*or));
+	    or->override_chance = mread32(mf);
+	    or->total_mon_freq = mread32(mf);
+	    has_gen_chances = mread8(mf) ? TRUE : FALSE;
+	    or->gen_chances = NULL;
+
+	    if (has_gen_chances) {
+		do {
+		    mfmagic_check(mf, MONGENTUPLE_MAGIC);
+		    mt = malloc(sizeof(*mt));
+		    mt->freq = mread32(mf);
+		    mt->is_sym = mread8(mf) ? TRUE : FALSE;
+		    mt->monid = mread32(mf);
+		    next = mread8(mf) ? TRUE : FALSE;
+
+		    mt->next = or->gen_chances;
+		    or->gen_chances = mt;
+		} while (next);
+	    }
+	}
+
+	return or;
 }
 
 
@@ -791,6 +830,7 @@ struct level *getlev(struct memfile *mf, xchar levnum, boolean ghostly)
 	   routine so that we can check for objects being buried under ice */
 	lev->buriedobjlist = restobjchn(mf, lev, ghostly, FALSE);
 	lev->billobjs = restobjchn(mf, lev, ghostly, FALSE);
+	lev->mon_gen = rest_mongen_override(mf);
 	rest_engravings(mf, lev);
 
 	/* reset level->monsters for new level */

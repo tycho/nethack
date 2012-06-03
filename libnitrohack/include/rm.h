@@ -440,6 +440,19 @@ struct levelflags {
 	unsigned forgotten:1;	/* previously visited but forgotten (amnesia) */
 };
 
+struct mon_gen_tuple {
+	int freq;
+	boolean is_sym;
+	int monid;
+	struct mon_gen_tuple *next;
+};
+
+struct mon_gen_override {
+	int override_chance;
+	int total_mon_freq;
+	struct mon_gen_tuple *gen_chances;
+};
+
 /* worm segment structure */
 struct wseg {
     struct wseg *nseg;
@@ -459,7 +472,8 @@ struct level {
     struct monst	*monlist;
     struct damage	*damagelist;
     struct levelflags	flags;
-    
+    struct mon_gen_override *mon_gen;
+
     timer_element	*lev_timers;
     struct ls_t		*lev_lights;
     struct trap 	*lev_traps;

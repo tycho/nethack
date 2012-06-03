@@ -442,7 +442,7 @@ static void fixup_special(struct level *lev)
 		otmp = mk_tt_object(lev, STATUE, x, y);
 		while (otmp && (poly_when_stoned(&mons[otmp->corpsenm]) ||
 				pm_resistance(&mons[otmp->corpsenm],MR_STONE))) {
-		    otmp->corpsenm = rndmonnum(&lev->z);
+		    otmp->corpsenm = rndmonnum(lev);
 		    otmp->owt = weight(otmp);
 		}
 	    }
@@ -456,7 +456,7 @@ static void fixup_special(struct level *lev)
 	if (otmp) {
 	    while (pm_resistance(&mons[otmp->corpsenm],MR_STONE)
 		   || poly_when_stoned(&mons[otmp->corpsenm])) {
-		otmp->corpsenm = rndmonnum(&lev->z);
+		otmp->corpsenm = rndmonnum(lev);
 		otmp->owt = weight(otmp);
 	    }
 	}

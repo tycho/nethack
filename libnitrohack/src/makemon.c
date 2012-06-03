@@ -833,7 +833,7 @@ struct monst *makemon(const struct permonst *ptr,
 		int tryct = 0;	/* maybe there are no good choices */
 		struct monst fakemon;
 		do {
-			if (!(ptr = rndmonst(&lev->z))) {
+			if (!(ptr = rndmonst(lev))) {
 			    return NULL;	/* no more monsters! */
 			}
 			fakemon.data = ptr;	/* set up for goodpos */
@@ -963,7 +963,7 @@ struct monst *makemon(const struct permonst *ptr,
 			mtmp->cham = CHAM_ORDINARY;
 		else {
 			mtmp->cham = mcham;
-			newcham(lev, mtmp, rndmonst(&lev->z), FALSE, FALSE);
+			newcham(lev, mtmp, rndmonst(lev), FALSE, FALSE);
 		}
 	} else if (mndx == PM_WIZARD_OF_YENDOR) {
 		mtmp->iswiz = TRUE;
@@ -1116,18 +1116,46 @@ static int align_shift(const d_level *dlev, const struct permonst *ptr)
     return alshift;
 }
 
+static const struct permonst *get_override_mon(const d_level *dlev,
+					       const struct mon_gen_override *ovr)
+{
+	int chance, try = 100;
+	const struct mon_gen_tuple *mt;
+	if (!ovr) return NULL;
+
+	chance = rnd(ovr->total_mon_freq);
+	do {
+	    mt = ovr->gen_chances;
+	    while (mt && (chance -= mt->freq) > 0)
+		mt = mt->next;
+	    if (mt && chance <= 0) {
+		if (mt->is_sym) {
+		    return mkclass(dlev, mt->monid, 0);
+		} else {
+		    if (!(mvitals[mt->monid].mvflags & G_GENOD))
+			return &mons[mt->monid];
+		}
+	    }
+	} while (--try > 0);
+
+	return NULL;
+}
+
 static struct rndmonst_state {
 	int choice_count;
 	char mchoices[SPECIAL_PM];	/* value range is 0..127 */
 } rndmonst_state;
 
 /* select a random monster type */
-const struct permonst *rndmonst(const d_level *dlev)
+const struct permonst *rndmonst(struct level *lev)
 {
 	const struct permonst *ptr;
 	int mndx, ct;
+	const d_level *dlev = &lev->z;
 
-	if (dlev->dnum == quest_dnum && rn2(7) && (ptr = qt_montype(dlev)) != 0)
+	if (lev->mon_gen &&
+	    rn2(100) < lev->mon_gen->override_chance &&
+	    (ptr = get_override_mon(&lev->z, lev->mon_gen)) != NULL)
 	    return ptr;
 
 	if (rndmonst_state.choice_count < 0) {	/* need to recalculate */

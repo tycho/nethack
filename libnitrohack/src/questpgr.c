@@ -386,22 +386,6 @@ void qt_pager(int msgnum)
 	return;
 }
 
-const struct permonst *qt_montype(const d_level *dlev)
-{
-	int qpm;
-
-	if (rn2(5)) {
-	    qpm = urole.enemy1num;
-	    if (qpm != NON_PM && rn2(5) && !(mvitals[qpm].mvflags & G_GENOD))
-	    	return &mons[qpm];
-	    return mkclass(dlev, urole.enemy1sym, 0);
-	}
-	qpm = urole.enemy2num;
-	if (qpm != NON_PM && rn2(5) && !(mvitals[qpm].mvflags & G_GENOD))
-	    return &mons[qpm];
-	return mkclass(dlev, urole.enemy2sym, 0);
-}
-
 /* The names of creator deities from different cultures. */
 static const char *creator_names[] = {
 	"Marduk", /* Babylonian */

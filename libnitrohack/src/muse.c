@@ -1468,7 +1468,7 @@ static const struct permonst *muse_newcham_mon(struct monst *mon)
 	    else if (Is_dragon_mail(m_armr->otyp))
 		return Dragon_mail_to_pm(m_armr);
 	}
-	return rndmonst(&mon->dlevel->z);
+	return rndmonst(mon->dlevel);
 }
 
 int use_misc(struct monst *mtmp, struct musable *m)

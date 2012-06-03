@@ -10,6 +10,7 @@
 LEVEL: "Arc-strt"
 FLAGS: noteleport, hardfloor, mazelevel
 INIT_MAP: solidfill, ' '
+MON_GENERATION: 86%, (80,'S'), (16,"human mummy"), (4,'M')
 GEOMETRY: center, center
 MAP
 ............................................................................
@@ -120,6 +121,7 @@ MONSTER: 'S',random,(10,19)
 LEVEL: "Arc-loca"
 FLAGS: hardfloor, mazelevel
 INIT_MAP: solidfill, ' '
+MON_GENERATION: 86%, (80,'S'), (16,"human mummy"), (4,'M')
 GEOMETRY: center, center
 MAP
 ............................................................................
@@ -269,6 +271,7 @@ MONSTER:'M',random,random
 LEVEL: "Arc-goal"
 FLAGS: mazelevel
 INIT_MAP: solidfill, ' '
+MON_GENERATION: 86%, (80,'S'), (16,"human mummy"), (4,'M')
 GEOMETRY: center, center
 MAP
                                                                             
@@ -387,6 +390,7 @@ MONSTER:'M',random,random
 #
 
 LEVEL: "Arc-fila"
+MON_GENERATION: 86%, (80,'S'), (16,"human mummy"), (4,'M')
 #
 ROOM: "ordinary" , random, random, random, random
 {
@@ -437,6 +441,7 @@ ROOM: "ordinary" , random, random, random, random
 RANDOM_CORRIDORS
 
 LEVEL: "Arc-filb"
+MON_GENERATION: 86%, (80,'S'), (16,"human mummy"), (4,'M')
 #
 ROOM: "ordinary" , random, random, random, random
 {

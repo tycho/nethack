@@ -19,5 +19,7 @@
 #define ENGRAVE_MAGIC		0x52474e45 /* "ENGR" */
 #define HISTORY_MAGIC		0x54534948 /* "HIST" */
 #define DIG_MAGIC		0x44494753 /* "DIGS" */
+#define MONGEN_MAGIC		0x4e45474d /* "MGEN" */
+#define MONGENTUPLE_MAGIC	0x5554474d /* "MGTU" */
 
 #endif

@@ -8,6 +8,8 @@
 static void savelevchn(struct memfile *mf);
 static void savedamage(struct memfile *mf, struct level *lev);
 static void freedamage(struct level *lev);
+static void save_mongen_override(struct memfile *mf, struct mon_gen_override *);
+static void free_mongen_override(struct mon_gen_override *);
 static void saveobjchn(struct memfile *mf, struct obj *);
 static void free_objchn(struct obj *otmp);
 static void savemonchn(struct memfile *mf, struct monst *);
@@ -349,6 +351,7 @@ void savelev(struct memfile *mf, xchar levnum)
 	saveobjchn(mf, lev->objlist);
 	saveobjchn(mf, lev->buriedobjlist);
 	saveobjchn(mf, lev->billobjs);
+	save_mongen_override(mf, lev->mon_gen);
 	save_engravings(mf, lev);
 	savedamage(mf, lev);
 	save_regions(mf, lev);
@@ -369,13 +372,15 @@ void freelev(xchar levnum)
 	free_objchn(lev->objlist);
 	free_objchn(lev->buriedobjlist);
 	free_objchn(lev->billobjs);
-	
+	free_mongen_override(lev->mon_gen);
+
 	lev->monlist = NULL;
 	lev->lev_traps = NULL;
 	lev->objlist = NULL;
 	lev->buriedobjlist = NULL;
 	lev->billobjs = NULL;
-	
+	lev->mon_gen = NULL;
+
 	free_engravings(lev);
 	freedamage(lev);
 	free_regions(lev);
@@ -434,6 +439,55 @@ static void freedamage(struct level *lev)
 	    free(tmp_dam);
 	}
 	lev->damagelist = NULL;
+}
+
+
+static void save_mongen_override(struct memfile *mf, struct mon_gen_override *or)
+{
+	struct mon_gen_tuple *mt;
+
+	mfmagic_set(mf, MONGEN_MAGIC);
+
+	if (!or) {
+	    /* marker == 0 means no monster generation override */
+	    mwrite32(mf, 0);
+	} else {
+	    /* marker == 1 means monster generation override is present */
+	    mwrite32(mf, 1);
+	    mwrite32(mf, or->override_chance);
+	    mwrite32(mf, or->total_mon_freq);
+	    mwrite8(mf, or->gen_chances ? 1 : 0);
+
+	    mt = or->gen_chances;
+	    while (mt) {
+		mfmagic_set(mf, MONGENTUPLE_MAGIC);
+		mwrite32(mf, mt->freq);
+		mwrite8(mf, mt->is_sym ? 1 : 0);
+		mwrite32(mf, mt->monid);
+		mwrite8(mf, mt->next ? 1 : 0);
+
+		mt = mt->next;
+	    }
+	}
+}
+
+
+static void free_mongen_override(struct mon_gen_override *or)
+{
+	struct mon_gen_tuple *mt;
+	struct mon_gen_tuple *prev;
+
+	if (!or)
+	    return;
+
+	mt = or->gen_chances;
+	while (mt) {
+	    prev = mt;
+	    mt = mt->next;
+	    free(prev);
+	}
+
+	free(or);
 }
 
 
