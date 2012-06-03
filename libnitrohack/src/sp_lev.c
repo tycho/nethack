@@ -208,13 +208,16 @@ static void lvlfill_maze_grid(struct level *lev, int x1, int y1, int x2, int y2,
 			(y < 2 || (x % 2 && y % 2)) ? STONE : filling;
 }
 
-static void lvlfill_solid(struct level *lev, schar filling)
+static void lvlfill_solid(struct level *lev, schar filling, schar lit)
 {
 	int x,y;
 
-	for (x = 2; x <= x_maze_max; x++)
-	    for (y = 0; y <= y_maze_max; y++)
+	for (x = 2; x <= x_maze_max; x++) {
+	    for (y = 0; y <= y_maze_max; y++) {
 		lev->locations[x][y].typ = filling;
+		lev->locations[x][y].lit = lit;
+	    }
+	}
 }
 
 static void flip_drawbridge_horizontal(struct rm *loc)
@@ -2400,14 +2403,15 @@ static void splev_initlev(struct level *lev, lev_init *linit)
 	default: impossible("Unrecognized level init style."); break;
 	case LVLINIT_NONE: break;
 	case LVLINIT_SOLIDFILL:
-	    lvlfill_solid(lev, linit->filling);
+	    if (linit->lit < 0) linit->lit = rn2(2);
+	    lvlfill_solid(lev, linit->filling, linit->lit);
 	    break;
 	case LVLINIT_MAZEGRID:
 	    lvlfill_maze_grid(lev, 2, 0, x_maze_max,y_maze_max, linit->filling);
 	    break;
 	case LVLINIT_MINES:
 	    if (linit->lit < 0) linit->lit = rn2(2);
-	    if (linit->filling > -1) lvlfill_solid(lev, linit->filling);
+	    if (linit->filling > -1) lvlfill_solid(lev, linit->filling, linit->lit);
 	    mkmap(lev, linit);
 	    break;
 	}

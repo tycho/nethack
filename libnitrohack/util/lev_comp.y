@@ -137,7 +137,7 @@ extern const char *fname;
 %type	<i> comparestmt
 %type	<i> seen_trap_mask
 %type	<i> mon_gen_list
-%type	<i> opt_percent
+%type	<i> opt_lit_state opt_percent
 %type	<map> string level_def m_name o_name
 %type	<corpos> corr_spec
 %start	file
@@ -184,12 +184,13 @@ lev_init	: /* nothing */
 		  {
 			$$ = LVLINIT_NONE;
 		  }
-		| LEV_INIT_ID ':' SOLID_FILL_ID ',' CHAR
+		| LEV_INIT_ID ':' SOLID_FILL_ID ',' CHAR opt_lit_state
 		  {
 			splev.init_lev.filling = what_map_char((char) $5);
 			if (splev.init_lev.filling == INVALID_TYPE ||
 			    splev.init_lev.filling >= MAX_TYPE)
 			    yyerror("INIT_MAP: Invalid fill char type.");
+			splev.init_lev.lit = $6;
 			$$ = LVLINIT_SOLIDFILL;
 			max_x_map = COLNO - 1;
 			max_y_map = ROWNO;
@@ -1834,6 +1835,16 @@ coordinate	: coord
 
 door_state	: DOOR_STATE
 		| RANDOM_TYPE
+		;
+
+opt_lit_state	: /* nothing */
+		  {
+			$<i>$ = 0;
+		  }
+		| ',' light_state
+		  {
+			$<i>$ = $2;
+		  }
 		;
 
 light_state	: LIGHT_STATE
