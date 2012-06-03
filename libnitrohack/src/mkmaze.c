@@ -479,11 +479,6 @@ static void fixup_special(struct level *lev)
 			maketrap(lev, x, y, rn2(3) ? LANDMINE : SPIKED_PIT);
 		}
 	    }
-    } else if (Role_if (PM_PRIEST) && In_quest(&lev->z)) {
-	/* less chance for undead corpses (lured from lower morgues) */
-	lev->flags.graveyard = 1;
-    } else if (Is_stronghold(&lev->z)) {
-	lev->flags.graveyard = 1;
     } else if (Is_sanctum(&lev->z)) {
 	croom = search_special(lev, TEMPLE);
 
