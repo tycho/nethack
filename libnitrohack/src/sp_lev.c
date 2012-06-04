@@ -3048,6 +3048,31 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		}
 	    }
 	    break;
+	case SPO_GRAVE:
+	    {
+		struct opvar gx, gy, typ, txt;
+		schar x, y;
+		if (!get_opvar_dat(&stack, &typ, SPOVAR_INT) ||
+		    !get_opvar_dat(&stack, &txt, SPOVAR_STRING) ||
+		    !get_opvar_dat(&stack, &gy, SPOVAR_INT) ||
+		    !get_opvar_dat(&stack, &gx, SPOVAR_INT))
+		    break;
+
+		x = gx.vardata.l;
+		y = gy.vardata.l;
+
+		get_location(lev, &x, &y, DRY, croom);
+
+		if (isok(x, y) && !t_at(lev, x, y)) {
+		    lev->locations[x][y].typ = GRAVE;
+		    switch (typ.vardata.l) {
+		    case 2: make_grave(lev, x, y, txt.vardata.str); break;
+		    case 1: make_grave(lev, x, y, NULL); break;
+		    default: del_engr_at(lev, x, y); break;
+		    }
+		}
+	    }
+	    break;
 	case SPO_ALTAR:
 	    {
 		struct opvar al, shrine, fy, fx;
