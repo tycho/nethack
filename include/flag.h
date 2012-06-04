@@ -258,6 +258,7 @@ struct instance_flags {
     boolean show_shop_prices;
     boolean item_use_menu;
     boolean notice_walls;
+    boolean use_menu_glyphs;
 /*
  * Window capability support.
  */
