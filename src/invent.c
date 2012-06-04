@@ -1717,7 +1717,7 @@ ddoinv()
 {
 	char c;
 	struct obj *otmp;
-	c = display_inventory((char *)0, TRUE);
+	c = display_inventory((char *)0, iflags.item_use_menu);
 	if (!c) return 0;
 	for (otmp = invent; otmp; otmp = otmp->nobj)
 		if (otmp->invlet == c) break;
@@ -2178,8 +2178,6 @@ long* out_cnt;
 	static winid local_win = WIN_ERR;	/* window for partial menus */
 	anything any;
 	menu_item *selected;
-
-	if (want_reply) want_reply = iflags.item_use_menu;
 
 #ifdef DUMP_LOG
 	if (want_disp) {
