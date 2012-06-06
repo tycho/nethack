@@ -27,8 +27,8 @@ static void create_engraving(struct level *lev, engraving *,struct mkroom *);
 static void create_altar(struct level *lev, altar *, struct mkroom *);
 static void create_gold(struct level *lev, gold *, struct mkroom *);
 static void create_feature(struct level *lev, int,int,struct mkroom *,int);
-static boolean search_door(struct mkroom *, xchar *, xchar *,
-					xchar, int);
+static boolean search_door(struct mkroom *, struct level *lev,
+			   xchar *, xchar *, xchar, int);
 static void fix_stair_rooms(struct level *lev);
 static void create_corridor(struct level *lev, corridor *);
 static void count_features(struct level *lev);
@@ -1959,8 +1959,8 @@ static void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
 /*
  * Search for a door in a room on a specified wall.
  */
-static boolean search_door(struct mkroom *croom, xchar *x, xchar *y,
-			   xchar wall, int cnt)
+static boolean search_door(struct mkroom *croom, struct level *lev,
+			   xchar *x, xchar *y, xchar wall, int cnt)
 {
 	int dx, dy;
 	int xx, yy;
@@ -1996,8 +1996,8 @@ static boolean search_door(struct mkroom *croom, xchar *x, xchar *y,
 	    break;
 	}
 	while (xx <= croom->hx + 1 && yy <= croom->hy + 1) {
-	    if (IS_DOOR(level->locations[xx][yy].typ) ||
-		level->locations[xx][yy].typ == SDOOR) {
+	    if (IS_DOOR(lev->locations[xx][yy].typ) ||
+		lev->locations[xx][yy].typ == SDOOR) {
 		*x = xx;
 		*y = yy;
 		if (cnt-- <= 0)
@@ -2166,12 +2166,12 @@ static void create_corridor(struct level *lev, corridor *c)
 	    return;
 	}
 
-	if (!search_door(&lev->rooms[c->src.room], &org.x, &org.y,
+	if (!search_door(&lev->rooms[c->src.room], lev, &org.x, &org.y,
 			 c->src.wall, c->src.door))
 	    return;
 
 	if (c->dest.room != -1) {
-	    if (!search_door(&lev->rooms[c->dest.room], &dest.x, &dest.y,
+	    if (!search_door(&lev->rooms[c->dest.room], lev, &dest.x, &dest.y,
 			     c->dest.wall, c->dest.door))
 		return;
 	    switch (c->src.wall) {
