@@ -62,6 +62,10 @@ void scan_map(char *,sp_lev *);
 boolean check_subrooms(sp_lev *);
 boolean write_level_file(char *,sp_lev *);
 
+struct lc_funcdefs *funcdef_new(long,char *);
+void funcdef_free_all(struct lc_funcdefs *);
+struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,const char *,int);
+
 void add_opcode(sp_lev *,int,void *);
 
 static boolean write_common_data(int,sp_lev *);
@@ -302,6 +306,45 @@ void add_opvars(sp_lev *sp, const char *fmt, ...)
 	va_end(argp);
 }
 
+struct lc_funcdefs *funcdef_new(long addr, char *name)
+{
+	struct lc_funcdefs *f = New(struct lc_funcdefs);
+	if (!f) {
+	    yyerror("Could not alloc funcdefs");
+	    return NULL;
+	}
+	f->next = NULL;
+	f->addr = addr;
+	f->name = name;
+	return f;
+}
+
+void funcdef_free_all(struct lc_funcdefs *fchain)
+{
+	struct lc_funcdefs *tmp = fchain;
+	struct lc_funcdefs *nxt;
+	while (tmp) {
+	    nxt = tmp->next;
+	    Free(tmp->name);
+	    Free(tmp);
+	    tmp = nxt;
+	}
+}
+
+struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *f, const char *name,
+				    int casesense)
+{
+	while (f) {
+	    if (casesense) {
+		if (!strcmp(name, f->name)) return f;
+	    } else {
+		if (!strcasecmp(name, f->name)) return f;
+	    }
+	    f = f->next;
+	}
+	return NULL;
+}
+
 /*
  * Find the type of floor, knowing its char representation.
  */
@@ -443,7 +486,7 @@ char what_map_char(char c)
 
 void add_opcode(sp_lev *sp, int opc, void *dat)
 {
-	long nop = sp->init_lev.n_opcodes;
+	long nop = sp->n_opcodes;
 	_opcode *tmp;
 
 	if (opc < 0 || opc >= MAX_SP_OPCODES)
@@ -462,7 +505,7 @@ void add_opcode(sp_lev *sp, int opc, void *dat)
 	sp->opcodes[nop].opcode = opc;
 	sp->opcodes[nop].opdat = dat;
 
-	sp->init_lev.n_opcodes++;
+	sp->n_opcodes++;
 }
 
 /*
@@ -554,7 +597,6 @@ static boolean write_common_data(int fd, sp_lev *lvl)
 	};
 
 	Write(fd, &version_data, sizeof version_data);
-	Write(fd, &lvl->init_lev, sizeof(lev_init));
 	return TRUE;
 }
 
@@ -569,7 +611,9 @@ static boolean write_maze(int fd, sp_lev *maze)
 	if (!write_common_data(fd, maze))
 	    return FALSE;
 
-	for (i = 0; i < maze->init_lev.n_opcodes; i++) {
+	Write(fd, &maze->n_opcodes, sizeof(maze->n_opcodes));
+
+	for (i = 0; i < maze->n_opcodes; i++) {
 	    _opcode tmpo = maze->opcodes[i];
 	    Write(fd, &(tmpo.opcode), sizeof(tmpo.opcode));
 
@@ -595,7 +639,7 @@ static boolean write_maze(int fd, sp_lev *maze)
 			Write(fd, &size, sizeof(size));
 			if (size) {
 			    Write(fd, ov->vardata.str, size);
-			    free(ov->vardata.str);
+			    Free(ov->vardata.str);
 			}
 			break;
 		    default:
@@ -612,7 +656,7 @@ static boolean write_maze(int fd, sp_lev *maze)
 	}
 	/* clear the struct for the next user */
 	Free(maze->opcodes);
-	memset(&maze->init_lev, 0, sizeof maze->init_lev);
+	maze->opcodes = NULL;
 
 	return TRUE;
 }
@@ -670,15 +714,24 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "copy",
 	    "je",
 	    "jne",
+	    "mon_generation",
+	    "end_moninvent",
+	    "grave",
+	    "frame_push",
+	    "frame_pop",
+	    "call",
+	    "return",
+	    "init_map",
+	    "flags",
 	};
 
 	/* don't bother with the header stuff */
 
-	for (i = 0; i < maze->init_lev.n_opcodes; i++) {
+	for (i = 0; i < maze->n_opcodes; i++) {
 	    const _opcode tmpo = maze->opcodes[i];
 
 	    if (tmpo.opcode < SPO_NULL || tmpo.opcode >= MAX_SP_OPCODES)
-		panic("write_maze: unknown opcode (%i).", tmpo.opcode);
+		panic("decompile_maze: unknown opcode (%i).", tmpo.opcode);
 
 	    if (tmpo.opcode == SPO_PUSH) {
 		const void *opdat = tmpo.opdat;
@@ -688,8 +741,14 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 		    switch (ov->spovartyp) {
 		    case SPOVAR_NULL: break;
 		    case SPOVAR_INT:
-			snprintf(debuf, 127, "%li:\t%s\t%li\n", i,
-				 opcodestr[tmpo.opcode], ov->vardata.l);
+			if (ov->vardata.l >= ' ' && ov->vardata.l <= '~') {
+			    snprintf(debuf, 127, "%li:\t%s\tint:%li\t# '%c'\n",
+				     i, opcodestr[tmpo.opcode], ov->vardata.l,
+				     (char)ov->vardata.l);
+			} else {
+			    snprintf(debuf, 127, "%li:\t%s\tint:%li\n",
+				     i, opcodestr[tmpo.opcode], ov->vardata.l);
+			}
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_STRING:
@@ -710,15 +769,15 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 				}
 			    }
 			    if (ok) {
-				snprintf(debuf, 127, "%li:\t%s\t\"%s\"\n", i,
-					 opcodestr[tmpo.opcode], ov->vardata.str);
+				snprintf(debuf, 127, "%li:\t%s\tstr:\"%s\"\n",
+					 i, opcodestr[tmpo.opcode], ov->vardata.str);
 				Write(fd, debuf, strlen(debuf));
 			    } else {
-				snprintf(debuf, 127, "%li:\t%s\tstring:", i,
-					 opcodestr[tmpo.opcode]);
+				snprintf(debuf, 127, "%li:\t%s\tstr:",
+					 i, opcodestr[tmpo.opcode]);
 				Write(fd, debuf, strlen(debuf));
 				for (x = 0; x < size; x++) {
-				    snprintf(debuf, 127, "%02x", ov->vardata.str[x]);
+				    snprintf(debuf, 127, "%02x ", ov->vardata.str[x]);
 				    Write(fd, debuf, strlen(debuf));
 				}
 				snprintf(debuf, 127, "\n");
@@ -727,14 +786,15 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 			}
 			break;
 		    default:
-			panic("write_maze: unknown data type (%i).", ov->spovartyp);
+			panic("decompile_maze: unknown data type (%i).",
+			      ov->spovartyp);
 		    }
-		} else panic("write_maze: PUSH with no data.");
+		} else panic("decompile_maze: PUSH with no data.");
 	    } else {
 		/* sanity check */
 		const void *opdat = tmpo.opdat;
 		if (opdat)
-		    panic("write_maze: opcode (%i) has data.", tmpo.opcode);
+		    panic("decompile_maze: opcode (%i) has data.", tmpo.opcode);
 		snprintf(debuf, 127, "%li:\t%s\n", i, opcodestr[tmpo.opcode]);
 		Write(fd, debuf, strlen(debuf));
 	    }
@@ -773,8 +833,7 @@ boolean write_level_file(char *filename, sp_lev *lvl)
 	if (!lvl) panic("write_level_file");
 
 	if (be_verbose)
-	    fprintf(stdout, "File: '%s', opcodes: %li\n",
-		    lbuf, lvl->init_lev.n_opcodes);
+	    fprintf(stdout, "File: '%s', opcodes: %li\n", lbuf, lvl->n_opcodes);
 
 	if (!write_maze(fout, lvl))
 	    return FALSE;

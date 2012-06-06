@@ -1312,6 +1312,7 @@ extern void load_qtlist(void);
 extern void unload_qtlist(void);
 extern short quest_info(int);
 extern boolean is_quest_artifact(struct obj*);
+extern char *string_subst(char *);
 extern void qt_com_firstline(int msgnum, char *msgbuf);
 extern void com_pager(int);
 extern void qt_pager(int);

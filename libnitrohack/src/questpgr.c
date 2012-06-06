@@ -245,10 +245,9 @@ static void convert_arg(char c)
 static void convert_line(void)
 {
 	char *c, *cc;
-	char xbuf[BUFSZ];
 
 	cc = out_line;
-	for (c = xcrypt(in_line, xbuf); *c; c++) {
+	for (c = in_line; *c; c++) {
 
 	    *cc = 0;
 	    switch(*c) {
@@ -312,26 +311,37 @@ static void convert_line(void)
 	return;
 }
 
+char *string_subst(char *str)
+{
+	strncpy(in_line, str, 79);
+	in_line[79] = '\0';
+	convert_line();
+	return out_line;
+}
+
 static void deliver_by_pline(struct qtmsg *qt_msg)
 {
 	long size;
+	char xbuf[BUFSZ];
 
 	for (size = 0; size < qt_msg->size; size += (long)strlen(in_line)) {
-	    dlb_fgets(in_line, 80, msg_file);
+	    dlb_fgets(xbuf, 80, msg_file);
+	    xcrypt(xbuf, in_line);
 	    convert_line();
 	    pline(out_line);
 	}
-
 }
 
 static void deliver_by_window(struct qtmsg *qt_msg)
 {
 	long size;
+	char xbuf[BUFSZ];
 	struct menulist menu;
 	init_menulist(&menu);
 
 	for (size = 0; size < qt_msg->size; size += (long)strlen(in_line)) {
-	    dlb_fgets(in_line, 80, msg_file);
+	    dlb_fgets(xbuf, 80, msg_file);
+	    xcrypt(xbuf, in_line);
 	    convert_line();
 	    add_menutext(&menu, out_line);
 	}
@@ -342,6 +352,7 @@ static void deliver_by_window(struct qtmsg *qt_msg)
 void qt_com_firstline(int msgnum, char *msgbuf)
 {
 	struct qtmsg *qt_msg;
+	char xbuf[BUFSZ];
 
 	if (!(qt_msg = msg_in(qt_list.common, msgnum))) {
 		warning("qt_com_firstline: message %d not found.", msgnum);
@@ -350,7 +361,8 @@ void qt_com_firstline(int msgnum, char *msgbuf)
 	}
 
 	dlb_fseek(msg_file, qt_msg->offset, SEEK_SET);
-	dlb_fgets(in_line, 80, msg_file);
+	dlb_fgets(xbuf, 80, msg_file);
+	xcrypt(xbuf, in_line);
 	convert_line();
 	strcpy(msgbuf, out_line);
 }
