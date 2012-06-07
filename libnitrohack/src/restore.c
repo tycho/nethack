@@ -8,6 +8,7 @@ static void find_lev_obj(struct level *lev);
 static void restlevchn(struct memfile *mf);
 static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly);
 static struct mon_gen_override *rest_mongen_override(struct memfile *mf);
+static struct lvl_sounds *rest_lvl_sounds(struct memfile *mf);
 static struct obj *restobjchn(struct memfile *mf, struct level *lev,
 			      boolean ghostly, boolean frozen);
 static struct monst *restmonchn(struct memfile *mf, struct level *lev, boolean ghostly);
@@ -188,6 +189,41 @@ static struct mon_gen_override *rest_mongen_override(struct memfile *mf)
 	}
 
 	return or;
+}
+
+
+static struct lvl_sounds *rest_lvl_sounds(struct memfile *mf)
+{
+	struct lvl_sounds *ls = NULL;
+
+	mfmagic_check(mf, LVLSOUNDS_MAGIC);
+
+	/* Check for level sounds marker. */
+	if (mread8(mf)) {
+	    ls = malloc(sizeof(*ls));
+	    ls->freq = mread32(mf);
+	    ls->n_sounds = mread32(mf);
+	    ls->sounds = NULL;
+
+	    if (ls->n_sounds > 0) {
+		int i;
+
+		ls->sounds = malloc(sizeof(struct lvl_sound_bite) * ls->n_sounds);
+		for (i = 0; i < ls->n_sounds; i++) {
+		    unsigned int len;
+
+		    mfmagic_check(mf, LVLSOUNDBITE_MAGIC);
+
+		    ls->sounds[i].flags = mread32(mf);
+		    len = mread32(mf);
+		    ls->sounds[i].msg = malloc(len);
+		    mread(mf, ls->sounds[i].msg, len);
+		    ls->sounds[i].msg[len - 1] = '\0';
+		}
+	    }
+	}
+
+	return ls;
 }
 
 
@@ -827,6 +863,7 @@ struct level *getlev(struct memfile *mf, xchar levnum, boolean ghostly)
 	lev->buriedobjlist = restobjchn(mf, lev, ghostly, FALSE);
 	lev->billobjs = restobjchn(mf, lev, ghostly, FALSE);
 	lev->mon_gen = rest_mongen_override(mf);
+	lev->sounds = rest_lvl_sounds(mf);
 	rest_engravings(mf, lev);
 
 	/* reset level->monsters for new level */

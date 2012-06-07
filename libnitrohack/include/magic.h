@@ -21,5 +21,7 @@
 #define DIG_MAGIC		0x44494753 /* "DIGS" */
 #define MONGEN_MAGIC		0x4e45474d /* "MGEN" */
 #define MONGENTUPLE_MAGIC	0x5554474d /* "MGTU" */
+#define LVLSOUNDS_MAGIC		0x444e534c /* "LSND" */
+#define LVLSOUNDBITE_MAGIC	0x4253564c /* "LVSB" */
 
 #endif

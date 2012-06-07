@@ -3027,6 +3027,46 @@ static void spo_mon_generation(struct sp_coder *coder, struct level *lev)
 	opvar_free(n_tuples);
 }
 
+static void spo_level_sounds(struct sp_coder *coder, struct level *lev)
+{
+	struct opvar *freq, *n_tuples;
+	struct lvl_sounds *ls;
+
+	if (lev->sounds) {
+	    impossible("level sounds already defined.");
+	    return;
+	}
+
+	if (!OV_pop_i(n_tuples) ||
+	    !OV_pop_i(freq)) return;
+
+	if (OV_i(n_tuples) < 1)
+	    impossible("no level sounds attached to the sound opcode?");
+
+	ls = malloc(sizeof(struct lvl_sounds));
+	ls->freq = OV_i(freq);
+	ls->n_sounds = OV_i(n_tuples);
+	ls->sounds = malloc(sizeof(struct lvl_sound_bite) * ls->n_sounds);
+
+	while (OV_i(n_tuples)-- > 0) {
+	    struct opvar *flags, *msg;
+
+	    if (!OV_pop_s(msg) ||
+		!OV_pop_i(flags))
+		panic("oopsie when loading lvl_sound_bite.");
+
+	    ls->sounds[OV_i(n_tuples)].flags = OV_i(flags);
+	    ls->sounds[OV_i(n_tuples)].msg = strdup(OV_s(msg));
+
+	    opvar_free(flags);
+	    opvar_free(msg);
+	}
+	lev->sounds = ls;
+
+	opvar_free(freq);
+	opvar_free(n_tuples);
+}
+
 static void spo_engraving(struct sp_coder *coder, struct level *lev)
 {
 	struct opvar *etyp, *txt, *fy, *fx;
@@ -4158,6 +4198,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	    case SPO_LEVEL_FLAGS:	spo_level_flags(coder, lev);	break;
 	    case SPO_INITLEVEL:		spo_initlevel(coder, lev);	break;
 	    case SPO_MON_GENERATION:	spo_mon_generation(coder, lev);	break;
+	    case SPO_LEVEL_SOUNDS:	spo_level_sounds(coder, lev);	break;
 	    case SPO_ENGRAVING:		spo_engraving(coder, lev);	break;
 	    case SPO_SUBROOM:		/* fall through */
 	    case SPO_ROOM:		spo_room(coder, lev);		break;

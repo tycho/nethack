@@ -24,6 +24,20 @@ void dosounds(void)
 
     if (!flags.soundok || u.uswallow || Underwater) return;
 
+    if (level->sounds && !rn2(level->sounds->freq)) {
+	int idx = rn2(level->sounds->n_sounds);
+	char *buf;
+	struct lvl_sound_bite *snd = &level->sounds->sounds[idx];
+	buf = string_subst(snd->msg);
+	switch (snd->flags) {
+	default:
+	case LVLSND_HEARD:	You_hear(buf);			break;
+	case LVLSND_PLINED:	pline(buf);			break;
+	case LVLSND_VERBAL:	verbalize(buf);			break;
+	case LVLSND_FELT:	pline("You feel %s", buf);	break;
+	}
+    }
+
     hallu = Hallucination ? 1 : 0;
 
     if (level->flags.nfountains && !rn2(400)) {

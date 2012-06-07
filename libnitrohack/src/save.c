@@ -10,6 +10,8 @@ static void savedamage(struct memfile *mf, struct level *lev);
 static void freedamage(struct level *lev);
 static void save_mongen_override(struct memfile *mf, struct mon_gen_override *);
 static void free_mongen_override(struct mon_gen_override *);
+static void save_lvl_sounds(struct memfile *mf, struct lvl_sounds *);
+static void free_lvl_sounds(struct lvl_sounds *);
 static void saveobjchn(struct memfile *mf, struct obj *);
 static void free_objchn(struct obj *otmp);
 static void savemonchn(struct memfile *mf, struct monst *);
@@ -352,6 +354,7 @@ void savelev(struct memfile *mf, xchar levnum)
 	saveobjchn(mf, lev->buriedobjlist);
 	saveobjchn(mf, lev->billobjs);
 	save_mongen_override(mf, lev->mon_gen);
+	save_lvl_sounds(mf, lev->sounds);
 	save_engravings(mf, lev);
 	savedamage(mf, lev);
 	save_regions(mf, lev);
@@ -373,6 +376,7 @@ void freelev(xchar levnum)
 	free_objchn(lev->buriedobjlist);
 	free_objchn(lev->billobjs);
 	free_mongen_override(lev->mon_gen);
+	free_lvl_sounds(lev->sounds);
 
 	lev->monlist = NULL;
 	lev->lev_traps = NULL;
@@ -380,6 +384,7 @@ void freelev(xchar levnum)
 	lev->buriedobjlist = NULL;
 	lev->billobjs = NULL;
 	lev->mon_gen = NULL;
+	lev->sounds = NULL;
 
 	free_engravings(lev);
 	freedamage(lev);
@@ -490,6 +495,53 @@ static void free_mongen_override(struct mon_gen_override *or)
 	}
 
 	free(or);
+}
+
+
+static void save_lvl_sounds(struct memfile *mf, struct lvl_sounds *ls)
+{
+	mfmagic_set(mf, LVLSOUNDS_MAGIC);
+
+	if (!ls) {
+	    /* lvl sounds marker == 0: no sounds defined */
+	    mwrite8(mf, 0);
+	} else {
+	    int i;
+
+	    /* lvl sounds marker == 1: sounds defined */
+	    mwrite8(mf, 1);
+	    mwrite32(mf, ls->freq);
+	    mwrite32(mf, ls->n_sounds);
+
+	    for (i = 0; i < ls->n_sounds; i++) {
+		unsigned int len;
+
+		mfmagic_set(mf, LVLSOUNDBITE_MAGIC);
+
+		mwrite32(mf, ls->sounds[i].flags);
+		len = strlen(ls->sounds[i].msg) + 1;
+		mwrite32(mf, len);
+		mwrite(mf, ls->sounds[i].msg, len);
+	    }
+	}
+}
+
+
+static void free_lvl_sounds(struct lvl_sounds *ls)
+{
+	int i;
+
+	if (!ls)
+	    return;
+
+	for (i = 0; i < ls->n_sounds; i++) {
+	    free(ls->sounds[i].msg);
+	    ls->sounds[i].msg = NULL;
+	}
+	free(ls->sounds);
+	ls->sounds = NULL;
+
+	free(ls);
 }
 
 
