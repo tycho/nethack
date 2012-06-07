@@ -449,25 +449,27 @@ static void save_mongen_override(struct memfile *mf, struct mon_gen_override *or
 	mfmagic_set(mf, MONGEN_MAGIC);
 
 	if (!or) {
-	    /* marker == 0 means no monster generation override */
-	    mwrite32(mf, 0);
+	    /* mon gen marker == 0: override doesn't exist */
+	    mwrite8(mf, 0);
 	} else {
-	    /* marker == 1 means monster generation override is present */
-	    mwrite32(mf, 1);
+	    /* mon gen marker == 1: override exists */
+	    mwrite8(mf, 1);
 	    mwrite32(mf, or->override_chance);
 	    mwrite32(mf, or->total_mon_freq);
-	    mwrite8(mf, or->gen_chances ? 1 : 0);
 
-	    mt = or->gen_chances;
-	    while (mt) {
+	    for (mt = or->gen_chances; mt; mt = mt->next) {
+		/* Write tuple marker. */
+		mwrite8(mf, 1);
+
 		mfmagic_set(mf, MONGENTUPLE_MAGIC);
+
 		mwrite32(mf, mt->freq);
 		mwrite8(mf, mt->is_sym ? 1 : 0);
 		mwrite32(mf, mt->monid);
-		mwrite8(mf, mt->next ? 1 : 0);
-
-		mt = mt->next;
 	    }
+
+	    /* End-of-tuples marker. */
+	    mwrite8(mf, 0);
 	}
 }
 

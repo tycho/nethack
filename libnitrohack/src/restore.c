@@ -159,35 +159,31 @@ static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
 
 static struct mon_gen_override *rest_mongen_override(struct memfile *mf)
 {
-	int marker;
 	struct mon_gen_override *or;
 	struct mon_gen_tuple *mt;
-	boolean has_gen_chances, next;
 
 	or = NULL;
 
 	mfmagic_check(mf, MONGEN_MAGIC);
 
-	marker = mread32(mf);
-	if (marker) {
+	/* Check for mon gen marker. */
+	if (mread8(mf)) {
 	    or = malloc(sizeof(*or));
 	    or->override_chance = mread32(mf);
 	    or->total_mon_freq = mread32(mf);
-	    has_gen_chances = mread8(mf) ? TRUE : FALSE;
 	    or->gen_chances = NULL;
 
-	    if (has_gen_chances) {
-		do {
-		    mfmagic_check(mf, MONGENTUPLE_MAGIC);
-		    mt = malloc(sizeof(*mt));
-		    mt->freq = mread32(mf);
-		    mt->is_sym = mread8(mf) ? TRUE : FALSE;
-		    mt->monid = mread32(mf);
-		    next = mread8(mf) ? TRUE : FALSE;
+	    /* Check for next tuple marker. */
+	    while (mread8(mf)) {
+		mfmagic_check(mf, MONGENTUPLE_MAGIC);
 
-		    mt->next = or->gen_chances;
-		    or->gen_chances = mt;
-		} while (next);
+		mt = malloc(sizeof(*mt));
+		mt->freq = mread32(mf);
+		mt->is_sym = mread8(mf) ? TRUE : FALSE;
+		mt->monid = mread32(mf);
+
+		mt->next = or->gen_chances;
+		or->gen_chances = mt;
 	    }
 	}
 
