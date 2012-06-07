@@ -1768,6 +1768,7 @@ poof:
 	    if (obj->otyp == potion->otyp ||	/* both POT_POLY */
 		    obj->otyp == WAN_POLYMORPH ||
 		    obj->otyp == SPE_POLYMORPH ||
+		    obj->otyp == AMULET_OF_UNCHANGING ||
 		    obj == uball || obj == uskin ||
 		    obj_resists(obj->otyp == POT_POLYMORPH ?
 				potion : obj, 5, 95)) {
