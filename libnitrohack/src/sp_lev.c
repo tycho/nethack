@@ -2567,6 +2567,11 @@ static void spo_frame_pop(struct sp_coder *coder)
 	}
 }
 
+static long sp_code_jmpaddr(long curpos, long jmpaddr)
+{
+	return (curpos + jmpaddr);
+}
+
 static void spo_call(struct sp_coder *coder)
 {
 	struct opvar *addr;
@@ -2577,7 +2582,7 @@ static void spo_call(struct sp_coder *coder)
 	if (OV_i(params) < 0) return;
 
 	/* push a frame */
-	tmpframe = frame_new(OV_i(addr) - 1);
+	tmpframe = frame_new(sp_code_jmpaddr(coder->frame->n_opcode, OV_i(addr) - 1));
 	tmpframe->next = coder->frame;
 	coder->frame = tmpframe;
 
@@ -4077,7 +4082,7 @@ static void spo_jmp(struct sp_coder *coder, sp_lev *lvl)
 
 	if (!OV_pop_i(tmpa)) return;
 
-	a = OV_i(tmpa) - 1;
+	a = sp_code_jmpaddr(coder->frame->n_opcode, OV_i(tmpa) - 1);
 	if (a >= 0 && a < lvl->n_opcodes &&
 	    a != coder->frame->n_opcode)
 	    coder->frame->n_opcode = a;
@@ -4094,12 +4099,13 @@ static void spo_conditional_jump(struct sp_coder *coder, sp_lev *lvl)
 	if (!OV_pop_i(oa) ||
 	    !OV_pop_i(oc)) return;
 
-	a = OV_i(oa) - 1;
+	a = sp_code_jmpaddr(coder->frame->n_opcode, OV_i(oa) - 1);
 	c = OV_i(oc);
 
 	switch (coder->opcode) {
 	default: impossible("spo_conditional_jump: illegal opcode"); break;
 	case SPO_JL:	test = (c <  0); break;
+	case SPO_JLE:	test = (c <= 0); break;
 	case SPO_JG:	test = (c >  0); break;
 	case SPO_JGE:	test = (c >= 0); break;
 	case SPO_JE:	test = (c == 0); break;
@@ -4276,6 +4282,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		spo_jmp(coder, lvl);
 		break;
 	    case SPO_JL:
+	    case SPO_JLE:
 	    case SPO_JG:
 	    case SPO_JGE:
 	    case SPO_JE:

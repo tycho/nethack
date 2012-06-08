@@ -66,6 +66,9 @@ struct lc_funcdefs *funcdef_new(long,char *);
 void funcdef_free_all(struct lc_funcdefs *);
 struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,const char *,int);
 
+struct opvar *opvar_clone(struct opvar *);
+void splev_add_from(sp_lev *,sp_lev *);
+
 void add_opcode(sp_lev *,int,void *);
 
 static boolean write_common_data(int,sp_lev *);
@@ -237,14 +240,6 @@ void yywarning(const char *s)
 				fname, colon_line_number, s);
 }
 
-/*
- * Stub needed for lex interface.
- */
-int yywrap(void)
-{
-	return 1;
-}
-
 struct opvar *set_opvar_int(struct opvar *ov, long val)
 {
 	if (ov) {
@@ -316,6 +311,9 @@ struct lc_funcdefs *funcdef_new(long addr, char *name)
 	f->next = NULL;
 	f->addr = addr;
 	f->name = name;
+	f->n_called = 0;
+	f->code.opcodes = NULL;
+	f->code.n_opcodes = 0;
 	return f;
 }
 
@@ -326,6 +324,7 @@ void funcdef_free_all(struct lc_funcdefs *fchain)
 	while (tmp) {
 	    nxt = tmp->next;
 	    Free(tmp->name);
+	    Free(tmp->code.opcodes);
 	    Free(tmp);
 	    tmp = nxt;
 	}
@@ -343,6 +342,57 @@ struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *f, const char *name,
 	    f = f->next;
 	}
 	return NULL;
+}
+
+/*
+ * Basically copied from src/sp_lev.c.
+ */
+struct opvar *opvar_clone(struct opvar *ov)
+{
+	if (ov) {
+	    struct opvar *tmpov = malloc(sizeof(struct opvar));
+	    if (!tmpov) panic("could not alloc opvar struct");
+
+	    switch (ov->spovartyp) {
+	    case SPOVAR_INT:
+		{
+		    tmpov->spovartyp = ov->spovartyp;
+		    tmpov->vardata.l = ov->vardata.l;
+		}
+		break;
+	    case SPOVAR_STRING:
+		{
+		    int len = strlen(ov->vardata.str);
+		    tmpov->spovartyp = ov->spovartyp;
+		    tmpov->vardata.str = malloc(len + 1);
+		    memcpy(tmpov->vardata.str, ov->vardata.str, len);
+		    tmpov->vardata.str[len] = '\0';
+		}
+		break;
+	    default:
+		{
+		    char buf[BUFSZ];
+		    sprintf(buf, "Unknown push value type (%i)!", ov->spovartyp);
+		    yyerror(buf);
+		}
+	    }
+	    return tmpov;
+	}
+
+	return NULL;
+}
+
+
+void splev_add_from(sp_lev *splev, sp_lev *from_splev)
+{
+	int i;
+
+	if (splev && from_splev) {
+	    for (i = 0; i < from_splev->n_opcodes; i++) {
+		add_opcode(splev, from_splev->opcodes[i].opcode,
+			   opvar_clone(from_splev->opcodes[i].opdat));
+	    }
+	}
 }
 
 /*
@@ -698,8 +748,11 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "cmp",
 	    "jmp",
 	    "jl",
+	    "jle",
 	    "jg",
 	    "jge",
+	    "je",
+	    "jne",
 	    "spill",
 	    "terrain",
 	    "replaceterrain",
@@ -712,8 +765,6 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "rn2",
 	    "dec",
 	    "copy",
-	    "je",
-	    "jne",
 	    "mon_generation",
 	    "end_moninvent",
 	    "grave",
@@ -723,6 +774,7 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "return",
 	    "init_map",
 	    "flags",
+	    "sounds",
 	};
 
 	/* don't bother with the header stuff */

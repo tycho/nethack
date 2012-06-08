@@ -29,6 +29,17 @@
 #     passing a dexterity check).
 #   Bones files are not permitted.
 
+# Each sokoban map should call this.
+FUNCTION soko_loot()
+{
+  # Random objects
+  OBJECT: '%', random, random
+  OBJECT: '%', random, random
+  OBJECT: '%', random, random
+  OBJECT: '%', random, random
+  OBJECT: '=', random, random
+  OBJECT: '/', random, random
+}
 
 ### Bottom (first) level of Sokoban ###
 LEVEL: "soko4-1"
@@ -86,13 +97,7 @@ TRAP:"pit",(07,10)
 OBJECT:'?',"earth",(02,11)
 OBJECT:'?',"earth",(03,11)
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 
 LEVEL: "soko4-2"
@@ -151,13 +156,7 @@ TRAP:"pit",(06,08)
 OBJECT:'?',"earth",(01,09)
 OBJECT:'?',"earth",(02,09)
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 
 ### Second level ###
@@ -229,13 +228,7 @@ TRAP:"hole",(24,10)
 TRAP:"hole",(25,10)
 TRAP:"hole",(26,10)
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 
 LEVEL: "soko3-2"
@@ -298,13 +291,7 @@ TRAP:"hole",(21,10)
 TRAP:"hole",(22,10)
 TRAP:"hole",(23,10)
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 
 ### Third level ###
@@ -365,13 +352,7 @@ TRAP:"hole",(15,09)
 TRAP:"hole",(16,09)
 TRAP:"hole",(17,09)
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 
 LEVEL: "soko2-2"
@@ -432,13 +413,7 @@ TRAP:"hole",(15,11)
 TRAP:"hole",(16,11)
 TRAP:"hole",(17,11)
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 
 ### Top (last) level of Sokoban ###
@@ -517,13 +492,7 @@ TRAP:"hole",(23,01)
 MONSTER:'m',"giant mimic", random, m_object "boulder"
 MONSTER:'m',"giant mimic", random, m_object "boulder"
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 # Rewards
 DOOR:locked,(23,13)
@@ -614,13 +583,7 @@ TRAP:"hole",(22,01)
 MONSTER:'m',"giant mimic", random, m_object "boulder"
 MONSTER:'m',"giant mimic", random, m_object "boulder"
 
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+soko_loot()
 
 # Rewards
 DOOR:locked,(23,12)
@@ -683,12 +646,8 @@ TRAP:"pit",(20,6)
 TRAP:"pit",(21,6)
 TRAP:"pit",(22,6)
 TRAP:"pit",(23,6)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko4-4"
@@ -745,12 +704,8 @@ TRAP:"pit",(1,10)
 TRAP:"pit",(3,12)
 TRAP:"pit",(4,12)
 TRAP:"pit",(5,12)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko4-5"
@@ -807,12 +762,8 @@ TRAP:"pit",(10,3)
 TRAP:"pit",(11,3)
 TRAP:"pit",(12,3)
 TRAP:"pit",(13,3)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko4-6"
@@ -862,12 +813,8 @@ TRAP:"pit",(7,9)
 TRAP:"pit",(8,9)
 TRAP:"pit",(9,9)
 TRAP:"pit",(10,9)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko4-7"
@@ -961,12 +908,8 @@ TRAP:"pit",(22,14)
 TRAP:"pit",(23,14)
 TRAP:"pit",(24,14)
 TRAP:"pit",(25,14)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko4-8"
@@ -1009,12 +952,8 @@ TRAP:"pit",(5,9)
 TRAP:"pit",(6,9)
 TRAP:"pit",(7,9)
 TRAP:"pit",(8,9)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko4-9"
@@ -1111,12 +1050,8 @@ TRAP:"hole",(6,5)
 TRAP:"hole",(7,5)
 TRAP:"hole",(8,5)
 TRAP:"hole",(9,5)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko3-4"
@@ -1173,12 +1108,8 @@ TRAP:"hole",(5,11)
 TRAP:"hole",(6,11)
 TRAP:"hole",(7,11)
 TRAP:"hole",(8,11)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko3-5"
@@ -1230,12 +1161,8 @@ TRAP:"hole",(19,8)
 TRAP:"hole",(15,9)
 TRAP:"hole",(16,9)
 TRAP:"hole",(17,9)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko3-6"
@@ -1300,12 +1227,8 @@ TRAP:"hole",(9,10)
 TRAP:"hole",(10,10)
 TRAP:"hole",(9,11)
 TRAP:"hole",(10,11)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko3-7"
@@ -1358,12 +1281,8 @@ TRAP:"hole",(14,8)
 TRAP:"hole",(15,8)
 TRAP:"hole",(16,8)
 TRAP:"hole",(17,8)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko2-3"
@@ -1422,12 +1341,8 @@ TRAP:"hole",(16,7)
 TRAP:"hole",(16,8)
 TRAP:"hole",(16,9)
 TRAP:"hole",(16,10)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko2-4"
@@ -1481,12 +1396,8 @@ TRAP:"hole",(16,6)
 TRAP:"hole",(16,7)
 TRAP:"hole",(16,8)
 TRAP:"hole",(16,9)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko2-5"
@@ -1543,12 +1454,8 @@ TRAP:"hole",(15,6)
 TRAP:"hole",(16,6)
 TRAP:"hole",(17,6)
 TRAP:"hole",(18,6)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko2-6"
@@ -1608,12 +1515,8 @@ TRAP:"hole",(14,13)
 TRAP:"hole",(15,13)
 TRAP:"hole",(16,13)
 TRAP:"hole",(17,13)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko2-7"
@@ -1663,12 +1566,8 @@ TRAP:"hole",(18,11)
 TRAP:"hole",(16,12)
 TRAP:"hole",(13,13)
 TRAP:"hole",(15,14)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
 LEVEL: "soko1-3"
@@ -1737,12 +1636,9 @@ TRAP:"hole",(14,10)
 TRAP:"hole",(14,11)
 TRAP:"hole",(14,12)
 TRAP:"hole",(14,13)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
+
 #OBJECT:'(',"bag of holding",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
 ENGRAVING:place[1],burn,"Elbereth"
@@ -1820,12 +1716,9 @@ TRAP:"hole",(15,12)
 TRAP:"hole",(15,13)
 TRAP:"hole",(15,14)
 TRAP:"hole",(15,15)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
+
 #OBJECT:'"',"amulet of reflection",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
 ENGRAVING:place[1],burn,"Elbereth"
