@@ -184,7 +184,7 @@ static void mainmenu(void)
     char verstr[32];
     sprintf(verstr, "Version %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
     
-    while (n > 0) {
+    while (n >= 0) {
 	if (COLS >= 100)
 	    nhlogo = nhlogo_large;
 	else
@@ -203,11 +203,12 @@ static void mainmenu(void)
 	mvwaddstr(basewin, LINES-1, COLS - strlen(verstr), verstr);
 	wrefresh(basewin);
 
-	menuresult[0] = EXITGAME; /* default action */
 	n = curses_display_menu_core(mainmenu_items, ARRAY_SIZE(mainmenu_items),
 				     NULL, PICK_ONE, menuresult, 0, logoheight,
 				     COLS, ROWNO+3, NULL);
-	
+	if (n < 1)
+	    continue;
+
 	switch (menuresult[0]) {
 	    case NEWGAME:
 		rungame(FALSE);
@@ -240,6 +241,7 @@ static void mainmenu(void)
 		break;
 		
 	    case EXITGAME:
+		n = -1; /* simulate menu cancel */
 		return;
 	}
     }
