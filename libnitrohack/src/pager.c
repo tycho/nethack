@@ -232,6 +232,9 @@ static int describe_object(int x, int y, int votyp, char *buf)
     } else
 	strcpy(buf, distant_name(otmp, xname));
     
+    if (level->locations[x][y].mem_obj_stacks)
+	strcat(buf, " and more");
+    
     if (level->locations[x][y].typ == STONE || level->locations[x][y].typ == SCORR)
 	strcat(buf, " embedded in stone");
     else if (IS_WALL(level->locations[x][y].typ) || level->locations[x][y].typ == SDOOR)
