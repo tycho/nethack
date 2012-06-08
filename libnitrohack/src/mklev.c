@@ -464,9 +464,12 @@ static void makeniche(struct level *lev, int trap_type)
 		dosdoor(lev, xx, yy, aroom, SDOOR);
 	    } else {
 		rm->typ = CORR;
-		if (rn2(7))
+		if (rn2(7)) {
 		    dosdoor(lev, xx, yy, aroom, rn2(5) ? SDOOR : DOOR);
-		else {
+		} else {
+		    /* inaccessible niches occasionally have iron bars */
+		    if (!rn2(8) && IS_WALL(lev->locations[xx][yy].typ))
+			lev->locations[xx][yy].typ = IRONBARS;
 		    if (!lev->flags.noteleport)
 			mksobj_at(SCR_TELEPORTATION, lev,
 					 xx, yy+dy, TRUE, FALSE);
