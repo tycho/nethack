@@ -566,8 +566,8 @@ void scan_map(char *map, sp_lev *sp)
 {
 	int i, len;
 	char *s1, *s2;
-	int max_len = 0;
-	int max_hig = 0;
+	long max_len = 0;
+	long max_hig = 0;
 	char msg[256];
 	char *tmpmap[ROWNO];
 	int dx, dy;
@@ -607,7 +607,7 @@ void scan_map(char *map, sp_lev *sp)
 		for (i=0; i<len; i++)
 		  if ((tmpmap[max_hig][i] = what_map_char(map[i])) == INVALID_TYPE) {
 		      sprintf(msg,
-			 "Invalid character @ (%d, %d) - replacing with stone",
+			 "Invalid character @ (%ld, %d) - replacing with stone",
 			      max_hig, i);
 		      yywarning(msg);
 		      tmpmap[max_hig][i] = STONE;
