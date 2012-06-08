@@ -162,6 +162,7 @@ struct instance_flags {
 	boolean  disable_log;   /* don't append anything to the logfile */
 	boolean  botl;		/* redo status line */
 	struct nh_autopickup_rules *ap_rules;
+	boolean  dark_room;	/* show shadows in lit rooms */
 };
 
 extern struct flag flags;
