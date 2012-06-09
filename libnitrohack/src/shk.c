@@ -2107,7 +2107,7 @@ speak:
 		return;
 	    }
 	    strcpy(buf, "\"For you, ");
-	    if (ANGRY(shkp)) strcat(buf, "scum ");
+	    if (ANGRY(shkp)) strcat(buf, "scum");
 	    else {
 		static const char *const honored[5] = {
 		  "good", "honored", "most gracious", "esteemed",
