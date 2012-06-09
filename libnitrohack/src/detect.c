@@ -1174,7 +1174,7 @@ void sokoban_detect(struct level *lev)
 		    loc->typ = DOOR;
 		else if (loc->typ == SCORR)
 		    loc->typ = CORR;
-		loc->waslit = (loc->typ != CORR) ? TRUE : loc->lit;
+		loc->waslit = (loc->typ != CORR) ? !iflags.dark_room : loc->lit;
 		loc->mem_bg = back_to_cmap(lev, x, y);
 		for (obj = lev->objects[x][y]; obj; obj = obj->nexthere)
 		    if (obj->otyp == BOULDER)
