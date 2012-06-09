@@ -40,6 +40,7 @@ NON_DIGGABLE:(00,00,74,17)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "wax candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -94,6 +95,7 @@ NON_DIGGABLE:(00,00,74,17)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "tallow candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -140,6 +142,7 @@ NON_DIGGABLE:(00,00,74,17)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "wax candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -214,6 +217,7 @@ FOUNTAIN:(69,15)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "tallow candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -261,6 +265,7 @@ NON_DIGGABLE:(00,00,72,18)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "wax candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -309,6 +314,7 @@ NON_DIGGABLE:(00,00,72,18)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "tallow candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -357,6 +363,7 @@ NON_DIGGABLE:(00,00,74,18)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "wax candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -406,6 +413,7 @@ NON_DIGGABLE:(00,00,72,18)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "tallow candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -453,6 +461,7 @@ NON_DIGGABLE:(00,00,74,17)
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "wax candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -502,6 +511,7 @@ STAIR:random,down
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "tallow candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -551,6 +561,7 @@ STAIR:random,down
 LOOP [15] {
   OBJECT: random, random, random
 }
+OBJECT: '(', "wax candle", random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
