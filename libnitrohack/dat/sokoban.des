@@ -42,7 +42,7 @@ FUNCTION soko_loot()
 }
 
 ### Bottom (first) level of Sokoban ###
-LEVEL: "soko4-1"
+LEVEL: "soko3-1"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -100,7 +100,7 @@ OBJECT:'?',"earth",(03,11)
 soko_loot()
 
 
-LEVEL: "soko4-2"
+LEVEL: "soko3-2"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -160,7 +160,7 @@ soko_loot()
 
 
 ### Second level ###
-LEVEL: "soko3-1"
+LEVEL: "soko3-11"
 FLAGS: noteleport, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -179,12 +179,12 @@ MAP
 |....|......................|
 -----------------------------
 ENDMAP
-STAIR:(11,02),down
-STAIR:(23,04),up
-DOOR:locked,(27,09)
-REGION:(00,00,28,11),lit,"ordinary"
-NON_DIGGABLE:(00,00,28,11)
-NON_PASSWALL:(00,00,28,11)
+BRANCH: (11,02,11,02), (0,0,0,0)
+STAIR: (23,04), up
+DOOR: locked, (27,09)
+REGION: (00,00,28,11), lit, "ordinary"
+NON_DIGGABLE: (00,00,28,11)
+NON_PASSWALL: (00,00,28,11)
 
 # Boulders
 OBJECT:'`',"boulder",(03,02)
@@ -212,26 +212,29 @@ OBJECT:'`',"boulder",(10,07)
 OBJECT:'`',"boulder",(10,10)
 
 # Traps
-TRAP:"hole",(12,10)
-TRAP:"hole",(13,10)
-TRAP:"hole",(14,10)
-TRAP:"hole",(15,10)
-TRAP:"hole",(16,10)
-TRAP:"hole",(17,10)
-TRAP:"hole",(18,10)
-TRAP:"hole",(19,10)
-TRAP:"hole",(20,10)
-TRAP:"hole",(21,10)
-TRAP:"hole",(22,10)
-TRAP:"hole",(23,10)
-TRAP:"hole",(24,10)
-TRAP:"hole",(25,10)
-TRAP:"hole",(26,10)
+TRAP: "pit", (12,10)
+TRAP: "pit", (13,10)
+TRAP: "pit", (14,10)
+TRAP: "pit", (15,10)
+TRAP: "pit", (16,10)
+TRAP: "pit", (17,10)
+TRAP: "pit", (18,10)
+TRAP: "pit", (19,10)
+TRAP: "pit", (20,10)
+TRAP: "pit", (21,10)
+TRAP: "pit", (22,10)
+TRAP: "pit", (23,10)
+TRAP: "pit", (24,10)
+TRAP: "pit", (25,10)
+TRAP: "pit", (26,10)
+
+OBJECT: '?', "earth", (03,10)
+OBJECT: '?', "earth", (04,10)
 
 soko_loot()
 
 
-LEVEL: "soko3-2"
+LEVEL: "soko3-12"
 FLAGS: noteleport, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -252,12 +255,12 @@ MAP
 ----|..|..|               
     -------               
 ENDMAP
-STAIR:(03,01),down
-STAIR:(20,04),up
-DOOR:locked,(24,09)
-REGION:(00,00,25,13),lit,"ordinary"
-NON_DIGGABLE:(00,00,25,13)
-NON_PASSWALL:(00,00,25,13)
+BRANCH: (03,01,03,01), (0,0,0,0)
+STAIR: (20,04), up
+DOOR: locked, (24,09)
+REGION: (00,00,25,13), lit, "ordinary"
+NON_DIGGABLE: (00,00,25,13)
+NON_PASSWALL: (00,00,25,13)
 
 # Boulders
 OBJECT:'`',"boulder",(02,03)
@@ -278,18 +281,21 @@ OBJECT:'`',"boulder",(10,10)
 OBJECT:'`',"boulder",(03,11)
 
 # Traps
-TRAP:"hole",(12,10)
-TRAP:"hole",(13,10)
-TRAP:"hole",(14,10)
-TRAP:"hole",(15,10)
-TRAP:"hole",(16,10)
-TRAP:"hole",(17,10)
-TRAP:"hole",(18,10)
-TRAP:"hole",(19,10)
-TRAP:"hole",(20,10)
-TRAP:"hole",(21,10)
-TRAP:"hole",(22,10)
-TRAP:"hole",(23,10)
+TRAP: "pit", (12,10)
+TRAP: "pit", (13,10)
+TRAP: "pit", (14,10)
+TRAP: "pit", (15,10)
+TRAP: "pit", (16,10)
+TRAP: "pit", (17,10)
+TRAP: "pit", (18,10)
+TRAP: "pit", (19,10)
+TRAP: "pit", (20,10)
+TRAP: "pit", (21,10)
+TRAP: "pit", (22,10)
+TRAP: "pit", (23,10)
+
+OBJECT: '?', "earth", (08,12)
+OBJECT: '?', "earth", (09,12)
 
 soko_loot()
 
@@ -600,7 +606,7 @@ ENGRAVING:place[2],burn,"Elbereth"
 # Following Sokoban levels heavily modified for NetHack by Pasi Kallinen
 # The original authors are listed just before the maps
 #
-LEVEL: "soko4-3"
+LEVEL: "soko3-3"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -650,7 +656,7 @@ TRAP:"pit",(23,6)
 soko_loot()
 
 
-LEVEL: "soko4-4"
+LEVEL: "soko3-4"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -708,7 +714,7 @@ TRAP:"pit",(5,12)
 soko_loot()
 
 
-LEVEL: "soko4-5"
+LEVEL: "soko3-5"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -766,7 +772,7 @@ TRAP:"pit",(13,3)
 soko_loot()
 
 
-LEVEL: "soko4-6"
+LEVEL: "soko3-6"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -817,7 +823,7 @@ TRAP:"pit",(10,9)
 soko_loot()
 
 
-LEVEL: "soko4-7"
+LEVEL: "soko3-7"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -912,7 +918,7 @@ TRAP:"pit",(25,14)
 soko_loot()
 
 
-LEVEL: "soko4-8"
+LEVEL: "soko3-8"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -956,7 +962,7 @@ TRAP:"pit",(8,9)
 soko_loot()
 
 
-LEVEL: "soko4-9"
+LEVEL: "soko3-9"
 FLAGS: noteleport, hardfloor, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -997,15 +1003,11 @@ TRAP:"pit",(5,9)
 TRAP:"pit",(6,9)
 TRAP:"pit",(7,9)
 TRAP:"pit",(8,9)
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+
+soko_loot()
 
 
-LEVEL: "soko3-3"
+LEVEL: "soko3-13"
 FLAGS: noteleport, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -1025,11 +1027,11 @@ MAP
        --...|
         -----
 ENDMAP
-STAIR:(16,7), down
-STAIR:(4,3), up
-REGION:(00,00,17,12),lit,"ordinary"
-NON_DIGGABLE:(00,00,17,12)
-NON_PASSWALL:(00,00,17,12)
+BRANCH: (16,7,16,7), (0,0,0,0)
+STAIR: (4,3), up
+REGION: (00,00,17,12), lit, "ordinary"
+NON_DIGGABLE: (00,00,17,12)
+NON_PASSWALL: (00,00,17,12)
 OBJECT:'`',"boulder",(12,2)
 OBJECT:'`',"boulder",(14,2)
 OBJECT:'`',"boulder",(11,3)
@@ -1040,21 +1042,24 @@ OBJECT:'`',"boulder",(11,7)
 OBJECT:'`',"boulder",(9,9)
 OBJECT:'`',"boulder",(11,9)
 OBJECT:'`',"boulder",(10,10)
-TRAP:"hole",(3,1)
-TRAP:"hole",(4,1)
-TRAP:"hole",(2,3)
-TRAP:"hole",(2,4)
-TRAP:"hole",(4,5)
-TRAP:"hole",(5,5)
-TRAP:"hole",(6,5)
-TRAP:"hole",(7,5)
-TRAP:"hole",(8,5)
-TRAP:"hole",(9,5)
+TRAP: "pit", (3,1)
+TRAP: "pit", (4,1)
+TRAP: "pit", (2,3)
+TRAP: "pit", (2,4)
+TRAP: "pit", (4,5)
+TRAP: "pit", (5,5)
+TRAP: "pit", (6,5)
+TRAP: "pit", (7,5)
+TRAP: "pit", (8,5)
+TRAP: "pit", (9,5)
+
+OBJECT: '?', "earth", (02,06)
+OBJECT: '?', "earth", (03,06)
 
 soko_loot()
 
 
-LEVEL: "soko3-4"
+LEVEL: "soko3-14"
 FLAGS: noteleport, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -1074,12 +1079,12 @@ MAP
 |.........|...|
 ---------------
 ENDMAP
-STAIR:(12,9), down
-STAIR:(9,11), up
-REGION:(00,00,19,12),lit,"ordinary"
-NON_DIGGABLE:(00,00,19,12)
-NON_PASSWALL:(00,00,19,12)
-DOOR:locked,(7,8)
+BRANCH: (12,9,12,9), (0,0,0,0)
+STAIR: (9,11), up
+REGION: (00,00,19,12), lit, "ordinary"
+NON_DIGGABLE: (00,00,19,12)
+NON_PASSWALL: (00,00,19,12)
+DOOR: locked, (7,8)
 OBJECT:'`',"boulder",(14,2)
 OBJECT:'`',"boulder",(12,3)
 OBJECT:'`',"boulder",(14,3)
@@ -1094,25 +1099,28 @@ OBJECT:'`',"boulder",(16,8)
 OBJECT:'`',"boulder",(9,9)
 OBJECT:'`',"boulder",(13,9)
 OBJECT:'`',"boulder",(11,10)
-TRAP:"hole",(5,5)
-TRAP:"hole",(6,5)
-TRAP:"hole",(7,5)
-TRAP:"hole",(2,6)
-TRAP:"hole",(2,7)
-TRAP:"hole",(2,8)
-TRAP:"hole",(5,8)
-TRAP:"hole",(2,9)
-TRAP:"hole",(3,11)
-TRAP:"hole",(4,11)
-TRAP:"hole",(5,11)
-TRAP:"hole",(6,11)
-TRAP:"hole",(7,11)
-TRAP:"hole",(8,11)
+TRAP: "pit", (5,5)
+TRAP: "pit", (6,5)
+TRAP: "pit", (7,5)
+TRAP: "pit", (2,6)
+TRAP: "pit", (2,7)
+TRAP: "pit", (2,8)
+TRAP: "pit", (5,8)
+TRAP: "pit", (2,9)
+TRAP: "pit", (3,11)
+TRAP: "pit", (4,11)
+TRAP: "pit", (5,11)
+TRAP: "pit", (6,11)
+TRAP: "pit", (7,11)
+TRAP: "pit", (8,11)
+
+OBJECT: '?', "earth", (02,04)
+OBJECT: '?', "earth", (03,04)
 
 soko_loot()
 
 
-LEVEL: "soko3-5"
+LEVEL: "soko3-15"
 FLAGS: noteleport, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -1131,12 +1139,12 @@ MAP
 |.....--.|.....---..|
 ---------------- ----
 ENDMAP
-STAIR:(8,10), down
-STAIR:(15,1), up
-REGION:(00,00,21,11),lit,"ordinary"
-NON_DIGGABLE:(00,00,21,11)
-NON_PASSWALL:(00,00,21,11)
-DOOR:locked,(15,5)
+BRANCH: (8,10,8,10), (0,0,0,0)
+STAIR: (15,1), up
+REGION: (00,00,21,11), lit, "ordinary"
+NON_DIGGABLE: (00,00,21,11)
+NON_PASSWALL: (00,00,21,11)
+DOOR: locked, (15,5)
 OBJECT:'`',"boulder",(2,3)
 OBJECT:'`',"boulder",(10,3)
 OBJECT:'`',"boulder",(12,3)
@@ -1149,23 +1157,26 @@ OBJECT:'`',"boulder",(10,5)
 OBJECT:'`',"boulder",(4,8)
 OBJECT:'`',"boulder",(4,9)
 OBJECT:'`',"boulder",(5,9)
-TRAP:"hole",(16,1)
-TRAP:"hole",(17,1)
-TRAP:"hole",(18,1)
-TRAP:"hole",(19,3)
-TRAP:"hole",(19,4)
-TRAP:"hole",(19,5)
-TRAP:"hole",(19,6)
-TRAP:"hole",(19,7)
-TRAP:"hole",(19,8)
-TRAP:"hole",(15,9)
-TRAP:"hole",(16,9)
-TRAP:"hole",(17,9)
+TRAP: "pit", (16,1)
+TRAP: "pit", (17,1)
+TRAP: "pit", (18,1)
+TRAP: "pit", (19,3)
+TRAP: "pit", (19,4)
+TRAP: "pit", (19,5)
+TRAP: "pit", (19,6)
+TRAP: "pit", (19,7)
+TRAP: "pit", (19,8)
+TRAP: "pit", (15,9)
+TRAP: "pit", (16,9)
+TRAP: "pit", (17,9)
+
+OBJECT: '?', "earth", (18,10)
+OBJECT: '?', "earth", (19,10)
 
 soko_loot()
 
 
-LEVEL: "soko3-6"
+LEVEL: "soko3-16"
 FLAGS: noteleport, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -1188,11 +1199,11 @@ MAP
     |.|....|..|...--
     ---------------
 ENDMAP
-STAIR:(8,1), down
-STAIR:(10,4), up
-REGION:(00,00,19,15),lit,"ordinary"
-NON_DIGGABLE:(00,00,19,15)
-NON_PASSWALL:(00,00,19,15)
+BRANCH: (8,1,8,1), (0,0,0,0)
+STAIR: (10,4), up
+REGION: (00,00,19,15), lit, "ordinary"
+NON_DIGGABLE: (00,00,19,15)
+NON_PASSWALL: (00,00,19,15)
 OBJECT:'`',"boulder",(7,2)
 OBJECT:'`',"boulder",(12,2)
 OBJECT:'`',"boulder",(14,3)
@@ -1209,29 +1220,32 @@ OBJECT:'`',"boulder",(5,12)
 OBJECT:'`',"boulder",(7,13)
 OBJECT:'`',"boulder",(11,13)
 OBJECT:'`',"boulder",(16,13)
-TRAP:"hole",(8,5)
-TRAP:"hole",(11,5)
-TRAP:"hole",(8,6)
-TRAP:"hole",(9,6)
-TRAP:"hole",(10,6)
-TRAP:"hole",(11,6)
-TRAP:"hole",(8,7)
-TRAP:"hole",(9,7)
-TRAP:"hole",(10,7)
-TRAP:"hole",(11,7)
-TRAP:"hole",(9,8)
-TRAP:"hole",(10,8)
-TRAP:"hole",(9,9)
-TRAP:"hole",(10,9)
-TRAP:"hole",(9,10)
-TRAP:"hole",(10,10)
-TRAP:"hole",(9,11)
-TRAP:"hole",(10,11)
+TRAP: "pit", (8,5)
+TRAP: "pit", (11,5)
+TRAP: "pit", (8,6)
+TRAP: "pit", (9,6)
+TRAP: "pit", (10,6)
+TRAP: "pit", (11,6)
+TRAP: "pit", (8,7)
+TRAP: "pit", (9,7)
+TRAP: "pit", (10,7)
+TRAP: "pit", (11,7)
+TRAP: "pit", (9,8)
+TRAP: "pit", (10,8)
+TRAP: "pit", (9,9)
+TRAP: "pit", (10,9)
+TRAP: "pit", (9,10)
+TRAP: "pit", (10,10)
+TRAP: "pit", (9,11)
+TRAP: "pit", (10,11)
+
+OBJECT: '?', "earth", (09,12)
+OBJECT: '?', "earth", (10,12)
 
 soko_loot()
 
 
-LEVEL: "soko3-7"
+LEVEL: "soko3-10"
 FLAGS: noteleport, mazelevel, premapped
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
@@ -1251,12 +1265,12 @@ MAP
   ---.----
     ---
 ENDMAP
-STAIR:(5,11), down
-STAIR:(15,5), up
-REGION:(00,00,20,12),lit,"ordinary"
-NON_DIGGABLE:(00,00,20,12)
-NON_PASSWALL:(00,00,20,12)
-DOOR:locked,(18,1)
+BRANCH: (5,11,5,11), (0,0,0,0)
+STAIR: (15,5), up
+REGION: (00,00,20,12), lit, "ordinary"
+NON_DIGGABLE: (00,00,20,12)
+NON_PASSWALL: (00,00,20,12)
+DOOR: locked, (18,1)
 OBJECT:'`',"boulder",(6,3)
 OBJECT:'`',"boulder",(7,3)
 OBJECT:'`',"boulder",(6,4)
@@ -1269,18 +1283,21 @@ OBJECT:'`',"boulder",(4,7)
 OBJECT:'`',"boulder",(6,7)
 OBJECT:'`',"boulder",(7,8)
 OBJECT:'`',"boulder",(8,8)
-TRAP:"hole",(19,2)
-TRAP:"hole",(19,3)
-TRAP:"hole",(19,4)
-TRAP:"hole",(19,5)
-TRAP:"hole",(19,6)
-TRAP:"hole",(19,7)
-TRAP:"hole",(12,8)
-TRAP:"hole",(13,8)
-TRAP:"hole",(14,8)
-TRAP:"hole",(15,8)
-TRAP:"hole",(16,8)
-TRAP:"hole",(17,8)
+TRAP: "pit", (19,2)
+TRAP: "pit", (19,3)
+TRAP: "pit", (19,4)
+TRAP: "pit", (19,5)
+TRAP: "pit", (19,6)
+TRAP: "pit", (19,7)
+TRAP: "pit", (12,8)
+TRAP: "pit", (13,8)
+TRAP: "pit", (14,8)
+TRAP: "pit", (15,8)
+TRAP: "pit", (16,8)
+TRAP: "pit", (17,8)
+
+OBJECT: '?', "earth", (18,09)
+OBJECT: '?', "earth", (19,09)
 
 soko_loot()
 

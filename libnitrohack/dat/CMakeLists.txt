@@ -80,9 +80,9 @@ set (COMPILED_LEVELS
     soko2-1.lev  soko2-2.lev  soko2-3.lev  soko2-4.lev
     soko2-5.lev  soko2-6.lev  soko2-7.lev  soko3-1.lev
     soko3-2.lev  soko3-3.lev  soko3-4.lev  soko3-5.lev
-    soko3-6.lev  soko3-7.lev  soko4-1.lev  soko4-2.lev
-    soko4-3.lev  soko4-4.lev  soko4-5.lev  soko4-6.lev
-    soko4-7.lev  soko4-8.lev  soko4-9.lev
+    soko3-6.lev  soko3-7.lev  soko3-8.lev  soko3-9.lev
+    soko3-10.lev soko3-11.lev soko3-12.lev soko3-13.lev
+    soko3-14.lev soko3-15.lev soko3-16.lev
     Tou-fila.lev Tou-filb.lev
     Tou-goal.lev Tou-loca.lev Tou-strt.lev tower1.lev
     tower2.lev   tower3.lev
