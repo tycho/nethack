@@ -937,7 +937,8 @@ static int dochat(void)
     }
 
     /* don't ask for a direction if there's only one monster around */
-    if (mon_count!=1 && !getdir("Talk to whom? (in what direction)",&dx,&dy,&dz)) {
+    if ((mon_count != 1 || iflags.paranoid_chat) &&
+	!getdir("Talk to whom? (in what direction)", &dx, &dy, &dz)) {
 	/* decided not to chat */
 	return 0;
     }

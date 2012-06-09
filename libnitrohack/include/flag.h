@@ -154,6 +154,8 @@ struct instance_flags {
 
 	boolean paranoid_hit;	/* Ask for 'yes' when hitting peacefuls */
 	boolean paranoid_quit;	/* Ask for 'yes' when quitting */
+	boolean paranoid_chat;	/* Always ask for direction when chatting */
+	boolean paranoid_loot;	/* Always ask to loot even with only one container */
 
 	/* Items which belong in flags, but are here to allow save compatibility */
 	boolean  show_uncursed;	/* always show uncursed items as such */

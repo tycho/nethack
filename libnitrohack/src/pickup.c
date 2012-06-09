@@ -1190,7 +1190,7 @@ lootcont:
 
 	    if (Is_container(cobj)) {
 		/* Don't ask if there's only one lootable object. */
-		if (container_count != 1) {
+		if (container_count != 1 || iflags.paranoid_loot) {
 		    sprintf(qbuf, "There is %s here, loot it?",
 			    safe_qbuf("", sizeof("There is  here, loot it?"),
 				 doname(cobj), an(simple_typename(cobj->otyp)),
