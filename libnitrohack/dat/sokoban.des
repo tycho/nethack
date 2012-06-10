@@ -495,8 +495,8 @@ TRAP:"hole",(21,01)
 TRAP:"hole",(22,01)
 TRAP:"hole",(23,01)
 
-MONSTER:'m',"giant mimic", random, m_object "boulder"
-MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
 
 soko_loot()
 
@@ -586,8 +586,8 @@ TRAP:"hole",(20,01)
 TRAP:"hole",(21,01)
 TRAP:"hole",(22,01)
 
-MONSTER:'m',"giant mimic", random, m_object "boulder"
-MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
 
 soko_loot()
 
@@ -1654,6 +1654,9 @@ TRAP:"hole",(14,11)
 TRAP:"hole",(14,12)
 TRAP:"hole",(14,13)
 
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
+
 soko_loot()
 
 #OBJECT:'(',"bag of holding",place[0]
@@ -1733,6 +1736,9 @@ TRAP:"hole",(15,12)
 TRAP:"hole",(15,13)
 TRAP:"hole",(15,14)
 TRAP:"hole",(15,15)
+
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
+MONSTER: 'm', "giant mimic", random, m_object "boulder"
 
 soko_loot()
 
