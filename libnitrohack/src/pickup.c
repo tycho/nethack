@@ -1022,6 +1022,9 @@ int pickup_object(struct obj *obj, long count,
 	    makeknown(obj->otyp);	/* obj is already known */
 	    obj->sokoprize = FALSE;	/* reset sokoprize flag */
 	    del_sokoprizes();		/* delete other sokoprizes */
+	    /* stop picking up other objects to prevent picking up
+	       one of the just-deleted other sokoban prizes */
+	    return -1;
 	}
 
 	return 1;
