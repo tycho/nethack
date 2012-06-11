@@ -2072,7 +2072,8 @@ struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user)
 		*(bp + 2) = 'a';
 
 	/* dragon scales - assumes order of dragons */
-	if (!strcmpi(bp, "scales") &&
+	if ((!strcmpi(bp, "scales") || !strcmpi(bp, "dragon scales")) &&
+			mntmp != NON_PM &&
 			mntmp >= PM_GRAY_DRAGON && mntmp <= PM_YELLOW_DRAGON) {
 		typ = GRAY_DRAGON_SCALES + mntmp - PM_GRAY_DRAGON;
 		mntmp = NON_PM;	/* no monster */
