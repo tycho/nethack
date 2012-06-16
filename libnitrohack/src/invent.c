@@ -1631,7 +1631,8 @@ boolean update_location(boolean all_objects)
 	if (icount && otmp)
 	    add_objitem(&items, &size, MI_TEXT, icount++, 0, "", NULL, FALSE);
 	
-	for (ocount = 0; otmp; otmp = otmp->nexthere) {
+	for (ocount = 0; otmp;
+	     otmp = (u.uswallow && u.ustuck) ? otmp->nobj : otmp->nexthere) {
 	    examine_object(otmp);
 	    if (!Blind || all_objects || ocount < 5)
 		add_objitem(&items, &size, MI_NORMAL, icount++, 0, doname_price(otmp),
