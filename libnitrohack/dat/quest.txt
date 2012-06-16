@@ -3532,8 +3532,8 @@ Welcome to NitroHack!  These tutorial messages will help you learn how
 to play the game.  To view any of these messages again, enter the help
 menu by pressing the ? key.
 
-The screen shows game messages at the top, the map in the middle, character
-info at the top and inventory to the right
+The screen shows game messages at the top, the map in the middle,
+character info at the top and inventory to the right
 
 Each symbol represents something; you are the @ sign.  Generally,
 letters (and some symbols like ' : ; & and @) are creatures, and
