@@ -89,8 +89,13 @@ CC = gcc
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -O2 -std=c89 -fno-strict-aliasing -Wno-format-security -Wall -Wimplicit -Wundef -U_FORTIFY_SOURCE -I../include
+CFLAGS = -O2 -std=gnu89 -fno-strict-aliasing -Wno-format-security -Wall -Wimplicit -Wundef -U_FORTIFY_SOURCE -I../include
 LFLAGS =
+
+ifeq ($(RNG),rdrand)
+CFLAGS += -mrdrnd
+LFLAGS += -mrdrnd
+endif
 
 LIBS =
  

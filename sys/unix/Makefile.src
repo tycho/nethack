@@ -162,8 +162,13 @@ GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -O2 -std=c89 -fno-strict-aliasing -Wno-format-security -Wall -Wimplicit -Wundef -U_FORTIFY_SOURCE -I../include
+CFLAGS = -O2 -std=gnu89 -fno-strict-aliasing -Wno-format-security -Wall -Wimplicit -Wundef -U_FORTIFY_SOURCE -I../include
 LFLAGS = 
+
+ifeq ($(RNG),rdrand)
+CFLAGS += -mrdrnd
+LFLAGS += -mrdrnd
+endif
 
 # The Qt and Be window systems are written in C++, while the rest of
 # NetHack is standard C.  If using Qt, uncomment the LINK line here to get
