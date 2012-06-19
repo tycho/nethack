@@ -15,6 +15,46 @@ extern int NDECL(rand);
 # endif
 #endif /* LINT */
 
+#ifdef __RDRND__
+int
+has_rdrand(void)
+{
+	const unsigned int RDRAND_BIT = 0x40000000;
+	unsigned int eax, ebx, ecx, edx;
+
+	static int cache = -1;
+
+	if (cache != -1)
+		return cache;
+
+	eax = 1;
+	ecx = 0;
+	ebx = edx = 0;
+	asm volatile(
+		"cpuid"
+		: "=a" (eax),
+		  "=b" (ebx),
+		  "=c" (ecx),
+		  "=d" (edx)
+		: "0" (eax), "2" (ecx));
+
+	cache = (ecx & RDRAND_BIT) ? 1 : 0;
+	return cache;
+}
+
+#include <immintrin.h>
+unsigned int rdrand()
+{
+	unsigned int x;
+	if (has_rdrand() && _rdrand32_step(&x))
+		return x;
+	else
+		return rand();
+}
+#undef RND
+#define RND(x)  (int)(rdrand() % (long)(x))
+#endif
+
 #ifdef OVL0
 
 int

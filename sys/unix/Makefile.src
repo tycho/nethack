@@ -184,6 +184,11 @@ endif
 
 LFLAGS = 
 
+ifeq ($(RNG),rdrand)
+CFLAGS += -mrdrnd
+LFLAGS += -mrdrnd
+endif
+
 # The Qt and Be window systems are written in C++, while the rest of
 # NetHack is standard C.  If using Qt, uncomment the LINK line here to get
 # the C++ libraries linked in.
