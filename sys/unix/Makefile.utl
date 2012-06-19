@@ -103,6 +103,11 @@ endif
 
 LFLAGS =
 
+ifeq ($(RNG),rdrand)
+CFLAGS += -mrdrnd
+LFLAGS += -mrdrnd
+endif
+
 LIBS =
  
 # If you are cross-compiling, you must use this:
