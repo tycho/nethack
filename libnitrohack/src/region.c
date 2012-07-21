@@ -669,23 +669,19 @@ boolean revive_cthulhu(void *p1, void *p2)
 	int cx, cy;
 	struct region *reg = (struct region *) p1;
 	struct monst *cthulhu = NULL;
-	coord cc;
 
 	cx = (reg->bounding_box.lx + reg->bounding_box.hx) / 2;
 	cy = (reg->bounding_box.ly + reg->bounding_box.hy) / 2;
 
-	if (enexto(&cc, level, cx, cy, &mons[PM_CTHULHU])) {
-	    cx = cc.x;
-	    cy = cc.y;
-	} else {
-	    cx = cy = 0;	/* Place Cthulhu randomly */
-	}
-
 	/* Make sure Cthulhu doesn't get the Amulet again! :-) */
 	cthulhu = makemon(&mons[PM_CTHULHU], level, cx, cy,
-			  MM_NOCOUNTBIRTH | NO_MINVENT);
-	if (cthulhu && canseemon(level, cthulhu))
-	    pline("%s reforms!", Monnam(cthulhu));
+			  MM_NOCOUNTBIRTH | NO_MINVENT | MM_ADJACENTOK);
+	if (cthulhu) {
+	    if (canseemon(level, cthulhu))
+		pline("%s reforms!", Monnam(cthulhu));
+	} else {
+	    pline("You feel less hassled.");
+	}
     }
     return ret;
 }

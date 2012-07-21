@@ -763,6 +763,7 @@ struct monst *makemon(const struct permonst *ptr,
 	boolean byyou = (x == u.ux && y == u.uy);
 	boolean allow_minvent = ((mmflags & NO_MINVENT) == 0);
 	boolean countbirth = ((mmflags & MM_NOCOUNTBIRTH) == 0);
+	boolean randpos_success = TRUE;	/* in case we aren't randomly positioning */
 	unsigned gpflags = (mmflags & MM_IGNOREWATER) ? MM_IGNOREWATER : 0;
 
 	/* if caller wants random location, do it here */
@@ -772,10 +773,13 @@ struct monst *makemon(const struct permonst *ptr,
 
 		fakemon.data = ptr;	/* set up for goodpos */
 		do {
-			x = rn1(COLNO-3,2);
+			x = rn1(COLNO - 3, 2);
 			y = rn2(ROWNO);
-		} while (!goodpos(lev, x, y, ptr ? &fakemon : NULL, gpflags) ||
-			(!in_mklev && tryct++ < 50 && cansee(x, y)));
+			tryct++;
+		} while ((!goodpos(lev, x, y, ptr ? &fakemon : NULL, gpflags) &&
+			  tryct <= 100) ||
+			 (!in_mklev && tryct <= 50 && cansee(x, y)));
+		randpos_success = tryct < 100;
 	} else if (byyou && !in_mklev) {
 		coord bypos;
 
@@ -786,8 +790,9 @@ struct monst *makemon(const struct permonst *ptr,
 			return NULL;
 	}
 
-	/* Does monster already exist at the position? */
-	if (MON_AT(lev, x, y)) {
+	/* Use adjacent position if chosen place is occupied, or
+	 * random positioning was asked for but failed. */
+	if (MON_AT(lev, x, y) || !randpos_success) {
 		if ((mmflags & MM_ADJACENTOK) != 0) {
 			coord bypos;
 			if (enexto_core(&bypos, lev, x, y, ptr, gpflags)) {
