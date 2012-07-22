@@ -123,7 +123,7 @@ static const struct nh_option_desc const_options[] = {
     {"autoquiver",	"when firing with an empty quiver, select something suitable",	OPTTYPE_BOOL, { VFALSE }},
     {"confirm",		"ask before hitting tame or peaceful monsters",	OPTTYPE_BOOL, { VTRUE }},
     {"dark_room",	"show shadows in lit rooms", OPTTYPE_BOOL, { VTRUE }},
-    {"disclose",	"wether to disclose information at end of game", OPTTYPE_ENUM, {(void*)DISCLOSE_PROMPT_DEFAULT_YES}},
+    {"disclose",	"whether to disclose information at end of game", OPTTYPE_ENUM, {(void*)DISCLOSE_PROMPT_DEFAULT_YES}},
     {"fruit",		"the name of a fruit you enjoy eating", OPTTYPE_STRING, {"slime mold"}},
     {"lit_corridor",	"show a dark corridor as lit if in sight",	OPTTYPE_BOOL, { VTRUE }},
     {"menustyle",	"user interface for object selection", OPTTYPE_ENUM, {(void*)MENU_FULL}},
@@ -136,7 +136,7 @@ static const struct nh_option_desc const_options[] = {
     {"pickup_dropped",	"autopickup items you deliberately dropped",	OPTTYPE_BOOL, { VFALSE }},
     {"pickup_thrown",	"autopickup items you threw or fired",	OPTTYPE_BOOL, { VTRUE }},
     {"prayconfirm",	"use confirmation prompt when #pray command issued",	OPTTYPE_BOOL, { VTRUE }},
-    {"pushweapon",	"when wielding a new weapon, put your previous weapon into the secondary weapon slot",	OPTTYPE_BOOL, { VFALSE }},
+    {"pushweapon",	"when wielding a new weapon, put previous weapon into secondary weapon slot",	OPTTYPE_BOOL, { VFALSE }},
     {"runmode",		"display frequency when `running' or `travelling'", OPTTYPE_ENUM, {(void*)RUN_LEAP}},
     {"safe_pet",	"prevent you from (knowingly) attacking your pet(s)",	OPTTYPE_BOOL, { VTRUE }},
     {"show_uncursed",	"always show uncursed status",	OPTTYPE_BOOL, { VTRUE }},
@@ -152,7 +152,7 @@ static const struct nh_option_desc const_options[] = {
 
 static const struct nh_option_desc const_birth_options[] = {
     { "elbereth", "difficulty: the E-word repels monsters", OPTTYPE_BOOL, { VTRUE }},
-    { "reincarnation", "Special Rogue-like levels", OPTTYPE_BOOL, { VTRUE }},
+    { "reincarnation", "special Rogue-style levels", OPTTYPE_BOOL, { VTRUE }},
     { "seduction", "certain monsters may seduce you", OPTTYPE_BOOL, { VTRUE }},
     { "bones", "allow bones levels", OPTTYPE_BOOL, { VTRUE }},
     { "legacy",   "print introductory message", OPTTYPE_BOOL, { VTRUE }},
