@@ -1,7 +1,7 @@
 # CMakeLists.txt for NitroHack 4.0.0
 
 cmake_minimum_required (VERSION 2.6)
-project (NitroHack)
+project (NitroHack C)
 
 if (WIN32)
     set(INSTALL_BASE "$ENV{USERPROFILE}")
