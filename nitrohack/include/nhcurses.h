@@ -111,7 +111,8 @@ typedef wchar_t fnchar;
 enum game_dirs {
     CONFIG_DIR,
     SAVE_DIR,
-    LOG_DIR
+    LOG_DIR,
+    DUMP_DIR
 };
 
 
