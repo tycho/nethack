@@ -396,7 +396,7 @@ boolean attack(struct monst *mtmp, schar dx, schar dy)
 		return FALSE;
 
 	tmp = find_roll_to_hit(mtmp);
-	if (Upolyd)
+	if (Upolyd || Race_if(PM_VAMPIRE))
 		hmonas(mtmp, tmp, dx, dy);
 	else
 		hitum(mtmp, tmp, youmonst.data->mattk, dx, dy);
@@ -2094,6 +2094,7 @@ static boolean hmonas(struct monst *mon, int tmp, schar dx, schar dy)
 	int	i, sum[NATTK], hittmp = 0;
 	int	nsum = 0;
 	int	dhit = 0;
+	boolean	Old_Upolyd = Upolyd;
 
 	for (i = 0; i < NATTK; i++) {
 
@@ -2311,8 +2312,8 @@ use_weapon:
 		passive(mon, sum[i], 1, mattk->aatyp);
 		nsum |= sum[i];
 	    }
-	    if (!Upolyd)
-		break; /* No extra attacks if no longer a monster */
+	    if (Upolyd != Old_Upolyd)
+		break; /* No extra attacks if form changed */
 	    if (multi < 0)
 		break; /* If paralyzed while attacking, i.e. floating eye */
 	}

@@ -2887,6 +2887,14 @@ boolean drown(void)
 		pline("But in vain.");
 	}
 	u.uinwater = 1;
+	/* [ALI] Vampires return to vampiric form on drowning. */
+	if (Upolyd && !Unchanging && Race_if(PM_VAMPIRE)) {
+		rehumanize();
+		u.uinwater = 0;
+		/* should be unnecessary as spoteffects() should get called */
+		/* pline("You fly up out of the water!"); */
+		return TRUE;
+	}
 	pline("You drown.");
 	killer_format = KILLED_BY_AN;
 	killer = (level->locations[u.ux][u.uy].typ == POOL || Is_medusa_level(&u.uz)) ?
@@ -2898,9 +2906,9 @@ boolean drown(void)
 		done(DROWNING);
 	}
 	if (u.uinwater) {
-	    u.uinwater = 0;
-	    pline("You find yourself back %s.", Is_waterlevel(&u.uz) ?
-		"in an air bubble" : "on land");
+		u.uinwater = 0;
+		pline("You find yourself back %s.",
+		      Is_waterlevel(&u.uz) ? "in an air bubble" : "on land");
 	}
 	return TRUE;
 }

@@ -269,6 +269,10 @@ extern struct you u;
 extern struct monst youmonst;	/* init'd and defined in decl.c */
 extern struct monst *mydogs, *migrating_mons;
 
+extern struct permonst upermonst;	/* init'd in decl.c,
+					 * defined in polyself.c
+					 */
+
 extern struct mvitals {
 	uchar	born;
 	uchar	died;

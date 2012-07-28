@@ -330,6 +330,9 @@ int monsndx(const struct permonst *ptr)
 {
 	int i;
 
+	if (ptr == &upermonst)
+	    return PM_PLAYERMON;
+
 	i = (int)(ptr - &mons[0]);
 	if (i < LOW_PM || i >= NUMMONS) {
 	    if (ptr == &pm_leader)

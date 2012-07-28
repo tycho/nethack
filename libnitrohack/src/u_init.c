@@ -241,6 +241,8 @@ static const struct inv_sub { short race_pm, item_otyp, subs_otyp; } inv_subs[] 
  /* { PM_DWARF, PICK_AXE,		DWARVISH_MATTOCK      }, */
     { PM_GNOME, BOW,			CROSSBOW	      },
     { PM_GNOME, ARROW,			CROSSBOW_BOLT	      },
+    { PM_VAMPIRE, POT_FRUIT_JUICE,	POT_BLOOD	      },
+    { PM_VAMPIRE, FOOD_RATION,		POT_VAMPIRE_BLOOD     },
     { NON_PM,	STRANGE_OBJECT,		STRANGE_OBJECT	      }
 };
 
@@ -517,7 +519,7 @@ void u_init(void)
 	u.umonnum = u.umonster = (flags.female &&
 			urole.femalenum != NON_PM) ? urole.femalenum :
 			urole.malenum;
-	set_uasmon();
+	init_uasmon();
 
 	u.ulevel = 0;	/* set up some of the initial attributes */
 	u.uhp = u.uhpmax = newhp();
@@ -700,6 +702,7 @@ void u_init_inv_skills(void)
 		break;
 
 	default:	/* impossible */
+		warning("u_init: unknown role %d", Role_switch);
 		break;
 	}
 
@@ -775,7 +778,14 @@ void u_init_inv_skills(void)
 	    knows_object(ORCISH_CLOAK);
 	    break;
 
+	case PM_VAMPIRE:
+	    /* Vampires start off with gods not as pleased, luck penalty */
+	    adjalign(-5);
+	    change_luck(-1);
+	    break;
+
 	default:	/* impossible */
+		warning("u_init: unknown race %d", Race_switch);
 		break;
 	}
 

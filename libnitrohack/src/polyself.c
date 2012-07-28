@@ -18,12 +18,42 @@ static void uunstick(void);
 static int armor_to_dragon(int);
 static void newman(void);
 
+/* Assumes u.umonster is set up already. */
+/* Use u.umonster since we might be restoring and you may be polymorphed. */
+void init_uasmon(void)
+{
+	int i;
+
+	upermonst = mons[u.umonster];
+
+	/* Fix up the flags */
+	/* Default flags assume human, so replace with your race's flags. */
+
+	upermonst.mflags1 &= ~(mons[PM_HUMAN].mflags1);
+	upermonst.mflags1 |= (mons[urace.malenum].mflags1);
+
+	upermonst.mflags2 &= ~(mons[PM_HUMAN].mflags2);
+	upermonst.mflags2 |= (mons[urace.malenum].mflags2);
+
+	upermonst.mflags3 &= ~(mons[PM_HUMAN].mflags3);
+	upermonst.mflags3 |= (mons[urace.malenum].mflags3);
+
+	/* Fix up the attacks */
+	for (i = 0; i < NATTK; i++) {
+	    upermonst.mattk[i] = mons[urace.malenum].mattk[i];
+	}
+
+	set_uasmon();
+}
+
 /* update the youmonst.data structure pointer */
 void set_uasmon(void)
 {
 	const struct permonst *pm = &mons[u.umonnum];
 	if (!Upolyd)
 	    pm = flags.female ? &pm_you_female : &pm_you_male;
+	if (u.umonnum == u.umonster)
+	    pm = &upermonst;
 	set_mon_data(&youmonst, pm, 0);
 }
 
@@ -265,11 +295,11 @@ void polyself(boolean forcecontrol)
 				mntmp = PM_HUMAN; /* Illegal; force newman() */
 			else
 				mntmp = u.ulycn;
-		} else {
-			if (youmonst.data->mlet == S_VAMPIRE)
+		} else if (isvamp) {
+			if (u.umonnum != PM_VAMPIRE_BAT)
 				mntmp = PM_VAMPIRE_BAT;
 			else
-				mntmp = PM_VAMPIRE;
+				mntmp = PM_HUMAN; /* newman() */
 		}
 		/* if polymon fails, "you feel" message has been given
 		   so don't follow up with another polymon or newman */

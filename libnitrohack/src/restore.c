@@ -611,7 +611,7 @@ int dorecover(struct memfile *mf)
 	mtmp = restore_mon(mf);
 	youmonst = *mtmp;
 	dealloc_monst(mtmp);
-	set_uasmon(); /* fix up youmonst.data */
+	init_uasmon(); /* fix up youmonst.data */
 	
 	/* restore dungeon */
 	restore_dungeon(mf);

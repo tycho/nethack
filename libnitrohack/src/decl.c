@@ -96,6 +96,7 @@ struct level *levels[MAXLINFO];
 struct level *level;		/* level map */
 
 struct monst youmonst;
+struct permonst upermonst;
 struct flag flags;
 struct instance_flags iflags;
 struct you u;
@@ -245,6 +246,7 @@ void init_data(void)
     memset(wolfname, 0, sizeof(wolfname));
     memset(crocname, 0, sizeof(crocname));
     memset(&youmonst, 0, sizeof(youmonst));
+    memset(&upermonst, 0, sizeof(upermonst));
     memset(&zeroobj, 0, sizeof(zeroobj));
     memset(mvitals, 0, sizeof(mvitals));
     memset(spl_book, 0, sizeof(spl_book));

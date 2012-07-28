@@ -1214,6 +1214,7 @@ extern void self_invis_message(void);
 
 /* ### polyself.c ### */
 
+extern void init_uasmon(void);
 extern void set_uasmon(void);
 extern void change_sex(void);
 extern void polyself(boolean);
