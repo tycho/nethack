@@ -1279,6 +1279,7 @@ int thitmonst(struct monst *mon, struct obj *obj)
 	    }
 
 	    if (tmp >= rnd(20)) {
+		int broken = FALSE;
 		if (hmon(mon,obj,1)) {	/* mon still alive */
 		    cutworm(mon, bhitpos.x, bhitpos.y, obj);
 		}
@@ -1292,7 +1293,7 @@ int thitmonst(struct monst *mon, struct obj *obj)
 		     * we still don't want anything to survive unconditionally,
 		     * but we need ammo to stay around longer on average.
 		     */
-		    int broken, chance;
+		    int chance;
 		    chance = 3 + greatest_erosion(obj) - obj->spe;
 		    if (chance > 1)
 			broken = rn2(chance);
@@ -1300,13 +1301,12 @@ int thitmonst(struct monst *mon, struct obj *obj)
 			broken = !rn2(4);
 		    if (obj->blessed && !rnl(4))
 			broken = 0;
-
-		    if (broken || obj_disint) {
-			if (*u.ushops)
-			    check_shop_obj(obj, bhitpos.x,bhitpos.y, TRUE);
-			obfree(obj, NULL);
-			return 1;
-		    }
+		}
+		if (broken || obj_disint) {
+		    if (*u.ushops)
+			check_shop_obj(obj, bhitpos.x,bhitpos.y, TRUE);
+		    obfree(obj, NULL);
+		    return 1;
 		}
 		passive_obj(mon, obj, NULL);
 	    } else {
