@@ -1500,14 +1500,14 @@ static boolean inherits(struct monst *shkp, int numsk, int croaked)
 	/* the simplifying principle is that first-come */
 	/* already took everything you had.		*/
 	if (numsk > 1) {
-	    if (cansee(shkp->mx, shkp->my && croaked))
+	    if (cansee(shkp->mx, shkp->my) && croaked)
 		pline("%s %slooks at your corpse%s and %s.",
 		      Monnam(shkp),
 		      (!shkp->mcanmove || shkp->msleeping) ? "wakes up, " : "",
 		      !rn2(2) ? (shkp->female ? ", shakes her head," :
 			   ", shakes his head,") : "",
 		      !inhishop(shkp) ? "disappears" : "sighs");
-	    rouse_shk(shkp, FALSE);	/* wake shk for bones */    
+	    rouse_shk(shkp, FALSE);	/* wake shk for bones */
 	    taken = (roomno == eshkp->shoproom);
 	    goto skip;
 	}
