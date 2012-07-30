@@ -790,7 +790,7 @@ int dodown(void)
 		can_fall = trap && (trap->ttyp == TRAPDOOR || trap->ttyp == HOLE);
 		if (!trap ||
 			(trap->ttyp != TRAPDOOR && trap->ttyp != HOLE &&
-			 trap->ttyp != PIT)
+			 trap->ttyp != PIT && trap->ttyp != SPIKED_PIT)
 			|| (!can_fall_thru(level) && can_fall) || !trap->tseen) {
 
 			if (flags.autodig && !flags.nopick &&
@@ -823,7 +823,7 @@ int dodown(void)
 	}
 
 	if (trap) {
-		if (trap->ttyp == PIT) {
+		if (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) {
 			if (u.utrap && (u.utraptype == TT_PIT)) {
 				pline("You are already in the pit."); /* YAFM needed */
 			} else {
