@@ -622,6 +622,8 @@ void place_monster(struct monst *mon, int x, int y)
     mon->mx = x;
     mon->my = y;
     mon->dlevel->monsters[x][y] = mon;
+    if (mon->data == &mons[PM_GIANT_TURTLE])
+	block_point(x, y);
 }
 
 /*steed.c*/

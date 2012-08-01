@@ -21,6 +21,16 @@ static struct obj *make_corpse(struct monst *);
 static void m_detach(struct monst *, const struct permonst *);
 static void lifesaved_monster(struct monst *, int);
 
+void remove_monster(struct level *lev, int x, int y)
+{
+	struct monst *m = lev->monsters[x][y];
+	if (m &&
+	    (m->data == &mons[PM_GIANT_TURTLE] &&
+	     (!m->minvis || See_invisible)))
+	    unblock_point(x, y);
+	lev->monsters[x][y] = NULL;
+}
+
 /* convert the monster index of an undead to its living counterpart */
 int undead_to_corpse(int mndx)
 {

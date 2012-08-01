@@ -947,6 +947,7 @@ extern struct mkroom *search_special(struct level *lev, schar type);
 
 /* ### mon.c ### */
 
+extern void remove_monster(struct level *,int,int);
 extern int undead_to_corpse(int);
 extern int genus(int,int);
 extern int pm_to_cham(int);
