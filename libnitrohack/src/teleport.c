@@ -769,13 +769,15 @@ void level_tele(void)
 		pline("Your body rematerializes%s.", invent ?
 			", and you gather up all your possessions" : "");
 		return;
-	    } else if (!wizard && newlev > 0) {
+
+	    /* only allow jump beyond Dungeons of Doom branch */
+	    } else if (!wizard && newlev > 0 && u.uz.dnum != 0) {
 		/* random teleport for destination level outside of
 		 * the current dungeon branch
 		 */
 		if (newlev > dungeons[u.uz.dnum].depth_start +
 			     dunlevs_in_dungeon(&u.uz)) {
-		    pline("Oops...");
+		    pline("You feel like bouncing off a solid wall!");
 		    goto random_levtport;
 		}
 	    }
