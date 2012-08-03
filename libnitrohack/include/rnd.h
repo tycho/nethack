@@ -46,16 +46,23 @@ static inline int dice(int n, int x)
 	return tmp; /* Alea iacta est. -- J.C. */
 }
 
+/* returns true numerator out of denominator times */
+static inline int rnf(int numerator, int denominator)
+{
+	return rn2(denominator) < numerator;
+}
 
 static inline int rne(int x)
 {
-	int tmp, utmp;
+	int n, utmp;
 
 	utmp = (u.ulevel < 15) ? 5 : u.ulevel/3;
-	tmp = 1;
-	while (tmp < utmp && !rn2(x))
-		tmp++;
-	return tmp;
+	n = 1;
+	/* Slightly higher probabilities for higher n than in NetHack 3.4.3
+	 * p(n) = \left(\frac{2}{x+2}\right)^{n-1} \frac{x}{x+2} */
+	while (n < utmp && rnf(2, x + 2))
+		n++;
+	return n;
 }
 
 static inline int rnz(int i)
@@ -68,12 +75,6 @@ static inline int rnz(int i)
 	if (rn2(2)) { x *= tmp; x /= 1000; }
 	else { x *= 1000; x /= tmp; }
 	return (int)x;
-}
-
-/* returns true numerator out of denominator times */
-static inline int rnf(int numerator, int denominator)
-{
-	return rn2(denominator) < numerator;
 }
 
 #undef RND
