@@ -332,7 +332,7 @@ static void nameshk(struct monst *shk, const char * const *nlp, struct level *le
 	} else if (nlp == shkblack) {
 	    /* special-case black marketeer */
 	    shname = "One-eyed Sam";
-	    shk->female = shk->data->mflags2 & M2_MALE ? FALSE : TRUE;
+	    shk->female = TRUE;
 	} else {
 	    /* We want variation from game to game, without needing the save
 	       and restore support which would be necessary for randomization;

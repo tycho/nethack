@@ -2361,7 +2361,7 @@ const struct permonst mons[] = {
 	M1_HUMANOID|M1_OMNIVORE,
 	M2_NOPOLY|M2_HUMAN|M2_PEACEFUL|M2_STRONG|M2_COLLECT|M2_MAGIC,
 	M3_INFRAVISIBLE, HI_DOMESTIC),
-/* the black marketeer's speed (24) matches the speed boots he's wearing */
+/* the black marketeer's speed (24) matches the speed boots she wears */
     MON("black marketeer", S_HUMAN,
 	LVL(25, 24, -8, 50, -2), G_NOGEN,
 	A(ATTK(AT_WEAP, AD_PHYS, 4, 10), NO_ATTK, NO_ATTK,
@@ -2370,7 +2370,7 @@ const struct permonst mons[] = {
 	MR_FIRE|MR_COLD|MR_SLEEP|MR_ELEC|MR_STONE,
 	MR_SLEEP, M1_HUMANOID|M1_OMNIVORE,
 	M2_NOPOLY|M2_HUMAN|M2_PEACEFUL|M2_STRONG|
-	M2_COLLECT|M2_MAGIC|M2_MALE, M3_INFRAVISIBLE, CLR_BLACK),
+	M2_COLLECT|M2_MAGIC|M2_FEMALE, M3_INFRAVISIBLE, CLR_BLACK),
     MON("guard", S_HUMAN,
 	LVL(12, 12, 10, 40, 10), G_NOGEN,
 	A(ATTK(AT_WEAP, AD_PHYS, 4,10),
