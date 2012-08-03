@@ -542,12 +542,10 @@ void add_opcode(sp_lev *sp, int opc, void *dat)
 	if (opc < 0 || opc >= MAX_SP_OPCODES)
 	    yyerror("Unknown opcode");
 
-	tmp = malloc(sizeof(_opcode) * (nop + 1));
-	if (sp->opcodes && nop) {
-	    memcpy(tmp, sp->opcodes, sizeof(_opcode) * nop);
-	    free(sp->opcodes);
-	} else if (!tmp) {
+	tmp = realloc(sp->opcodes, sizeof(_opcode) * (nop + 1));
+	if (!tmp) {
 	    yyerror("Couldn't alloc opcode space");
+	    /* sp->opcodes would be freed here, if this were ever reached */
 	}
 
 	sp->opcodes = tmp;
