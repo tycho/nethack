@@ -2454,11 +2454,6 @@ typfnd:
 	if (objects[typ].oc_nowish && !wizard)
 	    return NULL;
 
-	/* convert magic lamps to regular lamps before lighting them or setting
-	   the charges */
-	if (typ == MAGIC_LAMP && !wizard)
-	    typ = OIL_LAMP;
-
 	if (typ) {
 		otmp = mksobj(level, typ, TRUE, FALSE);
 	} else {
