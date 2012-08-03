@@ -100,7 +100,10 @@ void initworm(struct monst *worm, int wseg_count)
     struct wseg *seg, *new_tail = create_worm_tail(wseg_count);
     int wnum = worm->wormno;
 
-/*  if (!wnum) return;  bullet proofing */
+    if (!wnum) {
+	warning("initworm: worm->wormno was 0");
+	return;
+    }
 
     if (new_tail) {
 	worm->dlevel->wtails[wnum] = new_tail;
@@ -176,8 +179,10 @@ void worm_move(struct monst *worm)
     struct wseg *seg, *new_seg;	/* new segment */
     int	 wnum = worm->wormno;	/* worm number */
 
-
-/*  if (!wnum) return;  bullet proofing */
+    if (!wnum) {
+	warning("worm_move: worm->wormno was 0");
+	return;
+    }
 
     /*
      *  Place a segment at the old worm head.  The head has already moved.
@@ -195,7 +200,6 @@ void worm_move(struct monst *worm)
     new_seg->nseg = NULL;
     seg->nseg     = new_seg;		/* attach it to the end of the list */
     level->wheads[wnum]  = new_seg;		/* move the end pointer */
-
 
     if (level->wgrowtime[wnum] <= moves) {
 	if (!level->wgrowtime[wnum])
@@ -239,7 +243,10 @@ void wormgone(struct monst *worm)
     struct level *lev = worm->dlevel;
     int wnum = worm->wormno;
 
-/*  if (!wnum) return;  bullet proofing */
+    if (!wnum) {
+	warning("wormgone: worm->wormno was 0");
+	return;
+    }
 
     worm->wormno = 0;
 
@@ -263,7 +270,10 @@ void wormhitu(struct monst *worm)
     int wnum = worm->wormno;
     struct wseg *seg;
 
-/*  if (!wnum) return;  bullet proofing */
+    if (!wnum) {
+	warning("wormhitu: worm->wormno was 0");
+	return;
+    }
 
 /*  This does not work right now because mattacku() thinks that the head is
  *  out of range of the player.  We might try to kludge, and bring the head
@@ -305,7 +315,7 @@ void cutworm(struct monst *worm, xchar x, xchar y, struct obj *weap)
     int wnum = worm->wormno;
     int cut_chance, new_wnum;
 
-    if (!wnum) return; /* bullet proofing */
+    if (!wnum) return;	/* no worm */
 
     if (x == worm->mx && y == worm->my) return;		/* hit on head */
 
@@ -401,7 +411,10 @@ void see_wsegs(struct monst *worm)
 {
     struct wseg *curr = level->wtails[worm->wormno];
 
-/*  if (!mtmp->wormno) return;  bullet proofing */
+    if (!worm->wormno) {
+	warning("see_wsegs: worm->wormno was 0");
+	return;
+    }
 
     while (curr != level->wheads[worm->wormno]) {
 	newsym(curr->wx,curr->wy);
@@ -419,7 +432,10 @@ void detect_wsegs(struct monst *worm, boolean use_detection_glyph)
     int dflag;
     struct wseg *curr = level->wtails[worm->wormno];
 
-/*  if (!mtmp->wormno) return;  bullet proofing */
+    if (!worm->wormno) {
+	warning("detect_wsegs: worm->wormno was 0");
+	return;
+    }
 
     while (curr != level->wheads[worm->wormno]) {
 	dflag = use_detection_glyph ? MON_DETECTED : 0;
@@ -516,7 +532,10 @@ void place_wsegs(struct monst *worm)
 {
     struct wseg *curr = worm->dlevel->wtails[worm->wormno];
 
-/*  if (!mtmp->wormno) return;  bullet proofing */
+    if (!worm->wormno) {
+	warning("place_wsegs: worm->wormno was 0");
+	return;
+    }
 
     while (curr != worm->dlevel->wheads[worm->wormno]) {
 	place_worm_seg(worm, curr->wx, curr->wy);
@@ -536,7 +555,10 @@ void remove_worm(struct monst *worm)
 {
     struct wseg *curr = level->wtails[worm->wormno];
 
-/*  if (!mtmp->wormno) return;  bullet proofing */
+    if (!worm->wormno) {
+	warning("remove_worm: worm->wormno was 0");
+	return;
+    }
 
     while (curr) {
 	remove_monster(level, curr->wx, curr->wy);
@@ -562,7 +584,10 @@ void place_worm_tail_randomly(struct monst *worm, xchar x, xchar y)
     struct wseg *new_tail;
     xchar ox = x, oy = y;
 
-/*  if (!wnum) return;  bullet proofing */
+    if (!wnum) {
+	warning("place_worm_tail_randomly: worm->wormno was 0");
+	return;
+    }
 
     if (wnum && (!lev->wtails[wnum] || !lev->wheads[wnum]) ) {
 	warning("place_worm_tail_randomly: wormno is set without a tail!");
@@ -645,7 +670,10 @@ int count_wsegs(struct monst *mtmp)
     int i=0;
     struct wseg *curr = (mtmp->dlevel->wtails[mtmp->wormno])->nseg;
 
-/*  if (!mtmp->wormno) return 0;  bullet proofing */
+    if (!mtmp->wormno) {
+	warning("count_wsegs: mtmp->wormno was 0");
+	return 0;
+    }
 
     while (curr) {
 	i++;
