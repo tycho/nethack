@@ -825,7 +825,13 @@ int dodown(void)
 	if (trap) {
 		if (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) {
 			if (u.utrap && (u.utraptype == TT_PIT)) {
-				pline("You are already in the pit."); /* YAFM needed */
+				if (flags.autodig && !flags.nopick &&
+					uwep && is_pick(uwep)) {
+				    return use_pick_axe2(uwep, 0, 0, 1);
+				} else {
+				    /* YAFM needed */
+				    pline("You are already in the pit.");
+				}
 			} else {
 				u.utrap = 1;
 				u.utraptype = TT_PIT;
