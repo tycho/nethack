@@ -1655,6 +1655,10 @@ void do_genocide(int how, boolean only_on_level)
 	    pline("Wiped out %s%s%s.", which,
 		  (*which != 'a') ? buf : makeplural(buf),
 		  only_on_level ? " from this level" : "");
+	    if (!only_on_level) {
+		historic_event(FALSE, "genocided %s%s", which,
+			       (*which != 'a') ? buf : makeplural(buf));
+	    }
 
 	    if (killplayer) {
 		/* might need to wipe out dual role */
