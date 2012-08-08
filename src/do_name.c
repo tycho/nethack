@@ -1098,7 +1098,6 @@ static const char * const bogusmons[] = {
 	"dust speck",
 	"kitten prospecting robot",
 	"angry mariachi",
-	"manbearpig",
 	"star-nosed mole",
 	"acid blog",
 	"guillemet",
