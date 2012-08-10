@@ -51,8 +51,6 @@ void set_uasmon(void)
 {
 	const struct permonst *pm = &mons[u.umonnum];
 	if (!Upolyd)
-	    pm = flags.female ? &pm_you_female : &pm_you_male;
-	if (u.umonnum == u.umonster)
 	    pm = &upermonst;
 	set_mon_data(&youmonst, pm, 0);
 }

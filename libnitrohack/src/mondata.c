@@ -341,9 +341,9 @@ int monsndx(const struct permonst *ptr)
 		return urole.guardnum;
 	    else if (ptr == &pm_nemesis)
 		return urole.neminum;
-	    else if (ptr == &pm_you_male || ptr == &pm_you_female)
+	    else if (ptr == &upermonst)
 		return u.umonnum;
-	    
+
 	    panic("monsndx - could not index monster (ptr:%p, num:%d)", ptr, i);
 	    return NON_PM;		/* will not get here */
 	}

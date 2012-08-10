@@ -196,7 +196,6 @@ const char *const fqn_prefix_names[PREFIX_COUNT] = {
 /* quest monsters need some fixups depending on your race and role, but
  * mons is const. We'll use these copies instead. */
 struct permonst pm_leader, pm_guardian, pm_nemesis;
-struct permonst pm_you_male, pm_you_female;
 
 int exit_jmp_buf_valid;
 nh_jmp_buf exit_jmp_buf;

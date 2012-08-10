@@ -1886,9 +1886,8 @@ struct monst *restore_mon(struct memfile *mf)
 	case -1000: mon->data = &pm_leader; break;
 	case -2000: mon->data = &pm_guardian; break;
 	case -3000: mon->data = &pm_nemesis; break;
-	case -4000: mon->data = &pm_you_male; break;
-	case -5000: mon->data = &pm_you_female; break;
-	case -6000: mon->data = NULL; break;
+	case -4000: mon->data = &upermonst; break;
+	case -5000: mon->data = NULL; break;
 	default:
 	    if (LOW_PM <= idx && idx < NUMMONS)
 		mon->data = &mons[idx];
@@ -2073,9 +2072,8 @@ void save_mon(struct memfile *mf, const struct monst *mon)
 	if      (mon->data == &pm_leader)   idx = -1000;
 	else if (mon->data == &pm_guardian) idx = -2000;
 	else if (mon->data == &pm_nemesis)  idx = -3000;
-	else if (mon->data == &pm_you_male) idx = -4000;
-	else if (mon->data == &pm_you_female) idx = -5000;
-	else if (mon->data == NULL)         idx = -6000;
+	else if (mon->data == &upermonst)   idx = -4000;
+	else if (mon->data == NULL)         idx = -5000;
 	else impossible("Bad monster type detected.");
     }
     mwrite32(mf, idx);

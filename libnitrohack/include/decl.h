@@ -328,7 +328,6 @@ struct menulist {
 };
 
 extern struct permonst pm_leader, pm_guardian, pm_nemesis;
-extern struct permonst pm_you_male, pm_you_female;
 
 /* type of setjmp calls: sigsetjmp for UNIX, plain setjmp otherwise. */
 #ifdef UNIX
