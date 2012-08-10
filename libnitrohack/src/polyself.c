@@ -38,9 +38,12 @@ void init_uasmon(void)
 	upermonst.mflags3 &= ~(mons[PM_HUMAN].mflags3);
 	upermonst.mflags3 |= (mons[urace.malenum].mflags3);
 
-	/* Fix up the attacks */
-	for (i = 0; i < NATTK; i++) {
-	    upermonst.mattk[i] = mons[urace.malenum].mattk[i];
+	/* Fix up the attacks for vampires */
+	/* This replaces the role's attacks with the vampire's race attacks. */
+	if (Race_if(PM_VAMPIRE)) {
+	    for (i = 0; i < NATTK; i++) {
+		upermonst.mattk[i] = mons[urace.malenum].mattk[i];
+	    }
 	}
 
 	set_uasmon();
