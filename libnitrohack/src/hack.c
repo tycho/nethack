@@ -2378,6 +2378,11 @@ static void maybe_wail(void)
 
 void losehp(int n, const char *knam, boolean k_format)
 {
+	losehp_how(n, knam, k_format, DIED);
+}
+
+void losehp_how(int n, const char *knam, boolean k_format, int how)
+{
 	if (Upolyd) {
 		u.mh -= n;
 		if (u.mhmax < u.mh) u.mhmax = u.mh;
@@ -2397,7 +2402,7 @@ void losehp(int n, const char *knam, boolean k_format)
 		killer_format = k_format;
 		killer = knam;		/* the thing that killed you */
 		pline("You die...");
-		done(DIED);
+		done(how);
 	} else if (n > 0 && u.uhp*10 < u.uhpmax) {
 		maybe_wail();
 	}

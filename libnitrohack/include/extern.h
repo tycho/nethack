@@ -563,6 +563,7 @@ extern int monster_nearby(void);
 extern void nomul(int nval, const char *msg);
 extern void unmul(const char *);
 extern void losehp(int,const char *,boolean);
+extern void losehp_how(int,const char *,boolean,int);
 extern int weight_cap(void);
 extern int inv_weight(void);
 extern int near_capacity(void);
