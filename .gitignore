@@ -1,4 +1,5 @@
 build/*
+doc/Guidebook.txt
 *.swp
 *.kate-swp
 tags
