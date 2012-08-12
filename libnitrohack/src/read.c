@@ -1662,14 +1662,16 @@ void do_genocide(int how, boolean only_on_level)
 
 	    if (killplayer) {
 		/* might need to wipe out dual role */
-		if (urole.femalenum != NON_PM && mndx == urole.malenum)
-		    mvitals[urole.femalenum].mvflags |= (G_GENOD | G_NOCORPSE);
-		if (urole.femalenum != NON_PM && mndx == urole.femalenum)
-		    mvitals[urole.malenum].mvflags |= (G_GENOD | G_NOCORPSE);
-		if (urace.femalenum != NON_PM && mndx == urace.malenum)
-		    mvitals[urace.femalenum].mvflags |= (G_GENOD | G_NOCORPSE);
-		if (urace.femalenum != NON_PM && mndx == urace.femalenum)
-		    mvitals[urace.malenum].mvflags |= (G_GENOD | G_NOCORPSE);
+		if (!only_on_level) {
+		    if (urole.femalenum != NON_PM && mndx == urole.malenum)
+			mvitals[urole.femalenum].mvflags |= (G_GENOD | G_NOCORPSE);
+		    if (urole.femalenum != NON_PM && mndx == urole.femalenum)
+			mvitals[urole.malenum].mvflags |= (G_GENOD | G_NOCORPSE);
+		    if (urace.femalenum != NON_PM && mndx == urace.malenum)
+			mvitals[urace.femalenum].mvflags |= (G_GENOD | G_NOCORPSE);
+		    if (urace.femalenum != NON_PM && mndx == urace.femalenum)
+			mvitals[urace.malenum].mvflags |= (G_GENOD | G_NOCORPSE);
+		}
 
 		u.uhp = -1;
 		if (how & PLAYER) {

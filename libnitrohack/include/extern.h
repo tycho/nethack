@@ -1235,6 +1235,7 @@ extern const char *mbodypart(struct monst *,int);
 extern const char *body_part(int);
 extern int poly_gender(void);
 extern void ugolemeffects(int,int);
+extern boolean is_playermon_genocided(void);
 
 /* ### potion.c ### */
 

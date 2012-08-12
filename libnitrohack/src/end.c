@@ -449,7 +449,7 @@ static boolean check_survival(int how, char *kilbuf)
 			adjattrib(A_CON, -1, TRUE);
 			if (u.uhpmax <= 0) u.uhpmax = 10;	/* arbitrary */
 			savelife(how);
-			if (how == GENOCIDED)
+			if (how == GENOCIDED && is_playermon_genocided())
 				pline("Unfortunately you are still genocided...");
 			else {
 				killer = 0;
