@@ -54,6 +54,7 @@ struct u_conduct {		/* number of times... */
 	unsigned int polyselfs;	/* transformed yourself */
 	unsigned int wishes;	/* used a wish */
 	unsigned int wisharti;	/* wished for an artifact */
+	unsigned int wishmagic;	/* wished for a magic object */
 	unsigned int armoruses;	/* put on a piece of armor */
 	unsigned int unblinded;	/* starting non-blindfolded and removing a blindfold */
 	unsigned int robbed;	/* killed an artifact-guardian (like an ordinary robber) */

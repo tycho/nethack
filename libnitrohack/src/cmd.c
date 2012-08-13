@@ -1086,6 +1086,12 @@ void show_conduct(int final)
 		    u.uconduct.wishes, (u.uconduct.wishes > 1L) ? "es" : "");
 	    you_have_X(&menu, buf);
 
+	    if (u.uconduct.wishmagic) {
+		sprintf(buf, "used %u wish%s for magical items",
+			u.uconduct.wishmagic, u.uconduct.wishmagic > 1 ? "es" : "");
+		you_have_X(&menu, buf);
+	    }
+
 	    if (!u.uconduct.wisharti)
 		enl_msg(&menu, You_, "have not wished", "did not wish",
 			" for any artifacts");

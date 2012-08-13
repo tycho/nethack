@@ -4033,6 +4033,7 @@ void makewish(boolean magical)
 	char buf[BUFSZ];
 	struct obj *otmp, nothing;
 	int tries = 0;
+	boolean magical_object;
 
 	nothing = zeroobj;  /* lint suppression; only its address matters */
 	if (flags.verbose) pline("You may wish for an object.");
@@ -4071,8 +4072,8 @@ retry:
 	}
 
 	/* Check if wishing for magical objects is allowed. */
-	if (!magical && otmp &&
-	    (otmp->oartifact || objects[otmp->otyp].oc_magic)) {
+	magical_object = otmp && (otmp->oartifact || objects[otmp->otyp].oc_magic);
+	if (!magical && magical_object) {
 	    verbalize("I am sorry, but I am unable to provide you with magical items.");
 	    if (otmp->oartifact) artifact_exists(otmp, ONAME(otmp), FALSE);
 	    obfree(otmp, NULL);
@@ -4080,6 +4081,9 @@ retry:
 	    goto retry;
 	} else
 	    historic_event(FALSE, "wished for \"%s\".", buf);
+
+	if (magical_object)
+	    u.uconduct.wishmagic++;
 
 	/* KMH, conduct */
 	u.uconduct.wishes++;
