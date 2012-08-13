@@ -1864,7 +1864,7 @@ void drop_boulder_on_player(boolean confused, boolean helmet_protects,
 			    boolean by_player, boolean drop_directly_to_floor)
 {
 	int dmg;
-	struct obj *otmp2;
+	struct obj *otmp;
 
 	/* hit monster if swallowed */
 	if (u.uswallow && !drop_directly_to_floor) {
@@ -1872,16 +1872,16 @@ void drop_boulder_on_player(boolean confused, boolean helmet_protects,
 	    return;
 	}
 
-	otmp2 = mksobj(level, confused ? ROCK : BOULDER, FALSE, FALSE);
-	if (!otmp2) return;
-	otmp2->quan = confused ? rn1(5,2) : 1;
-	otmp2->owt = weight(otmp2);
+	otmp = mksobj(level, confused ? ROCK : BOULDER, FALSE, FALSE);
+	if (!otmp) return;
+	otmp->quan = confused ? rn1(5,2) : 1;
+	otmp->owt = weight(otmp);
 	if (!amorphous(youmonst.data) &&
 		!Passes_walls &&
 		!noncorporeal(youmonst.data) &&
 		!unsolid(youmonst.data)) {
-	    pline("You are hit by %s!", doname(otmp2));
-	    dmg = dmgval(otmp2, &youmonst) * otmp2->quan;
+	    pline("You are hit by %s!", doname(otmp));
+	    dmg = dmgval(otmp, &youmonst) * otmp->quan;
 	    if (uarmh && helmet_protects) {
 		if (is_metallic(uarmh)) {
 		    pline("Fortunately, you are wearing a hard helmet.");
@@ -1894,9 +1894,9 @@ void drop_boulder_on_player(boolean confused, boolean helmet_protects,
 	    dmg = 0;
 
 	/* Must be before the losehp(), for bones files */
-	if (!flooreffects(otmp2, u.ux, u.uy, "fall")) {
-	    place_object(otmp2, level, u.ux, u.uy);
-	    stackobj(otmp2);
+	if (!flooreffects(otmp, u.ux, u.uy, "fall")) {
+	    place_object(otmp, level, u.ux, u.uy);
+	    stackobj(otmp);
 	    newsym(u.ux, u.uy);
 	}
 
