@@ -291,7 +291,10 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 	struct objclass *ocl = &objects[typ];
 	int nn = ocl->oc_name_known ||
 		 /* only reveal Sokoban prizes when in sight */
-		 (Is_sokoprize(obj) && cansee(obj->ox, obj->oy));
+		 (Is_sokoprize(obj) &&
+		  (cansee(obj->ox, obj->oy) ||
+		   /* even reveal when Sokoban prize only felt */
+		   (u.ux == obj->ox && u.uy == obj->oy)));
 	const char *actualn = OBJ_NAME(*ocl);
 	const char *dn = OBJ_DESCR(*ocl);
 	const char *un = ocl->oc_uname;
@@ -313,6 +316,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 	 */
 	if (!nn && ocl->oc_uses_known && ocl->oc_unique) known = 0;
 	if (!Blind) dknown = TRUE;
+	/* needed, otherwise BoH only shows up as "bag" when blind */
+	if (Is_sokoprize(obj)) dknown = TRUE;
 	if (Role_if (PM_PRIEST)) bknown = TRUE;
 	if (obj_is_pname(obj))
 	    goto nameit;
