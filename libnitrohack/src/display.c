@@ -606,7 +606,8 @@ void feel_location(xchar x, xchar y)
 	}
 
 	/* Floor spaces are dark if unlit.  Corridors are dark if unlit. */
-	if (loc->typ == ROOM && loc->mem_bg == S_room && !loc->waslit) {
+	if (loc->typ == ROOM && loc->mem_bg == S_room &&
+	    (!loc->waslit || iflags.dark_room)) {
 	    loc->mem_bg = S_darkroom;
 	    dbuf_set_loc(x, y);
 	} else if (loc->typ == CORR &&
