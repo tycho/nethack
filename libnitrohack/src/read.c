@@ -1390,7 +1390,7 @@ int seffects(struct obj *sobj, boolean *known)
 		}
 		/* Attack the player */
 		if (!sobj->blessed) {
-		    drop_boulder_on_player(confused, !sobj->cursed);
+		    drop_boulder_on_player(confused, !sobj->cursed, TRUE, FALSE);
 		} else {
 		    if (boulder_created == 0)
 			pline("But nothing else happens.");
@@ -1860,10 +1860,17 @@ boolean create_particular(void)
 	return madeany;
 }
 
-void drop_boulder_on_player(boolean confused, boolean helmet_protects)
+void drop_boulder_on_player(boolean confused, boolean helmet_protects,
+			    boolean by_player, boolean drop_directly_to_floor)
 {
 	int dmg;
 	struct obj *otmp2;
+
+	/* hit monster if swallowed */
+	if (u.uswallow && !drop_directly_to_floor) {
+	    drop_boulder_on_monster(u.ux, u.uy, confused, by_player);
+	    return;
+	}
 
 	otmp2 = mksobj(level, confused ? ROCK : BOULDER, FALSE, FALSE);
 	if (!otmp2) return;
@@ -1920,6 +1927,13 @@ int drop_boulder_on_monster(int x, int y, boolean confused, boolean by_player)
 		pline("%s is hit by %s!", Monnam(mtmp), doname(otmp));
 		if (mtmp->minvis && !canspotmon(level, mtmp))
 		    map_invisible(mtmp->mx, mtmp->my);
+	    } else if (u.uswallow && mtmp == u.ustuck) {
+		if (flags.soundok) {
+		    You_hear("something hit %s %s over your %s!",
+			     s_suffix(mon_nam(mtmp)),
+			     mbodypart(mtmp, STOMACH),
+			     body_part(HEAD));
+		}
 	    }
 	    mdmg = dmgval(otmp, mtmp) * otmp->quan;
 	    if (helmet) {
@@ -1945,6 +1959,11 @@ int drop_boulder_on_monster(int x, int y, boolean confused, boolean by_player)
 		    mondied(mtmp);
 		}
 	    }
+	} else if (u.uswallow && mtmp == u.ustuck) {
+	    obfree(otmp, NULL);
+	    /* fall through to player */
+	    drop_boulder_on_player(confused, TRUE, FALSE, TRUE);
+	    return 1;
 	}
 	/* Drop the rock/boulder to the floor */
 	if (!flooreffects(otmp, x, y, "fall")) {
