@@ -1,3 +1,82 @@
+UnNitroHack
+===========
+
+UnNitroHack is an experimental merge of two modern NetHack variants: NitroHack
+and UnNetHack.
+
+It combines NitroHack's...
+
+    - new terminal interface
+      * persistent inventory and message windows
+      * HP and power bars
+      * Unicode and layered tiles
+    - dungeon overview
+    - full key remapping
+    - fine-grained autopickup rules
+    - saved in-game options
+    - multiple saved in-progress games
+    - game replays and dump logs
+    - interface-agnostic network play
+
+... with UnNetHack's...
+
+    - new levels, items and monsters
+    - new item, monster and dungeon feature interactions
+    - new powers and effects for existing items
+    - new playable vampire race and convict class
+    - new dungeon branches, rooms and shop types
+    - tutorial mode
+    - dozens of interface improvements, e.g.
+      * dim spaces outside of line-of-sight
+      * auto-open doors
+      * autopickup can ignore dropped items and grab thrown items
+      * paranoid prompts for actions that are usually bad
+      * Ctrl-E to engrave Elbereth
+    - many community patches
+    - rebalanced gameplay
+      * Gehennom completely reworked with open caverns and lava rivers
+      * randomized dragon names and appearances
+      * less free wishes, farming and exploits
+
+UnNitroHack is compiled the same way as NitroHack. To compile UnNitroHack with
+debugging symbols (for stack traces under gdb, useful for bug reports) and
+without its server (which is only useful if you want to host the game for
+others to play):
+
+    1) Install dependencies:
+      - the usual NetHack dependencies
+        * C compiler
+        * flex
+        * bison
+      - NitroHack interface and client dependencies
+        * ncursesw (NCurses with wide character support)
+        * jansson (JSON support for client to play on remote servers)
+      - NitroHack build dependencies
+        * cmake
+        * cmake-curses-gui (a.k.a. ccmake, optional but recommended)
+    2) 'mkdir build && cd build'
+    3) 'cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_SERVER=FALSE ..'
+    4) Configure your build with ccmake/cmake-curses-gui
+      - 'ccmake .'
+      - Edit paths by choosing lines with enter.
+      - Press 'c' to rerun configuration with your new paths.
+      - Press 'g' to generate and save your build configuration.
+      - Or press 'q' to cancel or quit if you're happy with the defaults.
+    5) 'make && make install'
+    6) Run the 'nitrohack' bootstrap script to play.
+      - Settings are stored under ~/.config/NitroHack if you want to change
+        Unicode glyphs or view dump logs.
+
+See also:
+
+    - Full UnNitroHack change list: https://github.com/tung/NitroHack/wiki
+    - NitroHack: http://www.nitrohack.org/
+    - UnNetHack: http://sourceforge.net/apps/trac/unnethack/
+    - NetHack4: https://gitorious.org/nitrohack/ais523/commits/nicehack
+
+Below is the original README for NitroHack.
+
+
 NitroHack
 =========
 
