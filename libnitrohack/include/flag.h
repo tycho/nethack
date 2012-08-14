@@ -154,6 +154,7 @@ struct instance_flags {
 
 	boolean paranoid_hit;	/* Ask for 'yes' when hitting peacefuls */
 	boolean paranoid_quit;	/* Ask for 'yes' when quitting */
+	boolean paranoid_trap;	/* Ask before walking into known traps */
 	boolean paranoid_chat;	/* Always ask for direction when chatting */
 	boolean paranoid_loot;	/* Always ask to loot even with only one container */
 

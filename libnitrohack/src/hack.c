@@ -1220,6 +1220,20 @@ int domove(schar dx, schar dy, schar dz)
 			nomul(0, NULL);
 			return 0;
 		}
+
+		/* warn player before walking into known traps */
+		if (iflags.paranoid_trap &&
+		    ((trap = t_at(level, x, y)) && trap->tseen)) {
+			char qbuf[BUFSZ];
+			sprintf(qbuf, "Really %s into that %s?",
+				locomotion(youmonst.data, "step"),
+				trapexplain[what_trap(trap->ttyp) - 1]);
+			if (flags.run || yn(qbuf) != 'y') {
+				nomul(0, NULL);
+				return 0;
+			}
+		}
+
 		if (((trap = t_at(level, x, y)) && trap->tseen) ||
 		    (Blind && !Levitation && !Flying &&
 		     !is_clinger(youmonst.data) &&
