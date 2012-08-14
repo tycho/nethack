@@ -848,7 +848,7 @@ extern void sort_rooms(struct level *lev);
 extern void add_room(struct level *lev,int,int,int,int,boolean,schar,boolean);
 extern void add_subroom(struct level *lev,struct mkroom *,int,int,int,int,
 			   boolean,schar,boolean);
-extern void makecorridors(struct level *lev);
+extern void makecorridors(struct level *lev, int);
 extern void add_door(struct level *lev, int,int,struct mkroom *);
 extern struct level *mklev(d_level *levnum);
 extern void topologize(struct level *lev, struct mkroom *croom);

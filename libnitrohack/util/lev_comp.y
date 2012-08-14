@@ -736,6 +736,20 @@ cobj_if_ending	: '{' cobj_statements '}'
 random_corridors: RAND_CORRIDOR_ID
 		  {
 			add_opvars(splev, "iiiiiio",
+				   -1,  0, -1,
+				   -1, -1, -1,
+				   SPO_CORRIDOR);
+		  }
+		| RAND_CORRIDOR_ID ':' INTEGER
+		  {
+			add_opvars(splev, "iiiiiio",
+				   -1, $3, -1,
+				   -1, -1, -1,
+				   SPO_CORRIDOR);
+		  }
+		| RAND_CORRIDOR_ID ':' RANDOM_TYPE
+		  {
+			add_opvars(splev, "iiiiiio",
 				   -1, -1, -1,
 				   -1, -1, -1,
 				   SPO_CORRIDOR);

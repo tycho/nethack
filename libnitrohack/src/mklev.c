@@ -278,33 +278,83 @@ static void join(struct level *lev, int a, int b, boolean nxcor)
 		smeq[a] = smeq[b];
 }
 
-void makecorridors(struct level *lev)
+void makecorridors(struct level *lev, int style)
 {
 	int a, b, i;
 	boolean any = TRUE;
 
-	for (a = 0; a < lev->nroom-1; a++) {
-		join(lev, a, a+1, FALSE);
-		if (!rn2(50)) break; /* allow some randomness */
-	}
-	for (a = 0; a < lev->nroom-2; a++)
-	    if (smeq[a] != smeq[a+2])
-		join(lev, a, a+2, FALSE);
-	for (a = 0; any && a < lev->nroom; a++) {
-	    any = FALSE;
-	    for (b = 0; b < lev->nroom; b++)
-		if (smeq[a] != smeq[b]) {
-		    join(lev, a, b, FALSE);
-		    any = TRUE;
-		}
-	}
-	if (lev->nroom > 2)
-	    for (i = rn2(lev->nroom) + 4; i; i--) {
-		a = rn2(lev->nroom);
-		b = rn2(lev->nroom-2);
-		if (b >= a) b += 2;
-		join(lev, a, b, TRUE);
+	if (style == -1)
+	    style = rn2(4);
+
+	switch (style) {
+	default: /* vanilla style */
+	    for (a = 0; a < lev->nroom - 1; a++) {
+		join(lev, a, a + 1, FALSE);
+		if (!rn2(50))
+		    break; /* allow some randomness */
 	    }
+	    for (a = 0; a < lev->nroom - 2; a++) {
+		if (smeq[a] != smeq[a + 2])
+		    join(lev, a, a + 2, FALSE);
+	    }
+	    for (a = 0; any && a < lev->nroom; a++) {
+		any = FALSE;
+		for (b = 0; b < lev->nroom; b++) {
+		    if (smeq[a] != smeq[b]) {
+			join(lev, a, b, FALSE);
+			any = TRUE;
+		    }
+		}
+	    }
+	    if (lev->nroom > 2) {
+		for (i = rn2(lev->nroom) + 4; i; i--) {
+		    a = rn2(lev->nroom);
+		    b = rn2(lev->nroom - 2);
+		    if (b >= a)
+			b += 2;
+		    join(lev, a, b, TRUE);
+		}
+	    }
+	    break;
+
+	case 1: /* at least one corridor leaves from each room
+		 * and goes to a random room */
+	    if (lev->nroom > 1) {
+		int cnt = 0;
+		for (a = 0; a < lev->nroom; a++) {
+		    do {
+			b = rn2(lev->nroom - 1);
+		    } while ((a == b || lev->rooms[b].doorct) && cnt++ < 100);
+		    if (cnt >= 100) {
+			for (b = 0; b < lev->nroom - 1; b++) {
+			    if (!lev->rooms[b].doorct && a != b)
+				break;
+			}
+		    }
+		    if (a == b)
+			b++;
+		    join(lev, a, b, FALSE);
+		}
+	    }
+	    break;
+
+	case 2: /* circular path: room1 -> room2 -> room3 -> ... -> room1 */
+	    if (lev->nroom > 1) {
+		for (a = 0; a < lev->nroom; a++) {
+		    b = (a + 1) % lev->nroom;
+		    join(lev, a, b, FALSE);
+		}
+	    }
+	    break;
+
+	case 3: /* all roads lead to rome... or to the first room */
+	    if (lev->nroom > 1) {
+		b = 0;
+		for (a = 1; a < lev->nroom; a++)
+		    join(lev, a, b, FALSE);
+	    }
+	    break;
+	}
 }
 
 void add_door(struct level *lev, int x, int y, struct mkroom *aroom)
@@ -615,7 +665,7 @@ static void makelevel(struct level *lev)
 					     to allow a random special room */
 	if (Is_rogue_level(&lev->z))
 	    goto skip0;
-	makecorridors(lev);
+	makecorridors(lev, 0);
 	make_niches(lev);
 
 	/* make a secret treasure vault, not connected to the rest */

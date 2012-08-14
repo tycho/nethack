@@ -2162,7 +2162,7 @@ static void create_corridor(struct level *lev, corridor *c)
 
 	if (c->src.room == -1) {
 	    fix_stair_rooms(lev);
-	    makecorridors(lev);
+	    makecorridors(lev, c->src.door);
 	    return;
 	}
 
