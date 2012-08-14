@@ -1129,6 +1129,7 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->uconduct.polyselfs = mread32(mf);
 	y->uconduct.wishes = mread32(mf);
 	y->uconduct.wisharti = mread32(mf);
+	y->uconduct.wishmagic = mread32(mf);
 	y->uconduct.armoruses = mread32(mf);
 	y->uconduct.unblinded = mread32(mf);
 	y->uconduct.robbed = mread32(mf);
@@ -1286,6 +1287,7 @@ void save_you(struct memfile *mf, struct you *y)
 	mwrite32(mf, y->uconduct.polyselfs);
 	mwrite32(mf, y->uconduct.wishes);
 	mwrite32(mf, y->uconduct.wisharti);
+	mwrite32(mf, y->uconduct.wishmagic);
 	mwrite32(mf, y->uconduct.armoruses);
 	mwrite32(mf, y->uconduct.unblinded);
 	mwrite32(mf, y->uconduct.robbed);
