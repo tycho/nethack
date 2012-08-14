@@ -665,7 +665,7 @@ static void makelevel(struct level *lev)
 					     to allow a random special room */
 	if (Is_rogue_level(&lev->z))
 	    goto skip0;
-	makecorridors(lev, 0);
+	makecorridors(lev, rn2(10) ? 0 : -1);
 	make_niches(lev);
 
 	/* make a secret treasure vault, not connected to the rest */
