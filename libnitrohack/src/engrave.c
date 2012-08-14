@@ -396,6 +396,32 @@ void del_engr_at(struct level *lev, int x, int y)
 	if (ep) del_engr(lev, ep);
 }
 
+/* Return the number of distinct times Elbereth is engraved at
+ * the specified location. Case insensitive.  Counts an engraving
+ * as being present even if it's still being written: if you're
+ * killed while trying to write Elbereth, it still violates the
+ * conduct (mainly because it's easier to implement that way).
+ */
+static unsigned int nelbereths_at(struct level *lev, xchar x, xchar y)
+{
+	const char *s = "Elbereth";
+	size_t s_len = strlen(s);
+	struct engr *ep = engr_at(lev, x, y);
+	unsigned int count = 0;
+	const char *p;
+
+	if (!ep || ep->engr_type == HEADSTONE)
+	    return 0;
+
+	p = ep->engr_txt;
+	while (strstri(p, s)) {
+	    count++;
+	    p += s_len;
+	}
+
+	return count;
+}
+
 /*
  *	freehand - returns true if player has a free hand
  */
@@ -467,6 +493,8 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 	struct engr *oep = engr_at(level, u.ux,u.uy);
 				/* The current engraving */
 	char *writer;
+	unsigned int ecount_before, ecount_after;
+				/* Elbereth tracking */
 
 	multi = 0;		/* moves consumed */
 	nomovemsg = NULL;	/* occupation end message */
@@ -1135,7 +1163,12 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 
 	strncat(buf, ebuf, (BUFSZ - (int)strlen(buf) - 1));
 
+	/* Make engraving while tracking Elbereths */
+	ecount_before = nelbereths_at(level, u.ux, u.uy);
 	make_engr_at(level, u.ux, u.uy, buf, (moves - multi), type);
+	ecount_after = nelbereths_at(level, u.ux, u.uy);
+	if (ecount_after > ecount_before)
+	    u.uconduct.elbereths++;
 
 	if (post_engr_text[0]) pline(post_engr_text);
 

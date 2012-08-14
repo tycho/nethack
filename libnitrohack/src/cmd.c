@@ -1097,6 +1097,18 @@ void show_conduct(int final)
 			" for any artifacts");
 	}
 
+	if (flags.elbereth_enabled) {
+	    if (!u.uconduct.elbereths)
+		you_have_never(&menu, "written Elbereth's name");
+	    else {
+		sprintf(buf, " Elbereth's name %u time%s",
+			u.uconduct.elbereths, plur(u.uconduct.elbereths));
+		enl_msg(&menu, You_, "have written", "wrote", buf);
+	    }
+	} else {
+	    you_have_X(&menu, "abstained from Elbereth's help");
+	}
+
 	/* Pop up the window and wait for a key */
 	display_menu(menu.items, menu.icount, "Voluntary challenges:", PICK_NONE, NULL);
 	free(menu.items);
