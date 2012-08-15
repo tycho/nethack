@@ -383,8 +383,22 @@ void makecorridors(struct level *lev, int style)
 
 	case 3: /* all roads lead to rome... or to the first room */
 	    if (lev->nroom > 1) {
+		/* find the most central room Manhattan-style */
+		int mindist = 9999; /* arbitrary big number */
 		b = 0;
-		for (a = 1; a < lev->nroom; a++)
+		for (i = 0; i < lev->nroom; i++) {
+		    struct mkroom *r = &lev->rooms[i];
+		    int cx = abs(r->lx + (r->hx - r->lx) / 2 - COLNO / 2);
+		    int cy = abs(r->ly + (r->hy - r->ly) / 2 - ROWNO / 2);
+		    if (cx + cy < mindist) {
+			b = i;
+			mindist = cx + cy;
+		    }
+		}
+
+		for (a = 0; a < b; a++)
+		    join(lev, a, b, FALSE);
+		for (a = b + 1; a < lev->nroom; a++)
 		    join(lev, a, b, FALSE);
 	    }
 	    break;
