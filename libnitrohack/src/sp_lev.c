@@ -2038,14 +2038,21 @@ boolean dig_corridor(struct level *lev, coord *org, coord *dest, boolean nxcor,
 	cct = 0;
 	while (xx != tx || yy != ty) {
 	    /* loop: dig corridor at [xx,yy] and find new [xx,yy] */
-	    if (cct++ > 500 || (nxcor && !rn2(35)))
+	    if (cct++ > 500 || (nxcor && !rn2(35))) {
+		if (!nxcor)
+		    warning("dig_corridor: giving up after %d tries", cct - 1);
 		return FALSE;
+	    }
 
 	    xx += dx;
 	    yy += dy;
 
-	    if (xx >= COLNO - 1 || xx <= 0 || yy <= 0 || yy >= ROWNO - 1)
-		return FALSE;		/* impossible */
+	    if (xx >= COLNO - 1 || xx <= 0 || yy <= 0 || yy >= ROWNO - 1) {
+		/* should be impossible */
+		if (!nxcor)
+		    warning("dig_corridor: hit level edge [%d,%d]", xx, yy);
+		return FALSE;
+	    }
 
 	    crm = &lev->locations[xx][yy];
 	    if (crm->typ == btyp) {
@@ -2059,6 +2066,10 @@ boolean dig_corridor(struct level *lev, coord *org, coord *dest, boolean nxcor,
 	    } else
 	    if (crm->typ != ftyp && crm->typ != SCORR) {
 		/* strange ... */
+		if (!nxcor) {
+		    warning("dig_corridor: trying to dig disallowed tile [%d,%d]",
+			    xx, yy);
+		}
 		return FALSE;
 	    }
 
@@ -2067,7 +2078,9 @@ boolean dig_corridor(struct level *lev, coord *org, coord *dest, boolean nxcor,
 	    diy = abs(yy-ty);
 
 	    /* do we have to change direction ? */
-	    if (dy && dix > diy) {
+	    if (dy && (dix > diy ||
+		       (dy < 0 && yy < ty) ||
+		       (dy > 0 && yy > ty))) {
 		int ddx = (xx > tx) ? -1 : 1;
 
 		crm = &lev->locations[xx + ddx][yy];
@@ -2076,7 +2089,9 @@ boolean dig_corridor(struct level *lev, coord *org, coord *dest, boolean nxcor,
 		    dy = 0;
 		    continue;
 		}
-	    } else if (dx && diy > dix) {
+	    } else if (dx && (diy > dix ||
+			      (dx < 0 && xx < tx) ||
+			      (dx > 0 && xx > tx))) {
 		int ddy = (yy > ty) ? -1 : 1;
 
 		crm = &lev->locations[xx][yy + ddy];
@@ -2094,11 +2109,79 @@ boolean dig_corridor(struct level *lev, coord *org, coord *dest, boolean nxcor,
 
 	    /* no, what must we do now?? */
 	    if (dx) {
+		/* should we go up or down? */
+		boolean upok = FALSE;
+		boolean downok = FALSE;
+		if (xx == tx) {
+		    if (yy > ty) upok = TRUE;
+		    else downok = TRUE;
+		} else {
+		    /* avoid corners made by rooms near level edges */
+		    int i;
+		    for (i = 1; i < ROWNO - 1; i++) {
+			if (upok && downok)
+			    break;
+			if (yy - i > 0) {
+			    crm = &lev->locations[xx + dx][yy - i];
+			    if (!upok &&
+				yy - i - 1 > 0 &&
+				(crm->typ == btyp ||
+				 crm->typ == ftyp ||
+				 crm->typ == SCORR))
+				upok = TRUE;
+			}
+			if (yy + i < ROWNO - 1) {
+			    crm = &lev->locations[xx + dx][yy + i];
+			    if (!downok &&
+				yy + i + 1 < ROWNO - 1 &&
+				(crm->typ == btyp ||
+				 crm->typ == ftyp ||
+				 crm->typ == SCORR))
+				downok = TRUE;
+			}
+		    }
+		}
+		if (!nxcor && !upok && !downok)
+		    warning("dig_corridor: horizontal corridor blocked");
 		dx = 0;
-		dy = (ty < yy) ? -1 : 1;
+		dy = ((yy > ty && upok) || !downok) ? -1 : 1;
 	    } else {
+		/* should we go left or right? */
+		boolean leftok = FALSE;
+		boolean rightok = FALSE;
+		if (yy == ty) {
+		    if (xx > tx) leftok = TRUE;
+		    else rightok = TRUE;
+		} else {
+		    /* avoid corners made by rooms near level edges */
+		    int i;
+		    for (i = 1; i < COLNO - 1; i++) {
+			if (leftok && rightok)
+			    break;
+			if (xx - i > 0) {
+			    crm = &lev->locations[xx - i][yy + dy];
+			    if (!leftok &&
+				xx - i - 1 > 0 &&
+				(crm->typ == btyp ||
+				 crm->typ == ftyp ||
+				 crm->typ == SCORR))
+				leftok = TRUE;
+			}
+			if (xx + i < COLNO - 1) {
+			    crm = &lev->locations[xx + i][yy + dy];
+			    if (!rightok &&
+				xx + i + 1 < COLNO - 1 &&
+				(crm->typ == btyp ||
+				 crm->typ == ftyp ||
+				 crm->typ == SCORR))
+				rightok = TRUE;
+			}
+		    }
+		}
+		if (!nxcor && !leftok && !rightok)
+		    warning("dig_corridor: vertical corridor blocked");
+		dx = ((xx > tx && leftok) || !rightok) ? -1 : 1;
 		dy = 0;
-		dx = (tx < xx) ? -1 : 1;
 	    }
 	    crm = &lev->locations[xx + dx][yy + dy];
 	    if (crm->typ == btyp || crm->typ == ftyp || crm->typ == SCORR)

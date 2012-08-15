@@ -20,12 +20,10 @@ static boolean place_niche(struct level *lev, struct mkroom *,int*,int*,int*);
 static void makeniche(struct level *lev, int);
 static void make_niches(struct level *lev);
 
-static int do_comp(const void *,const void *);
-
 static void dosdoor(struct level *lev, xchar,xchar,struct mkroom *,int);
 static void join(struct level *lev, int a,int b, boolean);
 static void do_room_or_subroom(struct level *lev, struct mkroom *,int,int,int,int,
-				       boolean,schar,boolean,boolean);
+			       boolean,schar,boolean);
 static void makerooms(struct level *lev);
 static void finddpos(struct level *lev, coord *,xchar,xchar,xchar,xchar);
 static void mkinvpos(xchar,xchar,int);
@@ -39,25 +37,6 @@ static void place_random_engravings(struct level *lev);
 static xchar		vault_x, vault_y;
 boolean goldseen;
 static boolean made_branch;	/* used only during level creation */
-
-/* Args must be (const void *) so that qsort will always be happy. */
-
-static int do_comp(const void *vx, const void *vy)
-{
-	const struct mkroom *x, *y;
-
-	x = (const struct mkroom *)vx;
-	y = (const struct mkroom *)vy;
-
-	/* sort by x coord first */
-	if (x->lx != y->lx)
-	    return x->lx - y->lx;
-
-	/* sort by ly if lx is equal
-	 * The additional criterium is necessary to get consistent sorting across
-	 * platforms with different qsort implementations. */
-	return x->ly - y->ly;
-}
 
 static void finddpos(struct level *lev, coord *cc, xchar xl, xchar yl, xchar xh, xchar yh)
 {
@@ -86,7 +65,49 @@ gotit:
 
 void sort_rooms(struct level *lev)
 {
-	qsort(lev->rooms, lev->nroom, sizeof(struct mkroom), do_comp);
+
+	int do_comp(const void *vx, const void *vy)
+	{
+		const struct mkroom *x, *y;
+
+		x = &lev->rooms[*(int *)vx];
+		y = &lev->rooms[*(int *)vy];
+
+		/* sort by x coord first */
+		if (x->lx != y->lx)
+			return x->lx - y->lx;
+
+		/* sort by ly if lx is equal
+		 * The additional criterium is necessary to get consistent sorting
+		 * across platforms with different qsort implementations. */
+		return x->ly - y->ly;
+	}
+
+	int ridx[lev->nroom];
+	struct mkroom tmprooms[lev->nroom];
+	coord tmpdoors[lev->doorindex];
+	int i, d, didx;
+
+	for (i = 0; i < lev->nroom; i++)
+		ridx[i] = i;
+	for (i = 0; i < lev->nroom; i++)
+		tmprooms[i] = lev->rooms[i];
+	for (i = 0; i < lev->doorindex; i++)
+		tmpdoors[i] = lev->doors[i];
+
+	qsort(ridx, lev->nroom, sizeof(int), do_comp);
+
+	didx = 0;
+	for (i = 0; i < lev->nroom; i++) {
+		struct mkroom *room = &lev->rooms[i];
+		*room = tmprooms[ridx[i]];
+
+		/* move the doors */
+		for (d = 0; d < room->doorct; d++)
+			lev->doors[didx + d] = tmpdoors[room->fdoor + d];
+		room->fdoor = didx;
+		didx += room->doorct;
+	}
 }
 
 static void do_room_or_subroom(struct level *lev,
@@ -95,8 +116,7 @@ static void do_room_or_subroom(struct level *lev,
 			       int hix, int hiy,
 			       boolean lit,
 			       schar rtype,
-			       boolean special,
-			       boolean is_room)
+			       boolean special)
 {
 	int x, y;
 	struct rm *loc;
@@ -149,14 +169,7 @@ static void do_room_or_subroom(struct level *lev,
 		for (y = lowy; y <= hiy; y++)
 		    loc++->typ = ROOM;
 	    }
-	    if (is_room) {
-		lev->locations[lowx-1][lowy-1].typ = TLCORNER;
-		lev->locations[hix+1][lowy-1].typ = TRCORNER;
-		lev->locations[lowx-1][hiy+1].typ = BLCORNER;
-		lev->locations[hix+1][hiy+1].typ = BRCORNER;
-	    } else {	/* a subroom */
-		wallification(lev, lowx-1, lowy-1, hix+1, hiy+1);
-	    }
+	    wallification(lev, lowx-1, lowy-1, hix+1, hiy+1);
 	}
 }
 
@@ -167,8 +180,7 @@ void add_room(struct level *lev, int lowx, int lowy, int hix, int hiy, boolean l
 	struct mkroom *croom;
 
 	croom = &lev->rooms[lev->nroom];
-	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit,
-					    rtype, special, (boolean) TRUE);
+	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit, rtype, special);
 	croom++;
 	croom->hx = -1;
 	lev->nroom++;
@@ -180,17 +192,98 @@ void add_subroom(struct level *lev, struct mkroom *proom, int lowx, int lowy,
 	struct mkroom *croom;
 
 	croom = &lev->subrooms[lev->nsubroom];
-	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit,
-					    rtype, special, FALSE);
+	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit, rtype, special);
 	proom->sbrooms[proom->nsubrooms++] = croom;
 	croom++;
 	croom->hx = -1;
 	lev->nsubroom++;
 }
 
+/* Borrowed from sp_lev.c to calculate room borders. */
+#define XLIM 4
+#define YLIM 3
+
+static boolean mk_split_room(struct level *lev)
+{
+	struct nhrect *r1 = rnd_rect();
+	struct nhrect r2;
+	int mleft, mtop, mright, mbottom;
+	int rxspace, ryspace;
+	xchar lx, ly, width, height;
+	xchar rlit;
+	xchar ax1, ay1, ax2, ay2, bx1, by1, bx2, by2;
+	int aroom, broom;
+
+	if (!r1)
+	    return FALSE;
+
+	/* Try to mimic create_room()'s border/margin calculations. */
+	mleft = r1->lx > 0 ? XLIM : 3;
+	mtop = r1->ly > 0 ? YLIM : 2;
+	mright = (r1->lx > 0 && r1->hx < COLNO - 1) ? 2 * XLIM : XLIM + 1;
+	mbottom = (r1->ly > 0 && r1->hy < ROWNO - 1) ? 2 * YLIM : YLIM + 1;
+
+	width = rn1(12, 5);
+	height = rn1(3, 5);
+	rxspace = r1->hx - (r1->lx > 0 ? r1->lx : 3) - width - mright + 1;
+	ryspace = r1->hy - (r1->ly > 0 ? r1->ly : 2) - height - mbottom + 1;
+
+	if (rxspace < 0 || ryspace < 0)
+	    return FALSE;
+
+	lx = r1->lx + mleft + (rxspace ? rn2(rxspace) : 0);
+	ly = r1->ly + mtop + (ryspace ? rn2(ryspace) : 0);
+
+	if (!check_room(lev, &lx, &width, &ly, &height, FALSE))
+	    return FALSE;
+	if (width < 5 || height < 5)
+	    return FALSE;
+
+	r2.lx = lx - 1;
+	r2.ly = ly - 1;
+	r2.hx = lx + width + 1;
+	r2.hy = ly + height + 1;
+	split_rects(r1, &r2);
+
+	ax1 = lx;
+	ay1 = ly;
+	if (rnf(width, width + height)) {
+	    int adj = width / 2;
+	    ax2 = lx + adj - 1;
+	    ay2 = ly + height;
+	    bx1 = lx + adj + 1;
+	    by1 = ly;
+	    bx2 = lx + adj + adj;
+	    by2 = ly + height;
+	} else {
+	    int adj = height / 2;
+	    ax2 = lx + width;
+	    ay2 = ly + adj - 1;
+	    bx1 = lx;
+	    by1 = ly + adj + 1;
+	    bx2 = lx + width;
+	    by2 = ly + adj + adj;
+	}
+
+	rlit = (rnd(1+abs(depth(&lev->z))) < 11 && rn2(77)) ? TRUE : FALSE;
+
+	add_room(lev, ax1, ay1, ax2, ay2, rlit, OROOM, FALSE);
+	aroom = lev->nroom - 1;
+	smeq[aroom] = aroom;
+
+	add_room(lev, bx1, by1, bx2, by2, rlit, OROOM, FALSE);
+	broom = lev->nroom - 1;
+	smeq[broom] = broom;
+
+	join(lev, aroom, broom, FALSE);
+
+	return TRUE;
+}
+
 static void makerooms(struct level *lev)
 {
 	boolean tried_vault = FALSE;
+	boolean do_splitrm = !rn2(10);
 
 	/* make rooms until satisfied */
 	/* rnd_rect() will returns 0 if no more rects are available... */
@@ -202,9 +295,14 @@ static void makerooms(struct level *lev)
 				vault_y = lev->rooms[lev->nroom].ly;
 				lev->rooms[lev->nroom].hx = -1;
 			}
-		} else
+		} else {
+		    if (do_splitrm && mk_split_room(lev)) {
+			do_splitrm = FALSE;
+			continue;
+		    }
 		    if (!create_room(lev, -1, -1, -1, -1, -1, -1, OROOM, -1))
 			return;
+		}
 	}
 	return;
 }
@@ -214,7 +312,11 @@ static void join(struct level *lev, int a, int b, boolean nxcor)
 	coord cc,tt, org, dest;
 	xchar tx, ty, xx, yy;
 	struct mkroom *croom, *troom;
+	struct mkroom *couter, *touter;
 	int dx, dy;
+	boolean splithalves;	/* we're joining two halves of a split room */
+
+	if (a == b) return;
 
 	croom = &lev->rooms[a];
 	troom = &lev->rooms[b];
@@ -224,53 +326,97 @@ static void join(struct level *lev, int a, int b, boolean nxcor)
 
 	if (troom->hx < 0 || croom->hx < 0 || lev->doorindex >= DOORMAX) return;
 	if (troom->lx > croom->hx) {
-		dx = 1;
-		dy = 0;
+		/* t is right of c */
+		dx =  1;
+		dy =  0;
 		xx = croom->hx+1;
 		tx = troom->lx-1;
+		splithalves = xx == tx &&
+			      croom->ly == troom->ly &&
+			      croom->hy == troom->hy;
 		finddpos(lev, &cc, xx, croom->ly, xx, croom->hy);
 		finddpos(lev, &tt, tx, troom->ly, tx, troom->hy);
 	} else if (troom->hy < croom->ly) {
+		/* t is above c */
+		dx =  0;
 		dy = -1;
-		dx = 0;
 		yy = croom->ly-1;
-		finddpos(lev, &cc, croom->lx, yy, croom->hx, yy);
 		ty = troom->hy+1;
+		splithalves = yy == ty &&
+			      croom->lx == troom->lx &&
+			      croom->hx == troom->hx;
+		finddpos(lev, &cc, croom->lx, yy, croom->hx, yy);
 		finddpos(lev, &tt, troom->lx, ty, troom->hx, ty);
 	} else if (troom->hx < croom->lx) {
+		/* t is left of c */
 		dx = -1;
-		dy = 0;
+		dy =  0;
 		xx = croom->lx-1;
 		tx = troom->hx+1;
+		splithalves = xx == tx &&
+			      croom->ly == troom->ly &&
+			      croom->hy == troom->hy;
 		finddpos(lev, &cc, xx, croom->ly, xx, croom->hy);
 		finddpos(lev, &tt, tx, troom->ly, tx, troom->hy);
 	} else {
-		dy = 1;
-		dx = 0;
+		/* t should be below c */
+		dx =  0;
+		dy =  1;
 		yy = croom->hy+1;
 		ty = troom->ly-1;
+		splithalves = yy == ty &&
+			      croom->lx == troom->lx &&
+			      croom->hx == troom->hx;
 		finddpos(lev, &cc, croom->lx, yy, croom->hx, yy);
 		finddpos(lev, &tt, troom->lx, ty, troom->hx, ty);
 	}
+
+	if (!splithalves) {
+	    /* two halves of a split room should be connected, so if another
+	       room (itself split or otherwise) tries to connect to one of the
+	       halves via its unreachable middle wall, proxy the join to the
+	       other half, which should be positioned better for the join */
+	    couter = pos_to_room(lev, cc.x+dx, cc.y+dy);
+	    touter = pos_to_room(lev, tt.x-dx, tt.y-dy);
+	    if (couter && couter - lev->rooms != b) {
+		    join(lev, couter - lev->rooms, b, nxcor);
+		    return;
+	    }
+	    if (touter && touter - lev->rooms != a) {
+		    join(lev, a, touter - lev->rooms, nxcor );
+		    return;
+	    }
+	}
+
 	xx = cc.x;
 	yy = cc.y;
 	tx = tt.x - dx;
 	ty = tt.y - dy;
-	if (nxcor && lev->locations[xx+dx][yy+dy].typ)
+	if (nxcor && lev->locations[xx+dx][yy+dy].typ && !splithalves)
 		return;
 	if (okdoor(lev, xx, yy) || !nxcor)
-	    dodoor(lev, xx, yy, croom);
+		dodoor(lev, xx, yy, croom);
 
-	org.x  = xx+dx; org.y  = yy+dy;
-	dest.x = tx; dest.y = ty;
+	if (splithalves) {
+		/* common door already made, so just do bookkeeping */
+		add_door(lev, xx, yy, troom);
+	} else {
+		org.x  = xx+dx;
+		org.y  = yy+dy;
+		dest.x = tx;
+		dest.y = ty;
 
-	if (!dig_corridor(lev, &org, &dest, nxcor,
-			lev->flags.arboreal ? ROOM : CORR, STONE))
-	    return;
+		if (!dig_corridor(lev, &org, &dest, nxcor,
+				  lev->flags.arboreal ? ROOM : CORR, STONE)) {
+			if (!nxcor)
+				warning("failed to dig required corridor");
+			return;
+		}
 
-	/* we succeeded in digging the corridor */
-	if (okdoor(lev, tt.x, tt.y) || !nxcor)
-	    dodoor(lev, tt.x, tt.y, troom);
+		/* we succeeded in digging the corridor */
+		if (okdoor(lev, tt.x, tt.y) || !nxcor)
+			dodoor(lev, tt.x, tt.y, troom);
+	}
 
 	if (smeq[a] < smeq[b])
 		smeq[b] = smeq[a];
