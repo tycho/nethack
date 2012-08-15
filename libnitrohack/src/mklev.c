@@ -340,9 +340,43 @@ void makecorridors(struct level *lev, int style)
 
 	case 2: /* circular path: room1 -> room2 -> room3 -> ... -> room1 */
 	    if (lev->nroom > 1) {
+		struct int_double {
+		    int i;
+		    double d;
+		};
+		int comp_int_double(const void *a, const void *b)
+		{
+		    const struct int_double *ida = a;
+		    const struct int_double *idb = b;
+		    if (ida->d < idb->d)
+			return -1;
+		    else if (ida->d > idb->d)
+			return 1;
+		    return 0;
+		}
+		struct int_double rotsorted[lev->nroom];
+
+		/* sort rotationally by room centers */
+		for (i = 0; i < lev->nroom; i++) {
+		    struct mkroom *r = &lev->rooms[i];
+		    int cx = r->lx + (r->hx - r->lx) / 2 - COLNO / 2;
+		    int cy = r->ly + (r->hy - r->ly) / 2 - ROWNO / 2;
+		    rotsorted[i].i = i;
+		    if (r->hx == r->lx && r->hy == r->ly) {
+			/* arbitrary but distinct value so we
+			 * don't have to rely on a stable sort
+			 * across qsort implementations */
+			rotsorted[i].d = cx / 1.0e4 + cy / 1.0e6;
+		    } else {
+			rotsorted[i].d = atan2(cy, cx);
+		    }
+		}
+		qsort(rotsorted, lev->nroom, sizeof(struct int_double),
+		      comp_int_double);
+
 		for (a = 0; a < lev->nroom; a++) {
 		    b = (a + 1) % lev->nroom;
-		    join(lev, a, b, FALSE);
+		    join(lev, rotsorted[a].i, rotsorted[b].i, FALSE);
 		}
 	    }
 	    break;
