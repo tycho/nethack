@@ -429,8 +429,13 @@ void makecorridors(struct level *lev, int style)
 	int a, b, i;
 	boolean any = TRUE;
 
-	if (style == -1)
-	    style = rn2(4);
+	if (style == -1) {
+	    /* avoid style 1 (random) unless it was asked for,
+	     * since it can be really ugly */
+	    style = rn2(3);
+	    if (style >= 1)
+		style++;
+	}
 
 	switch (style) {
 	default: /* vanilla style */
