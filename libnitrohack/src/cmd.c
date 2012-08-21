@@ -32,6 +32,7 @@ static int wiz_show_vision(void);
 static int wiz_mon_polycontrol(void);
 static int wiz_show_wmodes(void);
 static int wiz_mazewalkmap(void);
+static int wiz_show_rooms(void);
 extern char SpLev_Map[COLNO][ROWNO];
 static void count_obj(struct obj *, long *, long *, boolean, boolean);
 static void obj_chain(struct menulist *, const char *, struct obj *, long *, long *);
@@ -156,6 +157,7 @@ const struct cmd_desc cmdlist[] = {
 	{"panic", "(DEBUG) test panic routine (fatal to game)", 0, 0, TRUE, wiz_panic, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT},
 	{"polyself", "(DEBUG) polymorph self", 0, 0, TRUE, wiz_polyself, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT},
 	{"printdungeon", "(DEBUG) print dungeon structure", 0, 0, TRUE, wiz_where, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT | CMD_NOTIME},
+	{"rooms", "(DEBUG) show room numbers and shared boundaries", 0, 0, TRUE, wiz_show_rooms, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT | CMD_NOTIME},
 	{"seenv", "(DEBUG) show seen vectors", 0, 0, TRUE, wiz_show_seenv, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT | CMD_NOTIME},
 	{"showmap", "(DEBUG) reveal the entire map", 0, 0, TRUE, wiz_map, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT},
 	{"stats", "(DEBUG) show memory statistics", 0, 0, TRUE, wiz_show_stats, CMD_ARG_NONE | CMD_DEBUG | CMD_EXT | CMD_NOTIME},
@@ -527,6 +529,37 @@ static int wiz_mazewalkmap(void)
 	    if (y == u.uy)
 		row[u.ux] = '@';
 	    row[x] = '\0';
+	    add_menutext(&menu, row);
+	}
+	display_menu(menu.items, menu.icount, NULL, PICK_NONE, NULL);
+	free(menu.items);
+	return 0;
+}
+
+/* #rooms command */
+static int wiz_show_rooms(void)
+{
+	struct menulist menu;
+	int x, y;
+	char row[COLNO+1];
+
+	init_menulist(&menu);
+
+	for (y = 0; y < ROWNO; y++) {
+	    for (x = 0; x < COLNO; x++) {
+		int rno = level->locations[x][y].roomno;
+		if (rno == NO_ROOM) {
+		    row[x] = '.';
+		} else if (rno == SHARED) {
+		    row[x] = '+';
+		} else if (rno == SHARED_PLUS) {
+		    row[x] = '*';
+		} else {
+		    int i = (rno - ROOMOFFSET) % 52;
+		    row[x] = (i < 26) ? ('a' + i) : ('A' + i);
+		}
+	    }
+	    row[COLNO] = '\0';
 	    add_menutext(&menu, row);
 	}
 	display_menu(menu.items, menu.icount, NULL, PICK_NONE, NULL);
