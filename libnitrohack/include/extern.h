@@ -851,6 +851,7 @@ extern void add_subroom(struct level *lev,struct mkroom *,int,int,int,int,
 extern void makecorridors(struct level *lev, int);
 extern void add_door(struct level *lev, int,int,struct mkroom *);
 extern void wallwalk_right(struct level *lev, xchar,xchar,schar,schar,int);
+extern void mkpoolroom(struct level *lev);
 extern struct level *mklev(d_level *levnum);
 extern void topologize(struct level *lev, struct mkroom *croom);
 extern void place_branch(struct level *lev, branch *,xchar,xchar);
@@ -935,6 +936,7 @@ extern void save_obj(struct memfile *mf, struct obj *obj);
 /* ### mkroom.c ### */
 
 extern void mkroom(struct level *lev, int roomtype);
+extern struct mkroom *pick_room(struct level *lev, boolean strict);
 extern void fill_zoo(struct level *lev, struct mkroom *sroom);
 extern boolean nexttodoor(struct level *lev, int sx, int sy);
 extern int somex(struct mkroom *);

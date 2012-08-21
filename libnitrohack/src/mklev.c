@@ -920,6 +920,7 @@ static void makelevel(struct level *lev)
 	else if (u_depth > 15 && !rn2(6)) mkroom(lev, SWAMP);
 	else if (u_depth > 16 && !rn2(8) &&
 	   !(mvitals[PM_COCKATRICE].mvflags & G_GONE)) mkroom(lev, COCKNEST);
+	else if (u_depth > 17 && !rn2(8)) mkroom(lev, POOLROOM);
     }
 
 skip0:
@@ -1136,6 +1137,24 @@ void wallwalk_right(struct level *lev, xchar x, xchar y,
 		}
 	    } while (nx == x && ny == y && cnt < 5);
 	} while (x != sx || y != sy);
+}
+
+
+void mkpoolroom(struct level *lev)
+{
+	struct mkroom *sroom;
+	schar typ;
+
+	sroom = pick_room(lev, TRUE);
+	if (!sroom) return;
+
+	if (sroom->hx - sroom->lx < 3 || sroom->hy - sroom->ly < 3)
+	    return;
+
+	sroom->rtype = POOLROOM;
+	typ = !rn2(5) ? POOL : LAVAPOOL;
+
+	wallwalk_right(lev, sroom->lx, sroom->ly, typ, ROOM, 96);
 }
 
 

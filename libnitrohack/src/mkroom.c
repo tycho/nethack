@@ -16,7 +16,6 @@
 
 
 static boolean isbig(struct mkroom *);
-static struct mkroom * pick_room(struct level *lev, boolean strict);
 static void mkshop(struct level *lev);
 static void mkzoo(struct level *lev, int type);
 static void mkswamp(struct level *lev);
@@ -62,6 +61,7 @@ void mkroom(struct level *lev, int roomtype)
 	case ARMORY:	mkzoo(lev, ARMORY); break;
 	case ANTHOLE:	mkzoo(lev, ANTHOLE); break;
 	case LEMUREPIT:	mkzoo(lev, LEMUREPIT); break;
+	case POOLROOM:	mkpoolroom(lev); break;
 	default:	impossible("Tried to make a room of type %d.", roomtype);
     }
 }
@@ -124,6 +124,10 @@ static void mkshop(struct level *lev)
 			}
 			if (ep[0] == 'l' || ep[0] == 'L') {
 				mkzoo(lev, LEPREHALL);
+				return;
+			}
+			if (ep[0] == 'o' || ep[0] == 'O') {
+				mkpoolroom(lev);
 				return;
 			}
 			if (ep[0] == '_') {
@@ -191,7 +195,7 @@ gottype:
 
 
 /* pick an unused room, preferably with only one door */
-static struct mkroom *pick_room(struct level *lev, boolean strict)
+struct mkroom *pick_room(struct level *lev, boolean strict)
 {
 	struct mkroom *sroom;
 	int i = lev->nroom;
