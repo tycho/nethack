@@ -3816,6 +3816,16 @@ static void spo_region(struct sp_coder *coder, struct level *lev)
 	    topologize(lev, troom);	/* set roomno */
 	}
 
+	if (!room_not_needed) {
+	    if (coder->n_subroom > 1) {
+		impossible("spo_region: region as subroom");
+	    } else {
+		coder->tmproomlist[coder->n_subroom] = troom;
+		coder->failed_room[coder->n_subroom] = FALSE;
+		coder->n_subroom++;
+	    }
+	}
+
 	opvar_free(x1);
 	opvar_free(y1);
 	opvar_free(x2);
