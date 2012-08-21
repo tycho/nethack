@@ -23,7 +23,7 @@ static void make_niches(struct level *lev);
 static void dosdoor(struct level *lev, xchar,xchar,struct mkroom *,int);
 static void join(struct level *lev, int a,int b, boolean);
 static void do_room_or_subroom(struct level *lev, struct mkroom *,int,int,int,int,
-			       boolean,schar,boolean);
+			       boolean,schar,boolean,boolean);
 static void makerooms(struct level *lev);
 static void finddpos(struct level *lev, coord *,xchar,xchar,xchar,xchar);
 static void mkinvpos(xchar,xchar,int);
@@ -116,7 +116,8 @@ static void do_room_or_subroom(struct level *lev,
 			       int hix, int hiy,
 			       boolean lit,
 			       schar rtype,
-			       boolean special)
+			       boolean special,
+			       boolean is_room)
 {
 	int x, y;
 	struct rm *loc;
@@ -169,7 +170,15 @@ static void do_room_or_subroom(struct level *lev,
 		for (y = lowy; y <= hiy; y++)
 		    loc++->typ = ROOM;
 	    }
-	    wallification(lev, lowx-1, lowy-1, hix+1, hiy+1);
+	    if (is_room) {
+		lev->locations[lowx-1][lowy-1].typ = TLCORNER;
+		lev->locations[hix+1][lowy-1].typ = TRCORNER;
+		lev->locations[lowx-1][hiy+1].typ = BLCORNER;
+		lev->locations[hix+1][hiy+1].typ = BRCORNER;
+		wallification(lev, lowx-1, lowy-1, hix+1, hiy+1);
+	    } else {	/* a subroom */
+		wallification(lev, lowx, lowy, hix, hiy);	/* this is bugs */
+	    }
 	}
 }
 
@@ -180,7 +189,8 @@ void add_room(struct level *lev, int lowx, int lowy, int hix, int hiy, boolean l
 	struct mkroom *croom;
 
 	croom = &lev->rooms[lev->nroom];
-	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit, rtype, special);
+	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit,
+			   rtype, special, TRUE);
 	croom++;
 	croom->hx = -1;
 	lev->nroom++;
@@ -192,7 +202,8 @@ void add_subroom(struct level *lev, struct mkroom *proom, int lowx, int lowy,
 	struct mkroom *croom;
 
 	croom = &lev->subrooms[lev->nsubroom];
-	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit, rtype, special);
+	do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit,
+			   rtype, special, FALSE);
 	proom->sbrooms[proom->nsubrooms++] = croom;
 	croom++;
 	croom->hx = -1;
