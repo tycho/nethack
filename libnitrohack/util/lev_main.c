@@ -773,6 +773,7 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "init_map",
 	    "flags",
 	    "sounds",
+	    "wallwalk",
 	};
 
 	/* don't bother with the header stuff */

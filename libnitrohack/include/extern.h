@@ -850,6 +850,7 @@ extern void add_subroom(struct level *lev,struct mkroom *,int,int,int,int,
 			   boolean,schar,boolean);
 extern void makecorridors(struct level *lev, int);
 extern void add_door(struct level *lev, int,int,struct mkroom *);
+extern void wallwalk_right(struct level *lev, xchar,xchar,schar,schar,int);
 extern struct level *mklev(d_level *levnum);
 extern void topologize(struct level *lev, struct mkroom *croom);
 extern void place_branch(struct level *lev, branch *,xchar,xchar);

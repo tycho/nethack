@@ -3412,6 +3412,26 @@ static void spo_altar(struct sp_coder *coder, struct level *lev)
 	opvar_free(al);
 }
 
+static void spo_wallwalk(struct sp_coder *coder, struct level *lev)
+{
+	struct opvar *y, *x, *fgtyp, *bgtyp, *chance;
+
+	if (!OV_pop_i(bgtyp) ||
+	    !OV_pop_i(fgtyp) ||
+	    !OV_pop_i(chance) ||
+	    !OV_pop_i(y) ||
+	    !OV_pop_i(x)) return;
+
+	wallwalk_right(lev, OV_i(x), OV_i(y),
+		       OV_i(fgtyp), OV_i(bgtyp), OV_i(chance));
+
+	opvar_free(x);
+	opvar_free(y);
+	opvar_free(chance);
+	opvar_free(fgtyp);
+	opvar_free(bgtyp);
+}
+
 static void spo_feature(struct sp_coder *coder, struct level *lev)
 {
 	struct opvar *fy, *fx;
@@ -4300,6 +4320,7 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	    case SPO_SINK:		/* fall through */
 	    case SPO_POOL:		/* fall through */
 	    case SPO_FOUNTAIN:		spo_feature(coder, lev);	break;
+	    case SPO_WALLWALK:		spo_wallwalk(coder, lev);	break;
 	    case SPO_TRAP:		spo_trap(coder, lev);		break;
 	    case SPO_GOLD:		spo_gold(coder, lev);		break;
 	    case SPO_CORRIDOR:		spo_corridor(coder, lev);	break;

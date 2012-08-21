@@ -1088,6 +1088,57 @@ static void mineralize(struct level *lev)
 	    }
 }
 
+
+void wallwalk_right(struct level *lev, xchar x, xchar y,
+		    schar fgtyp, schar bgtyp, int chance)
+{
+	int sx, sy, nx, ny, dir, cnt;
+	schar tmptyp;
+	sx = x;
+	sy = y;
+	dir = 1;
+
+	if (!isok(x,y)) return;
+	if (lev->locations[x][y].typ != bgtyp) return;
+
+	do {
+	    if (!t_at(lev, x, y) && !bydoor(lev, x, y) &&
+		lev->locations[x][y].typ == bgtyp && chance >= rn2(100)) {
+		lev->locations[x][y].typ = fgtyp;
+		if (fgtyp == LAVAPOOL)
+		    lev->locations[x][y].lit = 1;
+	    }
+	    cnt = 0;
+	    do {
+		nx = x;
+		ny = y;
+		switch (dir % 4) {
+		case 0: y--; break;
+		case 1: x++; break;
+		case 2: y++; break;
+		case 3: x--; break;
+		}
+		if (isok(x, y)) {
+		    tmptyp = lev->locations[x][y].typ;
+		    if (tmptyp != bgtyp && tmptyp != fgtyp) {
+			dir++;
+			x = nx;
+			y = ny;
+			cnt++;
+		    } else {
+			dir = (dir + 3) % 4;
+		    }
+		} else {
+		    dir++;
+		    x = nx;
+		    y = ny;
+		    cnt++;
+		}
+	    } while (nx == x && ny == y && cnt < 5);
+	} while (x != sx || y != sy);
+}
+
+
 struct level *mklev(d_level *levnum)
 {
 	struct mkroom *croom;

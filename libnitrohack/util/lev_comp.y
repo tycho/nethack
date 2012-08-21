@@ -145,6 +145,7 @@ extern const char *fname;
 %token	<i> FUNCTION_ID
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
+%token	<i> WALLWALK_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING
@@ -158,7 +159,7 @@ extern const char *fname;
 %type	<i> seen_trap_mask
 %type	<i> mon_gen_list
 %type	<i> sounds_list
-%type	<i> opt_lit_state opt_percent
+%type	<i> opt_lit_state opt_percent opt_spercent
 %type	<map> string level_def m_name o_name
 %type	<corpos> corr_spec
 %type	<lregn> region lev_region lineends
@@ -339,6 +340,7 @@ levstatement	: message
 		| corridor
 		| diggable_detail
 		| door_detail
+		| wallwalk_detail
 		| drawbridge_detail
 		| engraving_detail
 		| fountain_detail
@@ -442,6 +444,18 @@ opt_percent	: /* nothing */
 			$$ = 100;
 		  }
 		| PERCENT
+		  {
+			if ($1 < 0 || $1 > 100)
+			    yyerror("unexpected percentile chance");
+			$$ = $1;
+		  }
+		;
+
+opt_spercent	: /* nothing */
+		  {
+			$$ = 100;
+		  }
+		| ',' SPERCENT
 		  {
 			if ($1 < 0 || $1 > 100)
 			    yyerror("unexpected percentile chance");
@@ -730,6 +744,27 @@ cobj_if_ending	: '{' cobj_statements '}'
 			    set_opvar_int(tmppush,
 					  splev->n_opcodes - tmppush->vardata.l);
 			} else yyerror("IF: Huh?! No end address?");
+		  }
+		;
+
+wallwalk_detail	: WALLWALK_ID ':' coordinate ',' CHAR opt_spercent
+		  {
+			long fgtyp = what_map_char((char) $5);
+			if (fgtyp >= MAX_TYPE)
+			     yyerror("Wallwalk: illegal foreground map char");
+			add_opvars(splev, "iiiiio", $3.x, $3.y, $6,
+				   fgtyp, ROOM, SPO_WALLWALK);
+		  }
+		| WALLWALK_ID ':' coordinate ',' CHAR ',' CHAR opt_spercent
+		  {
+			long fgtyp = what_map_char((char) $5);
+			long bgtyp = what_map_char((char) $7);
+			if (fgtyp >= MAX_TYPE)
+			     yyerror("Wallwalk: illegal foreground map char");
+			if (bgtyp >= MAX_TYPE)
+			     yyerror("Wallwalk: illegal background map char");
+			add_opvars(splev, "iiiiio", $3.x, $3.y, $8,
+				   fgtyp, bgtyp, SPO_WALLWALK);
 		  }
 		;
 
