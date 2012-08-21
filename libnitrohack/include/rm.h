@@ -198,7 +198,7 @@ extern const char * const defexplain[];
 extern const char * const warnexplain[];
 
 /*
- * The 5 possible states of doors
+ * The 6 possible states of doors
  */
 
 #define D_NODOOR	0
@@ -207,6 +207,7 @@ extern const char * const warnexplain[];
 #define D_CLOSED	4
 #define D_LOCKED	8
 #define D_TRAPPED	16
+#define D_SECRET	32	/* only used by sp_lev.c, NOT in rm-struct */
 
 /*
  * Some altars are considered as shrines, so we need a flag.

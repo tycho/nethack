@@ -3274,11 +3274,12 @@ static void spo_door(struct sp_coder *coder, struct level *lev)
 	typ = OV_i(msk) == -1 ? rnddoor() : (xchar)OV_i(msk);
 
 	get_location(lev, &x, &y, DRY, NULL);
-	if (lev->locations[x][y].typ != SDOOR) {
-	    lev->locations[x][y].typ = DOOR;
-	} else {
+	if (!IS_DOOR(lev->locations[x][y].typ) && lev->locations[x][y].typ != SDOOR)
+	    lev->locations[x][y].typ = (typ & D_SECRET) ? SDOOR : DOOR;
+	if (typ & D_SECRET) {
+	    typ &= ~D_SECRET;
 	    if (typ < D_CLOSED)
-		typ = D_CLOSED; /* force it to be closed */
+		typ = D_CLOSED;
 	}
 	lev->locations[x][y].doormask = typ;
 	/*SpLev_Map[x][y] = 1;*/
