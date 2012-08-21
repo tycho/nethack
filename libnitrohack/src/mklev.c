@@ -734,6 +734,41 @@ static void makeniche(struct level *lev, int trap_type)
 	}
 }
 
+/* Replace horiz/vert walls with iron bars if there's no door
+ * next to the place, and there's space on the other side of the wall.
+ */
+static void make_ironbarwalls(struct level *lev, int chance)
+{
+	xchar x, y;
+
+	if (chance < 1) return;
+
+	for (x = 1; x < COLNO - 1; x++) {
+	    for(y = 1; y < ROWNO - 1; y++) {
+		schar typ = lev->locations[x][y].typ;
+		schar left = lev->locations[x - 1][y].typ;
+		schar right = lev->locations[x + 1][y].typ;
+		schar above = lev->locations[x][y - 1].typ;
+		schar below = lev->locations[x][y + 1].typ;
+		if (typ == HWALL) {
+		    if ((IS_WALL(left)  || left  == IRONBARS) &&
+			(IS_WALL(right) || right == IRONBARS) &&
+			SPACE_POS(above) && SPACE_POS(below) &&
+			rn2(100) < chance) {
+			lev->locations[x][y].typ = IRONBARS;
+		    }
+		} else if (typ == VWALL) {
+		    if ((IS_WALL(above) || above == IRONBARS) &&
+			(IS_WALL(below) || below == IRONBARS) &&
+			SPACE_POS(left) && SPACE_POS(right) &&
+			rn2(100) < chance) {
+			lev->locations[x][y].typ = IRONBARS;
+		    }
+		}
+	    }
+	}
+}
+
 static void make_niches(struct level *lev)
 {
 	int ct = rnd((lev->nroom>>1) + 1), dep = depth(&lev->z);
@@ -871,6 +906,8 @@ static void makelevel(struct level *lev)
 	    goto skip0;
 	makecorridors(lev, rn2(10) ? 0 : -1);
 	make_niches(lev);
+
+	if (!rn2(5)) make_ironbarwalls(lev, rn2(20) ? rn2(20) : rn2(50));
 
 	/* make a secret treasure vault, not connected to the rest */
 	if (do_vault()) {
