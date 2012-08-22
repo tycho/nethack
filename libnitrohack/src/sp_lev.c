@@ -258,6 +258,19 @@ static struct opvar *opvar_clone(struct opvar *ov)
 	return tmpov;
 }
 
+#define SET_TYPLIT(lev, x, y, ttyp, llit)			\
+{								\
+	(lev)->locations[(x)][(y)].typ = (ttyp);		\
+	if ((ttyp) == LAVAPOOL) {				\
+	    (lev)->locations[(x)][(y)].lit = 1;			\
+	} else if ((llit) != -2) {				\
+	    if ((llit) == -1)					\
+		(lev)->locations[(x)][(y)].lit = rn2(2);	\
+	    else						\
+		(lev)->locations[(x)][(y)].lit = (llit);	\
+	}							\
+}
+
 static void lvlfill_maze_grid(struct level *lev, int x1, int y1, int x2, int y2,
 			      schar filling)
 {
@@ -275,8 +288,7 @@ static void lvlfill_solid(struct level *lev, schar filling, schar lit)
 
 	for (x = 2; x <= x_maze_max; x++) {
 	    for (y = 0; y <= y_maze_max; y++) {
-		lev->locations[x][y].typ = filling;
-		lev->locations[x][y].lit = lit;
+		SET_TYPLIT(lev, x, y, filling, lit);
 	    }
 	}
 }
@@ -1263,8 +1275,7 @@ static void spill_terrain(struct level *lev, spill *sp, struct mkroom *croom)
 		if (!isok(nx, ny)) continue;
 		if (IS_WALL(lev->locations[nx][ny].typ)) {
 		    /* mark it as broken through */
-		    lev->locations[nx][ny].typ = sp->typ;
-		    lev->locations[nx][ny].lit = sp->lit;
+		    SET_TYPLIT(lev, nx, ny, sp->typ, sp->lit);
 		    found = TRUE;
 		    break;
 		}
@@ -1285,8 +1296,7 @@ static void spill_terrain(struct level *lev, spill *sp, struct mkroom *croom)
 	ny = y;
 	for (j = sp->count; j > 0; j--) {
 	    guard = 0;
-	    lev->locations[nx][ny].typ = sp->typ;
-	    lev->locations[nx][ny].lit = sp->lit;
+	    SET_TYPLIT(lev, nx, ny, sp->typ, sp->lit);
 	    do {
 		guard++;
 		do {
@@ -1778,10 +1788,8 @@ static void create_feature(struct level *lev, int fx, int fy, struct mkroom *cro
 	y = fy;
 	get_location(lev, &x, &y, DRY, croom);
 	/* Don't cover up an existing feature (particularly randomly
-	   placed stairs).  However, if the _same_ feature is already
-	   here, it came from the map drawing and we still need to
-	   update the special counters. */
-	if (IS_FURNITURE(lev->locations[x][y].typ) && lev->locations[x][y].typ != typ)
+	   placed stairs). */
+	if (IS_FURNITURE(lev->locations[x][y].typ))
 	    return;
 
 	lev->locations[x][y].typ = typ;
@@ -1805,8 +1813,7 @@ static void replace_terrain(struct level *lev, replaceterrain *terr, struct mkro
 	    for (y = y1; y <= y2; y++) {
 		if (lev->locations[x][y].typ == terr->fromter &&
 		    rn2(100) < terr->chance) {
-		    lev->locations[x][y].typ = terr->toter;
-		    lev->locations[x][y].lit = terr->tolit;
+		    SET_TYPLIT(lev, x, y, terr->toter, terr->tolit);
 		}
 	    }
 	}
@@ -1823,8 +1830,7 @@ static void put_terr_spot(struct level *lev, schar x, schar y,
 	for (dx = x - thick / 2; dx < x + (thick + 1) / 2; dx++) {
 	    for (dy = y - thick / 2; dy < y + (thick+1) / 2; dy++) {
 		if (!(dx >= COLNO - 1 || dx <= 0 || dy <= 0 || dy >= ROWNO - 1)) {
-		    lev->locations[dx][dy].typ = ter;
-		    lev->locations[dx][dy].lit = lit;
+		    SET_TYPLIT(lev, dx, dy, ter, lit);
 		}
 	    }
 	}
@@ -1901,8 +1907,7 @@ static void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
 	switch (terr->areatyp) {
 	case 0: /* point */
 	default:
-	    lev->locations[x1][y1].typ = terr->ter;
-	    lev->locations[x1][y1].lit = terr->tlit;
+	    SET_TYPLIT(lev, x1, y1, terr->ter, terr->tlit);
 	    /* handle doors and secret doors */
 	    if (lev->locations[x1][y1].typ == SDOOR ||
 		    IS_DOOR(lev->locations[x1][y1].typ)) {
@@ -1914,16 +1919,12 @@ static void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
 	    }
 	    break;
 	case 1: /* horiz line */
-	    for (x = 0; x < terr->x2; x++) {
-		lev->locations[x + x1][y1].typ = terr->ter;
-		lev->locations[x + x1][y1].lit = terr->tlit;
-	    }
+	    for (x = 0; x < terr->x2; x++)
+		SET_TYPLIT(lev, x + x1, y1, terr->ter, terr->tlit);
 	    break;
 	case 2: /* vert line */
-	    for (y = 0; y < terr->y2; y++) {
-		lev->locations[x1][y + y1].typ = terr->ter;
-		lev->locations[x1][y + y1].lit = terr->tlit;
-	    }
+	    for (y = 0; y < terr->y2; y++)
+		SET_TYPLIT(lev, x1, y + y1, terr->ter, terr->tlit);
 	    break;
 	case 3: /* filled rectangle */
 	    x2 = terr->x2;
@@ -1931,8 +1932,7 @@ static void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
 	    get_location(lev, &x2, &y2, DRY|WET, croom);
 	    for (x = x1; x <= x2; x++) {
 		for (y = y1; y <= y2; y++) {
-		    lev->locations[x][y].typ = terr->ter;
-		    lev->locations[x][y].lit = terr->tlit;
+		    SET_TYPLIT(lev, x, y, terr->ter, terr->tlit);
 		}
 	    }
 	    break;
@@ -1941,16 +1941,12 @@ static void set_terrain(struct level *lev, terrain *terr, struct mkroom *croom)
 	    y2 = terr->y2;
 	    get_location(lev, &x2, &y2, DRY|WET, croom);
 	    for (x = x1; x <= x2; x++) {
-		lev->locations[x][y1].typ = terr->ter;
-		lev->locations[x][y1].lit = terr->tlit;
-		lev->locations[x][y2].typ = terr->ter;
-		lev->locations[x][y2].lit = terr->tlit;
+		SET_TYPLIT(lev, x, y1, terr->ter, terr->tlit);
+		SET_TYPLIT(lev, x, y2, terr->ter, terr->tlit);
 	    }
 	    for (y = y1; y <= y2; y++) {
-		lev->locations[x1][y].typ = terr->ter;
-		lev->locations[x1][y].lit = terr->tlit;
-		lev->locations[x2][y].typ = terr->ter;
-		lev->locations[x2][y].lit = terr->tlit;
+		SET_TYPLIT(lev, x1, y, terr->ter, terr->tlit);
+		SET_TYPLIT(lev, x2, y, terr->ter, terr->tlit);
 	    }
 	    break;
 	}
@@ -2596,14 +2592,13 @@ static void splev_initlev(struct level *lev, lev_init *linit)
 	default: impossible("Unrecognized level init style."); break;
 	case LVLINIT_NONE: break;
 	case LVLINIT_SOLIDFILL:
-	    if (linit->lit < 0) linit->lit = rn2(2);
+	    if (linit->lit == -1) linit->lit = rn2(2);
 	    lvlfill_solid(lev, linit->filling, linit->lit);
 	    break;
 	case LVLINIT_MAZEGRID:
 	    lvlfill_maze_grid(lev, 2, 0, x_maze_max, y_maze_max, linit->filling);
 	    break;
 	case LVLINIT_MINES:
-	    if (linit->lit < 0) linit->lit = rn2(2);
 	    if (linit->filling > -1) lvlfill_solid(lev, linit->filling, linit->lit);
 	    mkmap(lev, linit);
 	    break;
