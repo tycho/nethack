@@ -108,6 +108,7 @@ static void splev_stack_done(struct splevstack *st)
 		    case SPOVAR_NULL:
 		    case SPOVAR_INT:
 			break;
+		    case SPOVAR_VARIABLE:
 		    case SPOVAR_STRING:
 			if (st->stackdata[i]->vardata.str)
 			    Free(st->stackdata[i]->vardata.str);
@@ -162,22 +163,13 @@ static struct opvar *splev_stack_pop(struct splevstack *st)
 	return ret;
 }
 
-static struct opvar *splev_stack_getdat(struct splevstack *st, xchar typ)
-{
-	if (st) {
-	    struct opvar *tmp = splev_stack_pop(st);
-	    if (tmp->spovartyp == typ)
-		return tmp;
-	}
-	return NULL;
-}
-
+/* FIXME: OV_typ() shouldn't return SPOVAR_VARIABLE, but the variable's type */
 #define OV_typ(o)	((o)->spovartyp)
 #define OV_i(o)		((o)->vardata.l)
 #define OV_s(o)		((o)->vardata.str)
 
-#define OV_pop_i(x)	((x) = splev_stack_getdat(coder->stack, SPOVAR_INT))
-#define OV_pop_s(x)	((x) = splev_stack_getdat(coder->stack, SPOVAR_STRING))
+#define OV_pop_i(x)	((x) = splev_stack_getdat(coder, SPOVAR_INT))
+#define OV_pop_s(x)	((x) = splev_stack_getdat(coder, SPOVAR_STRING))
 
 /*
 static struct opvar *opvar_new_str(char *s)
@@ -217,6 +209,7 @@ static void opvar_free_x(struct opvar *ov)
 	switch (ov->spovartyp) {
 	case SPOVAR_INT:
 	    break;
+	case SPOVAR_VARIABLE:
 	case SPOVAR_STRING:
 	    if (ov->vardata.str)
 		Free(ov->vardata.str);
@@ -230,6 +223,7 @@ static void opvar_free_x(struct opvar *ov)
 
 #define opvar_free(ov)	do { opvar_free_x(ov); (ov) = NULL; } while (0)
 
+/* FIXME: should this return SPOVAR_VARIABLE, or the variable itself? */
 static struct opvar *opvar_clone(struct opvar *ov)
 {
 	struct opvar *tmpov = malloc(sizeof(struct opvar));
@@ -242,6 +236,7 @@ static struct opvar *opvar_clone(struct opvar *ov)
 		tmpov->vardata.l = ov->vardata.l;
 	    }
 	    break;
+	case SPOVAR_VARIABLE:
 	case SPOVAR_STRING:
 	    {
 		int len = strlen(ov->vardata.str);
@@ -256,6 +251,67 @@ static struct opvar *opvar_clone(struct opvar *ov)
 	}
 
 	return tmpov;
+}
+
+static struct opvar *opvar_var_conversion(struct sp_coder *coder, struct opvar *ov)
+{
+	struct splev_var *tmp;
+	struct opvar *tmpov;
+
+	if (!coder || !ov) return NULL;
+	if (ov->spovartyp != SPOVAR_VARIABLE) return ov;
+
+	tmp = coder->frame->variables;
+	while (tmp) {
+	    if (!strcmp(tmp->name, OV_s(ov))) {
+		tmpov = opvar_clone(tmp->value);
+		return tmpov;
+	    }
+	    tmp = tmp->next;
+	}
+
+	return NULL;
+}
+
+static struct splev_var *opvar_var_defined(struct sp_coder *coder, char *name)
+{
+	struct splev_var *tmp;
+
+	if (!coder) return NULL;
+
+	tmp = coder->frame->variables;
+	while (tmp) {
+	    if (!strcmp(tmp->name, name)) return tmp;
+	    tmp = tmp->next;
+	}
+
+	return NULL;
+}
+
+static struct opvar *splev_stack_getdat(struct sp_coder *coder, xchar typ)
+{
+	if (coder && coder->stack) {
+	    struct opvar *tmp = splev_stack_pop(coder->stack);
+	    if (tmp->spovartyp == SPOVAR_VARIABLE)
+		tmp = opvar_var_conversion(coder, tmp);
+	    if (tmp->spovartyp == typ)
+		return tmp;
+	}
+	return NULL;
+}
+
+static void variable_list_del(struct splev_var *varlist)
+{
+	if (!varlist) return;
+
+	while (varlist) {
+	    struct splev_var *tmp;
+	    free(varlist->name);
+	    opvar_free(varlist->value);
+	    tmp = varlist;
+	    varlist = varlist->next;
+	    free(tmp);
+	}
 }
 
 #define SET_TYPLIT(lev, x, y, ttyp, llit)			\
@@ -2538,6 +2594,7 @@ static boolean sp_level_loader(struct level *lev, dlb *fd, sp_lev *lvl)
 		case SPOVAR_INT:
 		    Fread(&ov->vardata.l, 1, sizeof(ov->vardata.l), fd);
 		    break;
+		case SPOVAR_VARIABLE:
 		case SPOVAR_STRING:
 		    {
 			char *opd;
@@ -2611,6 +2668,7 @@ static struct sp_frame *frame_new(long execptr)
 	if (!frame) panic("could not create execution frame.");
 
 	frame->next = NULL;
+	frame->variables = NULL;
 	frame->n_opcode = execptr;
 	frame->stack = malloc(sizeof(struct splevstack));
 	if (!frame->stack) panic("could not create execution frame stack.");
@@ -2625,6 +2683,10 @@ static void frame_del(struct sp_frame *frame)
 	if (frame->stack) {
 	    splev_stack_done(frame->stack);
 	    frame->stack = NULL;
+	}
+	if (frame->variables) {
+	    variable_list_del(frame->variables);
+	    frame->variables = NULL;
 	}
 	Free(frame);
 }
@@ -3088,12 +3150,13 @@ static void spo_mon_generation(struct sp_coder *coder, struct level *lev)
 	    struct opvar *mfreq, *is_sym, *mon;
 	    mgtuple = malloc(sizeof(struct mon_gen_tuple));
 
-	    if (!OV_pop_i(mfreq) ||
-		!OV_pop_i(is_sym) ||
-		!OV_pop_i(mon))
+	    if (!OV_pop_i(is_sym) ||
+		!OV_pop_i(mon) ||
+		!OV_pop_i(mfreq))
 		panic("oopsie when loading mon_gen chances.");
 
 	    mgtuple->freq = OV_i(mfreq);
+	    if (OV_i(mfreq) < 1) OV_i(mfreq) = 1;
 	    mgtuple->is_sym = OV_i(is_sym);
 	    if (OV_i(is_sym))
 		mgtuple->monid = def_char_to_monclass(OV_i(mon));
@@ -3122,22 +3185,20 @@ static void spo_level_sounds(struct sp_coder *coder, struct level *lev)
 	    return;
 	}
 
-	if (!OV_pop_i(n_tuples) ||
-	    !OV_pop_i(freq)) return;
+	if (!OV_pop_i(n_tuples)) return;
 
 	if (OV_i(n_tuples) < 1)
 	    impossible("no level sounds attached to the sound opcode?");
 
 	ls = malloc(sizeof(struct lvl_sounds));
-	ls->freq = OV_i(freq);
 	ls->n_sounds = OV_i(n_tuples);
 	ls->sounds = malloc(sizeof(struct lvl_sound_bite) * ls->n_sounds);
 
 	while (OV_i(n_tuples)-- > 0) {
 	    struct opvar *flags, *msg;
 
-	    if (!OV_pop_s(msg) ||
-		!OV_pop_i(flags))
+	    if (!OV_pop_i(flags) ||
+		!OV_pop_s(msg))
 		panic("oopsie when loading lvl_sound_bite.");
 
 	    ls->sounds[OV_i(n_tuples)].flags = OV_i(flags);
@@ -3146,6 +3207,14 @@ static void spo_level_sounds(struct sp_coder *coder, struct level *lev)
 	    opvar_free(flags);
 	    opvar_free(msg);
 	}
+
+	if (!OV_pop_i(freq))
+	    ls->freq = 1;
+	else
+	    ls->freq = OV_i(freq);
+	if (ls->freq < 0)
+	    ls->freq = -ls->freq;
+
 	lev->sounds = ls;
 
 	opvar_free(freq);
@@ -4369,6 +4438,14 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    struct opvar *b = splev_stack_pop(coder->stack);
 		    struct opvar *c;
 
+		    if (!a || !b) {
+			impossible("spo_cmp: no values in stack");
+			break;
+		    }
+
+		    a = opvar_var_conversion(coder, a);
+		    b = opvar_var_conversion(coder, b);
+
 		    if (OV_typ(a) != OV_typ(b)) {
 			impossible("spo_cmp: trying to compare differing datatypes");
 			break;
@@ -4408,13 +4485,41 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 
 		    if (!OV_pop_i(tmpv)) break;
 
-		    t = opvar_new_int(OV_i(tmpv) > 0 ? rn2(OV_i(tmpv)) : 0);
+		    t = opvar_new_int(OV_i(tmpv) > 1 ? rn2(OV_i(tmpv)) : 0);
 		    splev_stack_push(coder->stack, t);
 		    opvar_free(tmpv);
 		}
 		break;
 	    case SPO_MAP:
 		spo_map(coder, lev);
+		break;
+	    case SPO_VAR_INIT:
+		{
+		    struct opvar *vname = splev_stack_pop(coder->stack);
+		    struct opvar *vvalue = splev_stack_pop(coder->stack);
+		    if (!vname || !vvalue) {
+			impossible("no values for SPO_VAR_INIT");
+		    } else {
+			if (OV_typ(vname) != SPOVAR_STRING) {
+			    impossible("no var name for SPO_VAR_INIT");
+			} else {
+			    struct splev_var *tmpvar;
+			    if ((tmpvar = opvar_var_defined(coder, OV_s(vname))) != NULL) {
+				struct opvar *tmpvalue = opvar_var_conversion(coder, vvalue);
+				opvar_free(tmpvar->value);
+				tmpvar->value = tmpvalue;
+			    } else {
+				tmpvar = malloc(sizeof(struct splev_var));
+				if (!tmpvar) break;
+				tmpvar->next = coder->frame->variables;
+				tmpvar->name = strdup(OV_s(vname));
+				opvar_free(vname);
+				tmpvar->value = opvar_var_conversion(coder, vvalue);
+				coder->frame->variables = tmpvar;
+			    }
+			}
+		    }
+		}
 		break;
 	    default:
 		panic("sp_level_coder: Unknown opcode %i", coder->opcode);

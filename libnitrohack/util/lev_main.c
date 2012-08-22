@@ -49,6 +49,7 @@ void yywarning(const char *);
 int  yywrap(void);
 struct opvar *set_opvar_int(struct opvar *,long);
 struct opvar *set_opvar_str(struct opvar *,char *);
+struct opvar *set_opvar_var(struct opvar *,char *);
 void add_opvars(sp_lev *,const char *,...);
 int get_floor_type(char);
 int get_room_type(char *);
@@ -65,6 +66,10 @@ boolean write_level_file(char *,sp_lev *);
 struct lc_funcdefs *funcdef_new(long,char *);
 void funcdef_free_all(struct lc_funcdefs *);
 struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,const char *,int);
+
+struct lc_vardefs *vardef_new(long,char *);
+void vardef_free_all(struct lc_vardefs *);
+struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *, int);
 
 struct opvar *opvar_clone(struct opvar *);
 void splev_add_from(sp_lev *,sp_lev *);
@@ -258,6 +263,15 @@ struct opvar *set_opvar_str(struct opvar *ov, char *val)
 	return ov;
 }
 
+struct opvar *set_opvar_var(struct opvar *ov, char *val)
+{
+	if (ov) {
+	    ov->spovartyp = SPOVAR_VARIABLE;
+	    ov->vardata.str = val;
+	}
+	return ov;
+}
+
 #define New(type)	memset(malloc(sizeof(type)), 0, sizeof(type))
 
 void add_opvars(sp_lev *sp, const char *fmt, ...)
@@ -281,6 +295,13 @@ void add_opvars(sp_lev *sp, const char *fmt, ...)
 		{
 		    struct opvar *ov = New(struct opvar);
 		    set_opvar_str(ov, va_arg(argp, char *));
+		    add_opcode(sp, SPO_PUSH, ov);
+		    break;
+		}
+	    case 'v':
+		{
+		    struct opvar *ov = New(struct opvar);
+		    set_opvar_var(ov, va_arg(argp, char *));
 		    add_opcode(sp, SPO_PUSH, ov);
 		    break;
 		}
@@ -344,6 +365,46 @@ struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *f, const char *name,
 	return NULL;
 }
 
+struct lc_vardefs *vardef_new(long typ, char *name)
+{
+	struct lc_vardefs *f = New(struct lc_vardefs);
+	if (!f) {
+	    yyerror("Could not alloc vardefs");
+	    return NULL;
+	}
+	f->next = NULL;
+	f->var_type = typ;
+	f->name = strdup(name);
+	return f;
+}
+
+void vardef_free_all(struct lc_vardefs *fchain)
+{
+	struct lc_vardefs *tmp = fchain;
+	struct lc_vardefs *nxt;
+	while (tmp) {
+	    nxt = tmp->next;
+	    Free(tmp->name);
+	    Free(tmp);
+	    tmp = nxt;
+	}
+}
+
+struct lc_vardefs *vardef_defined(struct lc_vardefs *f, char *name, int casesense)
+{
+	while (f) {
+	    if (casesense) {
+		if (!strcmp(name, f->name))
+		    return f;
+	    } else {
+		if (!strcasecmp(name, f->name))
+		    return f;
+	    }
+	    f = f->next;
+	}
+	return NULL;
+}
+
 /*
  * Basically copied from src/sp_lev.c.
  */
@@ -360,6 +421,7 @@ struct opvar *opvar_clone(struct opvar *ov)
 		    tmpov->vardata.l = ov->vardata.l;
 		}
 		break;
+	    case SPOVAR_VARIABLE:
 	    case SPOVAR_STRING:
 		{
 		    int len = strlen(ov->vardata.str);
@@ -679,6 +741,7 @@ static boolean write_maze(int fd, sp_lev *maze)
 		    case SPOVAR_INT:
 			Write(fd, &(ov->vardata.l), sizeof(ov->vardata.l));
 			break;
+		    case SPOVAR_VARIABLE:
 		    case SPOVAR_STRING:
 			if (ov->vardata.str)
 			    size = strlen(ov->vardata.str);
@@ -774,6 +837,7 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "flags",
 	    "sounds",
 	    "wallwalk",
+	    "var_init",
 	};
 
 	/* don't bother with the header stuff */
@@ -802,6 +866,7 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 			}
 			Write(fd, debuf, strlen(debuf));
 			break;
+		    case SPOVAR_VARIABLE:
 		    case SPOVAR_STRING:
 			if (ov->vardata.str)
 			    size = strlen(ov->vardata.str);
@@ -820,8 +885,15 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 				}
 			    }
 			    if (ok) {
-				snprintf(debuf, 127, "%li:\t%s\tstr:\"%s\"\n",
-					 i, opcodestr[tmpo.opcode], ov->vardata.str);
+				if (ov->spovartyp == SPOVAR_VARIABLE) {
+				    snprintf(debuf, 127, "%li:\t%s\tvar:$%s\n",
+					     i, opcodestr[tmpo.opcode],
+					     ov->vardata.str);
+				} else {
+				    snprintf(debuf, 127, "%li:\t%s\tstr:\"%s\"\n",
+					     i, opcodestr[tmpo.opcode],
+					     ov->vardata.str);
+				}
 				Write(fd, debuf, strlen(debuf));
 			    } else {
 				snprintf(debuf, 127, "%li:\t%s\tstr:",

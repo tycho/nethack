@@ -229,6 +229,9 @@ graveyard	{ yylval.i=GRAVEYARD; return FLAG_TYPE; }
 		  yylval.map = malloc(strlen(yytext+1)+1);
 		  strcpy(yylval.map, yytext+1); /* Discard the first \" */
 		  return STRING; }
+\$[a-zA-Z_][a-zA-Z_0-9]* { yylval.map = malloc(strlen(yytext)+1);
+		  strcpy(yylval.map, yytext);
+		  return VARSTRING; }
 [a-zA-Z_][a-zA-Z_0-9]* { yylval.map = malloc(strlen(yytext)+1);
 		  strcpy(yylval.map, yytext);
 		  return NQSTRING; }

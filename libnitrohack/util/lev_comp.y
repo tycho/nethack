@@ -55,6 +55,10 @@ extern struct lc_funcdefs *funcdef_new(long,char *);
 extern void funcdef_free_all(struct lc_funcdefs *);
 extern struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,char *,int);
 
+extern struct lc_vardefs *vardef_new(long,char *);
+extern void vardef_free_all(struct lc_vardefs *);
+extern struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *,int);
+
 extern void splev_add_from(sp_lev *, sp_lev *);
 
 struct coord {
@@ -83,6 +87,8 @@ static long switch_case_value[MAX_SWITCH_CASES];
 static int n_switch_case_list = 0;
 static struct opvar *switch_break_list[MAX_SWITCH_BREAKS];
 static int n_switch_break_list = 0;
+
+static struct lc_vardefs *variable_definitions = NULL;
 
 static struct lc_funcdefs *function_definitions = NULL;
 int in_function_definition = 0;
@@ -154,7 +160,7 @@ extern const char *fname;
 %token	<i> WALLWALK_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
-%token	<map> NQSTRING
+%token	<map> NQSTRING VARSTRING
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> door_wall walled secret amount chance
@@ -216,6 +222,8 @@ level		: level_def flags lev_init levstatements
 			Free($1);
 			Free(splev);
 			splev = NULL;
+			vardef_free_all(variable_definitions);
+			variable_definitions = NULL;
 		  }
 		;
 
@@ -237,6 +245,8 @@ level_def	: LEVEL_ID ':' string
 			splev = malloc(sizeof(sp_lev));
 			splev->n_opcodes = 0;
 			splev->opcodes = NULL;
+			vardef_free_all(variable_definitions);
+			variable_definitions = NULL;
 			$$ = $3;
 		  }
 		;
@@ -353,6 +363,7 @@ levstatement	: message
 		| sounds_detail
 		| branch_region
 		| corridor
+		| variable_define
 		| diggable_detail
 		| door_detail
 		| wallwalk_detail
@@ -391,6 +402,63 @@ levstatement	: message
 		| teleprt_region
 		| trap_detail
 		| wallify_detail
+		;
+
+variable_define	: VARSTRING '=' INTEGER
+		  {
+			struct lc_vardefs *vd;
+			vd = vardef_defined(variable_definitions, $1, 1);
+			if (vd) {
+			    if (vd->var_type != SPOVAR_INT) {
+				yyerror("Trying to redefine non-integer variable "
+					"as integer");
+			    }
+			} else {
+			    vd = vardef_new(SPOVAR_INT, $1);
+			    vd->next = variable_definitions;
+			    variable_definitions = vd;
+			}
+			add_opvars(splev, "iso", (long)$3, $1, SPO_VAR_INIT);
+		  }
+		| VARSTRING '=' STRING
+		  {
+			struct lc_vardefs *vd;
+			vd = vardef_defined(variable_definitions, $1, 1);
+			if (vd) {
+			    if (vd->var_type != SPOVAR_STRING) {
+				yyerror("Trying to redefine non-string variable "
+					"as string");
+			    }
+			} else {
+			    vd = vardef_new(SPOVAR_STRING, $1);
+			    vd->next = variable_definitions;
+			    variable_definitions = vd;
+			}
+			add_opvars(splev, "sso", $3, $1, SPO_VAR_INIT);
+		  }
+		| VARSTRING '=' VARSTRING
+		  {
+			struct lc_vardefs *vd1, *vd2;
+			if (!strcmp($1, $3))
+			    yyerror("Trying to set variable to value of itself");
+			vd2 = vardef_defined(variable_definitions, $3, 1);
+			if (!vd2) {
+			    yyerror("Trying to use an undefined variable");
+			} else {
+			    vd1 = vardef_defined(variable_definitions, $1, 1);
+			    if (vd1) {
+				if (vd1->var_type != vd2->var_type) {
+				    yyerror("Trying to redefine non-string variable "
+					    "as string");
+				}
+			    } else {
+				vd1 = vardef_new(vd2->var_type, $1);
+				vd1->next = variable_definitions;
+				variable_definitions = vd1;
+			    }
+			}
+			add_opvars(splev, "vso", $3, $1, SPO_VAR_INIT);
+		  }
 		;
 
 function_define	: FUNCTION_ID NQSTRING '(' ')'
@@ -486,15 +554,12 @@ comparestmt	: PERCENT
 		  }
 		;
 
-switchstatement	: SWITCH_ID '[' INTEGER ']'
+switchstatement	: SWITCH_ID '[' integer_or_var ']'
 		  {
 			struct opvar *chkjmp;
 
 			if (in_switch_statement > 0)
 			    yyerror("Cannot nest switch statements.");
-
-			if ($3 < 1)
-			    yyerror("Switch with fewer than 1 available choices.");
 
 			in_switch_statement++;
 
@@ -502,7 +567,7 @@ switchstatement	: SWITCH_ID '[' INTEGER ']'
 			n_switch_break_list = 0;
 			switch_default_case = NULL;
 
-			add_opvars(splev, "io", (long)$3, SPO_RN2);
+			add_opvars(splev, "o", SPO_RN2);
 
 			chkjmp = New(struct opvar);
 			set_opvar_int(chkjmp, splev->n_opcodes + 1);
@@ -606,7 +671,7 @@ breakstatement	: BREAK_ID
 		  }
 		;
 
-loopstatement	: LOOP_ID '[' INTEGER ']'
+loopstatement	: LOOP_ID '[' integer_or_var ']'
 		  {
 			struct opvar *tmppush = New(struct opvar);
 
@@ -614,11 +679,6 @@ loopstatement	: LOOP_ID '[' INTEGER ']'
 			    yyerror("loopstatement: IFs nested too deeply.");
 			    n_if_list = MAX_NESTED_IFS - 1;
 			}
-
-			if ($3 < 1)
-			    yyerror("Loop with fewer than 1 repeats.");
-
-			add_opvars(splev, "i", (long)$3);
 
 			set_opvar_int(tmppush, splev->n_opcodes);
 			if_list[n_if_list++] = tmppush;
@@ -697,12 +757,9 @@ if_ending	: '{' levstatements '}'
 		  }
 		;
 
-message		: MESSAGE_ID ':' STRING
+message		: MESSAGE_ID ':' string_or_var
 		  {
-			if (strlen($3) > 254)
-			    yyerror("Message string > 255 characters.");
-			else
-			    add_opvars(splev, "so", $3, SPO_MESSAGE);
+			add_opvars(splev, "o", SPO_MESSAGE);
 		  }
 		;
 
@@ -1058,12 +1115,10 @@ place_list	: place
 		 ',' place_list
 		;
 
-sounds_detail	: SOUNDS_ID ':' INTEGER ',' sounds_list
+sounds_detail	: SOUNDS_ID ':' integer_or_var ',' sounds_list
 		  {
-			long chance = $3;
 			long n_sounds = $5;
-			if (chance < 0) chance = 0;
-			add_opvars(splev, "iio", chance, n_sounds, SPO_LEVEL_SOUNDS);
+			add_opvars(splev, "io", n_sounds, SPO_LEVEL_SOUNDS);
 		  }
 		;
 
@@ -1077,9 +1132,9 @@ sounds_list	: lvl_sound_part
 		  }
 		;
 
-lvl_sound_part	: '(' MSG_OUTPUT_TYPE ',' STRING ')'
+lvl_sound_part	: '(' MSG_OUTPUT_TYPE ',' string_or_var ')'
 		  {
-			add_opvars(splev, "is", (long)$2, $4);
+			add_opvars(splev, "i", (long)$2);
 		  }
 		;
 
@@ -1107,24 +1162,20 @@ mon_gen_list	: mon_gen_part
 		  }
 		;
 
-mon_gen_part	: '(' INTEGER ',' monster ')'
+mon_gen_part	: '(' integer_or_var ',' monster ')'
 		  {
 			long token = $4;
-			if ($2 < 1)
-			    yyerror("Monster generation chances are zero?");
 			if (token == ERR)
 			    yyerror("Monster generation: Invalid monster symbol");
-			add_opvars(splev, "iii", token, 1, (long)$2);
+			add_opvars(splev, "ii", token, 1);
 		  }
-		| '(' INTEGER ',' string ')'
+		| '(' integer_or_var ',' string ')'
 		  {
 			long token;
-			if ($2 < 1)
-			    yyerror("Monster generation chances are zero?");
 			token = get_monster_id($4, '\0');
 			if (token == ERR)
 			    yyerror("Monster generation: Invalid monster name");
-			add_opvars(splev, "iii", token, 0, (long)$2);
+			add_opvars(splev, "ii", token, 0);
 		  }
 		;
 
@@ -2074,6 +2125,42 @@ object		: CHAR
 			    yyerror("Unknown char class!");
 			    $$ = ERR;
 			}
+		  }
+		;
+
+string_or_var	: STRING
+		  {
+			add_opvars(splev, "s", $1);
+		  }
+		| VARSTRING
+		  {
+			struct lc_vardefs *vd;
+			vd = vardef_defined(variable_definitions, $1, 1);
+			if (vd) {
+			    if (vd->var_type != SPOVAR_STRING) {
+				yyerror("Trying to use a non-string variable "
+					"as string");
+			    }
+			} else yyerror("Variable not defined");
+			add_opvars(splev, "v", $1);
+		  }
+		;
+
+integer_or_var	: INTEGER
+		  {
+			add_opvars(splev, "i", $1);
+		  }
+		| VARSTRING
+		  {
+			struct lc_vardefs *vd;
+			vd = vardef_defined(variable_definitions, $1, 1);
+			if (vd) {
+			    if (vd->var_type != SPOVAR_INT) {
+				yyerror("Trying to use a non-integer variable "
+					"as integer");
+			    }
+			} else yyerror("Variable not defined");
+			add_opvars(splev, "v", $1);
 		  }
 		;
 
