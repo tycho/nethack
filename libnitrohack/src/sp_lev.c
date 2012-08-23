@@ -1211,7 +1211,7 @@ static boolean create_subroom(struct level *lev, struct mkroom *proom, xchar x, 
 static void create_door(struct level *lev, room_door *dd, struct mkroom *broom)
 {
 	int x = 0, y = 0;
-	int trycnt = 0, walltry = 0, wtry = 0;
+	int trycnt = 0, wtry = 0;
 
 	if (dd->secret == -1)
 	    dd->secret = rn2(2);
@@ -1246,44 +1246,51 @@ static void create_door(struct level *lev, room_door *dd, struct mkroom *broom)
 		    dwall = 1 << rn2(4);
 
 		dpos = dd->pos;
-		if (dpos == -1)	/* The position is RANDOM */
-		    dpos = rn2(((dwall & (W_WEST|W_EAST)) ? 2 : 1) ?
-			       (broom->hy - broom->ly + 1) :
-			       (broom->hx - broom->lx + 1));
 
 		/* Convert wall and pos into an absolute coordinate! */
 		wtry = rn2(4);
-		for (walltry = 0; walltry < 4; walltry++) {
-		    switch ((wtry + walltry) % 4) {
+		switch (wtry) {
 			case 0:
-			    if (!(dwall & W_NORTH)) break;
+			    if (!(dwall & W_NORTH)) goto redoloop;
 			    y = broom->ly - 1;
-			    x = broom->lx + dpos;
+			    x = broom->lx + (dpos == -1 ?
+					     rn2(broom->hx - broom->lx + 1) :
+					     dpos);
+			    if (IS_ROCK(lev->locations[x][y-1].typ)) goto redoloop;
 			    goto outdirloop;
 			case 1:
-			    if (!(dwall & W_SOUTH)) break;
+			    if (!(dwall & W_SOUTH)) goto redoloop;
 			    y = broom->hy + 1;
-			    x = broom->lx + dpos;
+			    x = broom->lx + (dpos == -1 ?
+					     rn2(broom->hx - broom->lx + 1) :
+					     dpos);
+			    if (IS_ROCK(lev->locations[x][y+1].typ)) goto redoloop;
 			    goto outdirloop;
 			case 2:
-			    if (!(dwall & W_WEST)) break;
+			    if (!(dwall & W_WEST)) goto redoloop;
 			    x = broom->lx - 1;
-			    y = broom->ly + dpos;
+			    y = broom->ly + (dpos == -1 ?
+					     rn2(broom->hy - broom->ly + 1) :
+					     dpos);
+			    if (IS_ROCK(lev->locations[x-1][y].typ)) goto redoloop;
 			    goto outdirloop;
 			case 3:
-			    if (!(dwall & W_EAST)) break;
+			    if (!(dwall & W_EAST)) goto redoloop;
 			    x = broom->hx + 1;
-			    y = broom->ly + dpos;
+			    y = broom->ly + (dpos == -1 ?
+					     rn2(broom->hy - broom->ly + 1) :
+					     dpos);
+			    if (IS_ROCK(lev->locations[x+1][y].typ)) goto redoloop;
 			    goto outdirloop;
 			default:
 			    x = y = 0;
 			    panic("create_door: No wall for door!");
 			    goto outdirloop;
-		    }
 		}
 outdirloop:
 		if (okdoor(lev, x, y))
 		    break;
+redoloop:	;
 	} while (++trycnt <= 100);
 	if (trycnt > 100) {
 		impossible("create_door: Can't find a proper place!");
