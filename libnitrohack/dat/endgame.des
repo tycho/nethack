@@ -508,35 +508,36 @@ MAP
                              -----------------                             
 ENDMAP
 # Rider locations
-RANDOM_PLACES:(23,9),(37,14),(51,9)
+$place = { (23,9), (37,14), (51,9) }
+SHUFFLE: $place
 # Where the player will land on arrival
-TELEPORT_REGION:(29,15,45,15),(30,15,44,15)
+TELEPORT_REGION: (29,15,45,15), (30,15,44,15)
 # Lit courts
-REGION:(01,05,16,14),lit,"ordinary",filled,true
-REGION:(31,01,44,10),lit,"ordinary",filled,true
-REGION:(61,05,74,14),lit,"ordinary",filled,true
+REGION: (01,05,16,14), lit, "ordinary", filled, true
+REGION: (31,01,44,10), lit, "ordinary", filled, true
+REGION: (61,05,74,14), lit, "ordinary", filled, true
 # A Sanctum for each alignment
 # The shrines' alignments are shuffled for
 # each game
-REGION:(04,07,10,11),lit,"temple"
-REGION:(34,03,40,07),lit,"temple"
-REGION:(64,07,70,11),lit,"temple"
-ALTAR:(07,09),align[0],sanctum
-ALTAR:(37,05),align[1],sanctum
-ALTAR:(67,09),align[2],sanctum
+REGION: (04,07,10,11), lit, "temple"
+REGION: (34,03,40,07), lit, "temple"
+REGION: (64,07,70,11), lit, "temple"
+ALTAR: (07,09), align[0], sanctum
+ALTAR: (37,05), align[1], sanctum
+ALTAR: (67,09), align[2], sanctum
 # Doors
-DOOR:closed,(11,09)
-DOOR:closed,(17,09)
-DOOR:locked,(23,12)
-DOOR:locked,(37,08)
-DOOR:closed,(37,11)
-DOOR:closed,(37,17)
-DOOR:locked,(51,12)
-DOOR:locked,(57,09)
-DOOR:closed,(63,09)
+DOOR: closed, (11,09)
+DOOR: closed, (17,09)
+DOOR: locked, (23,12)
+DOOR: locked, (37,08)
+DOOR: closed, (37,11)
+DOOR: closed, (37,17)
+DOOR: locked, (51,12)
+DOOR: locked, (57,09)
+DOOR: closed, (63,09)
 # Non diggable and phazeable everywhere
-NON_DIGGABLE:(00,00,74,19)
-NON_PASSWALL:(00,00,74,19)
+NON_DIGGABLE: (00,00,74,19)
+NON_PASSWALL: (00,00,74,19)
 # Moloch's horde
 # West round room
 MONSTER: '@', "aligned priest", (18,09), noalign, hostile
@@ -545,25 +546,25 @@ MONSTER: '@', "aligned priest", (19,09), noalign, hostile
 MONSTER: '@', "aligned priest", (19,10), noalign, hostile
 MONSTER: 'A', "Angel", (20,09), noalign, hostile
 MONSTER: 'A', "Angel", (20,10), noalign, hostile
-MONSTER: '&', "Pestilence", place[0], hostile {
+MONSTER: '&', "Pestilence", $place[0], hostile {
   OBJECT: '!', "sickness"
 }
 # South-central round room
-MONSTER:'@',"aligned priest",(36,12),noalign,hostile
-MONSTER:'@',"aligned priest",(37,12),noalign,hostile
-MONSTER:'@',"aligned priest",(38,12),noalign,hostile
-MONSTER:'@',"aligned priest",(36,13),noalign,hostile
-MONSTER:'A',"Angel",(38,13),noalign,hostile
-MONSTER:'A',"Angel",(37,13),noalign,hostile
-MONSTER:'&',"Death",place[1],hostile
+MONSTER: '@', "aligned priest", (36,12), noalign, hostile
+MONSTER: '@', "aligned priest", (37,12), noalign, hostile
+MONSTER: '@', "aligned priest", (38,12), noalign, hostile
+MONSTER: '@', "aligned priest", (36,13), noalign, hostile
+MONSTER: 'A', "Angel", (38,13), noalign, hostile
+MONSTER: 'A', "Angel", (37,13), noalign, hostile
+MONSTER: '&', "Death", $place[1], hostile
 # East round room
-MONSTER:'@',"aligned priest",(56,09),noalign,hostile
-MONSTER:'@',"aligned priest",(55,08),noalign,hostile
-MONSTER:'@',"aligned priest",(55,09),noalign,hostile
-MONSTER:'@',"aligned priest",(55,10),noalign,hostile
-MONSTER:'A',"Angel",(54,09),noalign,hostile
-MONSTER:'A',"Angel",(54,10),noalign,hostile
-MONSTER:'&',"Famine",place[2],hostile
+MONSTER: '@', "aligned priest", (56,09), noalign, hostile
+MONSTER: '@', "aligned priest", (55,08), noalign, hostile
+MONSTER: '@', "aligned priest", (55,09), noalign, hostile
+MONSTER: '@', "aligned priest", (55,10), noalign, hostile
+MONSTER: 'A', "Angel", (54,09), noalign, hostile
+MONSTER: 'A', "Angel", (54,10), noalign, hostile
+MONSTER: '&', "Famine", $place[2], hostile
 #
 # The aligned horde
 #

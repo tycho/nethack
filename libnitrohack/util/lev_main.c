@@ -48,6 +48,11 @@ void yyerror(const char *);
 void yywarning(const char *);
 int  yywrap(void);
 struct opvar *set_opvar_int(struct opvar *,long);
+struct opvar *set_opvar_coord(struct opvar *,long);
+struct opvar *set_opvar_region(struct opvar *,long);
+struct opvar *set_opvar_mapchar(struct opvar *,long);
+struct opvar *set_opvar_monst(struct opvar *,long);
+struct opvar *set_opvar_obj(struct opvar *,long);
 struct opvar *set_opvar_str(struct opvar *,char *);
 struct opvar *set_opvar_var(struct opvar *,char *);
 void add_opvars(sp_lev *,const char *,...);
@@ -254,6 +259,51 @@ struct opvar *set_opvar_int(struct opvar *ov, long val)
 	return ov;
 }
 
+struct opvar *set_opvar_coord(struct opvar *ov, long val)
+{
+	if (ov) {
+	    ov->spovartyp = SPOVAR_COORD;
+	    ov->vardata.l = val;
+	}
+	return ov;
+}
+
+struct opvar *set_opvar_region(struct opvar *ov, long val)
+{
+	if (ov) {
+	    ov->spovartyp = SPOVAR_REGION;
+	    ov->vardata.l = val;
+	}
+	return ov;
+}
+
+struct opvar *set_opvar_mapchar(struct opvar *ov, long val)
+{
+	if (ov) {
+	    ov->spovartyp = SPOVAR_MAPCHAR;
+	    ov->vardata.l = val;
+	}
+	return ov;
+}
+
+struct opvar *set_opvar_monst(struct opvar *ov, long val)
+{
+	if (ov) {
+	    ov->spovartyp = SPOVAR_MONST;
+	    ov->vardata.l = val;
+	}
+	return ov;
+}
+
+struct opvar *set_opvar_obj(struct opvar *ov, long val)
+{
+	if (ov) {
+	    ov->spovartyp = SPOVAR_OBJ;
+	    ov->vardata.l = val;
+	}
+	return ov;
+}
+
 struct opvar *set_opvar_str(struct opvar *ov, char *val)
 {
 	if (ov) {
@@ -288,6 +338,41 @@ void add_opvars(sp_lev *sp, const char *fmt, ...)
 		{
 		    struct opvar *ov = New(struct opvar);
 		    set_opvar_int(ov, va_arg(argp, long));
+		    add_opcode(sp, SPO_PUSH, ov);
+		    break;
+		}
+	    case 'c':
+		{
+		    struct opvar *ov = New(struct opvar);
+		    set_opvar_coord(ov, va_arg(argp, long));
+		    add_opcode(sp, SPO_PUSH, ov);
+		    break;
+		}
+	    case 'r':
+		{
+		    struct opvar *ov = New(struct opvar);
+		    set_opvar_region(ov, va_arg(argp, long));
+		    add_opcode(sp, SPO_PUSH, ov);
+		    break;
+		}
+	    case 'm':
+		{
+		    struct opvar *ov = New(struct opvar);
+		    set_opvar_mapchar(ov, va_arg(argp, long));
+		    add_opcode(sp, SPO_PUSH, ov);
+		    break;
+		}
+	    case 'M':
+		{
+		    struct opvar *ov = New(struct opvar);
+		    set_opvar_monst(ov, va_arg(argp, long));
+		    add_opcode(sp, SPO_PUSH, ov);
+		    break;
+		}
+	    case 'O':
+		{
+		    struct opvar *ov = New(struct opvar);
+		    set_opvar_obj(ov, va_arg(argp, long));
 		    add_opcode(sp, SPO_PUSH, ov);
 		    break;
 		}
@@ -415,6 +500,11 @@ struct opvar *opvar_clone(struct opvar *ov)
 	    if (!tmpov) panic("could not alloc opvar struct");
 
 	    switch (ov->spovartyp) {
+	    case SPOVAR_COORD:
+	    case SPOVAR_REGION:
+	    case SPOVAR_MAPCHAR:
+	    case SPOVAR_MONST:
+	    case SPOVAR_OBJ:
 	    case SPOVAR_INT:
 		{
 		    tmpov->spovartyp = ov->spovartyp;
@@ -738,6 +828,11 @@ static boolean write_maze(int fd, sp_lev *maze)
 		    Write(fd, &(ov->spovartyp), sizeof(ov->spovartyp));
 		    switch (ov->spovartyp) {
 		    case SPOVAR_NULL: break;
+		    case SPOVAR_COORD:
+		    case SPOVAR_REGION:
+		    case SPOVAR_MAPCHAR:
+		    case SPOVAR_MONST:
+		    case SPOVAR_OBJ:
 		    case SPOVAR_INT:
 			Write(fd, &(ov->vardata.l), sizeof(ov->vardata.l));
 			break;
@@ -838,6 +933,7 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "sounds",
 	    "wallwalk",
 	    "var_init",
+	    "shuffle_array",
 	};
 
 	/* don't bother with the header stuff */
@@ -855,6 +951,37 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 		    int size;
 		    switch (ov->spovartyp) {
 		    case SPOVAR_NULL: break;
+		    case SPOVAR_COORD:
+			snprintf(debuf, 127, "%li:\t%s\tcoord:(%li,%li)\n",
+				 i, opcodestr[tmpo.opcode],
+				 (ov->vardata.l & 0xff),
+				 ((ov->vardata.l >> 16) & 0xff));
+			Write(fd, debuf, strlen(debuf));
+			break;
+		    case SPOVAR_REGION:
+			snprintf(debuf, 127, "%li:\t%s\tregion:(%li,%li,%li,%li)\n",
+				 i, opcodestr[tmpo.opcode],
+				 (ov->vardata.l & 0xff),
+				 ((ov->vardata.l >> 8) & 0xff),
+				 ((ov->vardata.l >> 16) & 0xff),
+				 ((ov->vardata.l >> 24) & 0xff));
+			Write(fd, debuf, strlen(debuf));
+			break;
+		    case SPOVAR_OBJ:
+			snprintf(debuf, 127, "%li:\t%s\tobj:%li\n",
+				 i, opcodestr[tmpo.opcode], ov->vardata.l);
+			Write(fd, debuf, strlen(debuf));
+			break;
+		    case SPOVAR_MONST:
+			snprintf(debuf, 127, "%li:\t%s\tmonster:%li\n",
+				 i, opcodestr[tmpo.opcode], ov->vardata.l);
+			Write(fd, debuf, strlen(debuf));
+			break;
+		    case SPOVAR_MAPCHAR:
+			snprintf(debuf, 127, "%li:\t%s\tmapchar:%li\n",
+				 i, opcodestr[tmpo.opcode], ov->vardata.l);
+			Write(fd, debuf, strlen(debuf));
+			break;
 		    case SPOVAR_INT:
 			if (ov->vardata.l >= ' ' && ov->vardata.l <= '~') {
 			    snprintf(debuf, 127, "%li:\t%s\tint:%li\t# '%c'\n",

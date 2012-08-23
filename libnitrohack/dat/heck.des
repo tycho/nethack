@@ -105,47 +105,48 @@ MAP
 -----------------------------
  - - - - - - - - - - - - - -
 ENDMAP
-RANDOM_PLACES:(8,7),(8,9),(13,12),(15,12),(13,4),(15,4),(20,7),(20,9)
-MAZEWALK:(0,0),west
-NON_DIGGABLE:(1,5,27,11)
-NON_DIGGABLE:(3,3,25,13)
-NON_DIGGABLE:(7,1,21,15)
-NON_PASSWALL:(1,5,8,11)
-NON_PASSWALL:(3,3,13,7)
-NON_PASSWALL:(7,1,21,4)
-NON_PASSWALL:(15,3,25,7)
-NON_PASSWALL:(20,5,27,11)
-NON_PASSWALL:(15,9,25,13)
-NON_PASSWALL:(7,12,21,15)
-NON_PASSWALL:(3,11,13,13)
-NON_PASSWALL:(1,9,13,11)
-TELEPORT_REGION:levregion(1,0,79,20),(1,1,27,15)
-BRANCH:levregion(1,0,79,20),(1,1,27,15)
-STAIR:levregion(1,0,79,20),(1,1,27,15),up
-STAIR:levregion(1,0,79,20),(1,1,27,15),down
-DOOR:locked,(24,13)
-DOOR:locked,(4,3)
-DOOR:locked,(18,4)
-DOOR:locked,(9,11)
-TRAP:"board",(8,11)
-TRAP:"board",(19,3)
-OBJECT:'+',random,place[0]
-OBJECT:'+',random,place[0]
-OBJECT:'+',random,place[0]
-OBJECT:'+',random,place[0]
-OBJECT:'?',random,place[1]
-OBJECT:'?',random,place[1]
-OBJECT:'?',random,place[1]
-OBJECT:'?',random,place[1]
-OBJECT[75%]:'(',"magic marker",place[2]
-OBJECT:'!',random,place[3]
-OBJECT:'!',random,place[3]
-OBJECT:'!',random,place[3]
-OBJECT:'!',random,place[3]
-MONSTER: 'P', "green slime", place[4]
-MONSTER: 'P', "green slime", place[5]
-MONSTER: 'P', "green slime", place[6]
-MONSTER: 'P', "green slime", place[7]
+$place = { (8,7), (8,9), (13,12), (15,12), (13,4), (15,4), (20,7), (20,9) }
+SHUFFLE: $place
+MAZEWALK: (0,0), west
+NON_DIGGABLE: (1,5,27,11)
+NON_DIGGABLE: (3,3,25,13)
+NON_DIGGABLE: (7,1,21,15)
+NON_PASSWALL: (1,5,8,11)
+NON_PASSWALL: (3,3,13,7)
+NON_PASSWALL: (7,1,21,4)
+NON_PASSWALL: (15,3,25,7)
+NON_PASSWALL: (20,5,27,11)
+NON_PASSWALL: (15,9,25,13)
+NON_PASSWALL: (7,12,21,15)
+NON_PASSWALL: (3,11,13,13)
+NON_PASSWALL: (1,9,13,11)
+TELEPORT_REGION: levregion(1,0,79,20), (1,1,27,15)
+BRANCH: levregion(1,0,79,20), (1,1,27,15)
+STAIR: levregion(1,0,79,20), (1,1,27,15), up
+STAIR: levregion(1,0,79,20), (1,1,27,15), down
+DOOR: locked, (24,13)
+DOOR: locked, (4,3)
+DOOR: locked, (18,4)
+DOOR: locked, (9,11)
+TRAP: "board", (8,11)
+TRAP: "board", (19,3)
+OBJECT: '+', random, $place[0]
+OBJECT: '+', random, $place[0]
+OBJECT: '+', random, $place[0]
+OBJECT: '+', random, $place[0]
+OBJECT: '?', random, $place[1]
+OBJECT: '?', random, $place[1]
+OBJECT: '?', random, $place[1]
+OBJECT: '?', random, $place[1]
+OBJECT[75%]: '(', "magic marker", $place[2]
+OBJECT: '!', random, $place[3]
+OBJECT: '!', random, $place[3]
+OBJECT: '!', random, $place[3]
+OBJECT: '!', random, $place[3]
+MONSTER: 'P', "green slime", $place[4]
+MONSTER: 'P', "green slime", $place[5]
+MONSTER: 'P', "green slime", $place[6]
+MONSTER: 'P', "green slime", $place[7]
 MONSTER: '&', "Dispater", (14,8), asleep, hostile {
   OBJECT: '/', "striking"
 }
@@ -153,18 +154,18 @@ MONSTER: 'R', "disenchanter", (10,8), asleep
 MONSTER: 'R', "disenchanter", (18,8), asleep
 MONSTER: 'R', "disenchanter", (14,6), asleep
 MONSTER: 'R', "disenchanter", (14,10), asleep
-MONSTER:random,random,(14,14)
-MONSTER:random,random,(10,14)
-MONSTER:random,random,(18,14)
-MONSTER:random,random,(14,2)
-MONSTER:random,random,(10,2)
-MONSTER:random,random,(18,2)
-MONSTER:random,random,(4,6)
-MONSTER:random,random,(4,8)
-MONSTER:random,random,(4,10)
-MONSTER:random,random,(24,6)
-MONSTER:random,random,(24,8)
-MONSTER:random,random,(24,10)
+MONSTER: random, random, (14,14)
+MONSTER: random, random, (10,14)
+MONSTER: random, random, (18,14)
+MONSTER: random, random, (14,2)
+MONSTER: random, random, (10,2)
+MONSTER: random, random, (18,2)
+MONSTER: random, random, (4,6)
+MONSTER: random, random, (4,8)
+MONSTER: random, random, (4,10)
+MONSTER: random, random, (24,6)
+MONSTER: random, random, (24,8)
+MONSTER: random, random, (24,10)
 
 #
 # Flayers

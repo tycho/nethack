@@ -7,11 +7,13 @@
 LEVEL: "town-1"
 MESSAGE: "You step into the sunlight. You hear the sounds of civilization."
 RANDOM_MONSTERS: '@', 'r'
-RANDOM_PLACES: (4,6),(4,16),(18,2),(25,10),(40,13),(55,4),(58,12),(71,2),(73,15)
+$place = { ( 4, 6), ( 4,16), (18, 2), (25,10), (40,13),
+           (55, 4), (58,12), (71, 2), (73,15) }
+SHUFFLE: $place
 ROOM: "ordinary", lit, random, random, (76,17)
 {
-  STAIR: place[0], down
-  ENGRAVING: place[1], mark, "Welcome to the town of Angband!"
+  STAIR: $place[0], down
+  ENGRAVING: $place[1], mark, "Welcome to the town of Angband!"
   FOUNTAIN: ( 6,12)
   FOUNTAIN: (39, 9)
   FOUNTAIN: (68, 3)
@@ -54,22 +56,21 @@ ROOM: "ordinary", lit, random, random, (76,17)
   #
   #	The Town Watch.
   #
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watch captain", random, peaceful
-  MONSTER: '@', "watch captain", random, peaceful
-  MONSTER: '@', "watch captain", random, peaceful
+  LOOP [4] {
+    MONSTER: '@', "watchman", random, peaceful
+  }
+  LOOP [3] {
+    MONSTER: '@', "watch captain", random, peaceful
+  }
   #
   #	Some distracting townspeople
   #
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: 'r', "sewer rat", random, hostile
-  MONSTER: 'r', "sewer rat", random, hostile
+  LOOP [4] {
+    MONSTER: '@', "mugger", random, hostile
+  }
+  LOOP [2] {
+    MONSTER: 'r', "sewer rat", random, hostile
+  }
   MONSTER: 'd', "little dog", random, hostile
 }
 
@@ -82,13 +83,15 @@ ROOM: "ordinary", lit, random, random, (76,17)
 LEVEL: "town-2"
 MESSAGE: "You reach the surface.  You hear the sounds of civilization."
 RANDOM_MONSTERS: '@', 'r'
-RANDOM_PLACES: (4,6),(4,16),(18,2),(25,10),(40,13),(55,4),(58,12),(71,2),(73,15)
+$place = { ( 4, 6), ( 4,16), (18, 2), (25,10), (40,13),
+           (55, 4), (58,12), (71, 2), (73,15) }
+SHUFFLE: $place
 ROOM: "ordinary", lit, random, random, (76,17)
 {
-  FOUNTAIN: (55,9)
-  FOUNTAIN: (22,8)
-  STAIR: place[0], down
-  ENGRAVING: place[1], mark, "Welcome to the city of Angband!"
+  FOUNTAIN: (55, 9)
+  FOUNTAIN: (22, 8)
+  STAIR: $place[0], down
+  ENGRAVING: $place[1], mark, "Welcome to the city of Angband!"
   #
   #	The Shops
   #
@@ -130,21 +133,20 @@ ROOM: "ordinary", lit, random, random, (76,17)
   #
   #	The Town Watch.
   #
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watchman", random, peaceful
-  MONSTER: '@', "watch captain", random, peaceful
-  MONSTER: '@', "watch captain", random, peaceful
-  MONSTER: '@', "watch captain", random, peaceful
+  LOOP [4] {
+    MONSTER: '@', "watchman", random, peaceful
+  }
+  LOOP [3] {
+    MONSTER: '@', "watch captain", random, peaceful
+  }
   #
   #	Some distracting townspeople
   #
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: '@', "mugger", random, hostile
-  MONSTER: 'r', "sewer rat", random, hostile
-  MONSTER: 'r', "sewer rat", random, hostile
+  LOOP [4] {
+    MONSTER: '@', "mugger", random, hostile
+  }
+  LOOP [2] {
+    MONSTER: 'r', "sewer rat", random, hostile
+  }
   MONSTER: 'f', "kitten", random, hostile
 }

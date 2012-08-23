@@ -204,12 +204,13 @@ LL........................
 .........LLL.........L....
 ENDMAP
 # Dungeon Description
-RANDOM_PLACES:(14,04),(13,07)
-REGION:(00,00,25,10),unlit,"ordinary"
+$place = { (14,04), (13,07) }
+SHUFFLE: $place
+REGION: (00,00,25,10), unlit, "ordinary"
 # Stairs
 STAIR:(20,05),up
 # Objects
-OBJECT: '[', "helm of brilliance", place[0], blessed, 0, NAME:"The Mitre of Holiness"
+OBJECT: '[', "helm of brilliance", $place[0], blessed, 0, NAME:"The Mitre of Holiness"
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
@@ -232,7 +233,7 @@ TRAP:"fire",random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'&',"Nalzok",place[0]
+MONSTER: '&', "Nalzok", $place[0]
 MONSTER:'Z',"human zombie",random
 MONSTER:'Z',"human zombie",random
 MONSTER:'Z',"human zombie",random
@@ -274,35 +275,35 @@ LEVEL: "Pri-fila"
 FLAGS: graveyard
 MON_GENERATION: 86%, (64,"human zombie"), (16,'Z'), (16,"wraith"), (4,'W')
 #
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, up
-  OBJECT: random,random,random
+  OBJECT: random, random, random
   MONSTER: 'Z', "human zombie", random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   OBJECT: random, random, random
-  OBJECT: random,random,random
+  OBJECT: random, random, random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   OBJECT: random, random, random
   TRAP: random, random
-  OBJECT: random,random,random
+  OBJECT: random, random, random
   MONSTER: 'Z', "human zombie", random
 }
 
-ROOM: "morgue" , random, random, random, random
+ROOM: "morgue", random, random, random, random
 {
   STAIR: random, down
   OBJECT: random, random, random
   TRAP: random, random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   OBJECT: random, random, random
   OBJECT: random, random, random
@@ -310,7 +311,7 @@ ROOM: "ordinary" , random, random, random, random
   MONSTER: 'W', "wraith", random
 }
 
-ROOM: "morgue" , random, random, random, random
+ROOM: "morgue", random, random, random, random
 {
   OBJECT: random, random, random
   TRAP: random, random
@@ -322,31 +323,31 @@ LEVEL: "Pri-filb"
 FLAGS: graveyard
 MON_GENERATION: 86%, (64,"human zombie"), (16,'Z'), (16,"wraith"), (4,'W')
 #
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, up
-  OBJECT: random,random,random
+  OBJECT: random, random, random
   MONSTER: 'Z', "human zombie", random
   MONSTER: 'W', "wraith", random
 }
 
-ROOM: "morgue" , random, random, random, random
+ROOM: "morgue", random, random, random, random
 {
   OBJECT: random, random, random
   OBJECT: random, random, random
-  OBJECT: random,random,random
+  OBJECT: random, random, random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   OBJECT: random, random, random
   TRAP: random, random
-  OBJECT: random,random,random
+  OBJECT: random, random, random
   MONSTER: 'Z', "human zombie", random
   MONSTER: 'W', "wraith", random
 }
 
-ROOM: "morgue" , random, random, random, random
+ROOM: "morgue", random, random, random, random
 {
   STAIR: random, down
   OBJECT: random, random, random
@@ -354,7 +355,7 @@ ROOM: "morgue" , random, random, random, random
   TRAP: random, random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   OBJECT: random, random, random
   OBJECT: random, random, random
@@ -363,7 +364,7 @@ ROOM: "ordinary" , random, random, random, random
   MONSTER: 'W', "wraith", random
 }
 
-ROOM: "morgue" , random, random, random, random
+ROOM: "morgue", random, random, random, random
 {
   OBJECT: random, random, random
   TRAP: random, random
