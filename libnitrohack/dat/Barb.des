@@ -61,7 +61,7 @@ DOOR:open,(28,05)
 # Elder
 MONSTER:'@',"Pelias",(10,07)
 # The treasure of Pelias
-OBJECT:'(',"chest",(09,05)
+OBJECT: ('(',"chest"), (09,05)
 # chieftain guards for the audience chamber
 MONSTER:'@',"chieftain",(10,05)
 MONSTER:'@',"chieftain",(10,09)
@@ -149,21 +149,21 @@ DOOR:locked,(55,06)
 STAIR:(05,02),up
 STAIR:(70,13),down
 # Objects
-OBJECT:random,random,(42,03)
-OBJECT:random,random,(42,03)
-OBJECT:random,random,(42,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,03)
-OBJECT:random,random,(41,08)
-OBJECT:random,random,(41,08)
-OBJECT:random,random,(42,08)
-OBJECT:random,random,(42,08)
-OBJECT:random,random,(42,08)
-OBJECT:random,random,(71,13)
-OBJECT:random,random,(71,13)
-OBJECT:random,random,(71,13)
+LOOP [3] {
+  OBJECT: random, (42,03)
+}
+LOOP [4] {
+  OBJECT: random, (41,03)
+}
+LOOP [2] {
+  OBJECT: random, (41,08)
+}
+LOOP [3] {
+  OBJECT: random, (42,08)
+}
+LOOP [3] {
+  OBJECT: random, (71,13)
+}
 # Random traps
 TRAP:"spiked pit",(10,13)
 TRAP:"spiked pit",(21,07)
@@ -248,21 +248,10 @@ STAIR:(36,05),up
 ALTAR:(63,04),noncoaligned,altar
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT: '*', "luckstone", (63,04), blessed, 0, NAME:"The Heart of Ahriman"
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT: ('*',"luckstone"), (63,04), blessed, 0, NAME:"The Heart of Ahriman"
+LOOP [14] {
+  OBJECT: random, random
+}
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -271,7 +260,13 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',"Thoth Amon",(63,04),hostile
+MONSTER: '@', "Thoth Amon", (63,04), hostile {
+  OBJECT: ')', +2
+  OBJECT: '['
+  LOOP [3] {
+    OBJECT: random
+  }
+}
 MONSTER:'O',"ogre",random,hostile
 MONSTER:'O',"ogre",random,hostile
 MONSTER:'O',"ogre",random,hostile
@@ -319,14 +314,9 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+LOOP [8] {
+  OBJECT: random, random
+}
 #
 TRAP: random, random
 TRAP: random, random
@@ -347,17 +337,9 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+LOOP [11] {
+  OBJECT: random, random
+}
 #
 TRAP: random, random
 TRAP: random, random

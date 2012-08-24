@@ -53,9 +53,15 @@ DOOR:closed,(15,10)
 DOOR:locked,(19,10)
 DOOR:locked,(20,10)
 # Neferet the Green, the quest leader
-MONSTER:'@',"Neferet the Green",(23,05)
+MONSTER: '@', "Neferet the Green", (23,05) {
+  LOOP [2] {
+    OBJECT: '/'
+    OBJECT: '?'
+  }
+  OBJECT: '['
+}
 # The treasure of the quest leader
-OBJECT:'(',"chest",(24,05)
+OBJECT: ('(',"chest"), (24,05)
 # apprentice guards for the audience chamber
 MONSTER:'@',"apprentice",(30,07)
 MONSTER:'@',"apprentice",(24,06)
@@ -154,21 +160,9 @@ STAIR:(48,10),down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
 # Objects
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+LOOP [15] {
+  OBJECT: random, random
+}
 # Random traps
 TRAP:"spiked pit",(24,02)
 TRAP:"spiked pit",(07,10)
@@ -297,21 +291,10 @@ NON_DIGGABLE:(00,00,75,19)
 # The altar.  This is not a shrine.
 ALTAR:(16,11),noncoaligned,altar
 # Objects
-OBJECT: '"', "amulet of ESP", (16,11), blessed, 0, NAME:"The Eye of the Aethiopica"
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT: ('"',"amulet of ESP"), (16,11), blessed, 0, NAME:"The Eye of the Aethiopica"
+LOOP [14] {
+  OBJECT: random, random
+}
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -320,7 +303,12 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',"Dark One",(16,11)
+MONSTER: '@', "Dark One", (16,11) {
+  OBJECT: '/'
+  OBJECT: '?'
+  OBJECT: '+'
+  OBJECT: '['
+}
 MONSTER:'B',random,random,hostile
 MONSTER:'B',random,random,hostile
 MONSTER:'B',random,random,hostile
@@ -370,49 +358,49 @@ MONSTER:'@',"prisoner",(41,11),peaceful,asleep
 LEVEL: "Wiz-fila"
 MON_GENERATION: 86%, (64,"vampire bat"), (16,'B'), (16,"xorn"), (4,'W')
 #
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, up
-  OBJECT: random,random,random
+  OBJECT: random, random
   MONSTER: 'i', random, random, hostile
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random,random,random
+  OBJECT: random, random
+  OBJECT: random, random
   MONSTER: 'i', random, random, hostile
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
-  OBJECT: random,random,random
+  OBJECT: random, random
   MONSTER: 'B', "vampire bat", random
   MONSTER: 'B', "vampire bat", random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, down
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'i', random, random, hostile
   MONSTER: 'B', "vampire bat", random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'i', random, random, hostile
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'B', "vampire bat", random
 }
@@ -422,48 +410,48 @@ RANDOM_CORRIDORS
 LEVEL: "Wiz-filb"
 MON_GENERATION: 86%, (64,"vampire bat"), (16,'B'), (16,"xorn"), (4,'W')
 #
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, up
-  OBJECT: random,random,random
+  OBJECT: random, random
   MONSTER: 'X', random, random, hostile
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random,random,random
+  OBJECT: random, random
+  OBJECT: random, random
   MONSTER: 'i', random, random, hostile
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
-  OBJECT: random,random,random
+  OBJECT: random, random
   MONSTER: 'X', random, random, hostile
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, down
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'i', random, random, hostile
   MONSTER: 'B', "vampire bat", random
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'i', random, random, hostile
 }
 
-ROOM: "ordinary" , random, random, random, random
+ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'B', "vampire bat", random
 }

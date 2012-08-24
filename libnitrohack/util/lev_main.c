@@ -968,8 +968,10 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_OBJ:
-			snprintf(debuf, 127, "%li:\t%s\tobj:%li\n",
-				 i, opcodestr[tmpo.opcode], ov->vardata.l);
+			snprintf(debuf, 127, "%li:\t%s\tobj:(id=%li,class=\'%c\')\n",
+				 i, opcodestr[tmpo.opcode],
+				 SP_OBJ_TYP(ov->vardata.l),
+				 (char)SP_OBJ_CLASS(ov->vardata.l));
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_MONST:

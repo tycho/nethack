@@ -38,9 +38,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "wax candle", random, quantity:2
+OBJECT: ('(',"wax candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -94,9 +94,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "tallow candle", random, quantity:2
+OBJECT: ('(',"tallow candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -142,9 +142,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "wax candle", random, quantity:2
+OBJECT: ('(',"wax candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -217,9 +217,9 @@ FOUNTAIN:(69,02)
 FOUNTAIN:(69,15)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "tallow candle", random, quantity:2
+OBJECT: ('(',"tallow candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -266,9 +266,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,72,18)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "wax candle", random, quantity:2
+OBJECT: ('(',"wax candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -316,9 +316,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,72,18)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "tallow candle", random, quantity:2
+OBJECT: ('(',"tallow candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -366,9 +366,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,18)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "wax candle", random, quantity:2
+OBJECT: ('(',"wax candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -417,9 +417,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,72,18)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "tallow candle", random, quantity:2
+OBJECT: ('(',"tallow candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -465,9 +465,9 @@ STAIR:random,down
 NON_DIGGABLE:(00,00,74,17)
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "wax candle", random, quantity:2
+OBJECT: ('(',"wax candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -516,9 +516,9 @@ STAIR:random,up
 STAIR:random,down
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "tallow candle", random, quantity:2
+OBJECT: ('(',"tallow candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random
@@ -566,9 +566,9 @@ STAIR:(00,00,70,18),(02,03,68,15),up
 STAIR:random,down
 # Objects
 LOOP [15] {
-  OBJECT: random, random, random
+  OBJECT: random, random
 }
-OBJECT: '(', "wax candle", random, quantity:2
+OBJECT: ('(',"wax candle"), random, quantity:2
 # Random traps
 LOOP [6] {
   TRAP: random, random

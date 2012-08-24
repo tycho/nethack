@@ -144,21 +144,9 @@ STAIR:random,down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
 # Objects
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+LOOP [15] {
+  OBJECT: random, random
+}
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -224,21 +212,10 @@ REGION: (00,00,25,10), unlit, "ordinary"
 # Stairs
 STAIR: (20,05), up
 # Objects
-OBJECT: '(', "lenses", $place[0], blessed, 0, NAME:"The Eyes of the Overworld"
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT: ('(',"lenses"), $place[0], blessed, 0, NAME:"The Eyes of the Overworld"
+LOOP [14] {
+  OBJECT: random, random
+}
 # Random traps
 TRAP:"fire",random
 TRAP:"fire",random
@@ -248,10 +225,10 @@ TRAP:random,random
 TRAP:random,random
 # Random monsters.
 MONSTER: '@', "Master Kaen", $place[0] {
-  OBJECT: ')', random, +4
-  OBJECT: '?', random
-  OBJECT: '?', random
-  OBJECT: '?', random
+  OBJECT: ')', +4
+  LOOP [3] {
+    OBJECT: '?'
+  }
 }
 ALTAR: $place[0], noalign, altar
 MONSTER: 'E', "earth elemental", random
@@ -290,22 +267,22 @@ RANDOM_MONSTERS: 'E', 'X'
 ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, up
-  OBJECT: random, random, random
+  OBJECT: random, random
   MONSTER: 'E', random, random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
+  OBJECT: random, random
   MONSTER: 'E', random, random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
   MONSTER: 'X', "xorn", random
   MONSTER: 'E', "earth elemental", random
 }
@@ -313,7 +290,7 @@ ROOM: "ordinary", random, random, random, random
 ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, down
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'E', random, random, hostile
   MONSTER: 'E', "earth elemental", random
@@ -321,15 +298,15 @@ ROOM: "ordinary", random, random, random, random
 
 ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'X', random, random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'E', "earth elemental", random
 }
@@ -344,29 +321,29 @@ RANDOM_MONSTERS: 'E', 'X'
 ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, up
-  OBJECT: random, random, random
+  OBJECT: random, random
   MONSTER: 'X', random, random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
+  OBJECT: random, random
   MONSTER: 'X', random, random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
   MONSTER: 'E', random, random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
 {
   STAIR: random, down
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'E', random, random, hostile
   MONSTER: 'E', "earth elemental", random
@@ -374,15 +351,15 @@ ROOM: "ordinary", random, random, random, random
 
 ROOM: "ordinary", random, random, random, random
 {
-  OBJECT: random, random, random
-  OBJECT: random, random, random
+  OBJECT: random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'X', random, random, hostile
 }
 
 ROOM: "ordinary" , random, random, random, random
 {
-  OBJECT: random, random, random
+  OBJECT: random, random
   TRAP: random, random
   MONSTER: 'E', "earth elemental", random
 }

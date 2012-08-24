@@ -60,9 +60,12 @@ DOOR:closed,(45,03)
 DOOR:closed,(04,12)
 DOOR:closed,(45,12)
 # King Arthur
-MONSTER:'@',"King Arthur",(09,07)
+MONSTER: '@', "King Arthur", (09,07) {
+  OBJECT: (')',"long sword"), +4
+  OBJECT: '[', +3
+}
 # The treasure of King Arthur
-OBJECT:'(',"chest",(09,07)
+OBJECT: ('(',"chest"), (09,07)
 # knight guards for the watchrooms
 MONSTER:'@',"knight",(04,02),peaceful
 MONSTER:'@',"knight",(04,13),peaceful
@@ -135,21 +138,9 @@ STAIR:(18,05),down
 # The altar atop the Tor and its attendant (creating altar makes the priest).
 ALTAR:(17,05),neutral,shrine
 # Objects
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+LOOP [15] {
+  OBJECT: random, random
+}
 # Random traps
 # All of the avenues are guarded by magic except for the East.
 # South
@@ -280,28 +271,25 @@ STAIR:(03,08),up
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT: '(', "mirror", (50,06), blessed, 0, NAME:"The Magic Mirror of Merlin"
-OBJECT:random,random,(33,01)
-OBJECT:random,random,(33,02)
-OBJECT:random,random,(33,03)
-OBJECT:random,random,(33,04)
-OBJECT:random,random,(33,05)
-OBJECT:random,random,(34,01)
-OBJECT:random,random,(34,02)
-OBJECT:random,random,(34,03)
-OBJECT:random,random,(34,04)
-OBJECT:random,random,(34,05)
-OBJECT:random,random,(35,01)
-OBJECT:random,random,(35,02)
-OBJECT:random,random,(35,03)
-OBJECT:random,random,(35,04)
-OBJECT:random,random,(35,05)
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
+OBJECT: ('(',"mirror"), (50,06), blessed, 0, NAME:"The Magic Mirror of Merlin"
+OBJECT: random, (33,01)
+OBJECT: random, (33,02)
+OBJECT: random, (33,03)
+OBJECT: random, (33,04)
+OBJECT: random, (33,05)
+OBJECT: random, (34,01)
+OBJECT: random, (34,02)
+OBJECT: random, (34,03)
+OBJECT: random, (34,04)
+OBJECT: random, (34,05)
+OBJECT: random, (35,01)
+OBJECT: random, (35,02)
+OBJECT: random, (35,03)
+OBJECT: random, (35,04)
+OBJECT: random, (35,05)
+LOOP [6] {
+  OBJECT: random, random
+}
 # Random traps
 TRAP:"spiked pit",(13,07)
 TRAP:"spiked pit",(12,08)
@@ -312,7 +300,11 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'D',"Ixoth",(50,06),hostile
+MONSTER: 'D', "Ixoth", (50,06), hostile {
+  LOOP [2] {
+    OBJECT: '?'
+  }
+}
 MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',"quasit",random,hostile
@@ -359,14 +351,9 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+LOOP [8] {
+  OBJECT: random, random
+}
 #
 MONSTER: 'i', "quasit", random, hostile
 MONSTER: 'i', "quasit", random, hostile
@@ -389,17 +376,9 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
-OBJECT: random, random, random
+LOOP [11] {
+  OBJECT: random, random
+}
 #
 MONSTER: 'i', "quasit", random, hostile
 MONSTER: 'i', "quasit", random, hostile
