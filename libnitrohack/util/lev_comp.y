@@ -473,7 +473,7 @@ variable_define	: VARSTRING '=' INTEGER
 			}
 			add_opvars(splev, "siso", $3, -1, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' mapchar
+		| VARSTRING '=' TERRAIN_ID ':' mapchar
 		  {
 			struct lc_vardefs *vd;
 			vd = vardef_defined(variable_definitions, $1, 1);
@@ -487,7 +487,7 @@ variable_define	: VARSTRING '=' INTEGER
 			    vd->next = variable_definitions;
 			    variable_definitions = vd;
 			}
-			add_opvars(splev, "miso", (long)$3, 0, $1, SPO_VAR_INIT);
+			add_opvars(splev, "miso", (long)$5, 0, $1, SPO_VAR_INIT);
 		  }
 		| VARSTRING '=' MONSTER_ID ':' encodemonster
 		  {
@@ -603,9 +603,9 @@ variable_define	: VARSTRING '=' INTEGER
 			}
 			add_opvars(splev, "iso", n_items, $1, SPO_VAR_INIT);
 		  }
-		| VARSTRING '=' '{' mapchar_list '}'
+		| VARSTRING '=' TERRAIN_ID ':' '{' mapchar_list '}'
 		  {
-			long n_items = $4;
+			long n_items = $6;
 			struct lc_vardefs *vd;
 			if ((vd = vardef_defined(variable_definitions, $1, 1))) {
 			    if (vd->var_type != (SPOVAR_MAPCHAR|SPOVAR_ARRAY)) {
@@ -621,7 +621,7 @@ variable_define	: VARSTRING '=' INTEGER
 		  }
 		| VARSTRING '=' MONSTER_ID ':' '{' encodemonster_list '}'
 		  {
-			long n_items = $4;
+			long n_items = $6;
 			struct lc_vardefs *vd;
 			vd = vardef_defined(variable_definitions, $1, 1);
 			if (vd) {
@@ -638,7 +638,7 @@ variable_define	: VARSTRING '=' INTEGER
 		  }
 		| VARSTRING '=' OBJECT_ID ':' '{' encodeobj_list '}'
 		  {
-			long n_items = $4;
+			long n_items = $6;
 			struct lc_vardefs *vd;
 			vd = vardef_defined(variable_definitions, $1, 1);
 			if (vd) {
@@ -1058,22 +1058,13 @@ message		: MESSAGE_ID ':' string_or_var
 		  }
 		;
 
-wallwalk_detail	: WALLWALK_ID ':' coord_or_var ',' CHAR opt_spercent
+wallwalk_detail	: WALLWALK_ID ':' coord_or_var ',' mapchar_or_var opt_spercent
 		  {
-			long fgtyp = what_map_char((char) $5);
-			if (fgtyp >= MAX_TYPE)
-			     yyerror("Wallwalk: illegal foreground map char");
-			add_opvars(splev, "iiio", $6, fgtyp, ROOM, SPO_WALLWALK);
+			add_opvars(splev, "mio", ROOM, $6, SPO_WALLWALK);
 		  }
-		| WALLWALK_ID ':' coord_or_var ',' CHAR ',' CHAR opt_spercent
+		| WALLWALK_ID ':' coord_or_var ',' mapchar_or_var ',' mapchar_or_var opt_spercent
 		  {
-			long fgtyp = what_map_char((char) $5);
-			long bgtyp = what_map_char((char) $7);
-			if (fgtyp >= MAX_TYPE)
-			     yyerror("Wallwalk: illegal foreground map char");
-			if (bgtyp >= MAX_TYPE)
-			     yyerror("Wallwalk: illegal background map char");
-			add_opvars(splev, "iiio", $8, fgtyp, bgtyp, SPO_WALLWALK);
+			add_opvars(splev, "io", $8, SPO_WALLWALK);
 		  }
 		;
 

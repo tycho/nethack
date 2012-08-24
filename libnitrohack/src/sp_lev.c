@@ -177,6 +177,7 @@ static struct opvar *splev_stack_pop(struct splevstack *st)
 #define OV_pop_r(x)	((x) = splev_stack_getdat(coder, SPOVAR_REGION))
 #define OV_pop_s(x)	((x) = splev_stack_getdat(coder, SPOVAR_STRING))
 #define OV_pop(x)	((x) = splev_stack_getdat_any(coder))
+#define OV_pop_typ(x, typ) ((x) = splev_stack_getdat(coder, typ))
 
 /*
 static struct opvar *opvar_new_str(char *s)
@@ -2906,7 +2907,6 @@ static void spo_monster(struct sp_coder *coder, struct level *lev)
 	    case SP_M_V_NAME:
 		if (OV_typ(parm) == SPOVAR_STRING && !tmpmons.name.str)
 		    tmpmons.name.str = strdup(OV_s(parm));
-		opvar_free(parm);
 		break;
 	    case SP_M_V_APPEAR:
 		if (OV_typ(parm) == SPOVAR_INT && !tmpmons.appear_as.str) {
@@ -3537,14 +3537,21 @@ static void spo_altar(struct sp_coder *coder, struct level *lev)
 static void spo_wallwalk(struct sp_coder *coder, struct level *lev)
 {
 	struct opvar *coord, *fgtyp, *bgtyp, *chance;
+	xchar x, y;
 
-	if (!OV_pop_i(bgtyp) ||
-	    !OV_pop_i(fgtyp) ||
-	    !OV_pop_i(chance) ||
+	if (!OV_pop_i(chance) ||
+	    !OV_pop_typ(bgtyp, SPOVAR_MAPCHAR) ||
+	    !OV_pop_typ(fgtyp, SPOVAR_MAPCHAR) ||
 	    !OV_pop_c(coord)) return;
 
-	wallwalk_right(lev, SP_COORD_X(OV_i(coord)), SP_COORD_Y(OV_i(coord)),
-		       OV_i(fgtyp), OV_i(bgtyp), OV_i(chance));
+	x = SP_COORD_X(OV_i(coord));
+	y = SP_COORD_Y(OV_i(coord));
+	get_location(lev, &x, &y, DRY|WET, coder->croom);
+
+	if (OV_i(fgtyp) >= MAX_TYPE) return;
+	if (OV_i(bgtyp) >= MAX_TYPE) return;
+
+	wallwalk_right(lev, x, y, OV_i(fgtyp), OV_i(bgtyp), OV_i(chance));
 
 	opvar_free(coord);
 	opvar_free(chance);
