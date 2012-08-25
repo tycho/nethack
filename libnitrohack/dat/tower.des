@@ -21,15 +21,15 @@ MAP
 ENDMAP
 LADDER: (11,05), down
 # The lord and his court
-MONSTER: 'V', "Vlad the Impaler", (06,05) {
+MONSTER: ('V',"Vlad the Impaler"), (06,05) {
   OBJECT: ('(',"Candelabrum of Invocation")
 }
-MONSTER: 'V', random, (03,09)
-MONSTER: 'V', random, (07,09)
-MONSTER: 'V', random, (11,09)
-MONSTER: 'V', random, (03,01)
-MONSTER: 'V', random, (07,01)
-MONSTER: 'V', random, (11,01)
+MONSTER: 'V', (03,09)
+MONSTER: 'V', (07,09)
+MONSTER: 'V', (11,09)
+MONSTER: 'V', (03,01)
+MONSTER: 'V', (07,01)
+MONSTER: 'V', (11,01)
 # The doors
 DOOR:closed,(08,03)
 DOOR:closed,(10,03)
@@ -76,11 +76,11 @@ LADDER: (11,05), up
 LADDER: (03,07), down
 DOOR: locked, (10,04)
 DOOR: locked, (09,07)
-MONSTER: '&', random, $place[0]
-MONSTER: '&', random, $place[1]
-MONSTER: 'd', "hell hound pup", $place[2]
-MONSTER: 'd', "hell hound pup", $place[3]
-MONSTER: 'd', "winter wolf", $place[4]
+MONSTER: '&', $place[0]
+MONSTER: '&', $place[1]
+MONSTER: ('d',"hell hound pup"), $place[2]
+MONSTER: ('d',"hell hound pup"), $place[3]
+MONSTER: ('d',"winter wolf"), $place[4]
 IF [50%] {
   CONTAINER: ('(',"chest"), $place[5] {
     IF [50%] {
@@ -141,11 +141,11 @@ LADDER: (05,07), up
 # Entry door is, of course, locked
 DOOR: locked, (14,05)
 # Let's put a dragon behind the door, just for the fun...
-MONSTER: 'D', random, (13,05)
-MONSTER: random, random, (12,04)
-MONSTER: random, random, (12,06)
+MONSTER: 'D', (13,05)
+MONSTER: random, (12,04)
+MONSTER: random, (12,06)
 LOOP [6] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 OBJECT[75%]: (')',"long sword"), $place[0]
 TRAP: random, $place[0]

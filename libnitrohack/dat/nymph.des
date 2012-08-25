@@ -6,8 +6,9 @@ LEVEL: "nymph"
 RANDOM_MONSTERS: 'n'
 ROOM: "ordinary", unlit, random, random, (12,7)
 {
-  TRAP: "board", random
-  TRAP: "board", random
+  LOOP [2] {
+    TRAP: "board", random
+  }
   LOOP [4] {
     OBJECT: ('(',"chest"), random
     OBJECT: '=', random
@@ -15,13 +16,9 @@ ROOM: "ordinary", unlit, random, random, (12,7)
   }
   LOOP [5] {
     OBJECT: '*', random
+    MONSTER: 'n', random, hostile
   }
-  MONSTER: 'n', random, random, hostile
-  MONSTER: 'n', random, random, hostile
-  MONSTER: 'n', random, random, hostile
-  MONSTER: 'n', random, random, hostile
-  MONSTER: 'n', random, random, hostile
-  MONSTER: 'n', "Aphrodite", random, hostile
+  MONSTER: ('n',"Aphrodite"), random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
@@ -29,7 +26,7 @@ ROOM: "ordinary", random, random, random, random
   STAIR: random, up
   TRAP: "board", random
   OBJECT: random, random
-  MONSTER: 'n', random, random, hostile
+  MONSTER: 'n', random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
@@ -38,7 +35,7 @@ ROOM: "ordinary", random, random, random, random
   TRAP: "board", random
   OBJECT: random, random
   TRAP: random, random
-  MONSTER: 'n', random, random, hostile
+  MONSTER: 'n', random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
@@ -46,15 +43,7 @@ ROOM: "ordinary", random, random, random, random
   TRAP: "board", random
   OBJECT: random, random
   OBJECT: random, random
-  MONSTER: 'n', random, random, hostile
-}
-
-ROOM: "ordinary", random, random, random, random
-{
-  TRAP: "board", random
-  OBJECT: random, random
-  TRAP: random, random
-  MONSTER: 'n', random, random, hostile
+  MONSTER: 'n', random, hostile
 }
 
 ROOM: "ordinary", random, random, random, random
@@ -62,7 +51,15 @@ ROOM: "ordinary", random, random, random, random
   TRAP: "board", random
   OBJECT: random, random
   TRAP: random, random
-  MONSTER: 'n', random, random, hostile
+  MONSTER: 'n', random, hostile
+}
+
+ROOM: "ordinary", random, random, random, random
+{
+  TRAP: "board", random
+  OBJECT: random, random
+  TRAP: random, random
+  MONSTER: 'n', random, hostile
 }
 
 RANDOM_CORRIDORS

@@ -57,21 +57,21 @@ ROOM: "ordinary", lit, random, random, (76,17)
   #	The Town Watch.
   #
   LOOP [4] {
-    MONSTER: '@', "watchman", random, peaceful
+    MONSTER: ('@',"watchman"), random, peaceful
   }
   LOOP [3] {
-    MONSTER: '@', "watch captain", random, peaceful
+    MONSTER: ('@',"watch captain"), random, peaceful
   }
   #
   #	Some distracting townspeople
   #
   LOOP [4] {
-    MONSTER: '@', "mugger", random, hostile
+    MONSTER: ('@',"mugger"), random, hostile
   }
   LOOP [2] {
-    MONSTER: 'r', "sewer rat", random, hostile
+    MONSTER: ('r',"sewer rat"), random, hostile
   }
-  MONSTER: 'd', "little dog", random, hostile
+  MONSTER: ('d',"little dog"), random, hostile
 }
 
 #
@@ -134,19 +134,19 @@ ROOM: "ordinary", lit, random, random, (76,17)
   #	The Town Watch.
   #
   LOOP [4] {
-    MONSTER: '@', "watchman", random, peaceful
+    MONSTER: ('@',"watchman"), random, peaceful
   }
   LOOP [3] {
-    MONSTER: '@', "watch captain", random, peaceful
+    MONSTER: ('@',"watch captain"), random, peaceful
   }
   #
   #	Some distracting townspeople
   #
   LOOP [4] {
-    MONSTER: '@', "mugger", random, hostile
+    MONSTER: ('@',"mugger"), random, hostile
   }
   LOOP [2] {
-    MONSTER: 'r', "sewer rat", random, hostile
+    MONSTER: ('r',"sewer rat"), random, hostile
   }
-  MONSTER: 'f', "kitten", random, hostile
+  MONSTER: ('f',"kitten"), random, hostile
 }

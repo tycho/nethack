@@ -56,7 +56,7 @@ DOOR:closed,(47,08)
 DOOR:closed,(48,12)
 DOOR:locked,(50,10)
 # Hippocrates
-MONSTER: '@', "Hippocrates", (37,10) {
+MONSTER: ('@',"Hippocrates"), (37,10) {
   LOOP [4] {
     OBJECT: '/'
   }
@@ -68,14 +68,14 @@ MONSTER: '@', "Hippocrates", (37,10) {
 # The treasure of Hippocrates
 OBJECT: ('(',"chest"), (37,10)
 # intern guards for the audience chamber
-MONSTER:'@',"attendant",(29,08)
-MONSTER:'@',"attendant",(29,09)
-MONSTER:'@',"attendant",(29,10)
-MONSTER:'@',"attendant",(29,11)
-MONSTER:'@',"attendant",(40,09)
-MONSTER:'@',"attendant",(40,10)
-MONSTER:'@',"attendant",(40,11)
-MONSTER:'@',"attendant",(40,13)
+MONSTER: ('@',"attendant"), (29,08)
+MONSTER: ('@',"attendant"), (29,09)
+MONSTER: ('@',"attendant"), (29,10)
+MONSTER: ('@',"attendant"), (29,11)
+MONSTER: ('@',"attendant"), (40,09)
+MONSTER: ('@',"attendant"), (40,10)
+MONSTER: ('@',"attendant"), (40,11)
+MONSTER: ('@',"attendant"), (40,13)
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
@@ -86,29 +86,16 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Monsters on siege duty.
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: 'r',"rabid rat",random
-MONSTER: ';',"giant eel",random
-MONSTER: ';',"shark",random
-MONSTER: ';', random, random
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
+LOOP [10] {
+  MONSTER: ('r',"rabid rat"), random
+}
+MONSTER: (';',"giant eel"), random
+MONSTER: (';',"shark"), random
+MONSTER: ';', random
+LOOP [5] {
+  MONSTER: 'D', random, hostile
+  MONSTER: 'S', random, hostile
+}
 #
 #	The "locate" level for the quest.
 #
@@ -161,41 +148,25 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',random,random,hostile
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"kraken",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',random, random,hostile
-MONSTER:';',random, random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
+LOOP [8] {
+  MONSTER: ('r',"rabid rat"), random
+}
+MONSTER: 'r', random, hostile
+LOOP [5] {
+  MONSTER: (';',"giant eel"), random
+}
+LOOP [2] {
+  MONSTER: (';',"electric eel"), random
+  MONSTER: (';',"shark"), random
+  MONSTER: ';', random, hostile
+}
+MONSTER: (';',"kraken"), random
+LOOP [5] {
+  MONSTER: 'D', random, hostile
+}
+LOOP [9] {
+  MONSTER: 'S', random, hostile
+}
 
 #
 #	The "goal" level for the quest.
@@ -245,40 +216,27 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER: 'H', "Cyclops", (20,06), hostile {
+MONSTER: ('H',"Cyclops"), (20,06), hostile {
   OBJECT: '[', +3
 }
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',"rabid rat",random
-MONSTER:'r',random,random,hostile
-MONSTER:'r',random,random,hostile
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
+LOOP [3] {
+  MONSTER: ('r',"rabid rat"), random
+}
+LOOP [2] {
+  MONSTER: 'r', random, hostile
+  MONSTER: (';',"electric eel"), random
+  MONSTER: (';',"shark"), random
+}
+LOOP [6] {
+  MONSTER: (';',"giant eel"), random
+}
+MONSTER: ';', random, hostile
+LOOP [5] {
+  MONSTER: 'D', random, hostile
+}
+LOOP [10] {
+  MONSTER: 'S', random, hostile
+}
 
 #
 #	The "fill" levels for the quest.
@@ -302,19 +260,18 @@ LOOP [8] {
   OBJECT: random, random
 }
 #
-MONSTER: 'r', "rabid rat", random
-MONSTER: 'r', random, random,hostile
-MONSTER: 'r', random, random,hostile
-MONSTER: ';', "giant eel", random
-MONSTER: ';', "giant eel", random
-MONSTER: ';', "electric eel", random
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
+MONSTER: ('r',"rabid rat"), random
+LOOP [2] {
+  MONSTER: 'r', random, hostile
+  MONSTER: (';',"giant eel"), random
+}
+MONSTER: (';',"electric eel"), random
+LOOP [4] {
+  MONSTER: 'D', random, hostile
+}
+LOOP [3] {
+  MONSTER: 'S', random, hostile
+}
 #
 TRAP: random, random
 TRAP: random, random
@@ -334,24 +291,20 @@ LOOP [11] {
   OBJECT: random, random
 }
 #
-MONSTER: 'r', "rabid rat", random
-MONSTER: 'r', "rabid rat", random
-MONSTER: 'r', random, random,hostile
-MONSTER: 'r', random, random,hostile
-MONSTER: ';', "giant eel", random
-MONSTER: ';', "giant eel", random
-MONSTER: ';', "giant eel", random
-MONSTER: ';', "giant eel", random
-MONSTER: ';', "giant eel", random
-MONSTER: ';', "electric eel", random
-MONSTER: ';', "electric eel", random
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'D',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
-MONSTER: 'S',random,random,hostile
+LOOP [2] {
+  MONSTER: ('r',"rabid rat"), random
+  MONSTER: 'r', random, hostile
+  MONSTER: (';',"electric eel"), random
+}
+LOOP [5] {
+  MONSTER: (';',"giant eel"), random
+}
+LOOP [4] {
+  MONSTER: 'D', random, hostile
+}
+LOOP [3] {
+  MONSTER: 'S', random, hostile
+}
 #
 TRAP: random, random
 TRAP: random, random

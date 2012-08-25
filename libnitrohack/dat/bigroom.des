@@ -46,9 +46,9 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER[50%]: ':', "giant turtle", random
+MONSTER[50%]: (':',"giant turtle"), random
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 #	Here, just play with the lighting...
@@ -102,9 +102,9 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER[50%]: ':', "giant turtle", random
+MONSTER[50%]: (':',"giant turtle"), random
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 #	Now, let's get fancy...
@@ -150,34 +150,34 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER: random, random, (01,01)
-MONSTER: random, random, (13,01)
-MONSTER: random, random, (25,01)
-MONSTER: random, random, (37,01)
-MONSTER: random, random, (49,01)
-MONSTER: random, random, (61,01)
-MONSTER: random, random, (73,01)
-MONSTER: random, random, (07,07)
-MONSTER: random, random, (13,07)
-MONSTER: random, random, (25,07)
-MONSTER: random, random, (37,07)
-MONSTER: random, random, (49,07)
-MONSTER: random, random, (61,07)
-MONSTER: random, random, (67,07)
-MONSTER: random, random, (07,09)
-MONSTER: random, random, (13,09)
-MONSTER: random, random, (25,09)
-MONSTER: random, random, (37,09)
-MONSTER: random, random, (49,09)
-MONSTER: random, random, (61,09)
-MONSTER: random, random, (67,09)
-MONSTER: random, random, (01,16)
-MONSTER: random, random, (13,16)
-MONSTER: random, random, (25,16)
-MONSTER: random, random, (37,16)
-MONSTER: random, random, (49,16)
-MONSTER: random, random, (61,16)
-MONSTER: random, random, (73,16)
+MONSTER: random, (01,01)
+MONSTER: random, (13,01)
+MONSTER: random, (25,01)
+MONSTER: random, (37,01)
+MONSTER: random, (49,01)
+MONSTER: random, (61,01)
+MONSTER: random, (73,01)
+MONSTER: random, (07,07)
+MONSTER: random, (13,07)
+MONSTER: random, (25,07)
+MONSTER: random, (37,07)
+MONSTER: random, (49,07)
+MONSTER: random, (61,07)
+MONSTER: random, (67,07)
+MONSTER: random, (07,09)
+MONSTER: random, (13,09)
+MONSTER: random, (25,09)
+MONSTER: random, (37,09)
+MONSTER: random, (49,09)
+MONSTER: random, (61,09)
+MONSTER: random, (67,09)
+MONSTER: random, (01,16)
+MONSTER: random, (13,16)
+MONSTER: random, (25,16)
+MONSTER: random, (37,16)
+MONSTER: random, (49,16)
+MONSTER: random, (61,16)
+MONSTER: random, (73,16)
 
 LEVEL: "bigrm-4"
 FLAGS: mazelevel
@@ -225,9 +225,9 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER[50%]: ':', "giant turtle", random
+MONSTER[50%]: (':',"giant turtle"), random
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 #	Try an oval room...
@@ -274,9 +274,9 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER[50%]: ':', "giant turtle", random
+MONSTER[50%]: (':',"giant turtle"), random
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 
@@ -324,9 +324,9 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER[50%]: ':', "giant turtle", random
+MONSTER[50%]: (':',"giant turtle"), random
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 
@@ -374,9 +374,9 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER[50%]: ':', "giant turtle", random
+MONSTER[50%]: (':',"giant turtle"), random
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 
@@ -426,7 +426,7 @@ LOOP [6] {
 }
 # Random monsters.
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 
@@ -473,9 +473,9 @@ LOOP [6] {
   TRAP: random, random
 }
 # Random monsters.
-MONSTER[50%]: ':', "giant turtle", random
+MONSTER[50%]: (':',"giant turtle"), random
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 
@@ -525,7 +525,7 @@ LOOP [6] {
 }
 # Random monsters
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 
@@ -575,7 +575,7 @@ LOOP [6] {
 }
 # Random monsters
 LOOP [28] {
-  MONSTER: random, random, random
+  MONSTER: random, random
 }
 
 MAZEWALK: (4, 2), south
