@@ -45,6 +45,7 @@ extern void init_yyout(FILE *);
 
 int  main(int, char **);
 void yyerror(const char *);
+void lc_error(const char *,...);
 void yywarning(const char *);
 int  yywrap(void);
 struct opvar *set_opvar_int(struct opvar *,long);
@@ -75,6 +76,7 @@ struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,const char *,int);
 struct lc_vardefs *vardef_new(long,char *);
 void vardef_free_all(struct lc_vardefs *);
 struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *, int);
+void check_vardef_type(struct lc_vardefs *,char *,long,char *);
 
 struct opvar *opvar_clone(struct opvar *);
 void splev_add_from(sp_lev *,sp_lev *);
@@ -239,6 +241,18 @@ void yyerror(const char *s)
 		fprintf(stderr,"Too many errors, good bye!\n");
 		exit(EXIT_FAILURE);
 	}
+}
+
+void lc_error(const char *fmt, ...)
+{
+	char buf[512];
+	va_list argp;
+
+	va_start(argp, fmt);
+	vsnprintf(buf, 511, fmt, argp);
+	va_end(argp);
+
+	yyerror(buf);
 }
 
 /*
@@ -488,6 +502,22 @@ struct lc_vardefs *vardef_defined(struct lc_vardefs *f, char *name, int casesens
 	    f = f->next;
 	}
 	return NULL;
+}
+
+void check_vardef_type(struct lc_vardefs *vd, char *varname, long vartype,
+		       char *vartypestr)
+{
+	struct lc_vardefs *tmp;
+	tmp = vardef_defined(vd, varname, 1);
+	if (tmp) {
+	    if (tmp->var_type != vartype) {
+		lc_error("Trying to use a non-%s%s variable '%s' as %s",
+			 vartypestr, ((vartype & SPOVAR_ARRAY) ? " array" : ""),
+			 varname, vartypestr);
+	    }
+	} else {
+	    lc_error("Variable '%s' not defined", varname);
+	}
 }
 
 /*
