@@ -174,8 +174,8 @@ extern const char *fname;
 %type	<i> opt_percent opt_spercent opt_int opt_fillchar
 %type	<map> string level_def
 %type	<corpos> corr_spec
-%type	<lregn> region lev_region lineends
-%type	<crd> coord coordinate room_pos subroom_pos room_align
+%type	<lregn> region lev_region
+%type	<crd> room_pos subroom_pos room_align
 %type	<sze> room_size
 %type	<terr> terrain_type
 %start	file
@@ -1968,15 +1968,14 @@ terrain_detail	: TERRAIN_ID chance ':' coord_or_var ',' terrain_type
 		  }
 		;
 
-randline_detail	: RANDLINE_ID ':' lineends ',' terrain_type ',' INTEGER opt_int
+randline_detail	: RANDLINE_ID ':' coord_or_var ',' coord_or_var ',' terrain_type ',' INTEGER opt_int
 		  {
 			long c;
-			c = $5.ter;
+			c = $7.ter;
 			if (c == INVALID_TYPE || c >= MAX_TYPE)
 			    lc_error("Randline: illegal map char");
-			add_opvars(splev, "iiii iiiio",
-				   $3.x1, $3.y1, $3.x2, $3.y2,
-				   c, (long)$5.lit, (long)$7, (long)$<i>8,
+			add_opvars(splev, "iiiio",
+				   c, (long)$7.lit, (long)$9, (long)$10,
 				   SPO_RANDLINE);
 		  }
 
@@ -2170,13 +2169,6 @@ prefilled	: /* empty */
 		| ',' FILLING ',' BOOLEAN
 		  {
 			$$ = $2 + ($4 << 1);
-		  }
-		;
-
-coordinate	: coord
-		| RANDOM_TYPE
-		  {
-			$$.x = $$.y = -MAX_REGISTERS - 1;
 		  }
 		;
 
@@ -2487,25 +2479,6 @@ chance		: /* empty */
 
 engraving_type	: ENGRAVING_TYPE
 		| RANDOM_TYPE
-		;
-
-coord		: '(' INTEGER ',' INTEGER ')'
-		  {
-			if ($2 < 0 || $4 < 0 || $2 >= COLNO || $4 >= ROWNO)
-			    lc_error("Coordinates out of map range!");
-			$$.x = $2;
-			$$.y = $4;
-		  }
-		;
-
-lineends	: coordinate ',' coordinate
-		  {
-			$$.x1 = $1.x;
-			$$.y1 = $1.y;
-			$$.x2 = $3.x;
-			$$.y2 = $3.y;
-			$$.area = 1;
-		  }
 		;
 
 lev_region	: region

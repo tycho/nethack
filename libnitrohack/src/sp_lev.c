@@ -3677,33 +3677,29 @@ static void spo_replace_terrain(struct sp_coder *coder, struct level *lev)
 
 static void spo_randline(struct sp_coder *coder, struct level *lev)
 {
-	struct opvar *x1, *y1, *x2, *y2, *fg, *lit, *roughness, *thick;
+	struct opvar *coord1, *coord2, *fg, *lit, *roughness, *thick;
 	randline rl;
 
 	if (!OV_pop_i(thick) ||
 	    !OV_pop_i(roughness) ||
 	    !OV_pop_i(lit) ||
 	    !OV_pop_i(fg) ||
-	    !OV_pop_i(y2) ||
-	    !OV_pop_i(x2) ||
-	    !OV_pop_i(y1) ||
-	    !OV_pop_i(x1)) return;
+	    !OV_pop_c(coord2) ||
+	    !OV_pop_c(coord1)) return;
 
 	rl.thick = OV_i(thick);
 	rl.roughness = OV_i(roughness);
 	rl.lit = OV_i(lit);
 	rl.fg = OV_i(fg);
-	rl.x1 = OV_i(x1);
-	rl.y1 = OV_i(y1);
-	rl.x2 = OV_i(x2);
-	rl.y2 = OV_i(y2);
+	rl.x1 = SP_COORD_X(OV_i(coord1));
+	rl.y1 = SP_COORD_Y(OV_i(coord1));
+	rl.x2 = SP_COORD_X(OV_i(coord2));
+	rl.y2 = SP_COORD_Y(OV_i(coord2));
 
 	line_midpoint(lev, &rl, coder->croom);
 
-	opvar_free(x1);
-	opvar_free(y1);
-	opvar_free(x2);
-	opvar_free(y2);
+	opvar_free(coord1);
+	opvar_free(coord2);
 	opvar_free(fg);
 	opvar_free(lit);
 	opvar_free(roughness);
