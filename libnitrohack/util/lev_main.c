@@ -601,6 +601,10 @@ int get_monster_id(char *s, char c)
 	for (i = LOW_PM; i < NUMMONS; i++)
 	    if (!class || class == mons[i].mlet)
 		if (!strcmp(s, mons[i].mname)) return i;
+	/* didn't find it; lets try case insensitive search */
+	for (i = LOW_PM; i < NUMMONS; i++)
+	    if (!class || class == mons[i].mlet)
+		if (!strcasecmp(s, mons[i].mname)) return i;
 	return ERR;
 }
 
