@@ -55,20 +55,16 @@ static boolean create_subroom(struct level *lev, struct mkroom *, xchar, xchar,
 extern int min_rx, max_rx, min_ry, max_ry; /* from mkmap.c */
 
 char SpLev_Map[COLNO][ROWNO];
-static char robjects[MAX_REGISTERS], rmonst[MAX_REGISTERS];
-static char rloc_x[MAX_REGISTERS], rloc_y[MAX_REGISTERS];
 static const aligntyp init_ralign[3] = { AM_CHAOTIC, AM_NEUTRAL, AM_LAWFUL };
 static aligntyp ralign[3];
 static xchar xstart, ystart;
 static char xsize, ysize;
-static int n_rloc, n_robj, n_rmon; /* # or random registers */
 
 static void set_wall_property(struct level *lev, xchar,xchar,xchar,xchar,int);
 static int rnddoor(void);
 static int rndtrap(struct level *lev);
 static void get_location(struct level *lev, schar *x, schar *y, int humidity, struct mkroom *croom);
 static boolean is_ok_location(struct level *lev, schar, schar, int);
-static void sp_lev_shuffle(char *,char *,int);
 static void light_region(struct level *lev, region *tmpregion);
 static void maze1xy(struct level *lev, coord *m, int humidity);
 static boolean sp_level_loader(struct level *lev, dlb *fp, sp_lev *lvl);
@@ -690,7 +686,7 @@ static void shuffle_alignments(void)
 {
 	int i;
 	aligntyp atmp;
-	/* shuffle 3 alignments; can't use sp_lev_shuffle() on aligntyp's */
+	/* shuffle 3 alignments */
 	ralign[0] = init_ralign[0]; ralign[1] = init_ralign[1]; ralign[2] = init_ralign[2];
 	i = rn2(3);   atmp = ralign[2]; ralign[2] = ralign[i]; ralign[i] = atmp;
 	if (rn2(2)) { atmp = ralign[1]; ralign[1] = ralign[0]; ralign[0] = atmp; }
@@ -796,11 +792,7 @@ static int rndtrap(struct level *lev)
 /*
  * Coordinates in special level files are handled specially:
  *
- *	if x or y is -(MAX_REGISTERS+1), we generate a random coordinate.
- *	if x or y is between -1 and -MAX_REGISTERS, we read one from the corresponding
- *	register (x0, x1, ... x9).
- *	if x or y is nonnegative, we convert it from relative to the local map
- *	to global coordinates.
+ *	If x or y is < 0, we generate a random coordinate.
  *	The "humidity" flag is used to insure that engravings aren't
  *	created underwater, or eels on dry land.
  */
@@ -828,9 +820,6 @@ static void get_location(struct level *lev, schar *x, schar *y, int humidity, st
 	if (*x >= 0) {			/* normal locations */
 		*x += mx;
 		*y += my;
-	} else if (*x > -(MAX_REGISTERS+1)) {		/* special locations */
-		*x = mx + rloc_x[ - *x - 1];
-		*y = my + rloc_y[ - *y - 1];
 	} else {			/* random location */
 	    do {
 		*x = mx + rn2((int)sx);
@@ -876,27 +865,6 @@ static boolean is_ok_location(struct level *lev, schar x, schar y, int humidity)
 		return TRUE;
 	}
 	return FALSE;
-}
-
-/*
- * Shuffle the registers for locations, objects or monsters
- */
-static void sp_lev_shuffle(char list1[], char list2[], int n)
-{
-	int i, j;
-	char k;
-
-	for (i = n - 1; i > 0; i--) {
-		if ((j = rn2(i + 1)) == i) continue;
-		k = list1[j];
-		list1[j] = list1[i];
-		list1[i] = k;
-		if (list2) {
-			k = list2[j];
-			list2[j] = list2[i];
-			list2[i] = k;
-		}
-	}
 }
 
 /*
@@ -1377,7 +1345,7 @@ static void spill_terrain(struct level *lev, spill *sp, struct mkroom *croom)
 	 *
 	 * If we were given a specific coordinate, though, it doesn't have
 	 * to start from a wall... */
-	if (sp->x <= -(MAX_REGISTERS+1) || sp->y <= -(MAX_REGISTERS+1)) {
+	if (sp->x < 0 || sp->y < 0) {
 	    for (j = 0; j < 500; j++) {
 		x = sp->x;
 		y = sp->y;
@@ -1473,8 +1441,6 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 
 	if (m->class >= 0)
 	    class = (char) def_char_to_monclass((char)m->class);
-	else if (m->class > -(MAX_REGISTERS+1))
-	    class = (char) def_char_to_monclass(rmonst[- m->class - 1]);
 	else
 	    class = 0;
 
@@ -1641,8 +1607,6 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 
 	if (o->class >= 0)
 	    c = o->class;
-	else if (o->class > -(MAX_REGISTERS+1))
-	    c = robjects[ -(o->class+1)];
 	else
 	    c = 0;
 
@@ -3028,7 +2992,7 @@ static void spo_object(struct sp_coder *coder, struct level *lev)
 	tmpobj.invis = 0;
 	tmpobj.greased = 0;
 	tmpobj.broken = 0;
-	tmpobj.x = tmpobj.y = -MAX_REGISTERS - 1;
+	tmpobj.x = tmpobj.y = -1;
 
 	if (!OV_pop_i(containment)) return;
 
@@ -3951,66 +3915,6 @@ static void spo_region(struct sp_coder *coder, struct level *lev)
 	opvar_free(rtype);
 }
 
-static void spo_random_objects(struct sp_coder *coder)
-{
-	struct opvar *robj;
-
-	if (!OV_pop_s(robj)) return;
-
-	n_robj = strlen(OV_s(robj));
-	if (n_robj <= 0 || n_robj > MAX_REGISTERS) {
-	    impossible("spo_random_objects: rnd_objs idx out-of-bounds");
-	    return;
-	} else {
-	    memcpy(robjects, OV_s(robj), n_robj);
-	}
-	sp_lev_shuffle(robjects, NULL, n_robj);
-
-	opvar_free(robj);
-}
-
-static void spo_random_places(struct sp_coder *coder)
-{
-	struct opvar *places;
-	int tmpidx;
-
-	if (!OV_pop_s(places)) return;
-
-	if (strlen(OV_s(places)) % 2)
-	    impossible("spo_random_places: rnd_places?");
-	n_rloc = strlen(OV_s(places)) / 2;
-	if (n_rloc <= 0 || n_rloc > 2 * MAX_REGISTERS) {
-	    impossible("spo_random_places: rnd_places idx out-of-bounds");
-	    return;
-	} else {
-	    for (tmpidx = 0; tmpidx < n_rloc; tmpidx++) {
-		rloc_x[tmpidx] = places->vardata.str[tmpidx * 2] - 1;
-		rloc_y[tmpidx] = places->vardata.str[tmpidx * 2 + 1] - 1;
-	    }
-	}
-	sp_lev_shuffle(rloc_x, rloc_y, n_rloc);
-
-	opvar_free(places);
-}
-
-static void spo_random_monsters(struct sp_coder *coder)
-{
-	struct opvar *rmon;
-
-	if (!OV_pop_s(rmon)) return;
-
-	n_rmon = strlen(OV_s(rmon));
-	if (n_rmon <= 0 || n_rmon > MAX_REGISTERS) {
-	    impossible("spo_random_monsters: rnd_mons idx out-of-bounds");
-	    return;
-	} else {
-	    memcpy(rmonst, OV_s(rmon), n_rmon);
-	}
-	sp_lev_shuffle(rmonst, NULL, n_rmon);
-
-	opvar_free(rmon);
-}
-
 static void spo_drawbridge(struct sp_coder *coder, struct level *lev)
 {
 	struct opvar *dir, *db_open, *coord;
@@ -4582,9 +4486,6 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 	    case SPO_SPILL:		spo_spill(coder, lev);		break;
 	    case SPO_LEVREGION:		spo_levregion(coder, lev);	break;
 	    case SPO_REGION:		spo_region(coder, lev);		break;
-	    case SPO_RANDOM_OBJECTS:	spo_random_objects(coder);	break;
-	    case SPO_RANDOM_PLACES:	spo_random_places(coder);	break;
-	    case SPO_RANDOM_MONSTERS:	spo_random_monsters(coder);	break;
 	    case SPO_DRAWBRIDGE:	spo_drawbridge(coder, lev);	break;
 	    case SPO_MAZEWALK:		spo_mazewalk(coder, lev);	break;
 	    case SPO_NON_PASSWALL:	/* fall through */
