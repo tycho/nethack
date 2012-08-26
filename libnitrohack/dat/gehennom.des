@@ -59,19 +59,19 @@ NON_DIGGABLE:(00,00,75,19)
 #       fate reserved for members of *those* classes.
 #
 LOOP [2] {
-  OBJECT: ('%',"corpse"), random, "archeologist"
-  OBJECT: ('%',"corpse"), random, "barbarian"
-  OBJECT: ('%',"corpse"), random, "healer"
-  OBJECT: ('%',"corpse"), random, "knight"
-  OBJECT: ('%',"corpse"), random, "ranger"
-  OBJECT: ('%',"corpse"), random, "rogue"
-  OBJECT: ('%',"corpse"), random, "samurai"
-  OBJECT: ('%',"corpse"), random, "tourist"
-  OBJECT: ('%',"corpse"), random, "valkyrie"
-  OBJECT: ('%',"corpse"), random, "wizard"
+  OBJECT: ('%',"corpse"), random, montype:"archeologist"
+  OBJECT: ('%',"corpse"), random, montype:"barbarian"
+  OBJECT: ('%',"corpse"), random, montype:"healer"
+  OBJECT: ('%',"corpse"), random, montype:"knight"
+  OBJECT: ('%',"corpse"), random, montype:"ranger"
+  OBJECT: ('%',"corpse"), random, montype:"rogue"
+  OBJECT: ('%',"corpse"), random, montype:"samurai"
+  OBJECT: ('%',"corpse"), random, montype:"tourist"
+  OBJECT: ('%',"corpse"), random, montype:"valkyrie"
+  OBJECT: ('%',"corpse"), random, montype:"wizard"
 }
-OBJECT: ('%',"corpse"), random, "caveman"
-OBJECT: ('%',"corpse"), random, "cavewoman"
+OBJECT: ('%',"corpse"), random, montype:"caveman"
+OBJECT: ('%',"corpse"), random, montype:"cavewoman"
 #
 # Some random weapons and armor.
 #
@@ -186,19 +186,19 @@ NON_DIGGABLE:(00,00,75,19)
 #       fate reserved for members of *those* classes.
 #
 LOOP [2] {
-  OBJECT: ('%',"corpse"), random, "archeologist"
-  OBJECT: ('%',"corpse"), random, "barbarian"
-  OBJECT: ('%',"corpse"), random, "healer"
-  OBJECT: ('%',"corpse"), random, "knight"
-  OBJECT: ('%',"corpse"), random, "ranger"
-  OBJECT: ('%',"corpse"), random, "rogue"
-  OBJECT: ('%',"corpse"), random, "samurai"
-  OBJECT: ('%',"corpse"), random, "tourist"
-  OBJECT: ('%',"corpse"), random, "valkyrie"
-  OBJECT: ('%',"corpse"), random, "wizard"
+  OBJECT: ('%',"corpse"), random, montype:"archeologist"
+  OBJECT: ('%',"corpse"), random, montype:"barbarian"
+  OBJECT: ('%',"corpse"), random, montype:"healer"
+  OBJECT: ('%',"corpse"), random, montype:"knight"
+  OBJECT: ('%',"corpse"), random, montype:"ranger"
+  OBJECT: ('%',"corpse"), random, montype:"rogue"
+  OBJECT: ('%',"corpse"), random, montype:"samurai"
+  OBJECT: ('%',"corpse"), random, montype:"tourist"
+  OBJECT: ('%',"corpse"), random, montype:"valkyrie"
+  OBJECT: ('%',"corpse"), random, montype:"wizard"
 }
-OBJECT: ('%',"corpse"), random, "caveman"
-OBJECT: ('%',"corpse"), random, "cavewoman"
+OBJECT: ('%',"corpse"), random, montype:"caveman"
+OBJECT: ('%',"corpse"), random, montype:"cavewoman"
 #
 # Some random weapons and armor.
 #
@@ -561,7 +561,7 @@ REGION: (01,14,05,15), unlit, "shop"
 REGION: (39,01,43,02), unlit, "shop"
 REGION: (18,03,25,05), unlit, "temple"
 ALTAR: (20,04), noncoaligned, altar
-OBJECT: ('%',"corpse"), (23,03), "priest"
+OBJECT: ('%',"corpse"), (23,03), montype:"priest"
 # Some traps.
 TRAP:"spiked pit", random
 TRAP:"sleep gas", random
@@ -1220,9 +1220,9 @@ IF [30%] {
 } ELSE {
   # Cthulhu's didn't like its taste?
   IF [50%] {
-    OBJECT: ('%',"corpse"), (49,13), "archeologist"
+    OBJECT: ('%',"corpse"), (49,13), montype:"archeologist"
   } ELSE {
-    OBJECT: ('%',"corpse"), (49,13), "tourist"
+    OBJECT: ('%',"corpse"), (49,13), montype:"tourist"
   }
 }
 # poor boy, he got so far

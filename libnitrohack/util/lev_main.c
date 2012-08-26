@@ -47,6 +47,7 @@ int  main(int, char **);
 void yyerror(const char *);
 void lc_error(const char *,...);
 void yywarning(const char *);
+void lc_warning(const char *,...);
 int  yywrap(void);
 struct opvar *set_opvar_int(struct opvar *,long);
 struct opvar *set_opvar_coord(struct opvar *,long);
@@ -76,7 +77,8 @@ struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,const char *,int);
 struct lc_vardefs *vardef_new(long,char *);
 void vardef_free_all(struct lc_vardefs *);
 struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *, int);
-void check_vardef_type(struct lc_vardefs *,char *,long,char *);
+void check_vardef_type(struct lc_vardefs *,char *,long);
+struct lc_vardefs *add_vardef_type(struct lc_vardefs *,char *,long);
 
 struct opvar *opvar_clone(struct opvar *);
 void splev_add_from(sp_lev *,sp_lev *);
@@ -264,6 +266,18 @@ void yywarning(const char *s)
 				fname, colon_line_number, s);
 }
 
+void lc_warning(const char *fmt, ...)
+{
+	char buf[512];
+	va_list argp;
+
+	va_start(argp, fmt);
+	vsnprintf(buf, 511, fmt, argp);
+	va_end(argp);
+
+	yywarning(buf);
+}
+
 struct opvar *set_opvar_int(struct opvar *ov, long val)
 {
 	if (ov) {
@@ -425,7 +439,7 @@ struct lc_funcdefs *funcdef_new(long addr, char *name)
 {
 	struct lc_funcdefs *f = New(struct lc_funcdefs);
 	if (!f) {
-	    yyerror("Could not alloc funcdefs");
+	    lc_error("Could not alloc function definition for '%s'.", name);
 	    return NULL;
 	}
 	f->next = NULL;
@@ -468,7 +482,7 @@ struct lc_vardefs *vardef_new(long typ, char *name)
 {
 	struct lc_vardefs *f = New(struct lc_vardefs);
 	if (!f) {
-	    yyerror("Could not alloc vardefs");
+	    lc_error("Could not alloc variable definition for '%s'.", name);
 	    return NULL;
 	}
 	f->next = NULL;
@@ -504,20 +518,61 @@ struct lc_vardefs *vardef_defined(struct lc_vardefs *f, char *name, int casesens
 	return NULL;
 }
 
-void check_vardef_type(struct lc_vardefs *vd, char *varname, long vartype,
-		       char *vartypestr)
+static const char *spovar2str(long spovar)
+{
+	static int togl = 0;
+	static char buf[2][128];
+	char *n;
+	int is_array = (spovar & SPOVAR_ARRAY);
+	spovar &= ~SPOVAR_ARRAY;
+
+	switch (spovar) {
+	default:		lc_error("spovar2str(%li)", spovar); break;
+	case SPOVAR_INT:	n = "integer"; break;
+	case SPOVAR_STRING:	n = "string"; break;
+	case SPOVAR_VARIABLE:	n = "variable"; break;
+	case SPOVAR_COORD:	n = "coordinate"; break;
+	case SPOVAR_REGION:	n = "region"; break;
+	case SPOVAR_MAPCHAR:	n = "mapchar"; break;
+	case SPOVAR_MONST:	n = "monster"; break;
+	case SPOVAR_OBJ:	n = "object"; break;
+	}
+
+	togl = (togl + 1) % 2;
+
+	snprintf(buf[togl], 127, "%s%s", n, (is_array ? " array" : ""));
+	return buf[togl];
+}
+
+void check_vardef_type(struct lc_vardefs *vd, char *varname, long vartype)
 {
 	struct lc_vardefs *tmp;
 	tmp = vardef_defined(vd, varname, 1);
 	if (tmp) {
 	    if (tmp->var_type != vartype) {
-		lc_error("Trying to use a non-%s%s variable '%s' as %s",
-			 vartypestr, ((vartype & SPOVAR_ARRAY) ? " array" : ""),
-			 varname, vartypestr);
+		lc_error("Trying to use variable '%s' as %s, when it is %s.",
+			 varname, spovar2str(vartype), spovar2str(tmp->var_type));
 	    }
 	} else {
-	    lc_error("Variable '%s' not defined", varname);
+	    lc_error("Variable '%s' not defined.", varname);
 	}
+}
+
+struct lc_vardefs *add_vardef_type(struct lc_vardefs *vd, char *varname,
+				   long vartype)
+{
+	struct lc_vardefs *tmp;
+	tmp = vardef_defined(vd, varname, 1);
+	if (tmp) {
+	    if (tmp->var_type != vartype)
+		lc_error("Trying to redefine variable '%s' as %s, when it is %s.",
+			 varname, spovar2str(vartype), spovar2str(tmp->var_type));
+	} else {
+	    tmp = vardef_new(vartype, varname);
+	    tmp->next = vd;
+	    return tmp;
+	}
+	return vd;
 }
 
 /*
@@ -553,9 +608,7 @@ struct opvar *opvar_clone(struct opvar *ov)
 		break;
 	    default:
 		{
-		    char buf[BUFSZ];
-		    sprintf(buf, "Unknown push value type (%i)!", ov->spovartyp);
-		    yyerror(buf);
+		    lc_error("Unknown opvar_clone value type (%i)!", ov->spovartyp);
 		}
 	    }
 	    return tmpov;
@@ -587,7 +640,7 @@ int get_floor_type(char c)
 	val = what_map_char(c);
 	if (val == INVALID_TYPE) {
 	    val = ERR;
-	    yywarning("Invalid fill character in MAZE declaration");
+	    lc_warning("Invalid fill character '%c' in MAZE declaration", c);
 	}
 	return val;
 }
@@ -632,9 +685,16 @@ int get_monster_id(char *s, char c)
 	    if (!class || class == mons[i].mlet)
 		if (!strcmp(s, mons[i].mname)) return i;
 	/* didn't find it; lets try case insensitive search */
-	for (i = LOW_PM; i < NUMMONS; i++)
-	    if (!class || class == mons[i].mlet)
-		if (!strcasecmp(s, mons[i].mname)) return i;
+	for (i = LOW_PM; i < NUMMONS; i++) {
+	    if (!class || class == mons[i].mlet) {
+		if (!strcasecmp(s, mons[i].mname)) {
+		    if (be_verbose)
+			lc_warning("Monster type \"%s\" matches \"%s\".",
+				   s, mons[i].mname);
+		    return i;
+		}
+	    }
+	}
 	return ERR;
 }
 
@@ -726,11 +786,11 @@ void add_opcode(sp_lev *sp, int opc, void *dat)
 	_opcode *tmp;
 
 	if (opc < 0 || opc >= MAX_SP_OPCODES)
-	    yyerror("Unknown opcode");
+	    lc_error("Unknown opcode '%i'", opc);
 
 	tmp = realloc(sp->opcodes, sizeof(_opcode) * (nop + 1));
 	if (!tmp) {
-	    yyerror("Couldn't alloc opcode space");
+	    lc_error("Could not alloc opcode space");
 	    /* sp->opcodes would be freed here, if this were ever reached */
 	}
 
@@ -752,7 +812,6 @@ void scan_map(char *map, sp_lev *sp)
 	char *s1, *s2;
 	long max_len = 0;
 	long max_hig = 0;
-	char msg[256];
 	char *tmpmap[ROWNO];
 	int dx, dy;
 	char *mbuf;
@@ -790,10 +849,8 @@ void scan_map(char *map, sp_lev *sp)
 		}
 		for (i=0; i<len; i++)
 		  if ((tmpmap[max_hig][i] = what_map_char(map[i])) == INVALID_TYPE) {
-		      sprintf(msg,
-			 "Invalid character @ (%ld, %d) - replacing with stone",
-			      max_hig, i);
-		      yywarning(msg);
+		      lc_warning("Invalid character '%c' @ (%ld, %d) "
+				 "- replacing with stone", map[i], max_hig, i);
 		      tmpmap[max_hig][i] = STONE;
 		    }
 		while (i < max_len)
@@ -807,8 +864,8 @@ void scan_map(char *map, sp_lev *sp)
 	max_y_map = max_hig - 1;
 
 	if (max_len > MAP_X_LIM || max_hig > MAP_Y_LIM) {
-	    sprintf(msg, "Map too large! (max %d x %d)", MAP_X_LIM, MAP_Y_LIM);
-	    yyerror(msg);
+	    lc_error("Map too large at (%d x %d), max is (%d x %d)",
+		     max_len, max_hig, MAP_X_LIM, MAP_Y_LIM);
 	}
 
 	mbuf = malloc((max_hig - 1) * max_len + (max_len - 1) + 2);
@@ -951,6 +1008,12 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "pop",
 	    "rn2",
 	    "dec",
+	    "inc",
+	    "add",
+	    "sub",
+	    "mul",
+	    "div",
+	    "mod",
 	    "copy",
 	    "mon_generation",
 	    "end_moninvent",
@@ -985,17 +1048,17 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 		    case SPOVAR_COORD:
 			snprintf(debuf, 127, "%li:\t%s\tcoord:(%li,%li)\n",
 				 i, opcodestr[tmpo.opcode],
-				 (ov->vardata.l & 0xff),
-				 ((ov->vardata.l >> 16) & 0xff));
+				 SP_COORD_X(ov->vardata.l),
+				 SP_COORD_Y(ov->vardata.l));
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_REGION:
 			snprintf(debuf, 127, "%li:\t%s\tregion:(%li,%li,%li,%li)\n",
 				 i, opcodestr[tmpo.opcode],
-				 (ov->vardata.l & 0xff),
-				 ((ov->vardata.l >> 8) & 0xff),
-				 ((ov->vardata.l >> 16) & 0xff),
-				 ((ov->vardata.l >> 24) & 0xff));
+				 SP_REGION_X1(ov->vardata.l),
+				 SP_REGION_Y1(ov->vardata.l),
+				 SP_REGION_X2(ov->vardata.l),
+				 SP_REGION_Y2(ov->vardata.l));
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_OBJ:
@@ -1006,8 +1069,10 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_MONST:
-			snprintf(debuf, 127, "%li:\t%s\tmonster:%li\n",
-				 i, opcodestr[tmpo.opcode], ov->vardata.l);
+			snprintf(debuf, 127, "%li:\t%s\tmonst:(pm=%li,class='%c')\n",
+				 i, opcodestr[tmpo.opcode],
+				 SP_MONST_PM(ov->vardata.l),
+				 (char)SP_MONST_CLASS(ov->vardata.l));
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_MAPCHAR:

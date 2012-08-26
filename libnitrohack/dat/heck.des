@@ -303,7 +303,7 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 LOOP [14] {
-  OBJECT: ('%',"egg"), random, "scorpion", 0
+  OBJECT: ('%',"egg"), random, montype:"scorpion"
 }
 
 #
@@ -2287,7 +2287,7 @@ OBJECT[50%]: random, random
 OBJECT[50%]: ('`',"boulder"), random
 MONSTER[10%]: ('H',"minotaur"), random
 LOOP [2] {
-  MONSTER[50%]: random, random, random
+  MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
 GOLD: random, random

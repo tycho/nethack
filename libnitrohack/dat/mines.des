@@ -114,16 +114,16 @@ $place = { (05,04), (09,05), (13,04), (26,04), (31,05),
 SHUFFLE: $place
 
 # scatter some bodies
-OBJECT: ('%',"corpse"), (20,12), "aligned priest"
-OBJECT: ('%',"corpse"), $place[0], "shopkeeper"
-OBJECT: ('%',"corpse"), $place[1], "shopkeeper"
-OBJECT: ('%',"corpse"), $place[2], "shopkeeper"
-OBJECT: ('%',"corpse"), $place[3], "shopkeeper"
-OBJECT: ('%',"corpse"), $place[4], "shopkeeper"
+OBJECT: ('%',"corpse"), (20,12), montype:"aligned priest"
+OBJECT: ('%',"corpse"), $place[0], montype:"shopkeeper"
+OBJECT: ('%',"corpse"), $place[1], montype:"shopkeeper"
+OBJECT: ('%',"corpse"), $place[2], montype:"shopkeeper"
+OBJECT: ('%',"corpse"), $place[3], montype:"shopkeeper"
+OBJECT: ('%',"corpse"), $place[4], montype:"shopkeeper"
 LOOP [4] {
-  OBJECT: ('%',"corpse"), random, "watchman"
+  OBJECT: ('%',"corpse"), random, montype:"watchman"
 }
-OBJECT: ('%',"corpse"), random, "watch captain"
+OBJECT: ('%',"corpse"), random, montype:"watch captain"
 
 # Rubble!
 LOOP [13] {
@@ -184,7 +184,7 @@ LOOP [8] {
   MONSTER: ('o',"goblin"), random, hostile
 }
 
-WALLIFY: levregion(1,0,70,20)
+WALLIFY: (1,0,70,20)
 
 
 # Minetown variant 1
@@ -777,7 +777,7 @@ DOOR:locked,(73,18)
 OBJECT: ('(',"chest"), (73,19)
 DOOR:locked,(50,06)
 OBJECT: '(', (50,03)
-OBJECT: ('`',"statue"), (38,15), "gnome king", 1
+OBJECT: ('`',"statue"), (38,15), montype:"gnome king", 1
 # Temple
 REGION:(29,02,33,04),lit,"temple"
 DOOR:closed,(31,05)

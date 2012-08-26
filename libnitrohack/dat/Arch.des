@@ -419,7 +419,7 @@ ROOM: "ordinary", random, random, random, random
   STAIR: random, down
   OBJECT: random, random
   TRAP: random, random
-  MONSTER: 'S', random, random
+  MONSTER: 'S', random
   MONSTER: ('M',"human mummy"), random
 }
 
