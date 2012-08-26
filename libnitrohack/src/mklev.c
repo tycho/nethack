@@ -1139,7 +1139,7 @@ static void mineralize(struct level *lev)
 
 
 void wallwalk_right(struct level *lev, xchar x, xchar y,
-		    schar fgtyp, schar bgtyp, int chance)
+		    schar fgtyp, schar fglit, schar bgtyp, int chance)
 {
 	int sx, sy, nx, ny, dir, cnt;
 	schar tmptyp;
@@ -1153,9 +1153,7 @@ void wallwalk_right(struct level *lev, xchar x, xchar y,
 	do {
 	    if (!t_at(lev, x, y) && !bydoor(lev, x, y) &&
 		lev->locations[x][y].typ == bgtyp && chance >= rn2(100)) {
-		lev->locations[x][y].typ = fgtyp;
-		if (fgtyp == LAVAPOOL)
-		    lev->locations[x][y].lit = 1;
+		SET_TYPLIT(lev, x, y, fgtyp, fglit);
 	    }
 	    cnt = 0;
 	    do {
@@ -1202,7 +1200,7 @@ void mkpoolroom(struct level *lev)
 	sroom->rtype = POOLROOM;
 	typ = !rn2(5) ? POOL : LAVAPOOL;
 
-	wallwalk_right(lev, sroom->lx, sroom->ly, typ, ROOM, 96);
+	wallwalk_right(lev, sroom->lx, sroom->ly, typ, sroom->rlit, ROOM, 96);
 }
 
 

@@ -80,6 +80,8 @@ struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *, int);
 void check_vardef_type(struct lc_vardefs *,char *,long);
 struct lc_vardefs *add_vardef_type(struct lc_vardefs *,char *,long);
 
+int reverse_jmp_opcode(int);
+
 struct opvar *opvar_clone(struct opvar *);
 void splev_add_from(sp_lev *,sp_lev *);
 
@@ -161,6 +163,7 @@ static struct {
 const char *fname = "(stdin)";
 static char *outprefix = "";
 int fatal_error = 0;
+int got_errors = 0;
 int be_verbose = 0;
 int decompile = 0;
 
@@ -181,7 +184,7 @@ int main(int argc, char **argv)
 	if (argc == 1) {		/* Read standard input */
 	    init_yyin(stdin);
 	    yyparse();
-	    if (fatal_error > 0) {
+	    if (fatal_error > 0 || got_errors > 0) {
 		    errors_encountered = TRUE;
 	    }
 	} else {
@@ -213,7 +216,7 @@ int main(int argc, char **argv)
 			init_yyin(fin);
 			yyparse();
 			line_number = 1;
-			if (fatal_error > 0) {
+			if (fatal_error > 0 || got_errors > 0) {
 				errors_encountered = TRUE;
 				fatal_error = 0;
 			}
@@ -575,6 +578,21 @@ struct lc_vardefs *add_vardef_type(struct lc_vardefs *vd, char *varname,
 	return vd;
 }
 
+int reverse_jmp_opcode(int opcode)
+{
+	switch (opcode) {
+	case SPO_JE:	return SPO_JNE;
+	case SPO_JNE:	return SPO_JE;
+	case SPO_JL:	return SPO_JGE;
+	case SPO_JG:	return SPO_JLE;
+	case SPO_JLE:	return SPO_JG;
+	case SPO_JGE:	return SPO_JL;
+	default:
+	    lc_error("Cannot reverse comparison jmp opcode %i.", opcode);
+	    return SPO_NULL;
+	}
+}
+
 /*
  * Basically copied from src/sp_lev.c.
  */
@@ -715,6 +733,17 @@ int get_object_id(char *s, char c)
 	    if (objname && !strcmp(s, objname))
 		return i;
 	}
+
+	for (i = class ? bases[class] : 0; i < NUM_OBJECTS; i++) {
+	    if (class && objects[i].oc_class != class) break;
+	    objname = obj_descr[i].oc_name;
+	    if (objname && !strcasecmp(s, objname)) {
+		if (be_verbose)
+		    lc_warning("Object type \"%s\" matches \"%s\".", s, objname);
+		return i;
+	    }
+	}
+
 	return ERR;
 }
 
@@ -1028,6 +1057,7 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "wallwalk",
 	    "var_init",
 	    "shuffle_array",
+	    "dice",
 	};
 
 	/* don't bother with the header stuff */
@@ -1076,8 +1106,10 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_MAPCHAR:
-			snprintf(debuf, 127, "%li:\t%s\tmapchar:%li\n",
-				 i, opcodestr[tmpo.opcode], ov->vardata.l);
+			snprintf(debuf, 127, "%li:\t%s\tmapchar:(%i,%i)\n",
+				 i, opcodestr[tmpo.opcode],
+				 (int)SP_MAPCHAR_TYP(ov->vardata.l),
+				 (schar)SP_MAPCHAR_LIT(ov->vardata.l));
 			Write(fd, debuf, strlen(debuf));
 			break;
 		    case SPOVAR_INT:

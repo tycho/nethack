@@ -59,6 +59,8 @@ extern struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,char *,int);
 extern void check_vardef_type(struct lc_vardefs *,char *,long);
 extern struct lc_vardefs *add_vardef_type(struct lc_vardefs *, char *, long);
 
+extern int reverse_jmp_opcode(int);
+
 extern struct lc_vardefs *vardef_new(long,char *);
 extern void vardef_free_all(struct lc_vardefs *);
 extern struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *,int);
@@ -96,6 +98,7 @@ int in_function_definition = 0;
 sp_lev *function_splev_backup = NULL;
 
 extern int fatal_error;
+extern int got_errors;
 extern int line_number;
 extern const char *fname;
 
@@ -129,6 +132,10 @@ extern const char *fname;
 	    long height;
 	    long width;
 	} sze;
+	struct {
+	    long die;
+	    long num;
+	} dice;
 }
 
 
@@ -158,10 +165,11 @@ extern const char *fname;
 %token	<i> FUNCTION_ID
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
-%token	<i> WALLWALK_ID
+%token	<i> WALLWALK_ID COMPARE_TYPE
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
+%token	<dice> DICE
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
 %type	<i> alignment_prfx
@@ -215,10 +223,12 @@ levels		: level
 level		: level_def flags lev_init levstatements
 		  {
 			if (fatal_error > 0) {
-			    fprintf(stderr,
-			    "%s : %d errors detected. No output created!\n",
-				    fname, fatal_error);
-			} else {
+			    fprintf(stderr, "%s : %d errors detected "
+				    "for level \"%s\". No output created!\n",
+				    fname, fatal_error, $1);
+			    fatal_error = 0;
+			    got_errors++;
+			} else if (!got_errors) {
 			    if (!write_level_file($1, splev)) {
 				lc_error("Can't write output file for '%s'!", $1);
 				exit(EXIT_FAILURE);
@@ -728,8 +738,12 @@ opt_spercent	: /* nothing */
 comparestmt	: PERCENT
 		  {
 			/* val > rn2(100) */
-			add_opvars(splev, "ioi", 100, SPO_RN2, (long)$1);
-			$$ = SPO_JGE; /* TODO: shouldn't this be SPO_JG? */
+			add_opvars(splev, "iio", (long)$1, 100, SPO_RN2);
+			$$ = SPO_JG;
+		  }
+		| '[' math_expr_var COMPARE_TYPE math_expr_var ']'
+		  {
+			$$ = $3;
 		  }
 		;
 
@@ -893,7 +907,7 @@ ifstatement	: IF_ID comparestmt
 			set_opvar_int(tmppush2, splev->n_opcodes + 1);
 			if_list[n_if_list++] = tmppush2;
 			add_opcode(splev, SPO_PUSH, tmppush2);
-			add_opcode(splev, $2, NULL);
+			add_opcode(splev, reverse_jmp_opcode($2), NULL);
 		  }
 		 if_ending
 		  {
@@ -944,7 +958,9 @@ message		: MESSAGE_ID ':' string_or_var
 
 wallwalk_detail	: WALLWALK_ID ':' coord_or_var ',' mapchar_or_var opt_spercent
 		  {
-			add_opvars(splev, "mio", ROOM, $6, SPO_WALLWALK);
+			add_opvars(splev, "mio",
+				   SP_MAPCHAR_PACK(ROOM, -2), $6,
+				   SPO_WALLWALK);
 		  }
 		| WALLWALK_ID ':' coord_or_var ',' mapchar_or_var ',' mapchar_or_var opt_spercent
 		  {
@@ -1729,21 +1745,15 @@ terrain_type	: CHAR
 		  }
 		;
 
-replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var ',' terrain_type ',' SPERCENT
+replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var ',' mapchar_or_var ',' SPERCENT
 		  {
-			long chance, to_ter;
+			long chance;
 
 			chance = $9;
 			if (chance < 0) chance = 0;
 			else if (chance > 100) chance = 100;
 
-			to_ter = $7.ter;
-			if (to_ter >= MAX_TYPE)
-			    lc_error("Replace terrain: illegal map char");
-
-			add_opvars(splev, "iiio",
-				   to_ter, (long)$7.lit, chance,
-				   SPO_REPLACETERRAIN);
+			add_opvars(splev, "io", chance, SPO_REPLACETERRAIN);
 		  }
 		;
 
@@ -2193,10 +2203,19 @@ mapchar_or_var	: mapchar
 mapchar		: CHAR
 		  {
 			if (what_map_char((char)$1) != INVALID_TYPE) {
-			    $$ = what_map_char((char)$1);
+			    $$ = SP_MAPCHAR_PACK(what_map_char((char)$1), -2);
 			} else {
 			    lc_error("Unknown map char type '%c'!", $1);
-			    $$ = STONE;
+			    $$ = SP_MAPCHAR_PACK(STONE, -2);
+			}
+		  }
+		| '(' CHAR ',' light_state ')'
+		  {
+			if (what_map_char((char)$2) != INVALID_TYPE) {
+			    $$ = SP_MAPCHAR_PACK(what_map_char((char)$2), $4);
+			} else {
+			    lc_error("Unknown map char type '%c'!", $2);
+			    $$ = SP_MAPCHAR_PACK(STONE, $4);
 			}
 		  }
 		;
@@ -2312,6 +2331,10 @@ math_expr_var	: INTEGER
 		  {
 			add_opvars(splev, "i", $1 );
 		  }
+		| dice
+		  {
+			/* nothing */
+		  }
 		| '(' MINUS_INTEGER ')'
 		  {
 			add_opvars(splev, "i", $2 );
@@ -2358,6 +2381,10 @@ math_expr	: INTEGER
 		  {
 			add_opvars(splev, "i", $1 );
 		  }
+		| dice
+		  {
+			/* nothing */
+		  }
 		| '(' MINUS_INTEGER ')'
 		  {
 			add_opvars(splev, "i", $2 );
@@ -2388,6 +2415,12 @@ math_expr	: INTEGER
 		  }
 		;
 
+dice		: DICE
+		  {
+			add_opvars(splev, "iio", $1.num, $1.die, SPO_DICE);
+		  }
+		;
+
 all_integers	: MINUS_INTEGER
 		| PLUS_INTEGER
 		| INTEGER
@@ -2404,6 +2437,10 @@ all_ints_push	: MINUS_INTEGER
 		| INTEGER
 		  {
 			add_opvars(splev, "i", $1);
+		  }
+		| dice
+		  {
+			/* nothing */
 		  }
 		;
 
@@ -2433,7 +2470,7 @@ chance		: /* empty */
 			set_opvar_int(tmppush2, splev->n_opcodes + 1);
 			if_list[n_if_list++] = tmppush2;
 			add_opcode(splev, SPO_PUSH, tmppush2);
-			add_opcode(splev, $1, NULL);
+			add_opcode(splev, reverse_jmp_opcode($1), NULL);
 			$$ = 1;
 		  }
 		;

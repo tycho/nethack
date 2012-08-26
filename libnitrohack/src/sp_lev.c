@@ -367,19 +367,6 @@ static void variable_list_del(struct splev_var *varlist)
 	}
 }
 
-#define SET_TYPLIT(lev, x, y, ttyp, llit)			\
-{								\
-	(lev)->locations[(x)][(y)].typ = (ttyp);		\
-	if ((ttyp) == LAVAPOOL) {				\
-	    (lev)->locations[(x)][(y)].lit = 1;			\
-	} else if ((llit) != -2) {				\
-	    if ((llit) == -1)					\
-		(lev)->locations[(x)][(y)].lit = rn2(2);	\
-	    else						\
-		(lev)->locations[(x)][(y)].lit = (llit);	\
-	}							\
-}
-
 static void lvlfill_maze_grid(struct level *lev, int x1, int y1, int x2, int y2,
 			      schar filling)
 {
@@ -3527,10 +3514,12 @@ static void spo_wallwalk(struct sp_coder *coder, struct level *lev)
 	y = SP_COORD_Y(OV_i(coord));
 	get_location(lev, &x, &y, DRY|WET, coder->croom);
 
-	if (OV_i(fgtyp) >= MAX_TYPE) return;
-	if (OV_i(bgtyp) >= MAX_TYPE) return;
+	if (SP_MAPCHAR_TYP(OV_i(fgtyp)) >= MAX_TYPE) return;
+	if (SP_MAPCHAR_TYP(OV_i(bgtyp)) >= MAX_TYPE) return;
 
-	wallwalk_right(lev, x, y, OV_i(fgtyp), OV_i(bgtyp), OV_i(chance));
+	wallwalk_right(lev, x, y,
+		       SP_MAPCHAR_TYP(OV_i(fgtyp)), SP_MAPCHAR_LIT(OV_i(fgtyp)),
+		       SP_MAPCHAR_TYP(OV_i(bgtyp)), OV_i(chance));
 
 	opvar_free(coord);
 	opvar_free(chance);
@@ -3658,19 +3647,19 @@ static void spo_terrain(struct sp_coder *coder, struct level *lev)
 
 static void spo_replace_terrain(struct sp_coder *coder, struct level *lev)
 {
-	struct opvar *reg, *from_ter, *to_ter, *to_lit, *chance;
+	struct opvar *reg, *from_ter, *to_ter, *chance;
 	replaceterrain rt;
 
 	if (!OV_pop_i(chance) ||
-	    !OV_pop_i(to_lit) ||
-	    !OV_pop_i(to_ter) ||
+	    !OV_pop_typ(to_ter, SPOVAR_MAPCHAR) ||
 	    !OV_pop_typ(from_ter, SPOVAR_MAPCHAR) ||
 	    !OV_pop_r(reg)) return;
 
 	rt.chance = OV_i(chance);
-	rt.tolit = OV_i(to_lit);
-	rt.toter = OV_i(to_ter);
-	rt.fromter = OV_i(from_ter);
+	rt.tolit = SP_MAPCHAR_LIT(OV_i(to_ter));
+	rt.toter = SP_MAPCHAR_TYP(OV_i(to_ter));
+	rt.fromter = SP_MAPCHAR_TYP(OV_i(from_ter));
+	/* TODO: use SP_MAPCHAR_LIT(OV_i(from_ter)) too */
 	rt.x1 = SP_REGION_X1(OV_i(reg));
 	rt.y1 = SP_REGION_Y1(OV_i(reg));
 	rt.x2 = SP_REGION_X2(OV_i(reg));
@@ -3681,7 +3670,6 @@ static void spo_replace_terrain(struct sp_coder *coder, struct level *lev)
 	opvar_free(reg);
 	opvar_free(from_ter);
 	opvar_free(to_ter);
-	opvar_free(to_lit);
 	opvar_free(chance);
 }
 
@@ -4225,7 +4213,7 @@ static void spo_conditional_jump(struct sp_coder *coder, sp_lev *lvl)
 {
 	struct opvar *oa, *oc;
 	long a, c;
-	int test;
+	int test = 0;
 
 	if (!OV_pop_i(oa) ||
 	    !OV_pop_i(oc)) return;
@@ -4235,12 +4223,12 @@ static void spo_conditional_jump(struct sp_coder *coder, sp_lev *lvl)
 
 	switch (coder->opcode) {
 	default: impossible("spo_conditional_jump: illegal opcode"); break;
-	case SPO_JL:	test = (c <  0); break;
-	case SPO_JLE:	test = (c <= 0); break;
-	case SPO_JG:	test = (c >  0); break;
-	case SPO_JGE:	test = (c >= 0); break;
-	case SPO_JE:	test = (c == 0); break;
-	case SPO_JNE:	test = (c != 0); break;
+	case SPO_JL:	test = (c & SP_CPUFLAG_LT); break;
+	case SPO_JLE:	test = (c & (SP_CPUFLAG_LT|SP_CPUFLAG_EQ)); break;
+	case SPO_JG:	test = (c & SP_CPUFLAG_GT); break;
+	case SPO_JGE:	test = (c & (SP_CPUFLAG_GT|SP_CPUFLAG_EQ)); break;
+	case SPO_JE:	test = (c & SP_CPUFLAG_EQ); break;
+	case SPO_JNE:	test = (c & ~SP_CPUFLAG_EQ); break;
 	}
 
 	if (test && a >= 0 &&
@@ -4577,9 +4565,10 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    struct opvar *a;
 		    struct opvar *b;
 		    struct opvar *c;
+		    long val = 0;
 
-		    OV_pop(a);
 		    OV_pop(b);
+		    OV_pop(a);
 
 		    if (!a || !b) {
 			impossible("spo_cmp: no values in stack");
@@ -4598,10 +4587,14 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    case SPOVAR_MONST:
 		    case SPOVAR_OBJ:
 		    case SPOVAR_INT:
-			c = opvar_new_int(OV_i(b) - OV_i(a));
+			if (OV_i(b) > OV_i(a)) val |= SP_CPUFLAG_LT;
+			if (OV_i(b) < OV_i(a)) val |= SP_CPUFLAG_GT;
+			if (OV_i(b) == OV_i(a)) val |= SP_CPUFLAG_EQ;
+			c = opvar_new_int(val);
 			break;
 		    case SPOVAR_STRING:
-			c = opvar_new_int(strcmp(OV_s(b), OV_s(a)));
+			c = opvar_new_int(!strcmp(OV_s(b), OV_s(a)) ?
+					  SP_CPUFLAG_EQ : 0);
 			break;
 		    default:
 			c = opvar_new_int(0);
@@ -4633,6 +4626,18 @@ static boolean sp_level_coder(struct level *lev, sp_lev *lvl)
 		    t = opvar_new_int(OV_i(tmpv) > 1 ? rn2(OV_i(tmpv)) : 0);
 		    splev_stack_push(coder->stack, t);
 		    opvar_free(tmpv);
+		}
+		break;
+	    case SPO_DICE:
+		{
+		    struct opvar *a, *b, *t;
+		    if (!OV_pop_i(b) || !OV_pop_i(a)) break;
+		    if (OV_i(b) < 1) OV_i(b) = 1;
+		    if (OV_i(a) < 1) OV_i(a) = 1;
+		    t = opvar_new_int(dice(OV_i(a), OV_i(b)));
+		    splev_stack_push(coder->stack, t);
+		    opvar_free(a);
+		    opvar_free(b);
 		}
 		break;
 	    case SPO_MAP:

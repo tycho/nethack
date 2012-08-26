@@ -311,6 +311,19 @@ struct rm {
 	unsigned edge:1;	/* marks boundaries for special rooms*/
 };
 
+#define SET_TYPLIT(lev, x, y, ttyp, llit)			\
+do {								\
+	(lev)->locations[(x)][(y)].typ = (ttyp);		\
+	if ((ttyp) == LAVAPOOL) {				\
+	    (lev)->locations[(x)][(y)].lit = 1;			\
+	} else if ((schar)(llit) != -2) {			\
+	    if ((schar)(llit) == -1)				\
+		(lev)->locations[(x)][(y)].lit = rn2(2);	\
+	    else						\
+		(lev)->locations[(x)][(y)].lit = (llit);	\
+	}							\
+} while (0)
+
 /*
  * Add wall angle viewing by defining "modes" for each wall type.  Each
  * mode describes which parts of a wall are finished (seen as as wall)
