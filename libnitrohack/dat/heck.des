@@ -355,9 +355,9 @@ LOOP [5] {
   MONSTER: ('v',"energy vortex"), random
   MONSTER: 'T', random
 }
-LOOP [10] {
-  GOLD: random, random
-}
+#LOOP [10] {
+#  GOLD: random, random
+#}
 LOOP [7] {
   TRAP: random, random
 }
@@ -493,9 +493,9 @@ LOOP [8] {
 LOOP [5] {
   MONSTER: random, random
 }
-LOOP [7] {
-  GOLD: random, random
-}
+#LOOP [7] {
+#  GOLD: random, random
+#}
 LOOP [5] {
   TRAP: random, random
 }
@@ -617,9 +617,9 @@ LOOP [9] {
 LOOP [2] {
   TRAP[50%]: random, random
 }
-LOOP [12] {
-  GOLD: random, random
-}
+#LOOP [12] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:center,center
 MAP
@@ -812,7 +812,7 @@ LOOP [3] {
 MONSTER[50%]: ('H',"minotaur"), random
 LOOP [3] {
   MONSTER: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 #
@@ -937,9 +937,9 @@ MONSTER[50%]: ('H',"minotaur"), random
 LOOP [3] {
   MONSTER: random, random
 }
-LOOP [5] {
-  GOLD: random, random
-}
+#LOOP [5] {
+#  GOLD: random, random
+#}
 # more traps than usual
 LOOP [15] {
   TRAP: random, random
@@ -1305,9 +1305,9 @@ LOOP [2] {
 LOOP [11] {
   MONSTER[50%]: random, random
 }
-LOOP [10] {
-  GOLD: random, random
-}
+#LOOP [10] {
+#  GOLD: random, random
+#}
 LOOP [7] {
   TRAP: random, random
 }
@@ -1680,7 +1680,7 @@ LOOP [3] {
   MONSTER: random, random
 }
 LOOP [5] {
-  GOLD: random, random
+  #GOLD: random, random
   TRAP: random, random
 }
 
@@ -1708,7 +1708,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 GEOMETRY: center, bottom
 MAP
 .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
@@ -1725,7 +1725,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 GEOMETRY: left, top
 MAP
 .-.-.-.-.-.
@@ -1750,7 +1750,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 GEOMETRY: right, bottom
 MAP
 .-.-.-.-.-.
@@ -1775,7 +1775,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:center,top
 MAP
@@ -1862,9 +1862,9 @@ LOOP [4] {
 LOOP [3] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:center,bottom
 MAP
@@ -1888,9 +1888,9 @@ LOOP [4] {
 LOOP [3] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:center,top
 MAP
@@ -1947,9 +1947,9 @@ MONSTER[50%]: ('H',"minotaur"), random
 LOOP [5] {
   MONSTER: random, random
 }
-LOOP [7] {
-  GOLD: random, random
-}
+#LOOP [7] {
+#  GOLD: random, random
+#}
 LOOP [5] {
   TRAP: random, random
 }
@@ -2016,9 +2016,9 @@ LOOP [2] {
 LOOP [11] {
   MONSTER[50%]: random, random
 }
-LOOP [10] {
-  GOLD: random, random
-}
+#LOOP [10] {
+#  GOLD: random, random
+#}
 LOOP [7] {
   TRAP: random, random
 }
@@ -2067,7 +2067,7 @@ LOOP [4] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 
@@ -2104,7 +2104,7 @@ LOOP [4] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 
@@ -2141,7 +2141,7 @@ LOOP [4] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 GEOMETRY:left,top
@@ -2242,7 +2242,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:left,bottom
 MAP
@@ -2266,7 +2266,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-right,top
 MAP
@@ -2290,7 +2290,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-left,top
 MAP
@@ -2315,7 +2315,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:right,bottom
 MAP
@@ -2421,7 +2421,7 @@ MONSTER[10%]: ('H',"minotaur"), random
 MONSTER: random, random
 MONSTER[50%]: random, random
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-right,top
 MAP
@@ -2442,7 +2442,7 @@ MONSTER[10%]: ('H',"minotaur"), random
 MONSTER[50%]: random, random
 MONSTER: random, random
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-left,bottom
 MAP
@@ -2463,7 +2463,7 @@ MONSTER[10%]: ('H',"minotaur"), random
 MONSTER: random, random
 MONSTER[50%]: random, random
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:left,top
 MAP
@@ -2484,7 +2484,7 @@ MONSTER[10%]: ('H',"minotaur"), random
 MONSTER: random, random
 MONSTER[50%]: random, random
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:right,bottom
 MAP
@@ -2598,7 +2598,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:left,top
 MAP
@@ -2622,7 +2622,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-right,bottom
 MAP
@@ -2646,7 +2646,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-left,bottom
 MAP
@@ -2671,7 +2671,7 @@ LOOP [3] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 
 GEOMETRY:right,top
@@ -2771,7 +2771,7 @@ MONSTER[10%]: ('H',"minotaur"), random
 MONSTER[50%]: random, random
 MONSTER[50%]: random, random
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:center,bottom
 MAP
@@ -2789,7 +2789,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:center,top
 MAP
@@ -2844,9 +2844,9 @@ MONSTER[50%]: ('H',"minotaur"), random
 LOOP [5] {
   MONSTER: random, random
 }
-LOOP [7] {
-  GOLD: random, random
-}
+#LOOP [7] {
+#  GOLD: random, random
+#}
 LOOP [5] {
   TRAP: random, random
 }
@@ -2889,7 +2889,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:left,center
 MAP
@@ -2919,7 +2919,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:right,center
 MAP
@@ -3077,7 +3077,7 @@ LOOP [3] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 GEOMETRY:center,center
@@ -3110,7 +3110,7 @@ LOOP [3] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 GEOMETRY:right,center
@@ -3143,7 +3143,7 @@ LOOP [3] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 GEOMETRY:left,center
@@ -3252,7 +3252,7 @@ LOOP [4] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 GEOMETRY:right,center
@@ -3304,7 +3304,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-right,center
 MAP
@@ -3356,7 +3356,7 @@ LOOP [2] {
   MONSTER[50%]: random, random
 }
 TRAP[50%]: random, random
-GOLD: random, random
+#GOLD: random, random
 
 GEOMETRY:half-left,center
 MAP
@@ -3411,7 +3411,7 @@ LOOP [4] {
 }
 LOOP [2] {
   TRAP[50%]: random, random
-  GOLD: random, random
+  #GOLD: random, random
 }
 
 GEOMETRY:left,center
@@ -3502,9 +3502,9 @@ LOOP [5] {
 LOOP [4] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:right,center
 MAP
@@ -3540,9 +3540,9 @@ LOOP [5] {
 LOOP [4] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:left,center
 MAP
@@ -3578,9 +3578,9 @@ LOOP [5] {
 LOOP [4] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:center,center
 MAP
@@ -3692,9 +3692,9 @@ LOOP [5] {
 LOOP [4] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:center,top
 MAP
@@ -3730,9 +3730,9 @@ LOOP [5] {
 LOOP [4] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:right,center
 MAP
@@ -3768,9 +3768,9 @@ LOOP [5] {
 LOOP [4] {
   TRAP[50%]: random, random
 }
-LOOP [2] {
-  GOLD: random, random
-}
+#LOOP [2] {
+#  GOLD: random, random
+#}
 
 GEOMETRY:left,top
 MAP

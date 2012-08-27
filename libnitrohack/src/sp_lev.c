@@ -2957,6 +2957,7 @@ static void spo_monster(struct sp_coder *coder, struct level *lev)
 static void spo_object(struct sp_coder *coder, struct level *lev)
 {
 	int nparams = 0;
+	long quancnt;
 
 	struct opvar *varparam;
 	struct opvar *id, *containment;
@@ -3089,7 +3090,13 @@ static void spo_object(struct sp_coder *coder, struct level *lev)
 	tmpobj.class = SP_OBJ_CLASS(OV_i(id));
 	tmpobj.containment = OV_i(containment);
 
-	create_object(lev, &tmpobj, coder->croom);
+	quancnt = (tmpobj.id > STRANGE_OBJECT) ? tmpobj.quan : 0;
+
+	do {
+	    create_object(lev, &tmpobj, coder->croom);
+	    quancnt--;
+	} while (quancnt > 0 &&
+		 (tmpobj.id > STRANGE_OBJECT && !objects[tmpobj.id].oc_merge));
 
 	Free(tmpobj.name.str);
 
@@ -3570,8 +3577,8 @@ static void spo_gold(struct sp_coder *coder, struct level *lev)
 	struct opvar *coord, *amt;
 	gold tmpgold;
 
-	if (!OV_pop_i(amt) ||
-	    !OV_pop_c(coord)) return;
+	if (!OV_pop_c(coord) ||
+	    !OV_pop_i(amt)) return;
 
 	tmpgold.x = SP_COORD_X(OV_i(coord));
 	tmpgold.y = SP_COORD_Y(OV_i(coord));
@@ -3691,20 +3698,19 @@ static void spo_replace_terrain(struct sp_coder *coder, struct level *lev)
 
 static void spo_randline(struct sp_coder *coder, struct level *lev)
 {
-	struct opvar *coord1, *coord2, *fg, *lit, *roughness, *thick;
+	struct opvar *coord1, *coord2, *fg, *roughness, *thick;
 	randline rl;
 
 	if (!OV_pop_i(thick) ||
 	    !OV_pop_i(roughness) ||
-	    !OV_pop_i(lit) ||
-	    !OV_pop_i(fg) ||
+	    !OV_pop_typ(fg, SPOVAR_MAPCHAR) ||
 	    !OV_pop_c(coord2) ||
 	    !OV_pop_c(coord1)) return;
 
 	rl.thick = OV_i(thick);
 	rl.roughness = OV_i(roughness);
-	rl.lit = OV_i(lit);
-	rl.fg = OV_i(fg);
+	rl.lit = SP_MAPCHAR_LIT(OV_i(fg));
+	rl.fg = SP_MAPCHAR_TYP(OV_i(fg));
 	rl.x1 = SP_COORD_X(OV_i(coord1));
 	rl.y1 = SP_COORD_Y(OV_i(coord1));
 	rl.x2 = SP_COORD_X(OV_i(coord2));
@@ -3715,7 +3721,6 @@ static void spo_randline(struct sp_coder *coder, struct level *lev)
 	opvar_free(coord1);
 	opvar_free(coord2);
 	opvar_free(fg);
-	opvar_free(lit);
 	opvar_free(roughness);
 	opvar_free(thick);
 }
@@ -4014,30 +4019,24 @@ static void spo_mazewalk(struct sp_coder *coder, struct level *lev)
 
 static void spo_wall_property(struct sp_coder *coder, struct level *lev)
 {
-	struct opvar *x1, *y1, *x2, *y2;
+	struct opvar *r;
 	xchar dx1, dy1, dx2, dy2;
 	int wprop = (coder->opcode == SPO_NON_DIGGABLE) ?
 		    W_NONDIGGABLE : W_NONPASSWALL;
 
-	if (!OV_pop_i(y2) ||
-	    !OV_pop_i(x2) ||
-	    !OV_pop_i(y1) ||
-	    !OV_pop_i(x1)) return;
+	if (!OV_pop_r(r)) return;
 
-	dx1 = OV_i(x1);
-	dy1 = OV_i(y1);
-	dx2 = OV_i(x2);
-	dy2 = OV_i(y2);
+	dx1 = SP_REGION_X1(OV_i(r));
+	dy1 = SP_REGION_Y1(OV_i(r));
+	dx2 = SP_REGION_X2(OV_i(r));
+	dy2 = SP_REGION_Y2(OV_i(r));
 
 	get_location(lev, &dx1, &dy1, DRY|WET, NULL);
 	get_location(lev, &dx2, &dy2, DRY|WET, NULL);
 
 	set_wall_property(lev, dx1, dy1, dx2, dy2, wprop);
 
-	opvar_free(x1);
-	opvar_free(y1);
-	opvar_free(x2);
-	opvar_free(y2);
+	opvar_free(r);
 }
 
 static void spo_room_door(struct sp_coder *coder, struct level *lev)

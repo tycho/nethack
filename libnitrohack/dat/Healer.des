@@ -63,7 +63,7 @@ MONSTER: ('@',"Hippocrates"), (37,10) {
   LOOP [2] {
     OBJECT: '?'
   }
-  OBJECT: (')',"silver dagger"), +4
+  OBJECT: (')',"silver dagger"), 1d4
 }
 # The treasure of Hippocrates
 OBJECT: ('(',"chest"), (37,10)
@@ -217,7 +217,7 @@ TRAP:random,random
 TRAP:random,random
 # Random monsters.
 MONSTER: ('H',"Cyclops"), (20,06), hostile {
-  OBJECT: '[', +3
+  OBJECT: '[', 1d3
 }
 LOOP [3] {
   MONSTER: ('r',"rabid rat"), random
