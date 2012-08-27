@@ -171,6 +171,8 @@ extern unsigned int max_x_map, max_y_map;
 
 extern int line_number, colon_line_number;
 
+struct lc_vardefs *variable_definitions = NULL;
+
 int main(int argc, char **argv)
 {
 	FILE *fin;
