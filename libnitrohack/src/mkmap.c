@@ -25,13 +25,16 @@ static int n_loc_filled;
 
 static void init_map(struct level *lev, schar bg_typ)
 {
-	int i,j;
+	int i, j;
 
 	if (bg_typ >= MAX_TYPE) return;
 
-	for (i=1; i<COLNO; i++)
-	    for (j=0; j<ROWNO; j++)
+	for (i = 1; i < COLNO; i++) {
+	    for (j = 0; j < ROWNO; j++) {
 		lev->locations[i][j].typ = bg_typ;
+		lev->locations[i][j].lit = FALSE;
+	    }
+	}
 }
 
 static void backfill(struct level *lev, schar bg_typ, schar filler)

@@ -26,7 +26,6 @@ static void create_object(struct level *lev, object *, struct mkroom *);
 static void create_engraving(struct level *lev, engraving *,struct mkroom *);
 static void create_altar(struct level *lev, altar *, struct mkroom *);
 static void create_gold(struct level *lev, gold *, struct mkroom *);
-static void create_feature(struct level *lev, int,int,struct mkroom *,int);
 static boolean search_door(struct mkroom *, struct level *lev,
 			   xchar *, xchar *, xchar, int);
 static void fix_stair_rooms(struct level *lev);
@@ -1694,7 +1693,15 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	if (o->containment & SP_OBJ_CONTENT) {
 	    if (!container_idx) {
 		if (!invent_carrying_monster) {
-		    warning("create_object: no container");
+		    /*warning("create_object: no container");*/
+		    /*
+		     * Don't complain, the monster may be gone legally
+		     * (eg. unique demon already generated).
+		     * TODO: In the case of unique demon lords, they should
+		     * get their inventories even when they get generated
+		     * outside the des-file.  Maybe another data file that
+		     * determines what inventories monsters get by default?
+		     */
 		} else {
 		    int c;
 		    struct obj *objcheck = otmp;
@@ -1865,24 +1872,6 @@ static void create_gold(struct level *lev, gold *g, struct mkroom *croom)
 	if (g->amount == -1)
 	    g->amount = rnd(200);
 	mkgold((long) g->amount, lev, x, y);
-}
-
-/*
- * Create a feature (e.g a fountain) in a room.
- */
-static void create_feature(struct level *lev, int fx, int fy, struct mkroom *croom, int typ)
-{
-	schar x, y;
-
-	x = fx;
-	y = fy;
-	get_location(lev, &x, &y, DRY, croom);
-	/* Don't cover up an existing feature (particularly randomly
-	   placed stairs). */
-	if (IS_FURNITURE(lev->locations[x][y].typ))
-	    return;
-
-	lev->locations[x][y].typ = typ;
 }
 
 static void replace_terrain(struct level *lev, replaceterrain *terr, struct mkroom *croom)
@@ -2563,7 +2552,7 @@ static void splev_initlev(struct level *lev, lev_init *linit)
 	    lvlfill_maze_grid(lev, 2, 0, x_maze_max, y_maze_max, linit->filling);
 	    break;
 	case LVLINIT_MINES:
-	    if (linit->filling > -1) lvlfill_solid(lev, linit->filling, linit->lit);
+	    if (linit->filling > -1) lvlfill_solid(lev, linit->filling, 0);
 	    mkmap(lev, linit);
 	    break;
 	}
@@ -3379,28 +3368,6 @@ static void spo_wallwalk(struct sp_coder *coder, struct level *lev)
 	opvar_free(bgtyp);
 }
 
-static void spo_feature(struct sp_coder *coder, struct level *lev)
-{
-	struct opvar *coord;
-	int typ;
-
-	if (!OV_pop_c(coord)) return;
-
-	switch (coder->opcode) {
-	default:
-	    impossible("spo_feature called with wrong opcode %i.", coder->opcode);
-	    break;
-	case SPO_FOUNTAIN:	typ = FOUNTAIN;	break;
-	case SPO_SINK:		typ = SINK;	break;
-	case SPO_POOL:		typ = POOL;	break;
-	}
-
-	create_feature(lev, SP_COORD_X(OV_i(coord)), SP_COORD_Y(OV_i(coord)),
-		       coder->croom, typ);
-
-	opvar_free(coord);
-}
-
 static void spo_trap(struct sp_coder *coder, struct level *lev)
 {
 	struct opvar *type, *coord;
@@ -3831,6 +3798,12 @@ static void sel_set_ter(struct level *lev, int x, int y, void *arg)
 	}
 }
 
+static void sel_set_feature(struct level *lev, int x, int y, void *arg)
+{
+	if (IS_FURNITURE(lev->locations[x][y].typ)) return;
+	lev->locations[x][y].typ = *(int *)arg;
+}
+
 static void sel_set_door(struct level *lev, int dx, int dy, void *arg)
 {
 	xchar typ = *(xchar *)arg;
@@ -3875,6 +3848,26 @@ static void spo_door(struct sp_coder *coder, struct level *lev)
 
 	opvar_free(sel);
 	opvar_free(msk);
+}
+
+static void spo_feature(struct sp_coder *coder, struct level *lev)
+{
+	struct opvar *sel;
+	int typ;
+
+	if (!OV_pop_typ(sel, SPOVAR_SEL)) return;
+
+	switch (coder->opcode) {
+	default:
+	    impossible("spo_feature called with wrong opcode %i.", coder->opcode);
+	    break;
+	case SPO_FOUNTAIN:	typ = FOUNTAIN;	break;
+	case SPO_SINK:		typ = SINK;	break;
+	case SPO_POOL:		typ = POOL;	break;
+	}
+	selection_iterate(sel, sel_set_feature, lev, &typ);
+
+	opvar_free(sel);
 }
 
 static void spo_terrain(struct sp_coder *coder, struct level *lev)

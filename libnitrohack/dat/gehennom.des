@@ -1242,9 +1242,9 @@ STAIR:(63,15),up
 #  specific levels as defined above.
 #
 LEVEL: "hellfill"
-FLAGS: mazelevel
+FLAGS: mazelevel, noflip
 INIT_MAP: mines, '.', ' ', true, true, unlit, true, 'L'
-TELEPORT_REGION:levregion(11,01,59,19),levregion(01,01,02,02)
+TELEPORT_REGION: levregion(11,01,59,19), levregion(01,01,02,02)
 NOMAP
 #
 #  always put stairs relatively far apart
@@ -1252,22 +1252,22 @@ NOMAP
 IF [50%] {
   IF [50%] {
     # Option 1: Up Left, Down Right
-    STAIR:levregion(01,01,20,20),levregion(40,10,44,12),up
-    STAIR:levregion(50,01,70,20),levregion(45,10,49,12),down
+    STAIR: levregion(01,01,20,20), levregion(40,10,44,12), up
+    STAIR: levregion(50,01,70,20), levregion(45,10,49,12), down
   } ELSE {
     # Option 2: Up Right, Down Left
-    STAIR:levregion(50,01,70,20),levregion(45,10,49,12),up
-    STAIR:levregion(01,01,20,20),levregion(40,10,44,12),down
+    STAIR: levregion(50,01,70,20), levregion(45,10,49,12), up
+    STAIR: levregion(01,01,20,20), levregion(40,10,44,12), down
   }
 } ELSE {
   IF [50%] {
     # Option 3: Up Center, Down Elsewhere
-    STAIR:levregion(30,01,50,20),levregion(38,01,42,20),up
-    STAIR:levregion(01,01,70,20),levregion(30,01,50,20),down
+    STAIR: levregion(30,01,50,20), levregion(38,01,42,20), up
+    STAIR: levregion(01,01,70,20), levregion(30,01,50,20), down
   } ELSE {
     # Option 4: Down Center, Up Elsewhere
-    STAIR:levregion(01,01,70,20),levregion(30,01,50,20),up
-    STAIR:levregion(30,01,50,20),levregion(38,01,42,20),down
+    STAIR: levregion(01,01,70,20), levregion(30,01,50,20), up
+    STAIR: levregion(30,01,50,20), levregion(38,01,42,20), down
   }
 }
 #

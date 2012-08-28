@@ -313,7 +313,8 @@ struct rm {
 
 #define SET_TYPLIT(lev, x, y, ttyp, llit)			\
 do {								\
-	(lev)->locations[(x)][(y)].typ = (ttyp);		\
+	if ((ttyp) < MAX_TYPE)					\
+	    (lev)->locations[(x)][(y)].typ = (ttyp);		\
 	if ((ttyp) == LAVAPOOL) {				\
 	    (lev)->locations[(x)][(y)].lit = 1;			\
 	} else if ((schar)(llit) != -2) {			\

@@ -281,7 +281,7 @@ WALLIFY
 #
 
 LEVEL: "Ran-fila"
-FLAGS: mazelevel
+FLAGS: mazelevel, noflip
 INIT_MAP: mines, '.', 'T', true, true, random, true
 MON_GENERATION: 86%, (64,"forest centaur"), (16,'C'), (16,"scorpion"), (4,'s')
 NOMAP
@@ -305,7 +305,7 @@ MONSTER: 'C', random, hostile
 MONSTER: ('s',"scorpion"), random, hostile
 
 LEVEL: "Ran-filb"
-FLAGS: mazelevel
+FLAGS: mazelevel, noflip
 INIT_MAP: mines, '.', ' ', true, true, random, true
 MON_GENERATION: 86%, (64,"forest centaur"), (16,'C'), (16,"scorpion"), (4,'s')
 NOMAP
