@@ -1326,10 +1326,19 @@ static void create_trap(struct level *lev, trap *t, struct mkroom *croom)
 
 	x = t->x;
 	y = t->y;
-	if (croom)
+	if (croom) {
 	    get_free_room_loc(lev, &x, &y, croom);
-	else
-	    get_location(lev, &x, &y, DRY, croom);
+	} else {
+	    int trycnt = 0;
+	    do {
+		x = t->x;
+		y = t->y;
+		get_location(lev, &x, &y, DRY, croom);
+	    } while (++trycnt <= 100 &&
+		     (lev->locations[x][y].typ == STAIRS ||
+		      lev->locations[x][y].typ == LADDER));
+	    if (trycnt > 100) return;
+	}
 
 	tm.x = x;
 	tm.y = y;
