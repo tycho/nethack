@@ -1038,7 +1038,6 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "replaceterrain",
 	    "exit",
 	    "endroom",
-	    "randline",
 	    "pop_container",
 	    "push",
 	    "pop",
@@ -1065,6 +1064,17 @@ static boolean decompile_maze(int fd, const sp_lev *maze)
 	    "var_init",
 	    "shuffle_array",
 	    "dice",
+	    "selection_add",
+	    "selection_point",
+	    "selection_rect",
+	    "selection_fillrect",
+	    "selection_line",
+	    "selection_rndline",
+	    "selection_grow",
+	    "selection_flood",
+	    "selection_rndcoord",
+	    "selection_ellipse",
+	    "selection_filter",
 	};
 
 	/* don't bother with the header stuff */

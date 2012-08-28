@@ -145,7 +145,7 @@ extern const char *fname;
 %token	<i> OBJECT_ID COBJECT_ID MONSTER_ID TRAP_ID DOOR_ID DRAWBRIDGE_ID
 %token	<i> MAZEWALK_ID WALLIFY_ID REGION_ID FILLING
 %token	<i> ALTAR_ID LADDER_ID STAIR_ID NON_DIGGABLE_ID NON_PASSWALL_ID ROOM_ID
-%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID RANDLINE_ID
+%token	<i> PORTAL_ID TELEPRT_ID BRANCH_ID LEV CHANCE_ID
 %token	<i> CORRIDOR_ID GOLD_ID ENGRAVING_ID FOUNTAIN_ID POOL_ID SINK_ID NONE
 %token	<i> RAND_CORRIDOR_ID DOOR_STATE LIGHT_STATE CURSE_TYPE ENGRAVING_TYPE
 %token	<i> DIRECTION RANDOM_TYPE A_REGISTER
@@ -165,7 +165,8 @@ extern const char *fname;
 %token	<i> INCLUDE_ID
 %token	<i> SOUNDS_ID MSG_OUTPUT_TYPE
 %token	<i> WALLWALK_ID COMPARE_TYPE
-%token	<i> rect_ID
+%token	<i> rect_ID fillrect_ID line_ID randline_ID grow_ID selection_ID flood_ID
+%token	<i> rndcoord_ID circle_ID ellipse_ID filter_ID
 %token	<i> ',' ':' '(' ')' '[' ']' '{' '}'
 %token	<map> STRING MAP_ID
 %token	<map> NQSTRING VARSTRING
@@ -177,6 +178,7 @@ extern const char *fname;
 %token	<map> VARSTRING_MAPCHAR VARSTRING_MAPCHAR_ARRAY
 %token	<map> VARSTRING_MONST VARSTRING_MONST_ARRAY
 %token	<map> VARSTRING_OBJ VARSTRING_OBJ_ARRAY
+%token	<map> VARSTRING_SEL VARSTRING_SEL_ARRAY
 %token	<dice> DICE
 %type	<i> h_justif v_justif trap_name room_type door_state light_state
 %type	<i> alignment altar_type a_register roomfill door_pos
@@ -191,8 +193,9 @@ extern const char *fname;
 %type	<i> seen_trap_mask
 %type	<i> mon_gen_list encodemonster encodeobj encodeobj_list
 %type	<i> sounds_list integer_list string_list encodecoord_list encoderegion_list mapchar_list encodemonster_list
-%type	<i> opt_percent opt_spercent opt_int opt_fillchar
+%type	<i> opt_percent opt_spercent opt_fillchar
 %type	<i> all_integers
+%type	<i> ter_selection ter_selection_x
 %type	<map> string level_def
 %type	<map> any_var any_var_array any_var_or_arr
 %type	<corpos> corr_spec
@@ -413,7 +416,6 @@ levstatement	: message
 		| terrain_detail
 		| replace_terrain_detail
 		| spill_detail
-		| randline_detail
 		| stair_detail
 		| stair_region
 		| teleprt_region
@@ -429,6 +431,7 @@ any_var_array	: VARSTRING_INT_ARRAY
 		| VARSTRING_MAPCHAR_ARRAY
 		| VARSTRING_MONST_ARRAY
 		| VARSTRING_OBJ_ARRAY
+		| VARSTRING_SEL_ARRAY
 		;
 
 any_var		: VARSTRING_INT
@@ -439,6 +442,7 @@ any_var		: VARSTRING_INT
 		| VARSTRING_MAPCHAR
 		| VARSTRING_MONST
 		| VARSTRING_OBJ
+		| VARSTRING_SEL
 		;
 
 any_var_or_arr	: any_var_array
@@ -469,6 +473,14 @@ variable_define	: any_var_or_arr '=' INTEGER
 			variable_definitions = add_vardef_type(
 				variable_definitions, $1,
 				SPOVAR_INT);
+			add_opvars(splev, "iso", 0, $1, SPO_VAR_INIT);
+			Free($1);
+		  }
+		| any_var_or_arr '=' selection_ID ':' ter_selection
+		  {
+			variable_definitions = add_vardef_type(
+				variable_definitions, $1,
+				SPOVAR_SEL);
 			add_opvars(splev, "iso", 0, $1, SPO_VAR_INIT);
 			Free($1);
 		  }
@@ -1179,7 +1191,7 @@ door_detail	: ROOMDOOR_ID ':' secret ',' door_state ',' door_wall ',' door_pos
 				       SPO_ROOM_DOOR);
 			}
 		  }
-		| DOOR_ID ':' door_state ',' coord_or_var
+		| DOOR_ID ':' door_state ',' ter_selection
 		  {
 			add_opvars(splev, "io", (long)$3, SPO_DOOR);
 		  }
@@ -1810,9 +1822,9 @@ replace_terrain_detail : REPLACE_TERRAIN_ID ':' region_or_var ',' mapchar_or_var
 		  }
 		;
 
-terrain_detail	: TERRAIN_ID chance ':' coord_or_var ',' mapchar_or_var
+terrain_detail	: TERRAIN_ID chance ':' ter_selection ',' mapchar_or_var
 		  {
-			add_opvars(splev, "io", 0, SPO_TERRAIN);
+			add_opvars(splev, "o", SPO_TERRAIN);
 
 			if ( 1 == $2 ) {
 			    if (n_if_list > 0) {
@@ -1825,69 +1837,6 @@ terrain_detail	: TERRAIN_ID chance ':' coord_or_var ',' mapchar_or_var
 					 "but no jump point marker.");
 			    }
 			}
-		  }
-		| TERRAIN_ID chance ':' coord_or_var ',' HORIZ_OR_VERT ',' INTEGER ',' mapchar_or_var
-		  {
-			long areatyp, x2, y2;
-
-			areatyp = $<i>6; /* 1 or 2 */
-			if (areatyp == 1) {
-			    x2 = $8;
-			    y2 = -1;
-			} else {
-			    x2 = -1;
-			    y2 = $8;
-			}
-
-			add_opvars(splev, "cio",
-				   SP_COORD_PACK(x2, y2), areatyp,
-				   SPO_TERRAIN);
-
-			if ( 1 == $2 ) {
-			    if (n_if_list > 0) {
-				struct opvar *tmpjmp;
-				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp,
-					      splev->n_opcodes - tmpjmp->vardata.l);
-			    } else {
-				lc_error("Conditional terrain modification, "
-					 "but no jump point marker.");
-			    }
-			}
-		  }
-		| TERRAIN_ID chance ':' rect_ID region_or_var ',' FILLING ',' mapchar_or_var
-		  {
-			long areatyp = 3 + $<i>7; /* 3 or 4*/
-			add_opvars(splev, "io", areatyp, SPO_TERRAIN);
-
-			if ( 1 == $2 ) {
-			    if (n_if_list > 0) {
-				struct opvar *tmpjmp;
-				tmpjmp = (struct opvar *)if_list[--n_if_list];
-				set_opvar_int(tmpjmp,
-					      splev->n_opcodes - tmpjmp->vardata.l);
-			    } else {
-				lc_error("Conditional terrain modification, "
-					 "but no jump point marker.");
-			    }
-			}
-		  }
-		;
-
-randline_detail	: RANDLINE_ID ':' coord_or_var ',' coord_or_var ',' mapchar_or_var ',' INTEGER opt_int
-		  {
-			add_opvars(splev, "iio",
-				   (long)$9, (long)$10,
-				   SPO_RANDLINE);
-		  }
-
-opt_int		: /* empty */
-		  {
-			$$ = 0;
-		  }
-		| ',' INTEGER
-		  {
-			$$ = $2;
 		  }
 		;
 
@@ -2100,6 +2049,10 @@ integer_or_var	: math_expr_var
 coord_or_var	: encodecoord
 		  {
 			add_opvars(splev, "c", $1);
+		  }
+		| rndcoord_ID '(' ter_selection ')'
+		  {
+			add_opvars(splev, "o", SPO_SEL_RNDCOORD);
 		  }
 		| VARSTRING_COORD
 		  {
@@ -2410,6 +2363,85 @@ math_expr	: INTEGER
 		| '(' math_expr ')'
 		  {
 			/* nothing */
+		  }
+		;
+
+ter_selection_x	: coord_or_var
+		  {
+			add_opvars(splev, "o", SPO_SEL_POINT);
+		  }
+		| rect_ID region_or_var
+		  {
+			add_opvars(splev, "o", SPO_SEL_RECT);
+		  }
+		| fillrect_ID region_or_var
+		  {
+			add_opvars(splev, "o", SPO_SEL_FILLRECT);
+		  }
+		| line_ID coord_or_var '-' coord_or_var
+		  {
+			add_opvars(splev, "o", SPO_SEL_LINE);
+		  }
+		| randline_ID coord_or_var '-' coord_or_var ',' math_expr
+		  {
+			/* randline (x1,y1), (x2,y2), roughness */
+			add_opvars(splev, "o", SPO_SEL_RNDLINE);
+		  }
+		| grow_ID '(' ter_selection ')'
+		  {
+			add_opvars(splev, "io", W_ANY, SPO_SEL_GROW);
+		  }
+		| grow_ID '(' dir_list ',' ter_selection ')'
+		  {
+			add_opvars(splev, "io", $3, SPO_SEL_GROW);
+		  }
+		| filter_ID '(' SPERCENT ',' ter_selection ')'
+		  {
+			add_opvars(splev, "iio", $3, 0, SPO_SEL_FILTER);
+		  }
+		| filter_ID '(' ter_selection ',' ter_selection ')'
+		  {
+			add_opvars(splev, "io", 1, SPO_SEL_FILTER);
+		  }
+		| flood_ID coord_or_var
+		  {
+			add_opvars(splev, "o", SPO_SEL_FLOOD);
+		  }
+		| circle_ID '(' coord_or_var ',' math_expr ')'
+		  {
+			add_opvars(splev, "oio", SPO_COPY, 1, SPO_SEL_ELLIPSE);
+		  }
+		| circle_ID '(' coord_or_var ',' math_expr ',' FILLING ')'
+		  {
+			add_opvars(splev, "oio", SPO_COPY, $7, SPO_SEL_ELLIPSE);
+		  }
+		| ellipse_ID '(' coord_or_var ',' math_expr ',' math_expr ')'
+		  {
+			add_opvars(splev, "io", 1, SPO_SEL_ELLIPSE);
+		  }
+		| ellipse_ID '(' coord_or_var ',' math_expr ',' math_expr ',' FILLING ')'
+		  {
+			add_opvars(splev, "io", $9, SPO_SEL_ELLIPSE);
+		  }
+		| VARSTRING_SEL
+		  {
+			check_vardef_type(variable_definitions, $1, SPOVAR_SEL);
+			add_opvars(splev, "v", $1);
+			Free($1);
+		  }
+		| '(' ter_selection ')'
+		  {
+			/* nothing */
+		  }
+		;
+
+ter_selection	: ter_selection_x
+		  {
+			/* nothing */
+		  }
+		| ter_selection_x '&' ter_selection
+		  {
+			add_opvars(splev, "o", SPO_SEL_ADD);
 		  }
 		;
 

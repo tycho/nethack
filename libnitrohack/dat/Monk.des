@@ -142,21 +142,18 @@ STAIR:random,down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
 # Objects
-LOOP [15] {
+LOOP [10 + 1d10] {
   OBJECT: random, random
 }
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [3 + 2d3] {
+  TRAP: random, random
+}
 # Random monsters.
-LOOP [14] {
+LOOP [13 + 2d5] {
   MONSTER: ('E',"earth elemental"), random
 }
-LOOP [9] {
+LOOP [8 + 1d6] {
   MONSTER: ('X',"xorn"), random
 }
 
@@ -194,16 +191,15 @@ REGION: (00,00,25,10), unlit, "ordinary"
 STAIR: (20,05), up
 # Objects
 OBJECT: ('(',"lenses"), $place[0], blessed, 0, NAME:"The Eyes of the Overworld"
-LOOP [14] {
+LOOP [10 + 1d10] {
   OBJECT: random, random
 }
 # Random traps
-TRAP:"fire",random
-TRAP:"fire",random
-TRAP:"fire",random
-TRAP:"fire",random
-TRAP:random,random
-TRAP:random,random
+LOOP [3 + 1d3] {
+  TRAP: "fire", random
+}
+TRAP: random, random
+TRAP: random, random
 # Random monsters.
 MONSTER: ('@',"Master Kaen"), $place[0] {
   OBJECT: ')', 1d4
@@ -212,8 +208,10 @@ MONSTER: ('@',"Master Kaen"), $place[0] {
   }
 }
 ALTAR: $place[0], noalign, altar
-LOOP [9] {
+LOOP [10 + 1d6] {
   MONSTER: ('E',"earth elemental"), random
+}
+LOOP [10 + 1d6] {
   MONSTER: ('X',"xorn"), random
 }
 

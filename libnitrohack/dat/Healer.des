@@ -79,21 +79,20 @@ MONSTER: ('@',"attendant"), (40,13)
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [5 + 1d3] {
+  TRAP: random, random
+}
 # Monsters on siege duty.
-LOOP [10] {
+LOOP [8 + 1d6] {
   MONSTER: ('r',"rabid rat"), random
 }
 MONSTER: (';',"giant eel"), random
 MONSTER: (';',"shark"), random
 MONSTER: ';', random
-LOOP [5] {
+LOOP [3 + 1d5] {
   MONSTER: 'D', random, hostile
+}
+LOOP [3 + 1d5] {
   MONSTER: 'S', random, hostile
 }
 #
@@ -137,34 +136,29 @@ NON_DIGGABLE:(11,02,21,07)
 # Altar in the temple.
 ALTAR:(13,05), chaos, shrine
 # Objects
-LOOP [15] {
+LOOP [10 + 2d5] {
   OBJECT: random, random
 }
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [4 + 2d3] {
+  TRAP: random, random
+}
 # Random monsters.
-LOOP [8] {
+LOOP [8 + 2d4] {
   MONSTER: ('r',"rabid rat"), random
+  MONSTER[50%]: (';',"giant eel"), random
+  MONSTER[30%]: (';',"electric eel"), random
 }
 MONSTER: 'r', random, hostile
-LOOP [5] {
-  MONSTER: (';',"giant eel"), random
-}
+MONSTER: (';',"kraken"), random
 LOOP [2] {
-  MONSTER: (';',"electric eel"), random
   MONSTER: (';',"shark"), random
   MONSTER: ';', random, hostile
 }
-MONSTER: (';',"kraken"), random
-LOOP [5] {
+LOOP [3 + 1d6] {
   MONSTER: 'D', random, hostile
 }
-LOOP [9] {
+LOOP [8 + 2d3] {
   MONSTER: 'S', random, hostile
 }
 
@@ -205,16 +199,13 @@ NON_DIGGABLE:(00,00,40,11)
 # Objects
 OBJECT: (')',"quarterstaff"), (20,06), blessed, 0, NAME:"The Staff of Aesculapius"
 OBJECT: ('/',"lightning"), (20,06)
-LOOP [14] {
+LOOP [10 + 1d5] {
   OBJECT: random, random
 }
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [3 + 2d3] {
+  TRAP: random, random
+}
 # Random monsters.
 MONSTER: ('H',"Cyclops"), (20,06), hostile {
   OBJECT: '[', 1d3
@@ -231,10 +222,8 @@ LOOP [6] {
   MONSTER: (';',"giant eel"), random
 }
 MONSTER: ';', random, hostile
-LOOP [5] {
-  MONSTER: 'D', random, hostile
-}
-LOOP [10] {
+LOOP [5 + 2d5] {
+  MONSTER[90%]: 'D', random, hostile
   MONSTER: 'S', random, hostile
 }
 
@@ -256,7 +245,7 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-LOOP [8] {
+LOOP [5 + 1d10] {
   OBJECT: random, random
 }
 #
@@ -266,17 +255,14 @@ LOOP [2] {
   MONSTER: (';',"giant eel"), random
 }
 MONSTER: (';',"electric eel"), random
-LOOP [4] {
+LOOP [3 + 1d4] {
   MONSTER: 'D', random, hostile
-}
-LOOP [3] {
-  MONSTER: 'S', random, hostile
+  MONSTER[90%]: 'S', random, hostile
 }
 #
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
+LOOP [3 + 1d3] {
+  TRAP: random, random
+}
 
 LEVEL: "Hea-filb"
 FLAGS: mazelevel
@@ -287,7 +273,7 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-LOOP [11] {
+LOOP [5 + 1d10] {
   OBJECT: random, random
 }
 #
@@ -299,14 +285,11 @@ LOOP [2] {
 LOOP [5] {
   MONSTER: (';',"giant eel"), random
 }
-LOOP [4] {
+LOOP [3 + 1d5] {
   MONSTER: 'D', random, hostile
-}
-LOOP [3] {
-  MONSTER: 'S', random, hostile
+  MONSTER[90%]: 'S', random, hostile
 }
 #
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
+LOOP [3 + 1d3] {
+  TRAP: random, random
+}

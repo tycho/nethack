@@ -219,7 +219,7 @@ REGION: (00,00,25,10), unlit, "ordinary"
 STAIR:(20,05),up
 # Objects
 OBJECT: ('[',"helm of brilliance"), $place[0], blessed, 0, NAME:"The Mitre of Holiness"
-LOOP [14] {
+LOOP [10 + 1d6] {
   OBJECT: random, random
 }
 # Random traps
@@ -234,12 +234,12 @@ MONSTER: ('&',"Nalzok"), $place[0] {
   OBJECT: ')', 1d6
   OBJECT: '[', 1d3
 }
-LOOP [16] {
+LOOP [15 + 2d5] {
   MONSTER: ('Z',"human zombie"), random
 }
 MONSTER: 'Z', random
 MONSTER: 'Z', random
-LOOP [8] {
+LOOP [4 + 2d4] {
   MONSTER: ('W',"wraith"), random
 }
 MONSTER: 'W', random

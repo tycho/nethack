@@ -78,12 +78,9 @@ MONSTER: (';',"giant eel"), (67,17)
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+LOOP [3 + 3d3] {
+  TRAP: random, random
+}
 # Monsters on siege duty.
 MONSTER: 'B', (60,09), hostile
 MONSTER: 'W', (60,10), hostile
@@ -160,7 +157,7 @@ STAIR:(48,10),down
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,20)
 # Objects
-LOOP [15] {
+LOOP [10 + 1d6] {
   OBJECT: random, random
 }
 # Random traps

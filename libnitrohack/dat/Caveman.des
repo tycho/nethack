@@ -54,8 +54,8 @@ DOOR:locked,(19,06)
 ALTAR:(36,02),coaligned,shrine
 # Shaman Karnov
 MONSTER: ('@',"Shaman Karnov"), (35,02) {
-  OBJECT: '[', +6
-  OBJECT: ')', +6
+  OBJECT: '[', 1d6
+  OBJECT: ')', 1d6
 }
 # The treasure of Shaman Karnov
 OBJECT: ('(',"chest"), (34,02)
@@ -218,7 +218,7 @@ STAIR:random,up
 NON_DIGGABLE:(00,00,75,19)
 # Objects
 OBJECT: (')',"mace"), (23,10), blessed, 0, NAME:"The Sceptre of Might"
-LOOP [14] {
+LOOP [10 + 2d8] {
   OBJECT: random, random
 }
 # monsters.

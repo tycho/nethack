@@ -16,13 +16,15 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-OBJECT: '(', random
 LOOP [3] {
   OBJECT: '*', random
+}
+OBJECT: '(', random
+LOOP [2d2] {
   OBJECT: random, random
 }
 #
-LOOP [7] {
+LOOP [4 + 2d5] {
   MONSTER: ('G',"gnome"), random
 }
 MONSTER: ('G',"gnome lord"), random
@@ -32,7 +34,7 @@ LOOP [2] {
 }
 MONSTER: 'h', random
 #
-LOOP [6] {
+LOOP [4 + 1d5] {
   TRAP: random, random
 }
 
@@ -126,10 +128,8 @@ LOOP [4] {
 OBJECT: ('%',"corpse"), random, montype:"watch captain"
 
 # Rubble!
-LOOP [13] {
-  OBJECT: ('`',"boulder"), random
-}
-LOOP [11] {
+LOOP [9 + 2d5] {
+  OBJECT[90%]: ('`',"boulder"), random
   OBJECT: ('*',"rock"), random
 }
 
@@ -177,10 +177,8 @@ MONSTER: ('o',"orc shaman"), (16,12), hostile
 MONSTER: ('o',"orc shaman"), (24,12), hostile
 # these are not such a big deal
 # to run into outside the bars
-LOOP [13] {
-  MONSTER: ('o',"hill orc"), random, hostile
-}
-LOOP [8] {
+LOOP [9 + 2d5] {
+  MONSTER[90%]: ('o',"hill orc"), random, hostile
   MONSTER: ('o',"goblin"), random, hostile
 }
 
@@ -402,7 +400,7 @@ ROOM: "ordinary" , lit, (3,3), (center,center), (31,15)
   FOUNTAIN: (13, 8)
 
   # The Town Watch
-  LOOP [4] {
+  LOOP [2 + 1d7] {
     MONSTER: ('@',"watchman"), random, peaceful
   }
   MONSTER: ('@',"watch captain"), random, peaceful
@@ -532,7 +530,7 @@ ROOM: "ordinary", lit, (3,3), (center,center), (31,15)
   FOUNTAIN: (01,06)
   FOUNTAIN: (29,13)
 
-  LOOP [4] {
+  LOOP [2 + 1d7] {
     MONSTER: ('@',"watchman"), random, peaceful
   }
   MONSTER: ('@',"watch captain"), random, peaceful
@@ -647,7 +645,7 @@ ROOM: "ordinary", lit, (3,3), (center,center), (30,15)
   FOUNTAIN: (08,07)
   FOUNTAIN: (18,07)
 
-  LOOP [4] {
+  LOOP [2 + 1d7] {
     MONSTER: ('@',"watchman"), random, peaceful
   }
   MONSTER: ('@',"watch captain"), random, peaceful
@@ -727,11 +725,11 @@ REGION:(37,13,39,17),lit,"ordinary"
 REGION:(36,14,40,17),lit,"ordinary"
 REGION:(59,02,72,10),lit,"ordinary"
 
-LOOP [4] {
+LOOP [2 + 1d7] {
   MONSTER: ('@',"watchman"), random, peaceful
 }
 MONSTER: ('@',"watch captain"), random, peaceful
-LOOP [6] {
+LOOP [4 + 1d8] {
   MONSTER: ('G',"gnome"), random
 }
 LOOP [2] {
@@ -1099,13 +1097,13 @@ LOOP [6] {
 }
 # Random monsters
 MONSTER: ('G',"gnome king"), random
-LOOP [3] {
+LOOP [2 + 1d4] {
   MONSTER: ('G',"gnome lord"), random
 }
-LOOP [2] {
+LOOP [1d4] {
   MONSTER: ('G',"gnomish wizard"), random
 }
-LOOP [9] {
+LOOP [5 + 1d8] {
   MONSTER: ('G',"gnome"), random
 }
 LOOP [2] {
@@ -1286,29 +1284,29 @@ LOOP [7] {
 }
 OBJECT: ('*',"luckstone"), $place[0]
 OBJECT: ('*',"flint"), $place[1]
-LOOP [5] {
+LOOP [3d3] {
   OBJECT: '?', random
 }
-LOOP [4] {
+LOOP [3d2] {
   OBJECT: '+', random
 }
 LOOP [3] {
   OBJECT: random, random
 }
-LOOP [7] {
+LOOP [2 + 3d3] {
   TRAP: random, random
 }
 # One-time annoyance factor
 TRAP: "level teleport", $place[0]
 TRAP: "level teleport", $place[1]
-LOOP [5] {
+LOOP [2 + 3d3] {
   MONSTER: 'M', random
 }
 MONSTER: ('M',"ettin mummy"), random
 LOOP [2] {
   MONSTER: 'V', random
 }
-LOOP [5] {
+LOOP [3 + 3d3] {
   MONSTER: 'Z', random
 }
 LOOP [4] {

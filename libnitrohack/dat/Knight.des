@@ -138,7 +138,7 @@ STAIR:(18,05),down
 # The altar atop the Tor and its attendant (creating altar makes the priest).
 ALTAR:(17,05),neutral,shrine
 # Objects
-LOOP [15] {
+LOOP [10 + 2d5] {
   OBJECT: random, random
 }
 # Random traps
@@ -192,20 +192,16 @@ TRAP:"magic",(30,00)
 TRAP:"magic",(31,00)
 TRAP:"magic",(32,00)
 # Even so, there are magic "sinkholes" around.
-TRAP:"anti magic",random
-TRAP:"anti magic",random
-TRAP:"anti magic",random
-TRAP:"anti magic",random
-TRAP:"anti magic",random
-TRAP:"anti magic",random
-TRAP:"anti magic",random
+LOOP [5 + 2d6] {
+  TRAP: "anti magic", random
+}
 # Random monsters.
-LOOP [17] {
+LOOP [10 + 3d8] {
   MONSTER: ('i',"quasit"), random, hostile
 }
 MONSTER: 'i', random, hostile
 MONSTER: 'j', random, hostile
-LOOP [7] {
+LOOP [5 + 2d5] {
   MONSTER: ('j',"ochre jelly"), random, hostile
 }
 MONSTER: 'j', random, hostile
@@ -269,30 +265,28 @@ OBJECT: random, (35,02)
 OBJECT: random, (35,03)
 OBJECT: random, (35,04)
 OBJECT: random, (35,05)
-LOOP [6] {
+LOOP [3 + 1d3] {
   OBJECT: random, random
 }
 # Random traps
-TRAP:"spiked pit",(13,07)
-TRAP:"spiked pit",(12,08)
-TRAP:"spiked pit",(12,09)
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+TRAP: "spiked pit", (13,07)
+TRAP: "spiked pit", (12,08)
+TRAP: "spiked pit", (12,09)
+LOOP [2 + 2d2] {
+  TRAP: random, random
+}
 # Random monsters.
 MONSTER: ('D',"Ixoth"), (50,06), hostile {
   LOOP [2] {
     OBJECT: '?'
   }
 }
-LOOP [16] {
+LOOP [10 + 3d8] {
   MONSTER: ('i',"quasit"), random, hostile
 }
 MONSTER: 'i', random, hostile
 MONSTER: 'i', random, hostile
-LOOP [8] {
+LOOP [5 + 2d5] {
   MONSTER: ('j',"ochre jelly"), random, hostile
 }
 MONSTER: 'j', random, hostile
@@ -315,20 +309,19 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-LOOP [8] {
+LOOP [6 + 2d4] {
   OBJECT: random, random
 }
 #
-LOOP [4] {
+LOOP [3 + 1d4] {
   MONSTER: ('i',"quasit"), random, hostile
 }
 MONSTER: 'i', random, hostile
 MONSTER: ('j',"ochre jelly"), random, hostile
 #
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
+LOOP [3 + 1d5] {
+  TRAP: random, random
+}
 
 LEVEL: "Kni-filb"
 FLAGS: mazelevel
@@ -339,19 +332,18 @@ NOMAP
 STAIR: random, up
 STAIR: random, down
 #
-LOOP [11] {
+LOOP [6 + 2d4] {
   OBJECT: random, random
 }
 #
-LOOP [4] {
+LOOP [3 + 1d4] {
   MONSTER: ('i',"quasit"), random, hostile
 }
 MONSTER: 'i', random, hostile
-LOOP [3] {
+LOOP [3 + 1d4] {
   MONSTER: ('j',"ochre jelly"), random, hostile
 }
 #
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
-TRAP: random, random
+LOOP [3 + 1d5] {
+  TRAP: random, random
+}
