@@ -1663,14 +1663,24 @@ int dodip(struct obj *potion)
 		here = level->locations[u.ux][u.uy].typ;
 		/* Is there a fountain to dip into here? */
 		if (IS_FOUNTAIN(here)) {
-			sprintf(qbuf, "Dip %s into the fountain?", the(xname(obj)));
+			sprintf(qbuf, "Dip %s into the fountain?",
+				safe_qbuf("", sizeof("Dip  into the fountain?"),
+					  the(xname(obj)),
+					  the(simple_typename(obj->otyp)),
+					  "this item"));
 			if (yn(qbuf) == 'y') {
 				dipfountain(obj);
 				return 1;
 			}
 		} else if (is_pool(level, u.ux,u.uy)) {
 			tmp = waterbody_name(u.ux,u.uy);
-			sprintf(qbuf, "Dip %s into the %s?", the(xname(obj)), tmp);
+			sprintf(qbuf, "Dip %s into the %s?",
+				safe_qbuf("",
+					  sizeof("Dip  into the pool of water?"),
+					  the(xname(obj)),
+					  the(simple_typename(obj->otyp)),
+					  "this item"),
+				tmp);
 			if (yn(qbuf) == 'y') {
 			    if (Levitation) {
 				floating_above(tmp);
@@ -1684,7 +1694,11 @@ int dodip(struct obj *potion)
 			    return 1;
 			}
 		}
-		sprintf(qbuf, "dip %s into", the(xname(obj)));
+		sprintf(qbuf, "dip %s into",
+			safe_qbuf("", sizeof("dip  into"),
+				  the(xname(obj)),
+				  the(simple_typename(obj->otyp)),
+				  "this item"));
 		potion = getobj(beverages, qbuf);
 	}
 
