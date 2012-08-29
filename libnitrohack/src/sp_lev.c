@@ -2561,6 +2561,7 @@ static void splev_initlev(struct level *lev, lev_init *linit)
 	    lvlfill_maze_grid(lev, 2, 0, x_maze_max, y_maze_max, linit->filling);
 	    break;
 	case LVLINIT_MINES:
+	    if (linit->lit == -1) linit->lit = rn2(2);
 	    if (linit->filling > -1) lvlfill_solid(lev, linit->filling, 0);
 	    mkmap(lev, linit);
 	    break;
