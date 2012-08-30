@@ -1351,7 +1351,9 @@ dopois:
 		    hitmsg(mtmp, mattk);
 		    break;
 		}
-		if (!uwep && !uarmu && !uarm && !uarmh &&
+		/* this condition must match the one in sounds.c for MS_NURSE */
+		if (!(uwep && (uwep->oclass == WEAPON_CLASS || is_weptool(uwep))) &&
+		    !uarmu && !uarm && !uarmh &&
 		    !uarms && !uarmg && !uarmc && !uarmf) {
 		    boolean goaway = FALSE;
 		    pline("%s hits!  (I hope you don't mind.)", Monnam(mtmp));
