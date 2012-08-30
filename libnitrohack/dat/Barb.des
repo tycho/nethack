@@ -262,7 +262,7 @@ TRAP:random,random
 # Random monsters.
 MONSTER: ('@',"Thoth Amon"), (63,04), hostile {
   OBJECT: ('(',"Bell of Opening"), uncursed
-  OBJECT: ')', +2
+  OBJECT: ')', 1d2
   OBJECT: '['
   LOOP [3] {
     OBJECT: random
