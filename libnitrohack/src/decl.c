@@ -254,6 +254,8 @@ void init_data(void)
     memset(&digging, 0, sizeof(digging));
     memset(&inv_pos, 0, sizeof(inv_pos));
     memset(multi_txt, 0, sizeof(multi_txt));
+    memset(toplines, 0, sizeof(toplines));
+    memset(toplines_count, 0, sizeof(toplines_count));
     
     level = NULL;
     multi = occtime = killer_format = 0;
@@ -282,6 +284,7 @@ void init_data(void)
     branch_id = 0;
     histevents = NULL;
     histcount = 0;
+    curline = 0;
     
     program_state.restoring = in_restore;
     iflags.disable_log = nolog;
