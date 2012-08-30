@@ -1594,7 +1594,7 @@ dopois:
 			destroy_arm(destroyme);
 			dmg = 0;
 		    } else if (touched) {
-			int recip_damage = instadisintegrate(mons_mname(mtmp->data));
+			int recip_damage = instadisintegrate(an(mons_mname(mtmp->data)));
 			if (recip_damage) {
 			    dmg = 0;
 			    mtmp->mhp -= recip_damage;
