@@ -239,6 +239,7 @@ DOOR:locked,(53,08)
 DOOR:closed,(65,05)
 # Random monsters.
 MONSTER: ('s',"Scorpius"), (37,10), hostile {
+  OBJECT: ('(',"Bell of Opening"), uncursed
   LOOP [6] {
     OBJECT: random
   }

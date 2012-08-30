@@ -363,6 +363,7 @@ LOOP [3 + 1d5] {
 }
 # Random monsters.
 MONSTER: ('@',"Master of Thieves"), (04,01), hostile {
+  OBJECT: ('(',"Bell of Opening"), uncursed
   OBJECT: '['
   OBJECT: ')'
   LOOP [4] {
