@@ -44,7 +44,7 @@ static const char *const deaths[] = {		/* the array of death */
 	"died", "choked", "poisoned", "starvation", "drowning",
 	"burning", "dissolving under the heat and pressure",
 	"crushed", "turned to stone", "turned into slime",
-	"disintegrated", "genocided", "panic", "trickery",
+	"genocided", "disintegrated", "panic", "trickery",
 	"quit", "escaped", "defied the gods and escaped", "ascended"
 };
 
@@ -52,7 +52,7 @@ static const char *const ends[] = {		/* "when you..." */
 	"died", "choked", "were poisoned", "starved", "drowned",
 	"burned", "dissolved in the lava",
 	"were crushed", "turned to stone", "turned into slime",
-	"were disintegrated", "were genocided", "panicked", "were tricked",
+	"were genocided", "were disintegrated", "panicked", "were tricked",
 	"quit", "escaped", "defied the gods and escaped", "ascended"
 };
 
@@ -520,21 +520,22 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	    if (!done_stopprint || flags.tombstone)
 		show_endwin = TRUE;
 
-	    if (how < GENOCIDED && flags.tombstone && show_endwin) {
+	    if ((how <= GENOCIDED || how == DISINTEGRATED) &&
+		flags.tombstone && show_endwin) {
 		/* Put together death description */
 		switch (killer_format) {
-			default: warning("bad killer format?");
-			case KILLED_BY_AN:
-				strcpy(outrip_buf, killed_by_prefix[how]);
-				strcat(outrip_buf, an(killer));
-				break;
-			case KILLED_BY:
-				strcpy(outrip_buf, killed_by_prefix[how]);
-				strcat(outrip_buf, killer);
-				break;
-			case NO_KILLER_PREFIX:
-				strcpy(outrip_buf, killer);
-				break;
+		    default: warning("bad killer format?");
+		    case KILLED_BY_AN:
+			strcpy(outrip_buf, killed_by_prefix[how]);
+			strcat(outrip_buf, an(killer));
+			break;
+		    case KILLED_BY:
+			strcpy(outrip_buf, killed_by_prefix[how]);
+			strcat(outrip_buf, killer);
+			break;
+		    case NO_KILLER_PREFIX:
+			strcpy(outrip_buf, killer);
+			break;
 		}
 	    }
 	} else
@@ -677,7 +678,8 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	    add_menutext(&menu, "");
 	}
 	if (!done_stopprint)
-	    outrip(menu.items, menu.icount, how <= GENOCIDED, plname, umoney,
+	    outrip(menu.items, menu.icount,
+		   (how <= GENOCIDED || how == DISINTEGRATED), plname, umoney,
 		   outrip_buf, how, getyear());
 	
 	free(menu.items);
