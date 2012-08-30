@@ -1223,7 +1223,18 @@ int domove(schar dx, schar dy, schar dz)
 
 		/* warn player before walking into known traps */
 		if (iflags.paranoid_trap &&
-		    ((trap = t_at(level, x, y)) && trap->tseen)) {
+		    ((trap = t_at(level, x, y)) && trap->tseen &&
+		     /* bypass if the trap is known to not affect us */
+		     trap->ttyp != VIBRATING_SQUARE &&
+		     !((Levitation || Flying) &&
+		       (trap->ttyp == SQKY_BOARD || trap->ttyp == BEAR_TRAP ||
+			trap->ttyp == SPIKED_PIT || trap->ttyp == TRAPDOOR ||
+			(!In_sokoban(&u.uz) && (trap->ttyp == PIT ||
+						trap->ttyp == HOLE))))) &&
+		    /* bypass if we're trapped and can't move there anyway */
+		    !u.utrap &&
+		    /* bypass if there's something to fight */
+		    !MON_AT(level, x, y) && !level->locations[x][y].mem_invis) {
 			char qbuf[BUFSZ];
 			sprintf(qbuf, "Really %s into that %s?",
 				locomotion(youmonst.data, "step"),
