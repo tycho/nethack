@@ -2241,7 +2241,7 @@ void lookaround(void)
 		 (mtmp && mtmp->m_ap_type == M_AP_FURNITURE &&
 		  (mtmp->mappearance == S_hcdoor ||
 		   mtmp->mappearance == S_vcdoor))) {
-	    if (x != u.ux && y != u.uy) continue;
+	    if (flags.run == 8 || (x != u.ux && y != u.uy)) continue;
 	    if (flags.run != 1) goto stop;
 	    goto bcorr;
 	} else if (level->locations[x][y].typ == CORR) {
