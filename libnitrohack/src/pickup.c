@@ -1838,8 +1838,8 @@ static int menu_loot(int retry, struct obj *container, boolean put_in)
     } else if (flags.menu_style == MENU_FULL) {
 	all_categories = FALSE;
 	sprintf(buf,"%s what type of objects?", put_in ? putin : takeout);
-	mflags = put_in ? ALL_TYPES | BUC_ALLBKNOWN | BUC_UNKNOWN | UNIDENTIFIED:
-		          ALL_TYPES | CHOOSE_ALL | BUC_ALLBKNOWN | BUC_UNKNOWN | UNIDENTIFIED;
+	mflags = put_in ? ALL_TYPES | BUC_ALLBKNOWN | BUC_UNKNOWN | UNPAID_TYPES | UNIDENTIFIED:
+		          ALL_TYPES | CHOOSE_ALL | BUC_ALLBKNOWN | BUC_UNKNOWN | UNPAID_TYPES | UNIDENTIFIED;
 	n = query_category(buf, put_in ? invent : container->cobj,
 			   mflags, pick_list, PICK_ANY);
 	if (!n) return 0;
