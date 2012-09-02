@@ -715,13 +715,14 @@ static void restore_location(struct memfile *mf, struct rm *loc)
 	loc->mem_obj	= (lflags1 >> 11) & 1023;
 	loc->mem_obj_mn	= (lflags1 >> 2) & 511;
 	loc->mem_obj_stacks = (lflags1 >> 1) & 1;
-	loc->mem_invis	= (lflags1) & 1;
-	loc->flags	= (lflags2 >> 11) & 31;
-	loc->horizontal	= (lflags2 >> 10) & 1;
-	loc->lit	= (lflags2 >> 9) & 1;
-	loc->waslit	= (lflags2 >> 8) & 1;
-	loc->roomno	= (lflags2 >> 2) & 63;
-	loc->edge	= (lflags2 >> 1) & 1;
+	loc->mem_obj_soko = (lflags1) & 1;
+	loc->mem_invis	= (lflags2 >> 15) & 1;
+	loc->flags	= (lflags2 >> 10) & 31;
+	loc->horizontal	= (lflags2 >> 9) & 1;
+	loc->lit	= (lflags2 >> 8) & 1;
+	loc->waslit	= (lflags2 >> 7) & 1;
+	loc->roomno	= (lflags2 >> 1) & 63;
+	loc->edge	= (lflags2) & 1;
 }
 
 

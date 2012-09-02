@@ -539,7 +539,7 @@ int monster_detect(struct obj *otmp,	/* detecting object (if any) */
 		(mtmp->data == &mons[PM_LONG_WORM] && mclass == S_WORM_TAIL))
 		    if (mtmp->mx > 0) {
 			dbuf_set(mtmp->mx,mtmp->my, S_unexplored, 0, 0, 0, 0, 0,
-				 dbuf_monid(mtmp), 0, 0);
+				 0, dbuf_monid(mtmp), 0, 0);
 			/* don't be stingy - display entire worm */
 			if (mtmp->data == &mons[PM_LONG_WORM])
 			    detect_wsegs(mtmp,0);

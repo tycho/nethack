@@ -428,9 +428,12 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 	if (id == corpse_id) {
 	    syms[count] = cur_drawing->objects[id];
 	    syms[count].color = cur_drawing->monsters[dbe->obj_mn - 1].color;
-	    count++;
 	} else
-	    syms[count++] = cur_drawing->objects[id];
+	    syms[count] = cur_drawing->objects[id];
+	/* highlight Sokoban prize */
+	if (dbe->objflags & DOBJ_SOKOPRIZE)
+	    syms[count].color = CLR_BRIGHT_MAGENTA;
+	count++;
     }
     
     if (dbe->trap) {

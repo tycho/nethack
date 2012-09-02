@@ -323,7 +323,7 @@ static void srv_update_screen(struct nh_dbuf_entry dbuf[ROWNO][COLNO], int ux, i
 				    dbuf[y][x].trap,
 				    dbuf[y][x].obj,
 				    dbuf[y][x].obj_mn,
-				    dbuf[y][x].obj_stacks,
+				    dbuf[y][x].objflags,
 				    dbuf[y][x].mon,
 				    dbuf[y][x].monflags,
 				    dbuf[y][x].invis,

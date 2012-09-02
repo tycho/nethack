@@ -1882,6 +1882,7 @@ static void start_engulf(struct monst *mdef)
 			 level->locations[x][y].mem_obj,
 			 level->locations[x][y].mem_obj_mn,
 			 level->locations[x][y].mem_obj_stacks,
+			 level->locations[x][y].mem_obj_soko,
 			 0, dbuf_monid((&youmonst)), 0, 0);
 	}
 	pline("You engulf %s!", mon_nam(mdef));

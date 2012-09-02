@@ -2081,6 +2081,7 @@ int dooverview(void)
 			 lev->locations[x][y].mem_obj,
 			 lev->locations[x][y].mem_obj_mn,
 			 lev->locations[x][y].mem_obj_stacks,
+			 lev->locations[x][y].mem_obj_soko,
 			 lev->locations[x][y].mem_invis, 0, 0, 0);
 	
 	overview_print_lev(buf, lev);

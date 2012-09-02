@@ -65,6 +65,11 @@
 #define MON_DETECTED (1 << 2)
 #define MON_WARNING  (1 << 3) /* this "monster" is actually a warning */
 
+/* flags for displayed objects */
+#define DOBJ_NORMAL	0
+#define DOBJ_STACKS	(1 << 0)
+#define DOBJ_SOKOPRIZE	(1 << 1)
+
 /* 
  * level display modes
  * These defines are used by notify_levelchange() to inform the window port 
@@ -458,11 +463,11 @@ struct nh_dbuf_entry {
     short trap;
     short obj;
     short obj_mn;
+    short objflags;
     short mon;
     short monflags;
     nh_bool invis;
     nh_bool visible; /* can the hero see this location? */
-    nh_bool obj_stacks; /* is there more than one stack of objects here? */
 };
 
 #define NH_EFFECT_TYPE(e) ((enum nh_effect_types)((e) >> 16))

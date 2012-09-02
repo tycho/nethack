@@ -268,13 +268,14 @@ static void save_location(struct memfile *mf, struct rm *loc)
 	          (loc->mem_obj << 11) |
 	          (loc->mem_obj_mn << 2) |
 	          (loc->mem_obj_stacks << 1) |
-	          (loc->mem_invis);
-	lflags2 = (loc->flags << 11) |
-	          (loc->horizontal << 10) |
-	          (loc->lit << 9) |
-	          (loc->waslit << 8) |
-	          (loc->roomno << 2) |
-	          (loc->edge << 1);
+	          (loc->mem_obj_soko);
+	lflags2 = (loc->mem_invis << 15) |
+	          (loc->flags << 10) |
+	          (loc->horizontal << 9) |
+	          (loc->lit << 8) |
+	          (loc->waslit << 7) |
+	          (loc->roomno << 1) |
+	          (loc->edge);
 	mwrite32(mf, lflags1);
 	mwrite8(mf, loc->typ);
 	mwrite8(mf, loc->seenv);

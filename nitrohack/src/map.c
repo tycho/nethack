@@ -105,7 +105,8 @@ void draw_map(int cx, int cy)
 	    attr = A_NORMAL;
 	    if (((display_buffer[y][x].monflags & MON_TAME) && settings.hilite_pet) ||
 		(((display_buffer[y][x].monflags & MON_DETECTED) ||
-		  display_buffer[y][x].obj_stacks) && settings.use_inverse))
+		  (display_buffer[y][x].objflags & DOBJ_STACKS)) &&
+		 settings.use_inverse))
 		attr |= A_REVERSE;
 
 	    print_sym(mapwin, &syms[frame % symcount], attr);
