@@ -1829,6 +1829,8 @@ extern void remove_worm(struct monst *);
 extern void place_worm_tail_randomly(struct monst *,xchar,xchar);
 extern int count_wsegs(struct monst *);
 extern boolean worm_known(const struct level *,const struct monst *);
+extern void flip_worm_segs_vertical(struct level *,const struct monst *,int);
+extern void flip_worm_segs_horizontal(struct level *,const struct monst *,int);
 
 /* ### worn.c ### */
 

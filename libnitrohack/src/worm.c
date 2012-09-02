@@ -728,4 +728,24 @@ boolean worm_known(const struct level *lev, const struct monst *worm)
     return FALSE;
 }
 
+void flip_worm_segs_vertical(struct level *lev, const struct monst *worm, int y)
+{
+    struct wseg *curr = lev->wtails[worm->wormno];
+
+    while (curr) {
+	curr->wy = y - curr->wy;
+	curr = curr->nseg;
+    }
+}
+
+void flip_worm_segs_horizontal(struct level *lev, const struct monst *worm, int x)
+{
+    struct wseg *curr = lev->wtails[worm->wormno];
+
+    while (curr) {
+	curr->wx = x - curr->wx;
+	curr = curr->nseg;
+    }
+}
+
 /*worm.c*/
