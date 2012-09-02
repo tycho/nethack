@@ -268,11 +268,7 @@ void makeroguerooms(struct level *lev) {
 
 static void corr(struct level *lev, int x, int y)
 {
-	if (rn2(50)) {
-		lev->locations[x][y].typ = CORR;
-	} else {
-		lev->locations[x][y].typ = SCORR;
-	}
+	lev->locations[x][y].typ = CORR;
 }
 
 

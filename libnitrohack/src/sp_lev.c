@@ -2016,7 +2016,7 @@ boolean dig_corridor(struct level *lev, coord *org, coord *dest, boolean nxcor,
 		    if (nxcor && !rn2(50))
 			mksobj_at(BOULDER, lev, xx, yy, TRUE, FALSE);
 		} else {
-		    crm->typ = SCORR;
+		    crm->typ = CORR;	/* formerly secret corridor */
 		}
 	    } else
 	    if (crm->typ != ftyp && crm->typ != SCORR) {
