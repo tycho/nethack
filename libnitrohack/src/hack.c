@@ -1228,30 +1228,6 @@ int domove(schar dx, schar dy, schar dz)
 			return 0;
 		}
 
-		/* warn player before walking into known traps */
-		if (iflags.paranoid_trap &&
-		    ((trap = t_at(level, x, y)) && trap->tseen &&
-		     /* bypass if the trap is known to not affect us */
-		     trap->ttyp != VIBRATING_SQUARE &&
-		     !((Levitation || Flying) &&
-		       (trap->ttyp == SQKY_BOARD || trap->ttyp == BEAR_TRAP ||
-			trap->ttyp == SPIKED_PIT || trap->ttyp == TRAPDOOR ||
-			(!In_sokoban(&u.uz) && (trap->ttyp == PIT ||
-						trap->ttyp == HOLE))))) &&
-		    /* bypass if we're trapped and can't move there anyway */
-		    !u.utrap &&
-		    /* bypass if there's something to fight */
-		    !MON_AT(level, x, y) && !level->locations[x][y].mem_invis) {
-			char qbuf[BUFSZ];
-			sprintf(qbuf, "Really %s into that %s?",
-				locomotion(youmonst.data, "step"),
-				trapexplain[what_trap(trap->ttyp) - 1]);
-			if (flags.run || yn(qbuf) != 'y') {
-				nomul(0, NULL);
-				return 0;
-			}
-		}
-
 		if (((trap = t_at(level, x, y)) && trap->tseen) ||
 		    (Blind && !Levitation && !Flying &&
 		     !is_clinger(youmonst.data) &&
@@ -1513,7 +1489,28 @@ int domove(schar dx, schar dy, schar dz)
 		}
 		return 1;
 	}
-	
+
+	/* warn player before walking into known traps */
+	if (iflags.paranoid_trap &&
+	    ((trap = t_at(level, x, y)) && trap->tseen &&
+	     (Hallucination ||
+	      /* the trap might affect us */
+	      !(trap->ttyp == VIBRATING_SQUARE ||
+		((Levitation || Flying) &&
+		 (trap->ttyp == SQKY_BOARD || trap->ttyp == BEAR_TRAP ||
+		  trap->ttyp == SPIKED_PIT || trap->ttyp == TRAPDOOR ||
+		  (!In_sokoban(&u.uz) && (trap->ttyp == PIT ||
+					  trap->ttyp == HOLE)))))))) {
+	    char qbuf[BUFSZ];
+	    sprintf(qbuf, "Really %s into that %s?",
+		    locomotion(youmonst.data, "step"),
+		    trapexplain[what_trap(trap->ttyp) - 1]);
+	    if (flags.run || yn(qbuf) != 'y') {
+		nomul(0, NULL);
+		return 0;
+	    }
+	}
+
 	/* If moving into a door, open it. */
 	if (IS_DOOR(tmpr->typ) && tmpr->doormask != D_BROKEN &&
 	    tmpr->doormask != D_NODOOR && tmpr->doormask != D_ISOPEN) {
