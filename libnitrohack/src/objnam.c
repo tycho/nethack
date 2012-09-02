@@ -333,6 +333,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			strcpy(buf, actualn);
 		else if (un)
 			sprintf(buf,"amulet called %s", un);
+		else if (Is_sokoprize(obj))
+			strcpy(buf, "sokoban amulet");
 		else
 			sprintf(buf,"%s amulet", dn);
 		break;
@@ -352,6 +354,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			strcat(buf, dn ? dn : actualn);
 			strcat(buf, " called ");
 			strcat(buf, un);
+		} else if (Is_sokoprize(obj)) {
+			strcpy(buf, "sokoban bag");
 		} else
 			strcat(buf, dn ? dn : actualn);
 		/* If we use an() here we'd have to remember never to use */
@@ -391,6 +395,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 				strcpy(buf,"armor");
 			strcat(buf, " called ");
 			strcat(buf, un);
+		} else if (Is_sokoprize(obj)) {
+			strcpy(buf, "sokoban cloak");
 		} else	strcat(buf, dn);
 		break;
 	    case FOOD_CLASS:
