@@ -679,6 +679,9 @@ boolean revive_cthulhu(void *p1, void *p2)
 	if (cthulhu) {
 	    if (canseemon(level, cthulhu))
 		pline("%s reforms!", Monnam(cthulhu));
+	    /* Don't let Cthulhu meditate after being killed once
+	     * by the player. */
+	    wakeup(cthulhu);
 	} else {
 	    pline("You feel less hassled.");
 	}
