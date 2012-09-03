@@ -1731,7 +1731,7 @@ int bagotricks(struct obj *bag)
 		    else
 			pline("The bag belches out %s.",
 			      Hallucination ? "the alphabet" : "a noxious cloud");
-		    create_gas_cloud(level, u.ux, u.uy, 2, 8);
+		    create_gas_cloud(level, u.ux, u.uy, 2, 8, rn1(3, 2));
 		    break;
 		case 5:
 		    if (Blind) {

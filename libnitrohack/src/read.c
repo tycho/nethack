@@ -1424,7 +1424,7 @@ int seffects(struct obj *sobj, boolean *known)
 		    return 0;
 		}
 		create_gas_cloud(level, cc.x, cc.y, 3+bcsign(sobj),
-						8+4*bcsign(sobj));
+				 8+4*bcsign(sobj), rn1(3, 4));
 		break;
 	}
 	default:

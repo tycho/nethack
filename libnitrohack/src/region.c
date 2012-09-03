@@ -740,18 +740,20 @@ boolean inside_gas_cloud(void * p1, void * p2)
     return FALSE;		/* Monster is still alive */
 }
 
-struct region *create_cthulhu_death_cloud(struct level *lev, xchar x, xchar y, int radius, int damage)
+struct region *create_cthulhu_death_cloud(struct level *lev, xchar x, xchar y,
+					  int radius, int damage, int duration)
 {
     struct region *cloud;
 
-    cloud = create_gas_cloud(lev, x, y, radius, damage);
+    cloud = create_gas_cloud(lev, x, y, radius, damage, duration);
     if (cloud)
 	cloud->expire_f = REVIVE_CTHULHU;
 
     return cloud;
 }
 
-struct region *create_gas_cloud(struct level *lev, xchar x, xchar y, int radius, int damage)
+struct region *create_gas_cloud(struct level *lev, xchar x, xchar y,
+				int radius, int damage, int duration)
 {
     struct region *cloud;
     int i, nrect;
@@ -770,7 +772,7 @@ struct region *create_gas_cloud(struct level *lev, xchar x, xchar y, int radius,
 	tmprect.ly++;
 	tmprect.hy--;
     }
-    cloud->ttl = rn1(3,4);
+    cloud->ttl = duration;
     if (!in_mklev && !flags.mon_moving)
 	set_heros_fault(cloud);		/* assume player has created it */
     cloud->inside_f = INSIDE_GAS_CLOUD;
