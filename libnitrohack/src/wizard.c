@@ -200,8 +200,13 @@ static long target_on(int mask, struct monst *mtmp)
 		return STRAT(STRAT_PLAYER, u.ux, u.uy, mask);
 	    else if ((otmp = on_ground(otyp)))
 		return STRAT(STRAT_GROUND, otmp->ox, otmp->oy, mask);
-	    else if ((mtmp2 = other_mon_has_arti(mtmp, otyp)))
-		return STRAT(STRAT_MONSTR, mtmp2->mx, mtmp2->my, mask);
+	    else if ((mtmp2 = other_mon_has_arti(mtmp, otyp))) {
+		/* Don't let uniques attack other uniques with the amulet. */
+		if ((mtmp->data->geno & G_UNIQ) && (mtmp2->data->geno & G_UNIQ))
+		    return STRAT_NONE;
+		else
+		    return STRAT(STRAT_MONSTR, mtmp2->mx, mtmp2->my, mask);
+	    }
 	}
 	return STRAT_NONE;
 }
