@@ -1740,7 +1740,7 @@ int bagotricks(struct obj *bag)
 			else
 			    pline("You smell a musty odor.");
 		    } else {
-			pline("The bag exhales of puff of spores.");
+			pline("The bag exhales a puff of spores.");
 		    }
 		    if (!breathless(youmonst.data))
 			make_hallucinated(HHallucination + rn1(35, 10), TRUE, 0L);
