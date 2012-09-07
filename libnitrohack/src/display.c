@@ -239,7 +239,10 @@ void map_object(struct obj *obj, int show)
 	else
 	    level->locations[x][y].mem_obj_stacks = 0;
 
-	level->locations[x][y].mem_obj_soko = Is_sokoprize(obj) ? 1 : 0;
+	if (Is_sokoprize(obj))
+	    level->locations[x][y].mem_obj_soko = 1;
+	else
+	    level->locations[x][y].mem_obj_soko = 0;
     }
     if (show)
 	dbuf_set(x, y, level->locations[x][y].mem_bg,
@@ -398,6 +401,7 @@ static void display_monster(
 	    case M_AP_OBJECT: {
 		struct obj obj;	/* Make a fake object to send	*/
 				/* to map_object().		*/
+		obj = zeroobj;
 		obj.ox = x;
 		obj.oy = y;
 		obj.otyp = mon->mappearance;

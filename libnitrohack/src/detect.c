@@ -209,7 +209,7 @@ outgoldmap:
     	if (DEADMONSTER(mtmp)) continue;	/* probably overkill here */
 	if (findgold(mtmp->minvent) || monsndx(mtmp->data) == PM_GOLD_GOLEM) {
 	    struct obj gold;
-
+	    gold = zeroobj;
 	    gold.otyp = GOLD_PIECE;
 	    gold.ox = mtmp->mx;
 	    gold.oy = mtmp->my;
@@ -468,7 +468,7 @@ int object_detect(struct obj *detector, /* object doing the detecting */
 	if (is_cursed && mtmp->m_ap_type == M_AP_OBJECT &&
 		(!class || class == objects[mtmp->mappearance].oc_class)) {
 	    struct obj temp;
-
+	    temp = zeroobj;
 	    temp.otyp = mtmp->mappearance;	/* needed for obj_to_glyph() */
 	    temp.ox = mtmp->mx;
 	    temp.oy = mtmp->my;
@@ -476,7 +476,7 @@ int object_detect(struct obj *detector, /* object doing the detecting */
 	    map_object(&temp, 1);
 	} else if (findgold(mtmp->minvent) && (!class || class == COIN_CLASS)) {
 	    struct obj gold;
-
+	    gold = zeroobj;
 	    gold.otyp = GOLD_PIECE;
 	    gold.ox = mtmp->mx;
 	    gold.oy = mtmp->my;
@@ -567,6 +567,7 @@ static void sense_trap(struct trap *trap, xchar x, xchar y, int src_cursed)
 {
     if (Hallucination || src_cursed) {
 	struct obj obj;			/* fake object */
+	obj = zeroobj;
 	if (trap) {
 	    obj.ox = trap->tx;
 	    obj.oy = trap->ty;
