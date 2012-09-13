@@ -511,7 +511,10 @@ void u_entered_shop(char *enterstring)
 	static char empty_shops[5];
 
 	if (!*enterstring)
-		return;
+	    return;
+
+	/* interrupt multi-turn stuff */
+	nomul(0, NULL);
 
 	if (!(shkp = shop_keeper(level, *enterstring))) {
 	    if (!strchr(empty_shops, *enterstring) &&

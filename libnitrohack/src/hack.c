@@ -980,16 +980,26 @@ boolean test_move(int ux, int uy, int dx, int dy, int dz, int mode)
 static boolean unexplored(int x, int y)
 {
 	int i, j, k, l;
-	struct trap *ttmp = t_at(level, x, y);
+	const struct rm *loc;
+	const struct trap *ttmp;
+
 	if (!isok(x, y)) return FALSE;
-	if (level->locations[x][y].mem_stepped) return FALSE;
+	loc = &level->locations[x][y];
+	ttmp = t_at(level, x, y);
+
+	if (loc->mem_stepped) return FALSE;
 	if (ttmp && ttmp->tseen) return FALSE;
-	if (level->locations[x][y].mem_obj == what_obj(BOULDER)+1) return FALSE;
-	if (level->locations[x][y].mem_obj && inside_shop(level, x, y)) {
+	if (loc->mem_obj == what_obj(BOULDER) + 1) return FALSE;
+	if (loc->mem_obj && inside_shop(level, x, y)) {
 	    /* Black Market items are interesting. */
 	    return Is_blackmarket(&u.uz);
 	}
-	if (level->locations[x][y].mem_obj) return TRUE;
+	if (loc->mem_obj) return TRUE;
+
+	/* step into shop doorways so autoexplore can be interrupted */
+	if (IS_DOOR(loc->typ) && *in_rooms(level, x, y, SHOPBASE))
+	    return TRUE;
+
 	for (i = -1; i <= 1; i++) {
 	    for (j = -1; j <= 1; j++) {
 		if (isok(x+i, y+j) &&
