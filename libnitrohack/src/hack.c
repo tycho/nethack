@@ -912,8 +912,7 @@ boolean test_move(int ux, int uy, int dx, int dy, int dz, int mode)
 	     (is_pool(level, x, y) || is_lava(level, x, y)) &&
 	     level->locations[x][y].seenv)) {
 	    if (mode == DO_MOVE) {
-		if (t && t->tseen) autoexplore_msg("a trap");
-		else if (is_pool(level, x, y)) autoexplore_msg("a body of water");
+		if (is_pool(level, x, y)) autoexplore_msg("a body of water");
 		else if (is_lava(level, x, y)) autoexplore_msg("a pool of lava");
 		if (flags.travel) return FALSE;
 	    }
@@ -1415,8 +1414,12 @@ int domove(schar dx, schar dy, schar dz)
 		if (((trap = t_at(level, x, y)) && trap->tseen) ||
 		    (Blind && !Levitation && !Flying &&
 		     !is_clinger(youmonst.data) &&
-		     (is_pool(level, x, y) || is_lava(level, x, y)) && level->locations[x][y].seenv)) {
+		     (is_pool(level, x, y) || is_lava(level, x, y)) &&
+		     level->locations[x][y].seenv)) {
 			if (flags.run >= 2) {
+				if (trap && trap->tseen && flags.run == 8 &&
+				    iflags.autoexplore)
+					autoexplore_msg("a trap");
 				nomul(0, NULL);
 				return 0;
 			} else
