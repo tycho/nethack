@@ -694,6 +694,7 @@ static void forget_map(struct level *lev, boolean forget_all)
 		lev->locations[zx][zy].mem_obj = 0;
 		lev->locations[zx][zy].mem_obj_mn = 0;
 		lev->locations[zx][zy].mem_invis = 0;
+		lev->locations[zx][zy].mem_stepped = 0;
 	    }
 }
 
