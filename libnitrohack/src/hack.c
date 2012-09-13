@@ -1256,6 +1256,7 @@ int domove(schar dx, schar dy, schar dz)
 	int bc_control;				/* control for ball&chain */
 	boolean cause_delay = FALSE;	/* dragging ball will skip a move */
 	const char *predicament;
+	boolean was_running = FALSE;	/* for paranoid_trap prompt */
 	
 	if (dz) {
 	    nomul(0, NULL);
@@ -1422,8 +1423,10 @@ int domove(schar dx, schar dy, schar dz)
 					autoexplore_msg("a trap");
 				nomul(0, NULL);
 				return 0;
-			} else
-				nomul(0, NULL);
+			} else if (flags.run == 1) {
+				was_running = TRUE;
+			}
+			nomul(0, NULL);
 		}
 
 		if (u.ustuck && (x != u.ustuck->mx || y != u.ustuck->my)) {
@@ -1699,7 +1702,7 @@ int domove(schar dx, schar dy, schar dz)
 	    sprintf(qbuf, "Really %s into that %s?",
 		    locomotion(youmonst.data, "step"),
 		    trapexplain[what_trap(trap->ttyp) - 1]);
-	    if (flags.run || yn(qbuf) != 'y') {
+	    if (was_running || yn(qbuf) != 'y') {
 		nomul(0, NULL);
 		return 0;
 	    }
