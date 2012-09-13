@@ -983,7 +983,10 @@ static boolean unexplored(int x, int y)
 	if (level->locations[x][y].mem_stepped) return FALSE;
 	if (ttmp && ttmp->tseen) return FALSE;
 	if (level->locations[x][y].mem_obj == what_obj(BOULDER)+1) return FALSE;
-	if (level->locations[x][y].mem_obj && inside_shop(level, x, y)) return FALSE;
+	if (level->locations[x][y].mem_obj && inside_shop(level, x, y)) {
+	    /* Black Market items are interesting. */
+	    return Is_blackmarket(&u.uz);
+	}
 	if (level->locations[x][y].mem_obj) return TRUE;
 	for (i = -1; i <= 1; i++) {
 	    for (j = -1; j <= 1; j++) {
