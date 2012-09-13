@@ -704,25 +704,28 @@ void trickery(char *reason)
 static void restore_location(struct memfile *mf, struct rm *loc)
 {
 	unsigned int lflags1;
-	unsigned short lflags2;
+	unsigned int lflags2;
 	
 	lflags1 = mread32(mf);
 	loc->typ = mread8(mf);
 	loc->seenv = mread8(mf);
-	lflags2 = mread16(mf);
-	loc->mem_bg	= (lflags1 >> 26) & 63;
-	loc->mem_trap	= (lflags1 >> 21) & 31;
-	loc->mem_obj	= (lflags1 >> 11) & 1023;
-	loc->mem_obj_mn	= (lflags1 >> 2) & 511;
-	loc->mem_obj_stacks = (lflags1 >> 1) & 1;
-	loc->mem_obj_soko = (lflags1) & 1;
-	loc->mem_invis	= (lflags2 >> 15) & 1;
-	loc->flags	= (lflags2 >> 10) & 31;
-	loc->horizontal	= (lflags2 >> 9) & 1;
-	loc->lit	= (lflags2 >> 8) & 1;
-	loc->waslit	= (lflags2 >> 7) & 1;
-	loc->roomno	= (lflags2 >> 1) & 63;
-	loc->edge	= (lflags2) & 1;
+	lflags2 = mread32(mf);
+
+	loc->mem_bg	    = (lflags1 >> 26) & ((1 <<  6) - 1);
+	loc->mem_trap	    = (lflags1 >> 21) & ((1 <<  5) - 1);
+	loc->mem_obj	    = (lflags1 >> 11) & ((1 << 10) - 1);
+	loc->mem_obj_mn	    = (lflags1 >>  2) & ((1 <<  9) - 1);
+	loc->mem_obj_stacks = (lflags1 >>  1) & ((1 <<  1) - 1);
+	loc->mem_obj_soko   = (lflags1 >>  0) & ((1 <<  1) - 1);
+
+	loc->mem_stepped    = (lflags2 >> 16) & ((1 <<  1) - 1);
+	loc->mem_invis	    = (lflags2 >> 15) & ((1 <<  1) - 1);
+	loc->flags	    = (lflags2 >> 10) & ((1 <<  5) - 1);
+	loc->horizontal	    = (lflags2 >>  9) & ((1 <<  1) - 1);
+	loc->lit	    = (lflags2 >>  8) & ((1 <<  1) - 1);
+	loc->waslit	    = (lflags2 >>  7) & ((1 <<  1) - 1);
+	loc->roomno	    = (lflags2 >>  1) & ((1 <<  6) - 1);
+	loc->edge	    = (lflags2 >>  0) & ((1 <<  1) - 1);
 }
 
 

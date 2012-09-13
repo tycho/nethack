@@ -301,7 +301,8 @@ struct rm {
 	unsigned mem_obj_stacks:1; /* remembered other stacks of objects */
 	unsigned mem_obj_soko:1; /* remembered object is a Sokoban prize */
 	unsigned mem_invis:1;	/* remembered invisible monster encounter */
-	
+	unsigned mem_stepped:1;	/* has this square been stepped on? */
+
 	schar typ;		/* what is really there */
 	uchar seenv;		/* seen vector */
 	unsigned flags:5;	/* extra information for typ */

@@ -261,25 +261,30 @@ static void savegamestate(struct memfile *mf)
 static void save_location(struct memfile *mf, struct rm *loc)
 {
 	unsigned int lflags1;
-	unsigned short lflags2;
-	
-	lflags1 = (loc->mem_bg << 26) |
-	          (loc->mem_trap << 21) |
-	          (loc->mem_obj << 11) |
-	          (loc->mem_obj_mn << 2) |
-	          (loc->mem_obj_stacks << 1) |
-	          (loc->mem_obj_soko);
-	lflags2 = (loc->mem_invis << 15) |
-	          (loc->flags << 10) |
-	          (loc->horizontal << 9) |
-	          (loc->lit << 8) |
-	          (loc->waslit << 7) |
-	          (loc->roomno << 1) |
-	          (loc->edge);
+	unsigned int lflags2;
+
+	lflags1 = 0 |
+		  (loc->mem_bg		<< 26) |
+		  (loc->mem_trap	<< 21) |
+		  (loc->mem_obj		<< 11) |
+		  (loc->mem_obj_mn	<<  2) |
+		  (loc->mem_obj_stacks	<<  1) |
+		  (loc->mem_obj_soko	<<  0);
+
+	lflags2 = 0 |
+		  (loc->mem_stepped	<< 16) |
+		  (loc->mem_invis	<< 15) |
+		  (loc->flags		<< 10) |
+		  (loc->horizontal	<<  9) |
+		  (loc->lit		<<  8) |
+		  (loc->waslit		<<  7) |
+		  (loc->roomno		<<  1) |
+		  (loc->edge		<<  0);
+
 	mwrite32(mf, lflags1);
 	mwrite8(mf, loc->typ);
 	mwrite8(mf, loc->seenv);
-	mwrite16(mf, lflags2);
+	mwrite32(mf, lflags2);
 }
 
 

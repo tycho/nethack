@@ -345,6 +345,7 @@ void clear_memory_glyph(schar x, schar y, int to)
     level->locations[x][y].mem_obj_mn = 0;
     level->locations[x][y].mem_obj_stacks = 0;
     level->locations[x][y].mem_invis = 0;
+    level->locations[x][y].mem_stepped = 0;
 }
 
 

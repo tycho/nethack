@@ -208,8 +208,10 @@ int pickup(int what)
 		    return 0;
 		}
 
-		/* if there's anything here, stop running */
-		if (OBJ_AT(u.ux, u.uy) && flags.run && flags.run != 8 && !flags.nopick) nomul(0, NULL);
+		/* if there's anything here, stop running and travel */
+		if (OBJ_AT(u.ux, u.uy) && flags.run &&
+		    (flags.run != 8 || flags.travel) && !flags.nopick)
+		    nomul(0, NULL);
 	}
 
 	add_valid_menu_class(0);	/* reset */
