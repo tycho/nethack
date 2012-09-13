@@ -1184,6 +1184,37 @@ static boolean couldsee_func(int x, int y)
 	return couldsee(x, y);
 }
 
+/* Return TRUE if (x,y) could be explored.
+ *
+ * Differs from unexplored() in that it is uses information not
+ * available to the player.  It should only leak information about
+ * "obvious" coordinates, e.g. unexplored rooms or big areas not
+ * reachable by the player.
+ */
+static boolean interesting_to_explore(int x, int y)
+{
+	if (!goodpos(level, x, y, &youmonst, 0))
+	    return FALSE;
+
+	if (!unexplored(x, y))
+	    return FALSE;
+
+	/* don't leak information about secret locations */
+	if (level->locations[x][y].typ == SCORR ||
+	    level->locations[x][y].typ == SDOOR)
+	    return FALSE;
+
+	/* don't leak information about gold vaults */
+	if (*in_rooms(level, x, y, VAULT))
+	    return FALSE;
+
+	/* corridors are uninteresting */
+	if (level->locations[x][y].typ == CORR)
+	    return FALSE;
+
+	return TRUE;
+}
+
 int domove(schar dx, schar dy, schar dz)
 {
 	struct monst *mtmp;
@@ -1230,8 +1261,30 @@ int domove(schar dx, schar dy, schar dz)
 		u.tx = u.ux;
 		u.ty = u.uy;
 		if (!findtravelpath(unexplored, &dx, &dy)) {
+		    char msg[BUFSZ];
+		    int i, j;
+		    int unexplored_cnt = 0;
+		    for (i = 1; i < COLNO; i++) {
+			for (j = 0; j < ROWNO; j++) {
+			    if (interesting_to_explore(i, j))
+				unexplored_cnt++;
+			}
+		    }
 		    iflags.autoexplore = FALSE;
-		    pline("Nowhere else around here can be automatically explored.");
+		    /* TODO: Check if really done (known closed doors,
+		     * boulders blocking your way) and offer doing
+		     * travel when done. */
+		    if (unexplored_cnt > 0) {
+			if (wizard) {
+			    sprintf(msg, "Partly explored, can't reach %d places.",
+				    unexplored_cnt);
+			} else {
+			    strcpy(msg, "Partly explored, can't reach some places.");
+			}
+		    } else {
+			strcpy(msg, "Done exploring.");
+		    }
+		    pline("%s", msg);
 		}
 	    } else if (!findtravelpath(NULL, &dx, &dy)) {
 		findtravelpath(couldsee_func, &dx, &dy);
