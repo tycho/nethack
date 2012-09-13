@@ -295,6 +295,7 @@ void unmap_object(int x, int y)
     level->locations[x][y].mem_obj = 0;
     level->locations[x][y].mem_obj_mn = 0;
     level->locations[x][y].mem_obj_stacks = 0;
+    level->locations[x][y].mem_obj_soko = 0;
 }
 
 
@@ -317,6 +318,7 @@ void map_location(int x, int y, int show)
 	    level->locations[x][y].mem_obj = 0;
 	    level->locations[x][y].mem_obj_mn = 0;
 	    level->locations[x][y].mem_obj_stacks = 0;
+	    level->locations[x][y].mem_obj_soko = 0;
 	}
 
 	if ((trap = t_at(level, x, y)) && trap->tseen && !covers_traps(level, x, y))
@@ -344,6 +346,7 @@ void clear_memory_glyph(schar x, schar y, int to)
     level->locations[x][y].mem_obj = 0;
     level->locations[x][y].mem_obj_mn = 0;
     level->locations[x][y].mem_obj_stacks = 0;
+    level->locations[x][y].mem_obj_soko = 0;
     level->locations[x][y].mem_invis = 0;
     level->locations[x][y].mem_stepped = 0;
 }
