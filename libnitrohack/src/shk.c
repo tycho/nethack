@@ -583,7 +583,7 @@ void u_entered_shop(char *enterstring)
 		      shtypes[rt - SHOPBASE].name);
 	}
 	/* can't do anything about blocking if teleported in */
-	if (!inside_shop(level, u.ux, u.uy)) {
+	if (!inside_shop(level, u.ux, u.uy) && !Is_blackmarket(&u.uz)) {
 	    boolean should_block;
 	    int cnt;
 	    const char *tool;
@@ -3050,9 +3050,10 @@ int shk_move(struct monst *shkp)
 		} else {
 		    uondoor = (u.ux == eshkp->shd.x && u.uy == eshkp->shd.y);
 		    if (uondoor) {
-			badinv = (carrying(PICK_AXE) || carrying(DWARVISH_MATTOCK) ||
-				  (Fast && (sobj_at(PICK_AXE, level, u.ux, u.uy) ||
-				  sobj_at(DWARVISH_MATTOCK, level, u.ux, u.uy))));
+			badinv = (!Is_blackmarket(&u.uz) &&
+				  (carrying(PICK_AXE) || carrying(DWARVISH_MATTOCK) ||
+				   (Fast && (sobj_at(PICK_AXE, level, u.ux, u.uy) ||
+				    sobj_at(DWARVISH_MATTOCK, level, u.ux, u.uy)))));
 			if (satdoor && badinv)
 			    return 0;
 			avoid = !badinv;
@@ -3751,8 +3752,10 @@ boolean block_entry(xchar x, xchar y)
 	if (shkp->mx == sx && shkp->my == sy
 		&& shkp->mcanmove && !shkp->msleeping
 		&& (x == sx-1 || x == sx+1 || y == sy-1 || y == sy+1)
-		&& (Invis || carrying(PICK_AXE) || carrying(DWARVISH_MATTOCK)
-			|| u.usteed)) {
+		&& (Invis ||
+		    (!Is_blackmarket(&u.uz) &&
+		     (carrying(PICK_AXE) || carrying(DWARVISH_MATTOCK))) ||
+		    u.usteed)) {
 		pline("%s%s blocks your way!", shkname(shkp),
 				Invis ? " senses your motion and" : "");
 		return TRUE;
