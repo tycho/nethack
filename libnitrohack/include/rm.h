@@ -29,44 +29,46 @@
  */
 
 /* Level location types */
-#define STONE		0
-#define VWALL		1
-#define HWALL		2
-#define TLCORNER	3
-#define TRCORNER	4
-#define BLCORNER	5
-#define BRCORNER	6
-#define CROSSWALL	7	/* For pretty mazes and special levels */
-#define TUWALL		8
-#define TDWALL		9
-#define TLWALL		10
-#define TRWALL		11
-#define DBWALL		12
-#define TREE		13	/* KMH */
-#define SDOOR		14
-#define SCORR		15
-#define POOL		16
-#define MOAT		17	/* pool that doesn't boil, adjust messages */
-#define WATER		18
-#define DRAWBRIDGE_UP	19
-#define LAVAPOOL	20
-#define IRONBARS	21	/* KMH */
-#define DOOR		22
-#define CORR		23
-#define ROOM		24
-#define STAIRS		25
-#define LADDER		26
-#define FOUNTAIN	27
-#define THRONE		28
-#define SINK		29
-#define GRAVE		30
-#define ALTAR		31
-#define ICE		32
-#define DRAWBRIDGE_DOWN 33
-#define AIR		34
-#define CLOUD		35
+enum location_types {
+	STONE = 0,
+	VWALL,
+	HWALL,
+	TLCORNER,
+	TRCORNER,
+	BLCORNER,
+	BRCORNER,
+	CROSSWALL,	/* For pretty mazes and special levels */
+	TUWALL,
+	TDWALL,
+	TLWALL,
+	TRWALL,
+	DBWALL,
+	TREE,		/* KMH */
+	SDOOR,
+	SCORR,
+	POOL,
+	MOAT,		/* pool that doesn't boil, adjust messages */
+	WATER,
+	DRAWBRIDGE_UP,
+	LAVAPOOL,
+	IRONBARS,	/* KMH */
+	DOOR,
+	CORR,
+	ROOM,
+	STAIRS,
+	LADDER,
+	FOUNTAIN,
+	THRONE,
+	SINK,
+	GRAVE,
+	ALTAR,
+	ICE,
+	DRAWBRIDGE_DOWN,
+	AIR,
+	CLOUD,
 
-#define MAX_TYPE	36
+	MAX_TYPE
+};
 #define INVALID_TYPE	127
 
 /*
@@ -102,8 +104,9 @@
  */
 
 /* begin dungeon characters */
+/* Keep defexplain[] and defsyms[] in drawing.c in sync with this! */
 enum dungeon_symbols {
-/* 0*/	S_unexplored,
+/* 0*/	S_unexplored = 0,
 	S_stone,
 	S_vwall,
 	S_hwall,
@@ -127,7 +130,7 @@ enum dungeon_symbols {
 	S_ice,
 	S_lava,
 	S_ndoor,
-	
+	/* "features" start here */
 	S_vodoor,
 	S_hodoor,
 	S_vcdoor,	/* closed door, vertical wall */
@@ -150,43 +153,51 @@ enum dungeon_symbols {
 	S_vcdbridge,	/* closed drawbridge, vertical wall */
 	S_hcdbridge,	/* closed drawbridge, horizontal wall */
 
-	MAXPCHARS,	/* maximum number of mapped characters */
+	MAXPCHARS	/* maximum number of mapped characters */
 };
 
 #define DUNGEON_FEATURE_OFFSET S_vodoor
 
 /* end dungeon characters, begin special effects */
-
-#define E_digbeam	0	/* dig beam symbol */
-#define E_flashbeam	1	/* camera flash symbol */
-#define E_boomleft	2	/* thrown boomerang, open left, e.g ')'    */
-#define E_boomright	3	/* thrown boomerang, open right, e.g. '('  */
-#define E_ss1		4	/* 4 magic shield glyphs */
-#define E_ss2		5
-#define E_ss3		6
-#define E_ss4		7
-#define E_gascloud	8
+/* Keep effectsyms[] in drawing.c in sync with this! */
+enum effect_symbols {
+	E_digbeam = 0,	/* dig beam symbol */
+	E_flashbeam,	/* camera flash symbol */
+	E_boomleft,	/* thrown boomerang, open left, e.g ')'    */
+	E_boomright,	/* thrown boomerang, open right, e.g. '('  */
+	E_ss1,		/* 4 magic shield glyphs */
+	E_ss2,
+	E_ss3,
+	E_ss4,
+	E_gascloud,
+};
 
 /* The 8 swallow symbols.  Do NOT separate.  To change order or add, see */
 /* the function swallow_to_effect() in display.c.			 */
-#define S_sw_tl		0	/* swallow top left [1]			*/
-#define S_sw_tc		1	/* swallow top center [2]	Order:	*/
-#define S_sw_tr		2	/* swallow top right [3]		*/
-#define S_sw_ml		3	/* swallow middle left [4]	1 2 3	*/
-#define S_sw_mr		4	/* swallow middle right [6]	4 5 6	*/
-#define S_sw_bl		5	/* swallow bottom left [7]	7 8 9	*/
-#define S_sw_bc		6	/* swallow bottom center [8]		*/
-#define S_sw_br		7	/* swallow bottom right [9]		*/
+/* Keep swallowsyms[] in drawing.c in sync with this! */
+enum swallow_symbols {
+	S_sw_tl = 0,	/* swallow top left [1]			*/
+	S_sw_tc,	/* swallow top center [2]	Order:	*/
+	S_sw_tr,	/* swallow top right [3]		*/
+	S_sw_ml,	/* swallow middle left [4]	1 2 3	*/
+	S_sw_mr,	/* swallow middle right [6]	4 5 6	*/
+	S_sw_bl,	/* swallow bottom left [7]	7 8 9	*/
+	S_sw_bc,	/* swallow bottom center [8]		*/
+	S_sw_br,	/* swallow bottom right [9]		*/
+};
 
-#define E_explode1	0	/* explosion top left			*/
-#define E_explode2	1	/* explosion top center			*/
-#define E_explode3	2	/* explosion top right		 Ex.	*/
-#define E_explode4	3	/* explosion middle left		*/
-#define E_explode5	4	/* explosion middle center	 /-\	*/
-#define E_explode6	5	/* explosion middle right	 |@|	*/
-#define E_explode7	6	/* explosion bottom left	 \-/	*/
-#define E_explode8	7	/* explosion bottom center		*/
-#define E_explode9	8	/* explosion bottom right		*/
+/* Keep explsyms[] in drawing.c in sync with this! */
+enum explode_symbols {
+	E_explode1 = 0,	/* explosion top left			*/
+	E_explode2,	/* explosion top center			*/
+	E_explode3,	/* explosion top right		 Ex.	*/
+	E_explode4,	/* explosion middle left		*/
+	E_explode5,	/* explosion middle center	 /-\	*/
+	E_explode6,	/* explosion middle right	 |@|	*/
+	E_explode7,	/* explosion bottom left	 \-/	*/
+	E_explode8,	/* explosion bottom center		*/
+	E_explode9,	/* explosion bottom right		*/
+};
 
 /* end effects */
 

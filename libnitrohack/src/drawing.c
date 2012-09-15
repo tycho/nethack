@@ -151,7 +151,7 @@ const struct nh_symdef defsyms[] = {
 	{'.', "ice",		CLR_CYAN},
 	{'}', "lava",		CLR_RED},
 	{'.', "ndoor",		CLR_GRAY},
-	
+	/* "features" start here */
 	{'-', "vodoor",		CLR_BROWN},
 	{'|', "hodoor",		CLR_BROWN},
 	{'+', "vcdoor",		CLR_BROWN},
