@@ -128,7 +128,7 @@ static int dig_typ(struct obj *otmp, xchar x, xchar y)
 	return (ispick && sobj_at(STATUE, level, x, y) ? DIGTYP_STATUE :
 		ispick && sobj_at(BOULDER, level, x, y) ? DIGTYP_BOULDER :
 		closed_door(level, x, y) ? DIGTYP_DOOR :
-		IS_TREE(level->locations[x][y].typ) ?
+		IS_TREES(level, level->locations[x][y].typ) ?
 			(ispick ? DIGTYP_UNDIGGABLE : DIGTYP_TREE) :
 		ispick && IS_ROCK(level->locations[x][y].typ) &&
 			(!level->flags.arboreal || IS_WALL(level->locations[x][y].typ)) ?
@@ -211,7 +211,7 @@ static int dig(void)
 	if (digging.down) {
 	    if (!dig_check(BY_YOU, TRUE, u.ux, u.uy)) return 0;
 	} else { /* !digging.down */
-	    if (IS_TREE(loc->typ) && !may_dig(level, dpx,dpy) &&
+	    if (IS_TREES(level, loc->typ) && !may_dig(level, dpx,dpy) &&
 			dig_typ(uwep, dpx, dpy) == DIGTYP_TREE) {
 		pline("This tree seems to be petrified.");
 		return 0;
@@ -253,7 +253,9 @@ static int dig(void)
 
 	digging.effort += 10 + rn2(5) + abon() +
 			   uwep->spe - greatest_erosion(uwep) + u.udaminc;
-	if (Race_if (PM_DWARF))
+	if (Race_if(PM_DWARF))
+	    digging.effort *= 2;
+	if (loc->typ == DEADTREE)
 	    digging.effort *= 2;
 	if (digging.down) {
 		struct trap *ttmp;
@@ -306,7 +308,7 @@ static int dig(void)
 			}
 			digtxt = "The boulder falls apart.";
 		} else if (loc->typ == STONE || loc->typ == SCORR ||
-				IS_TREE(loc->typ)) {
+				IS_TREES(level, loc->typ)) {
 			if (Is_earthlevel(&u.uz)) {
 			    if (uwep->blessed && !rn2(3)) {
 				mkcavearea(FALSE);
@@ -317,7 +319,7 @@ static int dig(void)
 				goto cleanup;
 			    }
 			}
-			if (IS_TREE(loc->typ)) {
+			if (IS_TREES(level, loc->typ)) {
 			    digtxt = "You cut down the tree.";
 			    loc->typ = ROOM;
 			    if (!rn2(5)) rnd_treefruit_at(dpx, dpy);
@@ -872,7 +874,7 @@ int use_pick_axe2(struct obj *obj, schar dx, schar dy, schar dz)
 			} else if (loc->typ == IRONBARS) {
 			    pline("Clang!");
 			    wake_nearby();
-			} else if (IS_TREE(loc->typ))
+			} else if (IS_TREES(level, loc->typ))
 			    pline("You need an axe to cut down a tree.");
 			else if (IS_ROCK(loc->typ))
 			    pline("You need a pick to dig rock.");
@@ -970,7 +972,8 @@ void watch_dig(struct monst *mtmp, xchar x, xchar y, boolean zap)
 
 	if (in_town(x, y) &&
 	    (closed_door(level, x, y) || loc->typ == SDOOR ||
-	     IS_WALL(loc->typ) || IS_FOUNTAIN(loc->typ) || IS_TREE(loc->typ))) {
+	     IS_WALL(loc->typ) || IS_FOUNTAIN(loc->typ) ||
+	     IS_TREE(level, loc->typ))) {
 	    if (!mtmp) {
 		for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
 		    if (DEADMONSTER(mtmp)) continue;
@@ -991,7 +994,7 @@ void watch_dig(struct monst *mtmp, xchar x, xchar y, boolean zap)
 
 		    if (IS_DOOR(loc->typ))
 			str = "door";
-		    else if (IS_TREE(loc->typ))
+		    else if (IS_TREE(level, loc->typ))
 			str = "tree";
 		    else if (IS_ROCK(loc->typ))
 			str = "wall";
@@ -1035,7 +1038,7 @@ boolean mdig_tunnel(struct monst *mtmp)
 	    }
 	    newsym(mtmp->mx, mtmp->my);
 	    return FALSE;
-	} else if (!IS_ROCK(here->typ) && !IS_TREE(here->typ)) /* no dig */
+	} else if (!IS_ROCK(here->typ) && !IS_TREE(level, here->typ)) /* no dig */
 	    return FALSE;
 
 	/* Only rock, trees, and walls fall through to this point. */
@@ -1061,7 +1064,7 @@ boolean mdig_tunnel(struct monst *mtmp)
 		here->typ = DOOR;
 		here->doormask = D_NODOOR;
 	    }
-	} else if (IS_TREE(here->typ)) {
+	} else if (IS_TREE(level, here->typ)) {
 	    here->typ = ROOM;
 	    if (pile && pile < 5)
 		rnd_treefruit_at(mtmp->mx, mtmp->my);
@@ -1173,7 +1176,7 @@ void zap_dig(schar dx, schar dy, schar dz)
 		    } else if (!Blind)
 			pline("The wall glows then fades.");
 		    break;
-		} else if (IS_TREE(room->typ)) { /* check trees before stone */
+		} else if (IS_TREE(level, room->typ)) { /* check trees before stone */
 		    if (!(room->wall_info & W_NONDIGGABLE)) {
 			room->typ = ROOM;
 			unblock_point(zx,zy); /* vision */
@@ -1203,7 +1206,7 @@ void zap_dig(schar dx, schar dy, schar dz)
 			room->doormask = D_NODOOR;
 		    }
 		    digdepth -= 2;
-		} else if (IS_TREE(room->typ)) {
+		} else if (IS_TREE(level, room->typ)) {
 		    room->typ = ROOM;
 		    digdepth -= 2;
 		} else {	/* IS_ROCK but not IS_WALL or SDOOR */

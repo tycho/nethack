@@ -680,7 +680,8 @@ static void set_wall_property(struct level *lev, xchar x1, xchar y1,
 
 	for (y = y1; y <= y2; y++)
 	    for (x = x1; x <= x2; x++)
-		if (IS_STWALL(lev->locations[x][y].typ))
+		if (IS_STWALL(lev->locations[x][y].typ) ||
+		    IS_TREES(lev, lev->locations[x][y].typ))
 		    lev->locations[x][y].wall_info |= prop;
 }
 

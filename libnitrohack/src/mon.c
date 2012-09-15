@@ -926,7 +926,7 @@ nexttry:	/* eels prefer the water, but if there is no water nearby,
 	    if (nx == x && ny == y) continue;
 	    if (IS_ROCK(ntyp = level->locations[nx][ny].typ) &&
 	       !((flag & ALLOW_WALL) && may_passwall(level, nx,ny)) &&
-	       !((IS_TREE(ntyp) ? treeok : rockok) && may_dig(level, nx,ny))) continue;
+	       !((IS_TREE(level, ntyp) ? treeok : rockok) && may_dig(level, nx,ny))) continue;
 	    /* KMH -- Added iron bars */
 	    if (ntyp == IRONBARS && !(flag & ALLOW_BARS)) continue;
 	    if (IS_DOOR(ntyp) && !amorphous(mdat) &&

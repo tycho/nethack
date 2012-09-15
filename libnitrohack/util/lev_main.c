@@ -806,6 +806,7 @@ char what_map_char(char c)
 		  case 'I'  : return ICE;
 		  case 'W'  : return WATER;
 		  case 'T'  : return TREE;
+		  case 't'  : return DEADTREE;
 		  case 'F'  : return IRONBARS; /* Fe = iron */
 		  case 'x'  : return MAX_TYPE; /* 'see-through' */
 	    }

@@ -1610,6 +1610,8 @@ const char *dfeature_at(int x, int y, char *buf)
 	    cmap = S_grave;				/* "grave" */
 	else if (ltyp == TREE)
 	    cmap = S_tree;				/* "tree" */
+	else if (ltyp == DEADTREE)
+	    cmap = S_deadtree;				/* "dead tree" */
 	else if (ltyp == IRONBARS)
 	    dfeature = "set of iron bars";
 

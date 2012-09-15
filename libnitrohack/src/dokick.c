@@ -588,7 +588,8 @@ static char *kickstr(char *buf)
 
 	if (kickobj) what = distant_name(kickobj,doname);
 	else if (IS_DOOR(maploc->typ)) what = "a door";
-	else if (IS_TREE(maploc->typ)) what = "a tree";
+	else if (IS_TREE(level, maploc->typ)) what = "a tree";
+	else if (IS_DEADTREE(maploc->typ)) what = "a dead tree";
 	else if (IS_STWALL(maploc->typ)) what = "a wall";
 	else if (IS_ROCK(maploc->typ)) what = "a rock";
 	else if (IS_THRONE(maploc->typ)) what = "a throne";
@@ -875,7 +876,7 @@ int dokick(void)
 		}
 		if (IS_GRAVE(maploc->typ) || maploc->typ == IRONBARS)
 		    goto ouch;
-		if (IS_TREE(maploc->typ)) {
+		if (IS_TREE(level, maploc->typ)) {
 		    struct obj *treefruit;
 		    /* nothing, fruit or trouble? 75:23.5:1.5% */
 		    if (rn2(3)) {
@@ -926,6 +927,27 @@ int dokick(void)
 			return 1;
 		    }
 		    goto ouch;
+		}
+		if (IS_DEADTREE(maploc->typ)) {
+		    if (Levitation) goto dumb;
+		    pline("You kick %s.", Blind ? "something" : "the dead tree");
+		    switch (rn2(4)) {
+		    case 0: goto ouch;
+		    case 1: pline("The tree is tottering...");
+			    break;
+		    case 2: pline("Some branches are swinging...");
+			    break;
+		    case 3: if (!may_dig(level, x, y)) goto ouch;
+			    pline("The dead tree falls down.");
+			    maploc->typ = ROOM;
+			    if (Blind)
+				feel_location(x, y); /* we know it's gone */
+			    else
+				newsym(x, y);
+			    unblock_point(x, y);     /* vision */
+			    break;
+		    }
+		    return 1;
 		}
 		if (IS_SINK(maploc->typ)) {
 		    int gend = poly_gender();

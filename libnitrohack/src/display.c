@@ -1498,8 +1498,9 @@ int back_to_cmap(struct level *lev, xchar x, xchar y)
 	    } else
 		idx = S_ndoor;
 	    break;
-	case IRONBARS:	idx = S_bars;     break;
+	case IRONBARS:		idx = S_bars;     break;
 	case TREE:		idx = S_tree;     break;
+	case DEADTREE:		idx = S_deadtree; break;
 	case POOL:
 	case MOAT:		idx = S_pool;	  break;
 	case STAIRS:

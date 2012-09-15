@@ -3436,6 +3436,17 @@ buzzmonst:
 	    nomul(0, NULL);
 	}
 
+	if (loc->typ == TREE && abstype == ZT_DEATH &&
+	    abs(type) != ZT_BREATH(ZT_DEATH)) {
+	    loc->typ = DEADTREE;
+	    if (cansee(sx, sy)) {
+		pline("The tree withers!");
+		newsym(sx, sy);
+	    }
+	    range = 0;
+	    break;
+	}
+
 	if (!ZAP_POS(loc->typ) || (closed_door(level, sx, sy) && (range >= 0))) {
 	    int bounce;
 	    uchar rmn;

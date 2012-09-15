@@ -904,7 +904,7 @@ not_special:
 		    if (!(mw_tmp = MON_WEP(mtmp)) ||
 			!is_pick(mw_tmp) || !is_axe(mw_tmp))
 			mtmp->weapon_check = NEED_PICK_OR_AXE;
-		} else if (IS_TREE(level->locations[nix][niy].typ)) {
+		} else if (IS_TREE(level, level->locations[nix][niy].typ)) {
 		    if (!(mw_tmp = MON_WEP(mtmp)) || !is_axe(mw_tmp))
 			mtmp->weapon_check = NEED_AXE;
 		} else if (!(mw_tmp = MON_WEP(mtmp)) || !is_pick(mw_tmp)) {

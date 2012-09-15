@@ -209,7 +209,8 @@ static boolean drop_ripe_treefruit(struct level *lev, xchar x, xchar y,
 
 	rndmappos(&x, &y);
 	loc = &lev->locations[x][y];
-	if (IS_TREE(loc->typ) && !(loc->looted & TREE_LOOTED) && may_dig(lev, x, y)) {
+	if (IS_TREE(lev, loc->typ) && !(loc->looted & TREE_LOOTED) &&
+	    may_dig(lev, x, y)) {
 	    coord pos;
 	    int dir, dofs = rn2(8);
 	    for (dir = 0; dir < 8; dir++) {
@@ -264,7 +265,7 @@ static boolean seed_tree(struct level *lev, xchar x, xchar y)
 	struct rm *loc;
 
 	rndmappos(&x, &y);
-	if (IS_TREE(lev->locations[x][y].typ) && may_dig(lev, x, y)) {
+	if (IS_TREE(lev, lev->locations[x][y].typ) && may_dig(lev, x, y)) {
 	    int dir = rn2(8);
 	    dtoxy(&pos, dir);
 	    pos.x += x;
@@ -597,7 +598,7 @@ static int still_chewing(xchar x, xchar y)
 
     if (!boulder && IS_ROCK(loc->typ) && !may_dig(level, x,y)) {
 	pline("You hurt your teeth on the %s.",
-	    IS_TREE(loc->typ) ? "tree" : "hard stone");
+	      IS_TREES(level, loc->typ) ? "tree" : "hard stone");
 	nomul(0, NULL);
 	return 1;
     } else if (digging.pos.x != x || digging.pos.y != y ||
@@ -609,12 +610,13 @@ static int still_chewing(xchar x, xchar y)
 	digging.pos.y = y;
 	assign_level(&digging.level, &u.uz);
 	/* solid rock takes more work & time to dig through */
-	digging.effort =
-	    (IS_ROCK(loc->typ) && !IS_TREE(loc->typ) ? 30 : 60) + u.udaminc;
+	digging.effort = (IS_ROCK(loc->typ) && !IS_TREES(level, loc->typ) ?
+			  30 : 60) + u.udaminc;
 	pline("You start chewing %s %s.",
-	    (boulder || IS_TREE(loc->typ)) ? "on a" : "a hole in the",
-	    boulder ? "boulder" :
-	    IS_TREE(loc->typ) ? "tree" : IS_ROCK(loc->typ) ? "rock" : "door");
+	      (boulder || IS_TREES(level, loc->typ)) ? "on a" : "a hole in the",
+	      boulder ? "boulder" :
+	      IS_TREES(level, loc->typ) ? "tree" :
+	      IS_ROCK(loc->typ) ? "rock" : "door");
 	watch_dig(NULL, x, y, FALSE);
 	return 1;
     } else if ((digging.effort += (30 + u.udaminc)) <= 100)  {
@@ -622,7 +624,7 @@ static int still_chewing(xchar x, xchar y)
 	    pline("You %s chewing on the %s.",
 		digging.chew ? "continue" : "begin",
 		boulder ? "boulder" :
-		IS_TREE(loc->typ) ? "tree" :
+		IS_TREES(level, loc->typ) ? "tree" :
 		IS_ROCK(loc->typ) ? "rock" : "door");
 	digging.chew = TRUE;
 	watch_dig(NULL, x, y, FALSE);
@@ -665,7 +667,7 @@ static int still_chewing(xchar x, xchar y)
 	    loc->typ = DOOR;
 	    loc->doormask = D_NODOOR;
 	}
-    } else if (IS_TREE(loc->typ)) {
+    } else if (IS_TREE(level, loc->typ)) {
 	digtxt = "You chew through the tree.";
 	loc->typ = ROOM;
     } else if (loc->typ == SDOOR) {
@@ -769,14 +771,16 @@ static void dosinkfall(void)
 boolean may_dig(struct level *lev, xchar x, xchar y)
 /* intended to be called only on ROCKs */
 {
-    return (!(IS_STWALL(lev->locations[x][y].typ) &&
-			(lev->locations[x][y].wall_info & W_NONDIGGABLE)));
+	return !((IS_STWALL(lev->locations[x][y].typ) ||
+		  IS_TREES(lev, lev->locations[x][y].typ)) &&
+		 (lev->locations[x][y].wall_info & W_NONDIGGABLE));
 }
 
 boolean may_passwall(struct level *lev, xchar x, xchar y)
 {
-   return (!(IS_STWALL(lev->locations[x][y].typ) &&
-			(lev->locations[x][y].wall_info & W_NONPASSWALL)));
+	return !((IS_STWALL(lev->locations[x][y].typ) ||
+		  IS_TREES(lev, lev->locations[x][y].typ)) &&
+		 (lev->locations[x][y].wall_info & W_NONPASSWALL));
 }
 
 

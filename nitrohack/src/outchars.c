@@ -89,7 +89,8 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"web",	-1,	{0x00A4, 0},	0},	/* ¤ currency symbol */
 
 #if !defined(WIN32)
-    {"tree",	-1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
+    {"tree",	 -1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
+    {"deadtree", -1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
 #endif
 
     /* objects */

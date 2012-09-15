@@ -1608,7 +1608,8 @@ static boolean figurine_location_checks(struct obj *obj, coord *cc, boolean quie
 	    !(passes_walls(&mons[obj->corpsenm]) && may_passwall(level, x,y))) {
 		if (!quietly)
 		    pline("You cannot place a figurine in %s!",
-			IS_TREE(level->locations[x][y].typ) ? "a tree" : "solid rock");
+			  IS_TREES(level, level->locations[x][y].typ) ?
+			  "a tree" : "solid rock");
 		return FALSE;
 	}
 	if (sobj_at(BOULDER, level, x,y) && !passes_walls(&mons[obj->corpsenm])

@@ -444,7 +444,7 @@ boolean hurtle_step(void *arg, int x, int y)
 	    const char *s;
 
 	    pline("Ouch!");
-	    if (IS_TREE(level->locations[x][y].typ))
+	    if (IS_TREES(level, level->locations[x][y].typ))
 		s = "bumping into a tree";
 	    else if (IS_ROCK(level->locations[x][y].typ))
 		s = "bumping into a wall";

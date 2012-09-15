@@ -79,17 +79,18 @@ const char * const defexplain[] = {
 	"closed door",		/* hcdoor */
 	"iron bars",		/* bars */
 	"tree",			/* tree */
-/*30*/	"staircase up",		/* upstair */
+/*30*/	"dead tree",		/* deadtree */
+	"staircase up",		/* upstair */
 	"staircase down",	/* dnstair */
 	"ladder up",		/* upladder */
 	"ladder down",		/* dnladder */
-        "long staircase up",	/* upsstair */
-        "long staircase down",	/* dnsstair */
+	"long staircase up",	/* upsstair */
+	"long staircase down",	/* dnsstair */
 	"altar",		/* altar */
 	"grave",		/* grave */
 	"opulent throne",	/* throne */
-	"sink",			/* sink */
-/*40*/	"fountain",		/* fountain */
+/*40*/	"sink",			/* sink */
+	"fountain",		/* fountain */
 	"lowered drawbridge",	/* vodbridge */
 	"lowered drawbridge",	/* hodbridge */
 	"raised drawbridge",	/* vcdbridge */
@@ -158,7 +159,8 @@ const struct nh_symdef defsyms[] = {
 	{'+', "hcdoor",		CLR_BROWN},
 	{'#', "bars",		HI_METAL},
 	{'#', "tree",		CLR_GREEN},
-/*30*/	{'<', "upstair",	CLR_GRAY},
+/*30*/	{'#', "deadtree",	CLR_BLACK},
+	{'<', "upstair",	CLR_GRAY},
 	{'>', "dnstair",	CLR_GRAY},
 	{'<', "upladder",	CLR_BROWN},
 	{'>', "dnladder",	CLR_BROWN},
@@ -167,8 +169,8 @@ const struct nh_symdef defsyms[] = {
 	{'_', "altar",		CLR_GRAY},
 	{'|', "grave",		CLR_GRAY},
 	{'\\',"throne",		HI_GOLD},
-	{'#', "sink",		CLR_GRAY},
-/*40*/	{'{', "fountain",	CLR_BLUE},
+/*40*/	{'#', "sink",		CLR_GRAY},
+	{'{', "fountain",	CLR_BLUE},
 	{'.', "vodbridge",	CLR_BROWN},
 	{'.', "hodbridge",	CLR_BROWN},
 	{'#', "vcdbridge",	CLR_BROWN},

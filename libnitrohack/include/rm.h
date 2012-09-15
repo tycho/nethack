@@ -44,6 +44,7 @@ enum location_types {
 	TRWALL,
 	DBWALL,
 	TREE,		/* KMH */
+	DEADTREE,	/* youkan */
 	SDOOR,
 	SCORR,
 	POOL,
@@ -80,8 +81,10 @@ enum location_types {
 #define IS_STWALL(typ)	((typ) <= DBWALL)	/* STONE <= (typ) <= DBWALL */
 #define IS_ROCK(typ)	((typ) < POOL)		/* absolutely nonaccessible */
 #define IS_DOOR(typ)	((typ) == DOOR)
-#define IS_TREE(typ)	((typ) == TREE || \
-			(level->flags.arboreal && (typ) == STONE))
+#define IS_TREE(lev,typ) ((typ) == TREE || \
+			  ((lev)->flags.arboreal && (typ) == STONE))
+#define IS_DEADTREE(typ) ((typ) == DEADTREE)
+#define IS_TREES(lev,typ) (IS_TREE((lev),(typ)) || IS_DEADTREE(typ))
 #define ACCESSIBLE(typ) ((typ) >= DOOR)		/* good position */
 #define IS_ROOM(typ)	((typ) >= ROOM)		/* ROOM, STAIRS, furniture.. */
 #define ZAP_POS(typ)	((typ) >= POOL)
@@ -137,6 +140,7 @@ enum dungeon_symbols {
 	S_hcdoor,	/* closed door, horizontal wall */
 	S_bars,		/* KMH -- iron bars */
 	S_tree,		/* KMH */
+	S_deadtree,	/* youkan */
 	S_upstair,
 	S_dnstair,
 	S_upladder,
