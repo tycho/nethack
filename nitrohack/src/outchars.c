@@ -47,6 +47,9 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"tdwall",	-1,	{0x252C, 0},	0},	/* T down */
     {"tlwall",	-1,	{0x2524, 0},	0},	/* T left */
     {"trwall",	-1,	{0x251C, 0},	0},	/* T right */
+    {"pool",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
+    {"water",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
+    {"lava",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"ndoor",	-1,	{0x00B7, 0},	0},	/* · centered dot */
     {"vodoor",	-1,	{0x2588, 0},	0},	/* █ solid block */
     {"hodoor",	-1,	{0x2588, 0},	0},	/* █ solid block */
@@ -58,6 +61,8 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"litcorr",	-1,	{0x2592, 0},	0},	/* ▒ medium shading */
     {"upladder",-1,	{0x2264, 0},	0},	/* ≤ less-than-or-equals */
     {"dnladder",-1,	{0x2265, 0},	0},	/* ≥ greater-than-or-equals */
+    {"upsstair",-1,	{0x00AB, 0},	0},	/* « left-pointing double angle quotation mark */
+    {"dnsstair",-1,	{0x00BB, 0},	0},	/* » right-pointing double angle quotation mark */
     {"altar",	-1,	{0x03A9, 0},	0},	/* Ω GREEK CAPITAL LETTER OMEGA */
     {"grave",	-1,	{0x2020, 0},	0},	/* † DAGGER */
     {"ice",	-1,	{0x00B7, 0},	0},	/* · centered dot */
@@ -84,16 +89,9 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"web",	-1,	{0x00A4, 0},	0},	/* ¤ currency symbol */
 
 #if !defined(WIN32)
-    {"pool",	-1,	{0x224B, 0},	0},	/* ≋ triple tilde */
-    {"lava",	-1,	{0x224B, 0},	0},	/* ≋ triple tilde */
-    {"water",	-1,	{0x224B, 0},	0},	/* ≋ triple tilde */
     {"tree",	-1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
-    {"upsstair",-1,     {0x227E, 0},    0},     /* ≾ precedes-or-equivalent-to */
-    {"dnsstair",-1,     {0x227F, 0},    0},     /* ≿ succeeds-or-equivalent-to */
-#else
-    {"upsstair",-1,	{0x2264, 0},	0},	/* ≤ less-than-or-equals */
-    {"dnsstair",-1,	{0x2265, 0},	0},	/* ≥ greater-than-or-equals */
 #endif
+
     /* objects */
     {"boulder", -1,	{0x0030, 0},	0},	/* 0 zero */
 };
