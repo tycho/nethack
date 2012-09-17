@@ -585,6 +585,7 @@ void restore_flags(struct memfile *mf, struct flag *f)
 	f->vegetarian = mread8(mf);
 	
 	mread(mf, f->inv_order, sizeof(f->inv_order));
+	mread(mf, f->spell_order, sizeof(f->spell_order));
 }
 
 

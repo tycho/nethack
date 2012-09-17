@@ -62,6 +62,7 @@ struct flag {
 	int	 djinni_count, ghost_count;	/* potion effect tuning */
 	int	 pickup_burden;		/* maximum burden before prompt */
 	char	 inv_order[MAXOCLASSES];
+	char	 spell_order[52];	/* spell menu letters (a-zA-Z) */
 #define DISCLOSE_PROMPT_DEFAULT_YES	'y'
 #define DISCLOSE_PROMPT_DEFAULT_NO	'n'
 #define DISCLOSE_YES_WITHOUT_PROMPT	'+'

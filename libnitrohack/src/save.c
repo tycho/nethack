@@ -163,6 +163,7 @@ static void save_flags(struct memfile *mf)
 	mwrite8(mf, flags.vegetarian);
 	
 	mwrite(mf, flags.inv_order, sizeof(flags.inv_order));
+	mwrite(mf, flags.spell_order, sizeof(flags.spell_order));
 }
 
 

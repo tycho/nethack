@@ -15,8 +15,6 @@ static schar delay;		/* moves left for this spell */
 
 #define spellev(spell)		spl_book[spell].sp_lev
 #define spellname(spell)	OBJ_NAME(objects[spellid(spell)])
-#define spellet(spell)	\
-	((char)((spell < 26) ? ('a' + spell) : ('A' + spell - 26)))
 
 static boolean cursed_book(struct obj *bp);
 static boolean confused_book(struct obj *);
@@ -962,6 +960,14 @@ void losespells(void)
 	}
 }
 
+/* Get the shortcut character for the spell menu spell number. */
+static int spellet(int spell)
+{
+	if (spell < 0 || spell >= 52)
+	    return -1;
+	return flags.spell_order[spell];
+}
+
 /* the '+' command -- view known spells */
 int dovspell(void)
 {
@@ -1004,7 +1010,7 @@ static boolean dospellmenu(const char *prompt,
 			spelltypemnemonic(spell_skilltype(spellid(i))),
 			100 - percent_success(i));
 
-		set_menuitem(&items[count++], i+1, MI_NORMAL, buf, 0,
+		set_menuitem(&items[count++], i+1, MI_NORMAL, buf, spellet(i),
 			     (i == splaction) ? TRUE : FALSE);
 	      }
 

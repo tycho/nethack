@@ -7,6 +7,7 @@
 #define WINTYPELEN 16
 
 static int change_inv_order(char *op);
+static boolean change_spell_order(const char *op, boolean checkonly);
 static struct nh_autopickup_rules *copy_autopickup_rules(const struct nh_autopickup_rules *in);
 
 /* -------------------------------------------------------------------------- */
@@ -142,6 +143,7 @@ static const struct nh_option_desc const_options[] = {
     {"safe_pet",	"prevent you from (knowingly) attacking your pet(s)",	OPTTYPE_BOOL, { VTRUE }},
     {"show_uncursed",	"always show uncursed status",	OPTTYPE_BOOL, { VTRUE }},
     {"showrace",	"show yourself by your race rather than by role",	OPTTYPE_BOOL, { VFALSE }},
+    {"spellorder",	"the order of spell menu letters",	OPTTYPE_STRING, {"a-zA-Z"}},
     {"sortpack",	"group similar kinds of objects in inventory",	OPTTYPE_BOOL, { VTRUE }},
     {"sparkle",		"display sparkly effect for resisted magical attacks",	OPTTYPE_BOOL, { VTRUE }},
     {"tombstone",	"print tombstone when you die",	OPTTYPE_BOOL, { VTRUE }},
@@ -328,6 +330,7 @@ void init_opt_struct(void)
 	find_option(options, "pickup_burden")->e = pickup_burden_spec;
 	find_option(options, "packorder")->s.maxlen = MAXOCLASSES;
 	find_option(options, "runmode")->e = runmode_spec;
+	find_option(options, "spellorder")->s.maxlen = 78; /* "a-bc-d...Y-Z" */
 	find_option(options, "autopickup_rules")->a = autopickup_spec;
 	
 	find_option(birth_options, "align")->e = align_spec;
@@ -425,6 +428,12 @@ static boolean option_value_ok(struct nh_option_desc *option,
 		
 		if (!*value.s)
 		    value.s = NULL;
+		else {
+		    if (!strcmp("spellorder", option->name)) {
+			if (!change_spell_order(value.s, TRUE))
+			    break;
+		    }
+		}
 		
 		return TRUE;
 		
@@ -634,6 +643,10 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 	}
 	else if (!strcmp("runmode", option->name)) {
 		iflags.runmode = option->value.e;
+	}
+	else if (!strcmp("spellorder", option->name)) {
+		if (!change_spell_order(option->value.s, FALSE))
+			return FALSE;
 	}
 	else if (!strcmp("autopickup_rules", option->name)) {
 		if (iflags.ap_rules) {
@@ -928,6 +941,86 @@ static int change_inv_order(char *op)
 
     strcpy(flags.inv_order, buf);
     return 1;
+}
+
+
+static boolean change_spell_order(const char *op, boolean checkonly)
+{
+	char buf[52];
+	int i, b = 0;
+	const char *c;
+	char d;
+
+	int state;	/* 0 = starting state */
+			/* 1 = got letter */
+			/* 2 = got '-' */
+	char last;
+
+	/* Can't use strchr() since buf[] isn't null terminated. */
+#define sporder_append_nodup(ch)		\
+	do {					\
+	    for (i = 0; i < b; i++)		\
+		if ((ch) == buf[i]) break;	\
+	    if (i == b)				\
+		buf[b++] = (ch);		\
+	} while (0)
+
+	/* spellorder can accept letters and letter ranges e.g. "a-zA-Z" */
+	/* Ranges can also overlap or go backwards, but must be the same case. */
+	state = 0;
+	last = '\0';
+	for (c = op; *c && b < 52; c++) {
+	    const char cur = *c;
+	    if (('a' <= cur && cur <= 'z') || ('A' <= cur && cur <= 'Z')) {
+		if (state == 0) {
+		    last = cur;
+		    state = 1;
+		} else if (state == 1) {
+		    sporder_append_nodup(last);
+		    c--;	/* redo this letter */
+		    state = 0;
+		} else if (state == 2) {
+		    char tmp;
+		    if ((isupper(cur) && islower(last)) ||
+			(islower(cur) && isupper(last)))
+			return FALSE;
+		    if (cur >= last) {
+			for (tmp = last; tmp <= cur; tmp++)
+			    sporder_append_nodup(tmp);
+		    } else {
+			for (tmp = last; tmp >= cur; tmp--)
+			    sporder_append_nodup(tmp);
+		    }
+		    state = 0;
+		}
+	    } else if (cur == '-') {
+		if (state == 1)
+		    state = 2;
+		else
+		    return FALSE;
+	    } else {
+		return FALSE;
+	    }
+	}
+	if (state == 1)
+	    sporder_append_nodup(last);
+	else if (state != 0)
+	    return FALSE;
+
+	/* fill the rest with default letters, lowercase then uppercase */
+	for (d = 'a'; d <= 'z' && b < 52; d++)
+	    sporder_append_nodup(d);
+	for (d = 'A'; d <= 'Z' && b < 52; d++)
+	    sporder_append_nodup(d);
+
+#undef sporder_append_nodup
+
+	if (!checkonly) {
+	    for (i = 0; i < 52; i++)
+		flags.spell_order[i] = buf[i];
+	}
+
+	return TRUE;
 }
 
 
