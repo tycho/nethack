@@ -644,10 +644,11 @@ int query_category(const char *qstr,	/* query string */
 		    	W_WEP | W_SWAPWEP | W_QUIVER)))
 			 continue;
 		   if (!collected_type_name) {
-			add_menuitem(&menu, curr->oclass,
-				     let_to_name(*pack, FALSE), invlet++, FALSE);
-			menu.items[menu.icount - 1].group_accel =
-			    def_oc_syms[(int)objects[curr->otyp].oc_class];
+			char oc_sym, buf[BUFSZ];
+			oc_sym = def_oc_syms[(int)objects[curr->otyp].oc_class];
+			sprintf(buf, "%s '%c'", let_to_name(*pack, FALSE), oc_sym);
+			add_menuitem(&menu, curr->oclass, buf, invlet++, FALSE);
+			menu.items[menu.icount - 1].group_accel = oc_sym;
 			collected_type_name = TRUE;
 		   }
 		}
