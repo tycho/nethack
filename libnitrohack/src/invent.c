@@ -624,6 +624,8 @@ static void compactify(char *buf)
 
 	ilet2 = buf[0];
 	ilet1 = buf[1];
+	++i2;
+	++i1;
 	ilet = buf[i1];
 	while (ilet) {
 		if (ilet == ilet1+1) {
