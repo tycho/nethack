@@ -1473,6 +1473,7 @@ static const char *epitaphs[] = {
         "Here lies the body of John Round. Lost at sea and never found.",
         "Here there be dragons",
         "Hey, I didn't write this stuff!",
+	"Hodie mihi, cras tibi",
         "Hold my calls",
         "Home Sweet Hell",
         "Humpty Dumpty, a Bad Egg.  He was pushed off the wall.",
