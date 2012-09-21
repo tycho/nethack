@@ -1359,6 +1359,7 @@ static const char *epitaphs[] = {
         "Are we all being disintegrated, or is it just me?",
         "At least I'm good at something",
         "Attempted suicide",
+	"Auri sacra fames",
         "Auribus teneo lupum",
         "Be prepared",
         "Beauty survives",
