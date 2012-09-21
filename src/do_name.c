@@ -1141,6 +1141,13 @@ static const char * const bogusmons[] = {
 	"Magical Trevor",
 	"first category perpetual motion device",
 
+	"ghoti",
+	"regex engine",
+	"netsplit",
+	"peer",
+	"pigasus",
+	"Semigorgon",
+
 	/* soundex and typos of monsters */
 	"gloating eye",
 	"flush golem"
