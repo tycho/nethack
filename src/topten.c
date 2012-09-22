@@ -425,7 +425,7 @@ mk_HUPfile(char *fname)
     char new_dump_fn[512];
     Sprintf(new_dump_fn, "%s", dump_format_str(fname));
 
-    FILE *dump_fp = fopen(new_dump_fn, "w");
+    FILE *dump_fp = fopen(new_dump_fn, "a");
     if (!dump_fp) {
     } else {
 	struct toptenentry t0;
