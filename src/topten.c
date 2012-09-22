@@ -9,6 +9,10 @@
 #else
 #include "patchlevel.h"
 #endif
+#ifdef UNIX /* filename chmod() */
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
 
 #ifdef VMS
  /* We don't want to rewrite the whole file, because that entails	 */
@@ -346,6 +350,104 @@ struct toptenentry *tt;
 #undef SEPC
 #endif /* XLOGFILE */
 
+
+void
+get_current_ttentry_data(t0, how)
+struct toptenentry *t0;
+int how;
+{
+	int uid = getuid();
+	t0->ver_major = VERSION_MAJOR;
+	t0->ver_minor = VERSION_MINOR;
+	t0->patchlevel = PATCHLEVEL;
+	t0->points = u.urexp;
+	t0->deathdnum = u.uz.dnum;
+	t0->deathlev = observable_depth(&u.uz);
+	t0->maxlvl = deepest_lev_reached(TRUE);
+	t0->hp = u.uhp;
+	t0->maxhp = u.uhpmax;
+	t0->deaths = u.umortality;
+	t0->uid = uid;
+	(void) strncpy(t0->plrole, urole.filecode, ROLESZ);
+	t0->plrole[ROLESZ] = '\0';
+	(void) strncpy(t0->plrace, urace.filecode, ROLESZ);
+	t0->plrace[ROLESZ] = '\0';
+	(void) strncpy(t0->plgend, genders[flags.female].filecode, ROLESZ);
+	t0->plgend[ROLESZ] = '\0';
+	(void) strncpy(t0->plalign, aligns[1-u.ualign.type].filecode, ROLESZ);
+	t0->plalign[ROLESZ] = '\0';
+	(void) strncpy(t0->name, plname, NAMSZ);
+	t0->name[NAMSZ] = '\0';
+	t0->death[0] = '\0';
+	if (how == -1) {
+	    Strcat(t0->death, "hangup");
+	} else {
+	    switch (killer_format) {
+		default: impossible("bad killer format?");
+		case KILLED_BY_AN:
+			Strcat(t0->death, killed_by_prefix[how]);
+			(void) strncat(t0->death, an(killer),
+						DTHSZ-strlen(t0->death));
+			break;
+		case KILLED_BY:
+			Strcat(t0->death, killed_by_prefix[how]);
+			(void) strncat(t0->death, killer,
+						DTHSZ-strlen(t0->death));
+			break;
+		case NO_KILLER_PREFIX:
+			(void) strncat(t0->death, killer, DTHSZ);
+			break;
+	    }
+	}
+	t0->birthdate = yyyymmdd(u.ubirthday);
+
+#ifdef RECORD_START_END_TIME
+  /* Make sure that deathdate and deathtime refer to the same time; it
+   * wouldn't be good to have deathtime refer to the day after deathdate. */
+
+#if defined(BSD) && !defined(POSIX_TYPES)
+        (void) time((long *)&deathtime);
+#else
+        (void) time(&deathtime);
+#endif
+
+        t0->deathdate = yyyymmdd(deathtime);
+#else
+        t0->deathdate = yyyymmdd((time_t)0L);
+#endif /* RECORD_START_END_TIME */
+}
+
+/* record into file whenever user does HUP */
+void
+mk_HUPfile(char *fname)
+{
+  if (fname[0]) {
+    char new_dump_fn[512];
+    Sprintf(new_dump_fn, "%s", dump_format_str(fname));
+
+    FILE *dump_fp = fopen(new_dump_fn, "w");
+    if (!dump_fp) {
+    } else {
+	struct toptenentry t0;
+#ifdef UNIX
+	mode_t dumpmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+	chmod(new_dump_fn, dumpmode);
+#endif
+	get_current_ttentry_data(&t0, -1);
+	write_xlentry(dump_fp, &t0);
+	fclose(dump_fp);
+    }
+  }
+}
+
+
+void
+write_HUP_file()
+{
+    mk_HUPfile("/dgldir/userdata/%N/%n/hanguplist.txt");
+}
+
+
 STATIC_OVL void
 free_ttlist(tt)
 struct toptenentry *tt;
@@ -364,7 +466,6 @@ void
 topten(how)
 int how;
 {
-	int uid = getuid();
 	int rank, rank0 = -1, rank1 = 0;
 	int occ_cnt = PERSMAX;
 	register struct toptenentry *t0, *tprev;
@@ -416,60 +517,8 @@ int how;
 	 * as well (which also seems reasonable since that's all the player
 	 * sees on the screen anyway)
 	 */
-	t0->ver_major = VERSION_MAJOR;
-	t0->ver_minor = VERSION_MINOR;
-	t0->patchlevel = PATCHLEVEL;
-	t0->points = u.urexp;
-	t0->deathdnum = u.uz.dnum;
-	t0->deathlev = observable_depth(&u.uz);
-	t0->maxlvl = deepest_lev_reached(TRUE);
-	t0->hp = u.uhp;
-	t0->maxhp = u.uhpmax;
-	t0->deaths = u.umortality;
-	t0->uid = uid;
-	(void) strncpy(t0->plrole, urole.filecode, ROLESZ);
-	t0->plrole[ROLESZ] = '\0';
-	(void) strncpy(t0->plrace, urace.filecode, ROLESZ);
-	t0->plrace[ROLESZ] = '\0';
-	(void) strncpy(t0->plgend, genders[flags.female].filecode, ROLESZ);
-	t0->plgend[ROLESZ] = '\0';
-	(void) strncpy(t0->plalign, aligns[1-u.ualign.type].filecode, ROLESZ);
-	t0->plalign[ROLESZ] = '\0';
-	(void) strncpy(t0->name, plname, NAMSZ);
-	t0->name[NAMSZ] = '\0';
-	t0->death[0] = '\0';
-	switch (killer_format) {
-		default: impossible("bad killer format?");
-		case KILLED_BY_AN:
-			Strcat(t0->death, killed_by_prefix[how]);
-			(void) strncat(t0->death, an(killer),
-						DTHSZ-strlen(t0->death));
-			break;
-		case KILLED_BY:
-			Strcat(t0->death, killed_by_prefix[how]);
-			(void) strncat(t0->death, killer,
-						DTHSZ-strlen(t0->death));
-			break;
-		case NO_KILLER_PREFIX:
-			(void) strncat(t0->death, killer, DTHSZ);
-			break;
-	}
-	t0->birthdate = yyyymmdd(u.ubirthday);
 
-#ifdef RECORD_START_END_TIME
-  /* Make sure that deathdate and deathtime refer to the same time; it
-   * wouldn't be good to have deathtime refer to the day after deathdate. */
-
-#if defined(BSD) && !defined(POSIX_TYPES)
-        (void) time((long *)&deathtime);
-#else
-        (void) time(&deathtime);
-#endif
-
-        t0->deathdate = yyyymmdd(deathtime);
-#else
-        t0->deathdate = yyyymmdd((time_t)0L);
-#endif /* RECORD_START_END_TIME */
+	get_current_ttentry_data(t0,how);
 
 	t0->tt_next = 0;
 #ifdef UPDATE_RECORD_IN_PLACE

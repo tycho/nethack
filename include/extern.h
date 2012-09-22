@@ -2049,6 +2049,7 @@ E long FDECL(encodeconduct, (void));
 E void FDECL(topten, (int));
 E void FDECL(prscore, (int,char **));
 E struct obj *FDECL(tt_oname, (struct obj *));
+E void NDECL(write_HUP_file);
 
 /* ### track.c ### */
 
