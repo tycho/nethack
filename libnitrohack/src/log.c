@@ -102,6 +102,17 @@ void log_option(struct nh_option_desc *opt)
 	    free(encbuf2);
 	    free(str);
 	    break;
+	    
+	case OPTTYPE_MSGTYPE:
+	    str = msgtype_to_string(opt->value.mt);
+	    lprintf("m:");
+	    encbuf2 = malloc(strlen(str) * 4 / 3 + 4);
+	    base64_encode(str, encbuf2);
+	    /* write directly, large numbers of rules may overflow outbuf in lprintf */
+	    write(logfile, encbuf2, strlen(encbuf2));
+	    free(encbuf2);
+	    free(str);
+	    break;
     }
     
     last_cmd_pos = lseek(logfile, 0, SEEK_CUR);

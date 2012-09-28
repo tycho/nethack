@@ -1171,6 +1171,8 @@ extern int dotogglepickup(void);
 extern int fruitadd(char *);
 extern char *autopickup_to_string(const struct nh_autopickup_rules *rules);
 extern struct nh_autopickup_rules *parse_autopickup_rules(const char *str);
+extern char *msgtype_to_string(const struct nh_msgtype_rules *mt);
+extern struct nh_msgtype_rules *parse_msgtype_rules(const char *str);
 
 /* ### pager.c ### */
 

@@ -230,6 +230,7 @@ void init_data(void)
      * as part of the game init sequence after options have been set, etc. */
     boolean nolog = iflags.disable_log;
     struct nh_autopickup_rules *rules = iflags.ap_rules;
+    struct nh_msgtype_rules *mt_rules = iflags.mt_rules;
     moves = 1;
     
     memset(&program_state, 0, sizeof(program_state));
@@ -289,6 +290,7 @@ void init_data(void)
     program_state.restoring = in_restore;
     iflags.disable_log = nolog;
     iflags.ap_rules = rules;
+    iflags.mt_rules = mt_rules;
     flags.moonphase = 10; /* invalid value, so that the first call to realtime_tasks will dtrt */
     lastinvnr = 51;
     flags.soundok = 1;

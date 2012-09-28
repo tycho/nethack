@@ -567,7 +567,7 @@ static void replay_read_timezone(char *token)
 
 static void replay_read_option(char *token)
 {
-    char *name, *otype, *valstr, *arbuf, optname[BUFSZ], valbuf[BUFSZ];
+    char *name, *otype, *valstr, *buf, optname[BUFSZ], valbuf[BUFSZ];
     union nh_optvalue value;
     
     name = token + 1;
@@ -597,12 +597,17 @@ static void replay_read_option(char *token)
 	    value.b = atoi(valstr);
 	    break;
 	case 'a':
-	    arbuf = malloc(strlen(valstr) + 1);
-	    base64_decode(valstr, arbuf);
-	    value.ar = parse_autopickup_rules(arbuf);
-	    free(arbuf);
+	    buf = malloc(strlen(valstr) + 1);
+	    base64_decode(valstr, buf);
+	    value.ar = parse_autopickup_rules(buf);
+	    free(buf);
 	    break;
-	    
+	case 'm':
+	    buf = malloc(strlen(valstr) + 1);
+	    base64_decode(valstr, buf);
+	    value.mt = parse_msgtype_rules(buf);
+	    free(buf);
+	    break;
 	default:
 	    parse_error("Unrecognized option type");
     }

@@ -110,6 +110,8 @@
                                    * that instead point at random memory */
 #define OCLASS_ANY 'a' /* for autopickup */
 
+#define MSGTYPE_MAX_RULES	1000
+
 enum nh_direction {
     DIR_NONE = -1,
     DIR_W = 0,
@@ -164,9 +166,10 @@ enum nh_opttype {
     OPTTYPE_INT,
     OPTTYPE_ENUM,
     OPTTYPE_STRING,
-    OPTTYPE_AUTOPICKUP_RULES /* so this is a special case... I considered creating
+    OPTTYPE_AUTOPICKUP_RULES,/* so this is a special case... I considered creating
                                 a general purpose mechanism, but I came to the
                                 conclusion that YAGNI applies */
+    OPTTYPE_MSGTYPE,
 };
 
 enum nh_option_list {
@@ -261,6 +264,13 @@ enum autopickup_action {
     AP_LEAVE
 };
 
+enum msgtype_action {
+    MSGTYPE_DEFAULT,
+    MSGTYPE_MORE,
+    MSGTYPE_NO_REPEAT,
+    MSGTYPE_HIDE,
+};
+
 enum replay_control {
     REPLAY_FORWARD,
     REPLAY_BACKWARD,
@@ -313,12 +323,23 @@ struct nh_autopickup_rules {
     int num_rules; /* < AUTOPICKUP_MAX_RULES */
 };
 
+struct nh_msgtype_rule {
+    char pattern[120];
+    enum msgtype_action action;
+};
+
+struct nh_msgtype_rules {
+    struct nh_msgtype_rule *rules;
+    int num_rules; /* < MSGTYPE_MAX_RULES */
+};
+
 union nh_optvalue {
     char *s; /* largest element first for static initialisation */
     nh_bool b;
     int i;
     int e;
     struct nh_autopickup_rules *ar;
+    struct nh_msgtype_rules *mt;
 };
 
 struct nh_option_desc {

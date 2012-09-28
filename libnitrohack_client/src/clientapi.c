@@ -561,8 +561,30 @@ static void read_json_option(json_t *jobj, struct nh_option_desc *opt)
 			    &r->oclass, "buc", &r->buc, "action", &r->action);
 		strncpy(r->pattern, strval, sizeof(r->pattern) - 1);
 	    }
-	    
 	    break;
+	    
+	case OPTTYPE_MSGTYPE:
+	    size = json_array_size(joptval);
+	    if (size == 0)
+		break;
+	    else if (size > MSGTYPE_MAX_RULES)
+		size = MSGTYPE_MAX_RULES;
+
+	    opt->value.mt = malloc(sizeof(struct nh_msgtype_rules));
+	    opt->value.mt->num_rules = size;
+	    opt->value.mt->rules = malloc(size * sizeof(struct nh_msgtype_rule));
+	    for (i = 0; i < size; i++) {
+		struct nh_msgtype_rule *mtr = &opt->value.mt->rules[i];
+		jelem = json_array_get(joptval, i);
+		json_unpack(jelem, "{ss,si!}", "pattern", &strval, "action",
+			    &mtr->action);
+		strncpy(mtr->pattern, strval, sizeof(mtr->pattern));
+		mtr->pattern[sizeof(mtr->pattern) - 1] ='\0';
+	    }
+	    break;
+	    
+	default:
+	    print_error("Unknown option type.");
     }
 }
 
@@ -598,6 +620,13 @@ static void free_option_data(struct nh_option_desc *opt)
 	    if (opt->value.ar) {
 		free(opt->value.ar->rules);
 		free(opt->value.ar);
+	    }
+	    break;
+	    
+	case OPTTYPE_MSGTYPE:
+	    if (opt->value.mt) {
+		free(opt->value.mt->rules);
+		free(opt->value.mt);
 	    }
 	    break;
     }
@@ -641,6 +670,16 @@ nh_bool nhnet_set_option(const char *name, union nh_optvalue value, nh_bool isst
 		jobj = json_pack("{ss,si,si,si}", "pattern", r->pattern, "oclass",
 				 r->oclass, "buc", r->buc, "action", r->action);
 		json_array_append_new(joval, jobj);
+	    }
+	} else if (opt->type == OPTTYPE_MSGTYPE) {
+	    joval = json_array();
+	    if (value.mt) {
+		for (i = 0; i < value.mt->num_rules; i++) {
+		    struct nh_msgtype_rule *mtr = &value.mt->rules[i];
+		    jobj = json_pack("{ss,si}", "pattern", mtr->pattern, "action",
+				     mtr->action);
+		    json_array_append_new(joval, jobj);
+		}
 	    }
 	}
 	

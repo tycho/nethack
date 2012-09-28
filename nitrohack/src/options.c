@@ -30,6 +30,7 @@ enum extra_opttypes {
 
 static void read_ui_config(void);
 static void show_autopickup_menu(struct nh_option_desc *opt);
+static void show_msgtype_menu(struct nh_option_desc *opt);
 
 
 #if defined(NETCLIENT)
@@ -244,6 +245,7 @@ static const char* get_display_string(struct nh_option_desc *option)
 	    return nh_get_option_string(option);
 	    
 	case OPTTYPE_AUTOPICKUP_RULES:
+	case OPTTYPE_MSGTYPE:
 	case OPTTYPE_KEYMAP:
 	    return "submenu";
     }
@@ -413,6 +415,10 @@ static nh_bool get_option_value(struct win_menu *mdat, int idx)
 	    
 	case OPTTYPE_AUTOPICKUP_RULES:
 	    show_autopickup_menu(option);
+	    return FALSE;
+	    
+	case OPTTYPE_MSGTYPE:
+	    show_msgtype_menu(option);
 	    return FALSE;
 	    
 	case OPTTYPE_KEYMAP:
@@ -811,6 +817,249 @@ static void show_autopickup_menu(struct nh_option_desc *opt)
     
     free(value.ar->rules);
     free(value.ar);
+    free(items);
+}
+
+/*----------------------------------------------------------------------------*/
+
+static void msgtype_help(void)
+{
+    struct nh_menuitem items[] = {
+	{0, MI_TEXT, "Message types allow you treat certain messages shown during"},
+	{0, MI_TEXT, "the game in different ways, like pausing for input with --More--,"},
+	{0, MI_TEXT, "collapsing repeated messages or even hiding messages entirely."},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, "Possible actions for a matched message:"},
+	{0, MI_TEXT, "    DEFAULT    treat the message as usual"},
+	{0, MI_TEXT, "    MORE       pauses with --More-- after this message"},
+	{0, MI_TEXT, "    NO REPEAT  hides repetitions of this message"},
+	{0, MI_TEXT, "    HIDE       stops this message from being shown at all"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, "Messages are matched in order by pattern:"},
+	{0, MI_TEXT, "    ?                    matches any one character"},
+	{0, MI_TEXT, "    *                    matches any number of characters"},
+	{0, MI_TEXT, "    any other character  matches itself"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, "Select an existing entry to edit, reorder or delete it."},
+    };
+    curses_display_menu(items, listlen(items), "Message types help:",
+			PICK_NONE, NULL);
+}
+
+static const char *msgtype_action_string(enum msgtype_action action)
+{
+    return action == MSGTYPE_DEFAULT ? "DEFAULT" :
+	   action == MSGTYPE_MORE ? "MORE" :
+	   action == MSGTYPE_NO_REPEAT ? "NO REPEAT" :
+	   action == MSGTYPE_HIDE ? "HIDE" : "(invalid)";
+}
+
+static enum msgtype_action get_msgtype_action(enum msgtype_action current)
+{
+    struct nh_menuitem items[] = {
+	{MSGTYPE_DEFAULT + 1,	MI_NORMAL, "DEFAULT", 'd'},
+	{MSGTYPE_MORE + 1,	MI_NORMAL, "MORE", 'm'},
+	{MSGTYPE_NO_REPEAT + 1,	MI_NORMAL, "NO REPEAT", 'r'},
+	{MSGTYPE_HIDE + 1,	MI_NORMAL, "HIDE", 'h'},
+    };
+    int n, selected[1];
+    char query[QBUFSZ];
+    sprintf(query, "Message type action: (currently %s)",
+	    msgtype_action_string(current));
+    n = curses_display_menu(items, listlen(items), query, PICK_ONE, selected);
+    if (n <= 0)
+	return current;
+    return selected[0] - 1;
+}
+
+static void msgtype_edit_rule(struct nh_msgtype_rules *mt_rules, int ruleno)
+{
+    struct nh_msgtype_rule *rule;
+    /* Menu variables. */
+    struct nh_menuitem *items;
+    int icount, menusize, selected[1], n;
+
+    rule = &mt_rules->rules[ruleno];
+
+    menusize = 5;
+    items = malloc(sizeof(struct nh_menuitem) * menusize);
+
+    do {
+	char buf[BUFSZ], query[BUFSZ];
+	int i;
+	icount = 0;
+
+	sprintf(buf, "Position:\t[%d]", ruleno + 1);
+	add_menu_item(items, menusize, icount, 1, buf, 0, 0);
+
+	sprintf(buf, "Action:\t[%s]", msgtype_action_string(rule->action));
+	add_menu_item(items, menusize, icount, 2, buf, 0, 0);
+
+	sprintf(buf, "Pattern:\t[%s]", rule->pattern);
+	add_menu_item(items, menusize, icount, 3, buf, 0, 0);
+
+	add_menu_txt(items, menusize, icount, "", MI_TEXT);
+	add_menu_item(items, menusize, icount, 4, "Delete this match", '!', 0);
+
+	n = curses_display_menu(items, icount, "Edit match:", PICK_ONE, selected);
+	if (n > 0) {
+	    switch (selected[0]) {
+	    case 1:	/* change position */
+		{
+		    int newpos;
+		    struct nh_msgtype_rule tmprule;
+
+		    sprintf(query, "New match position: (1 - %d, currently %d)",
+			    mt_rules->num_rules, ruleno + 1);
+		    buf[0] = '\0';
+		    curses_getline(query, buf);
+		    if (!*buf || *buf == '\033')
+			break;
+
+		    newpos = atoi(buf);
+		    if (newpos <= 0 || newpos > mt_rules->num_rules) {
+			curses_msgwin("Invalid match position.");
+			break;
+		    }
+
+		    newpos--;
+		    if (newpos == ruleno)
+			break;
+
+		    tmprule = mt_rules->rules[ruleno];
+		    /* Shuffle rules in-between. */
+		    if (newpos > ruleno) {
+			for (i = ruleno; i < newpos; i++)
+			    mt_rules->rules[i] = mt_rules->rules[i + 1];
+		    } else {
+			for (i = ruleno; i > newpos; i--)
+			    mt_rules->rules[i] = mt_rules->rules[i - 1];
+		    }
+		    mt_rules->rules[newpos] = tmprule;
+
+		    /* Exit menu do-while (n > 0) */
+		    n = 0;
+		}
+		break;
+
+	    case 2:	/* change action */
+		rule->action = get_msgtype_action(rule->action);
+		break;
+
+	    case 3:	/* change pattern */
+		snprintf(query, BUFSZ, "New match pattern: (currently \"%s\")",
+			 rule->pattern);
+		buf[0] = '\0';
+		curses_getline(query, buf);
+		if (*buf != '\033') {
+		    /* Replace the same chars as msgtype_to_string to reduce
+		     * player surprise when loading a game and viewing msgtypes. */
+		    for (i = 0; i < sizeof(buf); i++) {
+			if (buf[i] == '"' || buf[i] == '|' || buf[i] == ';')
+			    buf[i] = '?';
+		    }
+		    strncpy(rule->pattern, buf, sizeof(rule->pattern));
+		}
+		rule->pattern[sizeof(rule->pattern) - 1] = '\0';
+		break;
+
+	    case 4:	/* delete match */
+		/* Shuffle rules down. */
+		for (i = ruleno; i < mt_rules->num_rules - 1; i++)
+		    mt_rules->rules[i] = mt_rules->rules[i + 1];
+		mt_rules->num_rules--;
+		mt_rules->rules = realloc(mt_rules->rules, mt_rules->num_rules *
+					  sizeof(struct nh_msgtype_rule));
+		/* Exit menu do-while (n > 0) */
+		n = 0;
+		break;
+
+	    default:
+		curses_msgwin("Invalid msgtype match menu choice.");
+	    }
+	}
+    } while (n > 0);
+
+    free(items);
+}
+
+static void show_msgtype_menu(struct nh_option_desc *opt)
+{
+    /* msgtype option variables. */
+    union nh_optvalue value;
+    unsigned int size;
+    /* Menu variables. */
+    struct nh_menuitem *items;
+    int icount, menusize, selected[1], n;
+
+    /* Clone msgtype rules. */
+    value.mt = malloc(sizeof(struct nh_msgtype_rules));
+    if (opt->value.mt) {
+	value.mt->num_rules = opt->value.mt->num_rules;
+	size = value.mt->num_rules * sizeof(struct nh_msgtype_rule);
+	value.mt->rules = malloc(size);
+	memcpy(value.mt->rules, opt->value.mt->rules, size);
+    } else {
+	value.mt->num_rules = 0;
+	value.mt->rules = NULL;
+    }
+
+    menusize = value.mt->num_rules + 4;
+    items = malloc(sizeof(struct nh_menuitem) * menusize);
+
+    do {
+	int i, id;
+	icount = 0;
+
+	add_menu_txt(items, menusize, icount, "Pos\tAction\tPattern", MI_HEADING);
+
+	for (i = 0; i < value.mt->num_rules; i++) {
+	    /* position (3) + '.' (1) + '\t' (1) + pattern (119) + '\t' (1) +
+	     * "NO REPEAT" (9) + null (1) */
+	    char buf[134];
+	    struct nh_msgtype_rule *r = &value.mt->rules[i];
+	    sprintf(buf, "%2d.\t%s\t%s", i + 1, msgtype_action_string(r->action),
+		    r->pattern);
+	    add_menu_item(items, menusize, icount, i + 1, buf, 0, 0);
+	}
+
+	add_menu_txt(items, menusize, icount, "", MI_TEXT);
+	add_menu_item(items, menusize, icount, -1, "add new match", '+', 0);
+	add_menu_item(items, menusize, icount, -2, "help", '?', 0);
+
+	n = curses_display_menu(items, icount, "Message types:", PICK_ONE, selected);
+	if (n > 0) {
+	    id = selected[0];
+	    if (id == -2) {
+		msgtype_help();
+	    } else if (id == -1) {
+		/* add new match */
+		if (value.mt->num_rules >= MSGTYPE_MAX_RULES) {
+		    curses_msgwin("Maximum number of rules reached.");
+		} else {
+		    struct nh_msgtype_rule *r;
+		    id = value.mt->num_rules;
+
+		    value.mt->num_rules++;
+		    size = value.mt->num_rules * sizeof(struct nh_msgtype_rule);
+		    value.mt->rules = realloc(value.mt->rules, size);
+
+		    r = &value.mt->rules[id];
+		    r->pattern[0] = '\0';
+		    r->action = MSGTYPE_DEFAULT;
+		}
+	    } else {
+		/* edit existing match */
+		msgtype_edit_rule(value.mt, id - 1);
+	    }
+	}
+    } while (n > 0);
+
+    nh_set_option(opt->name, value, FALSE);
+
+    if (value.mt->rules)
+	free(value.mt->rules);
+    free(value.mt);
     free(items);
 }
 

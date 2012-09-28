@@ -27,11 +27,26 @@ void pline(const char * line, ...)
 	va_end(the_args);
 }
 
+static enum msgtype_action msgtype_match_line(const char *line)
+{
+	const struct nh_msgtype_rules *mtrs = iflags.mt_rules;
+	if (mtrs) {
+	    int i;
+	    for (i = 0; i < mtrs->num_rules; i++) {
+		const struct nh_msgtype_rule *r = &mtrs->rules[i];
+		if (pmatch(r->pattern, line))
+		    return r->action;
+	    }
+	}
+	return MSGTYPE_DEFAULT;
+}
+
 static void vpline(const char *line, va_list the_args)
 {
 	char pbuf[BUFSZ];
 	boolean repeated;
 	int lastline;
+	enum msgtype_action mtact;
 
 	lastline = curline - 1;
 	if (lastline < 0)
@@ -42,9 +57,14 @@ static void vpline(const char *line, va_list the_args)
 	    vsprintf(pbuf,line,the_args);
 	    line = pbuf;
 	}
+
+	mtact = msgtype_match_line(line);
+	if (mtact == MSGTYPE_HIDE) return;
+
 	repeated = !strcmp(line, toplines[lastline]);
-	if (no_repeat && repeated)
+	if (repeated && (no_repeat || mtact == MSGTYPE_NO_REPEAT))
 	    return;
+
 	if (vision_full_recalc)
 	    vision_recalc(0);
 	if (u.ux)
@@ -59,6 +79,8 @@ static void vpline(const char *line, va_list the_args)
 	    curline %= MSGCOUNT;
 	}
 	print_message(moves, line);
+	if (mtact == MSGTYPE_MORE)
+	    win_pause_output(P_MESSAGE);	/* --more-- */
 }
 
 /*VARARGS1*/

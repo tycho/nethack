@@ -753,6 +753,13 @@ void freedynamicdata(void)
 	    free(iflags.ap_rules);
 	}
 	iflags.ap_rules = NULL;
+	if (iflags.mt_rules) {
+	    free(iflags.mt_rules->rules);
+	    iflags.mt_rules->rules = NULL;
+	    free(iflags.mt_rules);
+	    iflags.mt_rules = NULL;
+	}
+
 	free(artilist);
 	free(objects);
 	objects = NULL;

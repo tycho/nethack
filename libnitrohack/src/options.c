@@ -9,12 +9,17 @@
 static int change_inv_order(char *op);
 static boolean change_spell_order(const char *op, boolean checkonly);
 static struct nh_autopickup_rules *copy_autopickup_rules(const struct nh_autopickup_rules *in);
+static struct nh_msgtype_rules *copy_msgtype_rules(const struct nh_msgtype_rules *in);
 
 /* -------------------------------------------------------------------------- */
 
 /* output array for parse_autopickup_rules. */
 static struct nh_autopickup_rule ap_rules_array[AUTOPICKUP_MAX_RULES];
 static struct nh_autopickup_rules ap_rules_static;
+
+/* Output for parse_msgtype_rules. */
+static struct nh_msgtype_rule mt_rules_array[MSGTYPE_MAX_RULES];
+static struct nh_msgtype_rules mt_rules_static;
 
 #define listlen(list) (sizeof(list)/sizeof(list[0]))
 
@@ -128,6 +133,7 @@ static const struct nh_option_desc const_options[] = {
     {"fruit",		"the name of a fruit you enjoy eating", OPTTYPE_STRING, {"slime mold"}},
     {"lit_corridor",	"show a dark corridor as lit if in sight",	OPTTYPE_BOOL, { VTRUE }},
     {"menustyle",	"user interface for object selection", OPTTYPE_ENUM, {(void*)MENU_FULL}},
+    {"msgtype",		"--More--, hide or hide repeated messages by pattern", OPTTYPE_MSGTYPE, {0}},
     {"packorder",	"the inventory order of the items in your pack", OPTTYPE_STRING, {"$\")[%?+!=/(*`0_"}},
     {"paranoid_chat",	"always ask for direction when chatting",	OPTTYPE_BOOL, { VFALSE }},
     {"paranoid_hit",	"ask for 'yes' instead of 'y' when hitting peaceful monsters",	OPTTYPE_BOOL, { VTRUE }},
@@ -441,6 +447,11 @@ static boolean option_value_ok(struct nh_option_desc *option,
 		if (value.ar && value.ar->num_rules > AUTOPICKUP_MAX_RULES)
 		    break;
 		return TRUE;
+		
+	    case OPTTYPE_MSGTYPE:
+		if (value.mt && value.mt->num_rules > MSGTYPE_MAX_RULES)
+		    break;
+		return TRUE;
 	}
 	
 	return FALSE;
@@ -484,6 +495,10 @@ static union nh_optvalue string_to_optvalue(struct nh_option_desc *option, char 
 	    case OPTTYPE_AUTOPICKUP_RULES:
 		value.ar = parse_autopickup_rules(str);
 		break;
+		
+	    case OPTTYPE_MSGTYPE:
+		value.mt = parse_msgtype_rules(str);
+		break;
 	}
 	
 	return value;
@@ -495,6 +510,7 @@ static union nh_optvalue string_to_optvalue(struct nh_option_desc *option, char 
 static boolean copy_option_value(struct nh_option_desc *option, union nh_optvalue value)
 {
 	struct nh_autopickup_rules *aold, *anew;
+	struct nh_msgtype_rules *mold, *mnew;
 	int i;
     
 	switch (option->type) {
@@ -538,6 +554,32 @@ static boolean copy_option_value(struct nh_option_desc *option, union nh_optvalu
 		}
 		
 		option->value.ar = copy_autopickup_rules(value.ar);
+		break;
+		
+	    case OPTTYPE_MSGTYPE:
+		mold = option->value.mt;
+		mnew = value.mt;
+		
+		if (!mold && !mnew)
+		    return FALSE;
+		
+		/* Check equality. */
+		if (mold && mnew && mold->num_rules == mnew->num_rules) {
+		    for (i = 0; i < mold->num_rules; i++) {
+			if (strcmp(mold->rules[i].pattern, mnew->rules[i].pattern) ||
+			    mold->rules[i].action != mnew->rules[i].action)
+			    break;
+		    }
+		    if (i == mold->num_rules)
+			return FALSE;
+		}
+		
+		if (mold) {
+		    free(mold->rules);
+		    free(mold);
+		}
+		
+		option->value.mt = copy_msgtype_rules(value.mt);
 		break;
 		
 	    case OPTTYPE_BOOL:
@@ -656,6 +698,14 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 		}
 		iflags.ap_rules = copy_autopickup_rules(option->value.ar);
 	}
+	else if (!strcmp("msgtype", option->name)) {
+		if (iflags.mt_rules) {
+		    free(iflags.mt_rules->rules);
+		    free(iflags.mt_rules);
+		    iflags.mt_rules = NULL;
+		}
+		iflags.mt_rules = copy_msgtype_rules(option->value.mt);
+	}
 	/* birth options */
 	else if (!strcmp("align", option->name)) {
 		flags.init_align = option->value.e;
@@ -766,6 +816,11 @@ const char *nh_get_option_string(const struct nh_option_desc *option)
 	    valstr = autopickup_to_string(option->value.ar);
 	    break;
 	    
+	case OPTTYPE_MSGTYPE:
+	    freestr = TRUE;
+	    valstr = msgtype_to_string(option->value.mt);
+	    break;
+	    
 	default: /* custom option type defined by the client? */
 	    return NULL;
     }
@@ -795,6 +850,8 @@ struct nh_option_desc *clone_optlist(const struct nh_option_desc *in)
 		out[i].value.s = strdup(in[i].value.s);
 	    else if (in[i].type == OPTTYPE_AUTOPICKUP_RULES && in[i].value.ar)
 		out[i].value.ar = copy_autopickup_rules(in[i].value.ar);
+	    else if (in[i].type == OPTTYPE_MSGTYPE && in[i].value.mt)
+		out[i].value.mt = copy_msgtype_rules(in[i].value.mt);
 	}
 	
 	return out;
@@ -814,6 +871,9 @@ void free_optlist(struct nh_option_desc *opt)
 	    else if (opt[i].type == OPTTYPE_AUTOPICKUP_RULES && opt[i].value.ar) {
 		free(opt[i].value.ar->rules);
 		free(opt[i].value.ar);
+	    } else if (opt[i].type == OPTTYPE_MSGTYPE && opt[i].value.mt) {
+		free(opt[i].value.mt->rules);
+		free(opt[i].value.mt);
 	    }
 	}
 	
@@ -1126,6 +1186,111 @@ struct nh_autopickup_rules *parse_autopickup_rules(const char *str)
     }
     
     free(copy);
+    return out;
+}
+
+
+static struct nh_msgtype_rules *copy_msgtype_rules(const struct nh_msgtype_rules *in)
+{
+    struct nh_msgtype_rules *out;
+    unsigned int size;
+
+    if (!in || !in->num_rules)
+	return NULL;
+
+    out = malloc(sizeof(struct nh_msgtype_rules));
+    if (!out)
+	return NULL;
+
+    out->num_rules = in->num_rules;
+    size = out->num_rules * sizeof(struct nh_msgtype_rule);
+    out->rules = malloc(size);
+    if (!out->rules) {
+	free(out);
+	return NULL;
+    }
+    memcpy(out->rules, in->rules, size);
+
+    return out;
+}
+
+
+char *msgtype_to_string(const struct nh_msgtype_rules *mt)
+{
+    unsigned int size;
+    int i;
+    char *buf, *bp, pattern[120];
+
+    if (!mt || mt->num_rules == 0) {
+	buf = strdup("");
+	return buf;
+    }
+
+    /* 120 char pattern + 1-digit number + () + "" + , + ; < 128 chars */
+    size = 128 * mt->num_rules;
+    buf = malloc(size);
+    if (!buf)
+	return NULL;
+    buf[0] = '\0';
+
+    for (i = 0; i < mt->num_rules; i++) {
+	strncpy(pattern, mt->rules[i].pattern, sizeof(pattern));
+	pattern[sizeof(pattern) - 1] = '\0';
+
+	/* replace '"' and '|' and ';' with '?' to simplify parsing */
+	for (bp = pattern; *bp; bp++) {
+	    if (*bp == '"' || *bp == '|' || *bp == ';')
+		*bp = '?';
+	}
+
+	snprintf(eos(buf), 128, "(\"%s\"|%u);", pattern, mt->rules[i].action);
+    }
+
+    return buf;
+}
+
+
+struct nh_msgtype_rules *parse_msgtype_rules(const char *str)
+{
+    struct nh_msgtype_rules *out;
+    char *semi, *copy;
+    const char *start;
+    int i, rcount;
+
+    if (!str || !*str)
+	return NULL;
+
+    /* Count number of rules based on number of semicolons. */
+    rcount = 0;
+    start = str;
+    while ((semi = strchr(start, ';'))) {
+	rcount++;
+	start = semi + 1;
+    }
+    if (rcount == 0)
+	return NULL;
+
+    out = &mt_rules_static;
+    out->num_rules = rcount;
+    out->rules = mt_rules_array;
+
+    /* Parse the rules. */
+    copy = strdup(str);
+    start = copy;
+    for (i = 0; i < rcount && (semi = strchr(start, ';')); i++) {
+	/* Big enough for the pattern, extra " and null terminator. */
+	char pattern[121];
+
+	*semi = '\0';
+	sscanf(start, "(\"%120[^|]|%u)", pattern, &out->rules[i].action);
+	/* Remove extra " at the end of the %[ match. */
+	pattern[strlen(pattern) - 1] = '\0';
+	strcpy(out->rules[i].pattern, pattern);
+
+	start = semi + 1;
+    }
+    free(copy);
+
     return out;
 }
 

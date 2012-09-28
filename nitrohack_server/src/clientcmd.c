@@ -708,6 +708,19 @@ static json_t *json_option(const struct nh_option_desc *option)
 		json_array_append_new(joptval, jobj);
 	    }
 	    break;
+	    
+	case OPTTYPE_MSGTYPE:
+	    jobjdesc = json_object();
+	    joptval = json_array();
+	    if (option->value.mt) {
+		for (i = 0; i < option->value.mt->num_rules; i++) {
+		    struct nh_msgtype_rule *mtr = &option->value.mt->rules[i];
+		    jobj = json_pack("{ss,si}", "pattern", mtr->pattern, "action",
+				     mtr->action);
+		    json_array_append_new(joptval, jobj);
+		}
+	    }
+	    break;
     }
     
     jopt = json_pack("{ss,ss,si,so,so}", "name", option->name, "helptxt",
@@ -726,6 +739,7 @@ static void ccmd_set_option(json_t *params)
     union nh_optvalue value;
     struct nh_autopickup_rules ar = {NULL, 0};
     struct nh_autopickup_rule *r;
+    struct nh_msgtype_rules mtrs = {NULL, 0};
     
     if (json_unpack(params, "{ss,so,si*}", "name", &optname, "value", &joval,
 	"isstr", &isstr) == -1)
@@ -772,12 +786,38 @@ static void ccmd_set_option(json_t *params)
 	    }
 	} else
 	    value.ar = NULL;
+    
+    } else if (option->type == OPTTYPE_MSGTYPE) {
+	if (!json_is_array(joval))
+	    exit_client("could not decode msgtype option");
+
+	mtrs.num_rules = json_array_size(joval);
+	if (mtrs.num_rules > MSGTYPE_MAX_RULES)
+	    mtrs.num_rules = MSGTYPE_MAX_RULES;
+	mtrs.rules = malloc(sizeof(struct nh_msgtype_rule) * mtrs.num_rules);
+	if (mtrs.num_rules > 0) {
+	    value.mt = &mtrs;
+	    for (i = 0; i < mtrs.num_rules; i++) {
+		struct nh_msgtype_rule *mtr = &mtrs.rules[i];
+		if (json_unpack(json_array_get(joval, i), "{ss,si}",
+				"pattern", &pattern, "action", mtr->action) == -1)
+		    exit_client("Error unpacking msgtype rule");
+		strncpy(mtr->pattern, pattern, sizeof(mtr->pattern));
+		mtr->pattern[sizeof(mtr->pattern) - 1] = '\0';
+	    }
+	} else {
+	    value.mt = NULL;
+	}
     }
     
     ret = nh_set_option(optname, value, isstr);
     
     if (option->type == OPTTYPE_AUTOPICKUP_RULES)
 	free(ar.rules);
+    else if (option->type == OPTTYPE_MSGTYPE) {
+	if (mtrs.rules)
+	    free(mtrs.rules);
+    }
     
     gameopt = nh_get_options(GAME_OPTIONS);
     birthopt = nh_get_options(gameid ? ACTIVE_BIRTH_OPTIONS : CURRENT_BIRTH_OPTIONS);
