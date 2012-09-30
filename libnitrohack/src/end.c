@@ -33,7 +33,7 @@ static long calc_score(int how);
 static void list_vanquished(char,boolean);
 static void list_genocided(char,boolean);
 static boolean should_query_disclose_options(char *defquery);
-static void container_contents(struct obj *,boolean,boolean);
+static void container_contents(struct obj *,boolean);
 
 #define done_stopprint program_state.stopprint
 
@@ -212,14 +212,8 @@ static void disclose(int how, boolean taken)
 	    if (!done_stopprint) {
 		c = ask ? yn_function(qbuf, ynqchars, defquery) : defquery;
 		if (c == 'y') {
-			struct obj *obj;
-
-			for (obj = invent; obj; obj = obj->nobj) {
-			    makeknown(obj->otyp);
-			    obj->known = obj->bknown = obj->dknown = obj->rknown = 1;
-			}
-			display_inventory(NULL, TRUE);
-			container_contents(invent, TRUE, TRUE);
+		    display_inventory(NULL, TRUE);
+		    container_contents(invent, TRUE);
 		}
 		if (c == 'q')  done_stopprint++;
 	    }
@@ -252,19 +246,12 @@ static void disclose(int how, boolean taken)
 /* like disclose, but don't ask any questions */
 static void dump_disclose(int how)
 {
-	struct obj *obj;
-
 	/* temporarily redirect menu window output into the dumpfile */
 	dump_catch_menus(TRUE);
 	
 	/* re-"display" all the disclosure menus */
-	/* make sure the inventory is fully identified, even if DYWYPI = n */
-	for (obj = invent; obj; obj = obj->nobj) {
-	    makeknown(obj->otyp);
-	    obj->known = obj->bknown = obj->dknown = obj->rknown = 1;
-	}
 	display_inventory(NULL, TRUE);
-	container_contents(invent, TRUE, TRUE);
+	container_contents(invent, TRUE);
 	dump_spells();
 	dump_skills();
 	enlightenment(how >= PANICKED ? 1 : 2); /* final */
@@ -823,8 +810,7 @@ void done(int how)
 }
 
 
-static void container_contents(struct obj *list,
-			boolean identified, boolean all_containers)
+static void container_contents(struct obj *list, boolean all_containers)
 {
 	struct obj *box, *obj;
 	char buf[BUFSZ];
@@ -833,6 +819,8 @@ static void container_contents(struct obj *list,
 	struct obj **objlist;
 
 	for (box = list; box; box = box->nobj) {
+	    unsigned saveknown = objects[box->otyp].oc_name_known;
+	    objects[box->otyp].oc_name_known = 1;
 	    if (Is_container(box) || box->otyp == STATUE) {
 		if (box->otyp == BAG_OF_TRICKS && box->spe) {
 		    continue;	/* charged bag of tricks can't contain anything */
@@ -845,10 +833,6 @@ static void container_contents(struct obj *list,
 		    /* add the objects to a list */
 		    icount = 0;
 		    for (obj = box->cobj; obj; obj = obj->nobj) {
-			if (identified) {
-			    makeknown(obj->otyp);
-			    obj->known = obj->bknown = obj->dknown = obj->rknown = 1;
-			}
 			objlist[icount++] = obj;
 		    }
 		    
@@ -864,12 +848,13 @@ static void container_contents(struct obj *list,
 		    sprintf(buf, "Contents of %s:", the(xname(box)));
 		    display_objects(items, icount, buf, PICK_NONE, NULL);
 		    if (all_containers)
-			container_contents(box->cobj, identified, TRUE);
+			container_contents(box->cobj, TRUE);
 		} else {
 		    pline("%s empty.", Tobjnam(box, "are"));
 		    win_pause_output(P_MESSAGE);
 		}
 	    }
+	    objects[box->otyp].oc_name_known = saveknown;
 	    if (!all_containers)
 		break;
 	}

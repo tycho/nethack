@@ -928,7 +928,7 @@ extern void add_to_migration(struct obj *);
 extern void add_to_buried(struct obj *obj);
 extern void dealloc_obj(struct obj *);
 extern void obj_ice_effects(int, int, boolean);
-extern long peek_at_iced_corpse_age(struct obj *);
+extern long peek_at_iced_corpse_age(const struct obj *);
 extern void set_obj_level(struct level *lev, struct obj *obj);
 extern struct obj *restore_obj(struct memfile *mf);
 extern void save_obj(struct memfile *mf, struct obj *obj);

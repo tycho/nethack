@@ -1070,7 +1070,7 @@ void obj_ice_effects(int x, int y, boolean do_buried)
  * rot timers pertaining to the object don't have to be stopped and
  * restarted etc.
  */
-long peek_at_iced_corpse_age(struct obj *otmp)
+long peek_at_iced_corpse_age(const struct obj *otmp)
 {
     long age, retval = otmp->age;
     

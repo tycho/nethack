@@ -367,6 +367,8 @@ void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role
 	strcpy(it->caption, caption);
 	
 	if (role == MI_NORMAL && obj) {
+	    boolean dump_ID_flag = program_state.gameover;
+	    
 	    ocl = &objects[obj->otyp];
 	    
 	    it->count = obj->quan;
@@ -382,7 +384,7 @@ void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role
 		(obj->where == OBJ_CONTAINED && obj->ocontainer->where == OBJ_INVENT))
 		it->weight = obj->owt;
 	
-	    if (!obj->bknown)
+	    if (!obj->bknown && !dump_ID_flag)
 		it->buc = B_UNKNOWN;
 	    else if (obj->blessed)
 		it->buc = B_BLESSED;
