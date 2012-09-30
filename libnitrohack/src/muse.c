@@ -110,7 +110,9 @@ static int precheck(struct monst *mon, struct obj *obj, struct musable *m)
 		return 2;
 	    }
 	}
-	if (obj->oclass == WAND_CLASS && obj->cursed && !rn2(100)) {
+	/* Same probability for blowing up a cursed wand as in dozap()
+	 * for the player. */
+	if (obj->oclass == WAND_CLASS && obj->cursed && !rn2(30)) {
 	    int dam = dice(obj->spe+2, 6);
 
 	    if (flags.soundok) {
