@@ -1007,6 +1007,11 @@ static void list_genocided(char defquery, boolean ask)
 		    add_menutext(&menu, buf);
 		}
 
+	    if (nextincted > 0 && aprilfoolsday()) {
+		add_menutext(&menu, "ammonites (extinct)");
+		nextincted++;
+	    }
+
 	    add_menutext(&menu, "");
 	    sprintf(buf, "%d species genocided.", ngenocided);
 	    if (ngenocided)

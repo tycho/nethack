@@ -615,6 +615,7 @@ extern int phase_of_the_moon(void);
 extern boolean friday_13th(void);
 extern boolean towelday(void);
 extern boolean piday(void);
+extern boolean aprilfoolsday(void);
 extern int night(void);
 extern int midnight(void);
 extern unsigned int get_seedval(void);
