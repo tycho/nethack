@@ -406,8 +406,8 @@ void undiscover_object(int oindx)
 
 	/* clear last slot */
 	if (found) disco[dindx-1] = 0;
-	else impossible("named object \"%s\" (%d) not in disco",
-			OBJ_NAME(objects[oindx]), oindx);
+	else warning("named object \"%s\" (index: %d; base: %d; end: %d) not in disco",
+		     OBJ_NAME(objects[oindx]), oindx, bases[acls], dindx);
 
 	update_inventory();
     }
