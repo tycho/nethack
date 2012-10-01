@@ -152,6 +152,7 @@ struct instance_flags {
 	boolean  travel1;	/* first travel step */
 	coord    travelcc;	/* coordinates for travel_cache */
 	boolean  mon_polycontrol;	/* debug: control monster polymorphs */
+	boolean  autodigdown;	/* autodigging down tries to create a pit/hole */
 
 	boolean paranoid_hit;	/* Ask for 'yes' when hitting peacefuls */
 	boolean paranoid_quit;	/* Ask for 'yes' when quitting */

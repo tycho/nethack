@@ -124,6 +124,7 @@ static const struct nh_autopickup_rules def_autopickup = {def_ap_ruleset, SIZE(d
 
 static const struct nh_option_desc const_options[] = {
     {"autodig",		"dig if moving and wielding digging tool",	OPTTYPE_BOOL, { VFALSE }},
+    {"autodigdown",	"autodig downwards tries to create a pit or hole",	OPTTYPE_BOOL, { VFALSE }},
     {"autopickup",	"automatically pick up objects you move over",	OPTTYPE_BOOL, { VTRUE }},
     {"autopickup_rules", "rules to decide what to autopickup if autopickup is on", OPTTYPE_AUTOPICKUP_RULES, {(void*)&def_autopickup}},
     {"autoquiver",	"when firing with an empty quiver, select something suitable",	OPTTYPE_BOOL, { VFALSE }},
@@ -192,6 +193,7 @@ static const struct nh_option_desc const_birth_options[] = {
 /* associate boolean options with variables directly */
 static const struct nh_boolopt_map boolopt_map[] = {
 	{"autodig", &flags.autodig},
+	{"autodigdown", &iflags.autodigdown},
 	{"autopickup", &flags.pickup},
 	{"autoquiver", &flags.autoquiver},
 	{"confirm",&flags.confirm},
