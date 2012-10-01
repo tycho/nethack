@@ -551,6 +551,7 @@ extern boolean may_passwall(struct level *lev, xchar x, xchar y);
 extern boolean bad_rock(const struct permonst *,xchar,xchar);
 extern boolean invocation_pos(const d_level *dlev, xchar x, xchar y);
 extern boolean test_move(int, int, int, int, int, int);
+extern boolean try_escape_trap(xchar x, xchar y, schar dx, schar dy);
 extern int domove(schar dx, schar dy, schar dz);
 extern void invocation_message(void);
 extern void spoteffects(boolean);

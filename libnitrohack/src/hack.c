@@ -1248,6 +1248,120 @@ static boolean interesting_to_explore(int x, int y)
 	return TRUE;
 }
 
+/* Attempt to escape a trap if stuck in one.
+ * Return TRUE if player is stuck in a trap and thus spent time
+ * trying to escape.
+ */
+boolean try_escape_trap(xchar x, xchar y, schar dx, schar dy)
+{
+	const char *predicament;
+
+	if (!u.utrap)
+	    return FALSE;
+
+	if (u.utraptype == TT_PIT) {
+	    if (!rn2(2) && sobj_at(BOULDER, level, u.ux, u.uy)) {
+		pline("Your %s gets stuck in a crevice.", body_part(LEG));
+		win_pause_output(P_MESSAGE);
+		pline("You free your %s.", body_part(LEG));
+	    } else if (!(--u.utrap)) {
+		pline("You %s to the edge of the pit.",
+			(In_sokoban(&u.uz) && Levitation) ?
+			"struggle against the air currents and float" :
+			u.usteed ? "ride" : "crawl");
+		fill_pit(level, u.ux, u.uy);
+		vision_full_recalc = 1;	/* vision limits change */
+	    } else if (flags.verbose) {
+		if (u.usteed)
+		    Norep("%s is still in a pit.", upstart(y_monnam(u.usteed)));
+		else
+		    Norep((Hallucination && !rn2(5)) ?
+			  "You've fallen, and you can't get up." :
+			  "You are still in a pit.");
+	    }
+	} else if (u.utraptype == TT_LAVA) {
+	    if (flags.verbose) {
+		predicament = "stuck in the lava";
+		if (u.usteed)
+		    Norep("%s is %s.", upstart(y_monnam(u.usteed)), predicament);
+		else
+		    Norep("You are %s.", predicament);
+	    }
+	    if (!is_lava(level, x,y)) {
+		u.utrap--;
+		if ((u.utrap & 0xff) == 0) {
+		    if (u.usteed)
+			pline("You lead %s to the edge of the lava.",
+			    y_monnam(u.usteed));
+		    else
+			pline("You pull yourself to the edge of the lava.");
+		    u.utrap = 0;
+		}
+	    }
+	    u.umoved = TRUE;
+	} else if (u.utraptype == TT_WEB) {
+	    if (uwep && uwep->oartifact == ART_STING) {
+		u.utrap = 0;
+		pline("Sting cuts through the web!");
+		return 1;
+	    }
+	    if (--u.utrap) {
+		if (flags.verbose) {
+		    predicament = "stuck to the web";
+		    if (u.usteed)
+			Norep("%s is %s.", upstart(y_monnam(u.usteed)),
+			      predicament);
+		    else
+			Norep("You are %s.", predicament);
+		}
+	    } else {
+		if (u.usteed)
+		    pline("%s breaks out of the web.",
+			  upstart(y_monnam(u.usteed)));
+		else
+			pline("You disentangle yourself.");
+	    }
+	} else if (u.utraptype == TT_INFLOOR) {
+	    if (--u.utrap) {
+		if (flags.verbose) {
+		    predicament = "stuck in the";
+		    if (u.usteed)
+			Norep("%s is %s %s.",
+			      upstart(y_monnam(u.usteed)),
+			      predicament, surface(u.ux, u.uy));
+		    else
+			Norep("You are %s %s.", predicament, surface(u.ux, u.uy));
+		}
+	    } else {
+		if (u.usteed)
+		    pline("%s finally wiggles free.", upstart(y_monnam(u.usteed)));
+		else
+		    pline("You finally wiggle free.");
+	    }
+	} else {
+	    if (flags.verbose) {
+		predicament = "caught in a bear trap";
+		if (u.usteed)
+		    Norep("%s is %s.", upstart(y_monnam(u.usteed)), predicament);
+		else
+		    Norep("You are %s.", predicament);
+	    }
+	    /* Favor escaping diagonally. */
+	    if ((dx && dy) || !rn2(5)) {
+		u.utrap--;
+		if (!u.utrap) {
+		    if (u.usteed)
+			pline("%s escapes the bear trap.",
+			      upstart(y_monnam(u.usteed)));
+		    else
+			pline("You escape the bear trap.");
+		}
+	    }
+	}
+
+	return TRUE;
+}
+
 int domove(schar dx, schar dy, schar dz)
 {
 	struct monst *mtmp;
@@ -1259,7 +1373,6 @@ int domove(schar dx, schar dy, schar dz)
 	xchar chainx, chainy, ballx, bally;	/* ball&chain new positions */
 	int bc_control;				/* control for ball&chain */
 	boolean cause_delay = FALSE;	/* dragging ball will skip a move */
-	const char *predicament;
 	boolean was_running = FALSE;	/* for paranoid_trap prompt */
 	
 	if (dz) {
@@ -1593,103 +1706,8 @@ int domove(schar dx, schar dy, schar dz)
 		nomul(0, NULL);
 		return 1;
 	}
-	if (u.utrap) {
-		if (u.utraptype == TT_PIT) {
-		    if (!rn2(2) && sobj_at(BOULDER, level, u.ux, u.uy)) {
-			pline("Your %s gets stuck in a crevice.", body_part(LEG));
-			win_pause_output(P_MESSAGE);
-			pline("You free your %s.", body_part(LEG));
-		    } else if (!(--u.utrap)) {
-			pline("You %s to the edge of the pit.",
-				(In_sokoban(&u.uz) && Levitation) ?
-				"struggle against the air currents and float" :
-				u.usteed ? "ride" : "crawl");
-			fill_pit(level, u.ux, u.uy);
-			vision_full_recalc = 1;	/* vision limits change */
-		    } else if (flags.verbose) {
-			if (u.usteed)
-			    Norep("%s is still in a pit.",
-				  upstart(y_monnam(u.usteed)));
-			else
-				Norep( (Hallucination && !rn2(5)) ?
-				"You've fallen, and you can't get up." :
-				"You are still in a pit." );
-		    }
-		} else if (u.utraptype == TT_LAVA) {
-		    if (flags.verbose) {
-			predicament = "stuck in the lava";
-			if (u.usteed)
-			    Norep("%s is %s.", upstart(y_monnam(u.usteed)),
-				  predicament);
-			else
-			    Norep("You are %s.", predicament);
-		    }
-		    if (!is_lava(level, x,y)) {
-			u.utrap--;
-			if ((u.utrap & 0xff) == 0) {
-			    if (u.usteed)
-				pline("You lead %s to the edge of the lava.",
-				    y_monnam(u.usteed));
-			    else
-				pline("You pull yourself to the edge of the lava.");
-			    u.utrap = 0;
-			}
-		    }
-		    u.umoved = TRUE;
-		} else if (u.utraptype == TT_WEB) {
-		    if (uwep && uwep->oartifact == ART_STING) {
-			u.utrap = 0;
-			pline("Sting cuts through the web!");
-			return 1;
-		    }
-		    if (--u.utrap) {
-			if (flags.verbose) {
-			    predicament = "stuck to the web";
-			    if (u.usteed)
-				Norep("%s is %s.", upstart(y_monnam(u.usteed)),
-				      predicament);
-			    else
-				Norep("You are %s.", predicament);
-			}
-		    } else {
-			if (u.usteed)
-			    pline("%s breaks out of the web.",
-				  upstart(y_monnam(u.usteed)));
-			else
-				pline("You disentangle yourself.");
-		    }
-		} else if (u.utraptype == TT_INFLOOR) {
-		    if (--u.utrap) {
-			if (flags.verbose) {
-			    predicament = "stuck in the";
-			    if (u.usteed)
-				Norep("%s is %s %s.",
-				      upstart(y_monnam(u.usteed)),
-				      predicament, surface(u.ux, u.uy));
-			    else
-				Norep("You are %s %s.", predicament,
-				  surface(u.ux, u.uy));
-			}
-		    } else {
-			if (u.usteed)
-			    pline("%s finally wiggles free.",
-				  upstart(y_monnam(u.usteed)));
-			else
-				pline("You finally wiggle free.");
-		    }
-		} else {
-		    if (flags.verbose) {
-			predicament = "caught in a bear trap";
-			if (u.usteed)
-			    Norep("%s is %s.", upstart(y_monnam(u.usteed)),
-				  predicament);
-			else
-				Norep("You are %s.", predicament);
-		    }
-		    if ((dx && dy) || !rn2(5)) u.utrap--;
-		}
+	if (try_escape_trap(x, y, dx, dy))
 		return 1;
-	}
 
 	/* warn player before walking into known traps */
 	if (iflags.paranoid_trap &&

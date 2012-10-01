@@ -865,6 +865,8 @@ int doup(void)
 	     && (!level->sstairs.sx || u.ux != level->sstairs.sx || u.uy != level->sstairs.sy
 			|| !level->sstairs.up)
 	  ) {
+		if (try_escape_trap(u.ux, u.uy, 0, 0))
+			return 1;
 		pline("You can't go up here.");
 		return 0;
 	}
