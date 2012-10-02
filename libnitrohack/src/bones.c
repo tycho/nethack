@@ -16,14 +16,18 @@ static void drop_upon_death(struct monst *, struct obj *);
 static char *make_bones_id(char *buf, d_level *dlev)
 {
 	s_level *sptr;
-	
+
 	sprintf(buf, "%c%s", dungeons[dlev->dnum].boneid,
 			In_quest(dlev) ? urole.filecode : "0");
 	if ((sptr = Is_special(dlev)) != 0)
 	    sprintf(buf+2, ".%c", sptr->boneid);
 	else
 	    sprintf(buf+2, ".%d", dlev->dlevel);
-	
+
+	/* Simple bones pool by adding a number to the bones filename.
+	 * The number must stay the same for the current game. */
+	sprintf(eos(buf), ".%ld", u.ubirthday % 5);
+
 	return buf;
 }
 
