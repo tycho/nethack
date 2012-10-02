@@ -2485,7 +2485,7 @@ void lookaround(void)
 		    mtmp->m_ap_type != M_AP_OBJECT &&
 		    (!mtmp->minvis || See_invisible) && !mtmp->mundetected) {
 	    if ((flags.run != 1 && !mtmp->mtame) ||
-		(x == u.ux+u.dx && y == u.uy+u.dy))
+		(x == u.ux+u.dx && y == u.uy+u.dy && (flags.run != 8 || !mtmp->mtame)))
 		goto stop;
 	}
 
