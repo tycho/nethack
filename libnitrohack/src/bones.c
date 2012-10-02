@@ -272,6 +272,11 @@ make_bones:
 		drop_upon_death(NULL, otmp);
 		if (!otmp) return;	/* couldn't make statue */
 		mtmp = NULL;
+	} else if (Race_if(PM_VAMPIRE)) {
+		/* don't let vampires rise as some other monster */
+		drop_upon_death(NULL, NULL);
+		mtmp = NULL;
+		u.ugrave_arise = NON_PM;
 	} else if (u.ugrave_arise < LOW_PM) {
 		/* drop everything */
 		drop_upon_death(NULL, NULL);
