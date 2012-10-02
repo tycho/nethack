@@ -1942,6 +1942,9 @@ static const struct alt_spellings {
 	{ "eucalyptus", EUCALYPTUS_LEAF },
 	{ "grapple", GRAPPLING_HOOK },
 	{ "helmet of opposite alignment", HELM_OF_OPPOSITE_ALIGNMENT },
+	{ "crystall ball", CRYSTAL_BALL },
+	{ "crystall orb", CRYSTAL_BALL },
+	{ "crystal orb", CRYSTAL_BALL },
 	{ NULL, 0 },
 };
 
