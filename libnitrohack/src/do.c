@@ -244,6 +244,36 @@ void doaltarobj(struct obj *obj)  /* obj is an object dropped on an altar */
 			otense(obj, "land"));
 		obj->bknown = 1;
 	}
+
+	/* Also BUC one level deep inside containers. */
+	if (Has_contents(obj)) {
+	    struct obj *otmp, *otmp2, *otmp_nobj;
+	    int buccount = 0;
+	    for (otmp = obj->cobj; otmp; ) {
+		/* Ensure next otmp in case otmp is merged
+		 * and thus freed and unusable. */
+		otmp_nobj = otmp->nobj;
+		if (otmp->blessed || otmp->cursed)
+		    buccount++;
+		if (!Hallucination) {
+		    otmp->bknown = 1;
+		    /* Merge obj with a contained object if possible,
+		     * so objects of the same BUC but different BUC-known state
+		     * don't form separate stacks in the container. */
+		    for (otmp2 = obj->cobj; otmp2; otmp2 = otmp2->nobj)
+			if (otmp2 != otmp && merged(&otmp2, &otmp))
+			    break;
+		}
+		otmp = otmp_nobj;
+	    }
+	    if (buccount == 1) {
+		pline("Looking inside %s, you see a colored flash.",
+		      the(xname(obj)));
+	    } else if (buccount > 1) {
+		pline("Looking inside %s, you see colored flashes.",
+		      the(xname(obj)));
+	    }
+	}
 }
 
 static void trycall(struct obj *obj)
