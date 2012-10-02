@@ -2232,6 +2232,11 @@ boolean cancel_monst(struct monst *mdef, struct obj *obj, boolean youattack,
 				"Some writing vanishes from %s head!";
 	static const char your[] = "your";	/* should be extern */
 
+	if (youdefend) {
+	    pline(!Hallucination ? "You are covered in sparkling lights!" :
+				   "You are enveloped by psychedelic fireworks!");
+	}
+
 	if (youdefend ? (!youattack && Antimagic)
 		      : resist(mdef, obj->oclass, 0, NOTELL))
 		return FALSE;	/* resisted cancellation */
