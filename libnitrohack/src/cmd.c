@@ -1134,7 +1134,7 @@ void show_conduct(int final)
 
 	if (flags.elbereth_enabled) {
 	    if (!u.uconduct.elbereths)
-		you_have_never(&menu, "written Elbereth's name");
+		you_have_never(&menu, "wrote Elbereth's name");
 	    else {
 		sprintf(buf, " Elbereth's name %u time%s",
 			u.uconduct.elbereths, plur(u.uconduct.elbereths));
