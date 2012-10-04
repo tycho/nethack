@@ -1011,7 +1011,8 @@ static void ini_inv(const struct trobj *trop, short nocreate[4])
 
 		if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
 			otyp == TIN_OPENER || otyp == FLINT || otyp == ROCK) {
-		    if (is_ammo(obj) || is_missile(obj)) {
+		    if (is_ammo(obj) || is_missile(obj) ||
+			(otyp == DAGGER && obj->quan > 1)) {
 			if (!uquiver) setuqwep(obj);
 		    } else if (!uwep && !u.roleplay.pacifist) setuwep(obj);
 		    else if (!uswapwep) setuswapwep(obj);
