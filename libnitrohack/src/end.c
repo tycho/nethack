@@ -849,7 +849,7 @@ static void container_contents(struct obj *list, boolean all_containers)
 		    display_objects(items, icount, buf, PICK_NONE, NULL);
 		    if (all_containers)
 			container_contents(box->cobj, TRUE);
-		} else {
+		} else if (!done_stopprint) {
 		    pline("%s empty.", Tobjnam(box, "are"));
 		    win_pause_output(P_MESSAGE);
 		}
