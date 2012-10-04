@@ -6,7 +6,7 @@
 #include "hack.h"
 #include "edog.h"
 
-static int throw_obj(struct obj *,int);
+static int throw_obj(struct obj *,int,boolean);
 static void autoquiver(void);
 static int gem_accept(struct monst *, struct obj *);
 static void tmiss(struct obj *, struct monst *);
@@ -32,7 +32,7 @@ extern boolean notonhead;	/* for long worms */
 
 
 /* Throw the selected object, asking for direction */
-static int throw_obj(struct obj *obj, int shotlimit)
+static int throw_obj(struct obj *obj, int shotlimit, boolean cancel_unquivers)
 {
 	struct obj *otmp;
 	int multishot = 1;
@@ -46,6 +46,10 @@ static int throw_obj(struct obj *obj, int shotlimit)
 	    /* obj might need to be merged back into the singular gold object */
 	    freeinv(obj);
 	    addinv(obj);
+	    if (cancel_unquivers) {
+		pline("You now have no ammunition readied.");
+		setuqwep(NULL);
+	    }
 	    return 0;
 	}
 
@@ -200,7 +204,7 @@ int dothrow(struct obj *obj)
 	/* (or jewels, or iron balls... ) */
 
 	if (!obj) return 0;
-	return throw_obj(obj, shotlimit);
+	return throw_obj(obj, shotlimit, FALSE);
 }
 
 
@@ -273,6 +277,7 @@ static void autoquiver(void)
 int dofire(void)
 {
 	int shotlimit;
+	boolean cancel_unquivers = FALSE;
 
 	if (notake(youmonst.data)) {
 	    pline("You are physically incapable of doing that.");
@@ -285,6 +290,10 @@ int dofire(void)
 			/* Don't automatically fill the quiver */
 			pline("You have no ammunition readied!");
 			dowieldquiver(NULL);
+			/* Allow this quiver to be unset if the throw is cancelled,
+			 * so vi-keys players don't have to do it manually after
+			 * typo-ing an object when entering a firing direction. */
+			cancel_unquivers = TRUE;
 			if (!uquiver)
 			    return dothrow(NULL);
 		}
@@ -311,7 +320,7 @@ int dofire(void)
 	shotlimit = multi;
 	multi = 0;		/* reset; it's been used up */
 
-	return throw_obj(uquiver, shotlimit);
+	return throw_obj(uquiver, shotlimit, cancel_unquivers);
 }
 
 
