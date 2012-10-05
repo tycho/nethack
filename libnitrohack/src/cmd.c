@@ -1181,10 +1181,11 @@ struct nh_cmd_desc *nh_get_commands(int *count)
 
 
 /* for better readability below */
-#define SET_OBJ_CMD(cname, cdesc, singular) \
+#define SET_OBJ_CMD(caccel, cname, cdesc, singular) \
 do {\
     int _o_c_idx = get_command_idx(cname);\
     char dbuf[80], nbuf[80];\
+    obj_cmd[i].defkey = caccel;\
     strncpy(obj_cmd[i].name, cname, sizeof(obj_cmd[i].name));\
     snprintf(nbuf, 80, "%s %s", obj->quan > 1 ? \
                   (singular ? "one of these" : "these") : "this", cxname(obj));\
@@ -1194,9 +1195,10 @@ do {\
     i++;\
 } while (0)
 
-#define SET_OBJ_CMD2(cname, cdesc) \
+#define SET_OBJ_CMD2(caccel, cname, cdesc) \
 do {\
     int _o_c_idx = get_command_idx(cname);\
+    obj_cmd[i].defkey = caccel;\
     strncpy(obj_cmd[i].name, cname, sizeof(obj_cmd[i].name));\
     strncpy(obj_cmd[i].desc, cdesc, sizeof(obj_cmd[i].desc));\
     obj_cmd[i].flags = cmdlist[_o_c_idx].flags;\
@@ -1238,144 +1240,144 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	i = 0; /* incremented by the SET_OBJ_CMD macro */
 	/* apply item; this can mean almost anything depending on the item */
 	if (obj->otyp == CREAM_PIE)
-	    SET_OBJ_CMD("apply", "Hit yourself with %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Hit yourself with %s", 0);
 	else if (obj->otyp == BULLWHIP)
-	    SET_OBJ_CMD("apply", "Lash out with %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Lash out with %s", 0);
 	else if (obj->otyp == GRAPPLING_HOOK)
-	    SET_OBJ_CMD("apply", "Grapple something with %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Grapple something with %s", 0);
 	else if (obj->otyp == BAG_OF_TRICKS && obj->known)
-	    SET_OBJ_CMD("apply", "Reach into this %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Reach into this %s", 0);
 	else if (Is_container(obj) || obj->otyp == BAG_OF_TRICKS)
-	    SET_OBJ_CMD("apply", "Open this %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Open this %s", 0);
 	else if (obj->otyp == CAN_OF_GREASE)
-	    SET_OBJ_CMD("apply", "Use %s to grease an item", 0);
+	    SET_OBJ_CMD('a', "apply", "Use %s to grease an item", 0);
 	else if (obj->otyp == LOCK_PICK || obj->otyp == CREDIT_CARD || obj->otyp == SKELETON_KEY)
-	    SET_OBJ_CMD("apply", "Use %s to pick a lock", 0);
+	    SET_OBJ_CMD('a', "apply", "Use %s to pick a lock", 0);
 	else if (obj->otyp == TINNING_KIT)
-	    SET_OBJ_CMD("apply", "Use %s to tin a corpse", 0);
+	    SET_OBJ_CMD('a', "apply", "Use %s to tin a corpse", 0);
 	else if (obj->otyp == LEASH)
-	    SET_OBJ_CMD("apply", "Tie a pet to %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Tie a pet to %s", 0);
 	else if (obj->otyp == SADDLE)
-	    SET_OBJ_CMD("apply", "Place %s on a pet", 0);
+	    SET_OBJ_CMD('a', "apply", "Place %s on a pet", 0);
 	else if (obj->otyp == MAGIC_WHISTLE || obj->otyp == TIN_WHISTLE)
-	    SET_OBJ_CMD("apply", "Blow %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Blow %s", 0);
 	else if (obj->otyp == EUCALYPTUS_LEAF)
-	    SET_OBJ_CMD("apply", "Use %s as a whistle", 0);
+	    SET_OBJ_CMD('a', "apply", "Use %s as a whistle", 0);
 	else if (obj->otyp == STETHOSCOPE)
-	    SET_OBJ_CMD("apply", "Listen through %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Listen through %s", 0);
 	else if (obj->otyp == MIRROR)
-	    SET_OBJ_CMD2("apply", "Show something its reflection");
+	    SET_OBJ_CMD2('a', "apply", "Show something its reflection");
 	else if (obj->otyp == BELL || obj->otyp == BELL_OF_OPENING)
-	    SET_OBJ_CMD("apply", "Ring %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Ring %s", 0);
 	else if (obj->otyp == CANDELABRUM_OF_INVOCATION)
-	    SET_OBJ_CMD("apply", "Light or extinguish %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Light or extinguish %s", 0);
 	else if ((obj->otyp == WAX_CANDLE || obj->otyp == TALLOW_CANDLE) &&
 			carrying(CANDELABRUM_OF_INVOCATION))
-	    SET_OBJ_CMD("apply", "Attach %s to the candelabrum", 0);
+	    SET_OBJ_CMD('a', "apply", "Attach %s to the candelabrum", 0);
 	else if (obj->otyp == WAX_CANDLE || obj->otyp == TALLOW_CANDLE)
-	    SET_OBJ_CMD("apply", "Light or extinguish %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Light or extinguish %s", 0);
 	else if (obj->otyp == OIL_LAMP || obj->otyp == MAGIC_LAMP ||
 			obj->otyp == BRASS_LANTERN)
-	    SET_OBJ_CMD("apply", "Light or extinguish %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Light or extinguish %s", 0);
 	else if (obj->otyp == POT_OIL && objects[obj->otyp].oc_name_known)
-	    SET_OBJ_CMD("apply", "Light or extinguish %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Light or extinguish %s", 0);
 	else if (obj->otyp == EXPENSIVE_CAMERA)
-	    SET_OBJ_CMD2("apply", "Take a photograph");
+	    SET_OBJ_CMD2('a', "apply", "Take a photograph");
 	else if (obj->otyp == TOWEL)
-	    SET_OBJ_CMD("apply", "Clean yourself off with %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Clean yourself off with %s", 0);
 	else if (obj->otyp == CRYSTAL_BALL)
-	    SET_OBJ_CMD("apply", "Peer into %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Peer into %s", 0);
 	else if (obj->otyp == MAGIC_MARKER)
-	    SET_OBJ_CMD("apply", "Write on something with %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Write on something with %s", 0);
 	else if (obj->otyp == FIGURINE)
-	    SET_OBJ_CMD("apply", "Make %s transform", 0);
+	    SET_OBJ_CMD('a', "apply", "Make %s transform", 0);
 	else if (obj->otyp == UNICORN_HORN)
-	    SET_OBJ_CMD("apply", "Squeeze %s tightly", 0);
+	    SET_OBJ_CMD('a', "apply", "Squeeze %s tightly", 0);
 	else if ((obj->otyp >= WOODEN_FLUTE && obj->otyp <= DRUM_OF_EARTHQUAKE) ||
 			(obj->otyp == HORN_OF_PLENTY && !obj->known))
-	    SET_OBJ_CMD("apply", "Play %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Play %s", 0);
 	else if (obj->otyp == HORN_OF_PLENTY)
-	    SET_OBJ_CMD("apply", "Blow into %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Blow into %s", 0);
 	else if (obj->otyp == LAND_MINE || obj->otyp == BEARTRAP)
-	    SET_OBJ_CMD("apply", "Arm %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Arm %s", 0);
 	else if (obj->otyp == PICK_AXE || obj->otyp == DWARVISH_MATTOCK)
-	    SET_OBJ_CMD("apply", "Dig with %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Dig with %s", 0);
 	else if (obj->oclass == WAND_CLASS)
-	    SET_OBJ_CMD("apply", "Break %s", 0);
+	    SET_OBJ_CMD('a', "apply", "Break %s", 0);
 
 	/* drop item, works on almost everything */
 	if (!(obj->owornmask & ~W_WEP))
-	    SET_OBJ_CMD("drop", "Drop %s", 0);
+	    SET_OBJ_CMD('d', "drop", "Drop %s", 0);
 	
 	/* dip */
 	if (obj->oclass == POTION_CLASS)
-	    SET_OBJ_CMD("dip", "Dip something into %s", 1);
+	    SET_OBJ_CMD('D', "dip", "Dip something into %s", 1);
 
 	/* eat item; eat.c provides is_edible to check */
 	if (obj->otyp == TIN && uwep && uwep->otyp == TIN_OPENER)
-	    SET_OBJ_CMD("eat", "Open and eat %s with your tin opener", 1);
+	    SET_OBJ_CMD('e', "eat", "Open and eat %s with your tin opener", 1);
 	else if (obj->otyp == TIN)
-	    SET_OBJ_CMD("eat", "Open and eat %s", 1);
+	    SET_OBJ_CMD('e', "eat", "Open and eat %s", 1);
 	else if (is_edible(obj))
-	    SET_OBJ_CMD("eat", "Eat %s", 1);
+	    SET_OBJ_CMD('e', "eat", "Eat %s", 1);
 	
 	/* engrave with item */
 	if (obj->otyp == TOWEL)
-	    SET_OBJ_CMD("engrave", "Wipe the floor with %s", 0);
+	    SET_OBJ_CMD('E', "engrave", "Wipe the floor with %s", 0);
 	else if (obj->otyp == MAGIC_MARKER)
-	    SET_OBJ_CMD2("engrave", "Scribble graffiti on the floor");
+	    SET_OBJ_CMD2('E', "engrave", "Scribble graffiti on the floor");
 	else if (obj->oclass == WEAPON_CLASS || obj->oclass == WAND_CLASS ||
 			obj->oclass == GEM_CLASS || obj->oclass == RING_CLASS)
-	    SET_OBJ_CMD("engrave", "Write on the floor with %s", 0);
+	    SET_OBJ_CMD('E', "engrave", "Write on the floor with %s", 0);
 	
 	/* drink item; strangely, this one seems to have no exceptions */
 	if (obj->oclass == POTION_CLASS)
-	    SET_OBJ_CMD("drink", "Quaff %s", 1);
+	    SET_OBJ_CMD('q', "drink", "Quaff %s", 1);
 	
 	/* quiver throwable item
 	   (Why are weapons not designed for throwing included, I wonder?) */
 	if ((obj->oclass == GEM_CLASS || obj->oclass == WEAPON_CLASS) && !obj->owornmask)
-	    SET_OBJ_CMD("quiver", "Quiver %s for easy throwing", 0);
+	    SET_OBJ_CMD('Q', "quiver", "Quiver %s for easy throwing", 0);
 	
 	/* read item
 	  note: Fortune Cookies and T-shirt are intentionally omitted here,
 	        as getobj() also goes to some lengths to omit them from the list
 	        of items available for reading */
 	if (obj->oclass == SCROLL_CLASS)
-	    SET_OBJ_CMD("read", "Cast the spell on %s", 1);
+	    SET_OBJ_CMD('r', "read", "Cast the spell on %s", 1);
 	else if (obj->oclass == SPBOOK_CLASS)
-	    SET_OBJ_CMD("read", "Study %s", 0);
+	    SET_OBJ_CMD('r', "read", "Study %s", 0);
 	
 	/* rub */
 	if (obj->otyp == OIL_LAMP || obj->otyp == MAGIC_LAMP || obj->otyp == BRASS_LANTERN)
-	    SET_OBJ_CMD("rub", "Rub %s", 0);
+	    SET_OBJ_CMD('R', "rub", "Rub %s", 0);
 	else if (obj->oclass == GEM_CLASS && is_graystone(obj))
-	    SET_OBJ_CMD("rub", "Rub something on %s", 0);
+	    SET_OBJ_CMD('R', "rub", "Rub something on %s", 0);
 	
 	/* throw item, works on almost everything */
 	if (!(obj->owornmask & ~W_WEP)) {
 	    /* you automatically throw only 1 item - except for gold */
 	    if (obj->oclass == COIN_CLASS)
-		SET_OBJ_CMD("throw", "Throw %s", 0);
+		SET_OBJ_CMD('t', "throw", "Throw %s", 0);
 	    else
-		SET_OBJ_CMD("throw", "Throw %s", 1);
+		SET_OBJ_CMD('t', "throw", "Throw %s", 1);
 	}
 	
 	/* unequip armor */
 	if (obj->oclass == ARMOR_CLASS && (obj->owornmask & W_ARMOR))
-	    SET_OBJ_CMD("takeoff", "Take %s off", 0);
+	    SET_OBJ_CMD('T', "takeoff", "Take %s off", 0);
 	else if (obj->oclass == RING_CLASS && (obj->owornmask & W_RING))
-	    SET_OBJ_CMD("remove", "Take %s off", 0);
+	    SET_OBJ_CMD('T', "remove", "Take %s off", 0);
 	else if (obj->oclass == AMULET_CLASS && (obj->owornmask & W_AMUL))
-	    SET_OBJ_CMD("remove", "Take %s off", 0);
+	    SET_OBJ_CMD('T', "remove", "Take %s off", 0);
 	else if (obj->oclass == TOOL_CLASS && (obj->owornmask & W_TOOL))
-	    SET_OBJ_CMD("remove", "Take %s off", 0);
+	    SET_OBJ_CMD('T', "remove", "Take %s off", 0);
 	
 	/* invoke */
 	if ((obj->otyp == FAKE_AMULET_OF_YENDOR && !obj->known) ||
 			obj->oartifact || objects[obj->otyp].oc_unique ||
 			obj->otyp == MIRROR) /* deception, according to object_selection_checks */
-	    SET_OBJ_CMD("invoke", "Try to invoke a unique power of %s", 0);
+	    SET_OBJ_CMD('V', "invoke", "Try to invoke a unique power of %s", 0);
 	
 	/* wield: hold in hands, works on everything but with different
 	   advice text; not mentioned for things that are already
@@ -1383,37 +1385,37 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	if (obj->owornmask) {}
 	else if (obj->oclass == WEAPON_CLASS || obj->otyp == PICK_AXE ||
 			obj->otyp == UNICORN_HORN)
-	    SET_OBJ_CMD("wield", "Wield %s as your weapon", 0);
+	    SET_OBJ_CMD('w', "wield", "Wield %s as your weapon", 0);
 	else if (obj->otyp == TIN_OPENER)
-	    SET_OBJ_CMD("wield", "Hold %s to open tins", 0);
+	    SET_OBJ_CMD('w', "wield", "Hold %s to open tins", 0);
 	else
-	    SET_OBJ_CMD("wield", "Hold %s in your hands", 0);
+	    SET_OBJ_CMD('w', "wield", "Hold %s in your hands", 0);
 	
 	/* wear: Equip this item */
 	if (!obj->owornmask) {
 	    if (obj->oclass == ARMOR_CLASS)
-		SET_OBJ_CMD("wear", "Wear %s", 0);
+		SET_OBJ_CMD('W', "wear", "Wear %s", 0);
 	    else if (obj->oclass == RING_CLASS || obj->otyp == MEAT_RING)
-		SET_OBJ_CMD("put on", "Put %s on", 0);
+		SET_OBJ_CMD('W', "put on", "Put %s on", 0);
 	    else if (obj->oclass == AMULET_CLASS)
-		SET_OBJ_CMD("put on", "Put %s on", 0);
+		SET_OBJ_CMD('W', "put on", "Put %s on", 0);
 	    else if (obj->otyp == TOWEL || obj->otyp == BLINDFOLD)
-		SET_OBJ_CMD("put on", "Use %s to blindfold yourself", 0);
+		SET_OBJ_CMD('W', "put on", "Use %s to blindfold yourself", 0);
 	    else if (obj->otyp == LENSES)
-		SET_OBJ_CMD("put on", "Put %s on", 0);
+		SET_OBJ_CMD('W', "put on", "Put %s on", 0);
 	}
 	
 	/* zap wand */
 	if (obj->oclass == WAND_CLASS)
-	    SET_OBJ_CMD("zap", "Zap %s to release its magic", 0);
+	    SET_OBJ_CMD('z', "zap", "Zap %s to release its magic", 0);
 	
 	/* sacrifice object */
 	if (IS_ALTAR(level->locations[u.ux][u.uy].typ) && !u.uswallow) {
 	    if (In_endgame(&u.uz) &&
 		(obj->otyp == AMULET_OF_YENDOR || obj->otyp == FAKE_AMULET_OF_YENDOR))
-		SET_OBJ_CMD("sacrifice", "Sacrifice %s at this altar", 0);
+		SET_OBJ_CMD('S', "sacrifice", "Sacrifice %s at this altar", 0);
 	    else if (obj->otyp == CORPSE)
-		SET_OBJ_CMD("sacrifice", "Sacrifice %s at this altar", 1);
+		SET_OBJ_CMD('S', "sacrifice", "Sacrifice %s at this altar", 1);
 	}
 
 	*count = i;
