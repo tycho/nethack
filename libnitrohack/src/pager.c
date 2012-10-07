@@ -430,6 +430,9 @@ static void checkfile(const char *inp, struct permonst *pm, boolean user_typed_n
 	return;
     }
 
+    if (user_typed_name)
+	pline("Looking up \"%s\"...", inp);
+
     /* To prevent the need for entries in data.base like *ngel to account
      * for Angel and angel, make the lookup string the same for both
      * user_typed_name and picked name.
@@ -568,6 +571,46 @@ bad_data_file:	impossible("'data' file in wrong format");
     dlb_fclose(fp);
 }
 
+/*
+ * Extract a data.base-friendly word or phrase from an object
+ * for use with e.g. checkfile().
+ */
+static const char *database_oname(struct obj *obj)
+{
+	const char *oname, *dbterm;
+
+	if (!obj)
+	    return NULL;
+
+	if (obj->onamelth && (obj->known || obj->dknown) &&
+	    (oname = ONAME(obj)) && oname[0] >= 'A' && oname[0] <= 'Z') {
+	    /* Capitalized name may be an artifact, the corpse/tin/statue of
+	     * a named pet/monster or named object from a special level. */
+	    dbterm = oname;
+	} else if (obj->otyp == CORPSE ||
+		   obj->otyp == STATUE ||
+		   obj->otyp == FIGURINE ||
+		   (obj->otyp == TIN && obj->spe <= 0 && obj->corpsenm >= LOW_PM &&
+		    obj->known) ||
+		   (obj->otyp == EGG && obj->corpsenm >= LOW_PM &&
+		    (obj->known || mvitals[obj->corpsenm].mvflags & MV_KNOWS_EGG))) {
+	    /* Monster-based objects with no given name just go by monster name. */
+	    dbterm = mons_mname(&mons[obj->corpsenm]);
+	} else {
+	    /* Use xname(), but suppress player-provided name(s). */
+	    struct objclass *ocl = &objects[obj->otyp];
+	    uchar save_onamelth = obj->onamelth;
+	    char *save_uname = ocl->oc_uname;
+
+	    obj->onamelth = 0;
+	    ocl->oc_uname = NULL;
+	    dbterm = xname(obj);
+	    obj->onamelth = save_onamelth;
+	    ocl->oc_uname = save_uname;
+	}
+
+	return dbterm;
+}
 
 /* getpos() return values */
 #define LOOK_TRADITIONAL	0	/* '.' -- ask about "more info?" */
@@ -707,6 +750,21 @@ int doquickwhatis(void)
 {
 	check_tutorial_message(QT_T_CURSOR_NUMPAD);
 	return do_look(TRUE);
+}
+
+int dowhatisinv(struct obj *obj)
+{
+	static const char allowall[] = { ALL_CLASSES, 0 };
+
+	if (!obj)
+	    obj = getobj(allowall, "examine");
+	if (!obj || obj == &zeroobj)
+	    return 0;
+
+	/* Fake user_typed_name for feedback on failure to find an entry. */
+	checkfile(database_oname(obj), NULL, TRUE, TRUE);
+
+	return 0;
 }
 
 int doidtrap(void)

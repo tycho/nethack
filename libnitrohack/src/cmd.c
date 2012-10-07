@@ -139,6 +139,7 @@ const struct cmd_desc cmdlist[] = {
 	{"wield", "hold an item in your hands", 'w', 0, FALSE, dowield, CMD_ARG_NONE | CMD_ARG_OBJ},
 	{"wipe", "wipe off your face", M('w'), 0, FALSE, dowipe, CMD_ARG_NONE | CMD_EXT},
 	{"whatis", "describe a symbol", '/', 0, TRUE, dowhatis, CMD_HELP | CMD_ARG_NONE | CMD_NOTIME},
+	{"whatisinv", "describe an object in your inventory", 0, 0, TRUE, dowhatisinv, CMD_HELP | CMD_ARG_NONE | CMD_ARG_OBJ | CMD_NOTIME},
 	{"zap", "zap a wand to use its magic", 'z', 0, FALSE, dozap, CMD_ARG_NONE | CMD_ARG_OBJ},
 	
 	{"move", "move one step", 0, 0, FALSE, domovecmd, CMD_ARG_DIR | CMD_MOVE},
@@ -1398,6 +1399,9 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    else if (obj->otyp == CORPSE)
 		SET_OBJ_CMD2('S', "sacrifice", "sacrifice (on altar)");
 	}
+
+	/* describe object */
+	SET_OBJ_CMD2('/', "whatisinv", "describe");
 
 	*count = i;
 	return obj_cmd;

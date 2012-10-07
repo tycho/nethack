@@ -1180,6 +1180,7 @@ extern struct nh_msgtype_rules *parse_msgtype_rules(const char *str);
 
 extern int dowhatis(void);
 extern int doquickwhatis(void);
+extern int dowhatisinv(struct obj *);
 extern int doidtrap(void);
 extern int dolicense(void);
 extern int doverhistory(void);
