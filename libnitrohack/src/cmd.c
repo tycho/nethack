@@ -99,7 +99,7 @@ const struct cmd_desc cmdlist[] = {
 	{"name mon", "christen a monster", 0, 0, TRUE, do_mname, CMD_ARG_NONE},
 	{"open", "open a door", 'o', 0, FALSE, doopen, CMD_ARG_NONE | CMD_ARG_DIR},
 	{"overview", "show an overview of the dungeon", C('o'), 0, TRUE, dooverview, CMD_ARG_NONE | CMD_EXT | CMD_NOTIME},
-	{"pay", "pay a shopkeeper", 'p', 0, FALSE, dopay, CMD_ARG_NONE},
+	{"pay", "pay a shopkeeper", 'p', 0, FALSE, dopay, CMD_ARG_NONE | CMD_ARG_OBJ},
 	{"pickup", "take items from the floor", ',', 0, FALSE, dopickup, CMD_ARG_NONE},
 	{"pray", "pray to the gods for help", M('p'), 0, TRUE, dopray, CMD_ARG_NONE | CMD_EXT},
 	{"put on", "put on jewellery or accessories", 'P', 0, FALSE, doputon, CMD_ARG_NONE | CMD_ARG_OBJ},
@@ -1198,6 +1198,7 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	int i, cmdcount = 0;
 	struct nh_cmd_desc *obj_cmd;
 	struct obj *obj;
+	struct monst *shkp;
 	
 	/* returning a list of commands when .viewing is true doesn't hurt
 	 * anything, but since they won't work there is no point. */
@@ -1311,7 +1312,19 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	else if (obj->oclass == WEAPON_CLASS || obj->oclass == WAND_CLASS ||
 			obj->oclass == GEM_CLASS || obj->oclass == RING_CLASS)
 	    SET_OBJ_CMD2('E', "engrave", "engrave");
-	
+
+	/* pay for this item */
+	if ((shkp = shop_keeper(level, *in_rooms(level, u.ux, u.uy, SHOPBASE))) &&
+	    inhishop(shkp) && obj->unpaid) {
+	    char desc[80];	/* == sizeof(obj_cmd[i].desc) */
+	    long price = unpaid_cost(obj);
+	    boolean unpaid_contents = Has_contents(obj) &&
+				      contained_cost(obj, shkp, 0L, FALSE, TRUE) > 0;
+	    snprintf(desc, 80, "pay (%ld %s%s)", price, currency(price),
+		     unpaid_contents ? ", excluding contents" : "");
+	    SET_OBJ_CMD2('p', "pay", desc);
+	}
+
 	/* drink item; strangely, this one seems to have no exceptions */
 	if (obj->oclass == POTION_CLASS)
 	    SET_OBJ_CMD2('q', "drink", "quaff");
