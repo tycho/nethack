@@ -266,9 +266,13 @@ Adjust hero attributes as necessary.
 struct obj *addinv(struct obj *obj)
 {
 	struct obj *otmp;
+	boolean obj_was_thrown;
 
 	if (obj->where != OBJ_FREE)
 	    panic("addinv: obj not free (%d)", obj->where);
+
+	obj_was_thrown = obj->was_thrown;
+
 	obj->no_charge = 0;	/* not meaningful for invent */
 	obj->was_dropped = 0;
 	obj->was_thrown = 0;
@@ -289,6 +293,10 @@ struct obj *addinv(struct obj *obj)
 	invent = obj;
 	reorder_invent();
 	obj->where = OBJ_INVENT;
+
+	/* fill empty quiver if obj was thrown */
+	if (iflags.pickup_thrown && !uquiver && obj_was_thrown)
+	    setuqwep(obj);
 
 added:
 	addinv_core2(obj);
