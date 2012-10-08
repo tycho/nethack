@@ -72,6 +72,8 @@ static struct nh_cmd_desc *commandlist, *unknown_commands;
 static int cmdcount, unknown_count, unknown_size;
 static struct nh_cmd_desc *prev_cmd;
 static struct nh_cmd_arg prev_arg = {CMD_ARG_NONE}, next_command_arg;
+static nh_bool prev_cmd_same = FALSE;
+static int current_cmd_key;
 static nh_bool have_next_command = FALSE;
 static char next_command_name[32];
 static int prev_count;
@@ -82,7 +84,26 @@ static void init_keymap(void);
 static struct nh_cmd_desc *doextcmd(void);
 
 
-static const char *curses_keyname(int key)
+void reset_prev_cmd(void)
+{
+    prev_cmd = NULL;
+    prev_cmd_same = FALSE;
+}
+
+
+nh_bool check_prev_cmd_same(void)
+{
+    return prev_cmd_same;
+}
+
+
+int get_current_cmd_key(void)
+{
+    return current_cmd_key;
+}
+
+
+const char *curses_keyname(int key)
 {
     static char knbuf[16];
     const char *kname;
@@ -211,6 +232,7 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
 	new_action(); /* use a new message line for this action */
 	*count = multi;
 	cmd = keymap[key];
+	current_cmd_key = key;
 	
 	if (cmd != NULL) {
 	    /* handle internal commands. The command handler may alter
@@ -245,6 +267,7 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
     
     wmove(mapwin, player.y, player.x - 1);
     
+    prev_cmd_same = (cmd == prev_cmd);
     prev_cmd = cmd;
     prev_arg = *arg;
     prev_count = *count;

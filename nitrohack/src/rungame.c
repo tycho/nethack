@@ -95,6 +95,8 @@ int commandloop(void)
     
     gamestate = READY_FOR_INPUT;
     game_is_running = TRUE;
+    reset_prev_cmd();
+    reset_last_dir();
     
     while (gamestate < GAME_OVER) {
 	count = 0;
