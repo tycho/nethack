@@ -700,7 +700,9 @@ static void pre_move_tasks(boolean didmove)
 static void interrupt_multi(const char *points, int current_points, int max_points)
 {
     if (multi > 0 && current_points == max_points) {
-	nomul(0, NULL);
+	/* Don't interrupt running, travel or autoexplore though. */
+	if (!flags.run)
+	    nomul(0, NULL);
 	if (flags.verbose)
 	    pline("%s restored.", points);
     }
