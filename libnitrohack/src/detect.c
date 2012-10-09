@@ -1169,9 +1169,10 @@ void sokoban_detect(struct level *lev)
 	for (x = 1; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++) {
 		struct rm *loc = &lev->locations[x][y];
-		if (IS_WALL(loc->typ))
-		    loc->seenv = SVALL;
-		else if (loc->typ == SDOOR)
+		/* Set seen vector for all locations so travelling works
+		 * on pre-mapped levels. */
+		loc->seenv = SVALL;
+		if (loc->typ == SDOOR)
 		    loc->typ = DOOR;
 		else if (loc->typ == SCORR)
 		    loc->typ = CORR;
