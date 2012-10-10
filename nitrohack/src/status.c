@@ -217,7 +217,7 @@ static void draw_bar(int barlen, int val_cur, int val_max, const char *prefix)
 static void status3(struct nh_player_info *pi)
 {
     char buf[COLNO];
-    int i, namelen;
+    int namelen;
     
     /* line 1 */
     namelen = strlen(pi->plname) < 13 ? strlen(pi->plname) : 13;
@@ -269,11 +269,8 @@ static void status3(struct nh_player_info *pi)
     wmove(statuswin, 2, 0);
     draw_bar(18 + pi->max_rank_sz, pi->en, pi->enmax, "Pw:");
     wprintw(statuswin, "  Dex:%2d Cha:%2d ", pi->dx, pi->ch);
-    
-    wattron(statuswin, curses_color_attr(CLR_YELLOW));
-    for (i = 0; i < pi->nr_items; i++)
-	wprintw(statuswin, " %s", pi->statusitems[i]);
-    wattroff(statuswin, curses_color_attr(CLR_YELLOW));
+
+    draw_statuses(pi);
     wclrtoeol(statuswin);
 }
 
