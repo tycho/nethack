@@ -415,6 +415,8 @@ static void display_monster(
 	    }
 
 	    case M_AP_MONSTER:
+		/* Visible monsters always clear 'I' symbols. */
+		level->locations[x][y].mem_invis = 0;
 		dbuf_set(x, y, level->locations[x][y].mem_bg,
 			 level->locations[x][y].mem_trap,
 			 level->locations[x][y].mem_obj,
@@ -444,6 +446,9 @@ static void display_monster(
 	
 	if (mon->mtame && !Hallucination)
 	    mflag |= MON_TAME;
+
+	/* Visible monsters always clear 'I' symbols. */
+	level->locations[x][y].mem_invis = 0;
 
 	dbuf_set(x, y, level->locations[x][y].mem_bg,
 		 level->locations[x][y].mem_trap,
