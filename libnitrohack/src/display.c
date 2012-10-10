@@ -806,8 +806,12 @@ void shieldeff(xchar x, xchar y)
 	return;
     
     if (cansee(x,y)) {	/* Don't see anything if can't see the location */
-	for (i = 0; i < SHIELD_COUNT; i++) {
-	    dbuf_set_effect(x, y, dbuf_effect(E_MISC, shield_static[i]));
+	/* Only play half of the full sparkle animation,
+	 * starting from a random frame. */
+	int offset = display_rng(SHIELD_COUNT);
+	for (i = 0; i < SHIELD_COUNT / 2; i++) {
+	    int frame = (offset + i) % SHIELD_COUNT;
+	    dbuf_set_effect(x, y, dbuf_effect(E_MISC, shield_static[frame]));
 	    flush_screen();	/* make sure the effect shows up */
 	    win_delay_output();
 	}
