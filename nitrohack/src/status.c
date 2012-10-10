@@ -6,9 +6,30 @@
 
 struct nh_player_info player;
 
+static int percent_color(int val_cur, int val_max)
+{
+    int percent, color;
+
+    if (val_max <= 0 || val_cur <= 0)
+	percent = 0;
+    else
+	percent = 100 * val_cur / val_max;
+
+    if (percent < 25)
+	color = CLR_RED;
+    else if (percent < 50)
+	color = CLR_BROWN; /* inverted this looks orange */
+    else if (percent < 95)
+	color = CLR_GREEN;
+    else
+	color = CLR_GRAY; /* inverted this is white, with better text contrast */
+
+    return color;
+}
+
 static void draw_string_bar(const char *str, int val_cur, int val_max)
 {
-    int i, len, fill_len, percent, color, colorattr;
+    int i, len, fill_len, colorattr;
 
     /* Allow trailing spaces, but only after the bar. */
     len = strlen(str);
@@ -19,23 +40,12 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
 	    break;
     }
 
-    if (val_max <= 0 || val_cur <= 0) {
-	percent = 0;
+    if (val_max <= 0 || val_cur <= 0)
 	fill_len = 0;
-    } else {
-	percent = 100 * val_cur / val_max;
-	fill_len = len * val_cur / val_max;
-    }
-
-    if (percent < 25)
-	color = CLR_RED;
-    else if (percent < 50)
-	color = CLR_BROWN; /* inverted this looks orange */
-    else if (percent < 95)
-	color = CLR_GREEN;
     else
-	color = CLR_GRAY; /* inverted this is white, with better text contrast */
-    colorattr = curses_color_attr(color);
+	fill_len = len * val_cur / val_max;
+
+    colorattr = curses_color_attr(percent_color(val_cur, val_max));
 
     waddch(statuswin, '[');
     wattron(statuswin, colorattr);
@@ -58,6 +68,54 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
     wprintw(statuswin, "%s", &str[len]);
 }
 
+static void draw_statuses(const struct nh_player_info *pi)
+{
+    const int notice = CLR_YELLOW;
+    const int alert = CLR_ORANGE;
+    int i, j, len, colorattr;
+
+    for (i = 0; i < pi->nr_items; i++) {
+	const char *st = pi->statusitems[i];
+
+	colorattr = curses_color_attr(
+			/* These are padded, unlike the others. */
+			!strcmp(st, "Satiated") ? alert :
+			!strncmp(st, "Hungry", 6) ? notice :
+			!strncmp(st, "Weak", 4) ? alert :
+			!strcmp(st, "Fainting") ? alert :
+			!strncmp(st, "Fainted", 7) ? alert :
+			!strncmp(st, "Starved", 7) ? alert :
+
+			!strcmp(st, "Conf") ? notice :
+			!strcmp(st, "FoodPois") ? alert :
+			!strcmp(st, "Ill") ? alert :
+			!strcmp(st, "Blind") ? notice :
+			!strcmp(st, "Stun") ? notice :
+			!strcmp(st, "Hallu") ? notice :
+			!strcmp(st, "Slime") ? alert :
+
+			!strcmp(st, "Burdened") ? notice :
+			!strcmp(st, "Stressed") ? notice :
+			!strcmp(st, "Strained") ? notice :
+			!strcmp(st, "Overtaxed") ? notice :
+			!strcmp(st, "Overloaded") ? notice :
+			notice);
+
+	/* Strip trailing spaces. */
+	len = strlen(st);
+	for (j = len - 1; j >= 0; j--) {
+	    if (st[j] == ' ')
+		len = j;
+	    else
+		break;
+	}
+
+	wattron(statuswin, colorattr);
+	wprintw(statuswin, " %.*s", len, st);
+	wattroff(statuswin, colorattr);
+    }
+}
+
 /*
  * longest practical second status line at the moment is
  *	Astral Plane $:12345 HP:700(700) Pw:111(111) AC:-127 Xp:30/123456789
@@ -68,8 +126,8 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
 static void classic_status(struct nh_player_info *pi)
 {
     char buf[COLNO];
-    int i;
-    
+    int colorattr;
+
     /* line 1 */
     sprintf(buf, "%.10s the %-*s  ", pi->plname,
 	    pi->max_rank_sz + 8 - (int)strlen(pi->plname), pi->rank);
@@ -97,8 +155,22 @@ static void classic_status(struct nh_player_info *pi)
 
     /* line 2 */
     mvwaddstr(statuswin, 1, 0, pi->level_desc);
-    wprintw(statuswin, " %c:%-2ld HP:%d(%d) Pw:%d(%d) AC:%-2d", pi->coinsym,
-	    pi->gold, pi->hp, pi->hpmax, pi->en, pi->enmax, pi->ac);
+
+    wprintw(statuswin, " %c:%-2ld", pi->coinsym, pi->gold);
+
+    waddstr(statuswin, " HP:");
+    colorattr = curses_color_attr(percent_color(pi->hp, pi->hpmax));
+    wattron(statuswin, colorattr);
+    wprintw(statuswin, "%d(%d)", pi->hp, pi->hpmax);
+    wattroff(statuswin, colorattr);
+
+    waddstr(statuswin, " Pw:");
+    colorattr = curses_color_attr(percent_color(pi->en, pi->enmax));
+    wattron(statuswin, colorattr);
+    wprintw(statuswin, "%d(%d)", pi->en, pi->enmax);
+    wattroff(statuswin, colorattr);
+
+    wprintw(statuswin, " AC:%-2d", pi->ac);
 
     if (pi->monnum != pi->cur_monnum)
 	wprintw(statuswin, " HD:%d", pi->level);
@@ -109,10 +181,9 @@ static void classic_status(struct nh_player_info *pi)
 
     if (settings.time)
 	wprintw(statuswin, " T:%ld", pi->moves);
-    
-    for (i = 0; i < pi->nr_items; i++)
-	wprintw(statuswin, " %s", pi->statusitems[i]);
-    
+
+    draw_statuses(pi);
+
     wclrtoeol(statuswin);
 }
 
@@ -120,26 +191,14 @@ static void classic_status(struct nh_player_info *pi)
 static void draw_bar(int barlen, int val_cur, int val_max, const char *prefix)
 {
     char str[COLNO], bar[COLNO];
-    int fill_len = 0, bl, percent, colorattr, color;
+    int fill_len = 0, bl, colorattr;
     
     bl = barlen-2;
-    if (val_max <= 0 || val_cur <= 0)
-	percent = 0;
-    else {
-	percent = 100 * val_cur / val_max;
+    if (val_max > 0 && val_cur > 0)
 	fill_len = bl * val_cur / val_max;
-    }
-    
-    if (percent < 25)
-	color = CLR_RED;
-    else if (percent < 50)
-	color = CLR_BROWN; /* inverted this looks orange */
-    else if (percent < 95)
-	color = CLR_GREEN;
-    else
-	color = CLR_GRAY; /* inverted this is white, with better text contrast */
-    colorattr = curses_color_attr(color);
-    
+
+    colorattr = curses_color_attr(percent_color(val_cur, val_max));
+
     sprintf(str, "%s%d(%d)", prefix, val_cur, val_max);
     sprintf(bar, "%-*s", bl, str);
     waddch(statuswin, '[');
