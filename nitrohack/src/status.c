@@ -6,6 +6,58 @@
 
 struct nh_player_info player;
 
+static void draw_string_bar(const char *str, int val_cur, int val_max)
+{
+    int i, len, fill_len, percent, color, colorattr;
+
+    /* Allow trailing spaces, but only after the bar. */
+    len = strlen(str);
+    for (i = len - 1; i >= 0; i--) {
+	if (str[i] == ' ')
+	    len = i;
+	else
+	    break;
+    }
+
+    if (val_max <= 0 || val_cur <= 0) {
+	percent = 0;
+	fill_len = 0;
+    } else {
+	percent = 100 * val_cur / val_max;
+	fill_len = len * val_cur / val_max;
+    }
+
+    if (percent < 25)
+	color = CLR_RED;
+    else if (percent < 50)
+	color = CLR_BROWN; /* inverted this looks orange */
+    else if (percent < 95)
+	color = CLR_GREEN;
+    else
+	color = CLR_GRAY; /* inverted this is white, with better text contrast */
+    colorattr = curses_color_attr(color);
+
+    waddch(statuswin, '[');
+    wattron(statuswin, colorattr);
+
+    /* use_inverse enabled colors the whole string and colors the bar inverse
+     * use_inverse disabled colors part of the string to represent the bar. */
+    if (settings.use_inverse)
+	wattron(statuswin, A_REVERSE);
+    wprintw(statuswin, "%.*s", fill_len, str);
+    if (settings.use_inverse)
+	wattroff(statuswin, A_REVERSE);
+    else
+	wattroff(statuswin, colorattr);
+    wprintw(statuswin, "%.*s", len - fill_len, &str[fill_len]);
+
+    if (settings.use_inverse)
+	wattroff(statuswin, colorattr);
+    waddch(statuswin, ']');
+
+    wprintw(statuswin, "%s", &str[len]);
+}
+
 /*
  * longest practical second status line at the moment is
  *	Astral Plane $:12345 HP:700(700) Pw:111(111) AC:-127 Xp:30/123456789
@@ -22,8 +74,9 @@ static void classic_status(struct nh_player_info *pi)
     sprintf(buf, "%.10s the %-*s  ", pi->plname,
 	    pi->max_rank_sz + 8 - (int)strlen(pi->plname), pi->rank);
     buf[0] = toupper(buf[0]);
-    mvwaddstr(statuswin, 0, 0, buf);
-    
+    wmove(statuswin, 0, 0);
+    draw_string_bar(buf, pi->hp, pi->hpmax);
+
     if (pi->st == 18 && pi->st_extra) {
 	if (pi->st_extra < 100)
 	    wprintw(statuswin, "St:18/%02d ", pi->st_extra);
