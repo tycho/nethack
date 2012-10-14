@@ -367,6 +367,8 @@ extern nh_bool loadgame(void);
 extern fnchar **list_gamefiles(fnchar *dir, int *count);
 
 /* sidebar.c */
+extern void reset_old_status(void);
+extern void update_old_status(void);
 extern void draw_sidebar(void);
 extern nh_bool curses_list_items(struct nh_objitem *items, int icount, nh_bool invent);
 extern nh_bool curses_list_items_nonblocking(struct nh_objitem *items, int icount, nh_bool invent);

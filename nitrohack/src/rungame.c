@@ -102,10 +102,12 @@ int commandloop(void)
 	count = 0;
 	cmd = NULL;
 	
-	if (gamestate == READY_FOR_INPUT)
+	if (gamestate == READY_FOR_INPUT) {
+	    update_old_status();
 	    cmd = get_command(&count, &cmdarg);
-	else if (gamestate == MULTI_IN_PROGRESS && interrupt_multi)
+	} else if (gamestate == MULTI_IN_PROGRESS && interrupt_multi) {
 	    count = -1;
+	}
 	
 	interrupt_multi = FALSE; /* could have been set while no multi was in progress */
 	gamestate = nh_command(cmd, count, &cmdarg);
@@ -204,6 +206,7 @@ void rungame(nh_bool tutorial)
     }
     
     create_game_windows();
+    reset_old_status();
     if (!nh_start_game(fd, plname, role, race, gend, align,
 		       tutorial ? MODE_TUTORIAL : ui_flags.playmode)) {
 	destroy_game_windows();
@@ -426,6 +429,7 @@ nh_bool loadgame(void)
     
     fd = sys_open(filename, O_RDWR, FILE_OPEN_MASK);
     create_game_windows();
+    reset_old_status();
     if (nh_restore_game(fd, NULL, FALSE) != GAME_RESTORED) {
 	destroy_game_windows();
 	close(fd);

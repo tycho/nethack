@@ -25,6 +25,7 @@ void net_rungame(nh_bool tutorial)
 	return;
     
     create_game_windows();
+    reset_old_status();
     if (!nhnet_start_game(plname, role, race, gend, align,
 			  tutorial ? MODE_TUTORIAL : ui_flags.playmode)) {
 	destroy_game_windows();
@@ -75,6 +76,7 @@ void net_loadgame(void)
     id = pick[0];
     
     create_game_windows();
+    reset_old_status();
     if (nhnet_restore_game(id, NULL) != GAME_RESTORED) {
 	curses_msgwin("Failed to restore saved game.");
 	destroy_game_windows();
