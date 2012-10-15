@@ -759,11 +759,11 @@ MAP
          |...|            ###           |}}}}----|......|          #        
          |...|              #  ###       }}}}| |.+......+###########        
      -----+++-----    ####  #  #         }}}}  |.+......+###########        
-     |...........|    #     ######  ----  }}}} --|......|          #        
-     |...........S#####     #    #  |..|  }}}}   --------       ---+---     
-     |...........|    #     #    ###+..|   }}}}                 |.....|     
-     |.....\.....|    #######       |..|   }}}}                 |.....|     
-     -------------                  ----  }}}}                  -------     
+     |...........|    #     ######  ----}}}}}  --|......|          #        
+     |...........S#####     #    #  |...}}}}}    --------       ---+---     
+     |...........|    #     #    ###+..| }}}}}                  |.....|     
+     |.....\.....|    #######       |..| }}}}}                  |.....|     
+     -------------                  ----}}}}}                   -------     
 ENDMAP
 STAIR:(65,17),up
 STAIR:(11,16),down
@@ -813,13 +813,15 @@ MONSTER: ('&',"Asmodeus"), (11,16) {
   OBJECT: ('/',"fire")
 }
 # His close friends
-MONSTER: ('&',"marilith"), (08,16),asleep
-MONSTER: ('&',"marilith"), (09,17),asleep
-MONSTER: ('&',"succubus"), (14,16),asleep
-MONSTER: ('&',"succubus"), (13,17),asleep
-MONSTER: ('&',"incubus"), (11,18),asleep
-MONSTER: ('&',"barbed devil"), (10,13),asleep
-MONSTER: ('&',"barbed devil"), (12,13),asleep
+MONSTER: ('&',"marilith"), (08,16), asleep
+MONSTER: ('&',"marilith"), (09,17), asleep
+MONSTER: ('&',"succubus"), (14,16), asleep
+MONSTER: ('&',"succubus"), (13,17), asleep
+MONSTER: ('&',"incubus"), (11,18), asleep
+MONSTER: ('&',"barbed devil"), (10,13), asleep
+MONSTER: ('&',"barbed devil"), (12,13), asleep
+# A back door opportunity
+MONSTER: ('m',"giant mimic"), (39,16), m_feature "wall"
 # A few traps on the way in
 TRAP:"board",(10,12)
 TRAP:"board",(11,12)
