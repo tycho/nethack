@@ -2055,6 +2055,8 @@ static void append_honorific(char *buf)
 
 	if (is_vampire(youmonst.data))
 	    strcat(buf, flags.female ? " dark lady" : " dark lord");
+	else if (is_elf(youmonst.data))
+	    strcat(buf, flags.female ? " hiril" : " hir");
 	else if (!is_human(youmonst.data))
 	    strcat(buf, " creature");
 	else
