@@ -584,8 +584,11 @@ schar acurr(int x)
 	int tmp = (u.abon.a[x] + u.atemp.a[x] + u.acurr.a[x]);
 
 	if (x == A_STR) {
+		tmp = (tmp >= 125) ? 125 : ((tmp <= 3) ? 3 : tmp);
 		if (uarmg && uarmg->otyp == GAUNTLETS_OF_POWER) return 125;
-		else return (schar)((tmp >= 125) ? 125 : (tmp <= 3) ? 3 : tmp);
+		else if (uwep && uwep->oartifact == ART_GIANTSLAYER)
+		    return (schar)(tmp < 118 ? 118 : tmp);
+		else return (schar)tmp;
 	} else if (x == A_CHA) {
 		if (tmp < 18 && (youmonst.data->mlet == S_NYMPH ||
 		    u.umonnum==PM_SUCCUBUS || u.umonnum == PM_INCUBUS))
