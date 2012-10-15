@@ -45,6 +45,7 @@ static long stolen_container(struct obj *, struct monst *, long, boolean);
 static long getprice(const struct obj *,boolean);
 static void shk_names_obj(struct monst *,struct obj *,
 			  const char *,long,const char *);
+static void append_honorific(char *);
 static struct obj *bp_to_obj(struct bill_x *);
 static boolean inherits(struct monst *,int,int);
 static void set_repo_loc(struct eshk *);
@@ -2044,6 +2045,22 @@ static void shk_names_obj(struct monst *shkp, struct obj *obj,
 	}
 }
 
+static void append_honorific(char *buf)
+{
+	static const char *const honored[5] = {
+	    "good", "honored", "most gracious", "esteemed",
+	    "most renowned and sacred"
+	};
+	strcat(buf, honored[rn2(4) + u.uevent.udemigod]);
+
+	if (is_vampire(youmonst.data))
+	    strcat(buf, flags.female ? " dark lady" : " dark lord");
+	else if (!is_human(youmonst.data))
+	    strcat(buf, " creature");
+	else
+	    strcat(buf, flags.female ? " lady" : " sir");
+}
+
 void addtobill(struct obj *obj, boolean ininv, boolean dummy, boolean silent)
 {
 	struct monst *shkp;
@@ -2121,16 +2138,7 @@ speak:
 	    }
 	    strcpy(buf, "\"For you, ");
 	    if (ANGRY(shkp)) strcat(buf, "scum");
-	    else {
-		static const char *const honored[5] = {
-		  "good", "honored", "most gracious", "esteemed",
-		  "most renowned and sacred"
-		};
-		strcat(buf, honored[rn2(4) + u.uevent.udemigod]);
-		if (!is_human(youmonst.data)) strcat(buf, " creature");
-		else
-		    strcat(buf, (flags.female) ? " lady" : " sir");
-	    }
+	    else append_honorific(buf);
 	    if (ininv) {
 		long quan = obj->quan;
 		obj->quan = 1L; /* fool xname() into giving singular */
