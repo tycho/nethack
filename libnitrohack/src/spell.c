@@ -1006,7 +1006,7 @@ static boolean dospellmenu(const char *prompt,
 	for (i = 0; i < MAXSPELL && spellid(i) != NO_SPELL; i++) {
 		sprintf(buf, "%s\t%-d%s\t%s\t%-d%%",
 			spellname(i), spellev(i),
-			spellknow(i) ? " " : "*",
+			(spellknow(i) > 1000) ? " " : (spellknow(i) ? "!" : "*"),
 			spelltypemnemonic(spell_skilltype(spellid(i))),
 			100 - percent_success(i));
 
