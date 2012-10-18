@@ -579,7 +579,7 @@ int doopen(int dx, int dy, int dz)
 	    }
 	    pline("This door%s.", mesg);
 	    if (Blind) feel_location(cc.x,cc.y);
-	    if (locked) {
+	    if (locked && !flags.run) {
 		struct obj *otmp = NULL;
 		if (flags.autounlock &&
 		    ((otmp = carrying(SKELETON_KEY)) ||
