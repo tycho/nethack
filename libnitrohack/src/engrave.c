@@ -76,6 +76,7 @@ static const char *const random_mesg[] = {
 	"The Truth is Out There", /* X-Files */
 	"Look behind you, a Three-Headed Monkey!", /* Monkey Island */
 	"Ifnkovhgroghprm", /* Kings Quest I */
+	"Cookies are delicious delicacies", /* Mozilla Firefox */
 };
 
 char *random_engraving(char *outbuf)
