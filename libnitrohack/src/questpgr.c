@@ -427,6 +427,10 @@ static const char *creator_names[] = {
  */
 static const char *creatorname(void)
 {
+	if (pirateday())
+	    return "the FSM";
+	else if (discordian_holiday())
+	    return (u.ubirthday % 2) ? "Discordia" : "Eris";
 	return creator_names[u.ubirthday % SIZE(creator_names)];
 }
 

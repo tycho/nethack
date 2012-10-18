@@ -46,9 +46,11 @@ NitroHack, except that rounddiv may call panic().
 	long		yyyymmdd	(time_t)
 	int		phase_of_the_moon	(void)
 	boolean		friday_13th	(void)
+	boolean		discordian_holiday	(void)
 	boolean		towelday	(void)
 	boolean		piday		(void)
 	boolean		aprilfoolsday	(void)
+	boolean		pirateday	(void)
 	int		night		(void)
 	int		midnight	(void)
 =*/
@@ -434,6 +436,11 @@ boolean friday_13th(void)
 	return (boolean)(lt->tm_wday == 5 /* friday */ && lt->tm_mday == 13);
 }
 
+boolean discordian_holiday(void)
+{
+	return (boolean)(getmday() == 23 && getmonth() == 5);
+}
+
 boolean towelday(void)
 {
 	return (boolean)(getmday() == 25 && getmonth() == 5);
@@ -449,6 +456,11 @@ boolean piday(void)
 boolean aprilfoolsday(void)
 {
 	return (boolean)(getmonth() == 4 && getmday() == 1);
+}
+
+boolean pirateday(void)
+{
+	return (boolean)(getmday() == 19 && getmonth() == 9);
 }
 
 int night(void)
