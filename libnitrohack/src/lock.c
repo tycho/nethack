@@ -211,7 +211,8 @@ void reset_pick(void)
 }
 
 /* pick a lock with a given object */
-int pick_lock(struct obj *pick, int rx, int ry)
+/* explicit = mention tool being used explicitly */
+int pick_lock(struct obj *pick, int rx, int ry, boolean explicit)
 {
 	/* rx and ry are passed only from the use-stethoscope stuff */
 	int picktyp, c, ch;
@@ -261,7 +262,7 @@ int pick_lock(struct obj *pick, int rx, int ry)
 	ch = 0;		/* lint suppression */
 
 	/* If this is a stethoscope, we know where we came from. */
-	if (picktyp == STETHOSCOPE) {
+	if (rx != 0 && ry != 0) {
 	    cc.x = rx;
 	    cc.y = ry;
 	} else {
@@ -406,8 +407,10 @@ int pick_lock(struct obj *pick, int rx, int ry)
 			return 0;
 		    }
 
-		    sprintf(qbuf,"%sock it?",
-			(door->doormask & D_LOCKED) ? "Unl" : "L" );
+		    sprintf(qbuf,"%sock it%s%s?",
+			(door->doormask & D_LOCKED) ? "Unl" : "L",
+			explicit ? " with " : "",
+			explicit ? doname(pick) : "");
 
 		    c = yn(qbuf);
 		    if (c == 'n') return 0;
@@ -566,15 +569,24 @@ int doopen(int dx, int dy, int dz)
 
 	if (!(door->doormask & D_CLOSED)) {
 	    const char *mesg;
+	    int locked = FALSE;
 
 	    switch (door->doormask) {
 	    case D_BROKEN: mesg = " is broken"; break;
 	    case D_NODOOR: mesg = "way has no door"; break;
 	    case D_ISOPEN: mesg = " is already open"; break;
-	    default:	   mesg = " is locked"; break;
+	    default:	   mesg = " is locked"; locked = TRUE; break;
 	    }
 	    pline("This door%s.", mesg);
 	    if (Blind) feel_location(cc.x,cc.y);
+	    if (locked) {
+		struct obj *otmp = NULL;
+		if (flags.autounlock &&
+		    ((otmp = carrying(SKELETON_KEY)) ||
+		     (otmp = carrying(LOCK_PICK)) ||
+		     (otmp = carrying(CREDIT_CARD))))
+		    return pick_lock(otmp, cc.x, cc.y, TRUE);
+	    }
 	    return 0;
 	}
 

@@ -720,7 +720,7 @@ extern int wiz_light_sources(void);
 extern boolean picking_lock(int *,int *);
 extern boolean picking_at(int,int);
 extern void reset_pick(void);
-extern int pick_lock(struct obj *, int, int);
+extern int pick_lock(struct obj *,int,int,boolean);
 extern int doforce(void);
 extern boolean boxlock(struct obj *,struct obj *);
 extern boolean doorlock(struct obj *,int,int);

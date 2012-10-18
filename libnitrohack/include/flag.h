@@ -16,6 +16,7 @@
 struct flag {
 	boolean  autodig;       /* MRKR: Automatically dig */
 	boolean  autoquiver;	/* Automatically fill quiver */
+	boolean  autounlock;	/* Automatically ask to apply unlocking tool */
 	boolean  beginner;
 	boolean  confirm;	/* confirm before hitting tame monsters */
 	boolean  debug;		/* in debugging mode */

@@ -119,6 +119,7 @@ static void save_flags(struct memfile *mf)
 	
 	mwrite8(mf, flags.autodig);
 	mwrite8(mf, flags.autoquiver);
+	mwrite8(mf, flags.autounlock);
 	mwrite8(mf, flags.beginner);
 	mwrite8(mf, flags.confirm);
 	mwrite8(mf, flags.debug);
