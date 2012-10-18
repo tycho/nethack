@@ -6,7 +6,10 @@
 # Keeping the Moat for old-time's sake
 LEVEL: "wizard1"
 # Must have noflipx, due to the morgue-hack (see below).
-FLAGS: noteleport, hardfloor, mazelevel, noflipx
+# In fact, must be noflip period to prevent the stairs to
+# Vlad's Tower appearing in the Wizard's Tower, due to a bug
+# in level flipping.
+FLAGS: noteleport, hardfloor, mazelevel, noflip
 INIT_MAP: mazegrid, '-'
 GEOMETRY: center, center
 MAP
@@ -90,7 +93,7 @@ LOOP [3] {
 
 # The middle wizard level.
 LEVEL: "wizard2"
-FLAGS: noteleport, hardfloor, mazelevel
+FLAGS: noteleport, hardfloor, mazelevel, noflip
 INIT_MAP: mazegrid, '-'
 GEOMETRY: center, center
 MAP
@@ -143,7 +146,7 @@ OBJECT: '"', (04,06)
 # The bottom wizard level.
 # Memorialize the fakewiz setup.
 LEVEL: "wizard3"
-FLAGS: noteleport, hardfloor, mazelevel
+FLAGS: noteleport, hardfloor, mazelevel, noflip
 INIT_MAP: mazegrid, '-'
 GEOMETRY: center, center
 MAP
