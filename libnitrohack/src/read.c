@@ -165,6 +165,7 @@ int doread(struct obj *scroll)
 	    violated(CONDUCT_ILLITERACY);
 	    return 1;
 	} else if (scroll->oclass == COIN_CLASS) {
+	    char tmp[BUFSZ];
 	    if (u.roleplay.illiterate) {
 		if (Blind)
 		    pline("You feel the embossed words.");
@@ -177,7 +178,8 @@ int doread(struct obj *scroll)
 		pline("You feel the embossed words:");
 	    else if (flags.verbose)
 		pline("You read:");
-	    pline("\"1 Zorkmid. 857 GUE. In Frobs We Trust.\"");
+	    strcpy(tmp, currency(1));
+	    pline("\"1 %s. 857 GUE. In Frobs We Trust.\"", upstart(tmp));
 	    violated(CONDUCT_ILLITERACY);
 	    return 1;
 	} else if (scroll->oartifact == ART_ORB_OF_FATE) {
