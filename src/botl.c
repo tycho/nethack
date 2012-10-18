@@ -321,7 +321,8 @@ bot1()
 	    int bar_length = strlen(newbot1)-1;
 	    char tmp[MAXCO];
 	    char *p = tmp;
-	    int filledbar = uhp() * bar_length / uhpmax();
+	    int filledbar = ((uhp() < 0) ? 0 : uhp()) * bar_length / uhpmax();
+	    if (filledbar >= MAXCO) { filledbar = MAXCO-1; }
 	    Strcpy(tmp, newbot1);
 	    p++;
 
