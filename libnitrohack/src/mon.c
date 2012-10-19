@@ -1312,7 +1312,8 @@ void mondead_helper(struct monst *mtmp, int adtyp)
 
 	/* monster should no longer block vision */
 	if ((!mtmp->minvis || See_invisible) &&
-	    ((mtmp->m_ap_type == M_AP_FURNITURE &&
+	    (mtmp->data == &mons[PM_GIANT_TURTLE] ||
+	     (mtmp->m_ap_type == M_AP_FURNITURE &&
 	      (mtmp->mappearance == S_vcdoor || mtmp->mappearance == S_hcdoor)) ||
 	     (mtmp->m_ap_type == M_AP_OBJECT &&
 	      mtmp->mappearance == BOULDER)))
@@ -1491,7 +1492,8 @@ void mongone(struct monst *mdef)
 
 	/* monster should no longer block vision */
 	if ((!mdef->minvis || See_invisible) &&
-	    ((mdef->m_ap_type == M_AP_FURNITURE &&
+	    (mdef->data == &mons[PM_GIANT_TURTLE] ||
+	     (mdef->m_ap_type == M_AP_FURNITURE &&
 	      (mdef->mappearance == S_vcdoor || mdef->mappearance == S_hcdoor)) ||
 	     (mdef->m_ap_type == M_AP_OBJECT &&
 	      mdef->mappearance == BOULDER)))
