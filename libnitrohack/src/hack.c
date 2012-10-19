@@ -988,10 +988,12 @@ static boolean unexplored(int x, int y)
 	int i, j, k, l;
 	const struct rm *loc;
 	const struct trap *ttmp;
+	int mem_bg;
 
 	if (!isok(x, y)) return FALSE;
 	loc = &level->locations[x][y];
 	ttmp = t_at(level, x, y);
+	mem_bg = loc->mem_bg;
 
 	if (loc->mem_stepped) return FALSE;
 	if (ttmp && ttmp->tseen) return FALSE;
@@ -1001,6 +1003,13 @@ static boolean unexplored(int x, int y)
 	    return Is_blackmarket(&u.uz);
 	}
 	if (loc->mem_obj) return TRUE;
+
+	if (mem_bg == S_altar    || mem_bg == S_throne   ||
+	    mem_bg == S_sink     || mem_bg == S_fountain ||
+	    mem_bg == S_dnstair  || mem_bg == S_upstair  ||
+	    mem_bg == S_dnsstair || mem_bg == S_upsstair ||
+	    mem_bg == S_dnladder || mem_bg == S_upladder)
+	    return TRUE;
 
 	/* step into shop doorways so autoexplore can be interrupted */
 	if (IS_DOOR(loc->typ) && *in_rooms(level, x, y, SHOPBASE))
@@ -1031,9 +1040,21 @@ static boolean unexplored(int x, int y)
 static int autotravel_weighting(int x, int y, unsigned distance)
 {
 	const struct rm *loc = &level->locations[x][y];
+	int mem_bg = loc->mem_bg;
 
 	/* greedy for items */
 	if (loc->mem_obj)
+	    return distance;
+
+	/* some dungeon features */
+	if (mem_bg == S_altar || mem_bg == S_throne ||
+	    mem_bg == S_sink  || mem_bg == S_fountain)
+	    return distance;
+
+	/* stairs and ladders */
+	if (mem_bg == S_dnstair  || mem_bg == S_upstair  ||
+	    mem_bg == S_dnsstair || mem_bg == S_upsstair ||
+	    mem_bg == S_dnladder || mem_bg == S_upladder)
 	    return distance;
 
 	/* favor rooms */
@@ -1866,6 +1887,7 @@ int domove(schar dx, schar dy, schar dz)
 			IS_FURNITURE(tmpr->typ))
 		    nomul(0, NULL);
 	    } else if (flags.travel && iflags.autoexplore) {
+		int wallcount, mem_bg;
 		/* autoexplore stoppers: being orthogonally
 		 * adjacent to a boulder, being orthogonally adjacent
 		 * to 3 or more walls; this logic could be incorrect
@@ -1873,7 +1895,7 @@ int domove(schar dx, schar dy, schar dz)
 		 * not blind, we'll assume the hero knows about adjacent
 		 * walls and boulders due to being able to see them
 		 */
-		int wallcount = 0;
+		wallcount = 0;
 		if (isok(u.ux-1, u.uy  ))
 		    wallcount += IS_ROCK(level->locations[u.ux-1][u.uy  ].typ) +
 				 !!sobj_at(BOULDER, level, u.ux-1, u.uy  ) * 3;
@@ -1887,6 +1909,18 @@ int domove(schar dx, schar dy, schar dz)
 		    wallcount += IS_ROCK(level->locations[u.ux  ][u.uy+1].typ) +
 				 !!sobj_at(BOULDER, level, u.ux  , u.uy+1) * 3;
 		if (wallcount >= 3) nomul(0, NULL);
+		/*
+		 * More autoexplore stoppers: interesting dungeon features
+		 * that haven't been stepped on yet.
+		 */
+		mem_bg = tmpr->mem_bg;
+		if (tmpr->mem_stepped == 0 &&
+		    (mem_bg == S_altar    || mem_bg == S_throne   ||
+		     mem_bg == S_sink     || mem_bg == S_fountain ||
+		     mem_bg == S_dnstair  || mem_bg == S_upstair  ||
+		     mem_bg == S_dnsstair || mem_bg == S_upsstair ||
+		     mem_bg == S_dnladder || mem_bg == S_upladder))
+		    nomul(0, NULL);
 	    }
 	}
 
