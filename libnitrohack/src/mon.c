@@ -2577,14 +2577,18 @@ void kill_monster_on_level(int mndx)
 {
 	struct monst *mtmp;
 	struct monst *mtmp2;
-	int tmp_mndx;
 
 	for (mtmp = level->monlist; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;
 	    if (DEADMONSTER(mtmp)) continue;
-	    tmp_mndx = monsndx(mtmp->data);
-	    if (mndx == tmp_mndx)
+	    /*
+	     * Level genociding a chameleon kills it,
+	     * while level genociding its form just makes it change form.
+	     */
+	    if (mtmp->mnum == mndx)
 		mondead(mtmp);
+	    else if (mtmp->cham && monsndx(mtmp->data) == mndx)
+		newcham(level, mtmp, NULL, FALSE, FALSE);
 	}
 }
 
