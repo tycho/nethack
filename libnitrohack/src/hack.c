@@ -2468,10 +2468,13 @@ void lookaround(void)
 	if ((canseemon(level, mtmp) ||
 	     (canspotmon(level, mtmp) &&
 	      distmin(u.ux, u.uy, mtmp->mx, mtmp->my) <= 5)) &&
-	    !mtmp->mpeaceful && !mtmp->mtame &&
+	    mtmp->m_ap_type != M_AP_FURNITURE &&
+	    mtmp->m_ap_type != M_AP_OBJECT &&
+	    ((!mtmp->mpeaceful && !mtmp->mtame) || Hallucination) &&
+	    !noattacks(mtmp->data) &&
 	    mtmp->data->mmove && flags.run != 1) {
-	    nomul(0, NULL);
-	    return;
+		nomul(0, NULL);
+		return;
 	}
     }
 
