@@ -2864,6 +2864,7 @@ static int do_rush(int dx, int dy, int dz, int runmode, boolean move_only)
 {
 	int ret;
 
+	iflags.autoexplore = FALSE;
 	flags.travel = iflags.travel1 = 0;
 	flags.run = runmode;
 	
