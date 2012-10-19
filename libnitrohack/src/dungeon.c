@@ -2089,8 +2089,10 @@ int dooverview(void)
 	overview_print_lev(buf, lev);
 	pline("Now viewing %s%s.  Press any key to return.",
 	      Is_astralevel(&lev->z) ? "the " : "", buf);
+	notify_levelchange(&lev->z);
 	flush_screen_nopos();
 	win_pause_output(P_MAP);
+	notify_levelchange(NULL);
 	doredraw();
 	
 	return 0;
