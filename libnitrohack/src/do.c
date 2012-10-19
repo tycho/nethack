@@ -1222,6 +1222,9 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	    }
 	}
 
+	/* Stop autoexplore revisiting the entrance stairs. */
+	level->locations[u.ux][u.uy].mem_stepped = 1;
+
 	/* initial movement of bubbles just before vision_recalc */
 	if (Is_waterlevel(&u.uz))
 		movebubbles();
