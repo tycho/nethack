@@ -114,6 +114,7 @@ static struct Bool_Opt
 	{"guicolor", &iflags.wc2_guicolor, TRUE, SET_IN_GAME},
 	{"help", &flags.help, TRUE, SET_IN_GAME},
 	{"hilite_pet",    &iflags.wc_hilite_pet, FALSE, SET_IN_GAME},	/*WC*/
+	{"hilite_hidden_stairs",    &iflags.hilite_hidden_stairs, FALSE, SET_IN_GAME},	/*WC*/
 	{"hitpointbar", &iflags.hitpointbar, FALSE, SET_IN_GAME},
 	{"hp_monitor", (boolean *)0, TRUE, SET_IN_FILE}, /* For backward compat, HP monitor patch */
 	{"hp_notify", &iflags.hp_notify, FALSE, SET_IN_GAME},
