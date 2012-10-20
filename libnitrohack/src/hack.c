@@ -998,6 +998,8 @@ static boolean unexplored(int x, int y)
 	if (loc->mem_stepped) return FALSE;
 	if (ttmp && ttmp->tseen) return FALSE;
 	if (loc->mem_obj == what_obj(BOULDER) + 1) return FALSE;
+	if (loc->mem_obj == what_obj(STATUE) + 1 && loc->mem_obj_stacks == 0)
+	    return FALSE;
 	if (loc->mem_obj && inside_shop(level, x, y)) {
 	    /* Black Market items are interesting. */
 	    return Is_blackmarket(&u.uz);
