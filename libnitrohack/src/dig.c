@@ -357,7 +357,7 @@ static int dig(void)
 				loc->doormask = D_BROKEN;
 		} else return 0; /* statue or boulder got taken */
 
-		if (!does_block(level, dpx, dpy))
+		if (!does_block(level, dpx, dpy, NULL))
 		    unblock_point(dpx,dpy);	/* vision:  can see through */
 		if (Blind)
 		    feel_location(dpx, dpy);

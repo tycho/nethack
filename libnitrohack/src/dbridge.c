@@ -743,7 +743,7 @@ void destroy_drawbridge(int x, int y)
 	if ((t = t_at(level, x2, y2)) != 0) deltrap(level, t);
 	newsym(x,y);
 	newsym(x2,y2);
-	if (!does_block(level,x2,y2)) unblock_point(x2,y2);	/* vision */
+	if (!does_block(level, x2, y2, NULL)) unblock_point(x2,y2); /* vision */
 	if (Is_stronghold(&u.uz)) u.uevent.uopened_dbridge = TRUE;
 
 	set_entity(x2, y2, etmp2); /* currently only automissers can be here */

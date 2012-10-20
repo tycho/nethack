@@ -1565,7 +1565,7 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 				m->appear, m->appear_as.str);
 			break;
 		}
-		if (does_block(lev, x, y))
+		if (does_block(lev, x, y, NULL))
 		    block_point(x, y);
 	    }
 

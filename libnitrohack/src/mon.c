@@ -1311,12 +1311,7 @@ void mondead_helper(struct monst *mtmp, int adtyp)
 	    end_burn(otmp, FALSE);
 
 	/* monster should no longer block vision */
-	if ((!mtmp->minvis || See_invisible) &&
-	    (mtmp->data == &mons[PM_GIANT_TURTLE] ||
-	     (mtmp->m_ap_type == M_AP_FURNITURE &&
-	      (mtmp->mappearance == S_vcdoor || mtmp->mappearance == S_hcdoor)) ||
-	     (mtmp->m_ap_type == M_AP_OBJECT &&
-	      mtmp->mappearance == BOULDER)))
+	if (!does_block(level, mtmp->mx, mtmp->my, mtmp))
 	    unblock_point(mtmp->mx, mtmp->my);
 
 	mptr = mtmp->data;		/* save this for m_detach() */
@@ -1491,12 +1486,8 @@ void mongone(struct monst *mdef)
 		dismount_steed(DISMOUNT_GENERIC);
 
 	/* monster should no longer block vision */
-	if ((!mdef->minvis || See_invisible) &&
-	    (mdef->data == &mons[PM_GIANT_TURTLE] ||
-	     (mdef->m_ap_type == M_AP_FURNITURE &&
-	      (mdef->mappearance == S_vcdoor || mdef->mappearance == S_hcdoor)) ||
-	     (mdef->m_ap_type == M_AP_OBJECT &&
-	      mdef->mappearance == BOULDER)))
+	/* careful, may be called for something other than the current level */
+	if (!does_block(mdef->dlevel, mdef->mx, mdef->my, mdef))
 	    unblock_point(mdef->mx, mdef->my);
 
 	/* drop special items like the Amulet so that a dismissed Kop or nurse
@@ -2103,7 +2094,7 @@ void seemimic(struct monst *mtmp)
 	if (((old_ap_type == M_AP_FURNITURE &&
 	      (old_app == S_hcdoor || old_app == S_vcdoor)) ||
 	     (old_ap_type == M_AP_OBJECT && old_app == BOULDER)) &&
-	    !does_block(mtmp->dlevel, mtmp->mx, mtmp->my))
+	    !does_block(mtmp->dlevel, mtmp->mx, mtmp->my, mtmp))
 	    unblock_point(mtmp->mx, mtmp->my);
 
 	newsym(mtmp->mx,mtmp->my);

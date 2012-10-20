@@ -3746,8 +3746,8 @@ void fracture_rock(struct obj *obj)
 	if (obj->where == OBJ_FLOOR) {
 		obj_extract_self(obj);		/* move rocks back on top */
 		place_object(obj, level, obj->ox, obj->oy);
-		if (!does_block(obj->olev, obj->ox,obj->oy))
-	    		unblock_point(obj->ox,obj->oy);
+		if (!does_block(obj->olev, obj->ox, obj->oy, NULL))
+			unblock_point(obj->ox, obj->oy);
 		if (cansee(obj->ox,obj->oy))
 		    newsym(obj->ox,obj->oy);
 	}

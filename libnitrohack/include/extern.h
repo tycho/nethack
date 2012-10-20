@@ -1728,7 +1728,7 @@ extern void store_version(struct memfile *mf);
 /* ### vision.c ### */
 
 extern void vision_init(void);
-extern int does_block(struct level *lev, int x, int y);
+extern boolean does_block(struct level *,int,int,const struct monst *);
 extern void vision_reset(void);
 extern void vision_recalc(int);
 extern void block_point(int,int);

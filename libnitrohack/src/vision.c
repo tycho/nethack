@@ -132,7 +132,7 @@ void vision_init(void)
  * Returns true if the level feature, object, or monster at (x,y) blocks
  * sight.
  */
-int does_block(struct level *lev, int x, int y)
+boolean does_block(struct level *lev, int x, int y, const struct monst *excludemon)
 {
     struct obj   *obj;
     struct monst *mon;
@@ -153,6 +153,7 @@ int does_block(struct level *lev, int x, int y)
 
     /* Mimics mimicing a door or boulder block light. */
     if ((mon = m_at(lev, x,y)) && (!mon->minvis || See_invisible) &&
+	(excludemon == NULL || mon != excludemon) &&
 	(mon->data == &mons[PM_GIANT_TURTLE] ||
 	 ((mon->m_ap_type == M_AP_FURNITURE &&
 	   (mon->mappearance == S_hcdoor || mon->mappearance == S_vcdoor)) ||
@@ -190,7 +191,7 @@ void vision_reset(void)
 	block = TRUE;	/* location (0,y) is always stone; it's !isok() */
 	loc = &level->locations[1][y];
 	for (x = 1; x < COLNO; x++, loc += ROWNO)
-	    if (block != (IS_ROCK(loc->typ) || does_block(level, x, y))) {
+	    if (block != (IS_ROCK(loc->typ) || does_block(level, x, y, NULL))) {
 		if (block) {
 		    for (i=dig_left; i<x; i++) {
 			left_ptrs [y][i] = dig_left;
