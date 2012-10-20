@@ -1051,6 +1051,10 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->uburied	= (yflags >> 26) & 1;
 	y->uedibility	= (yflags >> 25) & 1;
 	y->usick_type	= (yflags >> 23) & 3;
+	y->bstack	= (yflags >> 22) & 1;
+	y->cstack	= (yflags >> 21) & 1;
+	y->bosoko	= (yflags >> 20) & 1;
+	y->cosoko	= (yflags >> 19) & 1;
 	
 	y->uevent.minor_oracle		= (eflags >> 31) & 1;
 	y->uevent.major_oracle		= (eflags >> 30) & 1;
@@ -1096,6 +1100,8 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->xray_range = mread32(mf);
 	y->bglyph = mread32(mf);
 	y->cglyph = mread32(mf);
+	y->bobjmn = mread32(mf);
+	y->cobjmn = mread32(mf);
 	y->bc_order = mread32(mf);
 	y->bc_felt = mread32(mf);
 	y->ucreamed = mread32(mf);
@@ -1216,7 +1222,9 @@ void save_you(struct memfile *mf, struct you *y)
 	unsigned int yflags, eflags, hflags;
 	yflags = (y->uswallow << 31) | (y->uinwater << 30) | (y->uundetected << 29) |
 		(y->mfemale << 28) | (y->uinvulnerable << 27) | (y->uburied << 26) |
-		(y->uedibility << 25) | (y->usick_type << 23);
+		(y->uedibility << 25) | (y->usick_type << 23) |
+		(y->bstack << 22) | (y->cstack << 21) |
+		(y->bosoko << 20) | (y->cosoko << 19);
 	eflags = (y->uevent.minor_oracle << 31) | (y->uevent.major_oracle << 30) |
 		(y->uevent.qcalled << 29) | (y->uevent.qexpelled << 28) |
 		(y->uevent.qcompleted << 27) | (y->uevent.uheard_tune << 25) |
@@ -1255,6 +1263,8 @@ void save_you(struct memfile *mf, struct you *y)
 	mwrite32(mf, y->xray_range);
 	mwrite32(mf, y->bglyph);
 	mwrite32(mf, y->cglyph);
+	mwrite32(mf, y->bobjmn);
+	mwrite32(mf, y->cobjmn);
 	mwrite32(mf, y->bc_order);
 	mwrite32(mf, y->bc_felt);
 	mwrite32(mf, y->ucreamed);

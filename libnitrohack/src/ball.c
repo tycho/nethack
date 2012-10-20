@@ -68,6 +68,12 @@ void ballfall(void)
  * from you.h
  *	int u.bglyph		glyph under the ball
  *	int u.cglyph		glyph under the chain
+ *	int u.bobjmn		obj mon number under the ball
+ *	int u.cobjmn		obj mon number under the chain
+ *	unsigned u.bstack	obj stacks flag under the ball
+ *	unsigned u.cstack	obj stacks flag under the chain
+ *	unsigned u.bosoko	obj sokoprize flag under the ball
+ *	unsigned u.cosoko	obj sokoprize flag under the chain
  *	int u.bc_felt		mask for ball/chain being felt
  *	#define BC_BALL  0x01	bit mask in u.bc_felt for ball
  *	#define BC_CHAIN 0x02	bit mask in u.bc_felt for chain
@@ -83,7 +89,38 @@ void ballfall(void)
 #define BCPOS_CHAIN	1	/* chain on top of ball */
 #define BCPOS_BALL	2	/* ball on top of chain */
 
+#define GLYPH_PICK(bc, x, y) \
+do { \
+    u.bc##glyph = level->locations[x][y].mem_obj; \
+    u.bc##objmn = level->locations[x][y].mem_obj_mn; \
+    u.bc##stack = level->locations[x][y].mem_obj_stacks; \
+    u.bc##osoko = level->locations[x][y].mem_obj_soko; \
+} while (0)
 
+#define BGLYPH_PICK(x, y)	GLYPH_PICK(b, x, y)
+#define CGLYPH_PICK(x, y)	GLYPH_PICK(c, x, y)
+
+#define GLYPH_DROP(bc, x, y) \
+do { \
+    level->locations[x][y].mem_obj        = u.bc##glyph; \
+    level->locations[x][y].mem_obj_mn     = u.bc##objmn; \
+    level->locations[x][y].mem_obj_stacks = u.bc##stack; \
+    level->locations[x][y].mem_obj_soko   = u.bc##osoko; \
+} while (0)
+
+#define BGLYPH_DROP(x, y)	GLYPH_DROP(b, x, y)
+#define CGLYPH_DROP(x, y)	GLYPH_DROP(c, x, y)
+
+#define GLYPH_CLONE_A_TO_B(a, b) \
+do { \
+    u.b##glyph = u.a##glyph; \
+    u.b##objmn = u.a##objmn; \
+    u.b##stack = u.a##stack; \
+    u.b##osoko = u.a##osoko; \
+} while (0)
+
+#define GLYPH_CLONE_BALL_TO_CHAIN()	GLYPH_CLONE_A_TO_B(b, c)
+#define GLYPH_CLONE_CHAIN_TO_BALL()	GLYPH_CLONE_A_TO_B(c, b)
 
 /*
  *  Place the ball & chain under the hero.  Make sure that the ball & chain
@@ -113,7 +150,9 @@ void placebc(void)
 
     place_object(uchain, level, u.ux, u.uy);
 
-    u.bglyph = u.cglyph = level->locations[u.ux][u.uy].mem_obj;   /* pick up glyph */
+    /* pick up glyph */
+    CGLYPH_PICK(u.ux, u.uy);
+    GLYPH_CLONE_CHAIN_TO_BALL();
 
     newsym(u.ux,u.uy);
 }
@@ -125,13 +164,13 @@ void unplacebc(void)
     if (!carried(uball)) {
 	obj_extract_self(uball);
 	if (Blind && (u.bc_felt & BC_BALL))		/* drop glyph */
-	    level->locations[uball->ox][uball->oy].mem_obj = u.bglyph;
+	    BGLYPH_DROP(uball->ox, uball->oy);
 
 	newsym(uball->ox,uball->oy);
     }
     obj_extract_self(uchain);
     if (Blind && (u.bc_felt & BC_CHAIN))		/* drop glyph */
-	level->locations[uchain->ox][uchain->oy].mem_obj = u.cglyph;
+	CGLYPH_DROP(uchain->ox, uchain->oy);
 
     newsym(uchain->ox,uchain->oy);
     u.bc_felt = 0;					/* feel nothing */
@@ -172,7 +211,8 @@ void set_bc(int already_blind)
     u.bc_felt = ball_on_floor ? BC_BALL|BC_CHAIN : BC_CHAIN;	/* felt */
 
     if (already_blind || u.uswallow) {
-	u.cglyph = u.bglyph = level->locations[u.ux][u.uy].mem_obj;
+	BGLYPH_PICK(u.ux, u.uy);
+	GLYPH_CLONE_BALL_TO_CHAIN();
 	return;
     }
 
@@ -185,19 +225,19 @@ void set_bc(int already_blind)
     if (ball_on_floor) remove_object(uball);
 
     newsym(uchain->ox, uchain->oy);
-    u.cglyph = level->locations[uchain->ox][uchain->oy].mem_obj;
+    CGLYPH_PICK(uchain->ox, uchain->oy);
 
     if (u.bc_order == BCPOS_DIFFER) {		/* different locations */
 	place_object(uchain, level, uchain->ox, uchain->oy);
 	newsym(uchain->ox, uchain->oy);
 	if (ball_on_floor) {
 	    newsym(uball->ox, uball->oy);		/* see under ball */
-	    u.bglyph = level->locations[uball->ox][uball->oy].mem_obj;
+	    BGLYPH_PICK(uball->ox, uball->oy);
 	    place_object(uball, level, uball->ox, uball->oy);
 	    newsym(uball->ox, uball->oy);		/* restore ball */
 	}
     } else {
-	u.bglyph = u.cglyph;
+	GLYPH_CLONE_CHAIN_TO_BALL();
 	if (u.bc_order == BCPOS_CHAIN) {
 	    place_object(uball, level, uball->ox, uball->oy);
 	    place_object(uchain, level, uchain->ox, uchain->oy);
@@ -239,52 +279,54 @@ void move_bc(int before, int control, xchar ballx, xchar bally, xchar chainx, xc
 		 *  Both ball and chain moved.  If felt, drop glyph.
 		 */
 		if (u.bc_felt & BC_BALL)
-		    level->locations[uball->ox][uball->oy].mem_obj = u.bglyph;
+		    BGLYPH_DROP(uball->ox, uball->oy);
 		if (u.bc_felt & BC_CHAIN)
-		    level->locations[uchain->ox][uchain->oy].mem_obj = u.cglyph;
+		    CGLYPH_DROP(uchain->ox, uchain->oy);
 		u.bc_felt = 0;
 
-		/* Pick up mem_obj at new location. */
-		u.bglyph = level->locations[ballx][bally].mem_obj;
-		u.cglyph = level->locations[chainx][chainy].mem_obj;
+		/* Pick up object memory at new location. */
+		BGLYPH_PICK(ballx, bally);
+		CGLYPH_PICK(chainx, chainy);
 
 		movobj(uball,ballx,bally);
 		movobj(uchain,chainx,chainy);
 	    } else if (control & BC_BALL) {
 		if (u.bc_felt & BC_BALL) {
 		    if (u.bc_order == BCPOS_DIFFER) {	/* ball by itself */
-			level->locations[uball->ox][uball->oy].mem_obj = u.bglyph;
+			BGLYPH_DROP(uball->ox, uball->oy);
 		    } else if (u.bc_order == BCPOS_BALL) {
-			if (u.bc_felt & BC_CHAIN) {   /* know chain is there */
+			if (u.bc_felt & BC_CHAIN)   /* know chain is there */
 			    map_object(uchain, 0);
-			} else {
-			    level->locations[uball->ox][uball->oy].mem_obj = u.bglyph;
-			}
+			else
+			    BGLYPH_DROP(uball->ox, uball->oy);
 		    }
 		    u.bc_felt &= ~BC_BALL;	/* no longer feel the ball */
 		}
 
-		/* Pick up mem_obj at new position. */
-		u.bglyph = (ballx != chainx || bally != chainy) ?
-					level->locations[ballx][bally].mem_obj : u.cglyph;
+		/* Pick up object memory at new position. */
+		if (ballx != chainx || bally != chainy)
+		    BGLYPH_PICK(ballx, bally);
+		else
+		    GLYPH_CLONE_CHAIN_TO_BALL();
 
 		movobj(uball,ballx,bally);
 	    } else if (control & BC_CHAIN) {
 		if (u.bc_felt & BC_CHAIN) {
 		    if (u.bc_order == BCPOS_DIFFER) {
-			level->locations[uchain->ox][uchain->oy].mem_obj = u.cglyph;
+			CGLYPH_DROP(uchain->ox, uchain->oy);
 		    } else if (u.bc_order == BCPOS_CHAIN) {
-			if (u.bc_felt & BC_BALL) {
+			if (u.bc_felt & BC_BALL)
 			    map_object(uball, 0);
-			} else {
-			    level->locations[uchain->ox][uchain->oy].mem_obj = u.cglyph;
-			}
+			else
+			    CGLYPH_DROP(uchain->ox, uchain->oy);
 		    }
 		    u.bc_felt &= ~BC_CHAIN;
 		}
-		/* Pick up mem_obj at new position. */
-		u.cglyph = (ballx != chainx || bally != chainy) ?
-					level->locations[chainx][chainy].mem_obj : u.bglyph;
+		/* Pick up object memory at new position. */
+		if (ballx != chainx || bally != chainy)
+		    CGLYPH_PICK(chainx, chainy);
+		else
+		    GLYPH_CLONE_BALL_TO_CHAIN();
 
 		movobj(uchain,chainx,chainy);
 	    }
@@ -628,7 +670,10 @@ void drop_ball(xchar x, xchar y, schar dx, schar dy)
     if (Blind) {
 	u.bc_order = bc_order();			/* get the order */
 							/* pick up mem_obj */
-	u.bglyph = (u.bc_order) ? u.cglyph : level->locations[x][y].mem_obj;
+	if (u.bc_order == BCPOS_DIFFER)
+	    BGLYPH_PICK(x, y);
+	else
+	    GLYPH_CLONE_CHAIN_TO_BALL();
     }
 
     if (x != u.ux || y != u.uy) {
@@ -686,10 +731,13 @@ void drop_ball(xchar x, xchar y, schar dx, schar dy)
 	if (Blind) {
 	    /* drop glyph under the chain */
 	    if (u.bc_felt & BC_CHAIN)
-		level->locations[uchain->ox][uchain->oy].mem_obj = u.cglyph;
+		CGLYPH_DROP(uchain->ox, uchain->oy);
 	    u.bc_felt  = 0;		/* feel nothing */
 	    /* pick up new glyph */
-	    u.cglyph = (u.bc_order) ? u.bglyph : level->locations[u.ux][u.uy].mem_obj;
+	    if (u.bc_order == BCPOS_DIFFER)
+		CGLYPH_PICK(u.ux, u.uy);
+	    else
+		GLYPH_CLONE_BALL_TO_CHAIN();
 	}
 	movobj(uchain,u.ux,u.uy);	/* has a newsym */
 	if (Blind) {

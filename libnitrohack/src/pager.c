@@ -211,11 +211,31 @@ static int describe_object(int x, int y, int votyp, char *buf)
 {
     int num_objs = 0;
     struct obj *otmp;
+    boolean unfelt_ball, unfelt_chain;
+
     if (votyp == -1)
 	return -1;
-    
+
+    /* If we're blind and punished and the ball/chain are on top of an object,
+     * vobj_at() may mismatch with votyp and describe the remembered object
+     * incorrectly. */
+    if (Blind && Punished) {
+	unfelt_ball = ((u.bc_felt & BC_BALL) == 0) && !carried(uball) &&
+		      x == uball->ox && y == uball->oy;
+	unfelt_chain = ((u.bc_felt & BC_CHAIN) == 0) &&
+		       x == uchain->ox && y == uchain->oy;
+    } else {
+	/* Even if the ball/chain exist, we're not blind so it doesn't matter. */
+	unfelt_ball = unfelt_chain = FALSE;
+    }
+
     otmp = vobj_at(x,y);
-    
+
+    /* Skip unfelt ball/chain if needed. */
+    while (otmp && ((unfelt_ball  && otmp == uball) ||
+		    (unfelt_chain && otmp == uchain)))
+	otmp = otmp->nexthere;
+
     if (!otmp || otmp->otyp != votyp) {
 	if (votyp == STRANGE_OBJECT) {
 	    strcpy(buf, "strange object");
@@ -256,10 +276,12 @@ static int describe_object(int x, int y, int votyp, char *buf)
     if (otmp->otyp != votyp)
 	/* Hero sees something other than the actual top object. Probably a mimic */
 	num_objs++;
-    
+
+    /* Don't count unfelt ball/chain. */
     for ( ; otmp; otmp = otmp->nexthere)
-	num_objs++;
-    
+	if ((!unfelt_ball || otmp != uball) && (!unfelt_chain || otmp != uchain))
+	    num_objs++;
+
     return num_objs;
 }
 

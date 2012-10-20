@@ -140,6 +140,12 @@ struct you {
 #define BC_CHAIN 0x02	/* bit mask for chain in 'bc_felt' below */
 	int bglyph;	/* glyph under the ball */
 	int cglyph;	/* glyph under the chain */
+	int bobjmn;	/* obj mon number under the ball */
+	int cobjmn;	/* obj mon number under the chain */
+	unsigned bstack:1;	/* obj stacks flag under the ball */
+	unsigned cstack:1;	/* obj stacks flag under the chain */
+	unsigned bosoko:1;	/* obj sokoprize flag under the ball */
+	unsigned cosoko:1;	/* obj sokoprize flag under the chain */
 	int bc_order;	/* ball & chain order [see bc_order() in ball.c] */
 	int bc_felt;	/* mask for ball/chain being felt */
 

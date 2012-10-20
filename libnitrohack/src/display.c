@@ -211,6 +211,55 @@ void map_trap(struct trap *trap, int show)
 }
 
 /*
+ * Get info about the top object at a location.
+ *
+ * Logic is very similar to map_object(), but they can't be merged since
+ * map_object() is used for object detection, which this won't work for.
+ */
+boolean topobj_at(int x, int y, boolean ignorebc, int *dotyp, int *domon,
+		  unsigned *ostack, unsigned *osoko)
+{
+    const struct obj *obj, *next;
+
+    *dotyp = 0;
+    *domon = 0;
+    *ostack = 0;
+    *osoko = 0;
+
+    obj = vobj_at(x, y);
+    if (ignorebc && uball && uchain) {
+	/* Get top object which isn't the ball or chain. */
+	while (obj && (obj == uball || obj == uchain))
+	    obj = obj->nexthere;
+    }
+
+    if (!obj || covers_objects(level, x, y))
+	return FALSE;
+
+    *dotyp = what_obj(obj->otyp) + 1;
+    if (*dotyp == CORPSE || *dotyp == STATUE || *dotyp == FIGURINE) {
+	if (Hallucination)
+	    *domon = random_monster() + 1;
+	else
+	    *domon = obfuscate_monster(obj->corpsenm) + 1;
+    }
+
+    next = obj->nexthere;
+    if (ignorebc && uball && uchain) {
+	/* Find next object that isn't the ball or chain */
+	while (next && (next == uball || next == uchain))
+	    next = next->nexthere;
+    }
+    if (*dotyp != BOULDER && next)
+	*ostack = 1;
+
+    if (Is_sokoprize(obj))
+	*osoko = 1;
+
+    return TRUE;
+}
+
+/*
  * map_object()
  *
  * Map the given object.  This routine assumes that the hero can physically
@@ -308,8 +357,8 @@ void unmap_object(int x, int y)
  */
 void map_location(int x, int y, int show)
 {
-    register struct obj   *obj;
-    register struct trap  *trap;
+    struct obj *obj;
+    struct trap *trap;
 
     if (level->flags.hero_memory) {
 	if ((obj = vobj_at(x, y)) && !covers_objects(level, x, y)) {
@@ -605,23 +654,24 @@ void feel_location(xchar x, xchar y)
 
 	if (Punished) {
 	    /*
-	     * A ball or chain is only felt if it is first on the object
-	     * location list.  Otherwise, we need to clear the felt bit ---
-	     * something has been dropped on the ball/chain.  If the bit is
-	     * not cleared, then when the ball/chain is moved it will drop
+	     * Update object-under-ball/chain info for layered display system.
+	     * If we don't, then when the ball/chain is moved it will drop
 	     * the wrong glyph.
 	     */
+	    unsigned bcstack, bcosoko;
 	    if (uchain->ox == x && uchain->oy == y) {
-		if (level->objects[x][y] == uchain)
-		    u.bc_felt |= BC_CHAIN;
-		else
-		    u.bc_felt &= ~BC_CHAIN;	/* do not feel the chain */
+		u.bc_felt |= BC_CHAIN;
+		bcstack = bcosoko = 0;
+		topobj_at(x, y, TRUE, &u.cglyph, &u.cobjmn, &bcstack, &bcosoko);
+		u.cstack = bcstack;
+		u.cosoko = bcosoko;
 	    }
 	    if (!carried(uball) && uball->ox == x && uball->oy == y) {
-		if (level->objects[x][y] == uball)
-		    u.bc_felt |= BC_BALL;
-		else
-		    u.bc_felt &= ~BC_BALL;	/* do not feel the ball */
+		u.bc_felt |= BC_BALL;
+		bcstack = bcosoko = 0;
+		topobj_at(x, y, TRUE, &u.bglyph, &u.bobjmn, &bcstack, &bcosoko);
+		u.bstack = bcstack;
+		u.bosoko = bcosoko;
 	    }
 	}
 

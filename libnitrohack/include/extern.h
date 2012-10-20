@@ -202,6 +202,7 @@ extern void clear_memory_glyph(schar x, schar y, int to);
 extern void magic_map_background(xchar,xchar,int);
 extern void map_background(xchar,xchar,int);
 extern void map_trap(struct trap *,int);
+extern boolean topobj_at(int,int,boolean,int *,int *,unsigned *,unsigned *);
 extern void map_object(struct obj *,int);
 extern void map_invisible(xchar,xchar);
 extern void unmap_object(int,int);
