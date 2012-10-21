@@ -161,7 +161,7 @@ static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
 static struct mon_gen_override *rest_mongen_override(struct memfile *mf)
 {
 	struct mon_gen_override *or;
-	struct mon_gen_tuple *mt;
+	struct mon_gen_tuple *mt, *mtcurr, *mtprev, *mtnext;
 
 	or = NULL;
 
@@ -186,6 +186,17 @@ static struct mon_gen_override *rest_mongen_override(struct memfile *mf)
 		mt->next = or->gen_chances;
 		or->gen_chances = mt;
 	    }
+
+	    /* Mon tuple list is reversed, so put it back in the right order. */
+	    mtcurr = or->gen_chances;
+	    mtprev = NULL;
+	    while (mtcurr) {
+		mtnext = mtcurr->next;
+		mtcurr->next = mtprev;
+		mtprev = mtcurr;
+		mtcurr = mtnext;
+	    }
+	    or->gen_chances = mtprev;
 	}
 
 	return or;
