@@ -742,7 +742,11 @@ static boolean toss_up(struct obj *obj, boolean hitsroof)
 			pline("It blinds you!");
 		    u.ucreamed += blindinc;
 		    make_blinded(Blinded + (long)blindinc, FALSE);
-		    if (!Blind) pline("Your vision quickly clears.");
+		    if (!Blind)
+			pline("Your vision quickly clears.");
+		    else if (flags.verbose)
+			pline("Use the command #wipe to clean your %s.",
+			      body_part(FACE));
 		}
 		break;
 	default:
