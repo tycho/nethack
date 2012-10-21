@@ -260,6 +260,7 @@ struct instance_flags {
     boolean notice_walls;
     boolean use_menu_glyphs;
     boolean hilite_hidden_stairs;
+    boolean hilite_obj_piles;
 /*
  * Window capability support.
  */

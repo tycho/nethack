@@ -2600,8 +2600,11 @@ tty_print_glyph(window, x, y, glyph)
     }
 
 #ifdef TEXTCOLOR
-    if (!reverse_on && (special & MG_STAIRS)) {
-	term_start_red_bg();
+    if (!reverse_on && (special & (MG_STAIRS|MG_OBJPILE))) {
+	if ((special & MG_STAIRS) && iflags.hilite_hidden_stairs)
+	    term_start_bgcolor(CLR_RED);
+	else if ((special & MG_OBJPILE) && iflags.hilite_obj_piles)
+	    term_start_bgcolor(CLR_BLUE);
     }
 #endif
 
@@ -2626,7 +2629,7 @@ tty_print_glyph(window, x, y, glyph)
     print_vt_code(AVTC_GLYPH_END, -1);
 
 #ifdef TEXTCOLOR
-    if (!reverse_on && (special & MG_STAIRS)) term_end_color();
+    if (!reverse_on && (special & (MG_STAIRS|MG_OBJPILE))) term_end_color();
 #endif
 
     wins[window]->curx++;	/* one character over */
