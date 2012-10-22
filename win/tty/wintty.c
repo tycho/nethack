@@ -2600,7 +2600,7 @@ tty_print_glyph(window, x, y, glyph)
     }
 
 #ifdef TEXTCOLOR
-    if (!reverse_on && (special & (MG_STAIRS|MG_OBJPILE))) {
+    if ((window == NHW_MAP) && !reverse_on && (special & (MG_STAIRS|MG_OBJPILE))) {
 	if ((special & MG_STAIRS) && iflags.hilite_hidden_stairs)
 	    term_start_bgcolor(CLR_RED);
 	else if ((special & MG_OBJPILE) && iflags.hilite_obj_piles)
