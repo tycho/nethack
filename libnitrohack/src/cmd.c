@@ -1288,8 +1288,10 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	else if (obj->oclass == WAND_CLASS)
 	    SET_OBJ_CMD2('a', "apply", "apply (break!)");
 
-	/* drop item, works on almost everything */
-	if (!(obj->owornmask & ~W_WEP))
+	/* drop item, works on almost everything
+	   (Yes, this reveals loadstones to be undroppable, but if it's
+	   gotten to this point, that info is too late to be useful anyway.)*/
+	if (canletgo(obj, ""))
 	    SET_OBJ_CMD2('d', "drop", "drop");
 	
 	/* dip */
