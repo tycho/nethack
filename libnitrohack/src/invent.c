@@ -28,6 +28,7 @@ static const char *dfeature_at(int,int,char *);
 enum obj_use_status {
     OBJECT_USABLE,
     ALREADY_IN_USE,
+    ARMOR_TAKEOFF_BLOCKED,
     UNSUITABLE_USE,
     CURRENTLY_NOT_USABLE
 };
@@ -678,13 +679,16 @@ static enum obj_use_status object_selection_checks(struct obj *otmp,
 	
 	/* ugly check: remove inappropriate things */
 	if ((taking_off(word) &&
-	    (!(otmp->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL))
-		|| (otmp==uarm && uarmc) || (otmp==uarmu && (uarm || uarmc)) ))
+	    !(otmp->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL)))
 	|| (putting_on(word) &&
 		(otmp->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL))) /* already worn */
 	|| (!strcmp(word, "ready") &&
 	    (otmp == uwep || (otmp == uswapwep && u.twoweap))))
 	    return ALREADY_IN_USE;
+
+	if (taking_off(word) &&
+	    ((otmp == uarm && uarmc) || (otmp == uarmu && (uarm || uarmc))))
+	    return ARMOR_TAKEOFF_BLOCKED;
 
 	/* Second ugly check; unlike the first it won't trigger an
 	 * "else" in "you don't have anything else to ___".
@@ -808,6 +812,7 @@ struct obj *getobj(const char *let, const char *word)
 		
 		switch (object_selection_checks(otmp, word)) {
 		    case ALREADY_IN_USE: /* eg: wield the weapon in your hands */
+		    case ARMOR_TAKEOFF_BLOCKED:
 			foo--;
 			foox++;
 			break;
@@ -974,14 +979,18 @@ boolean validate_object(struct obj *obj, const char *lets, const char *word)
 	    silly_thing(word, obj);
 	    return FALSE;
 	}
-	
+
 	switch (object_selection_checks(obj, word)) {
 	    default:
 	    case ALREADY_IN_USE:
 	    case UNSUITABLE_USE:
 		silly_thing(word, obj);
 		return FALSE;
-		
+
+	    case ARMOR_TAKEOFF_BLOCKED:
+		pline("The rest of your armor is in the way.");
+		return FALSE;
+
 	    case OBJECT_USABLE:
 	    case CURRENTLY_NOT_USABLE:
 		return TRUE;
