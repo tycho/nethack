@@ -145,6 +145,7 @@ static const struct nh_option_desc const_options[] = {
     {"pickup_burden",	"maximum burden picked up before prompt", OPTTYPE_ENUM, {(void*)SLT_ENCUMBER}},
     {"pickup_dropped",	"autopickup items you deliberately dropped",	OPTTYPE_BOOL, { VFALSE }},
     {"pickup_thrown",	"autopickup items you threw or fired",	OPTTYPE_BOOL, { VTRUE }},
+    {"pilesize",	"maximum number of floor items to list without sidebar", OPTTYPE_INT, {(void*)5}},
     {"prayconfirm",	"use confirmation prompt when #pray command issued",	OPTTYPE_BOOL, { VTRUE }},
     {"pushweapon",	"when wielding a new weapon, put previous weapon into secondary weapon slot",	OPTTYPE_BOOL, { VFALSE }},
     {"runmode",		"display frequency when `running' or `travelling'", OPTTYPE_ENUM, {(void*)RUN_LEAP}},
@@ -339,6 +340,8 @@ void init_opt_struct(void)
 	find_option(options, "menustyle")->e = menustyle_spec;
 	find_option(options, "pickup_burden")->e = pickup_burden_spec;
 	find_option(options, "packorder")->s.maxlen = MAXOCLASSES;
+	find_option(options, "pilesize")->i.min = 1;
+	find_option(options, "pilesize")->i.max = 20;
 	find_option(options, "runmode")->e = runmode_spec;
 	find_option(options, "spellorder")->s.maxlen = 78; /* "a-bc-d...Y-Z" */
 	find_option(options, "autopickup_rules")->a = autopickup_spec;
@@ -683,6 +686,9 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 	else if (!strcmp("packorder", option->name)) {
 		if (!change_inv_order(option->value.s))
 			return FALSE;
+	}
+	else if (!strcmp("pilesize", option->name)) {
+		iflags.pilesize = option->value.i;
 	}
 	else if (!strcmp("pickup_burden", option->name)) {
 		flags.pickup_burden = option->value.e;

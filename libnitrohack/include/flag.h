@@ -165,6 +165,7 @@ struct instance_flags {
 	boolean  show_uncursed;	/* always show uncursed items as such */
 	boolean  showrace;	/* show hero glyph by race rather than by role */
 	int	 runmode;	/* update screen display during run moves */
+	int	 pilesize;	/* max number of floor items to list automatically */
 	boolean  disable_log;   /* don't append anything to the logfile */
 	boolean  botl;		/* redo status line */
 	boolean  autoexplore;	/* currently autoexploring */

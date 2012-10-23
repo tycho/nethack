@@ -1713,7 +1713,7 @@ int look_here(int obj_cnt, /* obj_cnt > 0 implies that autopickup is in progess 
 	const char *verb = Blind ? "feel" : "see";
 	const char *dfeature = NULL;
 	char fbuf[BUFSZ], fbuf2[BUFSZ];
-	boolean skip_objects = (obj_cnt >= 5), felt_cockatrice = FALSE;
+	boolean skip_objects = (obj_cnt > iflags.pilesize), felt_cockatrice = FALSE;
 	int icount = 0;
 	int size = 10;
 	struct nh_objitem *items = NULL;
