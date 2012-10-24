@@ -199,6 +199,37 @@ static void draw_statuses(const struct nh_player_info *pi)
 }
 
 
+static void draw_time(const struct nh_player_info *pi)
+{
+    const struct nh_player_info *oldpi = &old_player;
+    int movediff, colorattr;
+    nh_bool colorchange;
+
+    if (!settings.time)
+	return;
+
+    /* Give players a better idea of the passage of time. */
+    movediff = pi->moves - oldpi->moves;
+    if (movediff > 1) {
+	colorattr = curses_color_attr(
+			(movediff >= 100) ? COLOR_RED :
+			(movediff >=  50) ? COLOR_YELLOW :
+			(movediff >=  20) ? COLOR_CYAN :
+			(movediff >=  10) ? COLOR_BLUE :
+					    COLOR_GREEN);
+	colorchange = TRUE;
+    } else {
+	colorchange = FALSE;
+    }
+
+    if (colorchange)
+	wattron(statuswin, colorattr);
+    wprintw(statuswin, "T:%ld", pi->moves);
+    if (colorchange)
+	wattroff(statuswin, colorattr);
+}
+
+
 /*
  * longest practical second status line at the moment is
  *	Astral Plane $:12345 HP:700(700) Pw:111(111) AC:-127 Xp:30/123456789
@@ -277,8 +308,8 @@ static void classic_status(struct nh_player_info *pi)
 	print_statdiff(" ", "Exp:%u", oldpi->level, pi->level);
     }
 
-    if (settings.time)
-	wprintw(statuswin, " T:%ld", pi->moves);
+    waddstr(statuswin, " ");
+    draw_time(pi);
 
     draw_statuses(pi);
 
@@ -345,9 +376,9 @@ static void status3(struct nh_player_info *pi)
     waddstr(statuswin, "  ");
     waddstr(statuswin, pi->level_desc);
 
-    if (settings.time)
-	wprintw(statuswin, "  T:%ld", pi->moves);
-    
+    waddstr(statuswin, "  ");
+    draw_time(pi);
+
     wprintw(statuswin, (pi->align == A_CHAOTIC) ? "  Chaotic" :
 		    (pi->align == A_NEUTRAL) ? "  Neutral" : "  Lawful");
     wclrtoeol(statuswin);
