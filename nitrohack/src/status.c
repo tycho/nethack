@@ -217,10 +217,10 @@ static void classic_status(struct nh_player_info *pi)
     wmove(statuswin, 0, 0);
     draw_string_bar(buf, pi->hp, pi->hpmax);
 
-    waddstr(statuswin, "St:");
     status_change_color_on(&stat_ch_col, &colorattr,
 			   oldpi->st, oldpi->st_extra,
 			   pi->st, pi->st_extra);
+    waddstr(statuswin, "St:");
     if (pi->st == 18 && pi->st_extra) {
 	if (pi->st_extra < 100)
 	    wprintw(statuswin, "18/%02d", pi->st_extra);
@@ -230,25 +230,27 @@ static void classic_status(struct nh_player_info *pi)
 	wprintw(statuswin, "%-1d", pi->st);
     status_change_color_off(stat_ch_col, colorattr);
 
-    print_statdiff(" Dx:", "%-1d", oldpi->dx, pi->dx);
-    print_statdiff(" Co:", "%-1d", oldpi->co, pi->co);
-    print_statdiff(" In:", "%-1d", oldpi->in, pi->in);
-    print_statdiff(" Wi:", "%-1d", oldpi->wi, pi->wi);
-    print_statdiff(" Ch:", "%-1d", oldpi->ch, pi->ch);
+    print_statdiff(" ", "Dx:%-1d", oldpi->dx, pi->dx);
+    print_statdiff(" ", "Co:%-1d", oldpi->co, pi->co);
+    print_statdiff(" ", "In:%-1d", oldpi->in, pi->in);
+    print_statdiff(" ", "Wi:%-1d", oldpi->wi, pi->wi);
+    print_statdiff(" ", "Ch:%-1d", oldpi->ch, pi->ch);
 
     wprintw(statuswin, (pi->align == A_CHAOTIC) ? "  Chaotic" :
 		    (pi->align == A_NEUTRAL) ? "  Neutral" : "  Lawful");
 
     if (settings.showscore)
-	print_statdiff(" S:", "%ld", oldpi->score, pi->score);
+	print_statdiff(" ", "S:%ld", oldpi->score, pi->score);
 
     wclrtoeol(statuswin);
 
     /* line 2 */
     mvwaddstr(statuswin, 1, 0, pi->level_desc);
 
-    wprintw(statuswin, " %c:", pi->coinsym);
-    print_statdiff(NULL, "%-2ld", oldpi->gold, pi->gold);
+    waddstr(statuswin, " ");
+    status_change_color_on(&stat_ch_col, &colorattr, oldpi->gold, 0, pi->gold, 0);
+    wprintw(statuswin, "%c:%-2ld", pi->coinsym, pi->gold);
+    status_change_color_off(stat_ch_col, colorattr);
 
     waddstr(statuswin, " HP:");
     colorattr = curses_color_attr(percent_color(pi->hp, pi->hpmax));
@@ -262,15 +264,15 @@ static void classic_status(struct nh_player_info *pi)
     wprintw(statuswin, "%d(%d)", pi->en, pi->enmax);
     wattroff(statuswin, colorattr);
 
-    print_statdiffr(" AC:", "%-2d", oldpi->ac, pi->ac);
+    print_statdiffr(" ", "AC:%-2d", oldpi->ac, pi->ac);
 
     if (pi->monnum != pi->cur_monnum) {
-	print_statdiff(" HD:", "%d", oldpi->level, pi->level);
+	print_statdiff(" ", "HD:%d", oldpi->level, pi->level);
     } else if (settings.showexp) {
-	print_statdiff(" Xp:", "%u", oldpi->level, pi->level);
+	print_statdiff(" ", "Xp:%u", oldpi->level, pi->level);
 	print_statdiff("/", "%-1ld", oldpi->xp, pi->xp);
     } else {
-	print_statdiff(" Exp:", "%u", oldpi->level, pi->level);
+	print_statdiff(" ", "Exp:%u", oldpi->level, pi->level);
     }
 
     if (settings.time)
@@ -322,12 +324,13 @@ static void status3(struct nh_player_info *pi)
     buf[0] = toupper(buf[0]);
     mvwaddstr(statuswin, 0, 0, buf);
 
-    print_statdiff("Con:", "%2d", oldpi->co, pi->co);
+    print_statdiff(NULL, "Con:%2d", oldpi->co, pi->co);
 
-    waddstr(statuswin, " Str:");
+    waddstr(statuswin, " ");
     status_change_color_on(&stat_ch_col, &colorattr,
 			   oldpi->st, oldpi->st_extra,
 			   pi->st, pi->st_extra);
+    waddstr(statuswin, "Str:");
     if (pi->st == 18 && pi->st_extra) {
 	if (pi->st_extra < 100)
 	    wprintw(statuswin, "18/%02d", pi->st_extra);
@@ -351,27 +354,31 @@ static void status3(struct nh_player_info *pi)
     wmove(statuswin, 1, 0);
     draw_bar(18 + pi->max_rank_sz, pi->hp, pi->hpmax, "HP:");
 
-    print_statdiff("  Int:", "%2d", oldpi->in, pi->in);
-    print_statdiff(" Wis:", "%2d", oldpi->wi, pi->wi);
-    wprintw(statuswin, "  %c:", pi->coinsym);
-    print_statdiff(NULL, "%-2ld", oldpi->gold, pi->gold);
-    print_statdiffr("  AC:", "%-2d", oldpi->ac, pi->ac);
+    print_statdiff("  ", "Int:%2d", oldpi->in, pi->in);
+    print_statdiff(" ", "Wis:%2d", oldpi->wi, pi->wi);
+
+    waddstr(statuswin, "  ");
+    status_change_color_on(&stat_ch_col, &colorattr, oldpi->gold, 0, pi->gold, 0);
+    wprintw(statuswin, "%c:%-2ld", pi->coinsym, pi->gold);
+    status_change_color_off(stat_ch_col, colorattr);
+
+    print_statdiffr("  ", "AC:%-2d", oldpi->ac, pi->ac);
     waddstr(statuswin, "  ");
 
     if (pi->monnum != pi->cur_monnum) {
-	print_statdiff("HD:", "%d", oldpi->level, pi->level);
+	print_statdiff(NULL, "HD:%d", oldpi->level, pi->level);
     } else if (settings.showexp) {
-	print_statdiff("Xp:", "%u", oldpi->level, pi->level);
+	print_statdiff(NULL, "Xp:%u", oldpi->level, pi->level);
 	if (pi->xp < 1000000)
 	    print_statdiff("/", "%-1ld", oldpi->xp, pi->xp);
 	else
 	    print_statdiff("/", "%-1ldk", oldpi->xp / 1000, pi->xp / 1000);
     } else {
-	print_statdiff("Exp:", "%u", oldpi->level, pi->level);
+	print_statdiff(NULL, "Exp:%u", oldpi->level, pi->level);
     }
 
     if (settings.showscore)
-	print_statdiff("  S:", "%ld", oldpi->score, pi->score);
+	print_statdiff("  ", "S:%ld", oldpi->score, pi->score);
 
     wclrtoeol(statuswin);
 
@@ -379,8 +386,8 @@ static void status3(struct nh_player_info *pi)
     wmove(statuswin, 2, 0);
     draw_bar(18 + pi->max_rank_sz, pi->en, pi->enmax, "Pw:");
 
-    print_statdiff("  Dex:", "%2d", oldpi->dx, pi->dx);
-    print_statdiff(" Cha:", "%2d", oldpi->ch, pi->ch);
+    print_statdiff("  ", "Dex:%2d", oldpi->dx, pi->dx);
+    print_statdiff(" ", "Cha:%2d", oldpi->ch, pi->ch);
     waddstr(statuswin, " ");
 
     draw_statuses(pi);
