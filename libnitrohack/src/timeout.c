@@ -810,7 +810,7 @@ void burn_object(void *arg, long timeout)
 			break;
 		}
 
-		if (obj->age)
+		if (obj && obj->age)
 		    begin_burn(level, obj, TRUE);
 
 		break;
