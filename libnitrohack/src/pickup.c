@@ -330,6 +330,7 @@ static int autopick(struct obj *olist,	/* the object list */
 	    examine_object(curr);
 	    if ((iflags.pickup_thrown && curr->was_thrown) ||
 		((iflags.pickup_dropped || !curr->was_dropped) &&
+		 !Is_sokoprize(curr) &&
 		 autopickup_match(curr)))
 		n++;
 	}
@@ -339,6 +340,7 @@ static int autopick(struct obj *olist,	/* the object list */
 	    for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow)) {
 		if ((iflags.pickup_thrown && curr->was_thrown) ||
 		    ((iflags.pickup_dropped || !curr->was_dropped) &&
+		     !Is_sokoprize(curr) &&
 		     autopickup_match(curr))) {
 		    pi[n].obj = curr;
 		    pi[n].count = curr->quan;
