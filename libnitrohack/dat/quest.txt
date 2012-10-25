@@ -4345,7 +4345,7 @@ you hit with heavier weapons and deal more damage when you do.
     #enhance    list and enhance skills
 %E
 %Cm - 00300
-Tutorial: Gold $
+Tutorial: Gold  ('$')
 
 Gold is shown as the $ symbol.  It takes no space in your inventory,
 and is light, but not weightless.  You can see how much gold you carry
@@ -4360,7 +4360,7 @@ shopkeepers with the $ key.
         $    show money you have and owe
 %E
 %Cm - 00301
-Tutorial: Weapons )
+Tutorial: Weapons  (')')
 
 The ) symbol or closing parenthesis is a weapon or ammunition.
 
@@ -4382,7 +4382,7 @@ long time and can damage it, so it's often a bad idea.
            a    apply an item (e.g. a lance at a far target)
 %E
 %Cm - 00302
-Tutorial: Armor [
+Tutorial: Armor  ('[')
 
 A [ symbol is a piece of armor.  Armor protects you from the blows of
 your enemies.
@@ -4396,7 +4396,7 @@ is heavy but sturdier, but orcish is inferior and heavy.
         T    take off equipment (e.g. a piece of armor)
 %E
 %Cm - 00303
-Tutorial: Food %%
+Tutorial: Food  ('%%')
 
 The %% symbol is an edible item (or comestible).  Food can be eaten
 with the e key.  Food is needed to live; a character that goes without
@@ -4417,7 +4417,7 @@ powers.  As they say, you are what you eat.
 # The existence of ?oID is mentioned in the Guidebook, so I'm
 # mentioning it here too.
 %Cm - 00304
-Tutorial: Scrolls ?
+Tutorial: Scrolls  ('?')
 
 The ? symbol is a scroll.  A scroll is a spell bound to paper.
 
@@ -4434,7 +4434,7 @@ others, your discovery will serve you well.
 %E
 # Wand overcharging is, surprisingly, a Guidebook spoiler.
 %Cm - 00305
-Tutorial: Wands /
+Tutorial: Wands  ('/')
 
 The / symbol is a wand.  Wands can be zapped to release the spell
 within by pressing the z key.  No spellcasting skill is needed to use
@@ -4452,7 +4452,7 @@ explode when recharged!
         a    apply an item (e.g. break a wand)
 %E
 %Cm - 00306
-Tutorial: Rings =
+Tutorial: Rings  ('=')
 
 The = symbol is a ring.  Rings grant magical powers when worn (with
 the W key) on either of your ring fingers (so you can wear at most two
@@ -4469,7 +4469,7 @@ dramatically!
 # Clear = water is a guidebook spoiler, as is holy water's effect on
 # undead.
 %Cm - 00307
-Tutorial: Potions !
+Tutorial: Potions  ('!')
 
 The ! symbol is a potion, which can be quaffed (drunk) for magical
 effects by pressing the q key.  Items can be dipped into potions with
@@ -4487,7 +4487,7 @@ uses to be discovered.
         t    throw an item (e.g. a potion)
 %E
 %Cm - 00308
-Tutorial: Tools (
+Tutorial: Tools  ('(')
 
 The ( is a tool.  There are many tools with different uses, but
 generally they can all be applied (used) by pressing the a key.  Some
@@ -4507,7 +4507,7 @@ all) tools don't explode when recharged many times.
         w    wield an item (e.g. a tool)
 %E
 %Cm - 00309
-Tutorial: Containers (
+Tutorial: Containers  ('(')
 
 Containers are special tools and as such are shown as the ( symbol.
 To put in or take out items from a container, use the #loot command
@@ -4529,7 +4529,7 @@ container; beware, this may backfire!
     #untrap    check for and possibly disarm traps
 %E
 %Cm - 00310
-Tutorial: Amulets "
+Tutorial: Amulets  ('"')
 
 The " symbol is an amulet.  Amulets grant magical powers when worn
 around your neck (with the W key; take them off with the T key).
@@ -4545,7 +4545,7 @@ of Menace.  Good luck!
         T    take off equipment (e.g. an amulet)
 %E
 %Cm - 00311
-Tutorial: Gems and Rocks *
+Tutorial: Gems and Rocks  ('*')
 
 The * symbol is a gem or rock; some are valuable, others are not.
 
@@ -4563,7 +4563,7 @@ other items with the #rub command for whatever effect that may have.
      #rub    rub items together (e.g. a gem and something else)
 %E
 %Cm - 00312
-Tutorial: Statues ` and Boulders 0
+Tutorial: Statues and Boulders  ('`' and '0')
 
 The ` symbol is a statue.  Some hold surprises, but most are heavy and
 useless.  You can walk past them or break them if you have a way.
@@ -4575,7 +4575,7 @@ get past it, you can also squeeze into its space by dropping your
 items and moving into it.
 %E
 %Cm - 00313
-Tutorial: Spellbooks +
+Tutorial: Spellbooks  ('+')
 
 The + symbol is a book (when it's not a door), usually a spellbook.
 Reading one with the r key attempts to learn the spell within; this is

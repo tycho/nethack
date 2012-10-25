@@ -668,7 +668,7 @@ int query_category(const char *qstr,	/* query string */
 		   if (!collected_type_name) {
 			char oc_sym, buf[BUFSZ];
 			oc_sym = def_oc_syms[(int)objects[curr->otyp].oc_class];
-			sprintf(buf, "%s '%c'", let_to_name(*pack, FALSE), oc_sym);
+			sprintf(buf, "%s  ('%c')", let_to_name(*pack, FALSE), oc_sym);
 			add_menuitem(&menu, curr->oclass, buf, invlet++, FALSE);
 			menu.items[menu.icount - 1].group_accel = oc_sym;
 			collected_type_name = TRUE;

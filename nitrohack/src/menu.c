@@ -472,9 +472,10 @@ static void layout_objmenu(struct gamewin *gw)
 	    sprintf(weightstr, " {%d}", mdat->items[i].weight);
 	    itemwidth += strlen(weightstr);
 	}
-	if ((mdat->items[i].role == MI_NORMAL && mdat->items[i].accel) ||
-	    (mdat->items[i].role == MI_HEADING && mdat->items[i].group_accel))
-	    itemwidth += 4; /* "a - " or " ')'" */
+	if (mdat->items[i].role == MI_NORMAL && mdat->items[i].accel)
+	    itemwidth += 4; /* "a - " */
+	if (mdat->items[i].role == MI_HEADING && mdat->items[i].group_accel)
+	    itemwidth += 7; /* "  (')')" */
 	maxwidth = max(maxwidth, itemwidth);
     }
     
@@ -512,7 +513,7 @@ void draw_objlist(WINDOW *win, int icount, struct nh_objitem *items,
 	    wattron(win, txtattr);
 	    waddstr(win, items[i].caption);
 	    if (items[i].group_accel)
-		wprintw(win, " '%c'", items[i].group_accel);
+		wprintw(win, "  ('%c')", items[i].group_accel);
 	    wattroff(win, txtattr);
 	    continue;
 	}	    
