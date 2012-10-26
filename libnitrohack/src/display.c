@@ -1223,11 +1223,12 @@ void display_self(void)
 		       level->locations[x][y].mem_obj_mn,
 		       level->locations[x][y].mem_obj_stacks,
 		       level->locations[x][y].mem_obj_soko,
-		       0, what_mon(u.usteed->mnum) + 1, MON_RIDDEN, 0);
+		       0, what_mon(obfuscate_monster(u.usteed->mnum)) + 1,
+		       MON_RIDDEN, 0);
     } else if (youmonst.m_ap_type == M_AP_NOTHING) {
-	int monnum = (Upolyd || !iflags.showrace) ? u.umonnum :
-	              (flags.female && urace.femalenum != NON_PM) ? urace.femalenum :
-	               urace.malenum;
+	int monnum = (Upolyd || !iflags.showrace) ? obfuscate_monster(u.umonnum) :
+	             (flags.female && urace.femalenum != NON_PM) ? urace.femalenum :
+	             urace.malenum;
 	dbuf_set(x, y, level->locations[x][y].mem_bg,
 		       level->locations[x][y].mem_trap,
 		       level->locations[x][y].mem_obj,
