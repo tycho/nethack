@@ -139,7 +139,11 @@ static void trim_contents(struct obj *container, int prob1, int prob2)
 		onext = otmp->nobj;
 		if (Has_contents(otmp))
 			trim_contents(otmp->cobj, prob1, prob2);
-		if (rnf(prob1, prob2)) {
+		/* Don't remove dragon scales/mails when player is polymorphed into
+		 * that dragon, otherwise if gold dragon armor gets removed, the
+		 * associated light source won't be deleted and the game will crash. */
+		if (rnf(prob1, prob2) &&
+		    !(otmp == uskin && Is_dragon_armor(uskin->otyp))) {
 			obj_extract_self(otmp);
 			obfree(otmp, NULL);	/* dealloc_obj() isn't sufficient */
 		}
