@@ -770,15 +770,29 @@ boolean mpickstuff(struct monst *mtmp, const char *str)
 		if (otmp->oinvis && !perceives(mtmp->data)) continue;
 #endif
 		if (Is_sokoprize(otmp)) continue;
-		if (cansee(mtmp->mx,mtmp->my) && flags.verbose)
+		if (otmp->otyp == BOULDER && is_rockbreaker(mtmp)) {
+		    if (cansee(mtmp->mx,mtmp->my)) {
+			pline("A thunderclap rings out, and %s shatters!",
+			      (distu(mtmp->mx, mtmp->my) <= 5) ?
+			      doname(otmp) : distant_name(otmp, doname));
+			pline("%s strides through the dust cloud.",
+			      Monnam(mtmp));
+		    } else {
+			pline("A thunderclap rings out!");
+		    }
+		} else {
+		    if (cansee(mtmp->mx,mtmp->my) && flags.verbose) {
 			pline("%s picks up %s.", Monnam(mtmp),
 			      (distu(mtmp->mx, mtmp->my) <= 5) ?
-				doname(otmp) : distant_name(otmp, doname));
-		obj_extract_self(otmp);
-		/* unblock point after extract, before pickup */
-		if (otmp->otyp == BOULDER)
-		    unblock_point(otmp->ox,otmp->oy);	/* vision */
-		mpickobj(mtmp, otmp);	/* may merge and free otmp */
+			      doname(otmp) : distant_name(otmp, doname));
+		    }
+		}
+		if (otmp->otyp == BOULDER && is_rockbreaker(mtmp)) {
+		    remove_object(otmp);
+		} else {
+		    obj_extract_self(otmp);
+		    mpickobj(mtmp, otmp);	/* may merge and free otmp */
+		}
 		m_dowear(level, mtmp, FALSE);
 		newsym(mtmp->mx, mtmp->my);
 		return TRUE;			/* pick only one object */
@@ -852,8 +866,10 @@ boolean can_carry(struct monst *mtmp, struct obj *otmp)
 	 * their alignment if the monster takes something they need
 	 */
 
-	/* special--boulder throwers carry unlimited amounts of boulders */
-	if (throws_rocks(mdat) && otyp == BOULDER)
+	/* special--boulder throwers carry unlimited amounts of boulders
+	 * and some monsters can shatter boulders (will be handled in mpickstuff)
+	 */
+	if ((throws_rocks(mdat) || is_rockbreaker(mtmp)) && otyp == BOULDER)
 		return TRUE;
 
 	/* nymphs deal in stolen merchandise, but not boulders or statues */
