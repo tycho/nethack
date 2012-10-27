@@ -436,6 +436,7 @@ extern schar lev_by_name(const char *);
 extern schar print_dungeon(boolean,schar *,xchar *);
 extern int donamelevel(void);
 extern int dooverview(void);
+extern const char *get_generic_level_description(const struct level *lev);
 
 /* ### eat.c ### */
 

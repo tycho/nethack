@@ -388,7 +388,8 @@ static int do_improvisation(struct obj *instr)
 		consume_obj_charge(instr, TRUE);
 
 		pline("You produce a heavy, thunderous rolling!");
-		pline("The entire dungeon is shaking around you!");
+		pline("The entire %s is shaking around you!",
+		      get_generic_level_description(level));
 		do_earthquake((u.ulevel - 1) / 3 + 1);
 		/* shake up monsters in a much larger radius... */
 		awaken_monsters(ROWNO * COLNO);

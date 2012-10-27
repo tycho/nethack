@@ -2098,4 +2098,30 @@ int dooverview(void)
 	return 0;
 }
 
+
+/*
+ * Return a generic description of the current level like "plane" for the
+ * planes, "tower" for Vlad's tower, or "dungeon" for a normal level.
+ */
+const char *get_generic_level_description(const struct level *lev)
+{
+	if (Is_astralevel(&lev->z))
+	    return "astral plane";
+	else if (In_endgame(&lev->z))
+	    return "plane";
+	else if (Is_sanctum(&lev->z))
+	    return "sanctum";
+	else if (Is_blackmarket(&lev->z))
+	    return "blackmarket";
+	else if (In_sokoban(&lev->z))
+	    return "puzzle";
+	else if (In_V_tower(&lev->z))
+	    return "tower";
+	else if (lev->flags.sky)
+	    return "ground";
+	else
+	    return "dungeon";
+}
+
+
 /*dungeon.c*/
