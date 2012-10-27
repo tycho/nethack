@@ -468,7 +468,8 @@ struct levelflags {
 
 	unsigned is_cavernous_lev:1;
 	unsigned arboreal:1;		/* Trees replace rock */
-	
+	unsigned sky:1;			/* map has sky instead of ceiling */
+
 	unsigned forgotten:1;	/* previously visited but forgotten (amnesia) */
 };
 

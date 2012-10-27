@@ -840,8 +840,9 @@ struct level *getlev(struct memfile *mf, xchar levnum, boolean ghostly)
 	lev->flags.stormy		= (lflags >> 13) & 1;
 	lev->flags.is_cavernous_lev	= (lflags >> 12) & 1;
 	lev->flags.arboreal		= (lflags >> 11) & 1;
-	lev->flags.forgotten		= (lflags >> 10) & 1;
-	
+	lev->flags.sky			= (lflags >> 10) & 1;
+	lev->flags.forgotten		= (lflags >>  9) & 1;
+
 	mread(mf, lev->doors, sizeof(lev->doors));
 	rest_rooms(mf, lev);	/* No joke :-) */
 	if (lev->nroom)

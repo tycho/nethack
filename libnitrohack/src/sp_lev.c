@@ -3018,6 +3018,7 @@ static void spo_level_flags(struct sp_coder *coder, struct level *lev)
 	if (flags & SHROUD)		lev->flags.hero_memory = 0;
 	if (flags & STORMY)		lev->flags.stormy = 1;
 	if (flags & GRAVEYARD)		lev->flags.graveyard = 1;
+	if (flags & SKYMAP)		lev->flags.sky = 1;
 
 	opvar_free(flagdata);
 }
