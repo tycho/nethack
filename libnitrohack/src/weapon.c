@@ -667,17 +667,31 @@ int abon(void)
 int dbon(void)
 {
 	int str = ACURR(A_STR);
+	int bonus = 0;
 
 	if (Upolyd) return 0;
 
-	if (str < 6) return -1;
-	else if (str < 16) return 0;
-	else if (str < 18) return 1;
-	else if (str == 18) return 2;		/* up to 18 */
-	else if (str <= STR18(75)) return 3;		/* up to 18/75 */
-	else if (str <= STR18(90)) return 4;		/* up to 18/90 */
-	else if (str < STR18(100)) return 5;		/* up to 18/99 */
-	else return 6;
+	if (str < 6) bonus = -1;
+	else if (str < 16) bonus = 0;
+	else if (str < 18) bonus = 1;
+	else if (str == 18) bonus = 2;		/* up to 18 */
+	else if (str <= STR18(75)) bonus = 3;	/* up to 18/75 */
+	else if (str <= STR18(90)) bonus = 4;	/* up to 18/90 */
+	else if (str < STR18(100)) bonus = 5;	/* up to 18/99 */
+	else if (str == STR18(100)) bonus = 6;	/* 18/ ** only */
+	else bonus = 7;		/* Gauntlets of Power or 18/ ** exceeded */
+
+	/* HASAAAAAN CHOP!
+	 *
+	 * If you're wielding a two-handed weapon, let's just, hmm,
+	 * double this bonus.  Yes, even when negative; those are HEAVY.
+	 *
+	 * This should sharply increase the appeal of two-handers
+	 * compared to #twoweapon.
+	 */
+	if (uwep && bimanual(uwep)) bonus *= 2;
+
+	return bonus;
 }
 
 
