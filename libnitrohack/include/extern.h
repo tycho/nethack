@@ -966,6 +966,7 @@ extern int meatmetal(struct monst *);
 extern int meatobj(struct monst *);
 extern void mpickgold(struct monst *);
 extern boolean mpickstuff(struct monst *,const char *);
+extern void mpickup_obj(struct monst *,struct obj *);
 extern int curr_mon_load(struct monst *);
 extern int max_mon_load(struct monst *);
 extern boolean can_carry(struct monst *,struct obj *);
