@@ -24,6 +24,7 @@ static int in_or_out_menu(const char *,struct obj *, boolean, boolean);
 static int container_at(int, int, boolean);
 static boolean able_to_loot(int, int);
 static boolean mon_beside(int, int);
+static boolean dump_container(struct obj *,boolean);
 static void del_sokoprizes(void);
 
 /* define for query_objlist() and autopickup() */
@@ -1555,16 +1556,16 @@ static int in_container(struct obj *obj)
 		/* did not actually insert obj yet */
 		if (was_unpaid) addtobill(obj, FALSE, FALSE, TRUE);
 		obfree(obj, NULL);
-		delete_contents(current_container);
-		if (!floor_container)
-			useup(current_container);
-		else if (obj_here(current_container, u.ux, u.uy))
-			useupf(current_container, obj->quan);
-		else
-			panic("in_container:  bag not found.");
 
-		losehp(dice(6,6),"magical explosion", KILLED_BY_AN);
-		current_container = 0;	/* baggone = TRUE; */
+		/* dump it out onto the floor so the scatterage can take effect */
+		if (dump_container(current_container, TRUE))
+		    pline("The contents fly everywhere!");
+		scatter(u.ux,u.uy,10,VIS_EFFECTS|MAY_HIT|MAY_DESTROY|MAY_FRACTURE,0);
+
+		delete_contents(current_container);
+
+		losehp(dice(6,6), "magical explosion", KILLED_BY_AN);
+		current_container = NULL;	/* baggone = TRUE; */
 	}
 
 	if (current_container) {
@@ -1950,6 +1951,50 @@ static int in_or_out_menu(const char *prompt, struct obj *obj,
 	n = selection[0];
     
     return n;
+}
+
+/* Dumps out a container, possibly as the prelude/result of an explosion.
+ * destroy_after trashes the container afterwards; try not to use it :P
+ *
+ * Player is assumed to not be handling the contents directly.
+ *
+ * Returns TRUE if at least one object was present, FALSE if empty.
+ */
+static boolean dump_container(struct obj *container, boolean destroy_after)
+{
+	struct obj *otmp, *otmp2;
+	boolean ret = FALSE;
+
+	/* sanity check */
+	if (!container) return 0;
+
+	for (otmp = container->cobj; otmp; otmp = otmp2) {
+	    ret = TRUE;
+	    otmp2 = otmp->nobj;
+	    obj_extract_self(otmp);
+	    container->owt = weight(container);
+
+	    /* we need to start the timer on these */
+	    if (container->otyp == ICE_BOX && !age_is_relative(otmp)) {
+		otmp->age = moves - otmp->age;
+		if (otmp->otyp == CORPSE)
+		    start_corpse_timeout(otmp);
+	    }
+	    place_object(otmp, otmp->olev, u.ux, u.uy);
+
+	    /* update character's gold piece count immediately */
+	    if (otmp->otyp == GOLD_PIECE)
+		bot();
+	}
+
+	if (destroy_after) {
+	    if (container->where == OBJ_INVENT)
+		useup(container);
+	    else if (obj_here(container, u.ux, u.uy))
+		useupf(container, container->quan);
+	}
+
+	return ret;
 }
 
 static void del_sokoprizes(void)
