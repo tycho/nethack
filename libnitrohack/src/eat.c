@@ -135,6 +135,8 @@ static const struct { const char *txt; int nut; } tintxts[] = {
 	{"sauteed",      95},
 	{"broiled",      80},
 	{"smoked",       50},
+#define DELICIOUS_SOUP_TIN 15
+	{"delicious soup made from", 200},
 	{"", 0}
 };
 #define TTSZ	SIZE(tintxts)
@@ -934,9 +936,17 @@ static int opentin(void) /* called during each move whilst opening a tin */
 		costly_tin(NULL);
 		goto use_me;
 	    }
-	    r = tin.tin->cursed ? ROTTEN_TIN :	/* always rotten if cursed */
-		    (tin.tin->spe == -1) ? HOMEMADE_TIN :  /* player made it */
-			rn2(TTSZ-1);		/* else take your pick */
+	    if (tin.tin->cursed) {
+		r = ROTTEN_TIN;			/* always rotten if cursed */
+	    } else if (tin.tin->spe == -1) {
+		r = HOMEMADE_TIN;		/* player made it */
+	    } else {
+		r = rn2(TTSZ - 2);		/* else take your pick */
+	    }
+	    if (tin.tin->corpsenm == PM_GIANT_TURTLE && !tin.tin->cursed) {
+		/* Giant turtles are always endangeredelicious! */
+		r = DELICIOUS_SOUP_TIN;
+	    }
 	    if (r == ROTTEN_TIN && (tin.tin->corpsenm == PM_LIZARD ||
 			tin.tin->corpsenm == PM_LICHEN))
 		r = HOMEMADE_TIN;		/* lizards don't rot */
