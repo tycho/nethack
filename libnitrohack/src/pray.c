@@ -1290,6 +1290,15 @@ int dosacrifice(struct obj *otmp)
 	}
     } /* corpse */
 
+    /* Don't accidentally break atheist conduct */
+    if (otmp->otyp == AMULET_OF_YENDOR ||
+	otmp->otyp == FAKE_AMULET_OF_YENDOR) {
+	if (successful_cdt(CONDUCT_ATHEISM) &&
+	    paranoid_yn("Really break your atheism by sacrificing the Amulet of Yendor?", TRUE) == 'n') {
+		return 0;
+	}
+    }
+
     if (otmp->otyp == AMULET_OF_YENDOR) {
 	/* There's now an atheist option to win the game */
 	u.uconduct.gnostic++;
