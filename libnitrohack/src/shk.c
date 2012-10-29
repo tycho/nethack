@@ -2660,8 +2660,6 @@ int doinvbill(int mode)
 	return 0;
 }
 
-#define HUNGRY	2
-
 static long getprice(const struct obj *obj, boolean shk_buying)
 {
 	long tmp = (long) objects[obj->otyp].oc_cost;

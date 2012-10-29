@@ -555,8 +555,6 @@ void check_leash(xchar x, xchar y)
 }
 
 
-#define WEAK	3	/* from eat.c */
-
 static const char look_str[] = "You look %s.";
 
 static int use_mirror(struct obj *obj)

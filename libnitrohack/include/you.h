@@ -118,7 +118,7 @@ struct you {
 	char	ushops_left[5]; /* ditto, shops exited this turn */
 
 	int	 uhunger;	/* refd only in eat.c and shk.c */
-	unsigned uhs;		/* hunger state - see eat.c */
+	unsigned uhs;		/* hunger state - see eat.c and hack.h */
 
 	struct prop uprops[LAST_PROP+1];
 
