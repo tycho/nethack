@@ -2240,7 +2240,7 @@ tty_end_menu(window, prompt)
 	}
 
 	/* cut off any lines that are too long */
-	len = strlen(curr->str) + 2;	/* extra space at beg & end */
+	len = strlen((curr->str ? curr->str : "")) + 2;	/* extra space at beg & end */
 
 	if (curr->selector) {
 	    /* extra space for keyboard accelerator */
