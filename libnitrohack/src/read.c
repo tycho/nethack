@@ -1259,7 +1259,9 @@ int seffects(struct obj *sobj, boolean *known)
 			TOOL_CLASS, FOOD_CLASS, POTION_CLASS, SCROLL_CLASS,
 			SPBOOK_CLASS, WAND_CLASS, COIN_CLASS, GEM_CLASS
 		    };
-		    return object_detect((struct obj *)0, random_classes[rn2(SIZE(random_classes))]);
+		    return object_detect(NULL,
+					 random_classes[rn2(SIZE(random_classes))],
+					 FALSE);
 		} else if (sobj->cursed) return trap_detect(sobj);
 		else return gold_detect(sobj, known);
 	case SCR_FOOD_DETECTION:
@@ -1315,7 +1317,8 @@ int seffects(struct obj *sobj, boolean *known)
 		    make_confused(HConfusion + rnd(30), FALSE);
 		    break;
 		}
-		if (sobj->blessed) {
+		/* reveal secret doors for uncursed and blessed scrolls */
+		if (!sobj->cursed) {
 		    int x, y;
 
 		    for (x = 1; x < COLNO; x++)
@@ -1335,6 +1338,9 @@ int seffects(struct obj *sobj, boolean *known)
 		cval = (sobj->cursed && !confused);
 		if (cval) HConfusion = 1;	/* to screw up map */
 		do_mapping();
+		/* objects, too, pal! */
+		if (sobj->blessed && !cval)
+		    object_detect(sobj, 0, TRUE);
 		if (cval) {
 		    HConfusion = 0;		/* restore */
 		    pline("Unfortunately, you can't grasp the details.");

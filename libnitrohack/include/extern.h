@@ -160,7 +160,7 @@ void init_data(void);
 
 extern int gold_detect(struct obj *sobj, boolean *scr_known);
 extern int food_detect(struct obj *sobj, boolean *scr_known);
-extern int object_detect(struct obj *,int);
+extern int object_detect(struct obj *,int,boolean);
 extern int monster_detect(struct obj *,int);
 extern int trap_detect(struct obj *);
 extern void use_crystal_ball(struct obj *);

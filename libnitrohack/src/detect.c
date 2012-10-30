@@ -346,7 +346,8 @@ int food_detect(struct obj *sobj, boolean *scr_known)
  *	0 - something was detected
  */
 int object_detect(struct obj *detector, /* object doing the detecting */
-		  int class /* an object class, 0 for all */) 
+		  int class, /* an object class, 0 for all */
+		  boolean quiet /* don't output any message */)
 {
     int x, y;
     char stuff[BUFSZ];
@@ -404,15 +405,15 @@ int object_detect(struct obj *detector, /* object doing the detecting */
     if (!clear_stale_map(!class ? ALL_CLASSES : class, 0) && !ct) {
 	if (!ctu) {
 	    if (detector)
-		strange_feeling(detector, "You feel a lack of something.");
+		if (!quiet) strange_feeling(detector, "You feel a lack of something.");
 	    return 1;
 	}
 
-	pline("You sense %s nearby.", stuff);
+	if (!quiet) pline("You sense %s nearby.", stuff);
 	return 0;
     }
 
-    cls();
+    if (!quiet) cls();
 
     u.uinwater = 0;
 /*
@@ -485,13 +486,15 @@ int object_detect(struct obj *detector, /* object doing the detecting */
     }
 
     newsym(u.ux,u.uy);
-    pline("You detect the %s of %s.", ct ? "presence" : "absence", stuff);
-    win_pause_output(P_MAP);
-    /*
-     * What are we going to do when the hero does an object detect while blind
-     * and the detected object covers a known pool?
-     */
-    doredraw();	/* this will correctly reset vision */
+    if (!quiet) {
+	pline("You detect the %s of %s.", ct ? "presence" : "absence", stuff);
+	win_pause_output(P_MAP);
+	/*
+	 * What are we going to do when the hero does an object detect while blind
+	 * and the detected object covers a known pool?
+	 */
+	doredraw();	/* this will correctly reset vision */
+    }
 
     u.uinwater = uw;
     if (Underwater) under_water(2);
@@ -794,7 +797,7 @@ void use_crystal_ball(struct obj *obj)
 	if (ch == DEF_MIMIC_DEF) ch = DEF_MIMIC;
 
 	if ((class = def_char_to_objclass(ch)) != MAXOCLASSES)
-		ret = object_detect(NULL, class);
+		ret = object_detect(NULL, class, FALSE);
 	else if ((class = def_char_to_monclass(ch)) != MAXMCLASSES)
 		ret = monster_detect(NULL, class);
 	else switch(ch) {
