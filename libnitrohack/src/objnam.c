@@ -1187,6 +1187,7 @@ char *an(const char *str)
 	if (strncmpi(str, "the ", 4) &&
 	    strcmp(str, "molten lava") &&
 	    strcmp(str, "iron bars") &&
+	    strcmp(str, "muddy swamp") &&
 	    strcmp(str, "ice")) {
 		if (strchr(vowels, *str) &&
 		    strncmp(str, "one-", 4) &&
@@ -2565,6 +2566,14 @@ srch:
 			del_engr_at(level, u.ux, u.uy);
 			pline("A pool of molten lava.");
 			if (!(Levitation || Flying)) lava_effects();
+			newsym(u.ux, u.uy);
+			return &zeroobj;
+		}
+		if (!BSTRCMP(bp, p-5, "swamp")) {
+			level->locations[u.ux][u.uy].typ = BOG;
+			del_engr_at(level, u.ux, u.uy);
+			pline("A muddy swamp.");
+			if (!(Levitation || Flying || Wwalking)) swamp_effects();
 			newsym(u.ux, u.uy);
 			return &zeroobj;
 		}

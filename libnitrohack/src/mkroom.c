@@ -543,10 +543,13 @@ static void mkswamp(struct level *lev)
 						lev, sx, sy, NO_MM_FLAGS);
 			    eelct++;
 			}
-		    } else
+		    } else {
 			if (!rn2(4))	/* swamps tend to be moldy */
 			    makemon(mkclass(&lev->z, S_FUNGUS,0), lev,
 						sx, sy, NO_MM_FLAGS);
+			else if (!rn2(6))
+			    lev->locations[sx][sy].typ = BOG;
+		    }
 		}
 		lev->flags.has_swamp = 1;
 	}

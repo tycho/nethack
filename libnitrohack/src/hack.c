@@ -12,6 +12,7 @@ static void dosinkfall(void);
 static boolean findtravelpath(boolean(*)(int, int), schar *, schar *);
 static boolean monstinroom(const struct permonst *,int);
 
+static void struggle_sub(const char *);
 static void move_update(boolean);
 
 #define IS_SHOP(x)	(level->rooms[x].rtype >= SHOPBASE)
@@ -913,11 +914,12 @@ boolean test_move(int ux, int uy, int dx, int dy, int dz, int mode)
 	if ((t && t->tseen) ||
 	    (!Levitation && !Flying &&
 	     !is_clinger(youmonst.data) &&
-	     (is_pool(level, x, y) || is_lava(level, x, y)) &&
+	     (is_pool(level, x, y) || is_lava(level, x, y) || is_swamp(level, x, y)) &&
 	     level->locations[x][y].seenv)) {
 	    if (mode == DO_MOVE) {
 		if (is_pool(level, x, y)) autoexplore_msg("a body of water");
 		else if (is_lava(level, x, y)) autoexplore_msg("a pool of lava");
+		else if (is_swamp(level, x, y)) autoexplore_msg("a muddy swamp");
 		if (flags.travel) return FALSE;
 	    }
 	    return mode == TEST_TRAP || mode == DO_MOVE;
@@ -1312,13 +1314,7 @@ boolean try_escape_trap(xchar x, xchar y, schar dx, schar dy)
 			  "You are still in a pit.");
 	    }
 	} else if (u.utraptype == TT_LAVA) {
-	    if (flags.verbose) {
-		predicament = "stuck in the lava";
-		if (u.usteed)
-		    Norep("%s is %s.", upstart(y_monnam(u.usteed)), predicament);
-		else
-		    Norep("You are %s.", predicament);
-	    }
+	    struggle_sub("stuck in the lava");
 	    if (!is_lava(level, x,y)) {
 		u.utrap--;
 		if ((u.utrap & 0xff) == 0) {
@@ -1338,14 +1334,7 @@ boolean try_escape_trap(xchar x, xchar y, schar dx, schar dy)
 		return 1;
 	    }
 	    if (--u.utrap) {
-		if (flags.verbose) {
-		    predicament = "stuck to the web";
-		    if (u.usteed)
-			Norep("%s is %s.", upstart(y_monnam(u.usteed)),
-			      predicament);
-		    else
-			Norep("You are %s.", predicament);
-		}
+		struggle_sub("stuck to the web");
 	    } else {
 		if (u.usteed)
 		    pline("%s breaks out of the web.",
@@ -1353,6 +1342,9 @@ boolean try_escape_trap(xchar x, xchar y, schar dx, schar dy)
 		else
 			pline("You disentangle yourself.");
 	    }
+	} else if (u.utraptype == TT_SWAMP) {
+	    if (--u.utrap)
+		struggle_sub("stuck in the mud");
 	} else if (u.utraptype == TT_INFLOOR) {
 	    if (--u.utrap) {
 		if (flags.verbose) {
@@ -1986,6 +1978,16 @@ int domove(schar dx, schar dy, schar dz)
 	return 1;
 }
 
+static void struggle_sub(const char *predicament)
+{
+	if (flags.verbose) {
+	    if (u.usteed)
+		Norep("%s is %s.", upstart(y_monnam(u.usteed)), predicament);
+	    else
+		Norep("You are %s.", predicament);
+	}
+}
+
 void invocation_message(void)
 {
 	/* a special clue-msg when near the Invocation position */
@@ -2048,6 +2050,8 @@ void spoteffects(boolean pick)
 				pline("You pop into an air bubble.");
 			else if (is_lava(level, u.ux, u.uy))
 				pline("You leave the water...");	/* oops! */
+			else if (is_swamp(level, u.ux, u.uy))
+				pline("You are on shallows.");
 			else
 				pline("You are on solid %s again.",
 				    is_ice(level, u.ux, u.uy) ? "ice" : "land");
@@ -2069,11 +2073,32 @@ void spoteffects(boolean pick)
 			vision_full_recalc = 1;
 		}
 	}
-	
+
 stillinwater:
+	if (u.utraptype == TT_SWAMP) {
+		if (!is_swamp(level, u.ux, u.uy)) {
+			if (is_lava(level, u.ux, u.uy))	/* oops! */
+				pline("You get out of the mud...");
+			else
+				pline("You are on solid %s again.",
+				      is_ice(level, u.ux, u.uy) ? "ice" : "land");
+		}
+		else if (Levitation)
+			pline("You rise out of the swamp.");
+		else if (Flying)
+			pline("You fly out of the swamp.");
+		else if (Wwalking)
+			pline("You slowly rise above the muddy water.");
+		else
+			goto stillinswamp;
+		u.utrap = 0;
+		u.utraptype = 0;
+	}
+stillinswamp:
 	if (!Levitation && !u.ustuck && !Flying) {
 	    /* limit recursive calls through teleds() */
-	    if (is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy)) {
+	    if (is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy) ||
+		is_swamp(level, u.ux, u.uy)) {
 		if (u.usteed && !is_flyer(u.usteed->data) &&
 			!is_floater(u.usteed->data) &&
 			!is_clinger(u.usteed->data)) {
@@ -2084,6 +2109,8 @@ stillinwater:
 			pick = FALSE;
 		} else if (is_lava(level, u.ux, u.uy)) {
 		    if (lava_effects()) return;
+		} else if (is_swamp(level, u.ux, u.uy)) {
+		    if (swamp_effects()) return;
 		} else if (!Wwalking && drown())
 		    return;
 	    }

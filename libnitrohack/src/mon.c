@@ -290,12 +290,12 @@ static struct obj *make_corpse(struct monst *mtmp)
 /* check mtmp and water/lava for compatibility, 0 (survived), 1 (died) */
 int minliquid(struct monst *mtmp)
 {
-    boolean inpool, inlava, infountain;
+    boolean inpool, inlava, inswamp, infountain, grounded;
 
-    inpool = is_pool(level, mtmp->mx,mtmp->my) &&
-	     !is_flyer(mtmp->data) && !is_floater(mtmp->data);
-    inlava = is_lava(level, mtmp->mx,mtmp->my) &&
-	     !is_flyer(mtmp->data) && !is_floater(mtmp->data);
+    grounded = !is_flyer(mtmp->data) && !is_floater(mtmp->data);
+    inpool = is_pool(level, mtmp->mx,mtmp->my) && grounded;
+    inlava = is_lava(level, mtmp->mx,mtmp->my) && grounded;
+    inswamp = is_swamp(level, mtmp->mx,mtmp->my) && grounded;
     infountain = IS_FOUNTAIN(level->locations[mtmp->mx][mtmp->my].typ);
 
 	/* Flying and levitation keeps our steed out of the liquid */
@@ -307,12 +307,12 @@ int minliquid(struct monst *mtmp)
      * keep going down, and when it gets to 1 hit point the clone
      * function will fail.
      */
-    if (mtmp->data == &mons[PM_GREMLIN] && (inpool || infountain) && rn2(3)) {
+    if (mtmp->data == &mons[PM_GREMLIN] && (inpool || infountain || inswamp) && rn2(3)) {
 	if (split_mon(mtmp, NULL))
 	    dryup(mtmp->mx, mtmp->my, FALSE);
 	if (inpool) water_damage(mtmp->minvent, FALSE, FALSE);
 	return 0;
-    } else if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
+    } else if (mtmp->data == &mons[PM_IRON_GOLEM] && (inpool || inswamp) && !rn2(5)) {
 	int dam = dice(2,6);
 	if (cansee(mtmp->mx,mtmp->my))
 	    pline("%s rusts.", Monnam(mtmp));
@@ -380,6 +380,12 @@ int minliquid(struct monst *mtmp)
 		return 0;
 	    }
 	    return 1;
+	}
+    } else if (inswamp) {
+	if (!is_clinger(mtmp->data)
+	    && !is_swimmer(mtmp->data) && !amphibious(mtmp->data)) {
+	    water_damage(mtmp->minvent, FALSE, FALSE);
+	    return 0;
 	}
     } else {
 	/* but eels have a difficult time outside */

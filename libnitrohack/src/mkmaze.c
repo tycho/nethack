@@ -1104,11 +1104,12 @@ const char *waterbody_name(xchar x, xchar y)
 		 (ltyp == DRAWBRIDGE_UP &&
 		  (level->locations[x][y].drawbridgemask & DB_UNDER) == DB_ICE))
 		return "ice";
-	else if (((ltyp != POOL) && (ltyp != WATER) &&
+	else if ((ltyp != POOL && ltyp != WATER && ltyp != BOG &&
 	  !Is_medusa_level(&u.uz) && !Is_waterlevel(&u.uz) && !Is_juiblex_level(&u.uz)) ||
 	   (ltyp == DRAWBRIDGE_UP && (level->locations[x][y].drawbridgemask & DB_UNDER) == DB_MOAT))
 		return "moat";
-	else if ((ltyp != POOL) && (ltyp != WATER) && Is_juiblex_level(&u.uz))
+	else if ((ltyp != POOL && ltyp != WATER && Is_juiblex_level(&u.uz)) ||
+		 ltyp == BOG)
 		return "swamp";
 	else if (ltyp == POOL)
 		return "pool of water";

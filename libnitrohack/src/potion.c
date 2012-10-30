@@ -1672,7 +1672,7 @@ int dodip(struct obj *potion)
 				dipfountain(obj);
 				return 1;
 			}
-		} else if (is_pool(level, u.ux,u.uy)) {
+		} else if (is_pool(level, u.ux,u.uy) || is_swamp(level, u.ux,u.uy)) {
 			tmp = waterbody_name(u.ux,u.uy);
 			sprintf(qbuf, "Dip %s into the %s?",
 				safe_qbuf("",

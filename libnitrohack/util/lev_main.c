@@ -808,6 +808,7 @@ char what_map_char(char c)
 		  case 'T'  : return TREE;
 		  case 't'  : return DEADTREE;
 		  case 'F'  : return IRONBARS; /* Fe = iron */
+		  case 'M'  : return BOG;
 		  case 'x'  : return MAX_TYPE; /* 'see-through' */
 	    }
 	return INVALID_TYPE;

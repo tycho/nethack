@@ -49,6 +49,7 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"trwall",	-1,	{0x251C, 0},	0},	/* T right */
     {"pool",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"water",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
+    {"swamp",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"lava",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"ndoor",	-1,	{0x00B7, 0},	0},	/* · centered dot */
     {"vodoor",	-1,	{0x2588, 0},	0},	/* █ solid block */

@@ -70,6 +70,7 @@ const char * const defexplain[] = {
 	"cloud",		/* [part of] a cloud */
 /*20*/	"water",		/* under water */
 	"ice",			/* ice */
+	"muddy swamp",		/* swamp */
 	"molten lava",		/* lava */
 	"doorway",		/* ndoor */
 	/* "features" start here */
@@ -78,8 +79,8 @@ const char * const defexplain[] = {
 	"closed door",		/* vcdoor */
 	"closed door",		/* hcdoor */
 	"iron bars",		/* bars */
-	"tree",			/* tree */
-/*30*/	"dead tree",		/* deadtree */
+/*30*/	"tree",			/* tree */
+	"dead tree",		/* deadtree */
 	"staircase up",		/* upstair */
 	"staircase down",	/* dnstair */
 	"ladder up",		/* upladder */
@@ -88,8 +89,8 @@ const char * const defexplain[] = {
 	"long staircase down",	/* dnsstair */
 	"altar",		/* altar */
 	"grave",		/* grave */
-	"opulent throne",	/* throne */
-/*40*/	"sink",			/* sink */
+/*40*/	"opulent throne",	/* throne */
+	"sink",			/* sink */
 	"fountain",		/* fountain */
 	"lowered drawbridge",	/* vodbridge */
 	"lowered drawbridge",	/* hodbridge */
@@ -150,6 +151,7 @@ const struct nh_symdef defsyms[] = {
 	{'#', "cloud",		CLR_GRAY},
 /*20*/	{'}', "water",		CLR_BLUE},
 	{'.', "ice",		CLR_CYAN},
+	{'}', "swamp",		CLR_GREEN},
 	{'}', "lava",		CLR_RED},
 	{'.', "ndoor",		CLR_GRAY},
 	/* "features" start here */
@@ -158,8 +160,8 @@ const struct nh_symdef defsyms[] = {
 	{'+', "vcdoor",		CLR_BROWN},
 	{'+', "hcdoor",		CLR_BROWN},
 	{'#', "bars",		HI_METAL},
-	{'#', "tree",		CLR_GREEN},
-/*30*/	{'#', "deadtree",	CLR_BLACK},
+/*30*/	{'#', "tree",		CLR_GREEN},
+	{'#', "deadtree",	CLR_BLACK},
 	{'<', "upstair",	CLR_GRAY},
 	{'>', "dnstair",	CLR_GRAY},
 	{'<', "upladder",	CLR_BROWN},
@@ -168,8 +170,8 @@ const struct nh_symdef defsyms[] = {
 	{'>', "dnsstair",	CLR_YELLOW},
 	{'_', "altar",		CLR_GRAY},
 	{'|', "grave",		CLR_GRAY},
-	{'\\',"throne",		HI_GOLD},
-/*40*/	{'#', "sink",		CLR_GRAY},
+/*40*/	{'\\',"throne",		HI_GOLD},
+	{'#', "sink",		CLR_GRAY},
 	{'{', "fountain",	CLR_BLUE},
 	{'.', "vodbridge",	CLR_BROWN},
 	{'.', "hodbridge",	CLR_BROWN},

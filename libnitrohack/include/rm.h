@@ -64,6 +64,7 @@ enum location_types {
 	GRAVE,
 	ALTAR,
 	ICE,
+	BOG,
 	DRAWBRIDGE_DOWN,
 	AIR,
 	CLOUD,
@@ -95,10 +96,11 @@ enum location_types {
 #define IS_SINK(typ)	((typ) == SINK)
 #define IS_GRAVE(typ)	((typ) == GRAVE)
 #define IS_ALTAR(typ)	((typ) == ALTAR)
+#define IS_SWAMP(typ)	((typ) == BOG)
 #define IS_DRAWBRIDGE(typ) ((typ) == DRAWBRIDGE_UP || (typ) == DRAWBRIDGE_DOWN)
 #define IS_FURNITURE(typ) ((typ) >= STAIRS && (typ) <= ALTAR)
 #define IS_AIR(typ)	((typ) == AIR || (typ) == CLOUD)
-#define IS_SOFT(typ)	((typ) == AIR || (typ) == CLOUD || IS_POOL(typ))
+#define IS_SOFT(typ)	((typ) == AIR || (typ) == CLOUD || IS_POOL(typ) || (typ) == BOG)
 
 /*
  * The screen symbols may be the default or defined at game startup time.
@@ -131,6 +133,7 @@ enum dungeon_symbols {
 	S_cloud,
 /*20*/	S_water,
 	S_ice,
+	S_bog,
 	S_lava,
 	S_ndoor,
 	/* "features" start here */
@@ -278,10 +281,12 @@ extern const char * const warnexplain[];
 /*
  * What's under a drawbridge.
  */
-#define DB_MOAT		0
-#define DB_LAVA		4
-#define DB_ICE		8
-#define DB_FLOOR	16
+#define DB_MOAT		0x00
+#define DB_LAVA		0x04
+#define DB_ICE		0x08
+#define DB_FLOOR	0x0c
+#define DB_BOG		0x10
+#define DB_GROUND	0x14
 #define DB_UNDER	28	/* mask for underneath */
 
 /*
@@ -300,6 +305,7 @@ extern const char * const warnexplain[];
 /*
  * Room areas may be iced pools
  */
+#define ICED_BOG	4
 #define ICED_POOL	8
 #define ICED_MOAT	16
 

@@ -143,6 +143,7 @@ extern int get_adjacent_loc(const char *, const char *, xchar, xchar, coord *, s
 extern boolean is_pool(struct level *lev, int x, int y);
 extern boolean is_lava(struct level *lev, int x, int y);
 extern boolean is_ice(struct level *lev, int x, int y);
+extern boolean is_swamp(struct level *lev, int x, int y);
 extern int is_drawbridge_wall(int,int);
 extern boolean is_db_wall(int,int);
 extern boolean find_drawbridge(int *,int*);
@@ -177,6 +178,7 @@ extern void sokoban_detect(struct level *lev);
 
 extern boolean is_digging(void);
 extern int holetime(void);
+extern schar fillholetyp(int,int);
 extern boolean dig_check(struct monst *, boolean, int, int);
 extern void digactualhole(int,int,struct monst *,int);
 extern int use_pick_axe(struct obj *);
@@ -1675,6 +1677,7 @@ extern struct trap *t_at(struct level *lev, int x, int y);
 extern void b_trapped(const char *,int);
 extern boolean unconscious(void);
 extern boolean lava_effects(void);
+extern boolean swamp_effects(void);
 extern void blow_up_landmine(struct trap *);
 
 /* ### tutorial.c ### */

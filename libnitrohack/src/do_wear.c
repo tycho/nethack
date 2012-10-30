@@ -90,7 +90,9 @@ static int Boots_on(void)
                 pline("Your %s feel longer.", makeplural(body_part(LEG)));
                 break;
 	case WATER_WALKING_BOOTS:
-		if (u.uinwater) spoteffects(TRUE);
+		if (u.uinwater ||
+		    is_lava(level, u.ux,u.uy) || is_swamp(level, u.ux,u.uy))
+			spoteffects(TRUE);
 		break;
 	case SPEED_BOOTS:
 		/* Speed boots are still better than intrinsic speed, */
@@ -142,7 +144,9 @@ int Boots_off(void)
 		}
 		break;
 	case WATER_WALKING_BOOTS:
-		if (is_pool(level, u.ux,u.uy) && !Levitation && !Flying &&
+		if ((is_pool(level, u.ux,u.uy) || is_lava(level, u.ux,u.uy) ||
+		     is_swamp(level, u.ux,u.uy)) &&
+		    !Levitation && !Flying &&
 		    !is_clinger(youmonst.data) && !cancelled_don) {
 			makeknown(otyp);
 			/* make boots known in case you survive the drowning */

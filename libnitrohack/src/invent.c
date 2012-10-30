@@ -1600,6 +1600,8 @@ const char *dfeature_at(int x, int y, char *buf)
 	    cmap = S_throne;				/* "opulent throne" */
 	else if (is_lava(level, x,y))
 	    cmap = S_lava;				/* "molten lava" */
+	else if (is_swamp(level, x,y))
+	    cmap = S_bog;				/* "muddy swamp" */
 	else if (is_ice(level, x, y))
 	    cmap = S_ice;				/* "ice" */
 	else if (is_pool(level, x,y))

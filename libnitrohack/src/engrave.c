@@ -193,6 +193,8 @@ const char *surface(int x, int y)
 	    return (Underwater && !Is_waterlevel(&u.uz)) ? "bottom" : "water";
 	else if (is_ice(level, x, y))
 	    return "ice";
+	else if (is_swamp(level, x, y))
+	    return "swamp";
 	else if (is_lava(level, x, y))
 	    return "lava";
 	else if (loc->typ == DRAWBRIDGE_DOWN)
@@ -524,7 +526,8 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 	} else if (Underwater) {
 		pline("You can't write underwater!");
 		return 0;
-	} else if (is_pool(level, u.ux,u.uy) || IS_FOUNTAIN(level->locations[u.ux][u.uy].typ)) {
+	} else if (is_pool(level, u.ux,u.uy) || is_swamp(level, u.ux,u.uy) ||
+		   IS_FOUNTAIN(level->locations[u.ux][u.uy].typ)) {
 		pline("You can't write on the water!");
 		return 0;
 	}
