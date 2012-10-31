@@ -322,7 +322,8 @@
 
 #define EReflecting		u.uprops[REFLECTING].extrinsic
 #define Reflecting		(EReflecting || \
-				 (youmonst.data == &mons[PM_SILVER_DRAGON]))
+				 youmonst.data == &mons[PM_CHROMATIC_DRAGON] || \
+				 youmonst.data == &mons[PM_SILVER_DRAGON])
 
 #define Free_action		u.uprops[FREE_ACTION].extrinsic /* [Tom] */
 

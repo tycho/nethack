@@ -347,6 +347,8 @@ DRGN_ARMR("stone dragon scale mail", "gold dragon scale mail",
 	1, STONE_RES,   900, 1, HI_GOLD),
 DRGN_ARMR("acid dragon scale mail", "guivre scale mail",
 	1, ACID_RES,    900, 1, CLR_YELLOW),
+DRGN_ARMR("chromatic dragon scale mail", "chromatic dragon scale mail",
+	1, POISON_RES, 2400, 1, CLR_MAGENTA), /* intrinsics are set manually */
 
 /* For now, only dragons leave these. */
 /* 3.4.1: dragon scales left classified as "non-magic"; they confer
@@ -371,6 +373,8 @@ DRGN_ARMR("stone dragon scales", "gold dragon scales",
 	0, STONE_RES,  500, 7, HI_GOLD),
 DRGN_ARMR("acid dragon scales", "guivre scales",
 	0, ACID_RES,   500, 7, CLR_YELLOW),
+DRGN_ARMR("chromatic dragon scales", "chromatic dragon scales",
+	0, 0, 1500, 7, CLR_MAGENTA), /* intrinsics are set manually */
 #undef DRGN_ARMR
 
 ARMOR("plate mail", NULL,

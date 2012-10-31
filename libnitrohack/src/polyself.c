@@ -249,8 +249,8 @@ void polyself(boolean forcecontrol)
 	int mntmp = NON_PM;
 	int tries=0;
 	boolean draconian = (uarm &&
-				uarm->otyp >= GRAY_DRAGON_SCALE_MAIL &&
-				uarm->otyp <= YELLOW_DRAGON_SCALES);
+			     uarm->otyp >= GRAY_DRAGON_SCALE_MAIL &&
+			     uarm->otyp <= CHROMATIC_DRAGON_SCALES);
 	boolean iswere = (u.ulycn >= LOW_PM || is_were(youmonst.data));
 	boolean isvamp = is_vampire(youmonst.data);
 	boolean was_floating = (Levitation || Flying);
@@ -744,6 +744,7 @@ void rehumanize(void)
 int dobreathe(void)
 {
 	const struct attack *mattk;
+	int typ;
 	schar dx, dy, dz;
 
 	if (Strangled) {
@@ -761,11 +762,16 @@ int dobreathe(void)
 	    return 0;
 
 	mattk = attacktype_fordmg(youmonst.data, AT_BREA, AD_ANY);
+	/* if new breath types are added, change AD_ACID to max type */
+	/* see also breamu() in polyself.c */
+	/* see also http://qdb.rawrnix.com/?1120 */
+	typ = (mattk->adtyp == AD_RBRE) ? rnd(AD_ACID) : mattk->adtyp;
 	if (!mattk)
 	    warning("bad breath attack?");	/* mouthwash needed... */
+	else if (typ >= AD_MAGM && typ <= AD_ACID)
+	    buzz(20 + typ - 1, (int)mattk->damn, u.ux, u.uy, dx, dy);
 	else
-	    buzz((int) (20 + mattk->adtyp-1), (int)mattk->damn,
-		u.ux, u.uy, dx, dy);
+	    warning("Breath weapon %d used", typ - 1);
 	return 1;
 }
 
@@ -1318,6 +1324,9 @@ static int armor_to_dragon(int atyp)
 	    case YELLOW_DRAGON_SCALE_MAIL:
 	    case YELLOW_DRAGON_SCALES:
 		return PM_YELLOW_DRAGON;
+	    case CHROMATIC_DRAGON_SCALE_MAIL:
+	    case CHROMATIC_DRAGON_SCALES:
+		return PM_CHROMATIC_DRAGON;
 	    default:
 		return -1;
 	}

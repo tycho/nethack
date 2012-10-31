@@ -842,7 +842,7 @@ void cancel_item(struct obj *obj)
 	/*       Suggested by Daniel Morris in RGRN */
 
 	if (obj->otyp >= GRAY_DRAGON_SCALE_MAIL &&
-	    obj->otyp <= YELLOW_DRAGON_SCALE_MAIL) {
+	    obj->otyp <= CHROMATIC_DRAGON_SCALE_MAIL) {
 		/* dragon scale mail reverts to dragon scales */
 		boolean worn = (obj == uarm);
 

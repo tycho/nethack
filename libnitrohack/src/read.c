@@ -958,7 +958,7 @@ int seffects(struct obj *sobj, boolean *known)
 		    otmp->spe >= 9 ? (rn2(otmp->spe) == 0) :
 		    sobj->blessed ? rnd(3-otmp->spe/3) : 1;
 		if (s >= 0 && otmp->otyp >= GRAY_DRAGON_SCALES &&
-					otmp->otyp <= YELLOW_DRAGON_SCALES) {
+			      otmp->otyp <= CHROMATIC_DRAGON_SCALES) {
 			/* dragon scales get turned into dragon scale mail */
 			pline("Your %s merges and hardens!", xname(otmp));
 			setworn(NULL, W_ARM);

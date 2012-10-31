@@ -2274,8 +2274,14 @@ struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user)
 	/* dragon scales - assumes order of dragons */
 	if ((!strcmpi(bp, "scales") || !strcmpi(bp, "dragon scales")) &&
 			mntmp != NON_PM &&
-			mntmp >= PM_GRAY_DRAGON && mntmp <= PM_YELLOW_DRAGON) {
-		typ = GRAY_DRAGON_SCALES + mntmp - PM_GRAY_DRAGON;
+			mntmp >= PM_GRAY_DRAGON && mntmp <= PM_CHROMATIC_DRAGON) {
+		if (mntmp == PM_CHROMATIC_DRAGON && !wizard) {
+			/* random scales when asking for chromatic dragon scales */
+			typ = rn2(YELLOW_DRAGON_SCALES - GRAY_DRAGON_SCALES) +
+			      GRAY_DRAGON_SCALES;
+		} else {
+			typ = GRAY_DRAGON_SCALES + mntmp - PM_GRAY_DRAGON;
+		}
 		mntmp = NON_PM;	/* no monster */
 		goto typfnd;
 	}
@@ -2790,9 +2796,17 @@ typfnd:
 			/* Dragon mail - depends on the order of objects */
 			/*		 & dragons.			 */
 			if (mntmp >= PM_GRAY_DRAGON &&
-						mntmp <= PM_YELLOW_DRAGON)
-			    otmp->otyp = GRAY_DRAGON_SCALE_MAIL +
-						    mntmp - PM_GRAY_DRAGON;
+			    mntmp <= PM_CHROMATIC_DRAGON) {
+			    if (mntmp == PM_CHROMATIC_DRAGON && !wizard) {
+				/* random dsm when asking for chromatic dsm */
+				otmp->otyp = rn2(YELLOW_DRAGON_SCALES -
+						 GRAY_DRAGON_SCALES) +
+					     GRAY_DRAGON_SCALE_MAIL;
+			    } else {
+				otmp->otyp = GRAY_DRAGON_SCALE_MAIL +
+					     mntmp - PM_GRAY_DRAGON;
+			    }
+			}
 			break;
 		}
 	}
