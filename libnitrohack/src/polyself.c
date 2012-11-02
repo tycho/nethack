@@ -763,7 +763,7 @@ int dobreathe(void)
 
 	mattk = attacktype_fordmg(youmonst.data, AT_BREA, AD_ANY);
 	/* if new breath types are added, change AD_ACID to max type */
-	/* see also breamu() in polyself.c */
+	/* see also breamu() in mthrowu.c */
 	/* see also http://qdb.rawrnix.com/?1120 */
 	typ = (mattk->adtyp == AD_RBRE) ? rnd(AD_ACID) : mattk->adtyp;
 	if (!mattk)
