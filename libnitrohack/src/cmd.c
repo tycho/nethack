@@ -660,7 +660,7 @@ void enlightenment(int final)
 	else if (u.ualign.record >= -8)	you_have(&menu, "sinned");
 	else you_have(&menu, "transgressed");
 
-	if (wizard) {
+	if (wizard || final) {
 		sprintf(buf, " %d", u.uhunger);
 		enl_msg(&menu, "Hunger level ", "is", "was", buf);
 
@@ -718,8 +718,8 @@ void enlightenment(int final)
 		sprintf(buf, "wounded %s", makeplural(body_part(LEG)));
 		you_have(&menu, buf);
 	}
-	if (Wounded_legs && u.usteed && wizard) {
-	    strcpy(buf, x_monnam(u.usteed, ARTICLE_YOUR, NULL, 
+	if (Wounded_legs && u.usteed && (wizard || final)) {
+	    strcpy(buf, x_monnam(u.usteed, ARTICLE_YOUR, NULL,
 		    SUPPRESS_SADDLE | SUPPRESS_HALLUCINATION, FALSE));
 	    *buf = highc(*buf);
 	    enl_msg(&menu, buf, " has", " had", " wounded legs");
@@ -785,7 +785,7 @@ void enlightenment(int final)
 	else if (Levitation) you_are(&menu, "levitating");	/* without control */
 	else if (Flying) you_can(&menu, "fly");
 	if (Wwalking) you_can(&menu, "walk on water");
-	if (Swimming) you_can(&menu, "swim");        
+	if (Swimming) you_can(&menu, "swim");
 	if (Breathless) you_can(&menu, "survive without air");
 	else if (Amphibious) you_can(&menu, "breathe water");
 	if (Passes_walls) you_can(&menu, "walk through walls");
@@ -799,7 +799,7 @@ void enlightenment(int final)
 	}
 	if (u.uswallow) {
 	    sprintf(buf, "swallowed by %s", a_monnam(u.ustuck));
-	    if (wizard) sprintf(eos(buf), " (%u)", u.uswldtim);
+	    if (wizard || final) sprintf(eos(buf), " (%u)", u.uswldtim);
 	    you_are(&menu, buf);
 	} else if (u.ustuck) {
 	    sprintf(buf, "%s %s",
@@ -839,7 +839,7 @@ void enlightenment(int final)
 	if (Upolyd) {
 	    if (u.umonnum == u.ulycn) strcpy(buf, "in beast form");
 	    else sprintf(buf, "polymorphed into %s", an(mons_mname(youmonst.data)));
-	    if (wizard) sprintf(eos(buf), " (%d)", u.mtimedone);
+	    if (wizard || final) sprintf(eos(buf), " (%d)", u.mtimedone);
 	    you_are(&menu, buf);
 	}
 	if (Unchanging) you_can(&menu, "not change from your current form");
@@ -857,10 +857,11 @@ void enlightenment(int final)
 	    sprintf(buf, "%s%slucky",
 		    ltmp >= 10 ? "extremely " : ltmp >= 5 ? "very " : "",
 		    Luck < 0 ? "un" : "");
-	    if (wizard) sprintf(eos(buf), " (%d)", Luck);
+	    if (wizard || final) sprintf(eos(buf), " (%d)", Luck);
 	    you_are(&menu, buf);
+	} else if (wizard || final) {
+	    enl_msg(&menu, "Your luck ", "is", "was", " zero");
 	}
-	 else if (wizard) enl_msg(&menu, "Your luck ", "is", "was", " zero");
 	if (u.moreluck > 0) you_have(&menu, "extra luck");
 	else if (u.moreluck < 0) you_have(&menu, "reduced luck");
 	if (carrying(LUCKSTONE) || stone_luck(TRUE)) {
@@ -874,7 +875,7 @@ void enlightenment(int final)
 	if (u.ugangr) {
 	    sprintf(buf, " %sangry with you",
 		    u.ugangr > 6 ? "extremely " : u.ugangr > 3 ? "very " : "");
-	    if (wizard) sprintf(eos(buf), " (%d)", u.ugangr);
+	    if (wizard || final) sprintf(eos(buf), " (%d)", u.ugangr);
 	    enl_msg(&menu, u_gname(), " is", " was", buf);
 	} else
 	    /*
@@ -1073,18 +1074,18 @@ void show_conduct(int final)
 
 	if (!u.uconduct.weaphit)
 	    you_have_never(&menu, "hit with a wielded weapon");
-	else if (wizard) {
+	else if (wizard || final) {
 	    sprintf(buf, "used a wielded weapon %u time%s",
 		    u.uconduct.weaphit, plur(u.uconduct.weaphit));
 	    you_have_X(&menu, buf);
 	}
 
-	if (wizard && u.uconduct.literate) {
+	if ((wizard || final) && u.uconduct.literate) {
 	    sprintf(buf, "read items or engraved %u time%s",
 		    u.uconduct.literate, plur(u.uconduct.literate));
 	    you_have_X(&menu, buf);
 	}
-	if (wizard && u.uconduct.armoruses) {
+	if ((wizard || final) && u.uconduct.armoruses) {
 	    sprintf(buf, "put on armor %u time%s",
 		    u.uconduct.armoruses, plur(u.uconduct.armoruses));
 	    you_have_X(&menu, buf);
@@ -1101,7 +1102,7 @@ void show_conduct(int final)
 
 	if (!u.uconduct.polypiles)
 	    you_have_never(&menu, "polymorphed an object");
-	else if (wizard) {
+	else if ((wizard || final)) {
 	    sprintf(buf, "polymorphed %u item%s",
 		    u.uconduct.polypiles, plur(u.uconduct.polypiles));
 	    you_have_X(&menu, buf);
@@ -1109,7 +1110,7 @@ void show_conduct(int final)
 
 	if (!u.uconduct.polyselfs)
 	    you_have_never(&menu, "changed form");
-	else if (wizard) {
+	else if ((wizard || final)) {
 	    sprintf(buf, "changed form %u time%s",
 		    u.uconduct.polyselfs, plur(u.uconduct.polyselfs));
 	    you_have_X(&menu, buf);
