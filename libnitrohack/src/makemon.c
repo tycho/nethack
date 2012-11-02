@@ -600,7 +600,7 @@ static void m_initinv(struct monst *mtmp)
 		/* Give gnomes candles, but don't light them to avoid
 		   cluttering the player's inventory with candles of
 		   different lengths. */
-		if (!rn2(4))
+		if (!rn2(In_mines(&mtmp->dlevel->z) ? 5 : 10))
 		    mongets(mtmp, rn2(4) ? TALLOW_CANDLE : WAX_CANDLE);
 		break;
 	    default:
