@@ -1146,6 +1146,14 @@ void show_conduct(int final)
 	    you_have_X(&menu, "abstained from Elbereth's help");
 	}
 
+	if ((wizard || final) && u.uconduct.bones) {
+	    sprintf(buf, "encountered %u bones level%s",
+		    u.uconduct.bones, plur(u.uconduct.bones));
+	    you_have_X(&menu, buf);
+	} else if (wizard || final) {
+	    you_have_never(&menu, "encountered a bones level");
+	}
+
 	/* Pop up the window and wait for a key */
 	display_menu(menu.items, menu.icount, "Voluntary challenges:", PICK_NONE, NULL);
 	free(menu.items);

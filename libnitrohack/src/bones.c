@@ -453,6 +453,8 @@ int getbones(d_level *levnum)
 
 	if (wizard) {
 		if (yn("Unlink bones?") == 'n') {
+			/* bones tracking */
+			if (ok) u.uconduct.bones++;
 			return ok;
 		}
 	}
@@ -467,6 +469,10 @@ int getbones(d_level *levnum)
 		freelev(ledger_no(levnum));
 		return 0;
 	}
+
+	/* bones tracking */
+	if (ok) u.uconduct.bones++;
+
 	return ok;
 }
 
