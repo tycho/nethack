@@ -60,6 +60,7 @@ struct u_conduct {		/* number of times... */
 	unsigned int robbed;	/* killed an artifact-guardian (like an ordinary robber) */
 	unsigned int elbereths;	/* engraved Elbereth */
 	unsigned int bones;	/* encountered bones level */
+	unsigned int unracearmor;/* put on non-racial armor */
 				/* genocides already listed at end of game */
 };
 

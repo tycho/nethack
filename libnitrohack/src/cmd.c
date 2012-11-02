@@ -1085,10 +1085,16 @@ void show_conduct(int final)
 		    u.uconduct.literate, plur(u.uconduct.literate));
 	    you_have_X(&menu, buf);
 	}
+
 	if ((wizard || final) && u.uconduct.armoruses) {
 	    sprintf(buf, "put on armor %u time%s",
 		    u.uconduct.armoruses, plur(u.uconduct.armoruses));
 	    you_have_X(&menu, buf);
+	}
+
+	if (!u.uconduct.unracearmor && u.uconduct.armoruses > 0) {
+	    sprintf(buf, "wearing only %s armor", urace.adj);
+	    you_have_been(&menu, buf);
 	}
 
 	ngenocided = num_genocides();

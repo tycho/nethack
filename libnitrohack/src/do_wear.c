@@ -122,6 +122,10 @@ static int Boots_on(void)
 		break;
 	default: warning(unknown_type, c_boots, uarmf->otyp);
     }
+
+    if (uarmf && !is_racial_armor(uarmf))
+	u.uconduct.unracearmor++;
+
     return 0;
 }
 
@@ -227,9 +231,13 @@ static int Cloak_on(void)
 	/* Alchemy smock gives poison _and_ acid resistance */
 	case ALCHEMY_SMOCK:
 		EAcid_resistance |= WORN_CLOAK;
-  		break;
+		break;
 	default: warning(unknown_type, c_cloak, uarmc->otyp);
     }
+
+    if (uarmc && !is_racial_armor(uarmc))
+	u.uconduct.unracearmor++;
+
     return 0;
 }
 
@@ -332,6 +340,10 @@ static int Helmet_on(void)
 		break;
 	default: warning(unknown_type, c_helmet, uarmh->otyp);
     }
+
+    if (uarmh && !is_racial_armor(uarmh))
+	u.uconduct.unracearmor++;
+
     return 0;
 }
 
@@ -398,6 +410,10 @@ static int Gloves_on(void)
 		break;
 	default: warning(unknown_type, c_gloves, uarmg->otyp);
     }
+
+    if (uarmg && !is_racial_armor(uarmg))
+	u.uconduct.unracearmor++;
+
     return 0;
 }
 
@@ -458,6 +474,9 @@ int Gloves_off(void)
 
 static int Shield_on(void)
 {
+    if (uarms && !is_racial_armor(uarms))
+	u.uconduct.unracearmor++;
+
     return 0;
 }
 
@@ -471,6 +490,9 @@ int Shield_off(void)
 
 static int Shirt_on(void)
 {
+    if (uarmu && !is_racial_armor(uarmu))
+	u.uconduct.unracearmor++;
+
     return 0;
 }
 
@@ -493,6 +515,7 @@ static int Armor_on(void)
 	if (!Blind)
 	    pline("%s to glow.", Tobjnam(uarm, "begin"));
     }
+
     switch (uarm->otyp) {
 	case CHROMATIC_DRAGON_SCALES:
 	case CHROMATIC_DRAGON_SCALE_MAIL:
@@ -509,6 +532,10 @@ static int Armor_on(void)
 	default:
 	    break;
     }
+
+    if (uarm && !is_racial_armor(uarm))
+	u.uconduct.unracearmor++;
+
     return 0;
 }
 

@@ -2401,4 +2401,14 @@ int display_binventory(int x, int y, boolean as_if_seen)
 	return n;
 }
 
+
+boolean is_racial_armor(const struct obj *otmp)
+{
+	if (Race_if(PM_DWARF)) return is_dwarvish_armor(otmp);
+	else if (Race_if(PM_ELF)) return is_elven_armor(otmp);
+	else if (Race_if(PM_GNOME)) return is_gnomish_armor(otmp);
+	else if (Race_if(PM_ORC)) return is_orcish_armor(otmp);
+	return FALSE;
+}
+
 /*invent.c*/
