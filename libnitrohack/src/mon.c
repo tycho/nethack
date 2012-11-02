@@ -252,6 +252,12 @@ static struct obj *make_corpse(struct monst *mtmp)
 		obj = mkgold((long)(200 - rnl(101)), level, x, y);
 		mtmp->mnamelth = 0;
 		break;
+	    case PM_WAX_GOLEM:
+		num = dice(2,4);
+		while (num--)
+			obj = mksobj_at(WAX_CANDLE, level, x, y, TRUE, FALSE);
+		mtmp->mnamelth = 0;
+		break;
 	    case PM_PAPER_GOLEM:
 		num = rnd(4);
 		while (num--)

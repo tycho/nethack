@@ -1111,6 +1111,10 @@ static void create_polymon(struct obj *obj, int okind)
 	    pm_index = PM_FLESH_GOLEM;
 	    material = "organic ";
 	    break;
+	case WAX:
+	    pm_index = PM_WAX_GOLEM;
+	    material = "wax ";
+	    break;
 	case WOOD:
 	    pm_index = PM_WOOD_GOLEM;
 	    material = "wood ";

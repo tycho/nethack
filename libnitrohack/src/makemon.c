@@ -1460,6 +1460,7 @@ int golemhp(int type)
 	switch(type) {
 		case PM_STRAW_GOLEM: return 20;
 		case PM_PAPER_GOLEM: return 20;
+		case PM_WAX_GOLEM: return 20;
 		case PM_ROPE_GOLEM: return 30;
 		case PM_LEATHER_GOLEM: return 40;
 		case PM_GOLD_GOLEM: return 40;

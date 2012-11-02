@@ -863,7 +863,8 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		    pline("%s is %s!", Monnam(mdef),
 			  on_fire(mdef->data, mattk));
 		if (pd == &mons[PM_STRAW_GOLEM] ||
-		    pd == &mons[PM_PAPER_GOLEM]) {
+		    pd == &mons[PM_PAPER_GOLEM] ||
+		    pd == &mons[PM_WAX_GOLEM]) {
 			if (vis) pline("%s burns completely!", Monnam(mdef));
 			mondied(mdef);
 			if (mdef->mhp > 0) return 0;

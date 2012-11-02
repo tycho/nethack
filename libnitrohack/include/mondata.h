@@ -157,6 +157,7 @@
 #define emits_light(ptr)	(((ptr)->mlet == S_LIGHT || \
 				  (ptr) == &mons[PM_FLAMING_SPHERE] || \
 				  (ptr) == &mons[PM_SHOCKING_SPHERE] || \
+				  (ptr) == &mons[PM_WAX_GOLEM] || \
 				  !strcmp(mons_mname(ptr), "gold dragon") || \
 				  !strcmp(mons_mname(ptr), "baby gold dragon") || \
 				  (ptr) == &mons[PM_FIRE_VORTEX]) ? 1 : \
