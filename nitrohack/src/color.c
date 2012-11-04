@@ -102,4 +102,17 @@ void set_darkgray(void)
 	init_pair(1, COLOR_BLUE, -1);
 }
 
+
+int darken(int nh_color)
+{
+    /*
+     * BEWARE: Check for blank glyphs before using this with darkgray,
+     * otherwise the bold-black-on-black trick will instead create a completely
+     * black space that can make the terminal cursor vanish while over it.
+     */
+    if (nh_color == CLR_GRAY) return CLR_BLACK;
+    if (nh_color <= NO_COLOR) return nh_color;
+    return nh_color - 8;
+}
+
 /* color.c */

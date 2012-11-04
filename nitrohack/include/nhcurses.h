@@ -272,6 +272,7 @@ extern const char *nhlogo_small[12], *nhlogo_large[12];
 extern void init_nhcolors(void);
 extern int curses_color_attr(int nh_color);
 extern void set_darkgray(void);
+extern int darken(int nh_color);
 
 /* dialog.c */
 extern WINDOW *newdialog(int height, int width);

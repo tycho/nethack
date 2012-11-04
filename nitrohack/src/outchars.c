@@ -378,6 +378,20 @@ void free_displaychars(void)
 }
 
 
+static void darken_symdef(struct curses_symdef *sym)
+{
+    /*
+     * Avoid black-on-black with darkgray trick on blank spaces (see darken()),
+     * and a blinking dark blue cursor on black otherwise.
+     */
+    if ((ui_flags.unicode && (sym->unichar[0] == ' ' ||
+			      (sym->unichar[0] == '\0' && sym->ch == ' '))) ||
+	(!ui_flags.unicode && sym->ch == ' '))
+	return;
+    sym->color = darken(sym->color);
+}
+
+
 int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 {
     int id, count = 0;
@@ -433,18 +447,33 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 	/* highlight Sokoban prize */
 	if (dbe->objflags & DOBJ_SOKOPRIZE)
 	    syms[count].color = CLR_BRIGHT_MAGENTA;
+	if (!dbe->visible)
+	    darken_symdef(&syms[count]);
 	count++;
     }
     
     if (dbe->trap) {
 	id = dbe->trap - 1;
-	syms[count++] = cur_drawing->traps[id];
+	syms[count] = cur_drawing->traps[id];
+	if (!dbe->visible)
+	    darken_symdef(&syms[count]);
+	count++;
     } 
     
     /* omit the background symbol from the list if it is boring */
-    if (count == 0 ||
-	dbe->bg >= cur_drawing->bg_feature_offset)
-	syms[count++] = cur_drawing->bgelements[dbe->bg];
+    if (count == 0 || dbe->bg >= cur_drawing->bg_feature_offset) {
+	syms[count] = cur_drawing->bgelements[dbe->bg];
+	/*
+	 * Avoid creating a black-on-black non-glyph space when using
+	 * the darkgray trick, otherwise the cursor will not appear
+	 * while over it.  Avoiding it with darkgray disabled also
+	 * prevents the cursor from blinking with dark blue in the
+	 * same places.
+	 */
+	if (!dbe->visible)
+	    darken_symdef(&syms[count]);
+	count++;
+    }
 
     return count; /* count <= 4 */
 }
