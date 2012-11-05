@@ -1879,7 +1879,8 @@ static void start_engulf(struct monst *mdef)
 		y = mdef->my;
 		map_location(u.ux, u.uy, TRUE);
 		
-		dbuf_set(x, y, level->locations[x][y].mem_bg,
+		dbuf_set(level, x, y,
+			 level->locations[x][y].mem_bg,
 			 level->locations[x][y].mem_trap,
 			 level->locations[x][y].mem_obj,
 			 level->locations[x][y].mem_obj_mn,

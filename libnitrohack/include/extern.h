@@ -224,7 +224,8 @@ extern void display_self(void);
 extern int doredraw(void);
 extern int obfuscate_object(int otyp);
 extern int obfuscate_monster(int mndx);
-extern void dbuf_set(int x, int y, int bg, int trap, int obj, int obj_mn,
+extern void dbuf_set(const struct level *lev, int x, int y,
+		     int bg, int trap, int obj, int obj_mn,
 		     boolean obj_stacks, boolean obj_sokoprize, boolean invis,
 		     int mon, int monflags, int effect);
 extern void dbuf_set_effect(int x, int y, int eglyph);

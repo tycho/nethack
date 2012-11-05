@@ -169,7 +169,7 @@ void magic_map_background(xchar x, xchar y, int show)
     if (level->flags.hero_memory)
 	loc->mem_bg = cmap;
     if (show)
-	dbuf_set(x, y, cmap, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	dbuf_set(level, x, y, cmap, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 /* FIXME: some of these use xchars for x and y, and some use ints.  Make
@@ -189,7 +189,7 @@ void map_background(xchar x, xchar y, int show)
     if (level->flags.hero_memory)
 	level->locations[x][y].mem_bg = cmap;
     if (show)
-	dbuf_set(x, y, cmap, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	dbuf_set(level, x, y, cmap, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 /*
@@ -206,7 +206,7 @@ void map_trap(struct trap *trap, int show)
     if (level->flags.hero_memory)
 	level->locations[x][y].mem_trap = trapid;
     if (show)
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y, level->locations[x][y].mem_bg,
 		 level->locations[x][y].mem_trap, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -294,7 +294,8 @@ void map_object(struct obj *obj, int show)
 	    level->locations[x][y].mem_obj_soko = 0;
     }
     if (show)
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y,
+		 level->locations[x][y].mem_bg,
 		 level->locations[x][y].mem_trap,
 		 level->locations[x][y].mem_obj,
 		 level->locations[x][y].mem_obj_mn,
@@ -317,7 +318,8 @@ void map_invisible(xchar x, xchar y)
     if (x != u.ux || y != u.uy) { /* don't display I at hero's location */
 	if (level->flags.hero_memory)
 	    level->locations[x][y].mem_invis = 1;
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y,
+		 level->locations[x][y].mem_bg,
 		 level->locations[x][y].mem_trap,
 		 level->locations[x][y].mem_obj,
 		 level->locations[x][y].mem_obj_mn,
@@ -466,7 +468,8 @@ static void display_monster(
 	    case M_AP_MONSTER:
 		/* Visible monsters always clear 'I' symbols. */
 		level->locations[x][y].mem_invis = 0;
-		dbuf_set(x, y, level->locations[x][y].mem_bg,
+		dbuf_set(level, x, y,
+			 level->locations[x][y].mem_bg,
 			 level->locations[x][y].mem_trap,
 			 level->locations[x][y].mem_obj,
 			 level->locations[x][y].mem_obj_mn,
@@ -499,7 +502,8 @@ static void display_monster(
 	/* Visible monsters always clear 'I' symbols. */
 	level->locations[x][y].mem_invis = 0;
 
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y,
+		 level->locations[x][y].mem_bg,
 		 level->locations[x][y].mem_trap,
 		 level->locations[x][y].mem_obj,
 		 level->locations[x][y].mem_obj_mn,
@@ -540,7 +544,8 @@ static void display_warning(struct monst *mon)
 	return;
     }
 
-    dbuf_set(x, y, level->locations[x][y].mem_bg,
+    dbuf_set(level, x, y,
+		level->locations[x][y].mem_bg,
 		level->locations[x][y].mem_trap,
 		level->locations[x][y].mem_obj,
 		level->locations[x][y].mem_obj_mn,
@@ -1017,7 +1022,7 @@ void swallowed(int first)
 	for (y = lasty-1; y <= lasty+1; y++)
 	    for (x = lastx-1; x <= lastx+1; x++)
 		dbuf_set_effect(x,y,0);
-	dbuf_set(lastx, lasty, 0,0,0,0,0,0,0,0,0,0); /* remove hero symbol */
+	dbuf_set(level, lastx, lasty, 0,0,0,0,0,0,0,0,0,0); /* remove hero symbol */
     }
 
     /* Account for e.g. shuffled dragon appearances. */
@@ -1086,13 +1091,13 @@ void under_water(int mode)
 	for (y = lasty-1; y <= lasty+1; y++)
 	    for (x = lastx-1; x <= lastx+1; x++)
 		if (isok(x,y))
-		    dbuf_set(x, y, S_unexplored, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		    dbuf_set(level, x, y, S_unexplored, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
     for (x = u.ux-1; x <= u.ux+1; x++)
 	for (y = u.uy-1; y <= u.uy+1; y++)
 	    if (isok(x,y) && is_pool(level, x,y)) {
 		if (Blind && !(x == u.ux && y == u.uy))
-		    dbuf_set(x, y, S_unexplored, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		    dbuf_set(level, x, y, S_unexplored, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		else	
 		    newsym(x,y);
 	    }
@@ -1217,7 +1222,8 @@ void display_self(void)
     int x = u.ux, y = u.uy;
     
     if (u.usteed && mon_visible(u.usteed)) {
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y,
+		       level->locations[x][y].mem_bg,
 		       level->locations[x][y].mem_trap,
 		       level->locations[x][y].mem_obj,
 		       level->locations[x][y].mem_obj_mn,
@@ -1229,7 +1235,8 @@ void display_self(void)
 	int monnum = (Upolyd || !iflags.showrace) ? obfuscate_monster(u.umonnum) :
 	             (flags.female && urace.femalenum != NON_PM) ? urace.femalenum :
 	             urace.malenum;
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y,
+		       level->locations[x][y].mem_bg,
 		       level->locations[x][y].mem_trap,
 		       level->locations[x][y].mem_obj,
 		       level->locations[x][y].mem_obj_mn,
@@ -1237,14 +1244,16 @@ void display_self(void)
 		       level->locations[x][y].mem_obj_soko,
 		       0, monnum + 1, 0, 0);
     } else if (youmonst.m_ap_type == M_AP_FURNITURE) {
-	dbuf_set(x, y, youmonst.mappearance, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	dbuf_set(level, x, y, youmonst.mappearance, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     } else if (youmonst.m_ap_type == M_AP_OBJECT) {
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y,
+		       level->locations[x][y].mem_bg,
 		       level->locations[x][y].mem_trap,
 		       youmonst.mappearance + 1,
 		       0, 0, 0, 0, 0, 0, 0);
     } else /* M_AP_MONSTER */
-	dbuf_set(x, y, level->locations[x][y].mem_bg,
+	dbuf_set(level, x, y,
+		       level->locations[x][y].mem_bg,
 		       level->locations[x][y].mem_trap,
 		       level->locations[x][y].mem_obj,
 		       level->locations[x][y].mem_obj_mn,
@@ -1402,7 +1411,7 @@ static void dbuf_set_object(int x, int y, int oid)
  */
 static void dbuf_set_loc(int x, int y)
 {
-    dbuf_set(x, y,
+    dbuf_set(level, x, y,
 	     level->locations[x][y].mem_bg,
 	     level->locations[x][y].mem_trap,
 	     level->locations[x][y].mem_obj,
@@ -1417,7 +1426,8 @@ static void dbuf_set_loc(int x, int y)
 /*
  * Store display information for later flushing.
  */
-void dbuf_set(int x, int y, int bg, int trap, int obj, int obj_mn,
+void dbuf_set(const struct level *lev, int x, int y,
+	      int bg, int trap, int obj, int obj_mn,
 	      boolean obj_stacks, boolean obj_sokoprize, boolean invis,
 	      int mon, int monflags, int effect)
 {
@@ -1437,7 +1447,7 @@ void dbuf_set(int x, int y, int bg, int trap, int obj, int obj_mn,
     dbuf[y][x].mon = mon;
     dbuf[y][x].monflags = monflags;
     dbuf[y][x].effect = effect;
-    dbuf[y][x].visible = cansee(x, y);
+    dbuf[y][x].visible = (lev == level) ? cansee(x, y) : 0;
 }
 
 

@@ -2078,7 +2078,8 @@ int dooverview(void)
 	/* set the display buffer from the remembered  */
 	for (y = 0; y < ROWNO; y++)
 	    for (x = 0; x < COLNO; x++)
-		dbuf_set(x, y, lev->locations[x][y].mem_bg,
+		dbuf_set(lev, x, y,
+			 lev->locations[x][y].mem_bg,
 			 lev->locations[x][y].mem_trap,
 			 lev->locations[x][y].mem_obj,
 			 lev->locations[x][y].mem_obj_mn,
