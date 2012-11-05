@@ -144,6 +144,7 @@ struct settings {
     int      win_height;/* window height, PDCurses on WIN32 only */
     int      win_width; /* window height, PDCurses on WIN32 only */
     nh_bool  darkgray;  /* use bolded black instead of dark blue for CLR_BLACK */
+    nh_bool  darkroom;	/* show spaces out-of-sight in darker colors */
     nh_bool  extmenu;	/* extended commands use menu interface */
     nh_bool  hilite_pet;/* hilight pets */
     nh_bool  showexp;	/* show experience points */

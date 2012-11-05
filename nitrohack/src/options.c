@@ -76,8 +76,9 @@ struct nh_option_desc curses_options[] = {
     {"name", "name for new characters (blank = ask)", OPTTYPE_STRING, {NULL}},
     {"blink", "show multiple symbols for each location by switching between them", OPTTYPE_BOOL, { VTRUE }},
     {"darkgray", "try to show 'black' as dark gray instead of dark blue", OPTTYPE_BOOL, {FALSE}},
+    {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL, { VTRUE }},
     {"extmenu", "use a menu for selecting extended commands (#)", OPTTYPE_BOOL, {FALSE}},
-    {"frame", "draw a frame around the window sections", OPTTYPE_BOOL, { VTRUE }},    
+    {"frame", "draw a frame around the window sections", OPTTYPE_BOOL, { VTRUE }},
     {"graphics", "enhanced line drawing style", OPTTYPE_ENUM, {(void*)UNICODE_GRAPHICS}},
     {"hilite_pet", "highlight your pet", OPTTYPE_BOOL, { VTRUE }},
     {"invweight", "show item weights in the inventory", OPTTYPE_BOOL, { VTRUE }},
@@ -106,6 +107,7 @@ struct nh_option_desc curses_options[] = {
 struct nh_boolopt_map boolopt_map[] = {
     {"blink", &settings.blink},
     {"darkgray", &settings.darkgray},
+    {"darkroom", &settings.darkroom},
     {"extmenu", &settings.extmenu},
     {"frame", &settings.frame},
     {"hilite_pet", &settings.hilite_pet},
@@ -137,6 +139,9 @@ static nh_bool option_change_callback(struct nh_option_desc *option)
     }
     else if (!strcmp(option->name, "darkgray")) {
 	set_darkgray();
+	draw_map(player.x, player.y);
+    }
+    else if (!strcmp(option->name, "darkroom")) {
 	draw_map(player.x, player.y);
     }
     else if (!strcmp(option->name, "menu_headings")) {

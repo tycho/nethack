@@ -447,7 +447,7 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 	/* highlight Sokoban prize */
 	if (dbe->objflags & DOBJ_SOKOPRIZE)
 	    syms[count].color = CLR_BRIGHT_MAGENTA;
-	if (!dbe->visible)
+	if (settings.darkroom && !dbe->visible)
 	    darken_symdef(&syms[count]);
 	count++;
     }
@@ -455,7 +455,7 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
     if (dbe->trap) {
 	id = dbe->trap - 1;
 	syms[count] = cur_drawing->traps[id];
-	if (!dbe->visible)
+	if (settings.darkroom && !dbe->visible)
 	    darken_symdef(&syms[count]);
 	count++;
     } 
@@ -470,7 +470,7 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 	 * prevents the cursor from blinking with dark blue in the
 	 * same places.
 	 */
-	if (!dbe->visible)
+	if (settings.darkroom && !dbe->visible)
 	    darken_symdef(&syms[count]);
 	count++;
     }
