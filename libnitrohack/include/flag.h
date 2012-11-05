@@ -171,7 +171,6 @@ struct instance_flags {
 	boolean  autoexplore;	/* currently autoexploring */
 	struct nh_autopickup_rules *ap_rules;
 	struct nh_msgtype_rules *mt_rules;
-	boolean  dark_room;	/* show shadows in lit rooms */
 };
 
 extern struct flag flags;

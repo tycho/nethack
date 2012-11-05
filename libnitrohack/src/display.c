@@ -681,8 +681,7 @@ void feel_location(xchar x, xchar y)
 	}
 
 	/* Floor spaces are dark if unlit.  Corridors are dark if unlit. */
-	if (loc->typ == ROOM && loc->mem_bg == S_room &&
-	    (!loc->waslit || iflags.dark_room)) {
+	if (loc->typ == ROOM && loc->mem_bg == S_room && !loc->waslit) {
 	    loc->mem_bg = S_darkroom;
 	    dbuf_set_loc(x, y);
 	} else if (loc->typ == CORR &&
@@ -828,7 +827,7 @@ void newsym(int x, int y)
 	 * These checks and changes must be here and not in back_to_glyph().
 	 * They are dependent on the position being out of sight.
 	 */
-	else if (!loc->waslit || iflags.dark_room) {
+	else if (!loc->waslit) {
 	    if (loc->mem_bg == S_litcorr && loc->typ == CORR) {
 		loc->mem_bg = S_corr;
 		dbuf_set_loc(x, y);
