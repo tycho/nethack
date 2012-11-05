@@ -206,8 +206,7 @@ void map_trap(struct trap *trap, int show)
     if (level->flags.hero_memory)
 	level->locations[x][y].mem_trap = trapid;
     if (show)
-	dbuf_set(level, x, y, level->locations[x][y].mem_bg,
-		 level->locations[x][y].mem_trap, 0, 0, 0, 0, 0, 0, 0, 0);
+	dbuf_set(level, x, y, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 /*
@@ -294,14 +293,7 @@ void map_object(struct obj *obj, int show)
 	    level->locations[x][y].mem_obj_soko = 0;
     }
     if (show)
-	dbuf_set(level, x, y,
-		 level->locations[x][y].mem_bg,
-		 level->locations[x][y].mem_trap,
-		 level->locations[x][y].mem_obj,
-		 level->locations[x][y].mem_obj_mn,
-		 level->locations[x][y].mem_obj_stacks,
-		 level->locations[x][y].mem_obj_soko,
-		 0, 0, 0, 0);
+	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0);
 }
 
 /*
@@ -318,14 +310,7 @@ void map_invisible(xchar x, xchar y)
     if (x != u.ux || y != u.uy) { /* don't display I at hero's location */
 	if (level->flags.hero_memory)
 	    level->locations[x][y].mem_invis = 1;
-	dbuf_set(level, x, y,
-		 level->locations[x][y].mem_bg,
-		 level->locations[x][y].mem_trap,
-		 level->locations[x][y].mem_obj,
-		 level->locations[x][y].mem_obj_mn,
-		 level->locations[x][y].mem_obj_stacks,
-		 level->locations[x][y].mem_obj_soko,
-		 1, 0, 0, 0);
+	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1, 1, 0, 0, 0);
     }
 }
 
@@ -468,14 +453,9 @@ static void display_monster(
 	    case M_AP_MONSTER:
 		/* Visible monsters always clear 'I' symbols. */
 		level->locations[x][y].mem_invis = 0;
-		dbuf_set(level, x, y,
-			 level->locations[x][y].mem_bg,
-			 level->locations[x][y].mem_trap,
-			 level->locations[x][y].mem_obj,
-			 level->locations[x][y].mem_obj_mn,
-			 level->locations[x][y].mem_obj_stacks,
-			 level->locations[x][y].mem_obj_soko,
-		         0, what_mon((int)mon->mappearance) + 1, mon->mtame ? MON_TAME : 0, 0);
+		dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1,
+		         0, what_mon((int)mon->mappearance) + 1,
+			 mon->mtame ? MON_TAME : 0, 0);
 		break;
 	}
 	
@@ -502,13 +482,7 @@ static void display_monster(
 	/* Visible monsters always clear 'I' symbols. */
 	level->locations[x][y].mem_invis = 0;
 
-	dbuf_set(level, x, y,
-		 level->locations[x][y].mem_bg,
-		 level->locations[x][y].mem_trap,
-		 level->locations[x][y].mem_obj,
-		 level->locations[x][y].mem_obj_mn,
-		 level->locations[x][y].mem_obj_stacks,
-		 level->locations[x][y].mem_obj_soko,
+	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1,
 		 0, what_mon(monnum) + 1, mflag, 0);
     }
 }
@@ -544,14 +518,7 @@ static void display_warning(struct monst *mon)
 	return;
     }
 
-    dbuf_set(level, x, y,
-		level->locations[x][y].mem_bg,
-		level->locations[x][y].mem_trap,
-		level->locations[x][y].mem_obj,
-		level->locations[x][y].mem_obj_mn,
-		level->locations[x][y].mem_obj_stacks,
-		level->locations[x][y].mem_obj_soko,
-		0, monnum, mflag, 0);
+    dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1, 0, monnum, mflag, 0);
 }
 
 /*
@@ -1221,44 +1188,21 @@ void display_self(void)
     int x = u.ux, y = u.uy;
     
     if (u.usteed && mon_visible(u.usteed)) {
-	dbuf_set(level, x, y,
-		       level->locations[x][y].mem_bg,
-		       level->locations[x][y].mem_trap,
-		       level->locations[x][y].mem_obj,
-		       level->locations[x][y].mem_obj_mn,
-		       level->locations[x][y].mem_obj_stacks,
-		       level->locations[x][y].mem_obj_soko,
-		       0, what_mon(obfuscate_monster(u.usteed->mnum)) + 1,
-		       MON_RIDDEN, 0);
+	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1,
+		 0, what_mon(obfuscate_monster(u.usteed->mnum)) + 1, MON_RIDDEN, 0);
     } else if (youmonst.m_ap_type == M_AP_NOTHING) {
 	int monnum = (Upolyd || !iflags.showrace) ? obfuscate_monster(u.umonnum) :
 	             (flags.female && urace.femalenum != NON_PM) ? urace.femalenum :
 	             urace.malenum;
-	dbuf_set(level, x, y,
-		       level->locations[x][y].mem_bg,
-		       level->locations[x][y].mem_trap,
-		       level->locations[x][y].mem_obj,
-		       level->locations[x][y].mem_obj_mn,
-		       level->locations[x][y].mem_obj_stacks,
-		       level->locations[x][y].mem_obj_soko,
-		       0, monnum + 1, 0, 0);
+	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1, 0, monnum + 1, 0, 0);
     } else if (youmonst.m_ap_type == M_AP_FURNITURE) {
 	dbuf_set(level, x, y, youmonst.mappearance, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     } else if (youmonst.m_ap_type == M_AP_OBJECT) {
-	dbuf_set(level, x, y,
-		       level->locations[x][y].mem_bg,
-		       level->locations[x][y].mem_trap,
-		       youmonst.mappearance + 1,
-		       0, 0, 0, 0, 0, 0, 0);
+	dbuf_set(level, x, y, -1, -1, youmonst.mappearance + 1, 0, 0, 0,
+		 0, 0, 0, 0);
     } else /* M_AP_MONSTER */
-	dbuf_set(level, x, y,
-		       level->locations[x][y].mem_bg,
-		       level->locations[x][y].mem_trap,
-		       level->locations[x][y].mem_obj,
-		       level->locations[x][y].mem_obj_mn,
-		       level->locations[x][y].mem_obj_stacks,
-		       level->locations[x][y].mem_obj_soko,
-		       0, youmonst.mappearance + 1, 0, 0);
+	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1,
+		 0, youmonst.mappearance + 1, 0, 0);
 }
 
 
@@ -1410,43 +1354,61 @@ static void dbuf_set_object(int x, int y, int oid)
  */
 static void dbuf_set_loc(int x, int y)
 {
-    dbuf_set(level, x, y,
-	     level->locations[x][y].mem_bg,
-	     level->locations[x][y].mem_trap,
-	     level->locations[x][y].mem_obj,
-	     level->locations[x][y].mem_obj_mn,
-	     level->locations[x][y].mem_obj_stacks,
-	     level->locations[x][y].mem_obj_soko,
-	     level->locations[x][y].mem_invis,
-	     0, 0, 0);
+    dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0);
 }
 
 
 /*
  * Store display information for later flushing.
+ *
+ * These arguments read -1 to draw from level memory:
+ * - bg
+ * - trap
+ * - obj
+ * - obj_mn
+ * - obj_stacks
+ * - obj_sokoprize
+ * - invis
+ *
+ * visible reads -1 to use cansee() if the current level is passed,
+ * or 0 otherwise.
  */
 void dbuf_set(const struct level *lev, int x, int y,
-	      int bg, int trap, int obj, int obj_mn,
-	      boolean obj_stacks, boolean obj_sokoprize, boolean invis,
-	      int mon, int monflags, int effect)
+	      int bg, int trap,
+	      int obj, int obj_mn, int obj_stacks, int obj_sokoprize,
+	      int invis, int mon, int monflags,
+	      int effect)
 {
+    struct nh_dbuf_entry *dbe;
+    const struct rm *loc;
+
     if (!isok(x, y))
 	return;
-    
-    dbuf[y][x].bg = bg;
-    dbuf[y][x].trap = trap;
-    dbuf[y][x].obj = obfuscate_object(obj);
-    dbuf[y][x].obj_mn = obj_mn;
-    dbuf[y][x].objflags = DOBJ_NORMAL;
-    if (obj_stacks)
-	dbuf[y][x].objflags |= DOBJ_STACKS;
-    if (obj_sokoprize)
-	dbuf[y][x].objflags |= DOBJ_SOKOPRIZE;
-    dbuf[y][x].invis = invis;
-    dbuf[y][x].mon = mon;
-    dbuf[y][x].monflags = monflags;
-    dbuf[y][x].effect = effect;
-    dbuf[y][x].visible = (lev == level) ? cansee(x, y) : 0;
+
+    dbe = &dbuf[y][x];
+    loc = &lev->locations[x][y];
+
+    dbe->bg = (bg != -1) ? bg : loc->mem_bg;
+    dbe->trap = (trap != -1) ? trap : loc->mem_trap;
+    dbe->obj = (obj != -1) ? obfuscate_object(obj) : loc->mem_obj;
+    dbe->obj_mn = (obj_mn != -1) ? obj_mn : loc->mem_obj_mn;
+
+    dbe->objflags = DOBJ_NORMAL;
+    if (obj_stacks == 0 || (obj_stacks == -1 && loc->mem_obj_stacks == 0))
+	dbe->objflags &= ~DOBJ_STACKS;
+    else
+	dbe->objflags |= DOBJ_STACKS;
+    if (obj_sokoprize == 0 || (obj_sokoprize == -1 && loc->mem_obj_soko == 0))
+	dbe->objflags &= ~DOBJ_SOKOPRIZE;
+    else
+	dbe->objflags |= DOBJ_SOKOPRIZE;
+
+    dbe->invis = (invis != -1) ? invis : loc->mem_invis;
+
+    dbe->mon = mon;
+    dbe->monflags = monflags;
+    dbe->effect = effect;
+    dbe->visible = (lev == level) ? cansee(x, y) : 0;
 }
 
 
