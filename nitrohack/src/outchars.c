@@ -463,13 +463,6 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
     /* omit the background symbol from the list if it is boring */
     if (count == 0 || dbe->bg >= cur_drawing->bg_feature_offset) {
 	syms[count] = cur_drawing->bgelements[dbe->bg];
-	/*
-	 * Avoid creating a black-on-black non-glyph space when using
-	 * the darkgray trick, otherwise the cursor will not appear
-	 * while over it.  Avoiding it with darkgray disabled also
-	 * prevents the cursor from blinking with dark blue in the
-	 * same places.
-	 */
 	if (settings.darkroom && !dbe->visible)
 	    darken_symdef(&syms[count]);
 	count++;
