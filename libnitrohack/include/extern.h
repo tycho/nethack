@@ -561,7 +561,7 @@ extern boolean try_escape_trap(xchar x, xchar y, schar dx, schar dy);
 extern int domove(schar dx, schar dy, schar dz);
 extern void invocation_message(void);
 extern void spoteffects(boolean);
-extern char *in_rooms(struct level *lev, xchar, xchar, int);
+extern char *in_rooms(const struct level *lev, xchar, xchar, int);
 extern boolean in_town(int,int);
 extern void check_special_room(boolean);
 extern int dopickup(void);

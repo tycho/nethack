@@ -725,6 +725,23 @@ REGION:(37,13,39,17),lit,"ordinary"
 REGION:(36,14,40,17),lit,"ordinary"
 REGION:(59,02,72,10),lit,"ordinary"
 
+# Define gnomes' homes so they can be marked with dungeon hints,
+# which allows them to have a different wall/floor appearance
+# from the rest of the level.
+#
+# unfilled forces them to be added to the level's rooms list.
+REGION: (02,13,03,14), lit, "ordinary", unfilled
+REGION: (01,18,03,19), lit, "ordinary", unfilled
+REGION: (21,12,25,13), lit, "ordinary", unfilled
+REGION: (19,17,21,18), lit, "ordinary", unfilled
+REGION: (38,05,39,07), lit, "ordinary", unfilled
+REGION: (43,08,44,10), lit, "ordinary", unfilled
+REGION: (58,04,59,05), lit, "ordinary", unfilled
+REGION: (61,04,63,04), lit, "ordinary", unfilled
+REGION: (70,04,71,05), lit, "ordinary", unfilled
+REGION: (66,14,68,15), lit, "ordinary", unfilled
+REGION: (70,17,73,19), lit, "ordinary", unfilled
+
 LOOP [2 + 1d7] {
   MONSTER: ('@',"watchman"), random, peaceful
 }
@@ -819,6 +836,23 @@ REGION:(23,1,25,3),lit,"shop"
 REGION:(22,12,24,13),lit,"food shop"
 REGION:(31,12,36,14),lit,"temple"
 ALTAR:(35,13),align[0],shrine
+
+# Define gnomes' homes so they can be marked with dungeon hints,
+# which allows them to have a different wall/floor appearance
+# from the rest of the level.
+#
+# unfilled forces them to be added to the level's rooms list.
+REGION: (02,01,04,03), lit, "ordinary", unfilled
+REGION: (02,08,03,09), lit, "ordinary", unfilled
+REGION: (09,03,11,05), lit, "ordinary", unfilled
+REGION: (13,05,14,06), lit, "ordinary", unfilled
+REGION: (13,10,14,11), lit, "ordinary", unfilled
+REGION: (19,11,20,13), lit, "ordinary", unfilled
+REGION: (21,09,31,09), lit, "ordinary", unfilled
+REGION: (27,01,28,03), lit, "ordinary", unfilled
+REGION: (27,07,28,08), lit, "ordinary", unfilled
+REGION: (30,01,36,02), lit, "ordinary", unfilled
+REGION: (34,06,36,08), lit, "ordinary", unfilled
 
 DOOR:closed,(5,2)
 DOOR:locked,(4,8)

@@ -147,6 +147,7 @@ struct settings {
     nh_bool  darkroom;	/* show spaces out-of-sight in darker colors */
     nh_bool  extmenu;	/* extended commands use menu interface */
     nh_bool  hilite_pet;/* hilight pets */
+    nh_bool  mapcolors;	/* use thematic colors for special map regions */
     nh_bool  showexp;	/* show experience points */
     nh_bool  showscore;	/* show score */
     nh_bool  standout;	/* use standout for --More-- */

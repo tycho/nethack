@@ -83,6 +83,9 @@
 #define LDM_MINES	3
 #define LDM_SOKOBAN	4
 #define LDM_ROGUE	5
+#define LDM_ENDGAME	6
+#define LDM_JUIBLEX	7
+#define LDM_VALLEY	8
 
 /* command param type specification */
 #define CMD_ARG_NONE (1 << 1)  /* param can be empty */
@@ -488,11 +491,37 @@ struct nh_dbuf_entry {
     short mon;
     short monflags;
     nh_bool invis;
-    nh_bool visible; /* can the hero see this location? */
+    short dgnflags; /* encode/decode parts with macros below */
 };
 
 #define NH_EFFECT_TYPE(e) ((enum nh_effect_types)((e) >> 16))
 #define NH_EFFECT_ID(e) (((e) - 1) & 0xffff)
+
+#define NH_DF_VISIBLE_MASK 1
+/*
+ * 2 bits reserved for door lock knowledge
+ * #define NH_DF_DOORLOCK_MASK (3 << 1)
+ * #define NH_DF_DOORLOCK_UNKNOWN 0
+ * #define NH_DF_DOORLOCK_UNLOCKED (1 << 1)
+ * #define NH_DF_DOORLOCK_LOCKED (2 << 1)
+ */
+/*
+ * 2 bits reserved for door trapped knowledge
+ * #define NH_DF_DOORTRAP_MASK (3 << 3)
+ * #define NH_DF_DOORTRAP_UNKNOWN 0
+ * #define NH_DF_DOORTRAP_UNTRAPPED (1 << 3)
+ * #define NH_DF_DOORTRAP_TRAPPED (2 << 3)
+ */
+#define NH_DF_ALTARALIGN_MASK (3 << 5)
+#define NH_DF_ALTARALIGN_OTHER 0 /* unaligned or Astral */
+#define NH_DF_ALTARALIGN_LAWFUL (1 << 5)
+#define NH_DF_ALTARALIGN_NEUTRAL (2 << 5)
+#define NH_DF_ALTARALIGN_CHAOTIC (3 << 5)
+
+#define NH_DF_BGHINT_MASK (63 << 7) /* 6 bits */
+#define NH_DF_BGHINT_BEEHIVE (1 << 7)
+#define NH_DF_BGHINT_MINEROOM (2 << 7)
+#define NH_DF_BGHINT_WIZTOWER (3 << 7)
 
 
 struct nh_symdef {

@@ -327,7 +327,7 @@ static void srv_update_screen(struct nh_dbuf_entry dbuf[ROWNO][COLNO], int ux, i
 				    dbuf[y][x].mon,
 				    dbuf[y][x].monflags,
 				    dbuf[y][x].invis,
-				    dbuf[y][x].visible);
+				    dbuf[y][x].dgnflags);
 		json_array_append_new(dbufcol, dbufent);
 	    }
 	}

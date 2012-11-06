@@ -2179,12 +2179,12 @@ static boolean monstinroom(const struct permonst *mdat, int roomno)
 	return FALSE;
 }
 
-char * in_rooms(struct level *lev, xchar x, xchar y, int typewanted)
+char *in_rooms(const struct level *lev, xchar x, xchar y, int typewanted)
 {
 	static char buf[5];
 	char rno, *ptr = &buf[4];
 	int typefound, min_x, min_y, max_x, max_y_offset, step;
-	struct rm *loc;
+	const struct rm *loc;
 
 #define goodtype(rno) (!typewanted || \
 	     ((typefound = lev->rooms[rno - ROOMOFFSET].rtype) == typewanted) || \

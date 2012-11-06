@@ -1408,7 +1408,27 @@ void dbuf_set(const struct level *lev, int x, int y,
     dbe->mon = mon;
     dbe->monflags = monflags;
     dbe->effect = effect;
-    dbe->visible = (lev == level) ? cansee(x, y) : 0;
+
+    dbe->dgnflags = 0;
+
+    if (lev == level && cansee(x, y))
+	dbe->dgnflags |= NH_DF_VISIBLE_MASK;
+
+    if (IS_ALTAR(loc->typ)) {
+	aligntyp a = Amask2align(loc->altarmask & AM_MASK);
+	dbe->dgnflags |=
+		(Is_astralevel(&lev->z) || a == A_NONE) ? NH_DF_ALTARALIGN_OTHER :
+		(a == A_LAWFUL) ? NH_DF_ALTARALIGN_LAWFUL :
+		(a == A_NEUTRAL) ? NH_DF_ALTARALIGN_NEUTRAL :
+		NH_DF_ALTARALIGN_CHAOTIC;
+    }
+
+    if (*in_rooms(lev, x, y, BEEHIVE))
+	dbe->dgnflags |= NH_DF_BGHINT_BEEHIVE;
+    else if (In_W_tower(x, y, &lev->z))
+	dbe->dgnflags |= NH_DF_BGHINT_WIZTOWER;
+    else if (Is_minetown_level(&lev->z) && *in_rooms(lev, x, y, 0))
+	dbe->dgnflags |= NH_DF_BGHINT_MINEROOM;
 }
 
 

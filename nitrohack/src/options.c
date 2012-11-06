@@ -83,6 +83,7 @@ struct nh_option_desc curses_options[] = {
     {"hilite_pet", "highlight your pet", OPTTYPE_BOOL, { VTRUE }},
     {"invweight", "show item weights in the inventory", OPTTYPE_BOOL, { VTRUE }},
     {"keymap", "alter the key to command mapping", OPTTYPE_KEYMAP, {0}},
+    {"mapcolors", "use thematic colors for special map regions", OPTTYPE_BOOL, { VTRUE }},
     {"menu_headings", "display style for menu headings", OPTTYPE_ENUM, {(void*)A_REVERSE}},
     {"msgheight", "message window height", OPTTYPE_INT, {(void*)8}},
     {"msghistory", "number of messages saved for prevmsg", OPTTYPE_INT, {(void*)256}},
@@ -112,6 +113,7 @@ struct nh_boolopt_map boolopt_map[] = {
     {"frame", &settings.frame},
     {"hilite_pet", &settings.hilite_pet},
     {"invweight", &settings.invweight},
+    {"mapcolors", &settings.mapcolors},
     {"scores_own", &settings.end_own},
     {"showexp", &settings.showexp},
     {"showscore", &settings.showscore},
@@ -142,6 +144,9 @@ static nh_bool option_change_callback(struct nh_option_desc *option)
 	draw_map(player.x, player.y);
     }
     else if (!strcmp(option->name, "darkroom")) {
+	draw_map(player.x, player.y);
+    }
+    else if (!strcmp(option->name, "mapcolors")) {
 	draw_map(player.x, player.y);
     }
     else if (!strcmp(option->name, "menu_headings")) {

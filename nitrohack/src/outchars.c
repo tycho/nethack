@@ -13,6 +13,11 @@
 #define array_size(x) (sizeof(x)/sizeof(x[0]))
 
 
+static int level_display_mode;
+static int altar_id,
+	   vwall_id, trwall_id,
+	   room_id, darkroom_id,
+	   ndoor_id;
 static int corpse_id;
 struct curses_drawing_info *default_drawing, *cur_drawing;
 static struct curses_drawing_info *unicode_drawing, *rogue_drawing;
@@ -325,7 +330,23 @@ void init_displaychars(void)
     read_unisym_config();
     
     cur_drawing = default_drawing;
-    
+
+    /* find bg elements that could use special treatment */
+    for (i = 0; i < cur_drawing->num_bgelements; i++) {
+	if (!strcmp("altar", cur_drawing->bgelements[i].symname))
+	    altar_id = i;
+	else if (!strcmp("vwall", cur_drawing->bgelements[i].symname))
+	    vwall_id = i;
+	else if (!strcmp("trwall", cur_drawing->bgelements[i].symname))
+	    trwall_id = i;
+	else if (!strcmp("room", cur_drawing->bgelements[i].symname))
+	    room_id = i;
+	else if (!strcmp("darkroom", cur_drawing->bgelements[i].symname))
+	    darkroom_id = i;
+	else if (!strcmp("ndoor", cur_drawing->bgelements[i].symname))
+	    ndoor_id = i;
+    }
+
     /* find objects that need special treatment */
     for (i = 0; i < cur_drawing->num_objects; i++) {
 	if (!strcmp("corpse", cur_drawing->objects[i].symname))
@@ -392,6 +413,80 @@ static void darken_symdef(struct curses_symdef *sym)
 }
 
 
+static void valley_symdef(struct curses_symdef *sym)
+{
+    if (!settings.mapcolors)
+	return;
+
+    if (level_display_mode == LDM_VALLEY) {
+	if (sym->color != CLR_BLACK)
+	    sym->color = (sym->color < NO_COLOR) ? CLR_GRAY : CLR_WHITE;
+    }
+}
+
+
+static void recolor_bg(const struct nh_dbuf_entry *dbe, struct curses_symdef *sym)
+{
+    int id;
+
+    if (!settings.mapcolors)
+	return;
+
+    id = dbe->bg;
+
+    switch (level_display_mode) {
+    case LDM_MINES:
+	/*
+	 * NH_DF_BGHINT_MINEROOM is excluded from coloring in the Mines;
+	 * in fact, all rooms are.
+	 */
+	if (id >= vwall_id && id <= trwall_id && !(dbe->dgnflags & NH_DF_BGHINT_MASK))
+	    sym->color = CLR_BROWN;
+	break;
+    case LDM_SOKOBAN:
+	if (id >= vwall_id && id <= trwall_id)
+	    sym->color = CLR_BRIGHT_BLUE;
+	break;
+    case LDM_JUIBLEX:
+	if (id == room_id)
+	    sym->color = CLR_BRIGHT_GREEN;
+	else if (id == darkroom_id)
+	    sym->color = CLR_GREEN;
+	break;
+    case LDM_HELL:
+	if (id >= vwall_id && id <= trwall_id)
+	    sym->color = CLR_ORANGE;
+	break;
+    }
+
+    switch (dbe->dgnflags & NH_DF_BGHINT_MASK) {
+    case NH_DF_BGHINT_BEEHIVE:
+	if ((id >= vwall_id && id <= trwall_id) || id == room_id || id == ndoor_id)
+	    sym->color = CLR_YELLOW;
+	else if (id == darkroom_id)
+	    sym->color = CLR_BROWN;
+	break;
+    case NH_DF_BGHINT_WIZTOWER:
+	if (id >= vwall_id && id <= trwall_id)
+	    sym->color = CLR_BRIGHT_MAGENTA;
+	break;
+    }
+
+    if (id == altar_id) {
+	if (level_display_mode == LDM_ENDGAME) {
+	    sym->color = CLR_BRIGHT_MAGENTA;
+	} else {
+	    short a = (dbe->dgnflags & NH_DF_ALTARALIGN_MASK);
+	    sym->color = (a == NH_DF_ALTARALIGN_OTHER) ? CLR_RED :
+			 (a == NH_DF_ALTARALIGN_LAWFUL) ? CLR_WHITE :
+			 (a == NH_DF_ALTARALIGN_NEUTRAL) ? CLR_GRAY :
+			 (a == NH_DF_ALTARALIGN_CHAOTIC) ? CLR_BLACK :
+			 CLR_BRIGHT_GREEN; /* shouldn't happen */
+	}
+    }
+}
+
+
 int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 {
     int id, count = 0;
@@ -420,21 +515,26 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 		syms[0].color = cur_drawing->effects[id].color;
 		break;
 	}
-	
+
+	valley_symdef(&syms[0]);
+
 	return 1; /* we don't want to show other glyphs under effects */
     }
     
-    if (dbe->invis)
-	syms[count++] = cur_drawing->invis[0];
-    
-    else if (dbe->mon) {
+    if (dbe->invis) {
+	syms[count] = cur_drawing->invis[0];
+	valley_symdef(&syms[count]);
+	count++;
+    } else if (dbe->mon) {
 	if (dbe->mon > cur_drawing->num_monsters && (dbe->monflags & MON_WARNING)) {
 	    id = dbe->mon - 1 - cur_drawing->num_monsters;
-	    syms[count++] = cur_drawing->warnings[id];
+	    syms[count] = cur_drawing->warnings[id];
 	} else {
 	    id = dbe->mon - 1;
-	    syms[count++] = cur_drawing->monsters[id];
+	    syms[count] = cur_drawing->monsters[id];
 	}
+	valley_symdef(&syms[count]);
+	count++;
     }
     
     if (dbe->obj) {
@@ -444,18 +544,21 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 	    syms[count].color = cur_drawing->monsters[dbe->obj_mn - 1].color;
 	} else
 	    syms[count] = cur_drawing->objects[id];
-	/* highlight Sokoban prize */
+
 	if (dbe->objflags & DOBJ_SOKOPRIZE)
 	    syms[count].color = CLR_BRIGHT_MAGENTA;
-	if (settings.darkroom && !dbe->visible)
+	valley_symdef(&syms[count]);
+	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))
 	    darken_symdef(&syms[count]);
+
 	count++;
     }
     
     if (dbe->trap) {
 	id = dbe->trap - 1;
 	syms[count] = cur_drawing->traps[id];
-	if (settings.darkroom && !dbe->visible)
+	valley_symdef(&syms[count]);
+	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))
 	    darken_symdef(&syms[count]);
 	count++;
     } 
@@ -463,7 +566,9 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
     /* omit the background symbol from the list if it is boring */
     if (count == 0 || dbe->bg >= cur_drawing->bg_feature_offset) {
 	syms[count] = cur_drawing->bgelements[dbe->bg];
-	if (settings.darkroom && !dbe->visible)
+	recolor_bg(dbe, &syms[count]);
+	valley_symdef(&syms[count]);
+	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))
 	    darken_symdef(&syms[count]);
 	count++;
     }
@@ -483,6 +588,7 @@ void set_rogue_level(nh_bool enable)
 
 void curses_notify_level_changed(int dmode)
 {
+    level_display_mode = dmode;
     set_rogue_level(dmode == LDM_ROGUE);
 }
 

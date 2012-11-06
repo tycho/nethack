@@ -941,7 +941,7 @@ void notify_levelchange(const d_level *dlev)
 	int mode;
 	const d_level *z = dlev ? dlev : &u.uz;
 	
-	if (In_hell(z))
+	if (In_hell(z) && !Is_valley(z) && !Is_juiblex_level(z))
 	    mode = LDM_HELL;
 	else if (In_quest(z))
 	    mode = LDM_QUEST;
@@ -951,6 +951,12 @@ void notify_levelchange(const d_level *dlev)
 	    mode = LDM_SOKOBAN;
 	else if (Is_rogue_level(z))
 	    mode = LDM_ROGUE;
+	else if (In_endgame(z))
+	    mode = LDM_ENDGAME;
+	else if (Is_juiblex_level(z))
+	    mode = LDM_JUIBLEX;
+	else if (Is_valley(z))
+	    mode = LDM_VALLEY;
 	else
 	    mode = LDM_DEFAULT;
 	

@@ -273,7 +273,7 @@ static json_t *cmd_update_screen(json_t *params, int display_only)
     static struct nh_dbuf_entry dbuf[ROWNO][COLNO];
     int ux, uy;
     int x, y, effect, bg, trap, obj, obj_mn, objflags,
-	mon, monflags, invis, visible;
+	mon, monflags, invis, dgnflags;
     json_t *jdbuf, *col, *elem;
     
     if (json_unpack(params, "{si,si,so!}", "ux", &ux, "uy", &uy, "dbuf", &jdbuf) == -1) {
@@ -326,7 +326,7 @@ static json_t *cmd_update_screen(json_t *params, int display_only)
 	    
 	    if (json_unpack(elem, "[i,i,i,i,i,i,i,i,i,i!]",
 			    &effect, &bg, &trap, &obj, &obj_mn, &objflags,
-			    &mon, &monflags, &invis, &visible) == -1)
+			    &mon, &monflags, &invis, &dgnflags) == -1)
 		print_error("Strange element data in cmd_update_screen");
 	    dbuf[y][x].effect = effect;
 	    dbuf[y][x].bg = bg;
@@ -337,7 +337,7 @@ static json_t *cmd_update_screen(json_t *params, int display_only)
 	    dbuf[y][x].mon = mon;
 	    dbuf[y][x].monflags = monflags;
 	    dbuf[y][x].invis = invis;
-	    dbuf[y][x].visible = visible;
+	    dbuf[y][x].dgnflags = dgnflags;
 	}
     }
     
