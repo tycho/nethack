@@ -1390,7 +1390,7 @@ void dbuf_set(const struct level *lev, int x, int y,
 
     dbe->bg = (bg != -1) ? bg : loc->mem_bg;
     dbe->trap = (trap != -1) ? trap : loc->mem_trap;
-    dbe->obj = (obj != -1) ? obfuscate_object(obj) : loc->mem_obj;
+    dbe->obj = obfuscate_object((obj != -1) ? obj : loc->mem_obj);
     dbe->obj_mn = (obj_mn != -1) ? obj_mn : loc->mem_obj_mn;
 
     dbe->objflags = DOBJ_NORMAL;
