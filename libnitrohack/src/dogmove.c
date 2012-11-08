@@ -765,7 +765,7 @@ dognext:
 		remove_monster(level, mtmp->mx, mtmp->my);
 		place_monster(mtmp, cc.x, cc.y);
 		newsym(cc.x,cc.y);
-		set_apparxy(mtmp);
+		set_apparxy(level, mtmp);
 	}
 	return 1;
 }

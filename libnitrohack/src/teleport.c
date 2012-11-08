@@ -1072,7 +1072,7 @@ void rloc_to(struct monst *mtmp, struct level *lev, int x, int y)
 	}
 
 	newsym(x, y);				/* update new location */
-	set_apparxy(mtmp);			/* orient monster */
+	set_apparxy(lev, mtmp);			/* orient monster */
 
 	/* shopkeepers will only teleport if you zap them with a wand of
 	   teleportation or if they've been transformed into a jumpy monster;

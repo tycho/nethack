@@ -309,7 +309,7 @@ int dochug(struct monst *mtmp)
 	if (mtmp->mflee && !mtmp->mfleetim
 	   && mtmp->mhp == mtmp->mhpmax && !rn2(25)) mtmp->mflee = 0;
 
-	set_apparxy(mtmp);
+	set_apparxy(level, mtmp);
 	/* Must be done after you move and before the monster does.  The
 	 * set_apparxy() call in m_move() doesn't suffice since the variables
 	 * inrange, etc. all depend on stuff set by set_apparxy().
@@ -589,7 +589,7 @@ int m_move(struct monst *mtmp, int after)
 	if (hides_under(ptr) && OBJ_AT(mtmp->mx, mtmp->my) && rn2(10))
 	    return 0;		/* do not leave hiding place */
 
-	set_apparxy(mtmp);
+	set_apparxy(level, mtmp);
 	/* where does mtmp think you are? */
 	/* Not necessary if m_move called from this file, but necessary in
 	 * other calls of m_move (ex. leprechauns dodging)
@@ -1189,7 +1189,7 @@ boolean accessible(int x, int y)
 
 
 /* decide where the monster thinks you are standing */
-void set_apparxy(struct monst *mtmp)
+void set_apparxy(struct level *lev, struct monst *mtmp)
 {
 	boolean notseen, gotu;
 	int disp, mx = mtmp->mux, my = mtmp->muy;
@@ -1233,8 +1233,8 @@ void set_apparxy(struct monst *mtmp)
 		  || (disp != 2 && mx == mtmp->mx && my == mtmp->my)
 		  || ((mx != u.ux || my != u.uy) &&
 		      !passes_walls(mtmp->data) &&
-		      (!ACCESSIBLE(level->locations[mx][my].typ) ||
-		       (closed_door(level, mx, my) && !can_ooze(mtmp))))
+		      (!ACCESSIBLE(lev->locations[mx][my].typ) ||
+		       (closed_door(lev, mx, my) && !can_ooze(mtmp))))
 		  || !couldsee(mx, my));
 	} else {
 found_you:

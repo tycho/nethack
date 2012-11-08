@@ -333,7 +333,7 @@ int mattacku(struct monst *mtmp)
 			place_monster(mtmp, u.ux, u.uy);
 			if (mtmp->wormno) worm_move(mtmp);
 			teleds(cc.x, cc.y, TRUE);
-			set_apparxy(mtmp);
+			set_apparxy(level, mtmp);
 			newsym(u.ux,u.uy);
 		    } else {
 			pline("%s is killed by a falling %s (you)!",

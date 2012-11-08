@@ -981,7 +981,7 @@ struct monst *makemon(const struct permonst *ptr,
 	} else {
 		if (byyou) {
 			newsym(mtmp->mx,mtmp->my);
-			set_apparxy(mtmp);
+			set_apparxy(lev, mtmp);
 		}
 	}
 	if (is_dprince(ptr) && ptr->msound == MS_BRIBE) {

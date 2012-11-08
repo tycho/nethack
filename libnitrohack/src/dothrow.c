@@ -562,7 +562,7 @@ static boolean mhurtle_step(void *arg, int x, int y)
 	    newsym(mon->mx, mon->my);
 	    place_monster(mon, x, y);
 	    newsym(mon->mx, mon->my);
-	    set_apparxy(mon);
+	    set_apparxy(level, mon);
 	    mintrap(mon);
 	    return TRUE;
 	}

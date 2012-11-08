@@ -96,7 +96,7 @@ static void kickdmg(struct monst *mon, boolean clumsy, schar dx, schar dy)
 			    newsym(mon->mx, mon->my);
 			    place_monster(mon, mdx, mdy);
 			    newsym(mon->mx, mon->my);
-			    set_apparxy(mon);
+			    set_apparxy(level, mon);
 			    if (mintrap(mon) == 2) trapkilled = TRUE;
 			}
 		}
