@@ -19,7 +19,6 @@ static boolean okay(struct level *lev, int x, int y, int dir);
 static void maze0xy(coord *);
 static boolean put_lregion_here(struct level *lev,xchar,xchar,xchar,
 	xchar,xchar,xchar,xchar,boolean,d_level *);
-static void fixup_special(struct level *lev);
 static void move(int *,int *,int);
 static void setup_waterlevel(struct level *lev);
 static boolean bad_location(struct level *lev, xchar x, xchar y,
@@ -318,7 +317,7 @@ static boolean put_lregion_here(struct level *lev,
 static boolean was_waterlevel; /* ugh... this shouldn't be needed */
 
 /* this is special stuff that the level compiler cannot (yet) handle */
-static void fixup_special(struct level *lev)
+void fixup_special(struct level *lev)
 {
     lev_region *r = lregions;
     struct d_level lvl;
@@ -561,7 +560,6 @@ void makemaz(struct level *lev, const char *s)
 	if (*protofile) {
 	    strcat(protofile, LEV_EXT);
 	    if (load_special(lev, protofile)) {
-		fixup_special(lev);
 		/* some levels can end up with monsters
 		   on dead mon list, including light source monsters */
 		dmonsfree(lev);

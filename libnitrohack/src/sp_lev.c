@@ -5167,6 +5167,10 @@ next_opcode:
 
 	count_features(lev);
 
+	/* This must be done before sokoban_detect(),
+	 * otherwise branch stairs won't be premapped. */
+	fixup_special(lev);
+
 	if (coder->premapped) sokoban_detect(lev);
 
 	if (coder->frame) {

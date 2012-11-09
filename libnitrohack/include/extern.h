@@ -891,6 +891,7 @@ extern void mkportal(struct level *lev, xchar x, xchar y,
 extern void place_lregion(struct level *lev, xchar,xchar,xchar,xchar,
 			     xchar,xchar,xchar,xchar,
 			     xchar,d_level *);
+extern void fixup_special(struct level *lev);
 extern void movebubbles(void);
 extern void water_friction(schar *, schar *);
 extern void free_waterlevel(void);
