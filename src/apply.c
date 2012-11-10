@@ -2830,6 +2830,7 @@ doapply()
 	case BAG_OF_HOLDING:
 	case OILSKIN_SACK:
 		res = use_container(obj, 1);
+		goto xit2; /* obj may have been destroyed */
 		break;
 	case BAG_OF_TRICKS:
 		bagotricks(obj);
@@ -3016,6 +3017,7 @@ doapply()
 		return 0;
 	}
 	if (res && obj && obj->oartifact) arti_speak(obj);
+xit2:
 	nomul(0, NULL);
 	return res;
 }
