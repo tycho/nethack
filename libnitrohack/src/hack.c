@@ -1132,7 +1132,8 @@ static boolean findtravelpath(boolean (*guess)(int, int), schar *dx, schar *dy)
 
 		    if (!isok(nx, ny)) continue;
 		    if ((!Passes_walls && !can_ooze(&youmonst) &&
-			closed_door(level, x, y)) || sobj_at(BOULDER, level, x, y) ||
+			 closed_door(level, nx, ny)) ||
+			sobj_at(BOULDER, level, nx, ny) ||
 			test_move(x, y, nx-x, ny-y, 0, TEST_TRAP)) {
 			/* closed doors and boulders usually
 			 * cause a delay, so prefer another path */
