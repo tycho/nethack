@@ -1127,13 +1127,30 @@ static boolean findtravelpath(boolean (*guess)(int, int), schar *dx, schar *dy)
 		boolean alreadyrepeated = FALSE;
 
 		for (dir = 0; dir < dirmax; ++dir) {
+		    const struct monst *mtmp;
+		    boolean divert_mon;
 		    int nx = x+xdir[ordered[dir]];
 		    int ny = y+ydir[ordered[dir]];
 
 		    if (!isok(nx, ny)) continue;
+
+		    /* Walk around monsters that just get in the way. */
+		    mtmp = m_at(level, nx, ny);
+		    divert_mon = (mtmp &&
+				  /* can be seen or spotted */
+				  canspotmon(level, mtmp) &&
+				  mtmp->m_ap_type != M_AP_FURNITURE &&
+				  mtmp->m_ap_type != M_AP_OBJECT &&
+				  !(is_hider(mtmp->data) || mtmp->mundetected) &&
+				  /* peaceful monsters */
+				  ((mtmp->mpeaceful && !Hallucination) ||
+				   /* monsters with no attacks */
+				   noattacks(mtmp->data)));
+
 		    if ((!Passes_walls && !can_ooze(&youmonst) &&
 			 closed_door(level, nx, ny)) ||
 			sobj_at(BOULDER, level, nx, ny) ||
+			divert_mon ||
 			test_move(x, y, nx-x, ny-y, 0, TEST_TRAP)) {
 			/* closed doors and boulders usually
 			 * cause a delay, so prefer another path */
