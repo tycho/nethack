@@ -1393,8 +1393,9 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	
 	/* wield: hold in hands, works on everything but with different
 	   advice text; not mentioned for things that are already
-	   wielded */
-	if (obj->owornmask) {}
+	   wielded (unless it's the alternate weapon) */
+	if (obj->owornmask & ~W_SWAPWEP)
+	    ; /* empty */
 	else if (obj->oclass == WEAPON_CLASS || obj->otyp == PICK_AXE ||
 			obj->otyp == UNICORN_HORN)
 	    SET_OBJ_CMD2('w', "wield", "wield");
