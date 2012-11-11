@@ -1446,6 +1446,11 @@ int domove(schar dx, schar dy, schar dz)
 		    nomul(0, NULL);
 		    return 0;
 		}
+		if (u.uhs >= WEAK) {
+		    pline("You feel too weak from hunger to explore.");
+		    nomul(0, NULL);
+		    return 0;
+		}
 		u.tx = u.ux;
 		u.ty = u.uy;
 		if (!findtravelpath(unexplored, &dx, &dy)) {
