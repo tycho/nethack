@@ -4,7 +4,7 @@
 #include "nhcurses.h"
 
 
-static nh_bool do_item_actions(char invlet, const char *objdesc);
+static nh_bool do_item_actions(const struct nh_objitem *item);
 
 static int calc_colwidths(char *menustr, int *colwidth)
 {
@@ -865,8 +865,7 @@ int curses_display_objects(struct nh_objitem *items, int icount,
 		    
 		    /* inventory special case: show item actions menu */
 		    else if (inventory_special)
-			if (do_item_actions(mdat->items[idx].accel,
-					    mdat->items[idx].caption))
+			if (do_item_actions(&mdat->items[idx]))
 			    done = TRUE;
 		    
 		} else if (mdat->how == PICK_ANY) { /* maybe it's a group accel? */
@@ -915,11 +914,11 @@ int curses_display_objects(struct nh_objitem *items, int icount,
 }
 
 
-static nh_bool do_item_actions(char invlet, const char *objdesc)
+static nh_bool do_item_actions(const struct nh_objitem *item)
 {
     int ccount = 0, i, selected[1];
-    struct nh_cmd_desc *obj_cmd = nh_get_object_commands(&ccount, invlet);
-    char title[BUFSZ];
+    struct nh_cmd_desc *obj_cmd = nh_get_object_commands(&ccount, item->accel);
+    char title[QBUFSZ];
     struct nh_menuitem *items;
     struct nh_cmd_arg arg;
     
@@ -932,7 +931,12 @@ static nh_bool do_item_actions(char invlet, const char *objdesc)
 	set_menuitem(&items[i], i+1, MI_NORMAL, obj_cmd[i].desc,
 		     obj_cmd[i].defkey, FALSE);
     
-    snprintf(title, BUFSZ, "%c - %s", invlet, objdesc);
+    if (settings.invweight && item->weight != -1) {
+	snprintf(title, QBUFSZ, "%c - %s {%d}",
+		 item->accel, item->caption, item->weight);
+    } else {
+	snprintf(title, QBUFSZ, "%c - %s", item->accel, item->caption);
+    }
     i = curses_display_menu(items, ccount, title, PICK_ONE, selected);
     free(items);
     
@@ -940,7 +944,7 @@ static nh_bool do_item_actions(char invlet, const char *objdesc)
 	return FALSE;
     
     arg.argtype = CMD_ARG_OBJ;
-    arg.invlet = invlet;
+    arg.invlet = item->accel;
     set_next_command(obj_cmd[selected[0]-1].name, &arg);
     
     return TRUE;
