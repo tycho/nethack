@@ -1147,6 +1147,9 @@ static const char * const bogusmons[] = {
 	"peer",
 	"pigasus",
 	"Semigorgon",
+	"meeple",
+	"conventioneer",
+	"terracotta warrior",
 
 	/* soundex and typos of monsters */
 	"gloating eye",
