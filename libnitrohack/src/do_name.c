@@ -97,13 +97,16 @@ int do_mname(void)
 static void do_oname(struct obj *obj)
 {
 	char buf[BUFSZ], qbuf[QBUFSZ];
+	char *otypname;
 	const char *aname;
 	short objtyp;
 
+	otypname = simple_typename(obj->otyp);
 	sprintf(qbuf, "What do you want to name %s %s?",
 		is_plural(obj) ? "these" : "this",
 		safe_qbuf("", sizeof("What do you want to name these ?"),
-			  xname(obj), simple_typename(obj->otyp),
+			  xname(obj),
+			  is_plural(obj) ? makeplural(otypname) : otypname,
 			  is_plural(obj) ? "things" : "thing"));
 	getlin(qbuf, buf);
 	if (!*buf || *buf == '\033')	return;
