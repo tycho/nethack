@@ -33,7 +33,7 @@ static long calc_score(int how);
 static void list_vanquished(char,boolean);
 static void list_genocided(char,boolean);
 static boolean should_query_disclose_options(char *defquery);
-static void container_contents(struct obj *,boolean);
+static void container_contents(struct obj *,boolean,boolean);
 
 #define done_stopprint program_state.stopprint
 
@@ -213,7 +213,7 @@ static void disclose(int how, boolean taken)
 		c = ask ? yn_function(qbuf, ynqchars, defquery) : defquery;
 		if (c == 'y') {
 		    display_inventory(NULL, TRUE);
-		    container_contents(invent, TRUE);
+		    container_contents(invent, TRUE, TRUE);
 		}
 		if (c == 'q')  done_stopprint++;
 	    }
@@ -251,7 +251,7 @@ static void dump_disclose(int how)
 	
 	/* re-"display" all the disclosure menus */
 	display_inventory(NULL, TRUE);
-	container_contents(invent, TRUE);
+	container_contents(invent, TRUE, FALSE);
 	dump_spells();
 	dump_skills();
 	enlightenment(how >= PANICKED ? 1 : 2); /* final */
@@ -810,7 +810,8 @@ void done(int how)
 }
 
 
-static void container_contents(struct obj *list, boolean all_containers)
+static void container_contents(struct obj *list, boolean all_containers,
+			       boolean show_empty)
 {
 	struct obj *box, *obj;
 	char buf[BUFSZ];
@@ -848,8 +849,8 @@ static void container_contents(struct obj *list, boolean all_containers)
 		    sprintf(buf, "Contents of %s:", the(xname(box)));
 		    display_objects(items, icount, buf, PICK_NONE, NULL);
 		    if (all_containers)
-			container_contents(box->cobj, TRUE);
-		} else if (!done_stopprint) {
+			container_contents(box->cobj, TRUE, show_empty);
+		} else if (!done_stopprint && show_empty) {
 		    pline("%s empty.", Tobjnam(box, "are"));
 		    win_pause_output(P_MESSAGE);
 		}
