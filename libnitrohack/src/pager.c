@@ -626,7 +626,7 @@ static const char *database_oname(struct obj *obj)
 
 	    obj->onamelth = 0;
 	    ocl->oc_uname = NULL;
-	    dbterm = xname(obj);
+	    dbterm = xname_single(obj);
 	    obj->onamelth = save_onamelth;
 	    ocl->oc_uname = save_uname;
 	}

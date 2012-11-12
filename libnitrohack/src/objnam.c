@@ -284,6 +284,12 @@ char *xname(const struct obj *obj)
 }
 
 
+char *xname_single(const struct obj *obj)
+{
+    return xname2(obj, TRUE);
+}
+
+
 static char *xname2(const struct obj *obj, boolean ignore_oquan)
 {
 	char *buf;
