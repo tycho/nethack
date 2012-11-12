@@ -584,7 +584,7 @@ bad_data_file:	impossible("'data' file in wrong format");
 		add_menutext(&menu, buf+1);
 	    }
 	    
-	    display_menu(menu.items, menu.icount, NULL, FALSE, NULL);
+	    display_menu(menu.items, menu.icount, upstart(dbase_str), FALSE, NULL);
 	    free(menu.items);
 	}
     } else if (user_typed_name)
