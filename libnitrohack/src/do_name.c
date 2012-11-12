@@ -316,7 +316,10 @@ void docall(struct obj *obj)
 	    sprintf(qbuf,"Call a stream of %s fluid:",
 		    OBJ_DESCR(objects[otemp.otyp]));
 	else
-	    sprintf(qbuf, "Call %s:", an(xname(&otemp)));
+	    sprintf(qbuf, "Call %s:",
+		    an(safe_qbuf("", sizeof("Call an :"),
+				 xname(&otemp), simple_typename(otemp.otyp),
+				 "object")));
 	getlin(qbuf, buf);
 	if (!*buf || *buf == '\033')
 		return;
