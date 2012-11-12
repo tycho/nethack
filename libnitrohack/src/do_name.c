@@ -242,22 +242,40 @@ static const char callable[] = {
 	SCROLL_CLASS, POTION_CLASS, WAND_CLASS, RING_CLASS, AMULET_CLASS,
 	GEM_CLASS, SPBOOK_CLASS, ARMOR_CLASS, TOOL_CLASS, 0 };
 
-int do_naming(void)
+int do_naming(struct obj *obj)
 {
 	int n, selected[1];
-	struct obj *obj;
 	static const char allowall[] = {ALL_CLASSES, 0};
 	struct menulist menu;
+	char title[QBUFSZ];
 
 	init_menulist(&menu);
 
-	add_menuitem(&menu, 1, "Name a monster", 'C', FALSE);
-	add_menuitem(&menu, 2, "Name an individual item", 'y', FALSE);
-	add_menuitem(&menu, 3, "Name all items of a certain type", 'n', FALSE);
-	add_menuitem(&menu, 4, "Annotate this level", 'f', FALSE);
+	if (obj) {
+	    char *otypname = simple_typename(obj->otyp);
+	    snprintf(title, QBUFSZ, "Name this individual %s%s?",
+		     is_plural(obj) ? "stack of " : "",
+		     is_plural(obj) ? makeplural(otypname) : otypname);
+	    add_menuitem(&menu, 2, is_plural(obj) ? "Yes, just this stack" :
+						    "Yes, just this item",
+			 'y', FALSE);
+	    add_menuitem(&menu, 3, "No, call all items of this type", 'n', FALSE);
+	} else {
+	    snprintf(title, QBUFSZ, "What do you wish to name?");
+	    add_menuitem(&menu, 1, "Name a monster", 'C', FALSE);
+	    add_menuitem(&menu, 2, "Name an individual item", 'y', FALSE);
+	    add_menuitem(&menu, 3, "Name all items of a certain type", 'n', FALSE);
+	    add_menuitem(&menu, 4, "Annotate this level", 'f', FALSE);
+	}
 
-	n = display_menu(menu.items, menu.icount, "What do you wish to name?",
-			PICK_ONE, selected);
+	if (!obj || strchr(callable, obj->oclass)) {
+	    n = display_menu(menu.items, menu.icount, title, PICK_ONE, selected);
+	} else {
+	    /* simulate choice to name individual item automatically */
+	    n = 1;
+	    selected[0] = 2;	/* name one */
+	}
+
 	free(menu.items);
 	if (n)
 	    n = selected[0] - 1;
@@ -272,12 +290,14 @@ int do_naming(void)
 		
 		/* cases 1 & 2 duplicated from ddocall() */
 	    case 1:
-		obj = getobj(allowall, "name");
-		if(obj)
+		if (!obj)
+		    obj = getobj(allowall, "name");
+		if (obj)
 		    do_oname(obj);
 		break;
 	    case 2:
-		obj = getobj(callable, "call");
+		if (!obj)
+		    obj = getobj(callable, "call");
 		if (obj) {
 		    /* behave as if examining it in inventory;
 		     * this might set dknown if it was picked up

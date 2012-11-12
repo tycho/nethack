@@ -273,7 +273,7 @@ extern void heal_legs(void);
 extern struct monst *christen_monst(struct monst *,const char *);
 extern int do_mname(void);
 extern struct obj *oname(struct obj *,const char *);
-extern int do_naming(void);
+extern int do_naming(struct obj *);
 extern void docall(struct obj *);
 extern const char *rndghostname(void);
 extern char *x_monnam(const struct monst *mon, int, const char *, int, boolean);

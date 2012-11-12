@@ -95,7 +95,7 @@ const struct cmd_desc cmdlist[] = {
 	{"menuinv", "show a partial inventory", 'I', 0, TRUE, dotypeinv, CMD_ARG_NONE | CMD_NOTIME},
 	{"monster", "use a monster's special ability", 'M', M('m'), TRUE, domonability, CMD_ARG_NONE | CMD_EXT},
 	{"multidrop", "drop multiple items", 'D', 0, FALSE, doddrop, CMD_ARG_NONE},
-	{"name", "name a monster, item or type of object", M('n'), 'C', TRUE, do_naming, CMD_ARG_NONE | CMD_EXT},
+	{"name", "name a monster, item or type of object", M('n'), 'C', TRUE, do_naming, CMD_ARG_NONE | CMD_ARG_OBJ | CMD_EXT},
 	{"name mon", "christen a monster", 0, 0, TRUE, do_mname, CMD_ARG_NONE},
 	{"open", "open a door", 'o', 0, FALSE, doopen, CMD_ARG_NONE | CMD_ARG_DIR},
 	{"overview", "show an overview of the dungeon", C('o'), 0, TRUE, dooverview, CMD_ARG_NONE | CMD_EXT | CMD_NOTIME},
@@ -1329,6 +1329,10 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	else if (obj->oclass == WEAPON_CLASS || obj->oclass == WAND_CLASS ||
 			obj->oclass == GEM_CLASS || obj->oclass == RING_CLASS)
 	    SET_OBJ_CMD2('E', "engrave", "engrave");
+
+	/* name this item or call all items like this */
+	if (obj->oclass != COIN_CLASS)
+	    SET_OBJ_CMD2('n', "name", "name");
 
 	/* pay for this item */
 	if ((shkp = shop_keeper(level, *in_rooms(level, u.ux, u.uy, SHOPBASE))) &&
