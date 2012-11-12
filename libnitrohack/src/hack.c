@@ -2360,6 +2360,7 @@ void check_special_room(boolean newlev)
 		    break;
 		case BEEHIVE:
 		    pline("You enter a giant beehive!");
+		    rt = 0;
 		    break;
 		case LEMUREPIT:
 		    pline("You enter a put of screaming lemures!");
