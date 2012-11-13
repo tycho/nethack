@@ -1371,7 +1371,7 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    SET_OBJ_CMD2('R', "rub", "rub (on object)");
 	
 	/* throw item, works on almost everything */
-	if (!(obj->owornmask & ~W_WEP)) {
+	if (!(obj->owornmask & ~(W_WEP | W_QUIVER | W_SWAPWEP))) {
 	    /* you automatically throw only 1 item - except for gold */
 	    if (obj->oclass == COIN_CLASS)
 		SET_OBJ_CMD2('t', "throw", "throw");
