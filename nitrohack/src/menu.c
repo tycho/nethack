@@ -918,19 +918,20 @@ static nh_bool do_item_actions(const struct nh_objitem *item)
 {
     int ccount = 0, i, selected[1];
     struct nh_cmd_desc *obj_cmd = nh_get_object_commands(&ccount, item->accel);
+    struct nh_cmd_desc *selected_cmd;
     char title[QBUFSZ];
     struct nh_menuitem *items;
     struct nh_cmd_arg arg;
-    
+
     if (!obj_cmd || !ccount)
 	return FALSE;
-    
+
     items = malloc(sizeof(struct nh_menuitem) * ccount);
-    
+
     for (i = 0; i < ccount; i++)
 	set_menuitem(&items[i], i+1, MI_NORMAL, obj_cmd[i].desc,
 		     obj_cmd[i].defkey, FALSE);
-    
+
     if (settings.invweight && item->weight != -1) {
 	snprintf(title, QBUFSZ, "%c - %s {%d}",
 		 item->accel, item->caption, item->weight);
@@ -939,14 +940,20 @@ static nh_bool do_item_actions(const struct nh_objitem *item)
     }
     i = curses_display_menu(items, ccount, title, PICK_ONE, selected);
     free(items);
-    
+
     if (i <= 0)
 	return FALSE;
-    
-    arg.argtype = CMD_ARG_OBJ;
-    arg.invlet = obj_cmd[selected[0]-1].altkey;
-    set_next_command(obj_cmd[selected[0]-1].name, &arg);
-    
+
+    selected_cmd = &obj_cmd[selected[0] - 1];
+    if (selected_cmd->altkey) {
+	arg.argtype = CMD_ARG_OBJ;
+	arg.invlet = selected_cmd->altkey;
+    } else {
+	/* Allow object-related commands that don't necessarily use the object. */
+	arg.argtype = CMD_ARG_NONE;
+    }
+    set_next_command(selected_cmd->name, &arg);
+
     return TRUE;
 }
 

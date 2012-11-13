@@ -1429,7 +1429,19 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    else if (obj->otyp == LENSES)
 		SET_OBJ_CMD2('W', "put on", "wear");
 	}
-	
+
+	/* swapweapon: swap main and alternate weapon slots */
+	if (obj->owornmask & (W_WEP | W_SWAPWEP))
+	    SET_OBJ_CMD('x', "swapweapon", 0, "swap wielded");
+
+	/* twoweapon: start or stop two-weapon combat */
+	if ((obj->owornmask & (W_WEP | W_SWAPWEP)) && uwep && uswapwep) {
+	    if (u.twoweap)
+		SET_OBJ_CMD('X', "twoweapon", 0, "two-weapon (end)");
+	    else
+		SET_OBJ_CMD('X', "twoweapon", 0, "two-weapon (begin)");
+	}
+
 	/* zap wand */
 	if (obj->oclass == WAND_CLASS)
 	    SET_OBJ_CMD2('z', "zap", "zap");
