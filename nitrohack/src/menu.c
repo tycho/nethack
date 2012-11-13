@@ -944,7 +944,7 @@ static nh_bool do_item_actions(const struct nh_objitem *item)
 	return FALSE;
     
     arg.argtype = CMD_ARG_OBJ;
-    arg.invlet = item->accel;
+    arg.invlet = obj_cmd[selected[0]-1].altkey;
     set_next_command(obj_cmd[selected[0]-1].name, &arg);
     
     return TRUE;

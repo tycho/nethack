@@ -101,6 +101,8 @@
 #define CMD_NOTIME     (1 << 13) /* command does not use any time or alter the game
                                     state in any way. Marked commands will not be logged */
 #define CMD_DEBUG      (1 << 14) /* a wizmode command */
+#define CMD_ZEROOBJ    (1 << 15) /* allow '-' to be converted into &zeroobj
+                                    with the CMD_ARG_OBJ param type */
 
 /* reserved flag for use by ui code that uses struct nh_cmd_desc internally */
 #define CMD_UI         (1 << 31) 

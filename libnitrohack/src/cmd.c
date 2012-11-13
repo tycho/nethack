@@ -77,7 +77,7 @@ const struct cmd_desc cmdlist[] = {
 	{"eat", "eat an item from inventory or the floor", 'e', 0, FALSE, doeat, CMD_ARG_NONE | CMD_ARG_OBJ},
 	{"elbereth", "write an Elbereth in the dust", C('e'), 0, FALSE, doelbereth, CMD_ARG_NONE},
 	{"enhance", "advance or check weapons skills", M('e'), 0, TRUE, enhance_weapon_skill, CMD_ARG_NONE | CMD_EXT},
-	{"engrave", "write on the floor", 'E', 0, FALSE, doengrave, CMD_ARG_NONE | CMD_ARG_OBJ},
+	{"engrave", "write on the floor", 'E', 0, FALSE, doengrave, CMD_ARG_NONE | CMD_ARG_OBJ | CMD_ZEROOBJ},
 	{"exploremode", "switch to non-scoring explore mode", 0, 0, TRUE, enter_explore_mode, CMD_ARG_NONE | CMD_EXT},
 	{"farlook", "say what is on a distant square", ';', 0, TRUE, doquickwhatis, CMD_ARG_NONE | CMD_NOTIME},
 	{"fight", "attack even if no hostile monster is visible", 'F', 0, FALSE, dofight, CMD_ARG_DIR},
@@ -136,7 +136,7 @@ const struct cmd_desc cmdlist[] = {
 	{"verhistory", "show version history", 0, 0, TRUE, doverhistory, CMD_HELP | CMD_ARG_NONE | CMD_NOTIME | CMD_EXT},
 	{"wait", "do nothing for one turn", '.', 0, TRUE, donull, CMD_ARG_NONE, "waiting"},
 	{"wear", "wear clothing or armor", 'W', 0, FALSE, dowear, CMD_ARG_NONE | CMD_ARG_OBJ},
-	{"wield", "hold an item in your hands", 'w', 0, FALSE, dowield, CMD_ARG_NONE | CMD_ARG_OBJ},
+	{"wield", "hold an item in your hands", 'w', 0, FALSE, dowield, CMD_ARG_NONE | CMD_ARG_OBJ | CMD_ZEROOBJ},
 	{"wipe", "wipe off your face", M('w'), 0, FALSE, dowipe, CMD_ARG_NONE | CMD_EXT},
 	{"whatis", "describe a symbol", '/', 0, TRUE, dowhatis, CMD_HELP | CMD_ARG_NONE | CMD_NOTIME},
 	{"whatisinv", "describe an object in your inventory", 0, 0, TRUE, dowhatisinv, CMD_HELP | CMD_ARG_NONE | CMD_ARG_OBJ | CMD_NOTIME},
@@ -1197,15 +1197,19 @@ struct nh_cmd_desc *nh_get_commands(int *count)
 
 
 /* for better readability below */
-#define SET_OBJ_CMD2(caccel, cname, cdesc) \
+#define SET_OBJ_CMD(caccel, cname, cinvlet, cdesc) \
 do {\
-    int _o_c_idx = get_command_idx(cname);\
-    obj_cmd[i].defkey = caccel;\
-    strncpy(obj_cmd[i].name, cname, sizeof(obj_cmd[i].name));\
-    strncpy(obj_cmd[i].desc, cdesc, sizeof(obj_cmd[i].desc));\
-    obj_cmd[i].flags = cmdlist[_o_c_idx].flags;\
-    i++;\
+	int _o_c_idx = get_command_idx(cname);\
+	obj_cmd[i].defkey = (caccel);\
+	obj_cmd[i].altkey = (cinvlet);\
+	strncpy(obj_cmd[i].name, (cname), sizeof(obj_cmd[i].name));\
+	strncpy(obj_cmd[i].desc, (cdesc), sizeof(obj_cmd[i].desc));\
+	obj_cmd[i].flags = cmdlist[_o_c_idx].flags;\
+	i++;\
 } while (0)
+
+#define SET_OBJ_CMD2(caccel, cname, cdesc) \
+	SET_OBJ_CMD((caccel), (cname), obj->invlet, (cdesc))
 
 
 struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
@@ -1397,18 +1401,20 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 			obj->otyp == MIRROR) /* deception, according to object_selection_checks */
 	    SET_OBJ_CMD2('V', "invoke", "invoke");
 	
-	/* wield: hold in hands, works on everything but with different
-	   advice text; not mentioned for things that are already
-	   wielded (unless it's the alternate weapon) */
-	if (obj->owornmask & ~W_SWAPWEP)
-	    ; /* empty */
-	else if (obj->oclass == WEAPON_CLASS || obj->otyp == PICK_AXE ||
-			obj->otyp == UNICORN_HORN)
+	/* wield: hold in hands */
+	if (obj->owornmask & W_WEP) {
+	    /* show unwield for wielded weapon */
+	    SET_OBJ_CMD('w', "wield", '-', "unwield (empty)");
+	} else if (obj->owornmask & ~W_SWAPWEP) {
+	    /* empty; don't show anything for alternate weapon */
+	} else if (obj->oclass == WEAPON_CLASS || obj->otyp == PICK_AXE ||
+		   obj->otyp == UNICORN_HORN) {
 	    SET_OBJ_CMD2('w', "wield", "wield");
-	else if (obj->otyp == TIN_OPENER)
+	} else if (obj->otyp == TIN_OPENER) {
 	    SET_OBJ_CMD2('w', "wield", "wield");
-	else
+	} else {
 	    SET_OBJ_CMD2('w', "wield", "wield (hold)");
+	}
 	
 	/* wear: Equip this item */
 	if (!obj->owornmask) {
@@ -1634,6 +1640,7 @@ int do_command(int command, int repcount, boolean firsttime, struct nh_cmd_arg *
 	struct obj *obj, *otmp;
 	struct nh_cmd_arg noarg = {CMD_ARG_NONE};
 	int argtype, functype;
+	boolean allow_zeroobj;
 	
 	/* for multi-turn movement, we use re-invocation of do_command rather
 	 * than set_occupation, so the relevant command must be saved and restored */
@@ -1671,7 +1678,8 @@ int do_command(int command, int repcount, boolean firsttime, struct nh_cmd_arg *
 	functype = (cmdlist[command].flags & CMD_ARG_FLAGS);
 	if (!functype)
 	    functype = CMD_ARG_NONE;
-	    
+	allow_zeroobj = (cmdlist[command].flags & CMD_ZEROOBJ) ? TRUE : FALSE;
+
 	argtype = (arg->argtype & cmdlist[command].flags);
 	if (!argtype)
 	    return COMMAND_BAD_ARG;
@@ -1736,6 +1744,8 @@ int do_command(int command, int repcount, boolean firsttime, struct nh_cmd_arg *
 		    func_obj = cmdlist[command].func;
 		    obj = NULL;
 		    if (argtype == CMD_ARG_OBJ) {
+			if (allow_zeroobj && arg->invlet == '-')
+			    obj = &zeroobj;
 			for (otmp = invent; otmp && !obj; otmp = otmp->nobj)
 			    if (otmp->invlet == arg->invlet)
 				obj = otmp;

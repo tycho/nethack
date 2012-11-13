@@ -220,7 +220,7 @@ int dowield(struct obj *wep)
 	}
 
 	/* Prompt for a new weapon */
-	if (wep && !validate_object(wep, wield_objs, "wield"))
+	if (wep && wep != &zeroobj && !validate_object(wep, wield_objs, "wield"))
 		return 0;
 	else if (!wep)
 		wep = getobj(wield_objs, "wield");

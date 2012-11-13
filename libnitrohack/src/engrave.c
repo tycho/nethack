@@ -545,7 +545,8 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 	 * Edited by GAN 10/20/86 so as not to change weapon wielded.
 	 */
 
-	if (otmp && !validate_object(otmp, styluses, "write with"))
+	if (otmp && otmp != &zeroobj &&
+	    !validate_object(otmp, styluses, "write with"))
 		return 0;
 	else if (!otmp && !auto_elbereth)
 		otmp = getobj(styluses, "write with");
