@@ -234,8 +234,8 @@ static boolean mk_split_room(struct level *lev)
 	mright = (r1->lx > 0 && r1->hx < COLNO - 1) ? 2 * XLIM : XLIM + 1;
 	mbottom = (r1->ly > 0 && r1->hy < ROWNO - 1) ? 2 * YLIM : YLIM + 1;
 
-	width = rn1(12, 5);
-	height = rn1(3, 5);
+	width = rn1(8, 5);
+	height = rn1(2, 5);
 	rxspace = r1->hx - (r1->lx > 0 ? r1->lx : 3) - width - mright + 1;
 	ryspace = r1->hy - (r1->ly > 0 ? r1->ly : 2) - height - mbottom + 1;
 
