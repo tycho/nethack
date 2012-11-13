@@ -1375,6 +1375,8 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    /* you automatically throw only 1 item - except for gold */
 	    if (obj->oclass == COIN_CLASS)
 		SET_OBJ_CMD2('t', "throw", "throw");
+	    else if (ammo_and_launcher(obj, uwep))
+		SET_OBJ_CMD2('t', "throw", "throw (fire)");
 	    else
 		SET_OBJ_CMD2('t', "throw", "throw");
 	}
