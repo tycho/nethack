@@ -441,8 +441,8 @@ static json_t *json_objitem(struct nh_objitem *oi)
     json_t *jobj;
     /* This array should have been an object, but transmission size prevents
      * that. */
-    jobj = json_pack("[s,i,i,i,i,i,i,i,i,i,i]", oi->caption,
-		     oi->id, oi->role, oi->count, oi->otype, oi->oclass,
+    jobj = json_pack("[s,i,i,i,i,i,i,i,i,i,i,i]", oi->caption,
+		     oi->id, oi->role, oi->count, oi->otype, oi->oclass, oi->omonnum,
 		     oi->weight, oi->buc, oi->accel, oi->group_accel, oi->worn);
     return jobj;
 }

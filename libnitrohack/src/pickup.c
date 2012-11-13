@@ -381,6 +381,9 @@ void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role
 	    it->group_accel = def_oc_syms[(int)obj->oclass];
 	    it->otype = obfuscate_object(obj->otyp + 1);
 	    it->oclass = obj->oclass;
+	    it->omonnum = (obj->otyp == CORPSE || obj->otyp == STATUE ||
+			   obj->otyp == FIGURINE) ?
+			  obfuscate_monster(obj->corpsenm) + 1 : 0;
 	    it->worn = !!obj->owornmask;
 	    
 	    /* don't unconditionally reveal weight, otherwise lodestones on the
@@ -402,7 +405,6 @@ void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role
 	    it->group_accel = obj ? def_oc_syms[(int)obj->oclass] : 0;
 	    it->otype = it->oclass = -1;
 	}
-	    
 }
 
 

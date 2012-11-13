@@ -487,6 +487,14 @@ static void recolor_bg(const struct nh_dbuf_entry *dbe, struct curses_symdef *sy
 }
 
 
+void object_symdef(int otyp, int obj_mn, struct curses_symdef *sym)
+{
+    *sym = cur_drawing->objects[otyp];
+    if (otyp == corpse_id)
+	sym->color = cur_drawing->monsters[obj_mn].color;
+}
+
+
 int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 {
     int id, count = 0;
@@ -538,12 +546,7 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
     }
     
     if (dbe->obj) {
-	id = dbe->obj - 1;
-	if (id == corpse_id) {
-	    syms[count] = cur_drawing->objects[id];
-	    syms[count].color = cur_drawing->monsters[dbe->obj_mn - 1].color;
-	} else
-	    syms[count] = cur_drawing->objects[id];
+	object_symdef(dbe->obj - 1, dbe->obj_mn - 1, &syms[count]);
 
 	if (dbe->objflags & DOBJ_SOKOPRIZE)
 	    syms[count].color = CLR_BRIGHT_MAGENTA;

@@ -456,8 +456,8 @@ static void json_read_objitem(json_t *jobj, struct nh_objitem *oi)
     const char *caption;
     int accel, group_accel, worn;
     
-    if (json_unpack(jobj, "[s,i,i,i,i,i,i,i,i,i,i!]", &caption, &oi->id,
-		    &oi->role, &oi->count, &oi->otype, &oi->oclass,
+    if (json_unpack(jobj, "[s,i,i,i,i,i,i,i,i,i,i,i!]", &caption, &oi->id,
+		    &oi->role, &oi->count, &oi->otype, &oi->oclass, &oi->omonnum,
 		    &oi->weight, &oi->buc, &accel, &group_accel, &worn) == -1) {
 	print_error("Bad objitem JSON object encountered");
     }

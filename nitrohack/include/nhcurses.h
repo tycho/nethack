@@ -347,6 +347,7 @@ extern void write_config(void);
 /* outchars.c */
 extern void init_displaychars(void);
 extern void free_displaychars(void);
+extern void object_symdef(int otyp, int obj_mn, struct curses_symdef *sym);
 extern int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms);
 extern void set_rogue_level(nh_bool enable);
 extern void switch_graphics(enum nh_text_mode mode);

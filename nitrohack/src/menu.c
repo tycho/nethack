@@ -530,7 +530,13 @@ void draw_objlist(WINDOW *win, int icount, struct nh_objitem *items,
 	    pos = 0; /* no accel after all */
 	
 	if (items[i].otype) {
-	    print_sym(win, &cur_drawing->objects[items[i].otype-1], A_NORMAL);
+	    if (items[i].omonnum) {
+		struct curses_symdef objsym;
+		object_symdef(items[i].otype - 1, items[i].omonnum - 1, &objsym);
+		print_sym(win, &objsym, A_NORMAL);
+	    } else {
+		print_sym(win, &cur_drawing->objects[items[i].otype - 1], A_NORMAL);
+	    }
 	    waddch(win, ' ');
 	    pos += 2;
 	}

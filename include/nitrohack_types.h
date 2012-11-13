@@ -378,6 +378,7 @@ struct nh_objitem {
     int count;
     int otype;
     int oclass;
+    int omonnum;
     int weight; /* w < 0  == weight unknown */
     enum nh_bucstatus buc;
     char accel;
