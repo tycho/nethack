@@ -6,7 +6,6 @@
 #include "hack.h"
 #include "lev.h"
 
-static void trycall(struct obj *);
 static void dosinkring(struct obj *);
 static int drop(struct obj *);
 static int wipeoff(void);
@@ -279,12 +278,6 @@ void doaltarobj(struct obj *obj)  /* obj is an object dropped on an altar */
 	}
 }
 
-static void trycall(struct obj *obj)
-{
-	if (!objects[obj->otyp].oc_name_known &&
-	   !objects[obj->otyp].oc_uname)
-	   docall(obj);
-}
 
 /* Transform the sink at the player's position into
  * a fountain, throne, altar or grave. */
@@ -368,7 +361,7 @@ static void dosinkring(struct obj *obj)  /* obj is a ring being dropped over a k
 giveback:
 		obj->in_use = FALSE;
 		dropx(obj);
-		trycall(obj);
+		makeknown(obj->otyp);
 		return;
 	    case RIN_LEVITATION:
 		pline("The sink quivers upward for a moment.");
@@ -498,7 +491,7 @@ giveback:
 	    }
 	}
 	if (ideed)
-	    trycall(obj);
+	    makeknown(obj->otyp);
 	else
 	    You_hear("the ring bouncing down the drainpipe.");
 	if (!rn2(20)) {
