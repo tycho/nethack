@@ -1298,7 +1298,7 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	/* Final confrontation */
 	if (In_endgame(&u.uz) && newdungeon && u.uhave.amulet)
 		resurrect();
-	if (newdungeon && In_V_tower(&u.uz) && In_hell(&u.uz0))
+	if (newdungeon && (In_V_tower(&u.uz) || In_dragon(&u.uz)) && In_hell(&u.uz0))
 		pline("The heat and smoke are gone.");
 
 	/* the message from your quest leader */

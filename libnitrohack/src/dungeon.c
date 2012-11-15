@@ -888,6 +888,7 @@ void init_dungeons(void)	/* initialize the "dungeon" structs */
 	mines_dnum = dname_to_dnum("The Gnomish Mines");
 	tower_dnum = dname_to_dnum("Vlad's Tower");
 	mall_dnum = dname_to_dnum("Town");
+	dragon_dnum = dname_to_dnum("The Dragon Caves");
 
 	/* one special fixup for dummy surface level */
 	if ((x = find_level("dummy")) != 0) {

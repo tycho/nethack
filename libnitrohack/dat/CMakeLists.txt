@@ -7,6 +7,7 @@ set (LEVEL_DESCRIPTIONS
     ${LNH_DAT}/blkmar.des
     ${LNH_DAT}/castle.des
     ${LNH_DAT}/Caveman.des
+    ${LNH_DAT}/dragons.des
     ${LNH_DAT}/endgame.des
     ${LNH_DAT}/gehennom.des
     ${LNH_DAT}/Healer.des
@@ -43,7 +44,9 @@ set (COMPILED_LEVELS
     bigrm-9.lev  bigrm-10.lev bigrm-11.lev
     castle-1.lev castle-2.lev castle-3.lev
     Cav-fila.lev Cav-filb.lev Cav-goal.lev Cav-loca.lev
-    Cav-strt.lev earth.lev    fakewiz1.lev fakewiz2.lev
+    Cav-strt.lev
+    drgnA.lev    drgnB.lev    drgnC.lev    drgnD.lev
+    earth.lev    fakewiz1.lev fakewiz2.lev
     fire.lev     Hea-fila.lev Hea-filb.lev Hea-goal.lev
     Hea-loca.lev Hea-strt.lev
     heck-a-1.lev heck-a-2.lev heck-a-3.lev heck-a-4.lev

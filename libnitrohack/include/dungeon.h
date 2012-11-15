@@ -138,6 +138,7 @@ struct overview_info {
 #define Is_town_level(x)	(on_level(x, &town_level))
 
 #define In_sokoban(x)		((x)->dnum == sokoban_dnum)
+#define In_dragon(x)		((x)->dnum == dragon_dnum)
 #define Inhell			In_hell(&u.uz)	/* now gehennom */
 #define In_endgame(x)		((x)->dnum == astral_level.dnum)
 
