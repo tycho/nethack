@@ -302,7 +302,7 @@ static int replay_display_objects(struct nh_objitem *items, int icount, const ch
     char *resultbuf;
     boolean id_ok;
     
-    if (how == PICK_NONE)
+    if (how == PICK_NONE || how == PICK_INVACTION)
 	return 0;
     
     token = next_log_token();
@@ -331,7 +331,7 @@ static int replay_display_objects(struct nh_objitem *items, int icount, const ch
 	count = -1;
     }
     
-    if (program_state.viewing && how != PICK_NONE) {
+    if (program_state.viewing && how != PICK_NONE && how != PICK_INVACTION) {
 	char buf[BUFSZ] = "(none selected)";
 	if (i == 1) {
 	    for (j = 0; j < icount && items[j].id != pick_list[0].id; j++);

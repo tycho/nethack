@@ -134,7 +134,11 @@ enum nh_direction {
 
 /* select_menu() "how" argument types */
 enum nh_pick_type {
-    PICK_NONE,	/* user picks nothing (display only) */
+    PICK_INVACTION = -1,/* like PICK_NONE to the game, i.e. don't return selection,
+                         * don't log, but allow the UI to ask for inventory object
+                         * action menus, valid only for object menus of inventory
+                         * with inventory letters */
+    PICK_NONE = 0,	/* user picks nothing (display only) */
     PICK_ONE,	/* only pick one */
     PICK_ANY,	/* can pick any amount */
 };

@@ -518,7 +518,7 @@ void draw_objlist(WINDOW *win, int icount, struct nh_objitem *items,
 	    continue;
 	}	    
 	
-	if (how != PICK_NONE && selected && items[i].accel)
+	if (how != PICK_NONE && how != PICK_INVACTION && selected && items[i].accel)
 	    switch (selected[i]) {
 		case -1: wprintw(win, "%c + ", items[i].accel); break;
 		case  0: wprintw(win, "%c - ", items[i].accel); break;
@@ -678,7 +678,6 @@ int curses_display_objects(struct nh_objitem *items, int icount,
     int i, key, idx, rv, startx, starty, prevcurs, prev_offset;
     nh_bool done, cancelled;
     char sbuf[BUFSZ];
-    nh_bool inventory_special = title && !!strstr(title, "Inventory") && how == PICK_NONE;
     
     prevcurs = curs_set(0);
     
@@ -693,7 +692,7 @@ int curses_display_objects(struct nh_objitem *items, int icount,
     mdat->selcount = -1;
     mdat->selected = calloc(icount, sizeof(int));
     
-    if (how != PICK_NONE)
+    if (how != PICK_NONE && how != PICK_INVACTION)
 	assign_objmenu_accelerators(mdat);
     layout_objmenu(gw);
     
@@ -869,8 +868,8 @@ int curses_display_objects(struct nh_objitem *items, int icount,
 		    if (mdat->how == PICK_ONE)
 			done = TRUE;
 		    
-		    /* inventory special case: show item actions menu */
-		    else if (inventory_special)
+		    /* show item actions menu */
+		    else if (mdat->how == PICK_INVACTION)
 			if (do_item_actions(&mdat->items[idx]))
 			    done = TRUE;
 		    

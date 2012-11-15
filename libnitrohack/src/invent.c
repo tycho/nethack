@@ -1312,7 +1312,7 @@ static char display_pickinv(const char *lets, boolean want_reply, long *out_cnt)
 	if (icount) {
 	    selected = malloc(icount * sizeof(struct nh_objresult));
 	    n = display_objects(items, icount, want_reply ? NULL : "Inventory:",
-				want_reply ? PICK_ONE : PICK_NONE, selected);
+				want_reply ? PICK_ONE : PICK_INVACTION, selected);
 	}
 	if (n > 0) {
 	    ret = (char)selected[0].id;
@@ -1570,7 +1570,7 @@ int dotypeinv(void)
 	check_tutorial_oclass(this_type);
 
 	if (query_objlist(NULL, invent, USE_INVLET | INVORDER_SORT,
-		    &dummy, PICK_NONE, this_type_only) > 0)
+			  &dummy, PICK_INVACTION, this_type_only) > 0)
 	    free(dummy);
 	return 0;
 }

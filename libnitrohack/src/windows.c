@@ -118,6 +118,10 @@ int display_menu(struct nh_menuitem *items, int icount, const char *title,
 		 int how, int *results)
 {
 	int n;
+	if (how < PICK_NONE) {
+	    warning("display_menu: invalid how argument (%d)", how);
+	    how = PICK_NONE;
+	}
 	n = (*windowprocs.win_display_menu)(items, icount, title, how, results);
 	if (how != PICK_NONE)
 	    log_menu(n, results);
@@ -130,7 +134,7 @@ int display_objects(struct nh_objitem *items, int icount, const char *title,
 {
 	int n;
 	n = (*windowprocs.win_display_objects)(items, icount, title, how, pick_list);
-	if (how != PICK_NONE)
+	if (how != PICK_NONE && how != PICK_INVACTION)
 	    log_objmenu(n, pick_list);
 	return n;
 }
