@@ -2975,7 +2975,7 @@ static int zap_hit_mon(struct monst *mon, int type, int nd,
 			break;
 		    }
 		    if (nonliving(mon->data) || is_demon(mon->data) ||
-			    resists_magm(mon)) {	/* similar to player */
+			    resists_magm(mon) || mon->data->msound == MS_LEADER) {	/* similar to player */
 			sho_shieldeff = TRUE;
 			break;
 		    }
