@@ -80,12 +80,15 @@ set (COMPILED_LEVELS
     Sam-fila.lev Sam-filb.lev Sam-goal.lev Sam-loca.lev
     Sam-strt.lev sanctum.lev
     soko1-1.lev  soko1-2.lev  soko1-3.lev  soko1-4.lev
+    soko1-5.lev  soko1-6.lev
     soko2-1.lev  soko2-2.lev  soko2-3.lev  soko2-4.lev
-    soko2-5.lev  soko2-6.lev  soko2-7.lev  soko3-1.lev
-    soko3-2.lev  soko3-3.lev  soko3-4.lev  soko3-5.lev
-    soko3-6.lev  soko3-7.lev  soko3-8.lev  soko3-9.lev
-    soko3-10.lev soko3-11.lev soko3-12.lev soko3-13.lev
-    soko3-14.lev soko3-15.lev soko3-16.lev
+    soko2-5.lev  soko2-6.lev  soko2-7.lev  soko2-8.lev
+    soko2-9.lev  soko2-10.lev soko2-11.lev
+    soko3-1.lev  soko3-2.lev  soko3-3.lev  soko3-4.lev
+    soko3-5.lev  soko3-6.lev  soko3-7.lev  soko3-8.lev
+    soko3-9.lev  soko3-10.lev soko3-11.lev soko3-12.lev
+    soko3-13.lev soko3-14.lev soko3-15.lev soko3-16.lev
+    soko3-17.lev soko3-18.lev
     Tou-fila.lev Tou-filb.lev
     Tou-goal.lev Tou-loca.lev Tou-strt.lev tower1.lev
     tower2.lev   tower3.lev
