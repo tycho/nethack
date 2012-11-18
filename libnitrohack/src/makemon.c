@@ -880,6 +880,9 @@ struct monst *makemon(const struct permonst *ptr,
 		(8 * mtmp->m_lev) : (4 * mtmp->m_lev + dice((int)mtmp->m_lev, 4)));
 	} else if (!mtmp->m_lev) {
 	    mtmp->mhpmax = mtmp->mhp = rnd(4);
+	} else if (ptr->msound == MS_LEADER) {
+	    /* Quest Leaders need to be fairly burly */
+	    mtmp->mhpmax = mtmp->mhp = 135 + rnd(30);
 	} else {
 	    mtmp->mhpmax = mtmp->mhp = dice((int)mtmp->m_lev, 8);
 	    if (is_home_elemental(&lev->z, ptr))
