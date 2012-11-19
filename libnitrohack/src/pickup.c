@@ -1551,6 +1551,11 @@ static int in_container(struct obj *obj)
 			if (rot_alarm) obj->norevive = 1;
 		}
 	} else if (Is_mbag(current_container) && mbag_explodes(obj, 0)) {
+		if (current_container->otyp == BAG_OF_HOLDING) {
+			historic_event(
+				!objects[BAG_OF_HOLDING].oc_name_known,
+				"lost a bag of holding in a magical explosion.");
+		}
 		/* explicitly mention what item is triggering the explosion */
 		pline(
 	      "As you put %s inside, you are blasted by a magical explosion!",
