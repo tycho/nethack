@@ -573,7 +573,10 @@ void tele(void)
 		    /* possible extensions: introduce a small error if
 		       magic power is low; allow transfer to solid rock */
 		    if (teleok(cc.x, cc.y, FALSE) ||
-			(wizard && yn("Force teleport?") == 'y')) {
+			(wizard &&
+			 yn((isok(cc.x, cc.y) && m_at(level, cc.x, cc.y)) ?
+			    "Force teleport? (monster blocking)" :
+			    "Force teleport?") == 'y')) {
 			teleds(cc.x, cc.y, FALSE);
 			return;
 		    }
