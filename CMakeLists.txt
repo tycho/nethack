@@ -50,7 +50,7 @@ endif ()
 
 
 if (CMAKE_COMPILER_IS_GNUCC)
-    set (CMAKE_C_FLAGS_DEBUG "-Wall -g3 -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith")
+    set (CMAKE_C_FLAGS_DEBUG "-Wall -g3 -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith -Wformat-security")
     if (UNIX)
 	add_definitions (-fvisibility=hidden)
     endif ()
