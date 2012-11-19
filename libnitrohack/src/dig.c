@@ -1170,7 +1170,6 @@ void zap_dig(schar dx, schar dy, schar dz)
 		room->doormask = D_NODOOR;
 		unblock_point(zx,zy); /* vision */
 		digdepth -= 2;
-		if (maze_dig) break;
 	    } else if (maze_dig) {
 		if (IS_WALL(room->typ)) {
 		    if (!(room->wall_info & W_NONDIGGABLE)) {
@@ -1180,23 +1179,29 @@ void zap_dig(schar dx, schar dy, schar dz)
 			}
 			room->typ = ROOM;
 			unblock_point(zx,zy); /* vision */
-		    } else if (!Blind)
-			pline("The wall glows then fades.");
-		    break;
+			digdepth -= 2;
+		    } else {
+			if (!Blind) pline("The wall glows then fades.");
+			digdepth = 0;
+		    }
 		} else if (IS_TREE(level, room->typ)) { /* check trees before stone */
 		    if (!(room->wall_info & W_NONDIGGABLE)) {
 			room->typ = ROOM;
 			unblock_point(zx,zy); /* vision */
-		    } else if (!Blind)
-			pline("The tree shudders but is unharmed.");
-		    break;
+			digdepth -= 2;
+		    } else {
+			if (!Blind) pline("The tree shudders but is unharmed.");
+			digdepth = 0;
+		    }
 		} else if (room->typ == STONE || room->typ == SCORR) {
 		    if (!(room->wall_info & W_NONDIGGABLE)) {
 			room->typ = CORR;
 			unblock_point(zx,zy); /* vision */
-		    } else if (!Blind)
-			pline("The rock glows then fades.");
-		    break;
+			digdepth -= 2;
+		    } else {
+			if (!Blind) pline("The rock glows then fades.");
+			digdepth = 0;
+		    }
 		}
 	    } else if (IS_ROCK(room->typ)) {
 		if (!may_dig(level, zx,zy)) break;
