@@ -1988,6 +1988,7 @@ struct monst *restore_mon(struct memfile *mf)
 	    shk->shoproom = mread8(mf);
 	    shk->following = mread8(mf);
 	    shk->surcharge = mread8(mf);
+	    shk->cheapskate = mread8(mf);
 	    mread(mf, shk->customer, sizeof(shk->customer));
 	    mread(mf, shk->shknam, sizeof(shk->shknam));
 	    for (i = 0; i < BILLSZ; i++)
@@ -2178,6 +2179,7 @@ void save_mon(struct memfile *mf, const struct monst *mon)
 	    mwrite8(mf, shk->shoproom);
 	    mwrite8(mf, shk->following);
 	    mwrite8(mf, shk->surcharge);
+	    mwrite8(mf, shk->cheapskate);
 	    mwrite(mf, shk->customer, sizeof(shk->customer));
 	    mwrite(mf, shk->shknam, sizeof(shk->shknam));
 	    for (i = 0; i < BILLSZ; i++)
