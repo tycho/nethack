@@ -21,7 +21,7 @@ static int align_shift(const d_level *dlev, const struct permonst *);
 static boolean wrong_elem_type(const struct d_level *dlev, const struct permonst *);
 static void m_initgrp(struct monst *, struct level *lev, int,int,int);
 static void m_initthrow(struct monst *,int,int);
-static void m_initweap(struct monst *);
+static void m_initweap(struct level *lev, struct monst *);
 static void m_initinv(struct monst *);
 
 extern const int monstr[];
@@ -135,13 +135,13 @@ static void m_initthrow(struct monst *mtmp, int otyp, int oquan)
 }
 
 
-static void m_initweap(struct monst *mtmp)
+static void m_initweap(struct level *lev, struct monst *mtmp)
 {
 	const struct permonst *ptr = mtmp->data;
 	int mm = monsndx(ptr);
 	struct obj *otmp;
 
-	if (Is_rogue_level(&mtmp->dlevel->z))
+	if (Is_rogue_level(&lev->z))
 	    return;
 /*
  *	first a few special cases:
@@ -220,7 +220,7 @@ static void m_initweap(struct monst *mtmp)
 		    }
 		} else if (ptr->msound == MS_PRIEST ||
 			quest_mon_represents_role(ptr,PM_PRIEST)) {
-		    otmp = mksobj(level, MACE, FALSE, FALSE);
+		    otmp = mksobj(lev, MACE, FALSE, FALSE);
 		    if (otmp) {
 			otmp->spe = rnd(3);
 			if (!rn2(2)) curse(otmp);
@@ -234,7 +234,7 @@ static void m_initweap(struct monst *mtmp)
 		    int spe2;
 
 		    /* create minion stuff; can't use mongets */
-		    otmp = mksobj(level, LONG_SWORD, FALSE, FALSE);
+		    otmp = mksobj(lev, LONG_SWORD, FALSE, FALSE);
 
 		    /* maybe make it special */
 		    if (!rn2(20) || is_lord(ptr))
@@ -246,7 +246,7 @@ static void m_initweap(struct monst *mtmp)
 		    otmp->spe = max(otmp->spe, spe2);
 		    mpickobj(mtmp, otmp);
 
-		    otmp = mksobj(level, !rn2(4) || is_lord(ptr) ?
+		    otmp = mksobj(lev, !rn2(4) || is_lord(ptr) ?
 				  SHIELD_OF_REFLECTION : LARGE_SHIELD,
 				  FALSE, FALSE);
 		    otmp->cursed = FALSE;
@@ -1011,7 +1011,7 @@ struct monst *makemon(const struct permonst *ptr,
 
 	if (allow_minvent) {
 	    if (is_armed(ptr))
-		m_initweap(mtmp);	/* equip with weapons / armor */
+		m_initweap(lev, mtmp);	/* equip with weapons / armor */
 	    m_initinv(mtmp);  /* add on a few special items incl. more armor */
 	    m_dowear(lev, mtmp, TRUE);
 	} else {
