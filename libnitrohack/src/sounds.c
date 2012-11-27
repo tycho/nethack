@@ -805,7 +805,26 @@ static int domonnoise(struct monst *mtmp)
 	    }
 	    break;
 	case MS_BRIBE:
-	    if (mtmp->mpeaceful && !mtmp->mtame) {
+	    if (monsndx(ptr) == PM_PRISON_GUARD) {
+		long gdemand = 500 * u.ulevel;
+		long goffer = 0;
+
+		if (!mtmp->mpeaceful && !mtmp->mtame) {
+		    pline("%s demands %ld %s to avoid re-arrest.",
+			  Amonnam(mtmp), gdemand, currency(gdemand));
+		    if ((goffer = bribe(mtmp)) >= gdemand) {
+			verbl_msg = "Good.  Now beat it, scum!";
+			mtmp->mpeaceful = 1;
+			set_malign(mtmp);
+		    } else {
+			verbalize("I said %ld!", gdemand);
+			mtmp->mspec_used = 1000;
+		    }
+		} else {
+		    verbl_msg = "Out of my way, scum!"; /* still a jerk */
+		}
+		break;
+	    } else if (mtmp->mpeaceful && !mtmp->mtame) {
 		demon_talk(mtmp);
 		break;
 	    }
@@ -998,6 +1017,22 @@ static int dochat(void)
 	    map_invisible(mtmp->mx, mtmp->my);
 	pline("%s is eating noisily.", Monnam(mtmp));
 	return 0;
+    }
+
+    if (Role_if(PM_CONVICT) && is_rat(mtmp->data) &&
+	!mtmp->mpeaceful && !mtmp->mtame) {
+	int soothe_roll = rnl(10);
+	pline("You attempt to soothe the %s with chittering sounds.",
+	      l_monnam(mtmp));
+	if (soothe_roll < 2) {
+	    tamedog(mtmp, NULL);
+	} else if (soothe_roll > 8) {
+	    pline("%s unfortunately ignores your overtures.", Monnam(mtmp));
+	} else {
+	    mtmp->mpeaceful = 1;
+	    set_malign(mtmp);
+	}
+	return 1;
     }
 
     return domonnoise(mtmp);

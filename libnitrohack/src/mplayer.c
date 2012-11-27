@@ -136,7 +136,7 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 	    mtmp->mpeaceful = 0;
 	    set_malign(mtmp); /* peaceful may have changed again */
 
-	    switch(monsndx(ptr)) {
+	    switch (monsndx(ptr)) {
 		case PM_ARCHEOLOGIST:
 		    if (rn2(2)) weapon = BULLWHIP;
 		    break;
@@ -153,6 +153,9 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 		    if (rn2(4)) weapon = MACE;
 		    else if (rn2(2)) weapon = CLUB;
 		    if (helm == HELM_OF_BRILLIANCE) helm = STRANGE_OBJECT;
+		    break;
+		case PM_CONVICT:
+		    /* Defaults are just fine. */
 		    break;
 		case PM_HEALER:
 		    if (rn2(4)) weapon = QUARTERSTAFF;
@@ -204,7 +207,8 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 		    if (rn2(4)) helm = HELM_OF_BRILLIANCE;
 		    shield = STRANGE_OBJECT;
 		    break;
-		default: warning("bad mplayer monster");
+		default:
+		    warning("bad mplayer monster: %d", monsndx(ptr));
 		    weapon = 0;
 		    break;
 	    }

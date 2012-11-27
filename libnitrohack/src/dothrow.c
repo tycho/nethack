@@ -479,7 +479,8 @@ boolean hurtle_step(void *arg, int x, int y)
 	    return FALSE;
 	}
 	if ((u.ux - x) && (u.uy - y) &&
-		bad_rock(youmonst.data,u.ux,y) && bad_rock(youmonst.data,x,u.uy)) {
+		bad_rock(youmonst.data, TRUE, u.ux,y) &&
+		bad_rock(youmonst.data, TRUE, x,u.uy)) {
 	    boolean too_much = (invent && (inv_weight() + weight_cap() > 600));
 	    /* Move at a diagonal. */
 	    if (bigmonst(youmonst.data) || too_much) {
@@ -497,7 +498,8 @@ boolean hurtle_step(void *arg, int x, int y)
 	return FALSE;
     }
     if ((u.ux - x) && (u.uy - y) &&
-	bad_rock(youmonst.data,u.ux,y) && bad_rock(youmonst.data,x,u.uy)) {
+	bad_rock(youmonst.data, TRUE, u.ux,y) &&
+	bad_rock(youmonst.data, TRUE, x,u.uy)) {
 	/* Move at a diagonal. */
 	if (In_sokoban(&u.uz)) {
 	    pline("You come to an abrupt halt!");

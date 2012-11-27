@@ -146,6 +146,8 @@ struct monst *makedog(void)
 		petname = wolfname;
 	else if (pettype == PM_BABY_CROCODILE)
 		petname = crocname;
+	else if (pettype == PM_SEWER_RAT)
+		petname = ratname;
 	else
 		petname = catname;
 
@@ -159,6 +161,8 @@ struct monst *makedog(void)
 		if (Role_if(PM_RANGER)) petname = "Sirius";     /* Orion's dog */
 	    } else if (pettype == PM_KITTEN) {
 		if (!rn2(100)) petname = "Shiva"; /* PM: RIP 1 Oct 1998 - 6 Sep 2009 */
+	    } else if (pettype == PM_SEWER_RAT) {
+		if (Role_if(PM_CONVICT)) petname = "Nicodemus"; /* Rats of NIMH */
 	    }
 	}
 
@@ -741,6 +745,12 @@ struct monst *tamedog(struct monst *mtmp, struct obj *obj)
 	if (flags.moonphase == FULL_MOON && night() && rn2(6) && obj
 						&& mtmp->data->mlet == S_DOG)
 		return NULL;
+
+	/* Domestic animals are wary of the Convict. */
+	if (Role_if(PM_CONVICT) && is_domestic(mtmp->data) && obj) {
+	    pline("%s still seems wary of you.", Monnam(mtmp));
+	    return NULL;
+	}
 
 	/* If we cannot tame it, at least it's no longer afraid. */
 	mtmp->mflee = 0;

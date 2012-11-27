@@ -1139,7 +1139,10 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 		    pline("You fly down along the %s.",
 			at_ladder ? "ladder" : "stairs");
 		else if (at_stairs &&
-		    (near_capacity() > UNENCUMBERED || Punished || Fumbling)) {
+		    (near_capacity() > UNENCUMBERED ||
+		     (Punished && (uwep != uball || P_SKILL(P_FLAIL) < P_BASIC ||
+				   !Role_if(PM_CONVICT))) ||
+		     Fumbling)) {
 		    pline("You fall down the %s.", at_ladder ? "ladder" : "stairs");
 		    if (Punished) {
 			drag_down();

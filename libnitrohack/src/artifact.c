@@ -521,6 +521,13 @@ int touch_artifact(struct obj *obj, struct monst *mon)
 	return 0;
     }
 
+    /* The Iron Ball of Liberation removes any mundane heavy iron ball. */
+    if (oart == &artilist[ART_IRON_BALL_OF_LIBERATION] &&
+	Punished && obj != uball) {
+	pline("You are liberated from %s!", yname(uball));
+	unpunish();
+    }
+
     return 1;
 }
 
@@ -1375,6 +1382,33 @@ static int arti_invoke(struct obj *obj)
 	    hold_another_object(otmp, "Suddenly %s out.", aobjnam(otmp, "fall"), NULL);
 	    break;
 	  }
+	case PHASING:	/* walk through walls and stone like a xorn */
+	    if (Passes_walls) goto nothing_special;
+	    if (oart == &artilist[ART_IRON_BALL_OF_LIBERATION]) {
+		if (Punished && obj != uball) {
+		    pline("You are liberated from %s!", yname(uball));
+		    unpunish(); /* remove a mundane heavy iron ball */
+		}
+
+		if (!Punished) {
+		    setworn(mkobj(level, CHAIN_CLASS, TRUE), W_CHAIN);
+		    setworn(obj, W_BALL);
+		    uball->spe = 1;	/* attach the Iron Ball of Liberation */
+		    if (!u.uswallow) {
+			placebc();
+			if (Blind) set_bc(1);	/* set up ball and chain variables */
+			newsym(u.ux, u.uy);	/* see ball&chain if can't see self */
+		    }
+		    pline("Your %s chains itself to you!", xname(obj));
+		}
+	    }
+	    if (!Hallucination)
+		pline("Your body begins to feel less solid.");
+	    else
+		pline("You feel one with the spirit world.");
+	    incr_itimeout(&Phasing, (50 + rnd(100)));
+	    obj->age += Phasing; /* Time begins after phasing ends */
+	    break;
 	}
     } else {
 	long eprop = (u.uprops[oart->inv_prop].extrinsic ^= W_ARTI),

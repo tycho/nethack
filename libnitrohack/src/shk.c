@@ -557,6 +557,10 @@ void u_entered_shop(char *enterstring)
 	    }
 	}
 
+	/* visible striped prison shirt (but black marketeer won't mind) */
+	if (uarmu && uarmu->otyp == STRIPED_SHIRT && !uarm && !uarmc)
+	    eshkp->pbanned = !Is_blackmarket(&u.uz);
+
 	if (Is_blackmarket(&u.uz) &&
 		u.umonnum > 0 && mons[u.umonnum].mlet != S_HUMAN) {
 	    verbalize("Non-human customers are not welcome!");
@@ -572,7 +576,7 @@ void u_entered_shop(char *enterstring)
 		      shtypes[rt - SHOPBASE].name);
 	} else if (eshkp->robbed) {
 	    pline("%s mutters imprecations against shoplifters.", shkname(shkp));
-	} else {
+	} else if (!eshkp->pbanned || inside_shop(level, u.ux, u.uy)) {
 	    verbalize("%s, %s!  Welcome%s to %s %s!",
 		      Hello(shkp), plname,
 		      eshkp->visitct++ ? " again" : "",
@@ -613,6 +617,9 @@ void u_entered_shop(char *enterstring)
 		verbalize(NOTANGRY(shkp) ?
 			  "Will you please leave %s outside?" :
 			  "Leave %s outside.", y_monnam(u.usteed));
+		should_block = TRUE;
+	    } else if (eshkp->pbanned) {
+		verbalize("I don't sell to your kind here.");
 		should_block = TRUE;
 	    } else {
 		should_block = (Fast && (sobj_at(PICK_AXE, level, u.ux, u.uy) ||
@@ -1495,6 +1502,7 @@ boolean paybill(int croaked)
 		else {
 		    numsk++;
 		    taken |= inherits(mtmp, numsk, croaked);
+		    ESHK(mtmp)->pbanned = FALSE; /* Un-ban for bones levels */
 		}
 	    }
 	}
@@ -3071,6 +3079,7 @@ int shk_move(struct monst *shkp)
 		    if (uondoor) {
 			badinv = (!Is_blackmarket(&u.uz) &&
 				  (carrying(PICK_AXE) || carrying(DWARVISH_MATTOCK) ||
+				   eshkp->pbanned ||
 				   (Fast && (sobj_at(PICK_AXE, level, u.ux, u.uy) ||
 				    sobj_at(DWARVISH_MATTOCK, level, u.ux, u.uy)))));
 			if (satdoor && badinv)

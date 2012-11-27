@@ -144,6 +144,7 @@ char horsename[PL_PSIZ];
 char monkeyname[PL_PSIZ];
 char wolfname[PL_PSIZ];
 char crocname[PL_PSIZ];
+char ratname[PL_PSIZ];
 char preferred_pet;	/* '\0', 'c', 'd', 'e', 'n' (none) */
 /* monsters that went down/up together with @ */
 struct monst *mydogs;
@@ -246,6 +247,7 @@ void init_data(void)
     memset(monkeyname, 0, sizeof(monkeyname));
     memset(wolfname, 0, sizeof(wolfname));
     memset(crocname, 0, sizeof(crocname));
+    memset(ratname, 0, sizeof(ratname));
     memset(&youmonst, 0, sizeof(youmonst));
     memset(&upermonst, 0, sizeof(upermonst));
     memset(&zeroobj, 0, sizeof(zeroobj));

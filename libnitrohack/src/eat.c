@@ -1341,11 +1341,13 @@ static void fprefx(struct obj *otmp)
 			  "Mmm, tripe... not bad!");
 		else {
 		    pline("Yak - dog food!");
+		    if (Role_if(PM_CONVICT))
+			pline("At least it's not prison food.");
 		    more_experienced(1, 1, 0);
 		    newexplevel();
 		    /* not cannibalism, but we use similar criteria
 		       for deciding whether to be sickened by this meal */
-		    if (rn2(2) && !CANNIBAL_ALLOWED())
+		    if (rn2(2) && !CANNIBAL_ALLOWED() && !Role_if(PM_CONVICT))
 			make_vomiting((long)rn1(victual.reqtime, 14), FALSE);
 		}
 		break;
@@ -1384,7 +1386,11 @@ static void fprefx(struct obj *otmp)
 #endif
 		if (otmp->otyp == EGG && stale_egg(otmp)) {
 		    pline("Ugh.  Rotten egg.");	/* perhaps others like it */
-		    make_vomiting(Vomiting+dice(10,4), TRUE);
+		    /* prisoners are used to bad food */
+		    if (Role_if(PM_CONVICT) && rn2(8) > u.ulevel)
+			pline("You feel a slight stomach ache.");
+		    else
+			make_vomiting(Vomiting + dice(10,4), TRUE);
 		} else
  give_feedback:
 		    pline("This %s is %s", singular(otmp, xname),
@@ -2103,6 +2109,8 @@ void gethungry(void) /* as time goes by - called by moveloop() and domove() */
 	if ((!u.usleep || !rn2(10))	/* slow metabolic rate while asleep */
 		&& (carnivorous(youmonst.data) || herbivorous(youmonst.data) ||
 		    is_vampire(youmonst.data))
+		/* Convicts can last twice as long at hungry and below */
+		&& (!Role_if(PM_CONVICT) || moves % 2 || u.uhs < HUNGRY)
 		&& !Slow_digestion)
 	    u.uhunger--;		/* ordinary food consumption */
 

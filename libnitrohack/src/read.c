@@ -1787,6 +1787,8 @@ void do_genocide(int how, boolean only_on_level)
 
 void punish(struct obj *sobj)
 {
+	struct obj *otmp;
+
 	/* KMH -- Punishment is still okay when you are riding */
 	pline("You are being punished for your misbehavior!");
 	if (Punished){
@@ -1799,8 +1801,20 @@ void punish(struct obj *sobj)
 		dropy(mkobj(level, BALL_CLASS, TRUE));
 		return;
 	}
+
+	/* The Iron Ball of Liberation chains itself back to you. */
 	setworn(mkobj(level, CHAIN_CLASS, TRUE), W_CHAIN);
-	setworn(mkobj(level, BALL_CLASS, TRUE), W_BALL);
+	for (otmp = invent; otmp; otmp = otmp->nobj) {
+	    if (otmp->otyp == HEAVY_IRON_BALL &&
+		otmp->oartifact == ART_IRON_BALL_OF_LIBERATION)
+		break;
+	}
+	if (otmp) {
+	    setworn(otmp, W_BALL);
+	    pline("Your %s chains itself to you!", xname(otmp));
+	} else {
+	    setworn(mkobj(level, BALL_CLASS, TRUE), W_BALL);
+	}
 	uball->spe = 1;		/* special ball (see save) */
 
 	/*

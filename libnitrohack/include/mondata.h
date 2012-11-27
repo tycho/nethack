@@ -93,6 +93,11 @@
 #define is_bat(ptr)		((ptr) == &mons[PM_BAT] || \
 				 (ptr) == &mons[PM_GIANT_BAT] || \
 				 (ptr) == &mons[PM_VAMPIRE_BAT])
+#define is_rat(ptr)		((ptr) == &mons[PM_SEWER_RAT] || \
+				 (ptr) == &mons[PM_GIANT_RAT] || \
+				 (ptr) == &mons[PM_RABID_RAT] || \
+				 (ptr) == &mons[PM_ENORMOUS_RAT] || \
+				 (ptr) == &mons[PM_RODENT_OF_UNUSUAL_SIZE])
 #define is_bird(ptr)		((ptr)->mlet == S_BAT && !is_bat(ptr))
 #define is_giant(ptr)		(((ptr)->mflags2 & M2_GIANT) != 0L)
 #define is_golem(ptr)		((ptr)->mlet == S_GOLEM)
@@ -214,7 +219,8 @@
 				 (!is_undead(ptr) || is_vampire(ptr)))
 
 #define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
-				     is_domestic(ptr))
+				     (is_domestic(ptr) || \
+				      (Role_if(PM_CONVICT) && is_rat(ptr))))
 
 #define is_rockbreaker(mon)	(((mon)->data->msound == MS_LEADER || \
 				  (mon)->data == &mons[PM_BLACK_MARKETEER] || \

@@ -156,6 +156,7 @@ extern char horsename[];
 extern char monkeyname[];
 extern char wolfname[];
 extern char crocname[];
+extern char ratname[];
 extern char preferred_pet;
 extern const char *occtxt;			/* defined when occupation != NULL */
 extern const char *nomovemsg;

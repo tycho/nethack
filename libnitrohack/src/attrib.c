@@ -36,6 +36,11 @@ const struct innate {
 		     {	15, &(HWarning), "sensitive", "" },
 		     {	 0, 0, 0, 0 } },
 
+	con_abil[] = { {  1, &(HSick_resistance), "", "" },
+		       {  7, &(HPoison_resistance), "healthy", "" },
+		       { 20, &(HSearching), "perceptive", "unaware" },
+		       {  0, 0, 0, 0 } },
+
 	hea_abil[] = { {	 1, &(HPoison_resistance), "", "" },
 		     {	15, &(HWarning), "sensitive", "" },
 		     {	 0, 0, 0, 0 } },
@@ -457,6 +462,7 @@ void adjabil(int oldlevel, int newlevel)
 	case PM_ARCHEOLOGIST:   abil = arc_abil;	break;
 	case PM_BARBARIAN:      abil = bar_abil;	break;
 	case PM_CAVEMAN:        abil = cav_abil;	break;
+	case PM_CONVICT:        abil = con_abil;	break;
 	case PM_HEALER:         abil = hea_abil;	break;
 	case PM_KNIGHT:         abil = kni_abil;	break;
 	case PM_MONK:           abil = mon_abil;	break;

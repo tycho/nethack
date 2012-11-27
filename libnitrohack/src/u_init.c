@@ -54,6 +54,11 @@ static const struct trobj Cave_man[] = {
 	{ LEATHER_ARMOR, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ 0, 0, 0, 0, 0 }
 };
+static const struct trobj Convict[] = {
+	{ ROCK, 0, GEM_CLASS, 1, 0 },
+	{ STRIPED_SHIRT, 0, ARMOR_CLASS, 1, 0 },
+	{ 0, 0, 0, 0, 0 }
+};
 static const struct trobj Healer[] = {
 	{ SCALPEL, 0, WEAPON_CLASS, 1, UNDEF_BLESS },
 	{ LEATHER_GLOVES, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
@@ -291,6 +296,18 @@ static const struct def_skill Skill_C[] = {
     { P_ATTACK_SPELL, P_BASIC },	{ P_MATTER_SPELL, P_SKILLED },
     { P_BOOMERANG, P_EXPERT },		{ P_UNICORN_HORN, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_MASTER },
+    { P_NONE, 0 }
+};
+
+static const struct def_skill Skill_Con[] = {
+    { P_DAGGER, P_SKILLED },		{ P_KNIFE,  P_EXPERT },
+    { P_HAMMER, P_SKILLED },		{ P_PICK_AXE, P_EXPERT },
+    { P_CLUB, P_EXPERT },		{ P_MACE, P_BASIC },
+    { P_DART, P_SKILLED },		{ P_FLAIL, P_EXPERT },
+    { P_SHORT_SWORD, P_BASIC },		{ P_SLING, P_SKILLED },
+    { P_ATTACK_SPELL, P_BASIC },	{ P_ESCAPE_SPELL, P_EXPERT },
+    { P_TWO_WEAPON_COMBAT, P_SKILLED },
+    { P_BARE_HANDED_COMBAT, P_SKILLED },
     { P_NONE, 0 }
 };
 
@@ -608,6 +625,15 @@ void u_init_inv_skills(void)
 		ini_inv(trobj_list, nclist);
 		skill_init(Skill_C);
 		break;
+	case PM_CONVICT:
+		ini_inv(Convict, nclist);
+		knows_object(SKELETON_KEY);
+		knows_object(GRAPPLING_HOOK);
+		skill_init(Skill_Con);
+		u.uhunger = 200;		    /* On the verge of hungry */
+		urace.hatemask |= urace.lovemask;   /* Hated by the race's allies */
+		urace.lovemask = 0;	    /* Convicts are pariahs of their race */
+		break;
 	case PM_HEALER:
 		u.umoney0 = rn1(1000, 1001);
 		ini_inv(Healer, nclist);
@@ -762,7 +788,7 @@ void u_init_inv_skills(void)
 
 	case PM_ORC:
 	    /* compensate for generally inferior equipment */
-	    if (!Role_if (PM_WIZARD))
+	    if (!Role_if(PM_WIZARD) && !Role_if(PM_CONVICT))
 		ini_inv(Xtra_food, nclist);
 	    /* Orcs can recognize all orcish objects */
 	    knows_object(ORCISH_SHORT_SWORD);
@@ -845,6 +871,7 @@ static boolean restricted_spell_discipline(int otyp)
      case PM_ARCHEOLOGIST:	skills = Skill_A; break;
      case PM_BARBARIAN:		skills = Skill_B; break;
      case PM_CAVEMAN:		skills = Skill_C; break;
+     case PM_CONVICT:		skills = Skill_Con; break;
      case PM_HEALER:		skills = Skill_H; break;
      case PM_KNIGHT:		skills = Skill_K; break;
      case PM_MONK:		skills = Skill_Mon; break;
@@ -975,6 +1002,8 @@ static void ini_inv(const struct trobj *trop, short nocreate[4])
 				is_graystone(obj) && obj->otyp != FLINT) {
 			    obj->quan = 1L;
 			}
+			if (obj->otyp == STRIPED_SHIRT)
+			    obj->cursed = TRUE;
 			if (trop->trspe != UNDEF_SPE)
 			    obj->spe = trop->trspe;
 			if (trop->trbless != UNDEF_BLESS)

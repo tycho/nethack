@@ -177,6 +177,7 @@ static const struct nh_option_desc const_birth_options[] = {
     { "crocname", "the name of your (first) crocodile", OPTTYPE_STRING, {NULL}},
     { "monkeyname", "the name of your (first) monkey", OPTTYPE_STRING, {NULL}},
     { "wolfname", "the name of your (first) wolf", OPTTYPE_STRING, {NULL}},
+    { "ratname",  "the name of your (first) rat", OPTTYPE_STRING, {NULL}},
     { "pettype",  "your preferred initial pet type", OPTTYPE_ENUM, {0}},
     { "ascet",    "conduct: never eat food", OPTTYPE_BOOL, { VFALSE }},
     { "atheist",  "conduct: adhere to atheism", OPTTYPE_BOOL, { VFALSE }},
@@ -355,6 +356,7 @@ void init_opt_struct(void)
 	find_option(birth_options, "crocname")->s.maxlen = PL_PSIZ;
 	find_option(birth_options, "monkeyname")->s.maxlen = PL_PSIZ;
 	find_option(birth_options, "wolfname")->s.maxlen = PL_PSIZ;
+	find_option(birth_options, "ratname")->s.maxlen = PL_PSIZ;
 
 	/* If no config file exists, these values will not get set until they
 	 * have already been used during game startup.  (-1) is a much better
@@ -745,6 +747,9 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 	}
 	else if (!strcmp("wolfname", option->name)) {
 		strncpy(wolfname, option->value.s, PL_PSIZ);
+	}
+	else if (!strcmp("ratname", option->name)) {
+		strncpy(ratname, option->value.s, PL_PSIZ);
 	}
 	else if (!strcmp("pettype", option->name)) {
 		preferred_pet = (char)option->value.e;

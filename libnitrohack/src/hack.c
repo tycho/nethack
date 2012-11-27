@@ -785,13 +785,13 @@ boolean may_passwall(struct level *lev, xchar x, xchar y)
 		 (lev->locations[x][y].wall_info & W_NONPASSWALL));
 }
 
-
-boolean bad_rock(const struct permonst *mdat, xchar x, xchar y)
+boolean bad_rock(const struct permonst *mdat, boolean is_player, xchar x, xchar y)
 {
 	return (boolean) ((In_sokoban(&u.uz) && sobj_at(BOULDER, level, x,y)) ||
 	       (IS_ROCK(level->locations[x][y].typ)
 		    && (!tunnels(mdat) || needspick(mdat) || !may_dig(level, x,y))
-		    && !(passes_walls(mdat) && may_passwall(level, x,y))));
+		    && !(may_passwall(level, x,y)
+			&& (passes_walls(mdat) || (is_player && Passes_walls)))));
 }
 
 boolean invocation_pos(const d_level *dlev, xchar x, xchar y)
@@ -888,7 +888,8 @@ boolean test_move(int ux, int uy, int dx, int dy, int dz, int mode)
 	}
     }
     if (dx && dy
-	    && bad_rock(youmonst.data,ux,y) && bad_rock(youmonst.data,x,uy)) {
+	    && bad_rock(youmonst.data, TRUE, ux,y)
+	    && bad_rock(youmonst.data, TRUE, x,uy)) {
 	/* Move at a diagonal. */
 	if (In_sokoban(&u.uz)) {
 	    if (mode == DO_MOVE)
@@ -1595,7 +1596,7 @@ int domove(schar dx, schar dy, schar dz)
 				confdir(&dx, &dy);
 				x = u.ux + dx;
 				y = u.uy + dy;
-			} while (!isok(x, y) || bad_rock(youmonst.data, x, y));
+			} while (!isok(x, y) || bad_rock(youmonst.data, TRUE, x, y));
 		}
 		/* turbulence might alter your actual destination */
 		if (u.uinwater) {
@@ -1884,8 +1885,8 @@ int domove(schar dx, schar dy, schar dz)
 		/* can't swap places with pet pinned in a pit by a boulder */
 		u.ux = u.ux0,  u.uy = u.uy0;	/* didn't move after all */
 	    } else if (u.ux0 != x && u.uy0 != y &&
-		       bad_rock(mtmp->data, x, u.uy0) &&
-		       bad_rock(mtmp->data, u.ux0, y) &&
+		       bad_rock(mtmp->data, FALSE, x, u.uy0) &&
+		       bad_rock(mtmp->data, FALSE, u.ux0, y) &&
 		       (bigmonst(mtmp->data) || (curr_mon_load(mtmp) > 600))) {
 		/* can't swap places when pet won't fit thru the opening */
 		u.ux = u.ux0,  u.uy = u.uy0;	/* didn't move after all */

@@ -7,6 +7,7 @@ set (LEVEL_DESCRIPTIONS
     ${LNH_DAT}/blkmar.des
     ${LNH_DAT}/castle.des
     ${LNH_DAT}/Caveman.des
+    ${LNH_DAT}/Convict.des
     ${LNH_DAT}/dragons.des
     ${LNH_DAT}/endgame.des
     ${LNH_DAT}/gehennom.des
@@ -45,6 +46,8 @@ set (COMPILED_LEVELS
     castle-1.lev castle-2.lev castle-3.lev
     Cav-fila.lev Cav-filb.lev Cav-goal.lev Cav-loca.lev
     Cav-strt.lev
+    Con-fila.lev Con-filb.lev Con-goal.lev Con-loca.lev
+    Con-strt.lev
     drgnA.lev    drgnB.lev    drgnC.lev    drgnD.lev
     earth.lev    fakewiz1.lev fakewiz2.lev
     fire.lev     Hea-fila.lev Hea-filb.lev Hea-goal.lev

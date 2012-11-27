@@ -251,6 +251,14 @@ schar find_roll_to_hit(struct monst *mtmp)
 	if (is_orc(mtmp->data) && maybe_polyd(is_elf(youmonst.data),
 			Race_if (PM_ELF)))
 	    tmp++;
+
+	/* Adding iron ball as a weapon skill gives a -4 penalty for
+	 * unskilled vs no penalty for non-weapon objects.  Add 4 to
+	 * compensate.
+	 */
+	if (uwep && uwep->otyp == HEAVY_IRON_BALL)
+	    tmp += 4;
+
 	if (Role_if(PM_MONK) && !Upolyd) {
 	    if (uarm) {
 		pline("Your armor is rather cumbersome...");
@@ -616,7 +624,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 	    } else {
 		strcpy(saved_oname, cxname(obj));
 		if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
-		   obj->oclass == GEM_CLASS) {
+		    obj->oclass == GEM_CLASS || obj->otyp == HEAVY_IRON_BALL) {
 
 		    /* is it not a melee weapon? */
 		    if (/* if you strike with a bow... */

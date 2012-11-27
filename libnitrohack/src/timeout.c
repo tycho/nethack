@@ -5,6 +5,7 @@
 #include "lev.h"	/* for checking save modes */
 
 static void stoned_dialogue(void);
+static void phasing_dialogue(void);
 static void vomiting_dialogue(void);
 static void choke_dialogue(void);
 static void slime_dialogue(void);
@@ -38,6 +39,21 @@ static void stoned_dialogue(void)
 	if (i == 3L)
 		nomul(-3, "getting stoned");
 	exercise(A_DEX, FALSE);
+}
+
+static void phasing_dialogue(void)
+{
+	if (Phasing == 15) {
+	    pline(Hallucination ?
+		  "You feel more distant from the spirit world." :
+		  "Your body is beginning to feel more solid.");
+	    stop_occupation();
+	} else if (Phasing == 1) {
+	    pline(Hallucination ?
+		  "You feel totally separated from the spirit world." :
+		  "Your body is solid again.");
+	    stop_occupation();
+	}
 }
 
 /* He is getting sicker and sicker prior to vomiting */
@@ -176,6 +192,7 @@ void nh_timeout(void)
 	    else if (u.uluck < baseluck && (nostone || time_luck > 0))
 		u.uluck++;
 	}
+	if (Phasing) phasing_dialogue();
 	if (u.uinvulnerable) return; /* things past this point could kill you */
 	if (Stoned) stoned_dialogue();
 	if (Slimed) slime_dialogue();

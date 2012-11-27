@@ -911,13 +911,20 @@ static void newgame(void)
     if (MON_AT(level, u.ux, u.uy)) mnexto(m_at(level, u.ux, u.uy));
     makedog();
     doredraw();
-    
+
+    if (Role_if(PM_CONVICT)) {
+	setworn(mkobj(level, CHAIN_CLASS, TRUE), W_CHAIN);
+	setworn(mkobj(level, BALL_CLASS, TRUE), W_BALL);
+	uball->spe = 1;	/* attach the ball to the hero */
+	placebc();
+    }
+
     /* help the window port get it's display charset/tiles sorted out */
     notify_levelchange(NULL);
 
     if (flags.legacy) {
 	    flush_screen();
-	    com_pager(1);
+	    com_pager(Role_if(PM_CONVICT) ? 199 : 1);
     }
 
     /* Stop autoexplore revisiting the entrance stairs (or position). */

@@ -32,6 +32,7 @@ struct eshk {
 	boolean following;	/* following customer since he owes us sth */
 	boolean surcharge;	/* angry shk inflates prices */
 	boolean cheapskate;	/* offers less than normal for sold goods */
+	boolean pbanned;	/* player is banned from the shop */
 	char customer[PL_NSIZ]; /* most recent customer */
 	char shknam[PL_NSIZ];
 };

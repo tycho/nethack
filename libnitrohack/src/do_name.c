@@ -236,6 +236,11 @@ struct obj *oname(struct obj *obj, const char *name)
 	    if (obj == uswapwep) untwoweapon();
 	    /* activate warning if you've just named your weapon "Sting" */
 	    if (obj == uwep) set_artifact_intrinsic(obj, TRUE, W_WEP);
+	    /* The Iron Ball of Liberation is rustproof only for convicts. */
+	    if (obj->oartifact == ART_IRON_BALL_OF_LIBERATION) {
+		obj->owt = 300;	/* magically lightened, but still heavy */
+		if (Role_if(PM_CONVICT)) obj->oerodeproof = TRUE;
+	    }
 	}
 	if (carried(obj)) update_inventory();
 	return obj;

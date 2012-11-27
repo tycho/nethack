@@ -176,6 +176,7 @@ static void m_initweap(struct level *lev, struct monst *mtmp)
 			case PM_LIEUTENANT:
 			  w1 = rn2(2) ? BROADSWORD : LONG_SWORD;
 			  break;
+			case PM_PRISON_GUARD:
 			case PM_CAPTAIN:
 			case PM_WATCH_CAPTAIN:
 			  w1 = rn2(2) ? LONG_SWORD : SILVER_SABER;
@@ -226,6 +227,11 @@ static void m_initweap(struct level *lev, struct monst *mtmp)
 			if (!rn2(2)) curse(otmp);
 			mpickobj(mtmp, otmp);
 		    }
+		} else if (mm == PM_MINER) {
+		    mongets(mtmp, PICK_AXE);
+		    otmp = mksobj(lev, BRASS_LANTERN, TRUE, FALSE);
+		    mpickobj(mtmp, otmp);
+		    begin_burn(lev, otmp, FALSE);
 		}
 		break;
 
@@ -457,6 +463,7 @@ static void m_initinv(struct monst *mtmp)
 
 		    switch(monsndx(ptr)) {
 			case PM_GUARD: mac = -1; break;
+			case PM_PRISON_GUARD: mac = -2; break;
 			case PM_SOLDIER: mac = 3; break;
 			case PM_SERGEANT: mac = 0; break;
 			case PM_LIEUTENANT: mac = -2; break;
@@ -501,6 +508,7 @@ static void m_initinv(struct monst *mtmp)
 			mongets(mtmp, LEATHER_CLOAK);
 
 		    if (ptr != &mons[PM_GUARD] &&
+			ptr != &mons[PM_PRISON_GUARD] &&
 			ptr != &mons[PM_WATCHMAN] &&
 			ptr != &mons[PM_WATCH_CAPTAIN]) {
 			if (!rn2(3)) mongets(mtmp, K_RATION);
@@ -1989,6 +1997,7 @@ struct monst *restore_mon(struct memfile *mf)
 	    shk->following = mread8(mf);
 	    shk->surcharge = mread8(mf);
 	    shk->cheapskate = mread8(mf);
+	    shk->pbanned = mread8(mf);
 	    mread(mf, shk->customer, sizeof(shk->customer));
 	    mread(mf, shk->shknam, sizeof(shk->shknam));
 	    for (i = 0; i < BILLSZ; i++)
@@ -2180,6 +2189,7 @@ void save_mon(struct memfile *mf, const struct monst *mon)
 	    mwrite8(mf, shk->following);
 	    mwrite8(mf, shk->surcharge);
 	    mwrite8(mf, shk->cheapskate);
+	    mwrite8(mf, shk->pbanned);
 	    mwrite(mf, shk->customer, sizeof(shk->customer));
 	    mwrite(mf, shk->shknam, sizeof(shk->shknam));
 	    for (i = 0; i < BILLSZ; i++)

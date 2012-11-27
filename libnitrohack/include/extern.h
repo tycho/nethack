@@ -554,7 +554,7 @@ extern boolean revive_nasty(int,int,const char*);
 extern void movobj(struct obj *,xchar,xchar);
 extern boolean may_dig(struct level *lev, xchar x, xchar y);
 extern boolean may_passwall(struct level *lev, xchar x, xchar y);
-extern boolean bad_rock(const struct permonst *,xchar,xchar);
+extern boolean bad_rock(const struct permonst *,boolean,xchar,xchar);
 extern boolean invocation_pos(const d_level *dlev, xchar x, xchar y);
 extern boolean test_move(int, int, int, int, int, int);
 extern boolean try_escape_trap(xchar x, xchar y, schar dx, schar dy);

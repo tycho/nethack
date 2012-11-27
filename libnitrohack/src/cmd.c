@@ -705,6 +705,8 @@ void enlightenment(int final)
 			if (u.usick_type & SICK_NONVOMITABLE)
 				you_are(&menu, "sick from illness");
 		}
+		if (Punished)
+			you_are(&menu, "punished");
 	}
 	if (Stoned) you_are(&menu, "turning to stone");
 	if (Slimed) you_are(&menu, "turning into slime");
