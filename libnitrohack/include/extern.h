@@ -137,6 +137,7 @@ extern int xytod(schar, schar);
 extern void dtoxy(coord *,int);
 extern void confdir(schar *dx, schar *dy);
 extern int get_adjacent_loc(const char *, const char *, xchar, xchar, coord *, schar *);
+extern void sokoban_trickster(void);
 
 /* ### dbridge.c ### */
 

@@ -1087,16 +1087,17 @@ void restore_you(struct memfile *mf, struct you *y)
 	
 	y->uevent.minor_oracle		= (eflags >> 31) & 1;
 	y->uevent.major_oracle		= (eflags >> 30) & 1;
-	y->uevent.qcalled		= (eflags >> 29) & 1;
-	y->uevent.qexpelled		= (eflags >> 28) & 1;
-	y->uevent.qcompleted		= (eflags >> 27) & 1;
-	y->uevent.uheard_tune		= (eflags >> 25) & 3;
-	y->uevent.uopened_dbridge	= (eflags >> 24) & 1;
-	y->uevent.invoked		= (eflags >> 23) & 1;
-	y->uevent.gehennom_entered	= (eflags >> 22) & 1;
-	y->uevent.uhand_of_elbereth	= (eflags >> 20) & 3;
-	y->uevent.udemigod		= (eflags >> 19) & 1;
-	y->uevent.ascended		= (eflags >> 18) & 1;
+	y->uevent.finished_sokoban	= (eflags >> 29) & 1;
+	y->uevent.qcalled		= (eflags >> 28) & 1;
+	y->uevent.qexpelled		= (eflags >> 27) & 1;
+	y->uevent.qcompleted		= (eflags >> 26) & 1;
+	y->uevent.uheard_tune		= (eflags >> 24) & 3;
+	y->uevent.uopened_dbridge	= (eflags >> 23) & 1;
+	y->uevent.invoked		= (eflags >> 22) & 1;
+	y->uevent.gehennom_entered	= (eflags >> 21) & 1;
+	y->uevent.uhand_of_elbereth	= (eflags >> 19) & 3;
+	y->uevent.udemigod		= (eflags >> 18) & 1;
+	y->uevent.ascended		= (eflags >> 17) & 1;
 	
 	y->uhave.amulet		= (hflags >> 31) & 1;
 	y->uhave.bell		= (hflags >> 30) & 1;
@@ -1173,6 +1174,7 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->uconduct.elbereths = mread32(mf);
 	y->uconduct.bones = mread32(mf);
 	y->uconduct.unracearmor = mread32(mf);
+	y->uconduct.sokoban = mread32(mf);
 	y->roleplay.ascet = mread8(mf);
 	y->roleplay.atheist = mread8(mf);
 	y->roleplay.blindfolded = mread8(mf);
@@ -1256,12 +1258,19 @@ void save_you(struct memfile *mf, struct you *y)
 		(y->uedibility << 25) | (y->usick_type << 23) |
 		(y->bstack << 22) | (y->cstack << 21) |
 		(y->bosoko << 20) | (y->cosoko << 19);
-	eflags = (y->uevent.minor_oracle << 31) | (y->uevent.major_oracle << 30) |
-		(y->uevent.qcalled << 29) | (y->uevent.qexpelled << 28) |
-		(y->uevent.qcompleted << 27) | (y->uevent.uheard_tune << 25) |
-		(y->uevent.uopened_dbridge << 24) | (y->uevent.invoked << 23) |
-		(y->uevent.gehennom_entered << 22) | (y->uevent.uhand_of_elbereth << 20) |
-		(y->uevent.udemigod << 19) | (y->uevent.ascended << 18);
+	eflags = (y->uevent.minor_oracle	<< 31) |
+		 (y->uevent.major_oracle	<< 30) |
+		 (y->uevent.finished_sokoban	<< 29) |
+		 (y->uevent.qcalled		<< 28) |
+		 (y->uevent.qexpelled		<< 27) |
+		 (y->uevent.qcompleted		<< 26) |
+		 (y->uevent.uheard_tune		<< 24) |
+		 (y->uevent.uopened_dbridge	<< 23) |
+		 (y->uevent.invoked		<< 22) |
+		 (y->uevent.gehennom_entered	<< 21) |
+		 (y->uevent.uhand_of_elbereth	<< 19) |
+		 (y->uevent.udemigod		<< 18) |
+		 (y->uevent.ascended		<< 17);
 	hflags = (y->uhave.amulet << 31) | (y->uhave.bell << 30) |
 		(y->uhave.book << 29) | (y->uhave.menorah << 28) |
 		(y->uhave.questart << 27);
@@ -1338,6 +1347,7 @@ void save_you(struct memfile *mf, struct you *y)
 	mwrite32(mf, y->uconduct.elbereths);
 	mwrite32(mf, y->uconduct.bones);
 	mwrite32(mf, y->uconduct.unracearmor);
+	mwrite32(mf, y->uconduct.sokoban);
 	mwrite8(mf, y->roleplay.ascet);
 	mwrite8(mf, y->roleplay.atheist);
 	mwrite8(mf, y->roleplay.blindfolded);

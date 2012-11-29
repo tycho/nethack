@@ -562,7 +562,7 @@ nopushmsg:
 			(flags.pickup && !In_sokoban(&u.uz))
 			    ? "pick it up" : "push it aside");
 		    if (In_sokoban(&u.uz))
-			change_luck(-1);	/* Sokoban guilt */
+			sokoban_trickster();	/* Sokoban guilt */
 		    break;
 		}
 		break;
@@ -574,7 +574,7 @@ nopushmsg:
 		|| verysmall(youmonst.data))) {
 		pline("However, you can squeeze yourself into a small opening.");
 		if (In_sokoban(&u.uz))
-		    change_luck(-1);	/* Sokoban guilt */
+		    sokoban_trickster();	/* Sokoban guilt */
 		break;
 	    } else
 		return -1;

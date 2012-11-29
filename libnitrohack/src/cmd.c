@@ -1162,6 +1162,14 @@ void show_conduct(int final)
 	    you_have_never(&menu, "encountered a bones level");
 	}
 
+	if ((wizard || final) && !u.uconduct.sokoban) {
+	    you_have_never(&menu, "used any shortcuts in Sokoban");
+	} else if (wizard || final) {
+	    sprintf(buf, "used %u shortcut%s in Sokoban",
+		    u.uconduct.sokoban, plur(u.uconduct.sokoban));
+	    you_have_X(&menu, buf);
+	}
+
 	/* Pop up the window and wait for a key */
 	display_menu(menu.items, menu.icount, "Voluntary challenges:", PICK_NONE, NULL);
 	free(menu.items);
@@ -1900,6 +1908,17 @@ static int dotravel(int x, int y)
 	flags.mv = TRUE;
 
 	return domove(0, 0, 0);
+}
+
+
+/*
+ * Track how many times the player "cheated" in Sokoban
+ * before picking up the prize.
+ */
+void sokoban_trickster(void)
+{
+	if (!u.uevent.finished_sokoban)
+	    u.uconduct.sokoban++;
 }
 
 /*cmd.c*/

@@ -1218,7 +1218,7 @@ struct obj *poly_obj(struct obj *obj, int id)
 	int obj_location = obj->where;
 
 	if (obj->otyp == BOULDER && In_sokoban(&u.uz))
-	    change_luck(-1);	/* Sokoban guilt */
+	    sokoban_trickster();	/* Sokoban guilt */
 	if (id == STRANGE_OBJECT) { /* preserve symbol */
 	    int try_limit = 3;
 	    /* Try up to 3 times to make the magic-or-not status of
@@ -3763,7 +3763,7 @@ void fracture_rock(struct obj *obj)
 {
 	/* A little Sokoban guilt... */
 	if (obj->otyp == BOULDER && In_sokoban(&u.uz) && !flags.mon_moving)
-	    change_luck(-1);
+	    sokoban_trickster();
 
 	obj->otyp = ROCK;
 	obj->quan = (long) rn1(60, 7);

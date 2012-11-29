@@ -25,12 +25,13 @@ struct u_have {
 struct u_event {
 	unsigned minor_oracle:1;	/* received at least 1 cheap oracle */
 	unsigned major_oracle:1;	/*  "  expensive oracle */
+	unsigned finished_sokoban:1;	/* obtained the Sokoban prize */
 	unsigned qcalled:1;		/* called by Quest leader to do task */
 	unsigned qexpelled:1;		/* expelled from the Quest dungeon */
 	unsigned qcompleted:1;		/* successfully completed Quest task */
 	unsigned uheard_tune:2;		/* 1=know about, 2=heard passtune */
-	unsigned uopened_dbridge:1;	/* opened the drawbridge */
 
+	unsigned uopened_dbridge:1;	/* opened the drawbridge */
 	unsigned invoked:1;		/* invoked Gate to the Sanctum level */
 	unsigned gehennom_entered:1;	/* entered Gehennom via Valley */
 	unsigned uhand_of_elbereth:2;	/* became Hand of Elbereth */
@@ -61,6 +62,7 @@ struct u_conduct {		/* number of times... */
 	unsigned int elbereths;	/* engraved Elbereth */
 	unsigned int bones;	/* encountered bones level */
 	unsigned int unracearmor;/* put on non-racial armor */
+	unsigned int sokoban;	/* Sokoban "rules" violated */
 				/* genocides already listed at end of game */
 };
 
