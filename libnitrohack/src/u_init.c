@@ -1172,6 +1172,7 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->uconduct.robbed = mread32(mf);
 	y->uconduct.elbereths = mread32(mf);
 	y->uconduct.bones = mread32(mf);
+	y->uconduct.unracearmor = mread32(mf);
 	y->roleplay.ascet = mread8(mf);
 	y->roleplay.atheist = mread8(mf);
 	y->roleplay.blindfolded = mread8(mf);
@@ -1336,6 +1337,7 @@ void save_you(struct memfile *mf, struct you *y)
 	mwrite32(mf, y->uconduct.robbed);
 	mwrite32(mf, y->uconduct.elbereths);
 	mwrite32(mf, y->uconduct.bones);
+	mwrite32(mf, y->uconduct.unracearmor);
 	mwrite8(mf, y->roleplay.ascet);
 	mwrite8(mf, y->roleplay.atheist);
 	mwrite8(mf, y->roleplay.blindfolded);
