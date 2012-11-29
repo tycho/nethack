@@ -3915,6 +3915,15 @@ boolean lava_effects(void)
 	for (obj = invent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
 	    if (is_organic(obj) && !obj->oerodeproof) {
+		/* Prevent the Book of the Dead from being destroyed when
+		 * the player falls into lava. */
+		if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+		    if (!Blind && usurvive) {
+			pline("%s glows a strange %s, but remains intact.",
+			      The(xname(obj)), hcolor("dark red"));
+		    }
+		    continue;
+		}
 		if (obj->owornmask) {
 		    if (usurvive)
 			pline("Your %s into flame!", aobjnam(obj, "burst"));
