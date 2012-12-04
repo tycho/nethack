@@ -622,11 +622,7 @@ touch_whereis()
   char whereis_file[255];
   char whereis_work[255];
 
-#ifdef WIN32
-  Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
-#else
-  Sprintf(whereis_file,"whereis/%s.whereis",plname);
-#endif
+  Sprintf(whereis_file,"%s",dump_format_str(WHEREIS_FILE));
   Sprintf(whereis_work,
 	  "depth=%d:dnum=%d:hp=%d:maxhp=%d:turns=%d:score=%ld:role=%s:race=%s:gender=%s:align=%s:conduct=0x%lx:amulet=%d\n",
 	  depth(&u.uz),
@@ -668,11 +664,7 @@ delete_whereis()
     /*FILE* fp;*/
   char whereis_file[255];
   /*char whereis_work[255];*/
-#if defined (WIN32)
-  Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
-#else
-  Sprintf(whereis_file,"whereis/%s.whereis",plname);
-#endif
+  Sprintf(whereis_file,"%s",dump_format_str(WHEREIS_FILE));
   (void) unlink(fqname(whereis_file, LEVELPREFIX, 2));
   /*
   fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);

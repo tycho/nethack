@@ -440,8 +440,9 @@ typedef unsigned char	uchar;
 #define RECORD_ALIGN0   /* Record initial alignment in logfile */
 #endif
 
-/* from Sporkhack */
-#define WHEREIS_FILE /* Write out player's current location to player.whereis */
+/* Write out player's current location to this file.
+   Can be left undefined, which will disable the feature. */
+#define WHEREIS_FILE "whereis/%n.whereis"
 
 #define USER_DUNGEONCOLOR
 
