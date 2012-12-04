@@ -196,7 +196,10 @@ mk_dgl_extrainfo()
     mode_t eimode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 #endif
     char new_fn[512];
-    Sprintf(new_fn, "%s", dump_format_str("/dgldir/extrainfo-nh343/%n.extrainfo"));
+#ifndef EXTRAINFO_FN
+    return;
+#endif
+    Sprintf(new_fn, "%s", dump_format_str(EXTRAINFO_FN));
 
     extrai = fopen(new_fn, "w");
     if (!extrai) {

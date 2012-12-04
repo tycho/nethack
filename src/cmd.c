@@ -540,7 +540,9 @@ enter_explore_mode()
 STATIC_PTR int
 wiz_mk_mapglyphdump()
 {
-    mk_mapdump("/dgldir/userdata/%N/%n/nh343.mapdump");
+#ifdef MAPDUMP_FN
+    mk_mapdump(MAPDUMP_FN);
+#endif
     return 0;
 }
 

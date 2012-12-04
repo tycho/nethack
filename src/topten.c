@@ -444,7 +444,9 @@ mk_HUPfile(char *fname)
 void
 write_HUP_file()
 {
-    mk_HUPfile("/dgldir/userdata/%N/%n/hanguplist.txt");
+#ifdef HUPLIST_FN
+    mk_HUPfile(HUPLIST_FN);
+#endif
 }
 
 

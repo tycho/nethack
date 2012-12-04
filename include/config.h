@@ -384,6 +384,24 @@ typedef unsigned char	uchar;
                                    * to prevent definition by users */
 #define DUMPMSGS 20     /* Number of latest messages in the dump file  */
 
+/* In the following filename definitions, you can use the some string substitutions:
+  %n = player's name
+  %N = first character of player's name
+  %t = character's starting time, in unix epoch format
+*/
+
+/* Filename for the wizard-mode command for dumping the map data.
+   Can be left undefined, in which case the wiz-mode command does nothing. */
+#define MAPDUMP_FN "/dgldir/userdata/%N/%n/nh343.mapdump"
+
+/* Filename for where HUPping a game is saved.
+   Can be left undefined, in which case HUPping doesn't write the data. */
+#define HUPLIST_FN "/dgldir/userdata/%N/%n/hanguplist.txt"
+
+/* Filename for dgamelaunch extra info field.
+   Can be left undefined for not writing extrainfo. */
+#define EXTRAINFO_FN "/dgldir/extrainfo-nh343/%n.extrainfo"
+
 #define SHOW_BORN    /* extinct & showborn -patch */
 #define SHOW_EXTINCT
 
