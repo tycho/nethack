@@ -695,7 +695,7 @@ struct obj *otmp;
 void
 ck_server_admin_msg()
 {
-#ifdef SERVER_ADMIN_MSG
+#if defined(SERVER_ADMIN_MSG) && defined(UNIX)
   static struct stat ost,nst;
   static long lastchk = 0;
 
@@ -734,7 +734,7 @@ ck_server_admin_msg()
       flags.soundok = snd;
     }
   }
-#endif /* SERVER_ADMIN_MSG */  
+#endif /* SERVER_ADMIN_MSG && UNIX */
 }
 
 /*mail.c*/

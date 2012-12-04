@@ -411,6 +411,11 @@ typedef unsigned char	uchar;
 
 #define PARANOID /* paranoid quit &c */
 
+/* If this file exists, players get a message from the user defined
+   in the file.  The file format is "username:message to be shown" all
+   in one line.  Can be left undefined to disable the feature.
+   Requires UNIX
+*/
 #define SERVER_ADMIN_MSG "admin_msg"
 
 #define LIVELOGFILE "livelog"
