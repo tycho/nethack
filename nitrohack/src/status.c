@@ -123,6 +123,8 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
 	fill_len = 0;
     else
 	fill_len = len * val_cur / val_max;
+    if (fill_len > len)
+	fill_len = len;
 
     colorattr = curses_color_attr(percent_color(val_cur, val_max));
     waddch(statuswin, '[');
@@ -325,6 +327,8 @@ static void draw_bar(int barlen, int val_cur, int val_max, const char *prefix)
     bl = barlen-2;
     if (val_max > 0 && val_cur > 0)
 	fill_len = bl * val_cur / val_max;
+    if (fill_len > bl)
+	fill_len = bl;
 
     colorattr = curses_color_attr(percent_color(val_cur, val_max));
 
