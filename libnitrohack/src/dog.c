@@ -159,8 +159,6 @@ struct monst *makedog(void)
 		if (Role_if(PM_SAMURAI)) petname = "Hachi";     /* Shibuya Station */
 		if (Role_if(PM_BARBARIAN)) petname = "Idefix";  /* Obelix */
 		if (Role_if(PM_RANGER)) petname = "Sirius";     /* Orion's dog */
-	    } else if (pettype == PM_KITTEN) {
-		if (!rn2(100)) petname = "Shiva"; /* PM: RIP 1 Oct 1998 - 6 Sep 2009 */
 	    } else if (pettype == PM_SEWER_RAT) {
 		if (Role_if(PM_CONVICT)) petname = "Nicodemus"; /* Rats of NIMH */
 	    }
@@ -188,6 +186,11 @@ struct monst *makedog(void)
 	    otmp->owornmask = W_SADDLE;
 	    otmp->leashmon = mtmp->m_id;
 	    update_mon_intrinsics(level, mtmp, otmp, TRUE, TRUE);
+	}
+
+	if (!*petname && pettype == PM_KITTEN && !rn2(100)) {
+	    if (mtmp->female) petname = "Shiva"; /* PM: RIP 1 Oct 1998 -  6 Sep 2009 */
+	    else petname = "Kali";		 /* PM: RIP 1 May 2000 - 22 Oct 2012 */
 	}
 
 	if (*petname)
