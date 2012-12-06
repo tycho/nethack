@@ -260,8 +260,8 @@ level_def	: LEVEL_ID ':' string
 
 			if (strchr($3, '.'))
 			    lc_error("Invalid dot ('.') in level name '%s'.", $3);
-			if (strlen($3) > 8) {
-			    lc_error("Level names limited to 8 characters ('%s').",
+			if (strlen($3) > 14) {
+			    lc_error("Level names limited to 14 characters ('%s').",
 				     $3);
 			}
 
