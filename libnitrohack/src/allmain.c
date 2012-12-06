@@ -135,6 +135,84 @@ boolean nh_exit_game(int exit_type)
 }
 
 
+/* Track HP for hp_notify messages. */
+static int prev_hp_notify;
+
+/*
+ * hp_notify format:
+ *
+ * - %a = HP adjustment since last notification, no +/- sign
+ * - %c = HP adjustment sign, i.e. +/- sign for above
+ * - %h = current HP
+ * - %m = maximum HP
+ * - %H = current HP or "max" if HP is at maximum
+ *
+ * e.g. "[HP%c%a=%h]" gives something like "[HP-2=10]".
+ */
+static char *hp_notify_format_str(const char *fmt)
+{
+    static char buf[128];
+    const char *f;
+    char *p, *end;
+    boolean ispercent = FALSE;
+
+    buf[0] = '\0';
+
+    if (!fmt) return NULL;
+
+    p = buf;
+    end = buf + sizeof(buf) - 10;
+
+    for (f = fmt; *f; f++) {
+	/* Don't give snprintf() negative buffer lengths. */
+	if (p > end) p = end;
+	if (ispercent) {
+	    switch (*f) {
+		case 'a':
+		    snprintf(p, end + 1 - p, "%ld",
+			     (long)abs(uhp() - prev_hp_notify));
+		    while (*p != '\0') p++;
+		    break;
+		case 'c':
+		    snprintf(p, end + 1 - p, "%c",
+			     (prev_hp_notify > uhp() ? '-' : '+'));
+		    p++;
+		    break;
+		case 'm':
+		    snprintf(p, end + 1 - p, "%ld", (long)uhpmax());
+		    while (*p != '\0') p++;
+		    break;
+		case 'H':
+		    if (uhp() == uhpmax())
+			snprintf(p, end + 1 - p, "%s", "max");
+		    else
+			snprintf(p, end + 1 - p, "%ld", (long)uhp());
+		    while (*p != '\0') p++;
+		    break;
+		case 'h':
+		    snprintf(p, end + 1 - p, "%ld", (long)uhp());
+		    while (*p != '\0') p++;
+		    break;
+		default:
+		    *p = *f;
+		    if (p < end) p++;
+	    }
+	    ispercent = FALSE;
+	} else {
+	    if (*f == '%') {
+		ispercent = TRUE;
+	    } else {
+		*p = *f;
+		if (p < end) p++;
+	    }
+	}
+    }
+    *p = '\0';
+
+    return buf;
+}
+
+
 void startup_common(const char *name, int playmode)
 {
     /* (re)init all global data */
@@ -226,7 +304,9 @@ static void post_init_tasks(void)
     encumber_msg(); /* in case they auto-picked up something */
 
     u.uz0.dlevel = u.uz.dlevel;
-    
+
+    prev_hp_notify = uhp();
+
     /* prepare for the first move */
     pre_move_tasks(FALSE);
 }
@@ -616,6 +696,12 @@ static void you_moved(void)
 
     if (u.utrap && u.utraptype == TT_LAVA)
 	handle_lava_trap(TRUE);
+
+    if (iflags.hp_notify && prev_hp_notify != uhp()) {
+	pline("%s", hp_notify_format_str(iflags.hp_notify_fmt ?
+					 iflags.hp_notify_fmt : "[HP%c%a=%h]"));
+	prev_hp_notify = uhp();
+    }
 }
 
 

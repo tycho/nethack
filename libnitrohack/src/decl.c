@@ -232,6 +232,7 @@ void init_data(void)
     boolean nolog = iflags.disable_log;
     struct nh_autopickup_rules *rules = iflags.ap_rules;
     struct nh_msgtype_rules *mt_rules = iflags.mt_rules;
+    char *hp_notify_fmt = iflags.hp_notify_fmt;
     moves = 1;
     
     memset(&program_state, 0, sizeof(program_state));
@@ -293,6 +294,7 @@ void init_data(void)
     iflags.disable_log = nolog;
     iflags.ap_rules = rules;
     iflags.mt_rules = mt_rules;
+    iflags.hp_notify_fmt = hp_notify_fmt;
     flags.moonphase = 10; /* invalid value, so that the first call to realtime_tasks will dtrt */
     lastinvnr = 51;
     flags.soundok = 1;

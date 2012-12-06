@@ -761,6 +761,10 @@ void freedynamicdata(void)
 	    free(iflags.mt_rules);
 	    iflags.mt_rules = NULL;
 	}
+	if (iflags.hp_notify_fmt) {
+	    free(iflags.hp_notify_fmt);
+	    iflags.hp_notify_fmt = NULL;
+	}
 
 	free(artilist);
 	free(objects);

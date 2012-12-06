@@ -132,6 +132,8 @@ static const struct nh_option_desc const_options[] = {
     {"confirm",		"ask before hitting tame or peaceful monsters",	OPTTYPE_BOOL, { VTRUE }},
     {"disclose",	"whether to disclose information at end of game", OPTTYPE_ENUM, {(void*)DISCLOSE_PROMPT_DEFAULT_YES}},
     {"fruit",		"the name of a fruit you enjoy eating", OPTTYPE_STRING, {"slime mold"}},
+    {"hp_notify",	"show a message when HP changes", OPTTYPE_BOOL, { VTRUE }},
+    {"hp_notify_format","hp_notify message format", OPTTYPE_STRING, {"[HP%c%a=%h]"}},
     {"lit_corridor",	"show a dark corridor as lit if in sight",	OPTTYPE_BOOL, { VTRUE }},
     {"menustyle",	"user interface for object selection", OPTTYPE_ENUM, {(void*)MENU_FULL}},
     {"msgtype",		"--More--, hide or hide repeated messages by pattern", OPTTYPE_MSGTYPE, {0}},
@@ -201,6 +203,7 @@ static const struct nh_boolopt_map boolopt_map[] = {
 	{"autounlock", &flags.autounlock},
 	{"confirm",&flags.confirm},
 	{"female", &flags.female},
+	{"hp_notify", &iflags.hp_notify},
 	{"legacy", &flags.legacy},
 	{"lit_corridor", &flags.lit_corridor},
 	{"paranoid_chat", &iflags.paranoid_chat},
@@ -336,6 +339,7 @@ void init_opt_struct(void)
 	/* initialize option definitions */
 	find_option(options, "disclose")->e = disclose_spec;
 	find_option(options, "fruit")->s.maxlen = PL_FSIZ;
+	find_option(options, "hp_notify_format")->s.maxlen = 80; /* min term width */
 	find_option(options, "menustyle")->e = menustyle_spec;
 	find_option(options, "pickup_burden")->e = pickup_burden_spec;
 	find_option(options, "packorder")->s.maxlen = MAXOCLASSES;
@@ -679,6 +683,13 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 		strncpy(pl_fruit, option->value.s, PL_FSIZ);
 		if (objects) /* don't do fruitadd before the game is running */
 		    fruitadd(pl_fruit);
+	}
+	else if (!strcmp("hp_notify_format", option->name)) {
+		if (iflags.hp_notify_fmt) {
+		    free(iflags.hp_notify_fmt);
+		    iflags.hp_notify_fmt = NULL;
+		}
+		iflags.hp_notify_fmt = strdup(option->value.s);
 	}
 	else if (!strcmp("menustyle", option->name)) {
 		flags.menu_style = option->value.e;

@@ -161,6 +161,9 @@ struct instance_flags {
 	boolean paranoid_chat;	/* Always ask for direction when chatting */
 	boolean paranoid_loot;	/* Always ask to loot even with only one container */
 
+	boolean hp_notify;	/* Show a message when HP changes. */
+	char	*hp_notify_fmt;	/* hp_notify message format. */
+
 	/* Items which belong in flags, but are here to allow save compatibility */
 	boolean  show_uncursed;	/* always show uncursed items as such */
 	boolean  showrace;	/* show hero glyph by race rather than by role */
