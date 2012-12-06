@@ -859,10 +859,12 @@ int curses_display_objects(struct nh_objitem *items, int icount,
 		idx = find_objaccel(key, mdat);
 		
 		if (idx != -1) { /* valid item accelerator */
-		    if (mdat->selected[idx])
-			mdat->selected[idx] = 0;
-		    else
+		    if (mdat->selcount > 0)
 			mdat->selected[idx] = mdat->selcount;
+		    else
+			mdat->selected[idx] = mdat->selected[idx] ? 0 : -1;
+		    if (mdat->selected[idx] >= mdat->items[idx].count)
+			mdat->selected[idx] = -1;
 		    mdat->selcount = -1;
 		    
 		    if (mdat->how == PICK_ONE)
@@ -877,10 +879,12 @@ int curses_display_objects(struct nh_objitem *items, int icount,
 		    int grouphits = 0;
 		    for (i = 0; i < mdat->icount; i++) {
 			if (items[i].group_accel == key && mdat->items[i].oclass != -1) {
-			    if (mdat->selected[i] == mdat->selcount)
-				mdat->selected[i] = 0;
-			    else
+			    if (mdat->selcount > 0)
 				mdat->selected[i] = mdat->selcount;
+			    else
+				mdat->selected[i] = mdat->selected[i] ? 0 : -1;
+			    if (mdat->selected[i] >= mdat->items[i].count)
+				mdat->selected[i] = -1;
 			    grouphits++;
 			}
 		    }
