@@ -1760,26 +1760,33 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	    struct monst *was;
 	    struct obj *obj;
 	    int wastyp;
+	    int i;
 
 	    /* Named random statues are of player types, and aren't stone-
 	     * resistant (if they were, we'd have to reset the name as well as
 	     * setting corpsenm).
 	     */
-	    for (wastyp = otmp->corpsenm; ; wastyp = rndmonnum(lev)) {
+	    wastyp = otmp->corpsenm;
+	    for (i = 0; i < 1000; i++) {
 		/* makemon without rndmonst() might create a group */
 		was = makemon(&mons[wastyp], lev, 0, 0, NO_MM_FLAGS);
-		if (!resists_ston(was)) break;
+		if (was) {
+		    if (!resists_ston(was)) break;
+		    mongone(was);
+		}
+		wastyp = rndmonnum(lev);
+	    }
+	    if (was) {
+		otmp->corpsenm = wastyp;
+		while (was->minvent) {
+		    obj = was->minvent;
+		    obj->owornmask = 0;
+		    obj_extract_self(obj);
+		    add_to_container(otmp, obj);
+		}
+		otmp->owt = weight(otmp);
 		mongone(was);
 	    }
-	    otmp->corpsenm = wastyp;
-	    while (was->minvent) {
-		obj = was->minvent;
-		obj->owornmask = 0;
-		obj_extract_self(obj);
-		add_to_container(otmp, obj);
-	    }
-	    otmp->owt = weight(otmp);
-	    mongone(was);
 	}
 
 	stackobj(otmp);

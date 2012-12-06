@@ -494,7 +494,7 @@ static void mkgarden(struct level *lev, struct mkroom *croom)
 		const struct permonst *pmon;
 		if (!MON_AT(lev, pos.x, pos.y) && (pmon = mkclass(&lev->z, S_NYMPH, 0))) {
 		    struct monst *mtmp = makemon(pmon, lev, pos.x, pos.y, NO_MM_FLAGS);
-		    mtmp->msleeping = 1;
+		    if (mtmp) mtmp->msleeping = 1;
 		    i--;
 		}
 	    }
