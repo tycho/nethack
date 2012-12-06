@@ -3301,7 +3301,7 @@ void buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy)
 		    unmap_object(sx, sy);
 		    newsym(sx, sy);
 		}
-		if (ZAP_POS(loc->typ) || cansee(lsx,lsy))
+		if (ZAP_POS(loc->typ) || (isok(lsx,lsy) && cansee(lsx,lsy)))
 		    tmp_at(sx,sy);
 		win_delay_output(); /* wait a little */
 	    }
