@@ -269,8 +269,10 @@ struct obj *addinv(struct obj *obj)
 	struct obj *otmp;
 	boolean obj_was_thrown;
 
-	if (obj->where != OBJ_FREE)
-	    panic("addinv: obj not free (%d)", obj->where);
+	if (obj->where != OBJ_FREE) {
+	    panic("addinv: obj not free (%d,%d,%d)",
+		  obj->where, obj->otyp, obj->invlet);
+	}
 
 	obj_was_thrown = obj->was_thrown;
 

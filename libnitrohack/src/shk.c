@@ -1993,8 +1993,11 @@ static void add_one_tobill(struct obj *obj, boolean dummy)
 
 static void add_to_billobjs(struct obj *obj)
 {
-    if (obj->where != OBJ_FREE)
-	panic("add_to_billobjs: obj not free (%d)", obj->where);
+    if (obj->where != OBJ_FREE) {
+	panic("add_to_billobjs: obj not free (%d,%d,%d)",
+	      obj->where, obj->otyp, obj->invlet);
+    }
+
     if (obj->timed)
 	obj_stop_timers(obj);
 
