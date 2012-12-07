@@ -95,7 +95,7 @@ set (COMPILED_LEVELS
     Tou-fila.lev Tou-filb.lev
     Tou-goal.lev Tou-loca.lev Tou-strt.lev tower1.lev
     tower2.lev   tower3.lev
-    town-1.lev   town-2.lev
+    town-1.lev   town-2.lev   townfill.lev
     Val-fila.lev Val-filb.lev
     Val-goal.lev valley-1.lev valley-2.lev
     Val-loca.lev Val-strt.lev
