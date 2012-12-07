@@ -2698,11 +2698,11 @@ int doapply(struct obj *obj)
 	case BAG_OF_HOLDING:
 	case OILSKIN_SACK:
 	case IRON_SAFE:
-		res = use_container(obj, 1);
-		break;
+		/* return immediately as the container might be destroyed */
+		return use_container(obj, 1);
 	case BAG_OF_TRICKS:
-		res = bagotricks(obj);
-		break;
+		/* return immediately as the container might be destroyed */
+		return bagotricks(obj);
 	case CAN_OF_GREASE:
 		use_grease(obj);
 		break;
