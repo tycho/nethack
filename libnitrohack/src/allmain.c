@@ -785,6 +785,14 @@ static void pre_move_tasks(boolean didmove)
     
     update_inventory();
     update_location(FALSE);
+
+    if (didmove) {
+	/* Mark the current square as stepped on unless blind,
+	 * since that would imply that we had properly explored it. */
+	struct rm *loc = &level->locations[u.ux][u.uy];
+	if (!Blind && !loc->mem_stepped)
+	    loc->mem_stepped = 1;
+    }
 }
 
 

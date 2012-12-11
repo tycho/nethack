@@ -55,6 +55,8 @@ static void check_here(boolean picked_some)
 {
 	struct obj *obj;
 	int ct = 0;
+	boolean autoexploring = (flags.run == 8 &&
+				 flags.travel && iflags.autoexplore);
 
 	/* count the objects here */
 	for (obj = level->objects[u.ux][u.uy]; obj; obj = obj->nexthere) {
@@ -62,8 +64,9 @@ static void check_here(boolean picked_some)
 		ct++;
 	}
 
-	/* If there are objects here, take a look. */
-	if (ct) {
+	/* If there are objects here, take a look unless
+	 * autoexploring a previously explored space. */
+	if (ct && !(autoexploring && level->locations[u.ux][u.uy].mem_stepped)) {
 	    if (flags.run) nomul(0, NULL);
 	    flush_screen();
 	    look_here(ct, picked_some);
@@ -211,9 +214,13 @@ int pickup(int what)
 		    return 0;
 		}
 
-		/* if there's anything here, stop running and travel */
+		/* If there's anything here, stop running and travel, but not
+		 * autoexplore unless it picks something up, which is handled
+		 * later.
+		 */
 		if (OBJ_AT(u.ux, u.uy) && flags.run &&
-		    (flags.run != 8 || flags.travel) && !flags.nopick)
+		    (flags.run != 8 || (flags.travel && !iflags.autoexplore)) &&
+		    !flags.nopick)
 		    nomul(0, NULL);
 	}
 
@@ -236,7 +243,6 @@ int pickup(int what)
 	    goto menu_pickup;
 	}
 
-
 	if (count) {	/* looking for N of something */
 	    char buf[QBUFSZ];
 	    sprintf(buf, "Pick %d of what?", count);
@@ -255,14 +261,12 @@ int pickup(int what)
 menu_pickup:
 	n_tried = n;
 	for (n_picked = i = 0 ; i < n; i++) {
-	    res = pickup_object(pick_list[i].obj, pick_list[i].count,
-				    FALSE);
+	    res = pickup_object(pick_list[i].obj, pick_list[i].count, FALSE);
 	    if (res < 0) break;	/* can't continue */
 	    n_picked += res;
 	}
 	if (pick_list)
 	    free(pick_list);
-
 
 	if (!u.uswallow) {
 		if (!OBJ_AT(u.ux, u.uy)) u.uundetected = 0;
@@ -273,6 +277,13 @@ menu_pickup:
 		/* see whether there's anything else here, after auto-pickup is done */
 		if (autopickup) check_here(n_picked > 0);
 	}
+
+	/* Stop autoexplore if this pile hasn't been explored or
+	 * auto-pickup (tried to) pick up anything. */
+	if (flags.run == 8 && flags.travel && iflags.autoexplore &&
+	    (!level->locations[u.ux][u.uy].mem_stepped || (autopickup && n_tried > 0)))
+	    nomul(0, NULL);
+
 	return n_tried > 0;
 }
 

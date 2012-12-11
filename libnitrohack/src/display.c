@@ -271,6 +271,12 @@ void map_object(struct obj *obj, int show)
     int monnum = 0;
 
     if (level->flags.hero_memory) {
+	struct rm *loc = &level->locations[x][y];
+	int old_obj = loc->mem_obj;
+	int old_obj_mn = loc->mem_obj_mn;
+	int old_obj_stacks = loc->mem_obj_stacks;
+	int old_obj_soko = loc->mem_obj_soko;
+
 	if (objtyp == CORPSE || objtyp == STATUE || objtyp == FIGURINE) {
 	    if (Hallucination)
 		monnum = random_monster();
@@ -278,19 +284,19 @@ void map_object(struct obj *obj, int show)
 		monnum = obfuscate_monster(obj->corpsenm);
 	}
 
-	level->locations[x][y].mem_obj = objtyp + 1;
-	level->locations[x][y].mem_obj_mn = monnum + 1;
+	loc->mem_obj = objtyp + 1;
+	loc->mem_obj_mn = monnum + 1;
+	loc->mem_obj_stacks = obj->otyp != BOULDER &&
+			      level->objects[x][y] && level->objects[x][y]->nexthere;
+	loc->mem_obj_soko = Is_sokoprize(obj);
 
-	if (obj->otyp != BOULDER && level->objects[x][y] &&
-	    level->objects[x][y]->nexthere)
-	    level->locations[x][y].mem_obj_stacks = 1;
-	else
-	    level->locations[x][y].mem_obj_stacks = 0;
-
-	if (Is_sokoprize(obj))
-	    level->locations[x][y].mem_obj_soko = 1;
-	else
-	    level->locations[x][y].mem_obj_soko = 0;
+	/* If object memory differs here, it's worth autoexploring again. */
+	if (loc->mem_stepped &&
+	    (loc->mem_obj != old_obj ||
+	     loc->mem_obj_mn != old_obj_mn ||
+	     loc->mem_obj_stacks != old_obj_stacks ||
+	     loc->mem_obj_soko != old_obj_soko))
+	    loc->mem_stepped = 0;
     }
     if (show)
 	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0);

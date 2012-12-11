@@ -2006,10 +2006,6 @@ int domove(schar dx, schar dy, schar dz)
 	    /* Since the hero has moved, adjust what can be seen/unseen. */
 	    vision_recalc(1);	/* Do the work now in the recover time. */
 	    invocation_message();
-	    /* Mark the square as stepped on, unless blind since that
-	     * would imply that we had properly explored that area. */
-	    if (!Blind)
-		level->locations[u.ux][u.uy].mem_stepped = 1;
 	}
 
 	if (Punished)				/* put back ball and chain */
