@@ -295,8 +295,8 @@ void savelev(struct memfile *mf, xchar levnum)
 	int x, y;
 	unsigned int lflags;
 	struct level *lev = levels[levnum];
-	
-	if (iflags.purge_monsters) {
+
+	if (lev->flags.purge_monsters) {
 		/* purge any dead monsters (necessary if we're starting
 		 * a panic save rather than a normal one, or sometimes
 		 * when changing levels without taking time -- e.g.

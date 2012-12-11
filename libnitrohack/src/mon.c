@@ -1194,10 +1194,10 @@ void dmonsfree(struct level *lev)
 	    mtmp = &(*mtmp)->nmon;
     }
 
-    if (count != iflags.purge_monsters)
+    if (count != lev->flags.purge_monsters)
 	impossible("dmonsfree: %d removed doesn't match %d pending",
-		   count, iflags.purge_monsters);
-    iflags.purge_monsters = 0;
+		   count, lev->flags.purge_monsters);
+    lev->flags.purge_monsters = 0;
 }
 
 
@@ -1275,7 +1275,7 @@ static void m_detach(struct monst *mtmp,
 
 	if (mtmp->isshk) shkgone(mtmp);
 	if (mtmp->wormno) wormgone(mtmp);
-	iflags.purge_monsters++;
+	mtmp->dlevel->flags.purge_monsters++;
 }
 
 /* find the worn amulet of life saving which will save a monster */

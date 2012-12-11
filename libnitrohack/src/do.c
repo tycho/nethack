@@ -1024,7 +1024,7 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	 */
 	vision_recalc(2);
 	
-	if (iflags.purge_monsters) {
+	if (level->flags.purge_monsters) {
 		/* purge any dead monsters */
 		dmonsfree(level);
 	}

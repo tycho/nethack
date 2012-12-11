@@ -147,7 +147,6 @@ struct flag {
  */
 struct instance_flags {
 	boolean  vision_inited; /* true if vision is ready */
-	int      purge_monsters;	/* # of dead monsters still on level->monlist list */
 	boolean  pickup_dropped;	/* auto-pickup items you dropped */
 	boolean  pickup_thrown; /* auto-pickup items you threw */
 	boolean  travel1;	/* first travel step */
