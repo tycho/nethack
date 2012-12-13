@@ -153,6 +153,7 @@ struct instance_flags {
 	coord    travelcc;	/* coordinates for travel_cache */
 	boolean  mon_polycontrol;	/* debug: control monster polymorphs */
 	boolean  autodigdown;	/* autodigging down tries to create a pit/hole */
+	boolean  menu_match_tight;	/* use tighter matching for multi-drop/loot */
 
 	boolean paranoid_hit;	/* Ask for 'yes' when hitting peacefuls */
 	boolean paranoid_quit;	/* Ask for 'yes' when quitting */

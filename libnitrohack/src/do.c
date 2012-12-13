@@ -740,16 +740,25 @@ static int menu_drop(int retry)
     }
 
     if (drop_everything) {
+	boolean matched = FALSE;
 	for (otmp = invent; otmp; otmp = otmp2) {
 	    otmp2 = otmp->nobj;
-	    n_dropped += drop(otmp);
+	    if (all_categories || allow_category(otmp)) {
+		matched = TRUE;
+		n_dropped += drop(otmp);
+	    }
 	}
+	if (!matched)
+	    pline(all_categories ? "Nothing to drop." : "No matching objects.");
     } else {
 	/* should coordinate with perm invent, maybe not show worn items */
 	n = query_objlist("What would you like to drop?", invent,
-			USE_INVLET|INVORDER_SORT, &obj_pick_list,
+			SIGNAL_NOMENU|USE_INVLET|INVORDER_SORT, &obj_pick_list,
 			PICK_ANY, all_categories ? allow_all : allow_category);
-	if (n > 0) {
+	if (n < 0) {
+	    if (!all_categories)
+		pline("No matching objects.");
+	} else if (n > 0) {
 	    for (i = 0; i < n; i++) {
 		otmp = obj_pick_list[i].obj;
 		cnt = obj_pick_list[i].count;

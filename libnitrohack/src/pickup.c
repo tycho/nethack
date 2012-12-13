@@ -114,27 +114,59 @@ boolean allow_all(const struct obj *obj)
 
 boolean allow_category(const struct obj *obj)
 {
-    boolean priest = Role_if(PM_PRIEST);
-    if (((strchr(valid_menu_classes,'u') != NULL) && obj->unpaid) ||
-	(strchr(valid_menu_classes, obj->oclass) != NULL))
-	return TRUE;
-    else if (((strchr(valid_menu_classes,'U') != NULL) &&
-	(obj->oclass != COIN_CLASS && (priest || obj->bknown) && !obj->blessed && !obj->cursed)))
-	return TRUE;
-    else if (((strchr(valid_menu_classes,'B') != NULL) &&
-	(obj->oclass != COIN_CLASS && (priest || obj->bknown) && obj->blessed)))
-	return TRUE;
-    else if (((strchr(valid_menu_classes,'C') != NULL) &&
-	(obj->oclass != COIN_CLASS && (priest || obj->bknown) && obj->cursed)))
-	return TRUE;
-    else if (((strchr(valid_menu_classes,'X') != NULL) &&
-	(obj->oclass != COIN_CLASS && !(priest || obj->bknown))))
-	return TRUE;
-    else if (((strchr(valid_menu_classes,'I') != NULL) &&
-	not_fully_identified_core(obj, TRUE)))
-	return TRUE;
-    else
-	return FALSE;
+	if (iflags.menu_match_tight) {
+	    /* object class match failure */
+	    if (!strchr(valid_menu_classes, obj->oclass))
+		return FALSE;
+
+	    /* none of the below apply to gold */
+	    if (obj->oclass == COIN_CLASS)
+		return TRUE;
+
+	    /* match BUC flags */
+	    if (Role_if(PM_PRIEST) || obj->bknown) {
+		if (strchr(valid_menu_classes, 'B') && obj->blessed)
+		    return TRUE;
+		if (strchr(valid_menu_classes, 'C') && obj->cursed)
+		    return TRUE;
+		if (strchr(valid_menu_classes, 'U') && !obj->blessed && !obj->cursed)
+		    return TRUE;
+	    } else {
+		if (strchr(valid_menu_classes, 'X'))
+		    return TRUE;
+	    }
+
+	    /* match unpaid or unIDed */
+	    if ((strchr(valid_menu_classes, 'u') && obj->unpaid) ||
+		(strchr(valid_menu_classes, 'I') &&
+		 not_fully_identified_core(obj, TRUE)))
+		return TRUE;
+
+	    return FALSE;
+	} else {
+	    /* Classic (loose) matching behavior. */
+	    boolean priest = Role_if(PM_PRIEST);
+	    if ((strchr(valid_menu_classes,'u') && obj->unpaid) ||
+		strchr(valid_menu_classes, obj->oclass))
+		return TRUE;
+	    else if (strchr(valid_menu_classes,'U') && obj->oclass != COIN_CLASS &&
+		     (priest || obj->bknown) && !obj->blessed && !obj->cursed)
+		return TRUE;
+	    else if (strchr(valid_menu_classes,'B') && obj->oclass != COIN_CLASS &&
+		     (priest || obj->bknown) && obj->blessed)
+		return TRUE;
+	    else if (strchr(valid_menu_classes,'C') && obj->oclass != COIN_CLASS &&
+		     (priest || obj->bknown) && obj->cursed)
+		return TRUE;
+	    else if (strchr(valid_menu_classes,'X') && obj->oclass != COIN_CLASS &&
+		     !(priest || obj->bknown))
+		return TRUE;
+	    else if (strchr(valid_menu_classes,'I') &&
+		     not_fully_identified_core(obj, TRUE))
+		return TRUE;
+	    else
+		return FALSE;
+	}
 }
 
 
@@ -622,6 +654,8 @@ int query_category(const char *qstr,	/* query string */
 	    do_buc_unknown = FALSE, do_unidentified = FALSE;
 	int num_buc_types = 0;
 	struct menulist menu;
+	int valid_oclasses[MAXOCLASSES]; /* excludes COIN_CLASS */
+	int num_valid_oclasses = 0;
 
 	if (!olist)
 	    return 0;
@@ -688,6 +722,15 @@ int query_category(const char *qstr,	/* query string */
 			add_menuitem(&menu, curr->oclass, buf, invlet++, FALSE);
 			menu.items[menu.icount - 1].group_accel = oc_sym;
 			collected_type_name = TRUE;
+			/* Gold is handled separately. */
+			if (iflags.menu_match_tight && curr->oclass != COIN_CLASS) {
+			    valid_oclasses[num_valid_oclasses++] = curr->oclass;
+			    if (num_valid_oclasses >= MAXOCLASSES) {
+				free(menu.items);
+				impossible("query_category: too many oclasses");
+				return 0;
+			    }
+			}
 		   }
 		}
 	    }
@@ -731,7 +774,124 @@ int query_category(const char *qstr,	/* query string */
 	free(menu.items);
 	if (n < 0)
 	    n = 0;	/* callers don't expect -1 */
-	
+
+	/*
+	 * Fudge menu choices since allow_category() requires at least
+	 * an object class and some object property to show anything.
+	 *
+	 * - Choosing all [a] goes through allow_all(), which skips all of this.
+	 * - Choosing gold [$] always shows gold, since it's not subjected
+	 *   the usual property checks.
+	 * - Choosing only gold [$] excludes all other objects.
+	 * - Auto-select all with nothing else includes gold and all objects.
+	 * - Choosing classes w/out properties auto-matches any BUC to match
+	 *   all objects of that class.
+	 * - Choosing properties w/out classes auto-matches all classes to match
+	 *   all objects with those properties.
+	 */
+	if (iflags.menu_match_tight && n > 0) {
+	    boolean all_chosen = FALSE;
+	    boolean gold_chosen = FALSE;
+	    boolean oclass_chosen = FALSE;
+	    boolean oprop_chosen = FALSE;
+	    boolean autosel_chosen = FALSE;
+	    boolean add_gold = FALSE;
+	    boolean add_oclasses = FALSE;
+	    boolean add_bucs = FALSE;
+	    const char *failed_at = NULL; /* 30 == hard-coded pick_list[] length */
+	    int i, j;
+
+	    /* Analyze menu choices. */
+	    for (i = 0; i < n; i++) {
+		int pick = pick_list[i];
+		for (j = 0; j < num_valid_oclasses && !oclass_chosen; j++) {
+		    if (pick == valid_oclasses[j])
+			oclass_chosen = TRUE;
+		}
+		switch (pick) {
+		case 'a':
+		    all_chosen = TRUE;
+		    break;
+		case COIN_CLASS:
+		    gold_chosen = TRUE;
+		    break;
+		case 'B': case 'C': case 'U': case 'X':
+		case 'u': case 'x': case 'I':
+		    oprop_chosen = TRUE;
+		    break;
+		case 'A':
+		    autosel_chosen = TRUE;
+		    break;
+		}
+	    }
+
+	    /* Choosing all [a] means no special fudging is needed. */
+	    if (all_chosen)
+		return n;
+
+	    /* If only gold is chosen, don't show anything else. */
+	    if (gold_chosen && !(oclass_chosen || oprop_chosen))
+		return n;
+
+	    if (autosel_chosen && !(gold_chosen || oclass_chosen || oprop_chosen)) {
+		/* If only auto-select all is chosen, add everything. */
+		add_gold = TRUE;
+		add_oclasses = TRUE;
+		add_bucs = TRUE;
+	    } else {
+		/* Add all oclasses if needed. */
+		if (!oclass_chosen)
+		    add_oclasses = TRUE;
+		/* Add all BUCs if no oprops were chosen. */
+		if (!oprop_chosen)
+		    add_bucs = TRUE;
+	    }
+
+	    if (n >= 30 && (add_gold || add_oclasses || add_bucs)) {
+		failed_at = "anything";
+		goto append_fail;
+	    }
+
+	    if (add_gold)
+		pick_list[n++] = COIN_CLASS;
+	    if (n >= 30 && (add_oclasses || add_bucs)) {
+		failed_at = "COIN_CLASS";
+		goto append_fail;
+	    }
+
+	    if (add_oclasses) {
+		for (j = 0; j < num_valid_oclasses && n < 30; j++)
+		    pick_list[n++] = valid_oclasses[j];
+		if (n >= 30 && (j < num_valid_oclasses || add_bucs)) {
+		    failed_at = "oclasses";
+		    goto append_fail;
+		}
+	    }
+
+	    if (add_bucs) {
+		pick_list[n++] = 'B';
+		if (n >= 30) {
+		    failed_at = "BUCs";
+		    goto append_fail;
+		}
+		pick_list[n++] = 'C';
+		if (n >= 30) {
+		    failed_at = "BUCs";
+		    goto append_fail;
+		}
+		pick_list[n++] = 'U';
+		if (n >= 30) {
+		    failed_at = "BUCs";
+		    goto append_fail;
+		}
+		pick_list[n++] = 'X';
+	    }
+
+append_fail:
+	    if (failed_at)
+		warning("query_category: no room in pick_list to add %s", failed_at);
+	}
+
 	return n;
 }
 
@@ -1906,19 +2066,32 @@ static int menu_loot(int retry, struct obj *container, boolean put_in)
     }
 
     if (loot_everything) {
+	boolean matched = FALSE;
 	for (otmp = container->cobj; otmp; otmp = otmp2) {
 	    otmp2 = otmp->nobj;
-	    res = out_container(otmp);
-	    if (res < 0) break;
+	    if (all_categories || allow_category(otmp)) {
+		matched = TRUE;
+		res = out_container(otmp);
+		if (res < 0) break;
+	    }
+	}
+	if (!matched) {
+	    if (all_categories)
+		pline("Nothing to %s.", put_in ? "put in" : "take out");
+	    else
+		pline("No matching objects.");
 	}
     } else {
-	mflags = INVORDER_SORT;
+	mflags = SIGNAL_NOMENU|INVORDER_SORT;
 	if (put_in) mflags |= USE_INVLET;
 	sprintf(buf,"%s what?", put_in ? putin : takeout);
 	n = query_objlist(buf, put_in ? invent : container->cobj,
 			  mflags, &obj_pick_list, PICK_ANY,
 			  all_categories ? allow_all : allow_category);
-	if (n) {
+	if (n < 0) {
+	    if (!all_categories)
+		pline("No matching objects.");
+	} else if (n > 0) {
 		n_looted = n;
 		for (i = 0; i < n; i++) {
 		    otmp = obj_pick_list[i].obj;

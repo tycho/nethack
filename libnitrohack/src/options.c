@@ -31,6 +31,12 @@ static const struct nh_listitem disclose_list[] = {
 };
 static const struct nh_enum_option disclose_spec = {disclose_list, listlen(disclose_list)};
 
+static const struct nh_listitem menumatch_list[] = {
+	{OMMATCH_LOOSE, "loose"},
+	{OMMATCH_TIGHT, "tight"}
+};
+static const struct nh_enum_option menumatch_spec = {menumatch_list, listlen(menumatch_list)};
+
 static const struct nh_listitem menustyle_list[] = {
 	{MENU_PARTIAL, "partial"},
 	{MENU_FULL, "full"}
@@ -135,6 +141,7 @@ static const struct nh_option_desc const_options[] = {
     {"hp_notify",	"show a message when HP changes", OPTTYPE_BOOL, { VTRUE }},
     {"hp_notify_format","hp_notify message format", OPTTYPE_STRING, {"[HP%c%a=%h]"}},
     {"lit_corridor",	"show a dark corridor as lit if in sight",	OPTTYPE_BOOL, { VTRUE }},
+    {"menumatch",	"how to filter types and traits during object selection", OPTTYPE_ENUM, {(void*)OMMATCH_TIGHT}},
     {"menustyle",	"user interface for object selection", OPTTYPE_ENUM, {(void*)MENU_FULL}},
     {"msgtype",		"--More--, hide or hide repeated messages by pattern", OPTTYPE_MSGTYPE, {0}},
     {"packorder",	"the inventory order of the items in your pack", OPTTYPE_STRING, {"$\")[%?+!=/(*`0_"}},
@@ -340,6 +347,7 @@ void init_opt_struct(void)
 	find_option(options, "disclose")->e = disclose_spec;
 	find_option(options, "fruit")->s.maxlen = PL_FSIZ;
 	find_option(options, "hp_notify_format")->s.maxlen = 80; /* min term width */
+	find_option(options, "menumatch")->e = menumatch_spec;
 	find_option(options, "menustyle")->e = menustyle_spec;
 	find_option(options, "pickup_burden")->e = pickup_burden_spec;
 	find_option(options, "packorder")->s.maxlen = MAXOCLASSES;
@@ -690,6 +698,9 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 		    iflags.hp_notify_fmt = NULL;
 		}
 		iflags.hp_notify_fmt = strdup(option->value.s);
+	}
+	else if (!strcmp("menumatch", option->name)) {
+		iflags.menu_match_tight = (option->value.e == OMMATCH_TIGHT);
 	}
 	else if (!strcmp("menustyle", option->name)) {
 		flags.menu_style = option->value.e;
