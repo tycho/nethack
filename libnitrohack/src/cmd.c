@@ -1163,9 +1163,9 @@ void show_conduct(int final)
 	}
 
 	if ((wizard || final) && !u.uconduct.sokoban) {
-	    you_have_never(&menu, "used any shortcuts in Sokoban");
+	    you_have_never(&menu, "used any Sokoban shortcuts");
 	} else if (wizard || final) {
-	    sprintf(buf, "used %u shortcut%s in Sokoban",
+	    sprintf(buf, "used %u Sokoban shortcut%s",
 		    u.uconduct.sokoban, plur(u.uconduct.sokoban));
 	    you_have_X(&menu, buf);
 	}
