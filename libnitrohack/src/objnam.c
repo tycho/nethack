@@ -1834,6 +1834,7 @@ char *makesingular(const char *oldstr)
 			   !BSTRCMP(bp, p-15, "detect monsters") ||
 			   !BSTRCMPI(bp, p-11, "Aesculapius") || /* staff */
 			   !BSTRCMP(bp, p-10, "eucalyptus") ||
+			   !BSTRCMP(bp, p-6, "lembas") ||
 			   !BSTRCMP(bp, p-9, "iron bars") ||
 			   !BSTRCMP(bp, p-5, "aklys") ||
 			   !BSTRCMP(bp, p-6, "fungus"))
@@ -1947,11 +1948,32 @@ static const struct alt_spellings {
 	{ "can opener", TIN_OPENER },
 	{ "kelp", KELP_FROND },
 	{ "eucalyptus", EUCALYPTUS_LEAF },
+	{ "lembas", LEMBAS_WAFER },
 	{ "grapple", GRAPPLING_HOOK },
 	{ "helmet of opposite alignment", HELM_OF_OPPOSITE_ALIGNMENT },
 	{ "crystall ball", CRYSTAL_BALL },
 	{ "crystall orb", CRYSTAL_BALL },
 	{ "crystal orb", CRYSTAL_BALL },
+	{ "wand of invisibility", WAN_MAKE_INVISIBLE },
+	{ "wand of speed", WAN_SPEED_MONSTER },
+	{ "wand of teleport", WAN_TELEPORTATION },
+	{ "invisibility wand", WAN_MAKE_INVISIBLE }, /* "of" inversions won't work */
+	{ "speed wand", WAN_SPEED_MONSTER },
+	{ "teleport wand", WAN_TELEPORTATION },
+	{ "ring of strength", RIN_GAIN_STRENGTH },
+	{ "ring of constitution", RIN_GAIN_CONSTITUTION },
+	{ "ring of intelligence", RIN_GAIN_INTELLIGENCE },
+	{ "ring of wisdom", RIN_GAIN_WISDOM },
+	{ "ring of dexterity", RIN_GAIN_DEXTERITY },
+	{ "ring of accuracy", RIN_INCREASE_ACCURACY },
+	{ "ring of damage", RIN_INCREASE_DAMAGE },
+	{ "strength ring", RIN_GAIN_STRENGTH }, /* "of" inversions won't work */
+	{ "constitution ring", RIN_GAIN_CONSTITUTION },
+	{ "intelligence ring", RIN_GAIN_INTELLIGENCE },
+	{ "wisdom ring", RIN_GAIN_WISDOM },
+	{ "dexterity ring", RIN_GAIN_DEXTERITY },
+	{ "accuracy ring", RIN_INCREASE_ACCURACY },
+	{ "damage ring", RIN_INCREASE_DAMAGE },
 	{ NULL, 0 },
 };
 
