@@ -403,6 +403,7 @@ struct nh_player_info {
     char level_desc[COLNO];
     char statusitems[12][ITEMLEN];
     int score, xp, gold, moves;
+    int wt, wtcap, invslots;
     int max_rank_sz;
     int st, st_extra, dx, co, in, wi, ch;
     int align, nr_items;

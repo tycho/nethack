@@ -232,6 +232,12 @@ static void srv_update_status(struct nh_player_info *pi)
 	json_object_set_new(jobj, "gold", json_integer(pi->gold));
     if (all || pi->moves != oi->moves)
 	json_object_set_new(jobj, "moves", json_integer(pi->moves));
+    if (all || pi->wt != oi->wt)
+	json_object_set_new(jobj, "wt", json_integer(pi->wt));
+    if (all || pi->wtcap != oi->wtcap)
+	json_object_set_new(jobj, "wtcap", json_integer(pi->wtcap));
+    if (all || pi->invslots != oi->invslots)
+	json_object_set_new(jobj, "invslots", json_integer(pi->invslots));
     if (all || pi->st != oi->st)
 	json_object_set_new(jobj, "st", json_integer(pi->st));
     if (all || pi->st_extra != oi->st_extra)

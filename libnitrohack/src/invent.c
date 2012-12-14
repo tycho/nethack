@@ -216,9 +216,10 @@ It may be valid to merge this code with with addinv_core2().
 */
 void addinv_core1(struct obj *obj)
 {
-	if (obj->oclass == COIN_CLASS) {
-		iflags.botl = 1;
-	} else if (obj->otyp == AMULET_OF_YENDOR) {
+	/* Update displayed weight and inventory slots. */
+	iflags.botl = 1;
+
+	if (obj->otyp == AMULET_OF_YENDOR) {
 		if (u.uhave.amulet) warning("already have amulet?");
 		u.uhave.amulet = 1;
 		historic_event(!obj->known, "gained the Amulet of Yendor!");
@@ -442,8 +443,10 @@ Should think of a better name...
 */
 void freeinv_core(struct obj *obj)
 {
+	/* Update displayed weight and inventory slots. */
+	iflags.botl = 1;
+
 	if (obj->oclass == COIN_CLASS) {
-		iflags.botl = 1;
 		return;
 	} else if (obj->otyp == AMULET_OF_YENDOR) {
 		if (!u.uhave.amulet) warning("don't have amulet?");
@@ -1312,8 +1315,17 @@ static char display_pickinv(const char *lets, boolean want_reply, long *out_cnt)
 	items = make_invlist(lets, &icount);
 
 	if (icount) {
+	    char *title;
+	    char titlebuf[QBUFSZ];
+	    if (want_reply) {
+		title = NULL;
+	    } else {
+		snprintf(titlebuf, QBUFSZ, "Inventory: %d/%dwt (%d of 52 slots)",
+			 weight_cap() + inv_weight(), weight_cap(), inv_cnt());
+		title = titlebuf;
+	    }
 	    selected = malloc(icount * sizeof(struct nh_objresult));
-	    n = display_objects(items, icount, want_reply ? NULL : "Inventory:",
+	    n = display_objects(items, icount, title,
 				want_reply ? PICK_ONE : PICK_INVACTION, selected);
 	}
 	if (n > 0) {

@@ -214,8 +214,11 @@ static void make_player_info(struct nh_player_info *pi)
 	    pi->level = u.ulevel;
 	pi->xp = u.uexp;
 
-	cap = near_capacity();
-	
+	/* weight and inventory slot count */
+	pi->wt = weight_cap() + inv_weight();
+	pi->wtcap = weight_cap();
+	pi->invslots = inv_cnt();
+
 	/* check if any skills could be anhanced */
 	advskills = 0;
 	for (i = 0; i < P_NUM_SKILLS; i++) {
@@ -247,6 +250,7 @@ static void make_player_info(struct nh_player_info *pi)
 	    strncpy(pi->statusitems[pi->nr_items++], "Hallu", ITEMLEN);
 	if (Slimed)
 	    strncpy(pi->statusitems[pi->nr_items++], "Slime", ITEMLEN);
+	cap = near_capacity();
 	if (cap > UNENCUMBERED)
 	    strncpy(pi->statusitems[pi->nr_items++], enc_stat[cap], ITEMLEN);
 	

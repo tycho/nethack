@@ -203,6 +203,12 @@ static json_t *cmd_update_status(json_t *params, int display_only)
 	player.gold = json_integer_value(p);
     if ( (p = json_object_get(params, "moves")) )
 	player.moves = json_integer_value(p);
+    if ( (p = json_object_get(params, "wt")) )
+	player.wt = json_integer_value(p);
+    if ( (p = json_object_get(params, "wtcap")) )
+	player.wtcap = json_integer_value(p);
+    if ( (p = json_object_get(params, "invslots")) )
+	player.invslots = json_integer_value(p);
     if ( (p = json_object_get(params, "max_rank_sz")) )
 	player.max_rank_sz = json_integer_value(p);
     if ( (p = json_object_get(params, "st")) )
