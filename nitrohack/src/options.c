@@ -347,19 +347,23 @@ static void select_enum_value(union nh_optvalue *value, struct nh_option_desc *o
 {
     struct nh_menuitem *items;
     int icount, size;
+    char titlebuf[QBUFSZ];
     int i, n, selectidx, *pick_list;
-    
+
     icount = 0; size = 10;
     items = malloc(sizeof(struct nh_menuitem) * size);
-    
+
     for (i = 0; i < option->e.numchoices; i++) {
 	/* don't use the choice ids directly, 0 is a valid value for those */
 	add_menu_item(items, size, icount, i+1, option->e.choices[i].caption, 0, 0);
     }
+
+    snprintf(titlebuf, QBUFSZ, "%s - %s", option->name, option->helptxt);
+
     pick_list = malloc(sizeof(int) * icount);
-    n = curses_display_menu(items, icount, option->name, PICK_ONE, pick_list);
+    n = curses_display_menu(items, icount, titlebuf, PICK_ONE, pick_list);
     free(items);
-    
+
     value->e = option->value.e; /* in case of ESC */
     if (n == 1) {
 	selectidx = pick_list[0] - 1;
