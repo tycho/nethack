@@ -226,8 +226,8 @@ extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define STOMACH 18
 
 /* Constants to control matching in filtered object menus */
-#define OMMATCH_LOOSE	 0
-#define OMMATCH_TIGHT	 1
+#define OBJMATCH_LOOSE	 0
+#define OBJMATCH_TIGHT	 1
 
 /* Flags to control menus */
 #define MENU_PARTIAL	 2

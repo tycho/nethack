@@ -692,7 +692,8 @@ int query_category(const char *qstr,	/* query string */
 	    }
 	    if (curr) {
 		pick_list[0] = curr->oclass;
-		return 1;
+		n = 1;
+		goto fudge_choices;
 	    }
 	    return 0;
 	}
@@ -789,6 +790,7 @@ int query_category(const char *qstr,	/* query string */
 	 * - Choosing properties w/out classes auto-matches all classes to match
 	 *   all objects with those properties.
 	 */
+fudge_choices:
 	if (iflags.menu_match_tight && n > 0) {
 	    boolean all_chosen = FALSE;
 	    boolean gold_chosen = FALSE;
