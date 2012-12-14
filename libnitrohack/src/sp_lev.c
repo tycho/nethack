@@ -1483,7 +1483,7 @@ static void create_monster(struct level *lev, monster *m, struct mkroom *croom)
 	    else if (g_mvflags & G_GONE)	/* genocided or extinct */
 		pm = NULL;	/* make random monster */
 	} else {
-	    pm = mkclass(&lev->z, class, G_NOGEN);
+	    pm = mkclass(&lev->z, class, 0);
 	    /* if we can't get a specific monster type (pm == 0) then the
 	       class has been genocided, so settle for a random monster */
 	}

@@ -1271,12 +1271,11 @@ void restore_rndmonst_state(struct memfile *mf)
 
 
 /*	The routine below is used to make one of the multiple types
- *	of a given monster class.  The second parameter specifies a
+ *	of a given monster class.  The spc parameter specifies a
  *	special casing bit mask to allow the normal genesis
  *	masks to be deactivated.  Returns 0 if no monsters
  *	in that class can be made.
  */
-
 const struct permonst *mkclass(const d_level *dlev, char class, int spc)
 {
 	int	first, last, num = 0;
