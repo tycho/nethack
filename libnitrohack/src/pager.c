@@ -599,16 +599,37 @@ bad_data_file:	impossible("'data' file in wrong format");
  */
 static const char *database_oname(struct obj *obj)
 {
-	const char *oname, *dbterm;
+	const char *dbterm;
+	boolean has_name = FALSE;
 
 	if (!obj)
 	    return NULL;
 
-	if (obj->onamelth && (obj->known || obj->dknown) &&
-	    (oname = ONAME(obj)) && oname[0] >= 'A' && oname[0] <= 'Z') {
-	    /* Capitalized name may be an artifact, the corpse/tin/statue of
+	/* Heuristic check for a given name. */
+	if (obj->onamelth && (obj->known || obj->dknown)) {
+	    const char *oname = ONAME(obj);
+	    char c;
+
+	    has_name = TRUE;
+
+	    /* Given names begin with a capital letter. */
+	    if ((c = *oname) && !(c >= 'A' && c <= 'Z'))
+		has_name = FALSE;
+
+	    /* Given names consist of letters, spaces, "hyphens" (i.e. '-')
+	     * and single quotes. */
+	    while ((c = *oname) && has_name) {
+		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+		      c == ' ' || c == '-' || c == '\''))
+		    has_name = FALSE;
+		oname++;
+	    }
+	}
+
+	if (has_name) {
+	    /* Given name may be an artifact, the corpse/tin/statue of
 	     * a named pet/monster or named object from a special level. */
-	    dbterm = oname;
+	    dbterm = ONAME(obj);
 	} else if (obj->otyp == CORPSE ||
 		   obj->otyp == STATUE ||
 		   obj->otyp == FIGURINE ||
