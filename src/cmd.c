@@ -1615,10 +1615,13 @@ int typ;
       any.a_int = 3;
       add_menu(win, NO_GLYPH, &any, 'c', 'n', ATR_NONE, "Name all items of a certain type", MENU_UNSELECTED);
 
+      any.a_int = 4;
+      add_menu(win, NO_GLYPH, &any, 'd', 0, ATR_NONE, "View discoveries", MENU_UNSELECTED);
+
       any.a_int = 0;
       add_menu(win, NO_GLYPH, &any, 0, 0, ATR_NONE, "", MENU_UNSELECTED);
 
-      end_menu(win, "What do you wish to name?");
+      end_menu(win, "What do you wish to do?");
       n = select_menu(win, PICK_ONE, &pick_list);
       destroy_nhwindow(win);
 
@@ -1653,6 +1656,7 @@ int typ;
 	    docall(obj);
 	}
 	break;
+    case 3: dodiscovered(); break;
     }
     return 0;
 }
