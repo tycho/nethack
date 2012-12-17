@@ -290,8 +290,11 @@ void map_object(struct obj *obj, int show)
 			      level->objects[x][y] && level->objects[x][y]->nexthere;
 	loc->mem_obj_soko = Is_sokoprize(obj);
 
-	/* If object memory differs here, it's worth autoexploring again. */
-	if (loc->mem_stepped &&
+	/*
+	 * If object memory differs here, it's worth autoexploring again,
+	 * unless it's attached to you.
+	 */
+	if (loc->mem_stepped && obj != uball && obj != uchain &&
 	    (loc->mem_obj != old_obj ||
 	     loc->mem_obj_mn != old_obj_mn ||
 	     loc->mem_obj_stacks != old_obj_stacks ||
