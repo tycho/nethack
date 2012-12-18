@@ -1856,6 +1856,7 @@ extern void flip_worm_segs_horizontal(struct level *,const struct monst *,int);
 /* ### worn.c ### */
 
 extern void setworn(struct obj *,long);
+extern void setworn_core(struct obj *,long,boolean);
 extern void setnotworn(struct obj *);
 extern void mon_set_minvis(struct monst *);
 extern void mon_adjust_speed(struct monst *,int,struct obj *);

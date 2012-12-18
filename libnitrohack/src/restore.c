@@ -465,12 +465,12 @@ static void restgamestate(struct memfile *mf)
 	/* this comes after inventory has been loaded */
 	for (otmp = invent; otmp; otmp = otmp->nobj)
 		if (otmp->owornmask)
-			setworn(otmp, otmp->owornmask);
+			setworn_core(otmp, otmp->owornmask, FALSE);
 	/* reset weapon so that player will get a reminder about "bashing"
 	   during next fight when bare-handed or wielding an unconventional
 	   item; for pick-axe, we aren't able to distinguish between having
 	   applied or wielded it, so be conservative and assume the former */
-	otmp = uwep;	/* `uwep' usually init'd by setworn() in loop above */
+	otmp = uwep;	/* `uwep' usually init'd by setworn_core() in loop above */
 	uwep = 0;	/* clear it and have setuwep() reinit */
 	setuwep(otmp);	/* (don't need any null check here) */
 	if (!uwep || uwep->otyp == PICK_AXE || uwep->otyp == GRAPPLING_HOOK)
@@ -646,7 +646,7 @@ int dorecover(struct memfile *mf)
 	/* take care of iron ball & chain */
 	for (otmp = level->objlist; otmp; otmp = otmp->nobj)
 		if (otmp->owornmask)
-			setworn(otmp, otmp->owornmask);
+			setworn_core(otmp, otmp->owornmask, FALSE);
 
 	/* in_use processing must be after:
 	 *    + The inventory has been read so that freeinv() works.

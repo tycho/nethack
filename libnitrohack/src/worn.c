@@ -41,7 +41,7 @@ const struct worn {
 
 
 /* Updated to use the extrinsic and blocked fields. */
-void setworn(struct obj *obj, long mask)
+void setworn_core(struct obj *obj, long mask, boolean conduct)
 {
 	const struct worn *wp;
 	struct obj *oobj;
@@ -52,12 +52,8 @@ void setworn(struct obj *obj, long mask)
 	    uskin = obj;
 	 /* assert( !uarm ); */
 	} else {
-	    if (obj && (mask & W_ARMOR)) {
+	    if (conduct && obj && (mask & W_ARMOR))
 		violated(CONDUCT_NUDISM);
-		/* Restoring a game and naming worn armor uses setworn.
-		 * This can unneccessarily increase the conduct-counter
-		 * (only visible in Wizmode) */
-	    }
 
 	    for (wp = worn; wp->w_mask; wp++) if (wp->w_mask & mask) {
 		oobj = *(wp->w_obj);
@@ -111,6 +107,11 @@ void setworn(struct obj *obj, long mask)
 	    }
 	}
 	update_inventory();
+}
+
+void setworn(struct obj *obj, long mask)
+{
+	setworn_core(obj, mask, TRUE);
 }
 
 /* called e.g. when obj is destroyed */
