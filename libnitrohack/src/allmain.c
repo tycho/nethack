@@ -273,34 +273,57 @@ void startup_common(const char *name, int playmode)
 }
 
 
+static void realtime_messages(boolean moon, boolean fri13)
+{
+    if (moon) {
+	switch (flags.moonphase) {
+	case FULL_MOON:
+	    pline("You are lucky!  Full moon tonight.");
+	    break;
+	case NEW_MOON:
+	    pline("Be careful!  New moon tonight.");
+	    break;
+	}
+    }
+
+    if (fri13 && flags.friday13)
+	pline("Watch out!  Bad things can happen on Friday the 13th.");
+}
+
+
 static void realtime_tasks(void)
 {
     int prev_moonphase = flags.moonphase;
     int prev_friday13 = flags.friday13;
-    
+    boolean msg_moonphase = TRUE;
+    boolean msg_friday13 = TRUE;
+
     flags.moonphase = phase_of_the_moon();
     if (flags.moonphase == FULL_MOON && prev_moonphase != FULL_MOON) {
-	pline("You are lucky!  Full moon tonight.");
 	change_luck(1);
     } else if (flags.moonphase != FULL_MOON && prev_moonphase == FULL_MOON) {
 	change_luck(-1);
     } else if (flags.moonphase == NEW_MOON && prev_moonphase != NEW_MOON) {
-	pline("Be careful!  New moon tonight.");
+	/* Do nothing, but show message. */
+    } else {
+	msg_moonphase = FALSE;
     }
-    
+
     flags.friday13 = friday_13th();
     if (flags.friday13 && !prev_friday13) {
-	pline("Watch out!  Bad things can happen on Friday the 13th.");
 	change_luck(-1);
     } else if (!flags.friday13 && prev_friday13) {
 	change_luck(1);
+    } else {
+	msg_friday13 = FALSE;
     }
+
+    realtime_messages(msg_moonphase, msg_friday13);
 }
 
 
 static void post_init_tasks(void)
 {
-    realtime_tasks();
     encumber_msg(); /* in case they auto-picked up something */
 
     u.uz0.dlevel = u.uz.dlevel;
@@ -352,6 +375,7 @@ boolean nh_start_game(int fd, const char *name, int irole, int irace, int igend,
     
     program_state.game_running = TRUE;
     youmonst.movement = NORMAL_SPEED;	/* give the hero some movement points */
+    realtime_tasks();
     post_init_tasks();
     
     api_exit();
@@ -440,6 +464,7 @@ enum nh_restore_status nh_restore_game(int fd, struct nh_window_procs *rwinprocs
     flush_screen();
     
     welcome(FALSE);
+    realtime_messages(TRUE, TRUE);
     update_inventory();
     
     api_exit();
@@ -764,7 +789,8 @@ static void pre_move_tasks(boolean didmove)
     if (iflags.botl)
 	bot();
 
-    if ((u.uhave.amulet || Clairvoyant) &&
+    if (didmove &&
+	(u.uhave.amulet || Clairvoyant) &&
 	!In_endgame(&u.uz) && !BClairvoyant &&
 	!(moves % 15) && !rn2(2))
 	    do_vicinity_map();
@@ -780,7 +806,7 @@ static void pre_move_tasks(boolean didmove)
 	}
     }
     
-    if (moves % 100 == 0)
+    if (didmove && moves % 100 == 0)
 	realtime_tasks();
     
     update_inventory();
