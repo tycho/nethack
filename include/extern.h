@@ -1458,6 +1458,7 @@ E void NDECL(free_autopickup_exceptions);
 #ifdef MENU_COLOR
 E boolean FDECL(add_menu_coloring, (char *));
 #endif /* MENU_COLOR */
+E boolean FDECL(parse_monster_color, (char *));
 
 /* ### pager.c ### */
 
