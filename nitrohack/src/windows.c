@@ -102,11 +102,38 @@ void exit_curses_ui(void)
 }
 
 
+int frame_hp_color(void)
+{
+    int attr = -1;
+
+    if (settings.frame_hp_color && ui_flags.ingame && player.x) {
+	int percent = 100;
+	if (player.hpmax > 0)
+	    percent = 100 * player.hp / player.hpmax;
+
+	if (percent < 25) attr = CLR_RED;
+	else if (percent < 50) attr = CLR_ORANGE;
+	else if (percent < 75) attr = CLR_YELLOW;
+
+	if (attr != -1)
+	    attr = curses_color_attr(attr);
+    }
+
+    return attr;
+}
+
+
 static void draw_frame(void)
 {
+    int frame_attr;
+
     if (!ui_flags.draw_frame)
 	return;
-    
+
+    frame_attr = frame_hp_color();
+    if (frame_attr != -1)
+	wattron(basewin, frame_attr);
+
     /* vertical lines */
     mvwvline(basewin, 1, 0, ACS_VLINE, ui_flags.viewheight);
     mvwvline(basewin, 1, COLNO + 1, ACS_VLINE, ui_flags.viewheight);
@@ -131,18 +158,52 @@ static void draw_frame(void)
     whline(basewin, ACS_HLINE, COLNO);
     mvwaddch(basewin, ui_flags.viewheight + 1, COLNO + 1, ACS_LRCORNER);
     
-    if (!ui_flags.draw_sidebar)
+    if (ui_flags.draw_sidebar) {
+	mvwaddch(basewin, 0, COLNO + 1, ACS_TTEE);
+	whline(basewin, ACS_HLINE, COLS - COLNO - 3);
+	mvwaddch(basewin, 0, COLS - 1, ACS_URCORNER);
+
+	mvwaddch(basewin, ui_flags.viewheight + 1, COLNO + 1, ACS_BTEE);
+	whline(basewin, ACS_HLINE, COLS - COLNO - 3);
+	mvwaddch(basewin, ui_flags.viewheight + 1, COLS - 1, ACS_LRCORNER);
+
+	mvwvline(basewin, 1, COLS - 1, ACS_VLINE, ui_flags.viewheight);
+    }
+
+    if (frame_attr != -1)
+	wattroff(basewin, frame_attr);
+}
+
+
+void redraw_frame(void)
+{
+    struct gamewin *gw;
+
+    if (!ui_flags.draw_frame || !ui_flags.ingame)
 	return;
-    
-    mvwaddch(basewin, 0, COLNO + 1, ACS_TTEE);
-    whline(basewin, ACS_HLINE, COLS - COLNO - 3);
-    mvwaddch(basewin, 0, COLS - 1, ACS_URCORNER);
-    
-    mvwaddch(basewin, ui_flags.viewheight + 1, COLNO + 1, ACS_BTEE);
-    whline(basewin, ACS_HLINE, COLS - COLNO - 3);
-    mvwaddch(basewin, ui_flags.viewheight + 1, COLS - 1, ACS_LRCORNER);
-    
-    mvwvline(basewin, 1, COLS - 1, ACS_VLINE, ui_flags.viewheight);
+
+    draw_frame();
+    wnoutrefresh(basewin);
+
+    /* The order of the following is based on redraw_game_windows(). */
+    touchwin(mapwin);
+    touchwin(msgwin);
+    wnoutrefresh(mapwin);
+    wnoutrefresh(msgwin);
+    if (statuswin) {
+	touchwin(statuswin);
+	wnoutrefresh(statuswin);
+    }
+    if (sidebar) {
+	draw_sidebar_divider();
+	touchwin(sidebar);
+	wnoutrefresh(sidebar);
+    }
+
+    for (gw = firstgw; gw; gw = gw->next) {
+	touchwin(gw->win);
+	wnoutrefresh(gw->win);
+    }
 }
 
 

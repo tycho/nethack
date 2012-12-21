@@ -157,6 +157,7 @@ struct settings {
     nh_bool  blink;	/* show multiple symbols for each location by blinking */
     nh_bool  sidebar;   /* draw the inventory sidebar */
     nh_bool  frame;     /* draw a frame around the window sections */
+    nh_bool  frame_hp_color; /* recolor frame according to HP */
     nh_bool  status3;	/* draw 3 line status */
 };
 
@@ -373,6 +374,7 @@ extern fnchar **list_gamefiles(fnchar *dir, int *count);
 /* sidebar.c */
 extern void reset_old_status(void);
 extern void update_old_status(void);
+extern void draw_sidebar_divider(void);
 extern void draw_sidebar(void);
 extern nh_bool curses_list_items(struct nh_objitem *items, int icount, nh_bool invent);
 extern nh_bool curses_list_items_nonblocking(struct nh_objitem *items, int icount, nh_bool invent);
@@ -388,6 +390,8 @@ extern void show_topten(char *player, int top, int around, nh_bool own);
 /* windows.c */
 extern void init_curses_ui(void);
 extern void exit_curses_ui(void);
+extern int frame_hp_color(void);
+extern void redraw_frame(void);
 extern void create_game_windows(void);
 extern void destroy_game_windows(void);
 extern void redraw_game_windows(void);

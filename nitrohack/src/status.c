@@ -467,5 +467,9 @@ void curses_update_status(struct nh_player_info *pi)
     /* prevent the cursor from flickering in the status line */
     wmove(mapwin, player.y, player.x - 1);
 
+    /* if HP changes, frame color may change */
+    if (ui_flags.draw_frame && settings.frame_hp_color)
+	redraw_frame();
+
     wnoutrefresh(statuswin);
 }

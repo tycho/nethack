@@ -79,6 +79,7 @@ struct nh_option_desc curses_options[] = {
     {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL, { VTRUE }},
     {"extmenu", "use a menu for selecting extended commands (#)", OPTTYPE_BOOL, {FALSE}},
     {"frame", "draw a frame around the window sections", OPTTYPE_BOOL, { VTRUE }},
+    {"frame_hp_color", "recolor frame according to HP", OPTTYPE_BOOL, { VTRUE }},
     {"graphics", "enhanced line drawing style", OPTTYPE_ENUM, {(void*)UNICODE_GRAPHICS}},
     {"hilite_pet", "highlight your pet", OPTTYPE_BOOL, { VTRUE }},
     {"invweight", "show item weights in the inventory", OPTTYPE_BOOL, { VTRUE }},
@@ -111,6 +112,7 @@ struct nh_boolopt_map boolopt_map[] = {
     {"darkroom", &settings.darkroom},
     {"extmenu", &settings.extmenu},
     {"frame", &settings.frame},
+    {"frame_hp_color", &settings.frame_hp_color},
     {"hilite_pet", &settings.hilite_pet},
     {"invweight", &settings.invweight},
     {"mapcolors", &settings.mapcolors},
@@ -129,6 +131,7 @@ struct nh_boolopt_map boolopt_map[] = {
 static nh_bool option_change_callback(struct nh_option_desc *option)
 {
     if (!strcmp(option->name, "frame") ||
+	!strcmp(option->name, "frame_hp_color") ||
 	!strcmp(option->name, "status3") ||
 	!strcmp(option->name, "sidebar")) {
 	rebuild_ui();

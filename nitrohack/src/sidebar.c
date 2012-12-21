@@ -57,6 +57,46 @@ static int count_omitted_items(struct nh_objitem *inv, int inv_icount, int pos)
 }
 
 
+/* Inventory and floor item list sizing: Each list "owns" half the sidebar,
+ * but will expand into unused space in the other half.
+ * If unused space remains, the inventory list is expanded to push the
+ * floor item list to the bottom of the screen. */
+static void split_sidebar(int *invheight, int *flheight)
+{
+    *invheight = min(inv_icount+1, ui_flags.viewheight / 2);
+    *flheight = min(floor_icount+1, (ui_flags.viewheight-1) / 2);
+
+    /* if there is need and available space, expand the floor item list up */
+    if (floor_icount+1 > *flheight && *invheight < (ui_flags.viewheight+1) / 2)
+	*flheight = min(floor_icount+1, ui_flags.viewheight - *invheight - 1);
+
+    /* assign all unused space to the inventory list whether it is needed or not */
+    *invheight = ui_flags.viewheight - *flheight - 1;
+}
+
+
+void draw_sidebar_divider(void)
+{
+    int invheight, flheight, sbwidth;
+    int frame_attr;
+
+    if (!flooritems || !inventory)
+	return;
+
+    split_sidebar(&invheight, &flheight);
+    sbwidth = getmaxx(sidebar);
+
+    frame_attr = frame_hp_color();
+    if (frame_attr != -1)
+	wattron(sidebar, frame_attr);
+
+    mvwhline(sidebar, invheight, 0, ACS_HLINE, sbwidth);
+
+    if (frame_attr != -1)
+	wattroff(sidebar, frame_attr);
+}
+
+
 void draw_sidebar(void)
 {
     int flheight = 0, invheight = 0, invwh, flwh;
@@ -73,19 +113,9 @@ void draw_sidebar(void)
     objwin = invwin = NULL;
     
     werase(sidebar);
-    /* Inventory and floor item list sizing: Each list "owns" half the sidebar,
-     * but will expand into unused space in the other half.
-     * If unused space remains, the inventory list is expanded to push the
-     * floor item list to the bottom of the screen. */
     if (flooritems && inventory) {
-	invheight = min(inv_icount+1, ui_flags.viewheight / 2);
-	flheight = min(floor_icount+1, (ui_flags.viewheight-1) / 2);
-	/* if there is need and available space, expand the floor item list up */
-	if (floor_icount+1 > flheight && invheight < (ui_flags.viewheight+1) / 2)
-	    flheight = min(floor_icount+1, ui_flags.viewheight - invheight - 1);
-	/* assign all unused space to the inventory list whether it is needed or not */
-	invheight = ui_flags.viewheight - flheight - 1;
-	mvwhline(sidebar, invheight, 0, ACS_HLINE, sbwidth);
+	split_sidebar(&invheight, &flheight);
+	draw_sidebar_divider();
     } else if (flooritems)
 	flheight = ui_flags.viewheight;
     else

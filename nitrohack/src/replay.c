@@ -84,7 +84,13 @@ static void draw_replay_info(struct nh_replay_info *rinfo)
     
     if (ui_flags.draw_frame) {
 	/* draw the replay state on top of the frame under the map */
+	int frame_attr = frame_hp_color();
+	if (frame_attr != -1)
+	    wattron(basewin, frame_attr);
 	mvwhline(basewin, 2 + ui_flags.msgheight + ROWNO, 1, ACS_HLINE, COLNO);
+	if (frame_attr != -1)
+	    wattroff(basewin, frame_attr);
+
 	wattron(basewin, COLOR_PAIR(4) | A_BOLD);
 	mvwaddstr(basewin, 2 + ui_flags.msgheight + ROWNO, 2, buf);
 	wattroff(basewin, COLOR_PAIR(4) | A_BOLD);
