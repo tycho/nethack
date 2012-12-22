@@ -493,7 +493,11 @@ static void you_moved(void)
 {
     int moveamt = 0, wtcap = 0, change = 0;
     boolean monscanmove = FALSE;
-    
+
+    /* Begin turn-tracking for delay_msg. */
+    if (iflags.delay_msg > 0 && delay_start == 0)
+	delay_start = moves;
+
     /* actual time passed */
     youmonst.movement -= NORMAL_SPEED;
 
@@ -835,6 +839,29 @@ static void interrupt_multi(const char *points, int current_points, int max_poin
 }
 
 
+static boolean is_delayed(void)
+{
+    /* See multi/occupation comment in nh_command() for details. */
+    return (multi >= 0 && occupation) || /* occupied, e.g. forcing lock */
+	   multi > 0 ||			 /* command with count */
+	   multi < 0;			 /* delayed, e.g. wearing/removing armor */
+}
+
+
+static void do_delay_msg(void)
+{
+    /* End turn-tracking for delay_msg. */
+    /* Be careful not to print and reset if still delayed somehow. */
+    if (iflags.delay_msg > 0 && delay_start && !is_delayed()) {
+	if (moves - delay_start >= iflags.delay_msg) {
+	    pline("[%d %s]", moves - delay_start,
+		  iflags.delay_msg == 1 ? "turn" : "turns");
+	}
+	delay_start = 0;
+    }
+}
+
+
 /* perform the command given by cmdidx (in index into cmdlist in cmd.c)
  * returns -1 if the command completes */
 int command_input(int cmdidx, int rep, struct nh_cmd_arg *arg)
@@ -892,10 +919,11 @@ int command_input(int cmdidx, int rep, struct nh_cmd_arg *arg)
     /* once-per-player-input things go here */
     /****************************************/
     xmalloc_cleanup();
-    
+
     /* prepare for the next move */
     flags.move = 1;
     pre_move_tasks(didmove);
+    do_delay_msg();
     if (multi == 0 && !occupation) {
 	flush_screen(); /* Flush screen buffer */
 	maybe_tutorial();

@@ -163,6 +163,7 @@ struct instance_flags {
 
 	boolean hp_notify;	/* Show a message when HP changes. */
 	char	*hp_notify_fmt;	/* hp_notify message format. */
+	int	delay_msg;	/* # turns before msg shown for multi-turn actions. */
 
 	/* Items which belong in flags, but are here to allow save compatibility */
 	boolean  show_uncursed;	/* always show uncursed items as such */
