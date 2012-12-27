@@ -387,48 +387,153 @@ static void show_whatdoes(void)
 }
 
 
+static void show_quickref(void)
+{
+    static struct nh_menuitem refitems[] = {
+	{0, MI_HEADING, "Moving and Looking"},
+	{0, MI_TEXT, "7 8 9   y k u"},
+	{0, MI_TEXT, " \\|/     \\|/    < aim up/go upstairs"},
+	{0, MI_TEXT, "4-.-6   h-.-l"},
+	{0, MI_TEXT, " /|\\     /|\\    > aim down/go downstairs"},
+	{0, MI_TEXT, "1 2 3   b j n"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, ".           wait (100. to wait 100 times)"},
+	{0, MI_TEXT, "s           search surroundings (20s to search 20 times)"},
+	{0, MI_TEXT, "m<dir>      move only"},
+	{0, MI_TEXT, "F<dir>      fight only"},
+	{0, MI_TEXT, "g<dir>      run (stop for anything)"},
+	{0, MI_TEXT, "G<dir>/Ctrl-<dir>"},
+	{0, MI_TEXT, "            run (along corridor ignoring intersections)"},
+	{0, MI_TEXT, "Shift-<dir> run (along corridor until blocked)"},
+	{0, MI_TEXT, "_           travel to targeted location, shortcuts:"},
+	{0, MI_TEXT, "                <  upstairs"},
+	{0, MI_TEXT, "                >  downstairs"},
+	{0, MI_TEXT, "                _  altar"},
+	{0, MI_TEXT, "v           autoexplore"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, ";           look"},
+	{0, MI_TEXT, ":           look here"},
+	{0, MI_TEXT, "/           multi-look or look up encyclopedia"},
+	{0, MI_TEXT, ""},
+	{0, MI_HEADING, "Meta-game"},
+	{0, MI_TEXT, "?           view help"},
+	{0, MI_TEXT, "O           view or change options"},
+	{0, MI_TEXT, "S           save and exit"},
+	{0, MI_TEXT, "#quit       END GAME PERMANENTLY"},
+	{0, MI_TEXT, ""},
+	{0, MI_HEADING, "Information"},
+	{0, MI_TEXT, "Ctrl-X      character info"},
+	{0, MI_TEXT, "Ctrl-P      previous messages"},
+	{0, MI_TEXT, "Ctrl-O      dungeon overview"},
+	{0, MI_TEXT, "\\           item discoveries"},
+	{0, MI_TEXT, "C           call (name) item, monster or level"},
+	{0, MI_TEXT, "#enhance    view or enhance skills"},
+	{0, MI_TEXT, "+           view or reorder magic spells"},
+	{0, MI_TEXT, "#history    record of achievements"},
+	{0, MI_TEXT, "#conduct    voluntary challenges"},
+	{0, MI_TEXT, ""},
+	{0, MI_HEADING, "Items"},
+	{0, MI_TEXT, "i           view or use inventory items"},
+	{0, MI_TEXT, ",           pick up"},
+	{0, MI_TEXT, "@           toggle autopickup"},
+	{0, MI_TEXT, "d           drop (d3x drops 3 of item x)"},
+	{0, MI_TEXT, "D           multi-drop"},
+	{0, MI_TEXT, "#adjust     move item to another inventory slot"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, "w           wield weapon (w- to wield nothing)"},
+	{0, MI_TEXT, "x           swap weapon to or from off-hand"},
+	{0, MI_TEXT, "X           toggle two-weapon combat"},
+	{0, MI_TEXT, "W/T         wear/take off armor, rings or amulet"},
+	{0, MI_TEXT, "t           throw item (wield bow and throw arrows to shoot)"},
+	{0, MI_TEXT, "Q/f         quiver/fire quivered item (throwing shortcut)"},
+	{0, MI_TEXT, "a           apply (use) tool"},
+	{0, MI_TEXT, "e           eat food or corpse"},
+	{0, MI_TEXT, "E           engrave (write) on floor (E- for fingers)"},
+	{0, MI_TEXT, "Ctrl-E      engrave \"Elbereth\""},
+	{0, MI_TEXT, "q           quaff (drink) potion"},
+	{0, MI_TEXT, "r           read scroll or spellbook"},
+	{0, MI_TEXT, "V           invoke artifact power"},
+	{0, MI_TEXT, "z           zap wand"},
+	{0, MI_TEXT, "#dip        dip item into potion or water"},
+	{0, MI_TEXT, "#rub        rub an item"},
+	{0, MI_TEXT, ""},
+	{0, MI_HEADING, "Actions"},
+	{0, MI_TEXT, "c           chat with pet or monster"},
+	{0, MI_TEXT, "o           open or close door"},
+	{0, MI_TEXT, "Ctrl-D      kick (e.g. locked door)"},
+	{0, MI_TEXT, "p           pay for items (in shop)"},
+	{0, MI_TEXT, "Z           cast magic spell"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, "#loot       open container on floor"},
+	{0, MI_TEXT, "#force      force open container with wielded weapon"},
+	{0, MI_TEXT, "#untrap     find and disarm traps (e.g. container or door)"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, "#pray       pray for divine help (near-death or troubled)"},
+	{0, MI_TEXT, "#sacrifice  sacrifice corpse or item at an altar"},
+	{0, MI_TEXT, "#turn       turn (away) undead (knight or priest only)"},
+	{0, MI_TEXT, ""},
+	{0, MI_TEXT, "#jump       jump to nearby location (if able)"},
+	{0, MI_TEXT, "#monster    use monster special ability (when polymorphed)"},
+	{0, MI_TEXT, "#ride       mount or dismount saddled pet"},
+	{0, MI_TEXT, "#sit        sit down (on throne/trap or to lay an egg)"},
+	{0, MI_TEXT, "Ctrl-T      trigger teleportation (if able)"},
+	{0, MI_TEXT, "#wipe       wipe eyes clean"},
+    };
+
+    curses_display_menu(refitems, ARRAY_SIZE(refitems), "Quick reference:",
+			PICK_NONE, NULL);
+}
+
+
 static struct nh_cmd_desc* show_help(void)
 {
     struct nh_menuitem *items;
     int i, n, size, icount, selected[1];
-    
+
     size = 10;
     items = malloc(size * sizeof(struct nh_menuitem));
     icount = 0;
-    
+
     add_menu_item(items, size, icount, 1, "describe game commands", 0, FALSE);
     add_menu_item(items, size, icount, 2, "describe what a key does", 0, FALSE);
     add_menu_item(items, size, icount, 3, "describe options", 0, FALSE);
-    
+
     for (i = 0; i < cmdcount; i++)
 	if (commandlist[i].flags & CMD_HELP)
 	    add_menu_item(items, size, icount, 100+i, commandlist[i].desc, 0, FALSE);
-    
+
+    add_menu_txt(items, size, icount, "", MI_NORMAL);
+    add_menu_item(items, size, icount, 4, "show quick reference", '?', FALSE);
+
     n = curses_display_menu(items, icount, "Help topics:", PICK_ONE, selected);
     free(items);
     if (n <= 0)
 	return NULL;
-    
+
     switch(selected[0]) {
 	case 1:
 	    show_keymap_menu(TRUE);
 	    break;
-	    
+
 	case 2:
 	    show_whatdoes();
 	    break;
-	    
+
 	case 3:
 	    print_options();
 	    break;
-	    
+
+	case 4:
+	    show_quickref();
+	    break;
+
 	default:
 	    n = selected[0] - 100;
 	    if (n >= 0 && n < cmdcount)
 		return &commandlist[n];
 	    break;
     }
-    
+
     return NULL;
 }
 
