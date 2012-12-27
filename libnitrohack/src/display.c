@@ -272,10 +272,6 @@ void map_object(struct obj *obj, int show)
 
     if (level->flags.hero_memory) {
 	struct rm *loc = &level->locations[x][y];
-	int old_obj = loc->mem_obj;
-	int old_obj_mn = loc->mem_obj_mn;
-	int old_obj_stacks = loc->mem_obj_stacks;
-	int old_obj_soko = loc->mem_obj_soko;
 
 	if (objtyp == CORPSE || objtyp == STATUE || objtyp == FIGURINE) {
 	    if (Hallucination)
@@ -289,17 +285,6 @@ void map_object(struct obj *obj, int show)
 	loc->mem_obj_stacks = obj->otyp != BOULDER &&
 			      level->objects[x][y] && level->objects[x][y]->nexthere;
 	loc->mem_obj_soko = Is_sokoprize(obj);
-
-	/*
-	 * If object memory differs here, it's worth autoexploring again,
-	 * unless it's attached to you.
-	 */
-	if (loc->mem_stepped && obj != uball && obj != uchain &&
-	    (loc->mem_obj != old_obj ||
-	     loc->mem_obj_mn != old_obj_mn ||
-	     loc->mem_obj_stacks != old_obj_stacks ||
-	     loc->mem_obj_soko != old_obj_soko))
-	    loc->mem_stepped = 0;
     }
     if (show)
 	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0);
