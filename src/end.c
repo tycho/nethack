@@ -216,6 +216,15 @@ mk_dgl_extrainfo()
 	} else if (In_endgame(&u.uz)) {
 	    Sprintf(tmpdng, "%s", "End");
 	    sortval += 256;
+	} else if (In_tower(&u.uz)) {
+	    Sprintf(tmpdng, "T%i", dunlev(&u.uz));
+	    sortval += 235+(depth(&u.uz));
+	} else if (In_sokoban(&u.uz)) {
+	    Sprintf(tmpdng, "S%i", dunlev(&u.uz));
+	    sortval += 225+(depth(&u.uz));
+	} else if (In_mines(&u.uz)) {
+	    Sprintf(tmpdng, "M%i", dunlev(&u.uz));
+	    sortval += 215+(dunlev(&u.uz));
 	} else {
 	    Sprintf(tmpdng, "D%i", depth(&u.uz));
 	    sortval += (depth(&u.uz));
