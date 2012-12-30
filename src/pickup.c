@@ -684,6 +684,7 @@ menu_item **pick_list;	/* list of objects and counts to pick up */
  *	USE_INVLET	  - Use object's invlet.
  *	INVORDER_SORT	  - Use hero's pack order.
  *	SIGNAL_NOMENU	  - Return -1 rather than 0 if nothing passes "allow".
+ *	SIGNAL_ESCAPE	  - Return -2 if menu was escaped.
  */
 int
 query_objlist(qstr, olist, qflags, pick_list, how, allow)
@@ -816,7 +817,7 @@ boolean FDECL((*allow), (OBJ_P));/* allow function */
 		if (mi->count == -1L || mi->count > mi->item.a_obj->quan)
 		    mi->count = mi->item.a_obj->quan;
 	} else if (n < 0) {
-	    n = 0;	/* caller's don't expect -1 */
+	    n = (qflags & SIGNAL_ESCAPE) ? -2 : 0;
 	}
 	return n;
 }
