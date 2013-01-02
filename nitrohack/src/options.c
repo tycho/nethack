@@ -761,7 +761,8 @@ static void show_autopickup_menu(struct nh_option_desc *opt)
     
     menusize = value.ar->num_rules + 4;
     items = malloc(sizeof(struct nh_menuitem) * menusize);
-    
+
+    selected[0] = 0;
     do {
 	icount = 0;
 	
@@ -810,8 +811,15 @@ static void show_autopickup_menu(struct nh_option_desc *opt)
 	add_menu_item(items, menusize, icount, -1, "add a new rule", '!', 0);
 	add_menu_item(items, menusize, icount, -2, "help", '?', 0);
 	
-	/* TODO */
-	n = curses_display_menu(items, icount, "Autopickup rules:", PICK_ONE, selected);
+	/* If the previous selection was to add a rule, scroll to the bottom now
+	 * so that the player can see it. */
+	if (selected[0] == -1) {
+	    n = curses_display_menu_bottom(items, icount, "Autopickup rules:",
+					   PICK_ONE, selected);
+	} else {
+	    n = curses_display_menu(items, icount, "Autopickup rules:",
+				    PICK_ONE, selected);
+	}
 	if (n <= 0)
 	    break;
 	
@@ -1032,6 +1040,7 @@ static void show_msgtype_menu(struct nh_option_desc *opt)
     menusize = value.mt->num_rules + 4;
     items = malloc(sizeof(struct nh_menuitem) * menusize);
 
+    selected[0] = 0;
     do {
 	int i, id;
 	icount = 0;
@@ -1052,7 +1061,15 @@ static void show_msgtype_menu(struct nh_option_desc *opt)
 	add_menu_item(items, menusize, icount, -1, "add new match", '+', 0);
 	add_menu_item(items, menusize, icount, -2, "help", '?', 0);
 
-	n = curses_display_menu(items, icount, "Message types:", PICK_ONE, selected);
+	/* If the previous selection was to add a rule, scroll to the bottom now
+	 * so that the player can see it. */
+	if (selected[0] == -1) {
+	    n = curses_display_menu_bottom(items, icount, "Message types:",
+					   PICK_ONE, selected);
+	} else {
+	    n = curses_display_menu(items, icount, "Message types:",
+				    PICK_ONE, selected);
+	}
 	if (n > 0) {
 	    id = selected[0];
 	    if (id == -2) {
