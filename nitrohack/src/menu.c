@@ -251,7 +251,8 @@ static int find_accel(int accel, struct win_menu *mdat)
 int curses_display_menu_core(struct nh_menuitem *items, int icount,
 			     const char *title, int how, int *results,
 			     int x1, int y1, int x2, int y2,
-			     nh_bool (*changefn)(struct win_menu*, int))
+			     nh_bool (*changefn)(struct win_menu*, int),
+			     nh_bool start_at_bottom)
 {
     struct gamewin *gw;
     struct win_menu *mdat;
@@ -277,10 +278,12 @@ int curses_display_menu_core(struct nh_menuitem *items, int icount,
     if (x2 < 0) x2 = COLS;
     if (y2 < 0) y2 = LINES;
     
-    
     assign_menu_accelerators(mdat);
     layout_menu(gw);
-    
+
+    if (start_at_bottom)
+	mdat->offset = max(mdat->icount - mdat->innerheight, 0);
+
     starty = (y2 - y1 - mdat->height) / 2 + y1;
     startx = (x2 - x1 - mdat->width) / 2 + x1;
     
@@ -423,12 +426,21 @@ int curses_display_menu_core(struct nh_menuitem *items, int icount,
 
 
 int curses_display_menu(struct nh_menuitem *items, int icount,
+			const char *title, int how, int *results)
+{
+    int n;
+    n = curses_display_menu_core(items, icount, title, how, results,
+				 0, 0, -1, -1, NULL, FALSE);
+    return n;
+}
+
+
+int curses_display_menu_bottom(struct nh_menuitem *items, int icount,
 			       const char *title, int how, int *results)
 {
     int n;
-    
-    n = curses_display_menu_core(items, icount, title, how, results, 0, 0,
-				 -1, -1, NULL);
+    n = curses_display_menu_core(items, icount, title, how, results,
+				 0, 0, -1, -1, NULL, TRUE);
     return n;
 }
 

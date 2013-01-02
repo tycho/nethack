@@ -493,7 +493,7 @@ static void netgame_mainmenu(struct server_info *server)
 	snprintf(buf, BUFSZ, "%s on %s:", server->username, server->hostname);
 	n = curses_display_menu_core(netmenu_items, ARRAY_SIZE(netmenu_items),
 				     buf, PICK_ONE, menuresult, 0, logoheight,
-				     COLS, ROWNO+3, NULL);
+				     COLS, ROWNO+3, NULL, FALSE);
 	
 	switch (menuresult[0]) {
 	    case NEWGAME:

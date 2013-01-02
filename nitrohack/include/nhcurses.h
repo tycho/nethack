@@ -319,10 +319,13 @@ extern void draw_map(int cx, int cy);
 extern void draw_menu(struct gamewin *gw);
 extern int curses_display_menu(struct nh_menuitem *items, int icount,
 			       const char *title, int how, int *results);
+extern int curses_display_menu_bottom(struct nh_menuitem *items, int icount,
+				      const char *title, int how, int *results);
 extern int curses_display_menu_core(struct nh_menuitem *items, int icount,
 			     const char *title, int how, int *results,
 			     int x1, int y1, int x2, int y2,
-			     nh_bool (*changefn)(struct win_menu*, int));
+			     nh_bool (*changefn)(struct win_menu*, int),
+			     nh_bool start_at_bottom);
 extern int curses_display_objects(struct nh_objitem *items, int icount,
 		  const char *title, int how, struct nh_objresult *pick_list);
 extern void draw_objlist(WINDOW *win, int icount, struct nh_objitem *items,

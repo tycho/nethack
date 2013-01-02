@@ -213,7 +213,7 @@ static void mainmenu(void)
 
 	n = curses_display_menu_core(mainmenu_items, ARRAY_SIZE(mainmenu_items),
 				     NULL, PICK_ONE, menuresult, 0, logoheight,
-				     COLS, ROWNO+3, NULL);
+				     COLS, ROWNO+3, NULL, FALSE);
 	if (n < 1)
 	    continue;
 

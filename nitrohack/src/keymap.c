@@ -946,7 +946,8 @@ void show_keymap_menu(nh_bool readonly)
 			"!!!\tReset all key bindings to built-in defaults\t!!!", '!', FALSE);
 	}
 	n = curses_display_menu_core(items, icount, "Keymap", readonly ? PICK_NONE :
-	                        PICK_ONE, NULL, 0, 0, COLS, LINES, set_command_keys);
+				     PICK_ONE, NULL, 0, 0, COLS, LINES,
+				     set_command_keys, FALSE);
     } while(n > 0);
     free(items);
     
