@@ -1898,7 +1898,7 @@ tty_putstr(window, attr, str)
     register struct WinDesc *cw = 0;
     register char *ob;
     register const char *nb;
-    register int i, j, n0;
+    register long i, j, n0;
 
     /* Assume there's a real problem if the window is missing --
      * probably a panic message
