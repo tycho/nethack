@@ -3677,6 +3677,9 @@ int zap_over_floor(xchar x, xchar y, int type, boolean *shopdamage)
 		int new_doormask = -1;
 		const char *see_txt = NULL, *sense_txt = NULL, *hear_txt = NULL;
 		rangemod = -1000;
+		/* ALI - Artifact doors */
+		if (artifact_door(level, x, y))
+		    goto def_case;
 		switch(abstype) {
 		case ZT_FIRE:
 		    new_doormask = D_NODOOR;

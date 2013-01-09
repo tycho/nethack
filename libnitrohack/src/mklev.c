@@ -1855,4 +1855,52 @@ static void place_random_engravings(struct level *lev)
 	}
 }
 
+/*
+ * The portal to the Advent Calender is special.
+ * It does not only lead to a floating branch like knox portal.
+ * It also may appear upon reentering a existing level if it is the
+ * right time of the year.
+ */
+boolean mk_advcal_portal(struct level *lev)
+{
+	extern int n_dgns;		/* from dungeon.c */
+	d_level *source;
+	branch *br;
+
+	/* made_branch remains unchanged when entering a already created
+	 * level. This leads to the branch inserted in the dungeon level
+	 * list but no portal created, the branch is unreachable.
+	 *
+	 * Technically this is a bug but nobody anticipated a branch
+	 * that could be inserted after level creation.
+	 */
+	if (made_branch) return FALSE;
+
+	br = dungeon_branch("Advent Calendar");
+	if (on_level(&advcal_level, &br->end1)) {
+	    source = &br->end2;
+	} else {
+	    /* disallow branch on a level with one branch already */
+	    if (Is_branchlev(&lev->z))
+		return FALSE;
+	    source = &br->end1;
+	}
+
+	/* Already set. */
+	if (source->dnum < n_dgns) return FALSE;
+
+	if (! (lev->z.dnum == oracle_level.dnum		 /* in main dungeon */
+		&& !at_dgn_entrance(&lev->z, "The Quest") /* but not Quest's entry */
+		&& depth(&lev->z) < depth(&medusa_level))) /* and above Medusa */
+	    return FALSE;
+
+	/* Adjust source to be current level and re-insert branch. */
+	*source = lev->z;
+	insert_branch(br, TRUE);
+
+	place_branch(lev, br, 0, 0);
+
+	return TRUE;
+}
+
 /*mklev.c*/

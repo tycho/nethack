@@ -429,6 +429,17 @@ int pick_lock(struct obj *pick, int rx, int ry, boolean explicit)
 		    }
 		    xlock.door = door;
 		    xlock.box = 0;
+
+		    /* ALI - Artifact doors */
+		    if (artifact_door(level, cc.x, cc.y)) {
+			if (picktyp == SKELETON_KEY) {
+			    pline("Your key doesn't seem to fit.");
+			    return 0;
+			} else {
+			    /* -1 == 0% chance */
+			    ch = -1;
+			}
+		    }
 	    }
 	}
 	flags.move = 0;
@@ -779,15 +790,21 @@ boolean doorlock(struct obj *otmp, int x, int y)
 	const char *msg = NULL;
 	const char *dustcloud = "A cloud of dust";
 	const char *quickly_dissipates = "quickly dissipates";
-	
+	int key = artifact_door(level, x, y);	/* ALI - Artifact doors */
+
 	if (door->typ == SDOOR) {
 	    switch (otmp->otyp) {
 	    case WAN_OPENING:
 	    case SPE_KNOCK:
 	    case WAN_STRIKING:
 	    case SPE_FORCE_BOLT:
-		door->typ = DOOR;
-		door->doormask = D_CLOSED | (door->doormask & D_TRAPPED);
+		if (key) {
+		    /* Artifact doors are revealed only */
+		    cvt_sdoor_to_door(door, &u.uz);
+		} else {
+		    door->typ = DOOR;
+		    door->doormask = D_CLOSED | (door->doormask & D_TRAPPED);
+		}
 		newsym(x,y);
 		if (cansee(x,y)) pline("A door appears in the wall!");
 		if (otmp->otyp == WAN_OPENING || otmp->otyp == SPE_KNOCK)
@@ -832,13 +849,16 @@ boolean doorlock(struct obj *otmp, int x, int y)
 
 	    switch (door->doormask & ~D_TRAPPED) {
 	    case D_CLOSED:
-		msg = "The door locks!";
+		msg = key ? "The door closes!" :
+			    "The door locks!";
 		break;
 	    case D_ISOPEN:
-		msg = "The door swings shut, and locks!";
+		msg = key ? "The door swings shut!" :
+			    "The door swings shut, and locks!";
 		break;
 	    case D_BROKEN:
-		msg = "The broken door reassembles and locks!";
+		msg = key ? "The broken door reassembles!" :
+			    "The broken door reassembles and locks!";
 		break;
 	    case D_NODOOR:
 		msg =
@@ -849,19 +869,20 @@ boolean doorlock(struct obj *otmp, int x, int y)
 		break;
 	    }
 	    block_point(x, y);
-	    door->doormask = D_LOCKED | (door->doormask & D_TRAPPED);
+	    door->doormask = (key ? D_CLOSED : D_LOCKED) |
+			     (door->doormask & D_TRAPPED);
 	    newsym(x,y);
 	    break;
 	case WAN_OPENING:
 	case SPE_KNOCK:
-	    if (door->doormask & D_LOCKED) {
+	    if (!key && door->doormask & D_LOCKED) {
 		msg = "The door unlocks!";
 		door->doormask = D_CLOSED | (door->doormask & D_TRAPPED);
 	    } else res = FALSE;
 	    break;
 	case WAN_STRIKING:
 	case SPE_FORCE_BOLT:
-	    if (door->doormask & (D_LOCKED | D_CLOSED)) {
+	    if (!key && door->doormask & (D_LOCKED | D_CLOSED)) {
 		if (door->doormask & D_TRAPPED) {
 		    if (MON_AT(level, x, y))
 			mb_trapped(m_at(level, x,y));
@@ -944,6 +965,24 @@ static void chest_shatter_msg(struct obj *otmp)
 		break;
 	}
 	pline("%s %s!", An(thing), disposition);
+}
+
+/*
+ * ALI - Kevin Hugo's artifact doors.
+ *
+ * Originally returned the artifact number (alignment?) unlocking a door at (x, y).
+ * Seems to come from SLASH'EM, with its alignment keys that open such doors to
+ * Vlad's Tower.
+ *
+ * For the Advent Calendar branch, it's effectively used to create unbreakable
+ * and impassible doors, so instead returns A_NONE in advcal and 0 otherwise.
+ */
+int artifact_door(struct level *lev, int x, int y)
+{
+	if (Is_advent_calendar(&lev->z))
+	    return A_NONE;
+
+	return 0;
 }
 
 /*lock.c*/

@@ -1,6 +1,7 @@
 # dat/CMakeLists.txt: generate game data files
 
 set (LEVEL_DESCRIPTIONS
+    ${LNH_DAT}/advcal.des
     ${LNH_DAT}/Arch.des
     ${LNH_DAT}/Barb.des
     ${LNH_DAT}/bigroom.des
@@ -35,6 +36,7 @@ set (LEVEL_DESCRIPTIONS
 
 # the compiled levels that will be added to nhdat
 set (COMPILED_LEVELS
+    advcal.lev
     air.lev      Arc-fila.lev Arc-filb.lev Arc-goal.lev
     Arc-loca.lev Arc-strt.lev asmod-1.lev  asmod-2.lev
     astral.lev   baalz-1.lev  baalz-2.lev

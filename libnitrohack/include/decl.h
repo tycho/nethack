@@ -47,6 +47,7 @@ extern struct dgn_topology {		/* special dungeon levels for speed */
     xchar	d_dragon_dnum;
     d_level	d_qstart_level, d_qlocate_level, d_nemesis_level;
     d_level	d_knox_level;
+    d_level	d_advcal_level;
     d_level	d_blackmarket_level;
     d_level	d_minetown_level;
     d_level	d_town_level;
@@ -82,6 +83,7 @@ extern struct dgn_topology {		/* special dungeon levels for speed */
 #define qlocate_level		(dungeon_topology.d_qlocate_level)
 #define nemesis_level		(dungeon_topology.d_nemesis_level)
 #define knox_level		(dungeon_topology.d_knox_level)
+#define advcal_level		(dungeon_topology.d_advcal_level)
 #define blackmarket_level	(dungeon_topology.d_blackmarket_level)
 #define minetown_level		(dungeon_topology.d_minetown_level)
 #define town_level		(dungeon_topology.d_town_level)

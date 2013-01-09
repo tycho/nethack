@@ -736,6 +736,7 @@ extern boolean boxlock(struct obj *,struct obj *);
 extern boolean doorlock(struct obj *,int,int);
 extern int doopen(int dx, int dy, int dz);
 extern int doclose(int dx, int dy, int dz);
+extern int artifact_door(struct level *lev, int, int);
 
 /* ### log.c ### */
 
@@ -873,6 +874,7 @@ extern void dodoor(struct level *lev, int,int,struct mkroom *);
 extern void mktrap(struct level *lev, int,int,struct mkroom *,coord*);
 extern void mkstairs(struct level *lev, xchar,xchar,char,struct mkroom *);
 extern void mkinvokearea(void);
+extern boolean mk_advcal_portal(struct level *lev);
 
 /* ### mkmap.c ### */
 
@@ -899,6 +901,7 @@ extern void free_waterlevel(void);
 extern void save_waterlevel(struct memfile *mf);
 extern void restore_waterlevel(struct memfile *mf, struct level *lev);
 extern const char *waterbody_name(xchar,xchar);
+extern void fill_advent_calendar(struct level *lev, boolean);
 
 /* ### mkobj.c ### */
 

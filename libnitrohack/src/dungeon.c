@@ -611,6 +611,7 @@ struct level_map {
 	const char *lev_name;
 	d_level *lev_spec;
 } const level_map[] = {
+	{ "advcal",	&advcal_level },
 	{ "air",	&air_level },
 	{ "asmodeus",	&asmodeus_level },
 	{ "astral",	&astral_level },
@@ -851,6 +852,20 @@ void init_dungeons(void)	/* initialize the "dungeon" structs */
 				 */
 				for (br = branches; br; br = br->next)
 				    if (on_level(&br->end2, &knox_level)) break;
+
+				if (br) br->end1.dnum = n_dgns;
+				/* adjust the branch's position on the list */
+				insert_branch(br, TRUE);
+			} else if (lev_map->lev_spec == &advcal_level) {
+				branch *br;
+				/*
+				 * Kludge to allow floating advcal entrance.  We
+				 * specify a floating entrance by the fact that
+				 * its entrance (end1) has a bogus dnum, namely
+				 * n_dgns.
+				 */
+				for (br = branches; br; br = br->next)
+				    if (on_level(&br->end2, &advcal_level)) break;
 
 				if (br) br->end1.dnum = n_dgns;
 				/* adjust the branch's position on the list */
@@ -1576,8 +1591,8 @@ schar print_dungeon(boolean bymenu, schar *rlev, xchar *rdgn)
 	    if (Is_stronghold(&slev->dlevel))
 		sprintf(eos(buf), " (tune %s)", tune);
 	    if (bymenu) {
-	    	/* If other floating branches are added, this will need to change */
-	    	if (i != knox_level.dnum) {
+		/* If other floating branches are added, this will need to change */
+		if (i != advcal_level.dnum && i != knox_level.dnum) {
 			lchoices.lev[lchoices.idx] = slev->dlevel.dlevel;
 			lchoices.dgn[lchoices.idx] = i;
 		} else {

@@ -1244,7 +1244,9 @@ void blow_up_landmine(struct trap *trap)
 		NULL);
 	del_engr_at(level, trap->tx, trap->ty);
 	wake_nearto(trap->tx, trap->ty, 400);
-	if (IS_DOOR(level->locations[trap->tx][trap->ty].typ))
+	/* ALI - artifact doors */
+	if (IS_DOOR(level->locations[trap->tx][trap->ty].typ) &&
+	    !artifact_door(level, trap->tx, trap->ty))
 	    level->locations[trap->tx][trap->ty].doormask = D_BROKEN;
 	/* TODO: destroy drawbridge if present */
 	/* caller may subsequently fill pit, e.g. with a boulder */

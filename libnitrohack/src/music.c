@@ -295,6 +295,7 @@ do_pit:		    chasm = maketrap(level, x,y,PIT);
 		    break;
 		  case DOOR : /* Make the door collapse */
 		    if (level->locations[x][y].doormask == D_NODOOR) goto do_pit;
+		    if (artifact_door(level, x, y)) break;
 		    if (cansee(x,y))
 			pline("The door collapses.");
 		    if (*in_rooms(level, x, y, SHOPBASE))

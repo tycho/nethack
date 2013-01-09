@@ -1330,6 +1330,13 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 		}
 	}
 
+	if (getmonth() == 12 && getmday() < 25) {
+		if (mk_advcal_portal(level))
+			pline("You smell chocolate!");
+	}
+	if (Is_advent_calendar(&u.uz))
+		fill_advent_calendar(level, FALSE);
+
 	/* once Croesus is dead, his alarm doesn't work any more */
 	if (Is_knox(&u.uz) && (new || !mvitals[PM_CROESUS].died)) {
 		pline("You penetrated a high security area!");

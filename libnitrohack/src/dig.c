@@ -155,6 +155,10 @@ boolean dig_check(struct monst *madeby, boolean verbose, int x, int y)
 		if (verbose) pline("The ladder resists your effort.");
 	    } else if (verbose) pline("The stairs are too hard to %s.", verb);
 	    return FALSE;
+	/* ALI - Artifact doors */
+	} else if (IS_DOOR(level->locations[x][y].typ) && artifact_door(level, x, y)) {
+	    if (verbose) pline("The %s here is too hard to dig in.", surface(x,y));
+	    return FALSE;
 	} else if (IS_THRONE(level->locations[x][y].typ) && madeby != BY_OBJECT) {
 	    if (verbose) pline("The throne is too hard to break apart.");
 	    return FALSE;
@@ -215,9 +219,12 @@ static int dig(void)
 		pline("This tree seems to be petrified.");
 		return 0;
 	    }
-	    if (IS_ROCK(loc->typ) && !may_dig(level, dpx,dpy) &&
-			dig_typ(uwep, dpx, dpy) == DIGTYP_ROCK) {
-		pline("This wall is too hard to %s.", verb);
+	    /* ALI - Artifact doors */
+	    if ((IS_ROCK(loc->typ) && !may_dig(level, dpx,dpy) &&
+			dig_typ(uwep, dpx, dpy) == DIGTYP_ROCK) ||
+			(IS_DOOR(loc->typ) && artifact_door(level, dpx, dpy))) {
+		pline("This %s is too hard to %s.",
+		      IS_DOOR(loc->typ) ? "door" : "wall", verb);
 		return 0;
 	    }
 	}
@@ -635,6 +642,8 @@ static boolean dighole(boolean pit_only)
 
 	if ((ttmp && (ttmp->ttyp == MAGIC_PORTAL ||
                       ttmp->ttyp == VIBRATING_SQUARE || nohole)) ||
+	   /* ALI - artifact doors */
+	   (IS_DOOR(loc->typ) && artifact_door(level, u.ux, u.uy)) ||
 	   (IS_ROCK(loc->typ) && loc->typ != SDOOR &&
 	    (loc->wall_info & W_NONDIGGABLE) != 0)) {
 		pline("The %s here is too hard to dig in.", surface(u.ux,u.uy));
@@ -1158,6 +1167,12 @@ void zap_dig(schar dx, schar dy, schar dz)
 	    tmp_at(zx,zy);
 	    win_delay_output();	/* wait a little bit */
 	    if (closed_door(level, zx, zy) || room->typ == SDOOR) {
+		/* ALI - Artifact doors */
+		if (artifact_door(level, zx, zy)) {
+		    if (cansee(zx, zy))
+			pline("The door glows then fades.");
+		    break;
+		}
 		if (*in_rooms(level, zx,zy,SHOPBASE)) {
 		    add_damage(zx, zy, 400L);
 		    shopdoor = TRUE;
