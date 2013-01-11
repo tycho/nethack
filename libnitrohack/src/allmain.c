@@ -848,11 +848,20 @@ static boolean is_delayed(void)
 }
 
 
+/* End turn-tracking for delay_msg. */
 static void do_delay_msg(void)
 {
-    /* End turn-tracking for delay_msg. */
+    if (iflags.delay_msg <= 0)
+	return;
+
+    /* Exempt running, travel and autoexplore from showing delay messages.
+     * Doing it like this allows a delay message to still be shown if the
+     * player is hit by sleep or paralysis mid-run. */
+    if (flags.run)
+	delay_start = 0;
+
     /* Be careful not to print and reset if still delayed somehow. */
-    if (iflags.delay_msg > 0 && delay_start && !is_delayed()) {
+    if (delay_start && !is_delayed()) {
 	if (moves - delay_start >= iflags.delay_msg) {
 	    pline("[%d %s]", moves - delay_start,
 		  iflags.delay_msg == 1 ? "turn" : "turns");
