@@ -1427,7 +1427,7 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	}
 	
 	/* wear: Equip this item */
-	if (!obj->owornmask) {
+	if (!(obj->owornmask & ~(W_WEP|W_QUIVER|W_SWAPWEP|W_ART|W_ARTI))) {
 	    if (obj->oclass == ARMOR_CLASS)
 		SET_OBJ_CMD2('W', "wear", "wear");
 	    else if (obj->oclass == RING_CLASS || obj->otyp == MEAT_RING)
