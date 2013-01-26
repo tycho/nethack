@@ -1415,8 +1415,8 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	if (obj->owornmask & W_WEP) {
 	    /* show unwield for wielded weapon */
 	    SET_OBJ_CMD('w', "wield", '-', "unwield (empty)");
-	} else if (obj->owornmask & ~W_SWAPWEP) {
-	    /* empty; don't show anything for alternate weapon */
+	} else if (obj->owornmask & ~(W_SWAPWEP|W_ART|W_ARTI|W_BALL)) {
+	    /* empty for anything worn except the above */
 	} else if (obj->oclass == WEAPON_CLASS || obj->otyp == PICK_AXE ||
 		   obj->otyp == UNICORN_HORN) {
 	    SET_OBJ_CMD2('w', "wield", "wield");
