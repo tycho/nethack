@@ -36,7 +36,7 @@ struct lchoice {
 };
 
 static void Fread(void *, int, int, dlb *);
-static xchar dname_to_dnum(const char *);
+static xchar dname_to_dnum(const char *, boolean);
 static int find_branch(const char *, struct proto_dungeon *);
 static xchar parent_dnum(const char *, struct proto_dungeon *);
 static int level_range(xchar,int,int,int,struct proto_dungeon *,int *);
@@ -222,12 +222,15 @@ static void Fread(void *ptr, int size, int nitems, dlb *stream)
 	}
 }
 
-static xchar dname_to_dnum(const char *s)
+static xchar dname_to_dnum(const char *s, boolean optional)
 {
 	xchar	i;
 
 	for (i = 0; i < n_dgns; i++)
 	    if (!strcmp(dungeons[i].dname, s)) return i;
+
+	if (optional)
+	    return n_dgns;	/* bogus dnum instead of panicking */
 
 	panic("Couldn't resolve dungeon number for name \"%s\".", s);
 	/*NOT REACHED*/
@@ -898,12 +901,12 @@ void init_dungeons(void)	/* initialize the "dungeon" structs */
 /*
  *	I hate hardwiring these names. :-(
  */
-	quest_dnum = dname_to_dnum("The Quest");
-	sokoban_dnum = dname_to_dnum("Sokoban");
-	mines_dnum = dname_to_dnum("The Gnomish Mines");
-	tower_dnum = dname_to_dnum("Vlad's Tower");
-	mall_dnum = dname_to_dnum("Town");
-	dragon_dnum = dname_to_dnum("The Dragon Caves");
+	quest_dnum = dname_to_dnum("The Quest", FALSE);
+	sokoban_dnum = dname_to_dnum("Sokoban", FALSE);
+	mines_dnum = dname_to_dnum("The Gnomish Mines", FALSE);
+	tower_dnum = dname_to_dnum("Vlad's Tower", FALSE);
+	mall_dnum = dname_to_dnum("Town", FALSE);
+	dragon_dnum = dname_to_dnum("The Dragon Caves", TRUE);
 
 	/* one special fixup for dummy surface level */
 	if ((x = find_level("dummy")) != 0) {
@@ -1297,7 +1300,7 @@ branch *dungeon_branch(const char *s)
     branch *br;
     xchar  dnum;
 
-    dnum = dname_to_dnum(s);
+    dnum = dname_to_dnum(s, FALSE);
 
     /* Find the branch that connects to dungeon i's branch. */
     for (br = branches; br; br = br->next)
