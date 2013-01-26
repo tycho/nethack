@@ -42,7 +42,7 @@ FUNCTION soko_loot()
 
 ### Bottom (first) level of Sokoban ###
 LEVEL: "soko3-1"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -96,7 +96,7 @@ soko_loot()
 
 
 LEVEL: "soko3-2"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -152,7 +152,7 @@ soko_loot()
 
 ### Second level ###
 LEVEL: "soko3-11"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -223,7 +223,7 @@ soko_loot()
 
 
 LEVEL: "soko3-12"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -287,7 +287,7 @@ soko_loot()
 
 ### Third level ###
 LEVEL: "soko2-1"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -347,7 +347,7 @@ soko_loot()
 
 
 LEVEL: "soko2-2"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -409,7 +409,7 @@ soko_loot()
 
 ### Top (last) level of Sokoban ###
 LEVEL: "soko1-1"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -499,7 +499,7 @@ ENGRAVING: $place[2], burn, "Elbereth"
 
 
 LEVEL: "soko1-2"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -594,7 +594,7 @@ ENGRAVING: $place[2], burn, "Elbereth"
 # The original authors are listed just before the maps
 #
 LEVEL: "soko3-3"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
@@ -642,7 +642,7 @@ soko_loot()
 
 
 LEVEL: "soko3-4"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -698,7 +698,7 @@ soko_loot()
 
 
 LEVEL: "soko3-5"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Thinking Rabbit"
@@ -754,7 +754,7 @@ soko_loot()
 
 
 LEVEL: "soko3-6"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -803,7 +803,7 @@ soko_loot()
 
 
 LEVEL: "soko3-7"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
@@ -896,7 +896,7 @@ soko_loot()
 
 
 LEVEL: "soko3-8"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Thinking Rabbit"
@@ -938,7 +938,7 @@ soko_loot()
 
 
 LEVEL: "soko3-9"
-FLAGS: noteleport, hardfloor, mazelevel, premapped
+FLAGS: noteleport, hardfloor, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -981,7 +981,7 @@ soko_loot()
 
 
 LEVEL: "soko3-13"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Thinking Rabbit"
@@ -1030,7 +1030,7 @@ soko_loot()
 
 
 LEVEL: "soko3-14"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Thinking Rabbit"
@@ -1088,7 +1088,7 @@ soko_loot()
 
 
 LEVEL: "soko3-15"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -1141,7 +1141,7 @@ soko_loot()
 
 
 LEVEL: "soko3-16"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -1207,7 +1207,7 @@ soko_loot()
 
 
 LEVEL: "soko3-10"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -1261,7 +1261,7 @@ soko_loot()
 
 
 LEVEL: "soko2-3"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Thinking Rabbit"
@@ -1321,7 +1321,7 @@ soko_loot()
 
 
 LEVEL: "soko2-4"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -1376,7 +1376,7 @@ soko_loot()
 
 
 LEVEL: "soko2-5"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Joseph L Traub"
@@ -1434,7 +1434,7 @@ soko_loot()
 
 
 LEVEL: "soko2-6"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Thinking Rabbit"
@@ -1495,7 +1495,7 @@ soko_loot()
 
 
 LEVEL: "soko2-7"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "Thinking Rabbit"
@@ -1546,7 +1546,7 @@ soko_loot()
 
 
 LEVEL: "soko1-3"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
@@ -1625,7 +1625,7 @@ ENGRAVING: $place[2], burn, "Elbereth"
 
 
 LEVEL: "soko1-4"
-FLAGS: noteleport, mazelevel, premapped
+FLAGS: noteleport, mazelevel, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # "J Franklin Mentzer <wryter@aol.com>"
@@ -1709,7 +1709,7 @@ ENGRAVING: $place[2], burn, "Elbereth"
 
 
 LEVEL: "soko3-17"
-FLAGS: noteleport, hardfloor, premapped
+FLAGS: noteleport, hardfloor, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # Steve Melenchuk <smelenchuk@gmail.com>
@@ -1758,7 +1758,7 @@ soko_loot()
 
 
 LEVEL: "soko3-18"
-FLAGS: noteleport, hardfloor, premapped
+FLAGS: noteleport, hardfloor, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # Steve Melenchuk <smelenchuk@gmail.com>
@@ -1812,7 +1812,7 @@ soko_loot()
 
 
 LEVEL: "soko2-8"
-FLAGS: noteleport, premapped
+FLAGS: noteleport, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # Steve Melenchuk <smelenchuk@gmail.com>
@@ -1875,7 +1875,7 @@ soko_loot()
 
 
 LEVEL: "soko2-9"
-FLAGS: noteleport, premapped
+FLAGS: noteleport, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #12345678901234567890123456789012345678901234567890
@@ -1944,7 +1944,7 @@ soko_loot()
 
 
 LEVEL: "soko2-10"
-FLAGS: noteleport, premapped
+FLAGS: noteleport, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # Steve Melenchuk <smelenchuk@gmail.com>
@@ -1998,7 +1998,7 @@ soko_loot()
 
 
 LEVEL: "soko2-11"
-FLAGS: noteleport, premapped
+FLAGS: noteleport, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # Steve Melenchuk <smelenchuk@gmail.com>
@@ -2052,7 +2052,7 @@ soko_loot()
 
 
 LEVEL: "soko1-5"
-FLAGS: noteleport, premapped
+FLAGS: noteleport, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # Steve Melenchuk <smelenchuk@gmail.com>
@@ -2147,7 +2147,7 @@ ENGRAVING: $place[2], burn, "Elbereth"
 
 
 LEVEL: "soko1-6"
-FLAGS: noteleport, premapped
+FLAGS: noteleport, premapped, noflip
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 # Steve Melenchuk <smelenchuk@gmail.com>
