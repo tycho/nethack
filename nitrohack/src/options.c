@@ -323,20 +323,19 @@ static void select_boolean_value(union nh_optvalue *value, struct nh_option_desc
 {
     struct nh_menuitem *items;
     int icount, size;
-    char titlebuf[QBUFSZ];
     int n, pick_list[2];
 
-    icount = 0; size = 2;
+    icount = 0; size = 4;
     items = malloc(sizeof(struct nh_menuitem) * size);
 
+    add_menu_txt(items, size, icount, option->helptxt, MI_TEXT);
+    add_menu_txt(items, size, icount, "", MI_TEXT);
     add_menu_item(items, size, icount, 1,
 		  option->value.b ? "true (set)" : "true", 't', 0);
     add_menu_item(items, size, icount, 2,
 		  option->value.b ? "false" : "false (set)", 'f', 0);
 
-    snprintf(titlebuf, QBUFSZ, "%s - %s", option->name, option->helptxt);
-
-    n = curses_display_menu(items, icount, titlebuf, PICK_ONE, pick_list);
+    n = curses_display_menu(items, icount, option->name, PICK_ONE, pick_list);
     free(items);
 
     value->b = option->value.b; /* in case of ESC */
@@ -350,11 +349,13 @@ static void select_enum_value(union nh_optvalue *value, struct nh_option_desc *o
 {
     struct nh_menuitem *items;
     int icount, size;
-    char titlebuf[QBUFSZ];
     int i, n, selectidx, *pick_list;
 
     icount = 0; size = 10;
     items = malloc(sizeof(struct nh_menuitem) * size);
+
+    add_menu_txt(items, size, icount, option->helptxt, MI_TEXT);
+    add_menu_txt(items, size, icount, "", MI_TEXT);
 
     for (i = 0; i < option->e.numchoices; i++) {
 	char capbuf[QBUFSZ];
@@ -369,10 +370,8 @@ static void select_enum_value(union nh_optvalue *value, struct nh_option_desc *o
 	add_menu_item(items, size, icount, i+1, cap, 0, 0);
     }
 
-    snprintf(titlebuf, QBUFSZ, "%s - %s", option->name, option->helptxt);
-
     pick_list = malloc(sizeof(int) * icount);
-    n = curses_display_menu(items, icount, titlebuf, PICK_ONE, pick_list);
+    n = curses_display_menu(items, icount, option->name, PICK_ONE, pick_list);
     free(items);
 
     value->e = option->value.e; /* in case of ESC */
