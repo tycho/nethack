@@ -1422,7 +1422,7 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    SET_OBJ_CMD2('w', "wield", "wield");
 	} else if (obj->otyp == TIN_OPENER) {
 	    SET_OBJ_CMD2('w', "wield", "wield");
-	} else {
+	} else if (obj->oclass != ARMOR_CLASS) { /* armor-wield typo begone! */
 	    SET_OBJ_CMD2('w', "wield", "wield (hold)");
 	}
 	
