@@ -98,9 +98,6 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"tree",	 -1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
     {"deadtree", -1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
 #endif
-
-    /* objects */
-    {"boulder", -1,	{0x0030, 0},	0},	/* 0 zero */
 };
 
 

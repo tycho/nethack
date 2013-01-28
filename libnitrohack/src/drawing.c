@@ -360,6 +360,8 @@ struct nh_drawing_info *nh_get_drawing_info(void)
 	tmp[i].symname = make_object_name(i);
 	tmp[i].color = const_objects[i].oc_color;
     }
+    /* show boulders as '0' by default */
+    tmp[BOULDER].ch = '0';
     di->objects = tmp;
     
     tmp = xmalloc(sizeof(struct nh_symdef));
