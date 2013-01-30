@@ -16,7 +16,7 @@
 #endif
 
 extern void yyerror(const char *);
-extern void yyparse(void);
+extern int yyparse(void);
 
 void init_yyin(FILE *);
 void init_yyout(FILE *);
