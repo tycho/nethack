@@ -32,9 +32,10 @@ endif()
 
 set (ALL_STATIC FALSE CACHE BOOL "Fully static build")
 if (NOT ALL_STATIC)
+    add_definitions(-fpic)
     set (LIB_TYPE SHARED)
 else ()
-    add_definitions(-fPIC -DSTATIC_BUILD)
+    add_definitions(-DSTATIC_BUILD)
     set (LIB_TYPE STATIC)
 endif ()
 
