@@ -444,7 +444,7 @@ int locflags;	/* non-zero means get location even if monster is buried */
 	    *xp = u.ux;
 	    *yp = u.uy;
 	    return TRUE;
-	} else if (mon->mx > 0 && (!mon->mburied || locflags)) {
+	} else if (mon && !DEADMONSTER(mon) && mon->mx > 0 && (!mon->mburied || locflags)) {
 	    *xp = mon->mx;
 	    *yp = mon->my;
 	    return TRUE;
