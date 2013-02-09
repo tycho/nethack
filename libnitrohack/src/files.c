@@ -282,6 +282,9 @@ void unlock_fd(int fd)
     
     UnlockFile(hFile, 0, 0, 64, 0);
 }
+
+#else
+#error File locking functions undefined. Define UNIX, WIN32, or implement them for the target platform.
 #endif
 
 /* ----------  END FILE LOCKING HANDLING ----------- */
