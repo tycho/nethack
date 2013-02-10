@@ -46,7 +46,8 @@ typedef signed char	boolean;		/* 0 or 1 */
  */
 typedef schar	xchar;
 
-#ifndef STRNCMPI
+/* Cygwin already defines this. */
+#if !defined(STRNCMPI) && !defined(__CYGWIN__)
 #  define strcmpi(a,b) strncmpi((a),(b),-1)
 #endif
 

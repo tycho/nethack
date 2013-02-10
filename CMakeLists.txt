@@ -1,6 +1,6 @@
 # CMakeLists.txt for NitroHack 4.0.0
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8.4)
 project (NitroHack C)
 
 if (WIN32)
@@ -32,7 +32,9 @@ endif()
 
 set (ALL_STATIC FALSE CACHE BOOL "Fully static build")
 if (NOT ALL_STATIC)
-    add_definitions(-fpic)
+    if (UNIX AND NOT CYGWIN)
+	add_definitions(-fpic)
+    endif ()
     set (LIB_TYPE SHARED)
 else ()
     add_definitions(-DSTATIC_BUILD)
@@ -52,7 +54,7 @@ endif ()
 
 if (CMAKE_COMPILER_IS_GNUCC)
     set (CMAKE_C_FLAGS_DEBUG "-Wall -g3 -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith -Wformat-security")
-    if (UNIX)
+    if (UNIX AND NOT CYGWIN)
 	add_definitions (-fvisibility=hidden)
     endif ()
 endif ()

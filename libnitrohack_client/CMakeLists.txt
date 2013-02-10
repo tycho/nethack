@@ -1,8 +1,13 @@
 # network client library for nitrohack
 
-if (WIN32)
-    set (JANSSON_INC_DIR "" CACHE PATH "Location of the jansson JSON headers")
-    set (JANSSON_LIB_DIR "" CACHE PATH "Location of the jansson JSON library")
+if (WIN32 OR CYGWIN)
+    if (CYGWIN)
+	set (JANSSON_INC_DIR "/usr/local/include" CACHE PATH "Location of the jansson JSON headers")
+	set (JANSSON_LIB_DIR "/usr/local/lib" CACHE PATH "Location of the jansson JSON library")
+    else ()
+	set (JANSSON_INC_DIR "" CACHE PATH "Location of the jansson JSON headers")
+	set (JANSSON_LIB_DIR "" CACHE PATH "Location of the jansson JSON library")
+    endif ()
     include_directories(${JANSSON_INC_DIR})
     link_directories(${JANSSON_LIB_DIR})
 endif ()

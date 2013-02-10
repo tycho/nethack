@@ -11,7 +11,7 @@
 #include <ctype.h>
 #include <setjmp.h>
 #include <sys/types.h>
-#if defined UNIX
+#if defined(UNIX)
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/ip.h>

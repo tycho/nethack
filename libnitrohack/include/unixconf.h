@@ -14,7 +14,10 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+/* Cygwin already defines this. */
+#if !defined(__CYGWIN__)
 #define strncmpi(a,b,c) strncasecmp(a,b,c)
+#endif
 
 #endif /* UNIXCONF_H */
 #endif /* UNIX */

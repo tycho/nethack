@@ -7,9 +7,9 @@
 /* #define DEBUG */	/* uncomment for debugging info */
 
 #ifdef __GNUC__
-#define noreturn __attribute__((noreturn))
+#define NORETURN __attribute__((noreturn))
 #else
-#define noreturn
+#define NORETURN
 #endif
 
 #include "config.h"
@@ -104,7 +104,7 @@ static const char *usage_info[] = {
     "       %s -h [IN (oracles.txt)] [OUT (oracles)]\n",
 };
 
-static noreturn void usage(char *argv0, char mode, int expected)
+static NORETURN void usage(char *argv0, char mode, int expected)
 {
 	int i;
 	if (expected)
