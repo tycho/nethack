@@ -3,6 +3,12 @@
 cmake_minimum_required (VERSION 2.8.4)
 project (NitroHack C)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_C_COMPILER "gcc")
+    set(CMAKE_CXX_COMPILER "g++")
+endif ()
+
+
 if (WIN32)
     set(INSTALL_BASE "$ENV{USERPROFILE}")
 else ()
@@ -55,7 +61,7 @@ endif ()
 if (CMAKE_COMPILER_IS_GNUCC)
     set (CMAKE_C_FLAGS_DEBUG "-Wall -g3 -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith -Wformat-security")
     if (UNIX AND NOT CYGWIN)
-	add_definitions (-fvisibility=hidden)
+	add_definitions (-fvisibility=hidden -fnested-functions)
     endif ()
 endif ()
 

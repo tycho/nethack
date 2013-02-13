@@ -45,7 +45,6 @@ if (ENABLE_NETCLIENT)
         src/netgame.c
         src/netplay.c)
 endif ()
-    
 if (WIN32)
     set (NH_CURSES_SRC ${NH_CURSES_SRC} rc/nh_ico.rc)
 endif ()
