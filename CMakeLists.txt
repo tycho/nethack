@@ -38,11 +38,13 @@ endif()
 
 set (ALL_STATIC FALSE CACHE BOOL "Fully static build")
 if (NOT ALL_STATIC)
-    if (UNIX AND NOT CYGWIN)
-	add_definitions(-fpic)
-    endif ()
     set (LIB_TYPE SHARED)
 else ()
+    if (UNIX AND NOT CYGWIN)
+	# Don't require object files to be recompiled
+	# if switching to a dynamic build.
+	add_definitions(-fPIC)
+    endif ()
     add_definitions(-DSTATIC_BUILD)
     set (LIB_TYPE STATIC)
 endif ()
