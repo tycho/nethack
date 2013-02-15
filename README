@@ -63,9 +63,38 @@ others to play):
       - Press 'g' to generate and save your build configuration.
       - Or press 'q' to cancel or quit if you're happy with the defaults.
     5) 'make && make install'
-    6) Run the 'nitrohack' bootstrap script to play.
+    6) Run the 'unnitrohack' bootstrap script to play.
       - Settings are stored under ~/.config/NitroHack if you want to change
         Unicode glyphs or view dump logs.
+
+To build UnNitroHack with Cygwin for Windows:
+
+    1) Install Cygwin with these packages selected:
+      - gcc4 (gcc may also work)
+      - make
+      - cmake
+      - flex
+      - bison
+      - libncursesw-devel
+      - git
+    2) Install Jansson for Cygwin:
+      - Download source tarball from http://www.digip.org/jansson/.
+      - Extract to C:\cygwin\home\foo where foo is whatever's already there.
+      - Open 'Cygwin Terminal' from the desktop shortcut and type (no quotes):
+        * 'cd jansson-2.4'
+        * './configure'
+        * 'make'
+        * 'make install'
+    3) Get the UnNitroHack source code (still in Cygwin Terminal):
+      - 'cd ~'
+      - 'git clone -b unnethack git://github.com/tung/NitroHack.git unnitrohack'
+      - 'cd unnitrohack'
+      - Follow the usual build instructions above from step 2 onwards.
+
+The Cygwin Terminal (mintty) is like the Windows console (cmd.exe), but supports
+Unicode characters, more fonts (I recommend Liberation Mono), dark gray (set it
+in UnNitroHack's options), unrestricted window size, a choice of cursor style
+and more; just right click and choose "Options...".
 
 See also:
 
