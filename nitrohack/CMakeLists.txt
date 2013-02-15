@@ -61,7 +61,7 @@ endif ()
 link_directories (${NitroHack_BINARY_DIR}/libnitrohack/src)
 link_directories (${NitroHack_BINARY_DIR}/libnitrohack_client)
 add_executable (nitrohack_curses ${NH_CURSES_SRC} )
-set_target_properties(nitrohack_curses PROPERTIES OUTPUT_NAME nitrohack )
+set_target_properties(nitrohack_curses PROPERTIES OUTPUT_NAME unnitrohack)
 target_link_libraries(nitrohack_curses nitrohack)
 
 if (USE_PDCURSES)
@@ -88,13 +88,15 @@ endif ()
 add_dependencies (nitrohack_curses libnitrohack)
 
 if (UNIX)
-    add_custom_command(OUTPUT nitrohack.sh
-                       COMMAND printf "%s\\n%s\\n" "#!/bin/sh" "LD_LIBRARY_PATH=${LIBDIR} ${BINDIR}/nitrohack $@" >> nitrohack.sh
+    add_custom_command(OUTPUT unnitrohack.sh
+                       COMMAND printf "%s\\n%s\\n" "#!/bin/sh"
+                               "LD_LIBRARY_PATH=${LIBDIR} ${BINDIR}/unnitrohack $@"
+                               >> unnitrohack.sh
                        VERBATIM)
     add_custom_target(nitrohack_curses_shell_script ALL
-                      DEPENDS nitrohack.sh)
-    install(PROGRAMS ${NitroHack_BINARY_DIR}/nitrohack/nitrohack.sh
-            DESTINATION ${SHELLDIR} RENAME nitrohack)
+                      DEPENDS unnitrohack.sh)
+    install(PROGRAMS ${NitroHack_BINARY_DIR}/nitrohack/unnitrohack.sh
+            DESTINATION ${SHELLDIR} RENAME unnitrohack)
 endif()
 
 install(TARGETS nitrohack_curses

@@ -9,24 +9,24 @@ else ()
     set(INSTALL_BASE "$ENV{HOME}")
 endif ()
 
-# default installation paths in $HOME/nitrohack
+# default installation paths in $HOME/unnitrohack
 if (NOT BINDIR)
-    set (BINDIR "${INSTALL_BASE}/nitrohack/nitrohack-data"
+    set (BINDIR "${INSTALL_BASE}/unnitrohack/unnitrohack-data"
          CACHE PATH "binary location" )
 endif()
 
 if (NOT LIBDIR)
-    set (LIBDIR "${INSTALL_BASE}/nitrohack/nitrohack-data"
+    set (LIBDIR "${INSTALL_BASE}/unnitrohack/unnitrohack-data"
          CACHE PATH "library location" )
 endif()
 
 if (NOT DATADIR)
-    set (DATADIR "${INSTALL_BASE}/nitrohack/nitrohack-data"
+    set (DATADIR "${INSTALL_BASE}/unnitrohack/unnitrohack-data"
          CACHE PATH "data location" )
 endif()
 
 if (NOT SHELLDIR)
-    set (SHELLDIR "${INSTALL_BASE}/nitrohack"
+    set (SHELLDIR "${INSTALL_BASE}/unnitrohack"
          CACHE PATH "launch script location" )
 endif()
 
