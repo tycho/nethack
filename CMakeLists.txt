@@ -3,12 +3,6 @@
 cmake_minimum_required (VERSION 2.8.4)
 project (NitroHack C)
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(CMAKE_C_COMPILER "gcc")
-    set(CMAKE_CXX_COMPILER "g++")
-endif ()
-
-
 if (WIN32)
     set(INSTALL_BASE "$ENV{USERPROFILE}")
 else ()
