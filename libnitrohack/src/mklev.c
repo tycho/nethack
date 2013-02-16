@@ -63,50 +63,62 @@ gotit:
 	return;
 }
 
+struct sort_rooms_data {
+	int room_index;
+	int lx, ly;
+};
+
+static int sort_rooms_comp(const void *va, const void *vb)
+{
+	const struct sort_rooms_data *a, *b;
+	a = (const struct sort_rooms_data *)va;
+	b = (const struct sort_rooms_data *)vb;
+	if (a->lx != b->lx)
+		return a->lx - b->lx;
+	return a->ly - b->ly;
+}
+
 void sort_rooms(struct level *lev)
 {
+	struct mkroom *tmprooms;
+	coord *tmpdoors;
+	struct sort_rooms_data *sortable;
+	int i, j, new_door_index;
 
-	int do_comp(const void *vx, const void *vy)
-	{
-		const struct mkroom *x, *y;
+	if (lev->nroom < 1) return;
 
-		x = &lev->rooms[*(int *)vx];
-		y = &lev->rooms[*(int *)vy];
-
-		/* sort by x coord first */
-		if (x->lx != y->lx)
-			return x->lx - y->lx;
-
-		/* sort by ly if lx is equal
-		 * The additional criterium is necessary to get consistent sorting
-		 * across platforms with different qsort implementations. */
-		return x->ly - y->ly;
+	/* save rooms and doors in their original order */
+	tmprooms = xmalloc(lev->nroom * sizeof(struct mkroom));
+	memcpy(tmprooms, lev->rooms, lev->nroom * sizeof(struct mkroom));
+	if (lev->doorindex > 0) {
+		tmpdoors = xmalloc(lev->doorindex * sizeof(coord));
+		memcpy(tmpdoors, lev->doors, lev->doorindex * sizeof(coord));
+	} else {
+		tmpdoors = NULL;
 	}
 
-	int ridx[lev->nroom];
-	struct mkroom tmprooms[lev->nroom];
-	coord tmpdoors[lev->doorindex];
-	int i, d, didx;
-
-	for (i = 0; i < lev->nroom; i++)
-		ridx[i] = i;
-	for (i = 0; i < lev->nroom; i++)
-		tmprooms[i] = lev->rooms[i];
-	for (i = 0; i < lev->doorindex; i++)
-		tmpdoors[i] = lev->doors[i];
-
-	qsort(ridx, lev->nroom, sizeof(int), do_comp);
-
-	didx = 0;
+	/* sort rooms from left to right */
+	sortable = xmalloc(lev->nroom * sizeof(struct sort_rooms_data));
 	for (i = 0; i < lev->nroom; i++) {
-		struct mkroom *room = &lev->rooms[i];
-		*room = tmprooms[ridx[i]];
+		sortable[i].room_index = i;
+		sortable[i].lx = lev->rooms[i].lx;
+		sortable[i].ly = lev->rooms[i].ly;
+	}
+	qsort(sortable, lev->nroom, sizeof(struct sort_rooms_data), sort_rooms_comp);
 
-		/* move the doors */
-		for (d = 0; d < room->doorct; d++)
-			lev->doors[didx + d] = tmpdoors[room->fdoor + d];
-		room->fdoor = didx;
-		didx += room->doorct;
+	/* apply room sorting */
+	new_door_index = 0;
+	for (i = 0; i < lev->nroom; i++) {
+		struct mkroom *room;
+		lev->rooms[i] = tmprooms[sortable[i].room_index];
+		room = &lev->rooms[i];
+
+		/* reorder doors to match sorted room order */
+		if (!tmpdoors) continue;
+		for (j = 0; j < room->doorct; j++)
+			lev->doors[new_door_index + j] = tmpdoors[room->fdoor + j];
+		room->fdoor = new_door_index;
+		new_door_index += room->doorct;
 	}
 }
 
