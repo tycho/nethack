@@ -19,7 +19,6 @@
 
 #include <sys/types.h>
 #include <stdlib.h>
-#include <math.h>
 
 #define PATHLEN		BUFSZ /* maximum pathlength */
 #define FILENAME	BUFSZ /* maximum filename length (conservative) */

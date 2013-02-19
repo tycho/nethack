@@ -19,6 +19,15 @@
 #define BOLT_LIM	8 /* from this distance ranged attacks will be made */
 #define MAX_CARR_CAP	1000	/* so that boulders can be heavier */
 
+/*
+ * Style of rooms and corridors on standard dungeon levels.
+ * Also the values that RANDOM_CORRIDORS accepts in special level files.
+ */
+#define LEVSTYLE_STANDARD	0
+#define LEVSTYLE_ANYTOANY	1
+#define LEVSTYLE_RING		2
+#define LEVSTYLE_HUB		3
+
 /* symbolic names for capacity levels */
 #define UNENCUMBERED	0
 #define SLT_ENCUMBER	1	/* Burdened */

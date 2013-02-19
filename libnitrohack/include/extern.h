@@ -857,7 +857,7 @@ extern int lminion(void);
 /* ### mklev.c ### */
 
 extern struct level *alloc_level(d_level *levnum);
-extern void sort_rooms(struct level *lev);
+extern void sort_rooms(struct level *lev,int);
 extern void add_room(struct level *lev,int,int,int,int,boolean,schar,boolean);
 extern void add_subroom(struct level *lev,struct mkroom *,int,int,int,int,
 			   boolean,schar,boolean);
