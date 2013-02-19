@@ -47,7 +47,7 @@ endif ()
 # Generalizing the code to the point where it will work on other systems
 # is not impossible, but the work has not been done.
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set (ENABLE_SERVER TRUE CACHE BOOL "Build the NitroHack network server")
+    set (ENABLE_SERVER FALSE CACHE BOOL "Build the NitroHack network server")
 else ()
     set (ENABLE_SERVER FALSE)
 endif ()

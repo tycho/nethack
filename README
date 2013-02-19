@@ -39,9 +39,7 @@ It combines NitroHack's...
       * less free wishes, farming and exploits
 
 UnNitroHack is compiled the same way as NitroHack. To compile UnNitroHack with
-debugging symbols (for stack traces under gdb, useful for bug reports) and
-without its server (which is only useful if you want to host the game for
-others to play):
+debugging symbols (for stack traces under gdb, useful for bug reports):
 
     1) Install dependencies:
       - the usual NetHack dependencies
@@ -55,7 +53,7 @@ others to play):
         * cmake
         * cmake-curses-gui (a.k.a. ccmake, optional but recommended)
     2) 'mkdir build && cd build'
-    3) 'cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_SERVER=FALSE ..'
+    3) 'cmake -DCMAKE_BUILD_TYPE=Debug ..'
     4) Configure your build with ccmake/cmake-curses-gui
       - 'ccmake .'
       - Edit paths by choosing lines with enter.
