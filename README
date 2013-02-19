@@ -114,7 +114,7 @@ To build UnNitroHack on OS X:
        * export NH_INSTALL_DIR=$HOME/unnitrohack
       - mkdir build
       - cd build
-      - CC=gcc CXX=g++ cmake -DUSE_OSX_HOMEBREW_CURSES=TRUE -DCMAKE_BUILD_TYPE=Debug -DENABLE_SERVER=FALSE  -DSHELLDIR=$NH_INSTALL_DIR -DBINDIR=$NH_INSTALL_DIR/data -DDATADIR=$NH_INSTALL_DIR/data -DLIBDIR=$NH_INSTALL_DIR/data ..
+      - cmake -DUSE_OSX_HOMEBREW_CURSES=TRUE -DCMAKE_BUILD_TYPE=Debug  -DSHELLDIR=$NH_INSTALL_DIR -DBINDIR=$NH_INSTALL_DIR/data -DDATADIR=$NH_INSTALL_DIR/data -DLIBDIR=$NH_INSTALL_DIR/data ..
       - make
       - make install
 

@@ -57,7 +57,7 @@ set (ENABLE_NETCLIENT TRUE CACHE BOOL "Enable network client mode")
 if (CMAKE_COMPILER_IS_GNUCC)
     set (CMAKE_C_FLAGS_DEBUG "-Wall -g3 -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith -Wformat-security")
     if (UNIX AND NOT CYGWIN)
-	add_definitions (-fvisibility=hidden -fnested-functions)
+	add_definitions (-fvisibility=hidden)
     endif ()
 endif ()
 
