@@ -66,9 +66,10 @@ gotit:
 struct sort_rooms_data {
 	int room_index;
 	int lx, ly;
+	int hx, hy;
 };
 
-static int sort_rooms_comp(const void *va, const void *vb)
+static int sort_rooms_standard_comp(const void *va, const void *vb)
 {
 	const struct sort_rooms_data *a, *b;
 	a = (const struct sort_rooms_data *)va;
@@ -78,14 +79,82 @@ static int sort_rooms_comp(const void *va, const void *vb)
 	return a->ly - b->ly;
 }
 
-void sort_rooms(struct level *lev)
+/* sort rooms by angle relative to the center of the level */
+static int sort_rooms_ring_comp(const void *va, const void *vb)
+{
+	const struct sort_rooms_data *a, *b;
+	int ax, ay, bx, by;	/* x and y relative to map center */
+	int aquad, bquad;	/* quadrants of rooms */
+
+	a = (const struct sort_rooms_data *)va;
+	b = (const struct sort_rooms_data *)vb;
+
+	ax = (a->lx + a->hx - COLNO) / 2;
+	bx = (b->lx + b->hx - COLNO) / 2;
+	ay = (a->ly + a->hy - ROWNO) / 2;
+	by = (b->ly + b->hy - ROWNO) / 2;
+
+	/*
+	 * Avoid expensive sqrt/atan2 calls by comparing
+	 * quadrants and tangents directly.
+	 *
+	 *  2 | 3
+	 * ---+---
+	 *  1 | 0
+	 */
+	aquad = (ax >= 0) ? (ay >= 0 ? 0 : 3) : (ay >= 0 ? 1 : 2);
+	bquad = (bx >= 0) ? (by >= 0 ? 0 : 3) : (by >= 0 ? 1 : 2);
+
+	if (aquad != bquad)
+	    return (aquad < bquad) ? -1 : 1;
+
+	/* Same quad? Compare tan values: ay/ax vs. by/bx */
+	if (ax == 0 && bx == 0) {
+	    /* Avoid unstable sort effects across qsort implementations. */
+	    return sort_rooms_standard_comp(va, vb);
+	} else if (ax == 0) {
+	    return -1;
+	} else if (bx == 0) {
+	    return 1;
+	} else {
+	    /* COLNO factor (longer level axis) to reduce rounding errors */
+	    int ayx = COLNO * ay / ax;
+	    int byx = COLNO * by / bx;
+	    if (ayx == byx) {
+		/* Again, avoid implementation qsort instability. */
+		return sort_rooms_standard_comp(va, vb);
+	    } else if (ayx < byx) {
+		return -1;
+	    } else {
+		return 1;
+	    }
+	}
+}
+
+void sort_rooms(struct level *lev, int levstyle)
 {
 	struct mkroom *tmprooms;
 	coord *tmpdoors;
 	struct sort_rooms_data *sortable;
+	int (*sort_func)(const void *, const void *);
 	int i, j, new_door_index;
 
 	if (lev->nroom < 1) return;
+
+	/* required for corridors of some level styles */
+	switch (levstyle) {
+	default:
+	    warning("sort_rooms: unknown levstyle %d", levstyle);
+	    /* fall through */
+	case LEVSTYLE_STANDARD:
+	case LEVSTYLE_ANYTOANY:
+	case LEVSTYLE_HUB:
+	    sort_func = sort_rooms_standard_comp;
+	    break;
+	case LEVSTYLE_RING:
+	    sort_func = sort_rooms_ring_comp;
+	    break;
+	}
 
 	/* save rooms and doors in their original order */
 	tmprooms = xmalloc(lev->nroom * sizeof(struct mkroom));
@@ -103,8 +172,10 @@ void sort_rooms(struct level *lev)
 		sortable[i].room_index = i;
 		sortable[i].lx = lev->rooms[i].lx;
 		sortable[i].ly = lev->rooms[i].ly;
+		sortable[i].hx = lev->rooms[i].hx;
+		sortable[i].hy = lev->rooms[i].hy;
 	}
-	qsort(sortable, lev->nroom, sizeof(struct sort_rooms_data), sort_rooms_comp);
+	qsort(sortable, lev->nroom, sizeof(struct sort_rooms_data), sort_func);
 
 	/* apply room sorting */
 	new_door_index = 0;
@@ -452,15 +523,8 @@ void makecorridors(struct level *lev, int style)
 	int a, b, i;
 	boolean any = TRUE;
 
-	if (style == -1) {
-	    /* avoid style 1 (random) unless it was asked for,
-	     * since it can be really ugly */
-	    style = rn2(3);
-	    if (style >= 1)
-		style++;
-	}
-
 	switch (style) {
+	case LEVSTYLE_STANDARD:
 	default: /* vanilla style */
 	    for (a = 0; a < lev->nroom - 1; a++) {
 		join(lev, a, a + 1, FALSE);
@@ -491,8 +555,8 @@ void makecorridors(struct level *lev, int style)
 	    }
 	    break;
 
-	case 1: /* at least one corridor leaves from each room
-		 * and goes to a random room */
+	case LEVSTYLE_ANYTOANY: /* at least one corridor leaves from each room
+				 * and goes to a random room */
 	    if (lev->nroom > 1) {
 		int cnt = 0;
 		for (a = 0; a < lev->nroom; a++) {
@@ -512,50 +576,15 @@ void makecorridors(struct level *lev, int style)
 	    }
 	    break;
 
-	case 2: /* circular path: room1 -> room2 -> room3 -> ... -> room1 */
-	    if (lev->nroom > 1) {
-		struct int_double {
-		    int i;
-		    double d;
-		};
-		int comp_int_double(const void *a, const void *b)
-		{
-		    const struct int_double *ida = a;
-		    const struct int_double *idb = b;
-		    if (ida->d < idb->d)
-			return -1;
-		    else if (ida->d > idb->d)
-			return 1;
-		    return 0;
-		}
-		struct int_double rotsorted[lev->nroom];
-
-		/* sort rotationally by room centers */
-		for (i = 0; i < lev->nroom; i++) {
-		    struct mkroom *r = &lev->rooms[i];
-		    int cx = r->lx + (r->hx - r->lx) / 2 - COLNO / 2;
-		    int cy = r->ly + (r->hy - r->ly) / 2 - ROWNO / 2;
-		    rotsorted[i].i = i;
-		    if (r->hx == r->lx && r->hy == r->ly) {
-			/* arbitrary but distinct value so we
-			 * don't have to rely on a stable sort
-			 * across qsort implementations */
-			rotsorted[i].d = cx / 1.0e4 + cy / 1.0e6;
-		    } else {
-			rotsorted[i].d = atan2(cy, cx);
-		    }
-		}
-		qsort(rotsorted, lev->nroom, sizeof(struct int_double),
-		      comp_int_double);
-
-		for (a = 0; a < lev->nroom; a++) {
-		    b = (a + 1) % lev->nroom;
-		    join(lev, rotsorted[a].i, rotsorted[b].i, FALSE);
-		}
+	case LEVSTYLE_RING: /* circular path:
+			     * room1 -> room2 -> room3 -> ... -> room1 */
+	    for (a = 0; a < lev->nroom; a++) {
+		b = (a + 1) % lev->nroom;
+		join(lev, a, b, FALSE);
 	    }
 	    break;
 
-	case 3: /* all roads lead to rome... or to the first room */
+	case LEVSTYLE_HUB: /* all roads lead to rome... or to the first room */
 	    if (lev->nroom > 1) {
 		/* find the most central room Manhattan-style */
 		int mindist = 9999; /* arbitrary big number */
@@ -847,6 +876,7 @@ struct level *alloc_level(d_level *levnum)
 static void makelevel(struct level *lev)
 {
 	struct mkroom *croom, *troom;
+	int levstyle;
 	int tryct;
 	int x, y;
 	struct monst *tmonst;	/* always put a web with a spider */
@@ -897,13 +927,23 @@ static void makelevel(struct level *lev)
 	}
 
 	/* otherwise, fall through - it's a "regular" level. */
+	if (rn2(10)) {
+	    levstyle = LEVSTYLE_STANDARD;
+	} else {
+	    /* avoid LEVSTYLE_ANYTOANY (style 1) unless
+	     * it was asked for, since it can be really ugly */
+	    levstyle = rn2(3);
+	    if (levstyle >= 1)
+		levstyle++;
+	}
 
 	if (Is_rogue_level(&lev->z)) {
 		makeroguerooms(lev);
 		makerogueghost(lev);
-	} else
+	} else {
 		makerooms(lev);
-	sort_rooms(lev);
+	}
+	sort_rooms(lev, levstyle);
 
 	/* construct stairs (up and down in different rooms if possible) */
 	croom = &lev->rooms[rn2(lev->nroom)];
@@ -929,7 +969,7 @@ static void makelevel(struct level *lev)
 					     to allow a random special room */
 	if (Is_rogue_level(&lev->z))
 	    goto skip0;
-	makecorridors(lev, rn2(10) ? 0 : -1);
+	makecorridors(lev, levstyle);
 	make_niches(lev);
 
 	if (!rn2(5)) make_ironbarwalls(lev, rn2(20) ? rn2(20) : rn2(50));

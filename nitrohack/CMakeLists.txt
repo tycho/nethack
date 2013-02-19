@@ -21,8 +21,6 @@ if (USE_OSX_HOMEBREW_CURSES)
     add_definitions(-DUSE_OSX_HOMEBREW_CURSES)
 endif()
 
-set (ENABLE_NETCLIENT TRUE CACHE BOOL "Enable network client mode")
-
 
 set (NH_CURSES_SRC
     src/main.c
