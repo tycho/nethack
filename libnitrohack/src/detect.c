@@ -493,8 +493,8 @@ int object_detect(struct obj *detector, /* object doing the detecting */
 	 * What are we going to do when the hero does an object detect while blind
 	 * and the detected object covers a known pool?
 	 */
-	doredraw();	/* this will correctly reset vision */
     }
+    doredraw();	/* this will correctly reset vision */
 
     u.uinwater = uw;
     if (Underwater) under_water(2);
