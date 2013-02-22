@@ -248,7 +248,7 @@ static void classic_status(struct nh_player_info *pi)
     /* line 1 */
     sprintf(buf, "%.10s the %-*s  ", pi->plname,
 	    pi->max_rank_sz + 8 - (int)strlen(pi->plname), pi->rank);
-    buf[0] = toupper(buf[0]);
+    buf[0] = toupper((unsigned char)buf[0]);
     wmove(statuswin, 0, 0);
     draw_string_bar(buf, pi->hp, pi->hpmax);
 
@@ -358,7 +358,7 @@ static void status3(struct nh_player_info *pi)
     namelen = strlen(pi->plname) < 13 ? strlen(pi->plname) : 13;
     sprintf(buf, "%.13s the %-*s  ", pi->plname,
 	    pi->max_rank_sz + 13 - namelen, pi->rank);
-    buf[0] = toupper(buf[0]);
+    buf[0] = toupper((unsigned char)buf[0]);
     mvwaddstr(statuswin, 0, 0, buf);
 
     print_statdiff(NULL, "Con:%2d", oldpi->co, pi->co);

@@ -382,9 +382,9 @@ nh_bool player_selection(int *out_role, int *out_race, int *out_gend,
 	    /* Prompt for a role */
 	    for (i = 0; i < listlen; i++) {
 		id = list[i].id + 1; /* list[i].id starts at 0 */
-		thisch = tolower(*list[i].caption);
+		thisch = tolower((unsigned char)*list[i].caption);
 		if (thisch == lastch)
-		    thisch = toupper(thisch);
+		    thisch = toupper((unsigned char)thisch);
 		add_menu_item(items, size, icount, id, list[i].caption, thisch, 0);
 		lastch = thisch;
 	    }

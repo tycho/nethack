@@ -139,7 +139,7 @@ static json_t *receive_json_msg(void)
 	
 	rbuf[datalen] = '\0'; /* terminate the string */
 	bp = &rbuf[datalen - 1];
-	while (isspace(*bp))
+	while (isspace((unsigned char)*bp))
 	    bp--;
 
 	recv_msg = NULL;

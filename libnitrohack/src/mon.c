@@ -1955,7 +1955,7 @@ void poisoned(const char *string, int typ, const char *pname, int fatal)
 	    /* so have "poison arrow", "poison dart", etc... */
 	    plural = (string[strlen(string) - 1] == 's')? 1 : 0;
 	    /* avoid "The" Orcus's sting was poisoned... */
-	    pline("%s%s %s poisoned!", isupper(*string) ? "" : "The ",
+	    pline("%s%s %s poisoned!", isupper((uchar)*string) ? "" : "The ",
 			string, plural ? "were" : "was");
 	}
 

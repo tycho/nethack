@@ -1124,9 +1124,9 @@ static void read_config_line(char* line)
     *delim-- = '\0';
     
     /* remove space around name */
-    while (isspace(*name))
+    while (isspace((unsigned char)*name))
 	name++;
-    while (isspace(*delim))
+    while (isspace((unsigned char)*delim))
 	*delim-- = '\0';
     
     /* remove spaces around value */
@@ -1135,9 +1135,9 @@ static void read_config_line(char* line)
 	delim++;
     delim--;
     
-    while (isspace(*value))
+    while (isspace((unsigned char)*value))
 	value++;
-    while (isspace(*delim))
+    while (isspace((unsigned char)*delim))
 	*delim-- = '\0';
     
     /* value may be enclosed with double quotes (") */

@@ -161,7 +161,7 @@ int curses_msgwin(const char *msg)
     WINDOW *win = newdialog(3, width);
     
     len = strlen(msg);
-    while (isspace(msg[len-1]))
+    while (isspace((unsigned char)msg[len-1]))
 	len--;
     
     mvwaddnstr(win, 1, 2, msg, len);

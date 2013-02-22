@@ -1204,7 +1204,7 @@ const struct permonst *rndmonst(struct level *lev)
 		rndmonst_state.mchoices[mndx] = 0;
 		if (tooweak(mndx, minmlev) || toostrong(mndx, maxmlev))
 		    continue;
-		if (upper && !isupper(def_monsyms[(int)(ptr->mlet)])) continue;
+		if (upper && !isupper((uchar)def_monsyms[(int)(ptr->mlet)])) continue;
 		if (elemlevel && wrong_elem_type(dlev, ptr)) continue;
 		if (uncommon(dlev, mndx)) continue;
 		if (In_hell(dlev) && (ptr->geno & G_NOHELL)) continue;

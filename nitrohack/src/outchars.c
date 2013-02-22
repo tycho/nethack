@@ -218,10 +218,10 @@ static void read_sym_line(char *line)
     ovr.symname = symname;
     bp++; /* go past the " at the end of the symname */
     
-    while (*bp && isspace(*bp)) bp++; /* find the start of the next value */
+    while (*bp && isspace((unsigned char)*bp)) bp++; /* find the start of the next value */
     sscanf(bp, "%d", &ovr.color);
     
-    while (*bp && !isspace(*bp)) bp++; /* go past the previous value */
+    while (*bp && !isspace((unsigned char)*bp)) bp++; /* go past the previous value */
     sscanf(bp, "%x", &ovr.unichar[0]);
     
     apply_override(unicode_drawing, &ovr, 1,  TRUE);

@@ -1043,7 +1043,7 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 
 	/* Count the actual # of chars engraved not including spaces */
 	len = strlen(ebuf);
-	for (sp = ebuf; *sp; sp++) if (isspace(*sp)) len -= 1;
+	for (sp = ebuf; *sp; sp++) if (isspace((uchar)*sp)) len -= 1;
 
 	if (len == 0 || strchr(ebuf, '\033')) {
 	    if (zapwand) {
@@ -1067,7 +1067,7 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 	/* Mix up engraving if surface or state of mind is unsound.
 	   Note: this won't add or remove any spaces. */
 	for (sp = ebuf; *sp; sp++) {
-	    if (isspace(*sp)) continue;
+	    if (isspace((uchar)*sp)) continue;
 	    if (((type == DUST || type == ENGR_BLOOD) && !rn2(25)) ||
 		    (Blind && !rn2(11)) || (Confusion && !rn2(7)) ||
 		    (Stunned && !rn2(4)) || (Hallucination && !rn2(2)))
@@ -1157,7 +1157,7 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 	/* Chop engraving down to size if necessary */
 	if (len > maxelen) {
 	    for (sp = ebuf; (maxelen && *sp); sp++)
-		if (!isspace(*sp)) maxelen--;
+		if (!isspace((uchar)*sp)) maxelen--;
 	    if (!maxelen && *sp) {
 		*sp = (char)0;
 		if (multi) nomovemsg = "You cannot write any more.";

@@ -577,9 +577,9 @@ static nh_bool read_keymap(void)
     while (line) {
 	/* find the first non-space after the first space (ie the second word) */
 	pos = 0;
-	while (line[pos] && !isspace(line[pos]))
+	while (line[pos] && !isspace((unsigned char)line[pos]))
 	    pos++;
-	while (line[pos] && isspace(line[pos]))
+	while (line[pos] && isspace((unsigned char)line[pos]))
 	    pos++;
 	
 	unknown = FALSE;

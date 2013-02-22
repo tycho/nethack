@@ -146,7 +146,7 @@ void replay_begin(void)
     
     warned = 0;
     for (i = 0; i < endpos; i++)
-	if (iscntrl(loginfo.mem[i]) && loginfo.mem[i] != '\n') {
+	if (iscntrl((uchar)loginfo.mem[i]) && loginfo.mem[i] != '\n') {
 	    if (recovery) {
 		endpos = i;
 		loginfo.mem[i] = '\0';

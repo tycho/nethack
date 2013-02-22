@@ -177,7 +177,7 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 	if (dir != DIR_NONE) {
 	    dx = xdir[dir];
 	    dy = ydir[dir];
-	} else if ( (dir = key_to_dir(tolower((char)key))) != DIR_NONE ) {
+	} else if ( (dir = key_to_dir(tolower((unsigned char)key))) != DIR_NONE ) {
 	    /* a shifted movement letter */
 	    dx = xdir[dir] * 8;
 	    dy = ydir[dir] * 8;

@@ -960,7 +960,7 @@ int fruitadd(char *str)
 
 		    for (c = pl_fruit; *c >= '0' && *c <= '9'; c++)
 			;
-		    if (isspace(*c) || *c == 0) numeric = TRUE;
+		    if (isspace((uchar)*c) || *c == 0) numeric = TRUE;
 		}
 		if (found || numeric ||
 		    !strncmp(str, "cursed ", 7) ||
@@ -1082,8 +1082,8 @@ static boolean change_spell_order(const char *op, boolean checkonly)
 		    state = 0;
 		} else if (state == 2) {
 		    char tmp;
-		    if ((isupper(cur) && islower(last)) ||
-			(islower(cur) && isupper(last)))
+		    if ((isupper((uchar)cur) && islower((uchar)last)) ||
+			(islower((uchar)cur) && isupper((uchar)last)))
 			return FALSE;
 		    if (cur >= last) {
 			for (tmp = last; tmp <= cur; tmp++)
