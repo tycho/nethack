@@ -222,7 +222,7 @@ static void read_sym_line(char *line)
     sscanf(bp, "%d", &ovr.color);
     
     while (*bp && !isspace((unsigned char)*bp)) bp++; /* go past the previous value */
-    sscanf(bp, "%x", &ovr.unichar[0]);
+    sscanf(bp, "%hx", &ovr.unichar[0]);
     
     apply_override(unicode_drawing, &ovr, 1,  TRUE);
 }
