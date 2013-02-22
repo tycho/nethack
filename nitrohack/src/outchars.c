@@ -222,7 +222,13 @@ static void read_sym_line(char *line)
     sscanf(bp, "%d", &ovr.color);
     
     while (*bp && !isspace((unsigned char)*bp)) bp++; /* go past the previous value */
+#if defined(__CYGWIN__)
+    /* can't find a format string that makes Cygwin and everything else
+     * happy at the same time :( */
     sscanf(bp, "%hx", &ovr.unichar[0]);
+#else
+    sscanf(bp, "%x", &ovr.unichar[0]);
+#endif
     
     apply_override(unicode_drawing, &ovr, 1,  TRUE);
 }
