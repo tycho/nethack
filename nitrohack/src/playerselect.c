@@ -349,7 +349,7 @@ nh_bool player_selection(int *out_role, int *out_race, int *out_gend,
 	list[i].caption = listbuffers[i];
     }
     
-    srand(time(NULL));
+    srandom(time(NULL));
     
     /* Should we randomly pick for the player? */
     if (!randomall &&
