@@ -57,6 +57,12 @@
 #define CLR_BRIGHT_CYAN		14
 #define CLR_WHITE		15
 #define CLR_MAX			16
+#define CLR_MASK		0x1F
+
+/*
+ * Additional effects.
+ */
+#define HI_ULINE	0x20
 
 /* flags for displayed monsters */
 #define MON_NORMAL   0

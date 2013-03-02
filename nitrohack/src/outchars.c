@@ -622,12 +622,14 @@ void print_sym(WINDOW *win, struct curses_symdef *sym, int extra_attrs)
 {
     int attr;
     cchar_t uni_out;
-    
+
     /* nitrohack color index -> curses color */
     attr = A_NORMAL | extra_attrs;
-    if (ui_flags.color)
-	attr |= curses_color_attr(sym->color);
-    
+    if (ui_flags.color) {
+	attr |= curses_color_attr(sym->color & CLR_MASK);
+	if (sym->color & HI_ULINE) attr |= A_UNDERLINE;
+    }
+
     /* print it; preferably as unicode */
     if (sym->unichar[0] && ui_flags.unicode) {
 	int color = PAIR_NUMBER(attr);
