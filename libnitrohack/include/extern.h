@@ -505,6 +505,7 @@ extern void make_grave(struct level *lev, int x, int y, const char *str);
 
 /* ### exper.c ### */
 
+extern long newuexp(int);
 extern int experience(struct monst *,int);
 extern void more_experienced(int,int,int);
 extern void losexp(const char *);
