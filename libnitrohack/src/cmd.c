@@ -1925,8 +1925,9 @@ static int dotravel(int x, int y)
 	    }
 	    pline("Where do you want to travel to?");
 	    if (getpos(&cc, FALSE, "the desired destination") < 0) {
-		    /* user pressed ESC */
-		    return 0;
+		if (flags.verbose)
+		    pline("Never mind.");
+		return 0;
 	    }
 	} else {
 	    cc.x = x;
