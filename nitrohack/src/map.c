@@ -139,7 +139,8 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
     int cx, cy;
     int key, dx, dy;
     int sidx;
-    static const char pick_chars[] = ".,;:";
+    static const char pick_chars[] = " \r\n.,;:";
+    static const int pick_vals[] = {1, 1, 1, 1, 2, 3, 4};
     const char *cp;
     char printbuf[BUFSZ];
     char *matching = NULL;
@@ -168,8 +169,7 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 	}
 	
 	if ((cp = strchr(pick_chars, (char)key)) != 0) {
-	    /* '.' => 0, ',' => 1, ';' => 2, ':' => 3 */
-	    result = cp - pick_chars;
+	    result = pick_vals[cp - pick_chars];
 	    break;
 	}
 
@@ -230,8 +230,7 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 		cx = monpos[monidx].x;
 		cy = monpos[monidx].y;
 	    }
-	    goto nxtc;
-	} else if (!strchr(quit_chars, key)) {
+	} else {
 	    int k = 0, tx, ty;
 	    int pass, lo_x, lo_y, hi_x, hi_y;
 	    matching = malloc(default_drawing->num_bgelements);
@@ -261,19 +260,13 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 		}		/* pass */
 		sprintf(printbuf, "Can't find dungeon feature '%c'.", (char)key);
 		curses_msgwin(printbuf);
-		goto nxtc;
 	    } else {
 		sprintf(printbuf, "Unknown direction%s.", 
-			!force ? " (aborted)" : "");
+			!force ? " (ESC to abort)" : "");
 		curses_msgwin(printbuf);
 	    }
-	} /* !quit_chars */
-	if (force) goto nxtc;
-	cx = -1;
-	cy = 0;
-	result = 0;	/* not -1 */
-	break;
-	    
+	}
+
 nxtc:
 	wmove(mapwin, cy, cx-1);
 	wrefresh(mapwin);
