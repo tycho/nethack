@@ -126,18 +126,28 @@ static void prune_messages(int maxturn)
 void draw_msgwin(void)
 {
     int i, pos;
+    nh_bool drew_older = FALSE;
 
     for (i = getmaxy(msgwin) - 1; i >= 0; i--) {
 	pos = curline - getmaxy(msgwin) + 1 + i;
 	if (pos < 0)
 	    pos += MAX_MSGLINES;
-	if (pos == start_of_turn_curline)
+	if (pos == start_of_turn_curline) {
 	    wattron(msgwin, curses_color_attr(COLOR_BLUE));
+	    drew_older = TRUE;
+	}
 	wmove(msgwin, i, 0);
 	waddstr(msgwin, msglines[pos]);
 	wclrtoeol(msgwin);
     }
-    wattroff(msgwin, curses_color_attr(COLOR_BLUE));
+
+    if (drew_older) {
+	wattroff(msgwin, curses_color_attr(COLOR_BLUE));
+    } else {
+	/* Don't dim out messages if the message buffer wraps. */
+	start_of_turn_curline = -1;
+    }
+
     wnoutrefresh(msgwin);
 }
 
@@ -209,9 +219,6 @@ static void curses_print_message_core(int turn, const char *inmsg, nh_bool canbl
     
     if (!msghistory)
 	alloc_hist_array();
-
-    if (turn != prevturn)
-	start_of_turn_curline = last_redraw_curline = curline;
 
     if (turn < prevturn) /* going back in time can happen during replay */
 	prune_messages(turn);
