@@ -109,8 +109,8 @@ static void prune_messages(int maxturn)
 	if (msghistory[pos].turn > prevturn)
 	    start_of_turn_curline = last_redraw_curline = curline;
 	prevturn = msghistory[pos].turn;
-	
-	if (strlen(msglines[curline]) + strlen(msg) + 1 < COLNO) {
+
+	if (strlen(msglines[curline]) + strlen(msg) + 2 < COLNO) {
 	    if (msglines[curline][0])
 		strcat(msglines[curline], "  ");
 	    strcat(msglines[curline], msg);
@@ -231,19 +231,19 @@ static void curses_print_message_core(int turn, const char *inmsg, nh_bool canbl
     
     if (stopprint)
 	return;
-    
-    /* 
+
+    /*
      * generally we want to put as many messages on one line as possible to
      * maximize space usage. A new line is begun after each player turn or if
      * more() is called via pause_messages(). "You die" also deserves its own line.
-     * 
+     *
      * If the message area is only one line high, space for "--More--" must be
      * reserved at the end of the line, otherwise  --More-- is shown on a new line.
      */
-    maxlen = COLNO;
+    maxlen = COLNO - 1;
     if (getmaxy(msgwin) == 1)
 	maxlen -= 8; /* for "--More--" */
-    
+
     died = !strncmp(msg, "You die", 7);
     if (strlen(msglines[curline]) + strlen(msg) + 1 < maxlen && !died) {
 	if (msglines[curline][0])
