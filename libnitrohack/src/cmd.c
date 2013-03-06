@@ -940,7 +940,7 @@ static boolean minimal_enlightenment(void)
 	init_menulist(&menu);
 
 	buf[0] = buf2[0] = '\0';
-	add_menuheading(&menu, "Stats");
+	add_menuheading(&menu, "Character Information");
 
 	/* Starting and current name, race, role, gender, alignment */
 	sprintf(buf, fmtstr_noorig, "name", plname);
@@ -994,7 +994,11 @@ static boolean minimal_enlightenment(void)
 
 	/* Deity list */
 	add_menutext(&menu, "");
-	add_menuheading(&menu, "Deities");
+	sprintf(buf, "%s Deities",
+		((Upolyd ? u.mfemale : flags.female) && urole.name.f) ?
+		urole.name.f : urole.name.m);
+	add_menuheading(&menu, buf);
+
 	sprintf(buf2, deity_fmtstr, align_gname(A_CHAOTIC),
 	    (u.ualignbase[A_ORIGINAL] == u.ualign.type
 		&& u.ualign.type == A_CHAOTIC) ? " (s,c)" :
@@ -1024,7 +1028,7 @@ static boolean minimal_enlightenment(void)
 	   and/or lost, to avoid giving away information not in vanilla
 	   NetHack. */
 	add_menutext(&menu, "");
-	add_menuheading(&menu, "Intrinsics and Extrinsics");
+	add_menuheading(&menu, "Known Intrinsics and Extrinsics");
 	n = menu.icount;
 
 	/* Resistances */
@@ -1062,7 +1066,7 @@ static boolean minimal_enlightenment(void)
 
 	if (n == menu.icount) add_menutext(&menu, "You are rather mundane.");
 
-	n = display_menu(menu.items, menu.icount, "Character Information",
+	n = display_menu(menu.items, menu.icount, "Your Attributes",
 			 PICK_NONE, NULL);
 	free(menu.items);
 	return n != -1;
