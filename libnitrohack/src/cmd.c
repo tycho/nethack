@@ -976,6 +976,20 @@ static boolean minimal_enlightenment(void)
 	}
 	add_menutext(&menu, buf);
 
+	if (ACURR(A_STR) > 18) {
+	    if (ACURR(A_STR) > STR18(100))
+		sprintf(buf, "attributes: St:%2d ", ACURR(A_STR) - 100);
+	    else if (ACURR(A_STR) < STR18(100))
+		sprintf(buf, "attributes: St:18/%02d ", ACURR(A_STR) - 18);
+	    else
+		sprintf(buf, "attributes: St:18/** ");
+	} else {
+	    sprintf(buf, "attributes: St:%-1d ", ACURR(A_STR));
+	}
+	sprintf(eos(buf), "Dx:%-1d Co:%-1d In:%-1d Wi:%-1d Ch:%-1d",
+		ACURR(A_DEX), ACURR(A_CON), ACURR(A_INT), ACURR(A_WIS), ACURR(A_CHA));
+	add_menutext(&menu, buf);
+
 	if (u.ulevel < 30) {
 	    sprintf(buf, "%-10s: %d (exp: %d, %ld needed)", "level",
 		    u.ulevel, u.uexp, newuexp(u.ulevel));
