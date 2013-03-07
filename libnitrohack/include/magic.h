@@ -19,6 +19,7 @@
 #define ENGRAVE_MAGIC		0x52474e45 /* "ENGR" */
 #define HISTORY_MAGIC		0x54534948 /* "HIST" */
 #define DIG_MAGIC		0x44494753 /* "DIGS" */
+#define DGN_MAGIC		0x004e4744 /* "DGN\0" */
 #define MONGEN_MAGIC		0x4e45474d /* "MGEN" */
 #define MONGENTUPLE_MAGIC	0x5554474d /* "MGTU" */
 #define LVLSOUNDS_MAGIC		0x444e534c /* "LSND" */
