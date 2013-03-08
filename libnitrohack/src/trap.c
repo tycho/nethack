@@ -1419,13 +1419,11 @@ int launch_obj(short otyp, int x1, int y1, int x2, int y2, int style)
 
 				if (newlev == depth(&u.uz) || In_endgame(&u.uz))
 				    continue;
-				add_to_migration(singleobj);
 				get_level(&dest, newlev);
-				singleobj->ox = dest.dnum;
-				singleobj->oy = dest.dlevel;
-				singleobj->owornmask = (long)MIGR_RANDOM;
+				deliver_object(singleobj, dest.dnum, dest.dlevel,
+					       MIGR_RANDOM);
 			    }
-		    	    seetrap(t);
+			    seetrap(t);
 			    used_up = TRUE;
 			    break;
 			case PIT:
