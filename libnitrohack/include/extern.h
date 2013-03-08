@@ -768,7 +768,8 @@ extern void replay_end(void);
 extern char *replay_bones(int *buflen);
 extern void replay_setup_windowprocs(const struct nh_window_procs *procs);
 extern void replay_restore_windowprocs(void);
-extern void replay_read_newgame(unsigned long long *time, int *playmode, char *name);
+extern void replay_read_newgame(unsigned long long *init, int *playmode, char *namebuf,
+			int *initrole, int *initrace, int *initgend, int *initalign);
 extern boolean replay_run_cmdloop(boolean optonly, boolean singlestep);
 
 
@@ -1187,7 +1188,7 @@ extern void initoptions(void);
 extern struct nh_option_desc *clone_optlist(const struct nh_option_desc *in);
 extern void free_optlist(struct nh_option_desc *opt);
 extern int dotogglepickup(void);
-extern int fruitadd(char *);
+extern int fruitadd(const char *str);
 extern char *autopickup_to_string(const struct nh_autopickup_rules *rules);
 extern struct nh_autopickup_rules *parse_autopickup_rules(const char *str);
 extern char *msgtype_to_string(const struct nh_msgtype_rules *mt);
