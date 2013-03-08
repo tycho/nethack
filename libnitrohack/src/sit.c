@@ -144,9 +144,11 @@ int dosit(void)
 
 	    pline(sit_message, defexplain[S_throne]);
 	    if (rnd(6) > 4)  {
+		int which_attr = rn2(A_MAX);
+		int attr_amount = -rn1(4,3);
 		switch (rnd(13))  {
 		    case 1:
-			adjattrib(rn2(A_MAX), -rn1(4,3), FALSE);
+			adjattrib(which_attr, attr_amount, FALSE);
 			losehp(rnd(10), "cursed throne", KILLED_BY_AN);
 			break;
 		    case 2:

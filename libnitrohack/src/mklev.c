@@ -947,8 +947,11 @@ static void makelevel(struct level *lev)
 
 	/* construct stairs (up and down in different rooms if possible) */
 	croom = &lev->rooms[rn2(lev->nroom)];
-	if (!Is_botlevel(&lev->z))
-	     mkstairs(lev, somex(croom), somey(croom), 0, croom); /* down */
+	if (!Is_botlevel(&lev->z)) {
+	    x = somex(croom);
+	    y = somey(croom);
+	    mkstairs(lev, x, y, 0, croom); /* down */
+	}
 	if (lev->nroom > 1) {
 	    troom = croom;
 	    croom = &lev->rooms[rn2(lev->nroom-1)];
@@ -1040,7 +1043,8 @@ skip0:
 		   we have to check for monsters on the stairs anyway. */
 
 		if (u.uhave.amulet || !rn2(3)) {
-		    x = somex(croom); y = somey(croom);
+		    x = somex(croom);
+		    y = somey(croom);
 		    tmonst = makemon(NULL, lev, x, y, NO_MM_FLAGS);
 		    if (tmonst && tmonst->data == &mons[PM_GIANT_SPIDER] &&
 			    !occupied(lev, x, y))
@@ -1052,8 +1056,11 @@ skip0:
 		if (x <= 1) x = 2;
 		while (!rn2(x))
 		    mktrap(lev, 0, 0, croom, NULL);
-		if (!goldseen && !rn2(3))
-		    mkgold(0L, lev, somex(croom), somey(croom));
+		if (!goldseen && !rn2(3)) {
+		    x = somex(croom);
+		    y = somey(croom);
+		    mkgold(0L, lev, x, y);
+		}
 		if (Is_rogue_level(&lev->z)) goto skip_nonrogue;
 		if (!rn2(10)) mkfount(lev, 0, croom);
 		if (!rn2(60)) mksink(lev, croom);
@@ -1063,9 +1070,11 @@ skip0:
 		if (!rn2(x)) mkgrave(lev, croom);
 
 		/* put statues inside */
-		if (!rn2(20))
-		    mkcorpstat(STATUE, NULL, NULL, lev,
-				      somex(croom), somey(croom), TRUE);
+		if (!rn2(20)) {
+		    x = somex(croom);
+		    y = somey(croom);
+		    mkcorpstat(STATUE, NULL, NULL, lev, x, y, TRUE);
+		}
 		/* put box/chest/safe inside;
 		 *  40% chance for at least 1 box, regardless of number
 		 *  of rooms; about 5 - 7.5% for 2 boxes, least likely
@@ -1076,8 +1085,9 @@ skip0:
 		    if (!x && depth(&u.uz) > 15) boxtype = IRON_SAFE;
 		    else if (x > 2)		 boxtype = CHEST;
 		    else			 boxtype = LARGE_BOX;
-		    mksobj_at(boxtype, lev, somex(croom), somey(croom),
-			    TRUE, FALSE);
+		    x = somex(croom);
+		    y = somey(croom);
+		    mksobj_at(boxtype, lev, x, y, TRUE, FALSE);
 		}
 
 		/* maybe make some graffiti */
@@ -1086,7 +1096,8 @@ skip0:
 		    const char *mesg = random_engraving(buf);
 		    if (mesg) {
 			do {
-			    x = somex(croom);  y = somey(croom);
+			    x = somex(croom);
+			    y = somey(croom);
 			} while (lev->locations[x][y].typ != ROOM && !rn2(40));
 			if (!(IS_POOL(lev->locations[x][y].typ) ||
 			      IS_FURNITURE(lev->locations[x][y].typ)))
@@ -1096,14 +1107,18 @@ skip0:
 
 	skip_nonrogue:
 		if (!rn2(3)) {
-		    mkobj_at(0, lev, somex(croom), somey(croom), TRUE);
+		    x = somex(croom);
+		    y = somey(croom);
+		    mkobj_at(0, lev, x, y, TRUE);
 		    tryct = 0;
 		    while (!rn2(5)) {
 			if (++tryct > 100) {
 			    impossible("tryct overflow4");
 			    break;
 			}
-			mkobj_at(0, lev, somex(croom), somey(croom), TRUE);
+			x = somex(croom);
+			y = somey(croom);
+			mkobj_at(0, lev, x, y, TRUE);
 		    }
 		}
 	}
