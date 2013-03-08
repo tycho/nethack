@@ -952,23 +952,22 @@ int fruitadd(const char *str)
 		/* disallow naming after other foods (since it'd be impossible
 		 * to tell the difference)
 		 */
-
 		boolean found = FALSE, numeric = FALSE;
+		char *c;
 
 		for (i = bases[FOOD_CLASS]; objects[i].oc_class == FOOD_CLASS;
 						i++) {
-			if (!strcmp(OBJ_NAME(objects[i]), pl_fruit)) {
+			if (i != SLIME_MOLD && !strcmp(OBJ_NAME(objects[i]), pl_fruit)) {
 				found = TRUE;
 				break;
 			}
 		}
-		{
-		    char *c;
 
-		    for (c = pl_fruit; *c >= '0' && *c <= '9'; c++)
-			;
-		    if (isspace((uchar)*c) || *c == 0) numeric = TRUE;
-		}
+		for (c = pl_fruit; *c >= '0' && *c <= '9'; c++)
+		    /* empty */;
+		if (isspace((uchar)*c) || *c == 0)
+		    numeric = TRUE;
+
 		if (found || numeric ||
 		    !strncmp(str, "cursed ", 7) ||
 		    !strncmp(str, "uncursed ", 9) ||
@@ -980,12 +979,11 @@ int fruitadd(const char *str)
 		    !strcmp(str, "empty tin") ||
 		    ((!strncmp(str + strlen(str) - 7, " corpse", 7) ||
 			    !strncmp(str + strlen(str) - 4, " egg", 4)) &&
-			name_to_mon(str) >= LOW_PM))
-			{
-			    strcpy(buf, pl_fruit);
-			    strcpy(pl_fruit, "candied ");
-			    strncat(pl_fruit+8, buf, PL_FSIZ-8-1);
-			}
+			name_to_mon(str) >= LOW_PM)) {
+		    strcpy(buf, pl_fruit);
+		    strcpy(pl_fruit, "candied ");
+		    strncat(pl_fruit+8, buf, PL_FSIZ-8-1);
+		}
 	}
 	for (f=ffruit; f; f = f->nextf) {
 		lastf = f;
