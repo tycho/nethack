@@ -923,6 +923,57 @@ void enlightenment(int final)
 	return;
 }
 
+static void unspoilered_intrinsics(void)
+{
+	int n;
+	struct menulist menu;
+
+	init_menulist(&menu);
+
+	/* Intrinsic list
+	   This lists only intrinsics that produce messages when gained
+	   and/or lost, to avoid giving away information not in vanilla
+	   NetHack. */
+	n = menu.icount;
+
+	/* Resistances */
+	if (HFire_resistance) add_menutext(&menu, "You are fire resistant.");
+	if (HCold_resistance) add_menutext(&menu, "You are cold resistant.");
+	if (HSleep_resistance) add_menutext(&menu, "You are sleep resistant.");
+	if (HDisint_resistance) add_menutext(&menu, "You are disintegration-resistant.");
+	if (HShock_resistance) add_menutext(&menu, "You are shock resistant.");
+	if (HPoison_resistance) add_menutext(&menu, "You are poison resistant.");
+	if (HDrain_resistance) add_menutext(&menu, "You are level-drain resistant.");
+	if (HSick_resistance) add_menutext(&menu, "You are immune to sickness.");
+	/* Senses */
+	if (HSee_invisible) add_menutext(&menu, "You see invisible.");
+	if (HTelepat) add_menutext(&menu, "You are telepathic.");
+	if (HWarning) add_menutext(&menu, "You are warned.");
+	if (HSearching) add_menutext(&menu, "You have automatic searching.");
+	if (HInfravision) add_menutext(&menu, "You have infravision.");
+	/* Appearance, behaviour */
+	if (HInvis && Invisible) add_menutext(&menu, "You are invisible.");
+	if (HInvis && !Invisible) add_menutext(&menu, "You are invisible to others.");
+	if (HStealth) add_menutext(&menu, "You are stealthy.");
+	if (HAggravate_monster) add_menutext(&menu, "You aggravte monsters.");
+	if (HConflict) add_menutext(&menu, "You cause conflict.");
+	/* Movement */
+	if (HJumping) add_menutext(&menu, "You can jump.");
+	if (HTeleportation) add_menutext(&menu, "You can teleport.");
+	if (HTeleport_control) add_menutext(&menu, "You have teleport control.");
+	if (HSwimming) add_menutext(&menu, "You can swim.");
+	if (HMagical_breathing) add_menutext(&menu, "You can survive without air.");
+	if (HPasses_walls) add_menutext(&menu, "You can walk through walls.");
+	if (HProtection) add_menutext(&menu, "You are protected.");
+	if (HPolymorph) add_menutext(&menu, "You are polymorhing.");
+	if (HPolymorph_control) add_menutext(&menu, "You have polymorph control.");
+	if (HFast) add_menutext(&menu, "You are fast.");
+	if (n == menu.icount) add_menutext(&menu, "You are rather mundane.");
+
+	display_menu(menu.items, menu.icount, "Your Intrinsics:", PICK_NONE, NULL);
+	free(menu.items);
+}
+
 /*
  * Courtesy function for non-debug, non-explorer mode players
  * to help refresh them about who/what they are.
@@ -930,7 +981,7 @@ void enlightenment(int final)
  */
 static boolean minimal_enlightenment(void)
 {
-	int genidx, n;
+	int genidx, n, selected[1];
 	char buf[BUFSZ], buf2[BUFSZ];
 	static const char fmtstr[] = "%-10s: %-12s (started %s)";
 	static const char fmtstr_noorig[] = "%-10s: %-12s";
@@ -1037,62 +1088,39 @@ static boolean minimal_enlightenment(void)
 	sprintf(buf, fmtstr_noorig, "Lawful", buf2);
 	add_menutext(&menu, buf);
 
-	/* Intrinsic list
-	   This lists only intrinsics that produce messages when gained
-	   and/or lost, to avoid giving away information not in vanilla
-	   NetHack. */
 	add_menutext(&menu, "");
-	add_menuheading(&menu, "Known Intrinsics and Extrinsics");
-	n = menu.icount;
+	add_menuheading(&menu, "Other Information");
+	add_menuitem(&menu, 'i', "Inventory", 'i', FALSE);
+	add_menuitem(&menu, 'n', "Intrinsics", 'n', FALSE);
+	if (num_vanquished() > 0)
+	    add_menuitem(&menu, 'v', "Vanquished creatures", 'v', FALSE);
+	if (num_genocides() > 0 || num_extinctions() > 0)
+	    add_menuitem(&menu, 'g', "Genocided/extinct creatures", 'g', FALSE);
+	add_menuitem(&menu, 'c', "Conducts followed", 'c', FALSE);
+	if (wizard || discover)
+	    add_menuitem(&menu, 'w', "Debug/explore mode spoilers", 'w', FALSE);
 
-	/* Resistances */
-	if (HFire_resistance) add_menutext(&menu, "You are fire resistant.");
-	if (HCold_resistance) add_menutext(&menu, "You are cold resistant.");
-	if (HSleep_resistance) add_menutext(&menu, "You are sleep resistant.");
-	if (HDisint_resistance) add_menutext(&menu, "You are disintegration-resistant.");
-	if (HShock_resistance) add_menutext(&menu, "You are shock resistant.");
-	if (HPoison_resistance) add_menutext(&menu, "You are poison resistant.");
-	if (HDrain_resistance) add_menutext(&menu, "You are level-drain resistant.");
-	if (HSick_resistance) add_menutext(&menu, "You are immune to sickness.");
-	/* Senses */
-	if (HSee_invisible) add_menutext(&menu, "You see invisible.");
-	if (HTelepat) add_menutext(&menu, "You are telepathic.");
-	if (HWarning) add_menutext(&menu, "You are warned.");
-	if (HSearching) add_menutext(&menu, "You have automatic searching.");
-	if (HInfravision) add_menutext(&menu, "You have infravision.");
-	/* Appearance, behaviour */
-	if (HInvis && Invisible) add_menutext(&menu, "You are invisible.");
-	if (HInvis && !Invisible) add_menutext(&menu, "You are invisible to others.");
-	if (HStealth) add_menutext(&menu, "You are stealthy.");
-	if (HAggravate_monster) add_menutext(&menu, "You aggravte monsters.");
-	if (HConflict) add_menutext(&menu, "You cause conflict.");
-	/* Movement */
-	if (HJumping) add_menutext(&menu, "You can jump.");
-	if (HTeleportation) add_menutext(&menu, "You can teleport.");
-	if (HTeleport_control) add_menutext(&menu, "You have teleport control.");
-	if (HSwimming) add_menutext(&menu, "You can swim.");
-	if (HMagical_breathing) add_menutext(&menu, "You can survive without air.");
-	if (Passes_walls) add_menutext(&menu, "You can walk through walls.");
-	if (HProtection) add_menutext(&menu, "You are protected.");
-	if (HPolymorph) add_menutext(&menu, "You are polymorhing.");
-	if (HPolymorph_control) add_menutext(&menu, "You have polymorph control.");
-	if (HFast) add_menutext(&menu, "You are fast.");
+	n = display_menu(menu.items, menu.icount, "Your Attributes:",
+			 PICK_ONE, selected);
 
-	if (n == menu.icount) add_menutext(&menu, "You are rather mundane.");
+	if (n == 1) {
+	    switch (selected[0]) {
+	    case 'i': ddoinv(); break;
+	    case 'n': unspoilered_intrinsics(); break;
+	    case 'v': list_vanquished('y', FALSE); break;
+	    case 'g': list_genocided('y', FALSE); break;
+	    case 'c': doconduct(); break;
+	    case 'w': if (wizard || discover) enlightenment(0); break;
+	    }
+	}
 
-	n = display_menu(menu.items, menu.icount, "Your Attributes",
-			 PICK_NONE, NULL);
 	free(menu.items);
 	return n != -1;
 }
 
-
 static int doattributes(void)
 {
-	if (!minimal_enlightenment())
-		return 0;
-	if (wizard || discover)
-		enlightenment(0);
+	minimal_enlightenment();
 	return 0;
 }
 
