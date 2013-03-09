@@ -138,7 +138,9 @@ void draw_msgwin(void)
 	}
 	wmove(msgwin, i, 0);
 	waddstr(msgwin, msglines[pos]);
-	wclrtoeol(msgwin);
+	/* Only clear the remainder of the line if the cursor did not wrap. */
+	if (getcurx(msgwin))
+	    wclrtoeol(msgwin);
     }
 
     if (drew_older) {
@@ -169,6 +171,8 @@ static void more(void)
     } else {
 	newline();
 	draw_msgwin();
+	wmove(msgwin, getmaxy(msgwin)-1, 0);
+	wclrtoeol(msgwin);
 	wmove(msgwin, getmaxy(msgwin)-1, COLNO/2 - 4);
 	wattron(msgwin, attr);
 	waddstr(msgwin, "--More--");
@@ -185,11 +189,16 @@ static void more(void)
 	doupdate();
     } while (key != '\n' && key != '\r' && key != ' ' && key != KEY_ESC);
     wtimeout(msgwin, -1);
-    
-    if (getmaxy(msgwin) == 1)
+
+    /* Clean up after the --More--. */
+    if (getmaxy(msgwin) == 1) {
 	newline();
+    } else {
+	wmove(msgwin, getmaxy(msgwin)-1, 0);
+	wclrtoeol(msgwin);
+    }
     draw_msgwin();
-    
+
     if (key == KEY_ESC)
 	stopprint = TRUE;
 
