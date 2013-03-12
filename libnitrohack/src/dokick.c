@@ -1428,10 +1428,10 @@ void deliver_object(struct obj *obj, xchar dnum, xchar dlevel, int where)
 	case MIGR_RANDOM:
 	default:
 	    /* set dummy coordinates because there's no
-	       current position for rloco() to update */
+	       current position for rloco_pos() to update */
 	    obj->ox = obj->oy = 0;
-	    rloco(obj);
-	    return;
+	    rloco_pos(obj, lev, &nx, &ny);
+	    break;
 	}
 
 	place_object(obj, lev, nx, ny);

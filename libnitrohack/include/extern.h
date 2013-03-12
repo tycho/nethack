@@ -1610,6 +1610,7 @@ extern boolean rloc(struct level *,struct monst *, boolean);
 extern boolean tele_restrict(struct monst *);
 extern void mtele_trap(struct monst *, struct trap *,int);
 extern int mlevel_tele_trap(struct monst *, struct trap *,boolean,int);
+extern void rloco_pos(struct obj *,struct level *,int *,int *);
 extern void rloco(struct obj *);
 extern int random_teleport_level(void);
 extern boolean u_teleport_mon(struct monst *,boolean);

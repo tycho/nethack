@@ -3802,7 +3802,8 @@ boolean break_statue(struct obj *obj)
 	    place_object(item, level, obj->ox, obj->oy);
 	}
 	if (Role_if (PM_ARCHEOLOGIST) && !flags.mon_moving && (obj->spe & STATUE_HISTORIC)) {
-	    pline("You feel guilty about damaging such a historic statue.");
+	    pline("You feel guilty %s.", cansee(obj->ox, obj->oy) ?
+		  "about damaging such a historic statue" : "for some reason");
 	    adjalign(-1);
 	}
 	obj->spe = 0;
