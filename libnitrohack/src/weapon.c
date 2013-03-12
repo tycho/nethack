@@ -898,9 +898,10 @@ int enhance_weapon_skill(void)
 
 	strcpy(buf, (to_advance > 0) ? "Pick a skill to advance:" :
 					"Current skills:");
-	if (wizard && !speedy)
+	if (!(wizard && speedy)) {
 	    sprintf(eos(buf), "  (%d slot%s available)",
 		    u.weapon_slots, plur(u.weapon_slots));
+	}
 	n = display_menu(menu.items, menu.icount, buf,
 			    to_advance ? PICK_ONE : PICK_NONE, selected);
 	if (n == 1) {
