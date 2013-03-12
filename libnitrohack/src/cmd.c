@@ -1091,6 +1091,7 @@ static boolean minimal_enlightenment(void)
 	add_menutext(&menu, "");
 	add_menuheading(&menu, "Other Information");
 	add_menuitem(&menu, 'i', "Inventory", 'i', FALSE);
+	add_menuitem(&menu, 's', "Skills", 's', FALSE);
 	add_menuitem(&menu, 'n', "Intrinsics", 'n', FALSE);
 	if (num_vanquished() > 0)
 	    add_menuitem(&menu, 'v', "Vanquished creatures", 'v', FALSE);
@@ -1106,6 +1107,7 @@ static boolean minimal_enlightenment(void)
 	if (n == 1) {
 	    switch (selected[0]) {
 	    case 'i': ddoinv(); break;
+	    case 's': enhance_weapon_skill(); break;
 	    case 'n': unspoilered_intrinsics(); break;
 	    case 'v': list_vanquished('y', FALSE); break;
 	    case 'g': list_genocided('y', FALSE); break;
