@@ -62,6 +62,14 @@ static const struct nh_listitem runmode_list[] = {
 };
 static const struct nh_enum_option runmode_spec = {runmode_list, listlen(runmode_list)};
 
+static const struct nh_listitem safe_peaceful_list[] = {
+	{'y', "yes"},
+	{'n', "no"},
+	{'a', "ask"}
+};
+static const struct nh_enum_option safe_peaceful_spec =
+			{safe_peaceful_list, listlen(safe_peaceful_list)};
+
 static const struct nh_listitem align_list[] = {
 	{0, "lawful"},
 	{1, "neutral"},
@@ -135,7 +143,6 @@ static const struct nh_option_desc const_options[] = {
     {"autopickup_rules", "rules to decide what to autopickup if autopickup is on", OPTTYPE_AUTOPICKUP_RULES, {(void*)&def_autopickup}},
     {"autoquiver",	"when firing with an empty quiver, select something suitable",	OPTTYPE_BOOL, { VFALSE }},
     {"autounlock",	"ask to apply unlocking tool when trying to open a locked door", OPTTYPE_BOOL, { VTRUE }},
-    {"confirm",		"ask before hitting tame or peaceful monsters",	OPTTYPE_BOOL, { VTRUE }},
     {"delay_msg",	"minimum turns to show message of turns spent (0 to disable)", OPTTYPE_INT, {(void*)3}},
     {"disclose",	"whether to disclose information at end of game", OPTTYPE_ENUM, {(void*)DISCLOSE_PROMPT_DEFAULT_YES}},
     {"fruit",		"the name of a fruit you enjoy eating", OPTTYPE_STRING, {"slime mold"}},
@@ -158,6 +165,7 @@ static const struct nh_option_desc const_options[] = {
     {"prayconfirm",	"use confirmation prompt when #pray command issued",	OPTTYPE_BOOL, { VTRUE }},
     {"pushweapon",	"when wielding a new weapon, put previous weapon into secondary weapon slot",	OPTTYPE_BOOL, { VFALSE }},
     {"runmode",		"display frequency when `running' or `travelling'", OPTTYPE_ENUM, {(void*)RUN_LEAP}},
+    {"safe_peaceful",	"prevent you from (knowingly) attacking peaceful monsters",	OPTTYPE_ENUM, {(void*)'y'}},
     {"safe_pet",	"prevent you from (knowingly) attacking your pet(s)",	OPTTYPE_BOOL, { VTRUE }},
     {"show_uncursed",	"always show uncursed status",	OPTTYPE_BOOL, { VTRUE }},
     {"showrace",	"show yourself by your race rather than by role",	OPTTYPE_BOOL, { VFALSE }},
@@ -209,7 +217,6 @@ static const struct nh_boolopt_map boolopt_map[] = {
 	{"autopickup", &flags.pickup},
 	{"autoquiver", &flags.autoquiver},
 	{"autounlock", &flags.autounlock},
-	{"confirm",&flags.confirm},
 	{"female", &flags.female},
 	{"hp_notify", &iflags.hp_notify},
 	{"legacy", &flags.legacy},
@@ -357,6 +364,7 @@ void init_opt_struct(void)
 	find_option(options, "pilesize")->i.min = 1;
 	find_option(options, "pilesize")->i.max = 20;
 	find_option(options, "runmode")->e = runmode_spec;
+	find_option(options, "safe_peaceful")->e = safe_peaceful_spec;
 	find_option(options, "spellorder")->s.maxlen = 78; /* "a-bc-d...Y-Z" */
 	find_option(options, "autopickup_rules")->a = autopickup_spec;
 	
@@ -730,6 +738,9 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 	}
 	else if (!strcmp("runmode", option->name)) {
 		iflags.runmode = option->value.e;
+	}
+	else if (!strcmp("safe_peaceful", option->name)) {
+		flags.safe_peaceful = option->value.e;
 	}
 	else if (!strcmp("spellorder", option->name)) {
 		if (!change_spell_order(option->value.s, FALSE))

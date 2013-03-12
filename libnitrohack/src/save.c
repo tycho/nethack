@@ -121,7 +121,6 @@ static void save_flags(struct memfile *mf)
 	mwrite8(mf, flags.autoquiver);
 	mwrite8(mf, flags.autounlock);
 	mwrite8(mf, flags.beginner);
-	mwrite8(mf, flags.confirm);
 	mwrite8(mf, flags.debug);
 	mwrite8(mf, flags.explore);
 	mwrite8(mf, flags.tutorial);
@@ -140,6 +139,7 @@ static void save_flags(struct memfile *mf)
 	mwrite8(mf, flags.pushweapon);
 	mwrite8(mf, flags.rest_on_space);
 	mwrite8(mf, flags.safe_dog);
+	mwrite8(mf, flags.safe_peaceful);
 	mwrite8(mf, flags.silent);
 	mwrite8(mf, flags.sortpack);
 	mwrite8(mf, flags.soundok);

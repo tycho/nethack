@@ -182,7 +182,7 @@ boolean attack_checks(struct monst *mtmp,
 	    wakeup(mtmp);
 	}
 
-	if (flags.confirm && mtmp->mpeaceful
+	if (flags.safe_peaceful != 'n' && mtmp->mpeaceful
 	    && !Confusion && !Hallucination && !Stunned) {
 		/* Intelligent chaotic weapons (Stormbringer) want blood */
 		if (wep && wep->oartifact == ART_STORMBRINGER) {
@@ -190,8 +190,16 @@ boolean attack_checks(struct monst *mtmp,
 			return FALSE;
 		}
 		if (canspotmon(level, mtmp)) {
-			sprintf(qbuf, "Really attack %s?", mon_nam(mtmp));
-			if (paranoid_yn(qbuf, iflags.paranoid_hit) != 'y') {
+			boolean call_off_harm = FALSE;
+			if (flags.safe_peaceful == 'y') {
+				pline("You stop for %s.", mon_nam(mtmp));
+				call_off_harm = TRUE;
+			} else if (flags.safe_peaceful == 'a') {
+				sprintf(qbuf, "Really attack %s?", mon_nam(mtmp));
+				if (paranoid_yn(qbuf, iflags.paranoid_hit) != 'y')
+					call_off_harm = TRUE;
+			}
+			if (call_off_harm) {
 				flags.move = 0;
 				return TRUE;
 			}

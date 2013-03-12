@@ -979,12 +979,22 @@ int dogaze(void)
 		  && mtmp->mtame) {
 		    pline("You avoid gazing at %s.", y_monnam(mtmp));
 		} else {
-		    if (flags.confirm && mtmp->mpeaceful && !Confusion
-							&& !Hallucination) {
-			sprintf(qbuf, "Really %s %s?",
-			    (adtyp == AD_CONF) ? "confuse" : "attack",
-			    mon_nam(mtmp));
-			if (yn(qbuf) != 'y') continue;
+		    if (mtmp->mpeaceful && !Confusion && !Hallucination) {
+			if (flags.safe_peaceful != 'n') {
+			    boolean call_off_harm = FALSE;
+			    if (flags.safe_peaceful == 'y') {
+				pline("You avoid gazing at %s.", mon_nam(mtmp));
+				call_off_harm = TRUE;
+			    } else if (flags.safe_peaceful == 'a') {
+				sprintf(qbuf, "Really %s %s?",
+					(adtyp == AD_CONF) ? "confuse" : "attack",
+					mon_nam(mtmp));
+				if (paranoid_yn(qbuf, iflags.paranoid_hit) != 'y')
+				    call_off_harm = TRUE;
+			    }
+			    if (call_off_harm)
+				continue;
+			}
 			setmangry(mtmp);
 		    }
 		    if (!mtmp->mcanmove || mtmp->mstun || mtmp->msleeping ||

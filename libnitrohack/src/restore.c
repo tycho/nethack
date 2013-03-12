@@ -553,7 +553,6 @@ void restore_flags(struct memfile *mf, struct flag *f)
 	f->autoquiver = mread8(mf);
 	f->autounlock = mread8(mf);
 	f->beginner = mread8(mf);
-	f->confirm = mread8(mf);
 	f->debug = mread8(mf);
 	f->explore = mread8(mf);
 	f->tutorial = mread8(mf);
@@ -572,6 +571,7 @@ void restore_flags(struct memfile *mf, struct flag *f)
 	f->pushweapon = mread8(mf);
 	f->rest_on_space = mread8(mf);
 	f->safe_dog = mread8(mf);
+	f->safe_peaceful = mread8(mf);
 	f->silent = mread8(mf);
 	f->sortpack = mread8(mf);
 	f->soundok = mread8(mf);

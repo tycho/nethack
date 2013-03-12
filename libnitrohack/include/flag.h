@@ -18,7 +18,6 @@ struct flag {
 	boolean  autoquiver;	/* Automatically fill quiver */
 	boolean  autounlock;	/* Automatically ask to apply unlocking tool */
 	boolean  beginner;
-	boolean  confirm;	/* confirm before hitting tame monsters */
 	boolean  debug;		/* in debugging mode */
 #define wizard	 flags.debug
 	boolean  explore;	/* in exploration mode */
@@ -42,6 +41,8 @@ struct flag {
 	boolean  pushweapon;	/* When wielding, push old weapon into second slot */
 	boolean  rest_on_space; /* space means rest */
 	boolean  safe_dog;	/* give complete protection to the dog */
+	char	 safe_peaceful;	/* prevent accidentally hitting peaceful monsters
+				 * 'y': yes, 'n': no, 'a': ask */
 	boolean  silent;	/* whether the bell rings or not */
 	boolean  sortpack;	/* sorted inventory */
 	boolean  soundok;	/* ok to tell about sounds heard */
