@@ -264,8 +264,6 @@ int dowield(struct obj *wep)
 int doswapweapon(void)
 {
 	struct obj *oldwep, *oldswap;
-	int result = 0;
-
 
 	/* May we attempt this? */
 	multi = 0;
@@ -284,7 +282,7 @@ int doswapweapon(void)
 	setuswapwep(NULL);
 
 	/* Set your new primary weapon */
-	result = ready_weapon(oldswap);
+	ready_weapon(oldswap);
 
 	/* Set your new secondary weapon */
 	if (uwep == oldwep)
@@ -301,7 +299,8 @@ int doswapweapon(void)
 	if (u.twoweap && !can_twoweapon())
 		untwoweapon();
 
-	return result;
+	/* Swapping weapons no longer takes time. */
+	return 0;
 }
 
 int dowieldquiver(struct obj *newquiver)
