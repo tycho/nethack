@@ -1153,6 +1153,8 @@ static const char * const bogusmons[] = {
 	"conventioneer",
 	"terracotta warrior",
 	"large microbat", "small megabat",
+	"uberhulk",
+	"hearse",
 
 	/* soundex and typos of monsters */
 	"gloating eye",

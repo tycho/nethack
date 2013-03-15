@@ -103,6 +103,7 @@ doread()
     "I scored with the princess",
     "I Support Single Succubi",
     "I want to live forever or die in the attempt.",
+    "I'll stick it in you!",
     "Kop Killaz",
     "Lichen Park",
     "LOST IN THOUGHT - please send search party",
