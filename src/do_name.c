@@ -1156,6 +1156,7 @@ static const char * const bogusmons[] = {
 	"uberhulk",
 	"hearse",
 	"COBOL",
+	"tofurkey",
 
 	/* soundex and typos of monsters */
 	"gloating eye",
