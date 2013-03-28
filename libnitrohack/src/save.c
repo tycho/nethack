@@ -16,7 +16,7 @@ static void saveobjchn(struct memfile *mf, struct obj *);
 static void free_objchn(struct obj *otmp);
 static void savemonchn(struct memfile *mf, struct monst *);
 static void free_monchn(struct monst *mon);
-static void savetrapchn(struct memfile *mf, struct trap *);
+static void savetrapchn(struct memfile *mf, struct level *lev);
 static void freetrapchn(struct trap *trap);
 static void savegamestate(struct memfile *mf);
 static void save_flags(struct memfile *mf);
@@ -43,11 +43,13 @@ int dosave(void)
 int dosave0(boolean emergency)
 {
 	int fd;
-	struct memfile mf = {NULL, 0, 0};
+	struct memfile mf;
 	boolean log_disabled = iflags.disable_log;
 
+	mnew(&mf, NULL);
+
 	fd = logfile;
-	
+
 	/* when  we leave via nh_exit, logging is disabled. It needs to be
 	 * enabled briefly so that log_finish will update the log header. */
 	iflags.disable_log = FALSE;
@@ -55,10 +57,10 @@ int dosave0(boolean emergency)
 	iflags.disable_log = log_disabled;
 	vision_recalc(2);	/* shut down vision to prevent problems
 				   in the event of an impossible() call */
-	
+
 	savegame(&mf);
-	store_mf(fd, &mf);
-	
+	store_mf(fd, &mf);	/* also frees mf */
+
 	freedynamicdata();
 
 	return TRUE;
@@ -69,22 +71,24 @@ void savegame(struct memfile *mf)
 {
 	int count = 0;
 	xchar ltmp;
-	
+
+	/* no tag useful here as store_version adds one */
 	store_version(mf);
-	
+
 	/* Place flags, player info & moves at the beginning of the save.
 	 * This makes it possible to read them in nh_get_savegame_status without
 	 * parsing all the dungeon and level data */
 	save_flags(mf);
 	save_you(mf, &u);
-	mwrite32(mf, moves);
+	mwrite32(mf, moves); /* no tag useful here; you is fixed-length */
 	save_mon(mf, &youmonst);
-	
+
 	/* store dungeon layout */
 	save_dungeon(mf);
 	savelevchn(mf);
-	
+
 	/* store levels */
+	mtag(mf, 0, MTAG_LEVELS);
 	for (ltmp = 1; ltmp <= maxledgerno(); ltmp++)
 	    if (levels[ltmp])
 		count++;
@@ -92,6 +96,7 @@ void savegame(struct memfile *mf)
 	for (ltmp = 1; ltmp <= maxledgerno(); ltmp++) {
 		if (!levels[ltmp])
 		    continue;
+		mtag(mf, ltmp, MTAG_LEVELS);
 		mwrite8(mf, ltmp); /* level number*/
 		savelev(mf, ltmp); /* actual level*/
 	}
@@ -101,6 +106,7 @@ void savegame(struct memfile *mf)
 
 static void save_flags(struct memfile *mf)
 {
+	/* no mtag useful; fixed distance after version */
 	mwrite32(mf, flags.ident);
 	mwrite32(mf, flags.moonphase);
 	mwrite32(mf, flags.no_of_wizards);
@@ -171,6 +177,8 @@ static void save_flags(struct memfile *mf)
 static void save_mvitals(struct memfile *mf)
 {
 	int i;
+	/* mtag useful here because migration is variable-length */
+	mtag(mf, 0, MTAG_MVITALS);
 	for (i = 0; i < NUMMONS; i++) {
 	    mwrite8(mf, mvitals[i].born);
 	    mwrite8(mf, mvitals[i].died);
@@ -220,8 +228,9 @@ static void savegamestate(struct memfile *mf)
 {
 	unsigned book_id;
 
+	mtag(mf, 0, MTAG_GAMESTATE);
 	mfmagic_set(mf, STATE_MAGIC);
-	
+
 	/* must come before migrating_mons are freed */
 	save_timers(mf, level, RANGE_GLOBAL);
 	save_light_sources(mf, level, RANGE_GLOBAL);
@@ -302,17 +311,18 @@ void savelev(struct memfile *mf, xchar levnum)
 		 * create statue trap then immediately level teleport) */
 		dmonsfree(lev);
 	}
-	
+
+	/* mtagging for this already done in save_game */
 	mfmagic_set(mf, LEVEL_MAGIC);
 
 	mwrite8(mf, lev->z.dnum);
 	mwrite8(mf, lev->z.dlevel);
 	mwrite(mf, lev->levname, sizeof(lev->levname));
-	
+
 	for (x = 0; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++)
 		save_location(mf, &lev->locations[x][y]);
-	
+
 	mwrite32(mf, lev->lastmoves);
 	mwrite(mf, &lev->upstair, sizeof(stairway));
 	mwrite(mf, &lev->dnstair, sizeof(stairway));
@@ -323,7 +333,7 @@ void savelev(struct memfile *mf, xchar levnum)
 	mwrite(mf, &lev->dndest, sizeof(dest_area));
 	mwrite8(mf, lev->flags.nfountains);
 	mwrite8(mf, lev->flags.nsinks);
-	
+
 	lflags = (lev->flags.has_shop		<< 31) |
 	         (lev->flags.has_vault		<< 30) |
 	         (lev->flags.has_zoo		<< 29) |
@@ -357,7 +367,7 @@ void savelev(struct memfile *mf, xchar levnum)
 
 	savemonchn(mf, lev->monlist);
 	save_worm(mf, lev);	/* save worm information */
-	savetrapchn(mf, lev->lev_traps);
+	savetrapchn(mf, lev);
 	saveobjchn(mf, lev->objlist);
 	saveobjchn(mf, lev->buriedobjlist);
 	saveobjchn(mf, lev->billobjs);
@@ -427,11 +437,14 @@ static void savedamage(struct memfile *mf, struct level *lev)
 	struct damage *damageptr;
 	unsigned int xl = 0;
 
+	mtag(mf, ledger_no(&lev->z), MTAG_DAMAGE);
+
 	for (damageptr = lev->damagelist; damageptr; damageptr = damageptr->next)
 	    xl++;
 	mwrite32(mf, xl);
 
 	for (damageptr = lev->damagelist; damageptr; damageptr = damageptr->next) {
+	    mtag(mf, damageptr->when, MTAG_DAMAGEVALUE);
 	    mwrite32(mf, damageptr->when);
 	    mwrite32(mf, damageptr->cost);
 	    mwrite8(mf, damageptr->place.x);
@@ -626,18 +639,24 @@ static void savemonchn(struct memfile *mf, struct monst *mtmp)
 }
 
 
-static void savetrapchn(struct memfile *mf, struct trap *trap)
+static void savetrapchn(struct memfile *mf, struct level *lev)
 {
-	struct trap *trap2;
+	struct trap *trap, *trap2;
 	unsigned short tflags;
 	int count = 0;
-	
+
 	mfmagic_set(mf, TRAPCHAIN_MAGIC);
+
+	trap = lev->lev_traps;
+
 	for (trap2 = trap; trap2; trap2 = trap2->ntrap)
 	    count++;
 	mwrite32(mf, count);
 
 	for (; trap; trap = trap->ntrap) {
+	    /* To distinguish traps from each other in tags, we use x/y/z coords. */
+	    mtag(mf, ledger_no(&lev->z) + ((int)trap->tx << 8) +
+		 ((int)trap->ty << 16), MTAG_TRAP);
 	    mwrite8(mf, trap->tx);
 	    mwrite8(mf, trap->ty);
 	    mwrite8(mf, trap->dst.dnum);
@@ -681,6 +700,7 @@ void savefruitchn(struct memfile *mf)
 
 	for (f1 = ffruit; f1; f1 = f1->nextf) {
 	    if (f1->fid >= 0) {
+		mtag(mf, f1->fid, MTAG_FRUIT);
 		mwrite(mf, f1->fname, sizeof(f1->fname));
 		mwrite32(mf, f1->fid);
 	    }

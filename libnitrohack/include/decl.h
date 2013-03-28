@@ -390,10 +390,114 @@ extern int curline;
 #define add_menutext(m, c)\
     add_menu_txt((m)->items, (m)->size, (m)->icount, c, MI_TEXT)
 
+/*
+ * Save file diff logging defines and structs.
+ */
+
+#define MEMFILE_HASHTABLE_SIZE 1009
+
+enum mdiff_cmd {
+    MDIFF_SEEK = 0,
+    MDIFF_COPY = 1,
+    MDIFF_EDIT = 2,
+    MDIFF_INVALID = 255
+};
+
+enum memfile_tagtype {
+    MTAG_START,
+    MTAG_WATERLEVEL,
+    MTAG_DUNGEONSTRUCT,
+    MTAG_BRANCH,
+    MTAG_DUNGEON,
+
+    MTAG_REGION,
+    MTAG_YOU,
+    MTAG_VERSION,
+    MTAG_WORMS,
+    MTAG_ROOMS,
+
+    MTAG_HISTORY,
+    MTAG_ORACLES,
+    MTAG_TIMER,
+    MTAG_TIMERS,
+    MTAG_LIGHT,
+
+    MTAG_LIGHTS,
+    MTAG_OBJ,
+    MTAG_TRACK,
+    MTAG_OCLASSES,
+    MTAG_RNDMONST,
+
+    MTAG_MON,
+    MTAG_STEAL,
+    MTAG_ARTIFACT,
+    MTAG_RNGSTATE,
+    MTAG_LEVELS,
+
+    MTAG_LEVEL,
+    MTAG_MVITALS,
+    MTAG_GAMESTATE,
+    MTAG_DAMAGE,
+    MTAG_DAMAGEVALUE,
+
+    MTAG_TRAP,
+    MTAG_FRUIT,
+    MTAG_ENGRAVING,
+};
+
+struct memfile_tag {
+    struct memfile_tag *next;
+    long tagdata;
+    enum memfile_tagtype tagtype;
+    int pos;
+};
+
+/* The basic information: the buffer, its length, and the file position. */
 struct memfile {
     char *buf;
     int len;
     int pos;
+
+    /*
+     * Difference memfiles are relative to another memfile; and they contain
+     * both the usual data in buf, and the diff data in diffbuf.
+     */
+    struct memfile *relativeto;
+    char *diffbuf;
+    int difflen;
+    int diffpos;
+    int relativepos; /* pos corresponds to relativepos in diffbuf */
+
+    /*
+     * Run-length encoding of diffs.  Either curcmd is MDIFF_INVALID and
+     * curcount is irrelevant, or curcmd is a command and curcount is a
+     * count matching that command.  Note that we allow a negative "runlength"
+     * for seek, so we can encode both forwards and backwards seeks.
+     *
+     * Diff commands are logged in a 16-bit value as follows:
+     *
+     *  cmd             count
+     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     * | 2 |             14            |
+     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     *
+     * 'count' is signed (two's complement) for MDIFF_SEEK and is unsigned
+     * for MDIFF_COPY and MDIFF_EDIT.
+     *
+     * MDIFF_EDIT also appends 'count' different bytes after itself.
+     */
+    enum mdiff_cmd curcmd;
+    int curcount; /* only 14 bits used */
+
+    /*
+     * Tags to help in diffing.  This is a hashtable for efficiency, using
+     * chaining in the case of collisions.
+     *
+     * Tags are NOT saved with save files.  Instead, they link
+     * the same save sections between the current and previous memfiles,
+     * emitting MDIFF_SEEK commands to reduce redundant diff output.
+     */
+    struct memfile_tag *tags[MEMFILE_HASHTABLE_SIZE];
 };
 
 extern int logfile;

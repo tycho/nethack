@@ -240,10 +240,22 @@ static void saveobjclass(struct memfile *mf, struct objclass *ocl)
 	int namelen = 0;
 	unsigned int oflags;
 	
-	oflags = (ocl->oc_name_known << 31) | (ocl->oc_merge << 30) | (ocl->oc_uses_known << 29) |
-	         (ocl->oc_pre_discovered << 28) | (ocl->oc_magic << 27) | (ocl->oc_charged << 26) |
-	         (ocl->oc_unique << 25) | (ocl->oc_nowish << 24) | (ocl->oc_big << 23) |
-	         (ocl->oc_tough << 22) | (ocl->oc_dir << 20) | (ocl->oc_material << 15);
+	/*
+	 * No mtag useful; object classes are always saved in the same
+	 * order and there are always the same number of them.
+	 */
+	oflags = (ocl->oc_name_known		<< 31) |
+		 (ocl->oc_merge			<< 30) |
+		 (ocl->oc_uses_known		<< 29) |
+		 (ocl->oc_pre_discovered	<< 28) |
+		 (ocl->oc_magic			<< 27) |
+		 (ocl->oc_charged		<< 26) |
+		 (ocl->oc_unique		<< 25) |
+		 (ocl->oc_nowish		<< 24) |
+		 (ocl->oc_big			<< 23) |
+		 (ocl->oc_tough			<< 22) |
+		 (ocl->oc_dir			<< 20) |
+		 (ocl->oc_material		<< 15);
 	mwrite32(mf, oflags);
 	mwrite16(mf, ocl->oc_name_idx);
 	mwrite16(mf, ocl->oc_descr_idx);
@@ -276,13 +288,14 @@ void savenames(struct memfile *mf)
 {
 	int i;
 
+	mtag(mf, 0, MTAG_OCLASSES);
 	mfmagic_set(mf, OCLASSES_MAGIC);
 	for (i = 0; i < MAXOCLASSES; i++)
 	    mwrite32(mf, bases[i]);
-	
+
 	for (i = 0; i < NUM_OBJECTS; i++)
 	    mwrite32(mf, disco[i]);
-	
+
 	for (i = 0; i < NUM_OBJECTS; i++)
 	    saveobjclass(mf, &objects[i]);
 }

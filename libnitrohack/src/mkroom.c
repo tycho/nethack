@@ -760,7 +760,11 @@ gotone:
 static void save_room(struct memfile *mf, struct mkroom *r)
 {
 	short i;
-	
+
+	/*
+	 * No tag; we tag room-saving once per level, because the
+	 * rooms don't change in number once the level is created.
+	 */
 	mwrite8(mf, r->lx);
 	mwrite8(mf, r->hx);
 	mwrite8(mf, r->ly);
@@ -771,7 +775,7 @@ static void save_room(struct memfile *mf, struct mkroom *r)
 	mwrite8(mf, r->fdoor);
 	mwrite8(mf, r->nsubrooms);
 	mwrite8(mf, r->irregular);
-	
+
 	for (i = 0; i < r->nsubrooms; i++)
 	    save_room(mf, r->sbrooms[i]);
 }
@@ -783,6 +787,7 @@ void save_rooms(struct memfile *mf, struct level *lev)
 {
 	short i;
 
+	mtag(mf, ledger_no(&lev->z), MTAG_ROOMS);
 	mfmagic_set(mf, ROOMS_MAGIC); /* "RDAT" */
 	/* First, write the number of rooms */
 	mwrite32(mf, lev->nroom);

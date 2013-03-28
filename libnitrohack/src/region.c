@@ -481,13 +481,20 @@ void save_regions(struct memfile *mf, struct level *lev)
     unsigned len1, len2;
     struct region *r;
 
+    mtag(mf, ledger_no(&lev->z), MTAG_REGION);
     mfmagic_set(mf, REGION_MAGIC);
     mwrite32(mf, moves);	/* timestamp */
     mwrite32(mf, lev->n_regions);
-    
+
+    /*
+     * Note: level regions don't have ID numbers, so we can't tag
+     * individual regions; instead, diff efficiency depends on the
+     * fact that regions tend to stay in the order and are typically
+     * inserted or deleted near the end of the list.
+     */
     for (i = 0; i < lev->n_regions; i++) {
 	r = lev->regions[i];
-	
+
 	mwrite(mf, &r->bounding_box, sizeof (struct nhrect));
 	mwrite32(mf, r->attach_2_m);
 	mwrite32(mf, r->effect_id);
@@ -506,18 +513,18 @@ void save_regions(struct memfile *mf, struct level *lev)
 	mwrite8(mf, r->player_flags);
 	mwrite8(mf, r->attach_2_u);
 	mwrite8(mf, r->visible);
-	
+
 	for (j = 0; j < r->n_monst; j++)
 	    mwrite32(mf, r->monsters[j]);
-	
+
 	len1 = r->enter_msg ? strlen(r->enter_msg) + 1 : 0;
 	mwrite16(mf, len1);
 	len2 = r->leave_msg ? strlen(r->leave_msg) + 1 : 0;
 	mwrite16(mf, len2);
-	
+
 	if (len1 > 0)
 	    mwrite(mf, r->enter_msg, len1);
-	
+
 	if (len2 > 0)
 	    mwrite(mf, r->leave_msg, len2);
     }

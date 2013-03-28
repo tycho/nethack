@@ -1097,6 +1097,12 @@ void save_waterlevel(struct memfile *mf)
 
 	if (!Is_waterlevel(&u.uz)) return;
 
+	/*
+	 * We're assuming that the number of bubbles stays constant,
+	 * as we can't reasonably tag it anyway.  If they don't, we
+	 * just end up with a diff that's longer than it needs to be.
+	 */
+	mtag(mf, 0, MTAG_WATERLEVEL);
 	n = 0;
 	for (b = bbubbles; b; b = b->next)
 	    ++n;

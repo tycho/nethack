@@ -1468,7 +1468,7 @@ struct obj *restore_obj(struct memfile *mf)
 void save_obj(struct memfile *mf, struct obj *obj)
 {
     unsigned int oflags;
-    
+
     oflags = (obj->cursed	<< 31) |
 	     (obj->blessed	<< 30) |
 	     (obj->unpaid	<< 29) |
@@ -1492,10 +1492,11 @@ void save_obj(struct memfile *mf, struct obj *obj)
 	     (obj->was_thrown	<<  6) |
 	     (obj->bypass	<<  5) |
 	     (obj->odrained	<<  4);
-    
+
+    mtag(mf, obj->o_id, MTAG_OBJ);
     mfmagic_set(mf, OBJ_MAGIC);
-    
-    mwrite32(mf, obj->onamelth);    
+
+    mwrite32(mf, obj->onamelth);
     mwrite32(mf, obj->o_id);
     mwrite32(mf, obj->owt);
     mwrite32(mf, obj->quan);
@@ -1504,9 +1505,9 @@ void save_obj(struct memfile *mf, struct obj *obj)
     mwrite32(mf, obj->age);
     mwrite32(mf, obj->owornmask);
     mwrite32(mf, oflags);
-    
+
     mwrite16(mf, obj->otyp);
-    
+
     mwrite8(mf, obj->ox);
     mwrite8(mf, obj->oy);
     mwrite8(mf, obj->spe);
@@ -1518,10 +1519,10 @@ void save_obj(struct memfile *mf, struct obj *obj)
     /* no need to save the value of the cobj pointer, but we will need to know
      * if there is something in here that needs to be restored */
     mwrite8(mf, obj->cobj ? 1 : 0);
-    
+
     if (obj->onamelth)
 	mwrite(mf, ONAME(obj), obj->onamelth);
-    
+
     if (obj->oattached == OATTACHED_MONST)
 	save_mon(mf, (struct monst*)obj->oextra);
     else if (obj->oattached == OATTACHED_M_ID)

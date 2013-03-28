@@ -680,8 +680,10 @@ int dorecover(struct memfile *mf)
 int dorecover_fd(int infd)
 {
 	int ret;
-	struct memfile mf = {NULL, 0, 0};
+	struct memfile mf;
 	long initial_pos;
+
+	mnew(&mf, NULL);
 
 	restoring = TRUE;
 
@@ -691,7 +693,7 @@ int dorecover_fd(int infd)
 	    return 0;
 	
 	ret = dorecover(&mf);
-	free(mf.buf);
+	mfree(&mf);
 	
 	if (ret) {
 	    /* erase the binary portion of the logfile */

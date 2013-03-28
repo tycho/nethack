@@ -2546,17 +2546,19 @@ boolean maybe_finished_meal(boolean stopping)
 void save_food(struct memfile *mf)
 {
     unsigned int oid, vflags;
-    
+
+    /* no mtag useful; fixed distance after track */
+
     oid = victual.piece ? victual.piece->o_id : 0;
     mwrite32(mf, oid);
     mwrite32(mf, victual.usedtime);
     mwrite32(mf, victual.reqtime);
     mwrite32(mf, victual.nmod);
-    
+
     vflags = (victual.canchoke << 31) | (victual.fullwarn << 30) |
              (victual.eating << 29) | (victual.doreset << 28);
     mwrite32(mf, vflags);
-    
+
     oid = tin.tin ? tin.tin->o_id : 0;
     mwrite32(mf, oid);
     mwrite32(mf, tin.usedtime);
