@@ -922,6 +922,7 @@ int command_input(int cmdidx, int rep, struct nh_cmd_arg *arg)
     /* once-per-player-input things go here */
     /****************************************/
     xmalloc_cleanup();
+    iflags.next_msg_nonblocking = FALSE;
 
     /* prepare for the next move */
     flags.move = 1;

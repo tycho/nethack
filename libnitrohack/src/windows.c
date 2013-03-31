@@ -18,7 +18,9 @@ int getpos(coord *cc, boolean force, const char *goal)
 	    rv = (*windowprocs.win_getpos)(&x, &y, force, goal);
 	} while (force && (rv == -1 || x < 1 || y < 1 || x > COLNO || y > ROWNO));
 	log_getpos(rv, x, y);
-	
+	pline("<position: (%d, %d)>", cc->x, cc->y);
+	suppress_more();
+
 	cc->x = x;
 	cc->y = y;
 	
@@ -28,11 +30,19 @@ int getpos(coord *cc, boolean force, const char *goal)
 
 int getdir(const char *s, schar *dx, schar *dy, schar *dz)
 {
+	static const char *const dirnames[] = {
+	    "no direction",
+	    "west", "northwest", "north", "northeast",
+	    "east", "southeast", "south", "southwest",
+	    "up", "down", "self"
+	};
 	const char *query = s ? s : "In what direction?";
 	boolean restricted = u.umonnum == PM_GRID_BUG;
 	enum nh_direction dir = (*windowprocs.win_getdir)(query, restricted);
 	log_getdir(dir);
-	
+	pline("<%s: %s>", query, dirnames[dir + 1]);
+	suppress_more();
+
 	*dz = 0;
 	if (!dir_to_delta(dir, dx, dy, dz))
 		return 0;
@@ -54,6 +64,13 @@ char query_key(const char *query, int *count)
 	char key;
 	key = (*windowprocs.win_query_key)(query, count);
 	log_query_key(key, count);
+
+	if (count && *count != -1)
+	    pline("<%s: %d %c>", query, *count, key);
+	else
+	    pline("<%s: %c>", query, key);
+	suppress_more();
+
 	return key;
 }
 
@@ -62,6 +79,8 @@ void getlin(const char *query, char *bufp)
 {
 	(*windowprocs.win_getlin)(query, bufp);
 	log_getlin(bufp);
+	pline("<%s: %s>", query, bufp[0] == '\033' ? "(escaped)" : bufp);
+	suppress_more();
 }
 
 
@@ -90,6 +109,8 @@ char yn_function(const char *query,const char *resp, char def)
 	
 	key = (*windowprocs.win_yn_function)(qbuf, resp, def);
 	log_yn_function(key);
+	pline("<%s [%s]: %c>", qbuf, resp, key);
+	suppress_more();
 	return key;
 }
 
@@ -117,14 +138,25 @@ char paranoid_yn(const char *query, boolean paranoid)
 int display_menu(struct nh_menuitem *items, int icount, const char *title,
 		 int how, int *results)
 {
-	int n;
+	int n, j;
 	if (how < PICK_NONE) {
 	    warning("display_menu: invalid how argument (%d)", how);
 	    how = PICK_NONE;
 	}
 	n = (*windowprocs.win_display_menu)(items, icount, title, how, results);
-	if (how != PICK_NONE)
+	if (how != PICK_NONE) {
+	    char buf[BUFSZ] = "(none selected)";
 	    log_menu(n, results);
+	    if (n == 1) {
+		for (j = 0; j < icount && items[j].id != results[0]; j++)
+		    /* empty */;
+		strcpy(buf, items[j].caption);
+	    } else if (n > 1) {
+		sprintf(buf, "(%d selected)", n);
+	    }
+	    pline("<%s: %s>", title ? title : "Untitled menu", buf);
+	    suppress_more();
+	}
 	return n;
 }
 
@@ -132,10 +164,21 @@ int display_menu(struct nh_menuitem *items, int icount, const char *title,
 int display_objects(struct nh_objitem *items, int icount, const char *title,
 		    int how, struct nh_objresult *pick_list)
 {
-	int n;
+	int n, j;
 	n = (*windowprocs.win_display_objects)(items, icount, title, how, pick_list);
-	if (how != PICK_NONE && how != PICK_INVACTION)
+	if (how != PICK_NONE && how != PICK_INVACTION) {
+	    char buf[BUFSZ] = "(none selected)";
 	    log_objmenu(n, pick_list);
+	    if (n == 1) {
+		for (j = 0; j < icount && items[j].id != pick_list[0].id; j++)
+		    /* empty */;
+		sprintf(buf, "%c", items[j].accel);
+	    } else if (n > 1) {
+		sprintf(buf, "(%d selected)", n);
+	    }
+	    pline("<%s: %s>", title ? title : "List of objects", buf);
+	    suppress_more();
+	}
 	return n;
 }
 

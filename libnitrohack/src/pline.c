@@ -78,9 +78,25 @@ static void vpline(const char *line, va_list the_args)
 	    curline++;
 	    curline %= MSGCOUNT;
 	}
-	print_message(moves, line);
+
+	if (iflags.next_msg_nonblocking) {
+	    (*windowprocs.win_print_message_nonblocking)(moves, line);
+	    iflags.next_msg_nonblocking = FALSE;
+	} else {
+	    print_message(moves, line);
+	}
+
 	if (mtact == MSGTYPE_MORE)
 	    win_pause_output(P_MESSAGE);	/* --more-- */
+}
+
+/*
+ * Allow the next printed message to push previous messages out of view
+ * if needed without a --More--.
+ */
+void suppress_more(void)
+{
+	iflags.next_msg_nonblocking = TRUE;
 }
 
 /*VARARGS1*/
