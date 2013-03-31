@@ -196,13 +196,7 @@ void log_newgame(int logfd, unsigned long long start_time,
     log_game_opts();
     /* all the timestamps are UTC, so timezone info is required to interpret them */
     log_timezone(get_tz_offset());
-
-    mfree(&recent_cmd_states[0]);
-    mfree(&recent_cmd_states[1]);
-    mnew(&recent_cmd_states[0], NULL);
-    mnew(&recent_cmd_states[1], NULL);
 }
-
 
 
 void log_timezone(int tz_offset)
@@ -430,7 +424,17 @@ void log_finish(enum nh_log_status status)
     logfile = -1;
 }
 
+
 void log_truncate(void)
 {
     ftruncate(logfile, last_cmd_pos);
+}
+
+
+void log_init(void)
+{
+    mfree(&recent_cmd_states[0]);
+    mfree(&recent_cmd_states[1]);
+    mnew(&recent_cmd_states[0], NULL);
+    mnew(&recent_cmd_states[1], NULL);
 }
