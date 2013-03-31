@@ -6,6 +6,8 @@
 #include "patchlevel.h"
 #include <ctype.h>
 
+/* #define DEBUG */
+
 extern int logfile;
 extern unsigned int last_cmd_pos;
 
@@ -35,9 +37,12 @@ static struct loginfo {
     char **tokens;
     int tokencount;
     int next;
+    boolean diffs_are_invalid;
+    boolean cmds_are_invalid;
     int cmdcount; /* number of tokens that look like commands ">..." */
 } loginfo;
 
+static struct memfile diff_base;
 
 struct replay_checkpoint {
     int actions, moves, nexttoken;
@@ -128,7 +133,9 @@ void replay_begin(void)
 	free(loginfo.mem);
 	free(loginfo.tokens);
     }
-    
+
+    loginfo.diffs_are_invalid = FALSE;
+    loginfo.cmds_are_invalid = FALSE;
     lseek(logfile, 0, SEEK_SET);
     loginfo.mem = loadfile(logfile, &filesize);
     if (filesize < 24 || !loginfo.mem ||
@@ -180,7 +187,8 @@ void replay_begin(void)
     loginfo.next = 0;
     
     if (recovery) {
-	/* the last token should always be a command status, eg "<rngstate" */
+	/* The last token should always be a command status, e.g. "<rngstate".
+	 * Skip '~' because we don't know if we saved in a stable state. */
 	while (loginfo.tokencount > 0 &&
 	    loginfo.tokens[loginfo.tokencount-1][0] != '<' &&
 	    loginfo.tokens[loginfo.tokencount-1][0] != '!') {
@@ -191,7 +199,10 @@ void replay_begin(void)
     
     last_cmd_pos = endpos;
     lseek(logfile, endpos, SEEK_SET);
-    
+
+    mfree(&diff_base);
+    mnew(&diff_base, NULL);
+
     /* the log contains options that need to be set while the log is being replayed.
      * However, the current option state is the most recent state set by the user
      * and should be preserved */
@@ -225,14 +236,21 @@ void replay_end(void)
     for (i = 1; i < cmdcount; i++)
 	free(commands[i]);
     free(commands);
+    mfree(&diff_base);
     commands = NULL;
 }
 
 
 static void NORETURN parse_error(const char *str)
 {
-    raw_printf("Error at token %d (\"%s\"): %s\n", loginfo.next,
+#ifdef DEBUG
+    raw_printf("Error at token %d (\"%.20s\"): %s\n", loginfo.next,
 	       loginfo.tokens[loginfo.next-1], str);
+#else
+    raw_printf("The command log seems to be in an outdated format.  "
+	       "The game will be replayed from diffs instead.");
+#endif
+    loginfo.cmds_are_invalid = TRUE;
     terminate();
 }
 
@@ -676,13 +694,227 @@ static void replay_check_cmdresult(char *token)
     unsigned int rngstate;
     if (!token)
 	return;
-    
+
+    if (loginfo.cmds_are_invalid)
+	return;
+
     n = sscanf(token, "<%x", &rngstate);
     if (n != 1)
 	parse_error("Error: incorrect command result specification\n");
     
-    if (rngstate != (mt_nextstate() & 0xffff))
-	parse_error("Error: RNG state deviation detected.");
+    if (rngstate != (mt_nextstate() & 0xffff)) {
+	loginfo.cmds_are_invalid = TRUE;
+	raw_printf("The recorded commands seem to be invalid.  "
+		   "Replay will use diffs instead.");
+    }
+}
+
+
+static void replay_check_diff(char *token, boolean optonly)
+{
+    char *b64data, *buf, *bufp;
+    int buflen, dbpos = 0;
+    boolean do_realloc;
+    struct memfile mf;
+    if (!token)
+	return;
+
+    if (loginfo.diffs_are_invalid)
+	return; /* this won't work, so no point in doing it */
+
+    if (strncmp(token, "f:", 2))
+	parse_error("Error: incorrect binary diff format.\n");
+
+    b64data = token + 2;
+    buflen = strlen(b64data);
+
+    buf = malloc(buflen + 2);
+    memset(buf, 0, buflen + 2);
+    base64_decode(b64data, buf);
+
+    /*
+     * We create the save game as it should look, from the diff,
+     * in a new memfile mf.  Then we save the game as it actually
+     * is in diff_base (we need to do this anyway to interpret
+     * future diffs), and compare.  If they're different, we have
+     * a desync; either save or replay compatibility broke, and
+     * we can choose which to follow, depending on whether we're
+     * trying to reconstruct the saves from the replay or vice
+     * versa.
+     */
+    mnew(&mf, NULL);
+    bufp = buf;
+    while (bufp[0] || bufp[1]) {
+	/* 0x0000 means "seek 0" which would never be generated */
+	unsigned char bufp0 = bufp[0];
+	unsigned char bufp1 = bufp[1];
+	enum mdiff_cmd cmd = bufp1 >> 6;
+	int n = ((bufp1 & 0x3f) << 8) + bufp0;
+
+	switch (cmd) {
+	case MDIFF_SEEK:
+	    if (n >= 0x2000) /* seek counts are signed */
+		n -= 0x4000;
+	    if (dbpos < n) {
+		free(buf);
+		mfree(&mf);
+		parse_error("diff seeks past start of file");
+	    }
+	    dbpos -= n;
+	    bufp += 2;
+	    break;
+
+	case MDIFF_COPY:
+	case MDIFF_EDIT:
+	    /* make sure there's enough room to do what we need to do */
+	    do_realloc = FALSE;
+	    while (mf.len < mf.pos + n) {
+		mf.len += 4096;
+		do_realloc = TRUE;
+	    }
+	    if (do_realloc)
+		mf.buf = realloc(mf.buf, mf.len);
+
+	    if (cmd == MDIFF_COPY) {
+		/* copy bytes from previous state */
+		if (dbpos + n > diff_base.pos) {
+		    free(buf);
+		    mfree(&mf);
+		    parse_error("binary diff reads past EOF");
+		}
+		memcpy(mf.buf + mf.pos, diff_base.buf + dbpos, n);
+		dbpos += n;
+		mf.pos += n;
+		bufp += 2;
+	    } else { /* MDIFF_EDIT */
+		/* use bytes supplied with edit command */
+		bufp += 2;
+		if (bufp - buf + n > buflen) {
+		    free(buf);
+		    mfree(&mf);
+		    parse_error("binary diff ends unexpectedly");
+		}
+		memcpy(mf.buf + mf.pos, bufp, n);
+		dbpos += n; /* can legally go past the end of diff_base! */
+		mf.pos += n;
+		bufp += n;
+	    }
+	    break;
+
+	default:
+	    free(buf);
+	    mfree(&mf);
+	    parse_error("unknown command in binary diff");
+	    break;
+	}
+    }
+
+    /*
+     * Game save data constructed from diff, now to make use of it.
+     */
+    if (optonly) {
+	/*
+	 * We aren't checking anything, but still need to record the diff
+	 * so that we don't lose track of things.
+	 */
+	mfree(&diff_base);
+	diff_base = mf;
+	/* then we let mf go out of scope */
+    } else {
+	/*
+	 * Save the game into memory as the replay sees it
+	 * and compare with the diff-constructed save.
+	 */
+	mfree(&diff_base);
+	mnew(&diff_base, NULL);
+	savegame(&diff_base);
+	if (diff_base.pos != mf.pos || memcmp(diff_base.buf, mf.buf, mf.pos)) {
+#ifdef DEBUG /* desync location debugging */
+	    if (mf.pos == diff_base.pos && !loginfo.cmds_are_invalid) {
+		int i;
+		struct memfile_tag origtag;
+		origtag.next = 0;
+		origtag.tagdata = 99;
+		origtag.tagtype = MTAG_START;
+		origtag.pos = 0;
+		struct memfile_tag *best_tag = &origtag;
+		for (dbpos = 0; dbpos < diff_base.pos; dbpos++) {
+		    if (mf.buf[dbpos] != diff_base.buf[dbpos]) {
+			for (i = 0; i < MEMFILE_HASHTABLE_SIZE; i++) {
+			    struct memfile_tag *tp;
+			    for (tp = diff_base.tags[i]; tp; tp = tp->next) {
+				if (tp->pos <= dbpos && tp->pos >= best_tag->pos)
+				    best_tag = tp;
+			    }
+			}
+			raw_printf("desync between recording and save at tag "
+				   "(%d, %ld) + %d bytes", (int)best_tag->tagtype,
+				   best_tag->tagdata, dbpos - best_tag->pos);
+			break; /* comment this out to see all desyncs */
+		    }
+		}
+	    } else if (!loginfo.cmds_are_invalid) {
+		raw_printf("desync between recording (length %d) and "
+			   "recorded save (length %d)", diff_base.pos, mf.pos);
+	    }
+#endif
+	    {
+		volatile struct sinfo ps;
+		jmp_buf old_exit_jmp_buf;
+		/* Use the version in the diff, not the one reached by playing
+		 * through the game. */
+
+		ps = program_state;
+
+		/* We want to catch exceptions during the load, which means
+		 * storing the old jmp_buf somewhere. */
+		memcpy(&old_exit_jmp_buf, &exit_jmp_buf, sizeof(jmp_buf));
+		api_exit();
+
+		if (!api_entry_checkpoint()) {
+		    raw_printf("The diffs in recording seem to be invalid.  "
+			       "Replay will use recorded commands instead.");
+		    loginfo.diffs_are_invalid = TRUE;
+		    freedynamicdata();
+		    program_state.restoring = TRUE;
+		    startup_common(NULL,
+				   flags.tutorial ? MODE_TUTORIAL :
+				   wizard ? MODE_WIZARD :
+				   discover ? MODE_EXPLORE : MODE_NORMAL);
+		    dorecover(&diff_base);
+		} else {
+		    freedynamicdata();
+		    program_state.restoring = TRUE;
+		    startup_common(NULL,
+				   flags.tutorial ? MODE_TUTORIAL :
+				   wizard ? MODE_WIZARD :
+				   discover ? MODE_EXPLORE : MODE_NORMAL);
+		    dorecover(&mf);
+		    /* It loaded fine, but is different from the recorded
+		     * version.  Most likely cause: the recorded version is
+		     * out of date. */
+		    if (!loginfo.cmds_are_invalid) {
+			loginfo.cmds_are_invalid = TRUE;
+			raw_printf("The recorded commands seem to be invalid.  "
+				   "Replay will use diffs instead.");
+		    }
+		}
+		iflags.disable_log = TRUE;
+		program_state = ps;
+
+		memcpy(&exit_jmp_buf, &old_exit_jmp_buf, sizeof(jmp_buf));
+		exit_jmp_buf_valid = 1;
+
+		mfree(&diff_base);
+		diff_base = mf;
+	    }
+	} else {
+	    /* mf matches diff_base, so all is well. */
+	    mfree(&mf);
+	}
+    }
+    free(buf);
+    /* Otherwise everything is fine, and we've saved in diff_base already. */
 }
 
 
@@ -713,19 +945,13 @@ boolean replay_run_cmdloop(boolean optonly, boolean singlestep)
 		break;
 		
 	    case '>': /* command */
-		if (!optonly) {
+		if (!optonly && !loginfo.cmds_are_invalid) {
 		    replay_read_command(token, &cmd, &count, &cmdarg);
 		    cmdidx = get_command_idx(cmd);
 		    command_input(cmdidx, count, &cmdarg);
+		}
+		if (!optonly)
 		    did_action = TRUE;
-		}
-		
-		if (singlestep) {
-		    if (optonly)
-			loginfo.next--; /* put the token back for later use */
-		    goto out;
-		}
-		    
 		break;
 		
 	    case '<': /* a command result */
@@ -734,8 +960,9 @@ boolean replay_run_cmdloop(boolean optonly, boolean singlestep)
 		break;
 
 	    case '~': /* a diff */
-		if (!optonly)
-		    /* nothing yet */;
+		replay_check_diff(next_log_token(), optonly);
+		if (singlestep)
+		    goto out;
 		break;
 	}
 	
@@ -768,7 +995,7 @@ static void make_checkpoint(int actions)
     checkpoints[cpcount-1].nexttoken = loginfo.next;
     /* the active option list must be saved: it is not part of the normal binary save */
     checkpoints[cpcount-1].opt = clone_optlist(options);
-    memset(&checkpoints[cpcount-1].cpdata, 0, sizeof(struct memfile));
+    mnew(&checkpoints[cpcount-1].cpdata, NULL);
     savegame(&checkpoints[cpcount-1].cpdata);
     checkpoints[cpcount-1].cpdata.len = checkpoints[cpcount-1].cpdata.pos;
     checkpoints[cpcount-1].cpdata.pos = 0;
@@ -795,7 +1022,10 @@ static int load_checkpoint(int idx)
     startup_common(namebuf, playmode);
     dorecover(&checkpoints[idx].cpdata);
     checkpoints[idx].cpdata.pos = 0;
-    
+
+    mfree(&diff_base);
+    mnew(&diff_base, NULL);
+
     iflags.disable_log = TRUE;
     program_state.viewing = TRUE;
     program_state.game_running = TRUE;
@@ -803,7 +1033,9 @@ static int load_checkpoint(int idx)
     /* restore the full option state of the time of the checkpoint */
     for (i = 0; checkpoints[idx].opt[i].name; i++)
 	nh_set_option(checkpoints[idx].opt[i].name, checkpoints[idx].opt[i].value, FALSE);
-    
+
+    savegame(&diff_base);
+
     return checkpoints[idx].actions;
 }
 
@@ -814,7 +1046,7 @@ static void free_checkpoints(void)
     
     for (i = 0; i < cpcount; i++) {
 	free_optlist(checkpoints[i].opt);
-	free(checkpoints[i].cpdata.buf);
+	mfree(&(checkpoints[i].cpdata));
     }
     free(checkpoints);
     checkpoints = NULL;
