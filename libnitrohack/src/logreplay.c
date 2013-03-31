@@ -676,6 +676,29 @@ static void replay_check_cmdresult(char *token)
 }
 
 
+static void replay_check_msg(char *token)
+{
+    char *b64data, *buf;
+    int buflen;
+
+    if (!token)
+	return;
+
+    if (token[0] != '-' || token[1] != '-')
+	parse_error("Error: incorrect message format");
+
+    b64data = token + 2;
+    buflen = strlen(b64data);
+
+    buf = malloc(buflen + 2);
+    memset(buf, 0, buflen + 2);
+    base64_decode(b64data, buf);
+
+    pline("%s", buf);
+    free(buf);
+}
+
+
 static void replay_check_diff(char *token, boolean optonly)
 {
     char *b64data, *buf, *bufp;
@@ -929,6 +952,13 @@ boolean replay_run_cmdloop(boolean optonly, boolean singlestep)
 		replay_check_diff(next_log_token(), optonly);
 		if (singlestep)
 		    goto out;
+		break;
+
+	    case '-': /* a message */
+		/* We want to display the welcome messages in the
+		 * new-game sequence even if recovering from diffs. */
+		if (program_state.viewing && loginfo.cmds_are_invalid)
+		    replay_check_msg(token);
 		break;
 	}
 	
