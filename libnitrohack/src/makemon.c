@@ -2005,7 +2005,8 @@ struct monst *restore_mon(struct memfile *mf)
 	case MX_ESHK:
 	    shk = ESHK(mon);
 	    billid = mread32(mf);
-	    shk->bill_p = (billid == -1000) ? (struct bill_x*)-1000 : &shk->bill[billid];
+	    shk->bill_p = (billid == -1000) ? (struct bill_x*)-1000 :
+			  (billid == -2000) ? NULL : &shk->bill[billid];
 	    shk->shk.x = mread8(mf);
 	    shk->shk.y = mread8(mf);
 	    shk->shd.x = mread8(mf);
@@ -2200,7 +2201,9 @@ void save_mon(struct memfile *mf, const struct monst *mon)
 	    
 	case MX_ESHK:
 	    shk = ESHK(mon);
-	    mwrite32(mf, (shk->bill_p == (struct bill_x*)-1000) ? -1000 : (shk->bill_p - shk->bill));
+	    mwrite32(mf, (shk->bill_p == (struct bill_x*)-1000) ? -1000 :
+			 !shk->bill_p ? -2000 :
+			 (shk->bill_p - shk->bill));
 	    mwrite8(mf, shk->shk.x);
 	    mwrite8(mf, shk->shk.y);
 	    mwrite8(mf, shk->shd.x);
