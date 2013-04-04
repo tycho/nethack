@@ -455,6 +455,7 @@ static void restgamestate(struct memfile *mf)
 	lev = levels[ledger_no(&u.uz)];
 
 	/* this stuff comes after potential aborted restore attempts */
+	restore_timeout(mf);
 	restore_timers(mf, lev, RANGE_GLOBAL, FALSE, 0L);
 	restore_light_sources(mf, lev);
 	invent = restobjchn(mf, lev, FALSE, FALSE);

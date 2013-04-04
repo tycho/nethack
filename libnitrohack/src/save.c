@@ -232,6 +232,7 @@ static void savegamestate(struct memfile *mf)
 	mfmagic_set(mf, STATE_MAGIC);
 
 	/* must come before migrating_mons are freed */
+	save_timeout(mf);
 	save_timers(mf, level, RANGE_GLOBAL);
 	save_light_sources(mf, level, RANGE_GLOBAL);
 

@@ -1633,6 +1633,9 @@ extern void learn_egg_type(int);
 extern void begin_burn(struct level *, struct obj *, boolean);
 extern void end_burn(struct obj *, boolean);
 extern void do_storms(void);
+extern void init_timeout(void);
+extern void save_timeout(struct memfile *mf);
+extern void restore_timeout(struct memfile *mf);
 extern boolean start_timer(struct level *lev, long when, short kind,
 			   short func_index, void *arg);
 extern long stop_timer(struct level *lev, short func_index, void *arg);
