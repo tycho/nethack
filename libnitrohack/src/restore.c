@@ -674,8 +674,7 @@ int dorecover(struct memfile *mf)
 	doredraw();
 	restoring = FALSE;
 	program_state.something_worth_saving++;	/* useful data now exists */
-	
-	check_special_room(FALSE);
+
 	flags.move = 0;
 
 	/* Success! */
