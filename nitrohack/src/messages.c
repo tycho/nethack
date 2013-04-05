@@ -79,16 +79,18 @@ static void newline(void)
 
 static void prune_messages(int maxturn)
 {
-    int i, pos;
+    int i, pos, removed;
     const char *msg;
     
     if (!msghistory)
 	return;
     
     /* remove future messages from the history */
-    while (msghistory[histpos].turn >= maxturn) {
+    removed = 0;
+    while (msghistory[histpos].turn >= maxturn && removed < histsize) {
 	msghistory[histpos].turn = 0;
 	msghistory[histpos].msg[0] = '\0';
+	removed++;
 	histpos--;
 	if (histpos < 0)
 	    histpos += histsize;
