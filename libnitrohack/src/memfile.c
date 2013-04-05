@@ -6,13 +6,17 @@
 #ifdef IS_BIG_ENDIAN
 static unsigned short host_to_le16(unsigned short x) { return _byteswap16(x); }
 static unsigned int   host_to_le32(unsigned int x)   { return _byteswap32(x); }
+static unsigned long long host_to_le64(unsigned long long x) { return _byteswap64(x); }
 static unsigned short le16_to_host(unsigned short x) { return _byteswap16(x); }
 static unsigned int   le32_to_host(unsigned int x)   { return _byteswap32(x); }
+static unsigned long long le64_to_host(unsigned long long x) { return _byteswap64(x); }
 #else
 static unsigned short host_to_le16(unsigned short x) { return x; }
 static unsigned int   host_to_le32(unsigned int x)   { return x; }
+static unsigned long long host_to_le64(unsigned long long x) { return x; }
 static unsigned short le16_to_host(unsigned short x) { return x; }
 static unsigned int   le32_to_host(unsigned int x)   { return x; }
+static unsigned long long le64_to_host(unsigned long long x) { return x; }
 #endif
 
 
@@ -121,6 +125,13 @@ void mwrite32(struct memfile *mf, int32_t value)
 {
 	int32_t le_value = host_to_le32(value);
 	mwrite(mf, &le_value, 4);
+}
+
+
+void mwrite64(struct memfile *mf, int64_t value)
+{
+	int64_t le_value = host_to_le64(value);
+	mwrite(mf, &le_value, 8);
 }
 
 
@@ -266,6 +277,14 @@ int32_t mread32(struct memfile *mf)
 	int32_t value;
 	mread(mf, &value, 4);
 	return le32_to_host(value);
+}
+
+
+int64_t mread64(struct memfile *mf)
+{
+	int64_t value;
+	mread(mf, &value, 8);
+	return le64_to_host(value);
 }
 
 

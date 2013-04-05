@@ -1150,6 +1150,7 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->urideturns = mread32(mf);
 	y->umortality = mread32(mf);
 	y->ugrave_arise = mread32(mf);
+	y->ubirthday = mread64(mf);
 	y->weapon_slots = mread32(mf);
 	y->skills_advanced = mread32(mf);
 	y->initrole = mread32(mf);
@@ -1324,6 +1325,7 @@ void save_you(struct memfile *mf, struct you *y)
 	mwrite32(mf, y->urideturns);
 	mwrite32(mf, y->umortality);
 	mwrite32(mf, y->ugrave_arise);
+	mwrite64(mf, y->ubirthday);
 	mwrite32(mf, y->weapon_slots);
 	mwrite32(mf, y->skills_advanced);
 	mwrite32(mf, y->initrole);
