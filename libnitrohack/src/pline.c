@@ -43,7 +43,7 @@ static enum msgtype_action msgtype_match_line(const char *line)
 
 static void vpline(const char *line, va_list the_args)
 {
-	char pbuf[BUFSZ];
+	char pbuf[BUFSZ], *c;
 	boolean repeated;
 	int lastline;
 	enum msgtype_action mtact;
@@ -53,10 +53,17 @@ static void vpline(const char *line, va_list the_args)
 	    lastline += MSGCOUNT;
 
 	if (!line || !*line) return;
-	if (strchr(line, '%')) {
-	    vsprintf(pbuf,line,the_args);
-	    line = pbuf;
+
+	vsprintf(pbuf, line, the_args);
+
+	/* Sanitize, otherwise the line can mess up
+	 * the message window and message history. */
+	for (c = pbuf; *c && c < pbuf + BUFSZ; c++) {
+	    if (*c == '\n' || *c == '\t')
+		*c = ' ';
 	}
+
+	line = pbuf;
 
 	mtact = msgtype_match_line(line);
 	if (mtact == MSGTYPE_HIDE) return;
