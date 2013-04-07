@@ -63,7 +63,7 @@ link_directories (${NitroHack_BINARY_DIR}/libnitrohack/src)
 link_directories (${NitroHack_BINARY_DIR}/libnitrohack_client)
 add_executable (nitrohack_curses ${NH_CURSES_SRC} )
 set_target_properties(nitrohack_curses PROPERTIES OUTPUT_NAME unnitrohack)
-target_link_libraries(nitrohack_curses nitrohack)
+target_link_libraries(nitrohack_curses nitrohack z)
 
 if (USE_PDCURSES)
     target_link_libraries (nitrohack_curses ${PDCURSES_LIBNAME})
@@ -77,7 +77,7 @@ endif ()
 
 if (ENABLE_NETCLIENT)
     add_dependencies (nitrohack_curses libnitrohack_client)
-    target_link_libraries (nitrohack_curses nitrohack_client)
+    target_link_libraries (nitrohack_curses nitrohack_client z)
     # this is a kludge; these libraries are required by libnitrohack_client, but
     # for static linking they must be specified here. I couldn't figure out how
     # to set the dependencies from the libnitrohack_client CMakeLists.txt

@@ -49,6 +49,7 @@ debugging symbols (for stack traces under gdb, useful for bug reports):
       - NitroHack interface and client dependencies
         * ncursesw (NCurses with wide character support)
         * jansson (JSON support for client to play on remote servers)
+        * zlib (save log compression)
       - NitroHack build dependencies
         * cmake
         * cmake-curses-gui (a.k.a. ccmake, optional but recommended)
@@ -75,6 +76,7 @@ To build UnNitroHack with Cygwin for Windows:
       - bison
       - libncursesw-devel
       - git
+      - zlib-devel
     2) Install Jansson for Cygwin:
       - Download source tarball from http://www.digip.org/jansson/.
       - Extract to C:\cygwin\home\foo where foo is whatever's already there.
