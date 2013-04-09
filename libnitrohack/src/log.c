@@ -11,6 +11,7 @@ extern const struct cmd_desc cmdlist[];
 
 int logfile = -1;
 unsigned int last_cmd_pos;
+unsigned int action_count;
 static struct memfile recent_cmd_states[2];
 static struct memfile *last_cmd_state = recent_cmd_states;
 static const char *const statuscodes[] = {"save", "done", "inpr"};
@@ -211,7 +212,7 @@ void log_newgame(int logfd, unsigned long long start_time,
     else
 	role = roles[u.initrole].name.m;
 
-    lprintf("NHGAME inpr %08x NitroHack %d.%d.%d\n", 0, VERSION_MAJOR,
+    lprintf("NHGAME inpr %08x 00000000 %d.%d.%d\n", 0, VERSION_MAJOR,
 	    VERSION_MINOR, PATCHLEVEL);
     
     base64_encode(plname, encbuf);
@@ -311,11 +312,13 @@ void log_command_result(void)
 #endif
 	mfree(last_cmd_state);
 	last_cmd_state = this_cmd_state;
+	action_count++;
     }
 
     last_cmd_pos = lseek(logfile, 0, SEEK_CUR);
     lseek(logfile, 0, SEEK_SET);
-    lprintf("NHGAME %4s %08x", statuscodes[LS_IN_PROGRESS], last_cmd_pos);
+    lprintf("NHGAME %4s %08x %08x", statuscodes[LS_IN_PROGRESS],
+	    last_cmd_pos, action_count);
     lseek(logfile, last_cmd_pos, SEEK_SET);
 }
 
@@ -463,7 +466,12 @@ void log_finish(enum nh_log_status status)
 
 void log_truncate(void)
 {
-    ftruncate(logfile, last_cmd_pos);
+    if (ftruncate(logfile, last_cmd_pos) < 0)
+	panic("Cannot truncate logfile");
+
+    /* The replay code might leave the file pointer anywhere
+     * (it uses stdio), so move it to the right place manually. */
+    lseek(logfile, last_cmd_pos, SEEK_SET);
 }
 
 

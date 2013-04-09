@@ -11,6 +11,7 @@
 
 extern int logfile;
 extern unsigned int last_cmd_pos;
+extern unsigned int action_count;
 
 
 static void replay_pause(enum nh_pause_reason r) {}
@@ -34,13 +35,13 @@ static void replay_getlin(const char *query, char *buf);
 
 
 static struct loginfo {
-    char *mem;
-    char **tokens;
-    int tokencount;
-    int next;
+    FILE *flog;
+    unsigned long endpos;
+    long nonjumped_filepointer;
+    long last_token_start;
+    unsigned int actioncount;
     boolean diffs_are_invalid;
     boolean cmds_are_invalid;
-    int cmdcount; /* number of tokens that look like commands ">..." */
 } loginfo;
 
 static struct memfile diff_base;
@@ -163,81 +164,78 @@ void replay_set_logfile(int logfd)
 
 void replay_begin(void)
 {
-    int filesize;
-    int i, warned, nr_tokens;
-    char *nexttoken;
-    unsigned int endpos;
+    long filesize;
+    int i, dupped_fd;
     boolean recovery = FALSE;
-    
-    if (loginfo.mem) {
-	free(loginfo.mem);
-	free(loginfo.tokens);
-    }
+
+    if (loginfo.flog)
+	fclose(loginfo.flog);
 
     loginfo.diffs_are_invalid = FALSE;
     loginfo.cmds_are_invalid = FALSE;
     lseek(logfile, 0, SEEK_SET);
-    loginfo.mem = loadfile(logfile, &filesize);
-    if (filesize < 24 || !loginfo.mem ||
-	!sscanf(loginfo.mem, "NHGAME %*s %x", &endpos) || endpos > filesize) {
-	free(loginfo.mem);
-	loginfo.mem = NULL;
+    dupped_fd = dup(logfile);
+    if (dupped_fd < 0)
+	panic("Could not duplicate file descriptor");
+
+    loginfo.flog = fdopen(dupped_fd, "rb");
+    if (!loginfo.flog)
+	panic("Could not open save file with stdio");
+
+    fseek(loginfo.flog, 0, SEEK_END);
+    filesize = ftell(loginfo.flog);
+    fseek(loginfo.flog, 0, SEEK_SET);
+
+    if (filesize < 24 ||
+	!fscanf(loginfo.flog, "NHGAME %*s %lx %x",
+		&loginfo.endpos, &loginfo.actioncount) ||
+	loginfo.endpos > filesize) {
+	fclose(loginfo.flog);
+	loginfo.flog = NULL;
 	terminate();
     }
-    
-    if (!endpos) {
-	endpos = filesize;
+
+    /* log_command_result() in log.c needs this to update the log header
+     * correctly, but getting this info there The Right Way involves
+     * mucking up file-reading state, hence this ugly hack. */
+    action_count = loginfo.actioncount;
+
+    if (!loginfo.endpos) {
+	loginfo.endpos = filesize;
 	recovery = TRUE;
     }
-    loginfo.mem[endpos] = '\0';
-    
-    warned = 0;
-    for (i = 0; i < endpos; i++)
-	if (iscntrl((uchar)loginfo.mem[i]) && loginfo.mem[i] != '\n') {
-	    if (recovery) {
-		endpos = i;
-		loginfo.mem[i] = '\0';
-		break;
-	    } else {
-		loginfo.mem[i] = ' ';
-		if (!warned++)
-		    raw_print("Warning: found control characters in textual log section");
-	    }
-	}
-    
-    /* split the logfile into tokens */
-    nr_tokens = 1024;
-    loginfo.tokens = malloc(nr_tokens * sizeof(char*));
-    loginfo.next = 0;
-    loginfo.cmdcount = -1; /* we record one ~ just after new-gaming */
 
-    nexttoken = strtok(loginfo.mem, " \r\n");
-    while (nexttoken) {
-	loginfo.tokens[loginfo.next++] = nexttoken;
-	if (nexttoken[0] == '~')
-	    loginfo.cmdcount++;
-	
-	nexttoken = strtok(NULL, " \r\n");
-	if (loginfo.next >= nr_tokens) {
-	    nr_tokens *= 2;
-	    loginfo.tokens = realloc(loginfo.tokens, nr_tokens * sizeof(char*));
-	}
-    }
-    
-    loginfo.tokencount = loginfo.next;
-    loginfo.next = 0;
-    
     if (recovery) {
-	/* The last token should always be a command diff. */
-	while (loginfo.tokencount > 0 &&
-	    loginfo.tokens[loginfo.tokencount-1][0] != '~') {
-	    endpos = (long)loginfo.tokens[loginfo.tokencount-1] - (long)loginfo.mem;
-	    loginfo.tokencount--;
+	/* The last token should always be a command diff.  So we look
+	 * backwards through the file for a line starting with ~.
+	 * Because standard file reading functions only look /forwards/,
+	 * we start 1024 bytes before the end of the file, and move 1024
+	 * bytes backwards if we don't find it, etc. */
+	long fstart = loginfo.endpos;
+	long found = -1;
+	while (fstart > 0) {
+	    char endbuf[1024];
+	    int tread;
+	    fstart -= 1024;
+	    if (fstart < 0) fstart = 0;
+	    fseek(loginfo.flog, fstart, SEEK_SET);
+	    tread = fread(endbuf, 1,
+			  (loginfo.endpos - fstart > 1026 ? 1026 :
+			   loginfo.endpos - fstart),
+			  loginfo.flog);
+	    for (i = 0; i < tread - 1; i++) {
+		if ((endbuf[i] == '\r' || endbuf[i] == '\n') &&
+		    endbuf[i+1] == '~')
+		    found = i+1;
+	    }
+	    if (found > 0)
+		found += fstart;
 	}
+	loginfo.endpos = found;
     }
-    
-    last_cmd_pos = endpos;
-    lseek(logfile, endpos, SEEK_SET);
+
+    last_cmd_pos = loginfo.endpos;
+    fseek(loginfo.flog, 0, SEEK_SET);
 
     mfree(&diff_base);
     mnew(&diff_base, NULL);
@@ -253,16 +251,12 @@ void replay_end(void)
 {
     int i;
     long tz_off;
-    if (!loginfo.mem)
+
+    if (!loginfo.flog)
 	return;
 
-    free(loginfo.mem);
-    free(loginfo.tokens);
-    loginfo.mem = NULL;
-    loginfo.tokens = NULL;
-    loginfo.tokencount = 0;
-    loginfo.next = 0;
-    loginfo.cmdcount = 0;
+    fclose(loginfo.flog);
+    loginfo.flog = 0;
 
     tz_off = get_tz_offset();
     if (tz_off != replay_timezone)
@@ -272,23 +266,36 @@ void replay_end(void)
     for (i = 0; saved_options[i].name; i++)
 	nh_set_option(saved_options[i].name, saved_options[i].value, FALSE);
     free_optlist(saved_options);
-    
+
+    mfree(&diff_base);
+
     if (!commands)
 	return;
     
     for (i = 1; i < cmdcount; i++)
 	free(commands[i]);
     free(commands);
-    mfree(&diff_base);
     commands = NULL;
+}
+
+
+void replay_jump_to_endpos(void)
+{
+    loginfo.nonjumped_filepointer = lseek(logfile, 0, SEEK_CUR);
+    lseek(logfile, loginfo.endpos, SEEK_SET);
+}
+
+
+void replay_undo_jump_to_endpos(void)
+{
+    lseek(logfile, loginfo.nonjumped_filepointer, SEEK_SET);
 }
 
 
 static void NORETURN parse_error(const char *str)
 {
 #ifdef DEBUG
-    raw_printf("Error at token %d (\"%.20s\"): %s\n", loginfo.next,
-	       loginfo.tokens[loginfo.next-1], str);
+    raw_printf("Error at file position: %ld\n", ftell(loginfo.flog), str);
 #else
     raw_printf("The command log seems to be in an outdated format.  "
 	       "The game will be replayed from diffs instead.");
@@ -298,12 +305,42 @@ static void NORETURN parse_error(const char *str)
 }
 
 
+/* note: returns a buffer that is overwritten on every call */
 static char *next_log_token(void)
 {
-    if (!loginfo.tokens || loginfo.next == loginfo.tokencount)
-	return NULL;
-    
-    return loginfo.tokens[loginfo.next++];
+    static char *rbuf = NULL;
+    static int rbuflen = 0;
+
+    int rbpos = 0;
+    long filepos = ftell(loginfo.flog);
+
+    loginfo.last_token_start = filepos;
+    while (1) {
+	char c;
+	if (rbpos >= rbuflen) {
+	    rbuflen *= 2;
+	    if (rbuflen < 256) rbuflen = 256;
+	    rbuf = realloc(rbuf, rbuflen);
+	}
+	if (rbpos + filepos >= loginfo.endpos) {
+	    rbuf[rbpos] = 0;
+	    return rbpos ? rbuf : NULL;
+	}
+	if (fread(&c, 1, 1, loginfo.flog) != 1) {
+	    raw_printf("Unexpected EOF or error in save file");
+	    terminate();
+	}
+	rbuf[rbpos] = c;
+	if (c == '\r' || c == '\n' || c == ' ') {
+	    if (rbpos != 0) break;
+	    /* otherwise overwrite the redundant whitespace the next time
+	     * round the loop */
+	} else {
+	    rbpos++;
+	}
+    }
+    rbuf[rbpos] = 0;
+    return rbuf;
 }
 
 
@@ -465,7 +502,8 @@ char *replay_bones(int *buflen)
 	return NULL;
     
     if (strncmp(token, "b:", 2) != 0) {
-	loginfo.next--; /* no bones to load */
+	/* no bones to load */
+	fseek(loginfo.flog, loginfo.last_token_start, SEEK_SET);
 	return NULL;
     }
     
@@ -547,16 +585,18 @@ void replay_read_newgame(unsigned long long *init, int *playmode, char *namebuf,
     header = next_log_token();
     if (!header || strcmp(header, "NHGAME"))
 	parse_error("This file does not look like a NitroHack logfile.");
-    
+    /* now header is not read any more */
+
     next_log_token(); /* marker */
     next_log_token(); /* end pos, see replay_begin() */
-    next_log_token(); /* game name */
+    next_log_token(); /* action count, see replay_begin() */
     verstr = next_log_token();
     
     n = sscanf(verstr, "%d.%d.%d", &ver1, &ver2, &ver3);
     if (n != 3)
 	parse_error("No version found where it was expected");
-    
+    /* now verstr is not read any more */
+
     if (ver1 != VERSION_MAJOR && ver2 != VERSION_MINOR)
 	raw_printf("Warning: Version mismatch; expected %d.%d, got %d.%d\n",
 		   VERSION_MAJOR, VERSION_MINOR, ver1, ver2);
@@ -946,6 +986,21 @@ static void replay_check_diff(char *token, boolean optonly)
 }
 
 
+static char *strdupnull(char *s)
+{
+    if (s) return strdup(s);
+    return NULL;
+}
+
+
+/*
+ * optonly: look only for options
+ * singlestep: run one line at a time
+ *
+ * Note: in the special case of TRUE, FALSE, the log may not be used
+ * for anything other than options (i.e. replay_end must be called as
+ * the next replay-related command, other than replay_restore_windowprocs).
+ */
 boolean replay_run_cmdloop(boolean optonly, boolean singlestep)
 {
     char *cmd, *token;
@@ -959,9 +1014,9 @@ boolean replay_run_cmdloop(boolean optonly, boolean singlestep)
     tmp = birth_options;
     birth_options = active_birth_options;
     active_birth_options = tmp;
-    
-    token = next_log_token();
-    
+
+    token = strdupnull(next_log_token());
+
     while (token) {
 	switch (token[0]) {
 	    case '!': /* Option */
@@ -988,7 +1043,8 @@ boolean replay_run_cmdloop(boolean optonly, boolean singlestep)
 		break;
 
 	    case '~': /* a diff */
-		replay_check_diff(next_log_token(), optonly);
+		if (!optonly || singlestep)
+		    replay_check_diff(next_log_token(), optonly);
 		if (singlestep)
 		    goto out;
 		break;
@@ -996,12 +1052,12 @@ boolean replay_run_cmdloop(boolean optonly, boolean singlestep)
 	    case '-': /* a message */
 		/* We want to display the welcome messages in the
 		 * new-game sequence even if recovering from diffs. */
-		if (program_state.viewing && loginfo.cmds_are_invalid)
+		if (program_state.viewing && loginfo.cmds_are_invalid && !optonly)
 		    replay_check_msg(token);
 		break;
 	}
-	
-	token = next_log_token();
+	free(token);
+	token = strdupnull(next_log_token());
     }
 
 out:
@@ -1027,7 +1083,7 @@ static void make_checkpoint(int actions)
     checkpoints = realloc(checkpoints, sizeof(struct replay_checkpoint) * cpcount);
     checkpoints[cpcount-1].actions = actions;
     checkpoints[cpcount-1].moves = moves;
-    checkpoints[cpcount-1].nexttoken = loginfo.next;
+    checkpoints[cpcount-1].nexttoken = ftell(loginfo.flog);
     /* the active option list must be saved: it is not part of the normal binary save */
     checkpoints[cpcount-1].opt = clone_optlist(options);
     mnew(&checkpoints[cpcount-1].cpdata, NULL);
@@ -1051,11 +1107,11 @@ static int load_checkpoint(int idx)
 
     replay_end();
     freedynamicdata();
-    
-    replay_begin();/* tokens get mangled during replay, so a new token list is needed */
+
+    replay_begin();
     replay_read_newgame(&turntime, &playmode, namebuf,
 			&irole, &irace, &igend, &ialign);
-    loginfo.next = checkpoints[idx].nexttoken;
+    fseek(loginfo.flog, checkpoints[idx].nexttoken, SEEK_SET);
 
     loginfo.cmds_are_invalid = cmd_invalid;
     loginfo.diffs_are_invalid = diff_invalid;
@@ -1098,25 +1154,8 @@ static void free_checkpoints(void)
 
 static boolean find_next_command(char *buf, int buflen)
 {
-    int i, n, cmdidx, count;
-    long dummy;
-    const char *cmdname;
-    
     buf[0] = '\0';
-    for (i = loginfo.next; i < loginfo.tokencount; i++)
-	if (*loginfo.tokens[i] == '>')
-	    break;
-	
-    if (i == loginfo.tokencount)
-	return FALSE;
-    
-    n = sscanf(loginfo.tokens[i], ">%lx:%x:%d", &dummy, &cmdidx, &count);
-    if (n != 3)
-	return FALSE;
-    
-    cmdname = commands[cmdidx] ? commands[cmdidx] : "<continue>";
-    strncpy(buf, cmdname, buflen);
-    return TRUE;
+    return FALSE;
 }
 
 
@@ -1156,7 +1195,7 @@ boolean nh_view_replay_start(int fd, struct nh_window_procs *rwinprocs,
     flush_screen();
     
     info->max_moves = gi.moves;
-    info->max_actions = loginfo.cmdcount;
+    info->max_actions = loginfo.actioncount - 1; /* - 1 for the new-game ~ */
     find_next_command(info->nextcmd, sizeof(info->nextcmd));
     update_inventory();
     make_checkpoint(0);
@@ -1217,7 +1256,7 @@ boolean nh_view_replay_step(struct nh_replay_info *info,
 	    /* else fall through */
 	    
 	case REPLAY_FORWARD:
-	    did_action = info->actions < info->max_actions;
+	    did_action = TRUE;
 	    i = 0;
 	    while (i < count && did_action) {
 		i++;
@@ -1298,9 +1337,9 @@ enum nh_log_status nh_get_savegame_status(int fd, struct nh_game_info *gi)
     long long starttime;
     
     lseek(fd, 0, SEEK_SET);
-    read(fd, header, 127);
+    if (read(fd, header, 127) <= 0) return LS_INVALID;
     header[127] = '\0';
-    n = sscanf(header, "NHGAME %4s %x NitroHack %d.%d.%d\n%llx %x %x %s %s %s %s %s",
+    n = sscanf(header, "NHGAME %4s %x %*8s %d.%d.%d\n%llx %x %x %s %s %s %s %s",
 	       status, &savepos, &v1, &v2, &v3, &starttime, &seed, &playmode, encplname,
 	       role, race, gend, algn);
     if (n != 13) return LS_INVALID;
