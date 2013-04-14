@@ -171,7 +171,7 @@ static const struct nh_option_desc const_options[] = {
     {"showrace",	"show yourself by your race rather than by role",	OPTTYPE_BOOL, { VFALSE }},
     {"spellorder",	"the order of spell menu letters",	OPTTYPE_STRING, {"a-zA-Z"}},
     {"sortpack",	"group similar kinds of objects in inventory",	OPTTYPE_BOOL, { VTRUE }},
-    {"sparkle",		"display sparkly effect for resisted magical attacks",	OPTTYPE_BOOL, { VTRUE }},
+    {"sparkle",		"speed of sparkly animation for resisted magical attacks (0 to disable)",	OPTTYPE_INT, {(void*)2}},
     {"tombstone",	"print tombstone when you die",	OPTTYPE_BOOL, { VTRUE }},
     {"verbose",		"print more commentary during the game",	OPTTYPE_BOOL, { VTRUE }},
     
@@ -234,7 +234,6 @@ static const struct nh_boolopt_map boolopt_map[] = {
 	{"show_uncursed", &iflags.show_uncursed},
 	{"showrace", &iflags.showrace},
 	{"sortpack", &flags.sortpack},
-	{"sparkle", &flags.sparkle},
 	{"tombstone",&flags.tombstone},
 	{"verbose", &flags.verbose},
 
@@ -365,6 +364,8 @@ void init_opt_struct(void)
 	find_option(options, "pilesize")->i.max = 20;
 	find_option(options, "runmode")->e = runmode_spec;
 	find_option(options, "safe_peaceful")->e = safe_peaceful_spec;
+	find_option(options, "sparkle")->i.min = 0;
+	find_option(options, "sparkle")->i.max = 21; /* SHIELD_COUNT in display.h */
 	find_option(options, "spellorder")->s.maxlen = 78; /* "a-bc-d...Y-Z" */
 	find_option(options, "autopickup_rules")->a = autopickup_spec;
 	
@@ -741,6 +742,9 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 	}
 	else if (!strcmp("safe_peaceful", option->name)) {
 		flags.safe_peaceful = option->value.e;
+	}
+	else if (!strcmp("sparkle", option->name)) {
+		flags.sparkle = option->value.i;
 	}
 	else if (!strcmp("spellorder", option->name)) {
 		if (!change_spell_order(option->value.s, FALSE))

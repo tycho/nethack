@@ -46,7 +46,7 @@ struct flag {
 	boolean  silent;	/* whether the bell rings or not */
 	boolean  sortpack;	/* sorted inventory */
 	boolean  soundok;	/* ok to tell about sounds heard */
-	boolean  sparkle;	/* show "resisting" special FX (Scott Bigham) */
+	char	 sparkle;	/* show "resisting" special FX (Scott Bigham) */
 	boolean  tombstone;	/* print tombstone */
 	boolean  verbose;	/* max battle info */
 	boolean  prayconfirm;	/* confirm before praying */
