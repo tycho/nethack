@@ -70,6 +70,7 @@ To build UnNitroHack with Cygwin for Windows:
 
     1) Install Cygwin with these packages selected:
       - gcc4 (gcc may also work)
+        * libmpfr4 (needed for gcc4 only, if it's not already selected)
       - make
       - cmake
       - flex
