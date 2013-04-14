@@ -162,6 +162,8 @@ struct instance_flags {
 	boolean paranoid_trap;	/* Ask before walking into known traps */
 	boolean paranoid_chat;	/* Always ask for direction when chatting */
 	boolean paranoid_loot;	/* Always ask to loot even with only one container */
+	boolean paranoid_lava;	/* Require m-direction to move into lava. */
+	boolean paranoid_water;	/* Require m-direciton to move into water. */
 
 	boolean hp_notify;	/* Show a message when HP changes. */
 	char	*hp_notify_fmt;	/* hp_notify message format. */

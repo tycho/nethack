@@ -1846,6 +1846,31 @@ int domove(schar dx, schar dy, schar dz)
 	    return 0;
 	}
 
+	/* If no 'm' prefix, veto dangerous moves. */
+	if (!flags.nopick || flags.run) {
+	    if (!Levitation && !Flying && !is_clinger(youmonst.data) &&
+		!Stunned && !Confusion &&
+		level->locations[x][y].seenv &&
+		!(flags.travel && iflags.autoexplore)) {
+
+		boolean warned_move = TRUE;
+		if (is_lava(level, x, y) && iflags.paranoid_lava) {
+		    pline("You stop for the lava!");
+		} else if (is_pool(level, x, y) && !HSwimming &&
+			   iflags.paranoid_water) {
+		    pline("You stop for the water!");
+		} else {
+		    warned_move = FALSE;
+		}
+		if (warned_move) {
+		    if (flags.verbose)
+			pline("(Use m-direction to move there anyway.)");
+		    nomul(0, NULL);
+		    return 0;
+		}
+	    }
+	}
+
 	/* Move ball and chain.  */
 	if (Punished)
 	    if (!drag_ball(x,y, &bc_control, &ballx, &bally, &chainx, &chainy,
