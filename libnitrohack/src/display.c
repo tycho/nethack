@@ -166,8 +166,17 @@ void magic_map_background(xchar x, xchar y, int show)
 	else if (loc->typ == CORR && cmap == S_litcorr)
 	    cmap = S_corr;
     }
-    if (level->flags.hero_memory)
+    if (level->flags.hero_memory) {
 	loc->mem_bg = cmap;
+	if (cmap == S_vodoor || cmap == S_hodoor ||
+	    cmap == S_vcdoor || cmap == S_hcdoor) {
+	    loc->mem_door_l = 1;
+	    loc->mem_door_t = 1;
+	} else {
+	    loc->mem_door_l = 0;
+	    loc->mem_door_t = 0;
+	}
+    }
     if (show)
 	dbuf_set(level, x, y, cmap, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
@@ -186,8 +195,17 @@ void map_background(xchar x, xchar y, int show)
 {
     int cmap = back_to_cmap(level, x, y);
 
-    if (level->flags.hero_memory)
+    if (level->flags.hero_memory) {
 	level->locations[x][y].mem_bg = cmap;
+	if (cmap == S_vodoor || cmap == S_hodoor ||
+	    cmap == S_vcdoor || cmap == S_hcdoor) {
+	    /* leave memory alone, it'll be 0 if this wasn't
+	     * remembered as a door */
+	} else {
+	    level->locations[x][y].mem_door_l = 0;
+	    level->locations[x][y].mem_door_t = 0;
+	}
+    }
     if (show)
 	dbuf_set(level, x, y, cmap, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
@@ -379,6 +397,8 @@ void clear_memory_glyph(schar x, schar y, int to)
     level->locations[x][y].mem_obj_soko = 0;
     level->locations[x][y].mem_invis = 0;
     level->locations[x][y].mem_stepped = 0;
+    level->locations[x][y].mem_door_l = 0;
+    level->locations[x][y].mem_door_t = 0;
 }
 
 
@@ -427,6 +447,9 @@ static void display_monster(
 		 * makemon.c.
 		 */
 		level->locations[x][y].mem_bg = mon->mappearance;
+		/* cannot correctly remember a mimic's locked/trapped status */
+		level->locations[x][y].mem_door_l = 0;
+		level->locations[x][y].mem_door_t = 0;
 		if (!sensed)
 		    dbuf_set_loc(x, y);
 		break;
@@ -599,10 +622,14 @@ void feel_location(xchar x, xchar y)
 		    map_background(x, y, 1);
 		} else {
 		    loc->mem_bg = loc->waslit ? S_room : S_darkroom;
+		    loc->mem_door_l = 0;
+		    loc->mem_door_t = 0;
 		    dbuf_set_loc(x, y);
 		}
 	    } else if (loc->mem_bg < S_room || loc->mem_invis) {
 		loc->mem_bg = loc->waslit ? S_room : S_darkroom;
+		loc->mem_door_l = 0;
+		loc->mem_door_t = 0;
 		dbuf_set_loc(x, y);
 	    }
 	} else {
@@ -612,6 +639,8 @@ void feel_location(xchar x, xchar y)
 	    /* (lit_corridor only).					    */
 	    if (loc->typ == CORR && loc->mem_bg == S_litcorr && !loc->waslit) {
 		loc->mem_bg = S_corr;
+		loc->mem_door_l = 0;
+		loc->mem_door_t = 0;
 		dbuf_set_loc(x, y);
 	    }
 	}
@@ -644,10 +673,14 @@ void feel_location(xchar x, xchar y)
 	/* Floor spaces are dark if unlit.  Corridors are dark if unlit. */
 	if (loc->typ == ROOM && loc->mem_bg == S_room && !loc->waslit) {
 	    loc->mem_bg = S_darkroom;
+	    loc->mem_door_l = 0;
+	    loc->mem_door_t = 0;
 	    dbuf_set_loc(x, y);
 	} else if (loc->typ == CORR &&
 		    loc->mem_bg == S_litcorr && !loc->waslit) {
 	    loc->mem_bg = S_corr;
+	    loc->mem_door_l = 0;
+	    loc->mem_door_t = 0;
 	    dbuf_set_loc(x, y);
 	}
     }
@@ -791,9 +824,13 @@ void newsym(int x, int y)
 	else if (!loc->waslit) {
 	    if (loc->mem_bg == S_litcorr && loc->typ == CORR) {
 		loc->mem_bg = S_corr;
+		loc->mem_door_l = 0;
+		loc->mem_door_t = 0;
 		dbuf_set_loc(x, y);
 	    } else if (loc->mem_bg == S_room && loc->typ == ROOM) {
 		loc->mem_bg = S_darkroom;
+		loc->mem_door_l = 0;
+		loc->mem_door_t = 0;
 		dbuf_set_loc(x, y);
 	    }
 	    else
@@ -1403,6 +1440,22 @@ void dbuf_set(const struct level *lev, int x, int y,
 
     if (lev == level && cansee(x, y))
 	dbe->dgnflags |= NH_DF_VISIBLE_MASK;
+
+    if (dbe->bg == S_hcdoor || dbe->bg == S_vcdoor) {
+	if (!IS_DOOR(loc->typ)) {
+	    dbe->dgnflags |= NH_DF_DOORLOCK_UNKNOWN;
+	    dbe->dgnflags |= NH_DF_DOORTRAP_UNKNOWN;
+	} else {
+	    dbe->dgnflags |=
+		    loc->mem_door_l == 0 ? NH_DF_DOORLOCK_UNKNOWN :
+		    (loc->doormask & D_LOCKED) ? NH_DF_DOORLOCK_LOCKED :
+		    NH_DF_DOORLOCK_UNLOCKED;
+	    dbe->dgnflags |=
+		    loc->mem_door_t == 0 ? NH_DF_DOORTRAP_UNKNOWN :
+		    (loc->doormask & D_TRAPPED) ? NH_DF_DOORTRAP_TRAPPED :
+		    NH_DF_DOORTRAP_UNTRAPPED;
+	}
+    }
 
     if (IS_ALTAR(loc->typ)) {
 	aligntyp a = Amask2align(loc->altarmask & AM_MASK);

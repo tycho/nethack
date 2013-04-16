@@ -512,20 +512,17 @@ struct nh_dbuf_entry {
 #define NH_EFFECT_ID(e) (((e) - 1) & 0xffff)
 
 #define NH_DF_VISIBLE_MASK 1
-/*
- * 2 bits reserved for door lock knowledge
- * #define NH_DF_DOORLOCK_MASK (3 << 1)
- * #define NH_DF_DOORLOCK_UNKNOWN 0
- * #define NH_DF_DOORLOCK_UNLOCKED (1 << 1)
- * #define NH_DF_DOORLOCK_LOCKED (2 << 1)
- */
-/*
- * 2 bits reserved for door trapped knowledge
- * #define NH_DF_DOORTRAP_MASK (3 << 3)
- * #define NH_DF_DOORTRAP_UNKNOWN 0
- * #define NH_DF_DOORTRAP_UNTRAPPED (1 << 3)
- * #define NH_DF_DOORTRAP_TRAPPED (2 << 3)
- */
+
+#define NH_DF_DOORLOCK_MASK (3 << 1)
+#define NH_DF_DOORLOCK_UNKNOWN 0
+#define NH_DF_DOORLOCK_UNLOCKED (1 << 1)
+#define NH_DF_DOORLOCK_LOCKED (2 << 1)
+
+#define NH_DF_DOORTRAP_MASK (3 << 3)
+#define NH_DF_DOORTRAP_UNKNOWN 0
+#define NH_DF_DOORTRAP_UNTRAPPED (1 << 3)
+#define NH_DF_DOORTRAP_TRAPPED (2 << 3)
+
 #define NH_DF_ALTARALIGN_MASK (3 << 5)
 #define NH_DF_ALTARALIGN_OTHER 0 /* unaligned or Astral */
 #define NH_DF_ALTARALIGN_LAWFUL (1 << 5)

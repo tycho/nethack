@@ -321,11 +321,14 @@ struct rm {
 	unsigned mem_obj_mn:9;	/* monnum of remembered corpses, statues, figurines */
 	unsigned mem_obj_stacks:1; /* remembered other stacks of objects */
 	unsigned mem_obj_soko:1; /* remembered object is a Sokoban prize */
-	unsigned mem_invis:1;	/* remembered invisible monster encounter */
-	unsigned mem_stepped:1;	/* has this square been stepped on? */
 
 	schar typ;		/* what is really there */
 	uchar seenv;		/* seen vector */
+
+	unsigned mem_door_l:1;	/* player knows whether or not door is locked */
+	unsigned mem_door_t:1;	/* player knows whether or not door is trapped */
+	unsigned mem_stepped:1;	/* has this square been stepped on? */
+	unsigned mem_invis:1;	/* remembered invisible monster encounter */
 	unsigned flags:5;	/* extra information for typ */
 	unsigned horizontal:1; /* wall/door/etc is horiz. (more typ info) */
 	unsigned lit:1;	/* speed hack for lit rooms */

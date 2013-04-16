@@ -17,7 +17,7 @@ static int level_display_mode;
 static int altar_id,
 	   vwall_id, trwall_id,
 	   room_id, darkroom_id,
-	   ndoor_id;
+	   ndoor_id, vcdoor_id, hcdoor_id;
 static int corpse_id;
 struct curses_drawing_info *default_drawing, *cur_drawing;
 static struct curses_drawing_info *unicode_drawing, *rogue_drawing;
@@ -348,6 +348,10 @@ void init_displaychars(void)
 	    darkroom_id = i;
 	else if (!strcmp("ndoor", cur_drawing->bgelements[i].symname))
 	    ndoor_id = i;
+	else if (!strcmp("vcdoor", cur_drawing->bgelements[i].symname))
+	    vcdoor_id = i;
+	else if (!strcmp("hcdoor", cur_drawing->bgelements[i].symname))
+	    hcdoor_id = i;
     }
 
     /* find objects that need special treatment */
@@ -473,6 +477,15 @@ static void recolor_bg(const struct nh_dbuf_entry *dbe, struct curses_symdef *sy
 	if (id >= vwall_id && id <= trwall_id)
 	    sym->color = CLR_BRIGHT_MAGENTA;
 	break;
+    }
+
+    if (id == vcdoor_id || id == hcdoor_id) {
+	if (dbe->dgnflags & NH_DF_DOORTRAP_TRAPPED)
+	    sym->color = CLR_CYAN;
+	else if (dbe->dgnflags & NH_DF_DOORLOCK_LOCKED)
+	    sym->color = CLR_RED;
+	else if (dbe->dgnflags & NH_DF_DOORLOCK_UNLOCKED)
+	    sym->color = CLR_GREEN;
     }
 
     if (id == altar_id) {

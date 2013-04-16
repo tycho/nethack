@@ -624,6 +624,12 @@ int trap_detect(struct obj *sobj)
     }
     for (door = 0; door < level->doorindex; door++) {
 	cc = level->doors[door];
+	/* make the door, and its trapped status,
+	 * show up on the player's memory */
+	if (!sobj || !sobj->cursed) {
+	    level->locations[cc.x][cc.y].mem_door_t = 1;
+	    map_background(cc.x, cc.y, FALSE);
+	}
 	if (level->locations[cc.x][cc.y].doormask & D_TRAPPED) {
 	    if (cc.x != u.ux || cc.y != u.uy)
 		goto outtrapmap;
@@ -1173,6 +1179,8 @@ void sokoban_detect(struct level *lev)
 	for (x = 1; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++) {
 		struct rm *loc = &lev->locations[x][y];
+		int cmap = back_to_cmap(lev, x, y);
+
 		/* Set seen vector for all locations so travelling works
 		 * on pre-mapped levels. */
 		loc->seenv = SVALL;
@@ -1181,7 +1189,17 @@ void sokoban_detect(struct level *lev)
 		else if (loc->typ == SCORR)
 		    loc->typ = CORR;
 		loc->waslit = (loc->typ != CORR) ? TRUE : loc->lit;
-		loc->mem_bg = back_to_cmap(lev, x, y);
+
+		loc->mem_bg = cmap;
+		if (cmap == S_vodoor || cmap == S_hodoor ||
+		    cmap == S_vcdoor || cmap == S_hcdoor) {
+		    lev->locations[x][y].mem_door_l = 1;
+		    lev->locations[x][y].mem_door_t = 1;
+		} else {
+		    lev->locations[x][y].mem_door_l = 0;
+		    lev->locations[x][y].mem_door_t = 0;
+		}
+
 		for (obj = lev->objects[x][y]; obj; obj = obj->nexthere)
 		    if (obj->otyp == BOULDER)
 			loc->mem_obj = what_obj(BOULDER) + 1;

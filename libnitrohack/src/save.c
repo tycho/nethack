@@ -283,6 +283,8 @@ static void save_location(struct memfile *mf, struct rm *loc)
 		  (loc->mem_obj_soko	<<  0);
 
 	lflags2 = 0 |
+		  (loc->mem_door_l	<< 18) |
+		  (loc->mem_door_t	<< 17) |
 		  (loc->mem_stepped	<< 16) |
 		  (loc->mem_invis	<< 15) |
 		  (loc->flags		<< 10) |
