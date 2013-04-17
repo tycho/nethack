@@ -70,6 +70,7 @@
 #define MON_RIDDEN   (1 << 1)
 #define MON_DETECTED (1 << 2)
 #define MON_WARNING  (1 << 3) /* this "monster" is actually a warning */
+#define MON_PEACEFUL (1 << 4)
 
 /* flags for displayed objects */
 #define DOBJ_NORMAL	0

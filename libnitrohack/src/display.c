@@ -472,7 +472,9 @@ static void display_monster(
 		level->locations[x][y].mem_invis = 0;
 		dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1,
 		         0, what_mon((int)mon->mappearance) + 1,
-			 mon->mtame ? MON_TAME : 0, 0);
+			 mon->mtame ? MON_TAME :
+			 mon->mpeaceful ? MON_PEACEFUL : 0,
+			 0);
 		break;
 	}
 	
@@ -495,6 +497,8 @@ static void display_monster(
 	
 	if (mon->mtame && !Hallucination)
 	    mflag |= MON_TAME;
+	else if (mon->mpeaceful && !Hallucination)
+	    mflag |= MON_PEACEFUL;
 
 	/* Visible monsters always clear 'I' symbols. */
 	level->locations[x][y].mem_invis = 0;
