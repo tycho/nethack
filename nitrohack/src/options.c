@@ -144,14 +144,14 @@ static nh_bool option_change_callback(struct nh_option_desc *option)
 	!strcmp(option->name, "time")) {
 	curses_update_status(NULL);
     }
+    else if (!strcmp(option->name, "darkroom") ||
+	!strcmp(option->name, "hilite_peaceful") ||
+	!strcmp(option->name, "hilite_pet") ||
+	!strcmp(option->name, "mapcolors")) {
+	draw_map(player.x, player.y);
+    }
     else if (!strcmp(option->name, "darkgray")) {
 	set_darkgray();
-	draw_map(player.x, player.y);
-    }
-    else if (!strcmp(option->name, "darkroom")) {
-	draw_map(player.x, player.y);
-    }
-    else if (!strcmp(option->name, "mapcolors")) {
 	draw_map(player.x, player.y);
     }
     else if (!strcmp(option->name, "menu_headings")) {
