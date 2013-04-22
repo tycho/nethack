@@ -2184,7 +2184,7 @@ weight_cap()
 
 	if (Levitation || Is_airlevel(&u.uz)    /* pugh@cornell */
 #ifdef STEED
-			|| (u.usteed && strongmonst(u.usteed->data))
+			|| (u.usteed && u.usteed->data && strongmonst(u.usteed->data))
 #endif
 	)
 		carrcap = MAX_CARR_CAP;
