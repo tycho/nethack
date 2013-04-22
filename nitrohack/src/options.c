@@ -74,7 +74,7 @@ static const char *const bucnames[] = {"unknown", "blessed", "uncursed", "cursed
 
 struct nh_option_desc curses_options[] = {
     {"name", "name for new characters (blank = ask)", OPTTYPE_STRING, {NULL}},
-    {"blink", "show multiple symbols for each location by switching between them", OPTTYPE_BOOL, { VTRUE }},
+    {"blink", "show multiple symbols for each location by switching between them", OPTTYPE_BOOL, { FALSE }},
     {"darkgray", "try to show 'black' as dark gray instead of dark blue", OPTTYPE_BOOL, {FALSE}},
     {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL, { VTRUE }},
     {"extmenu", "use a menu for selecting extended commands (#)", OPTTYPE_BOOL, {FALSE}},
