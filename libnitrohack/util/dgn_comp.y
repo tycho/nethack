@@ -8,7 +8,7 @@
  */
 
 #include "config.h"
-#include "date.h"
+#include "verinfo.h"
 #include "dgn_file.h"
 
 void yyerror(const char *);
