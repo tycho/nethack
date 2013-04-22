@@ -1179,7 +1179,7 @@ void sokoban_detect(struct level *lev)
 	for (x = 1; x < COLNO; x++)
 	    for (y = 0; y < ROWNO; y++) {
 		struct rm *loc = &lev->locations[x][y];
-		int cmap = back_to_cmap(lev, x, y);
+		int cmap;
 
 		/* Set seen vector for all locations so travelling works
 		 * on pre-mapped levels. */
@@ -1189,6 +1189,7 @@ void sokoban_detect(struct level *lev)
 		else if (loc->typ == SCORR)
 		    loc->typ = CORR;
 		loc->waslit = (loc->typ != CORR) ? TRUE : loc->lit;
+		cmap = back_to_cmap(lev, x, y);
 
 		loc->mem_bg = cmap;
 		if (cmap == S_vodoor || cmap == S_hodoor ||
