@@ -17,7 +17,10 @@ static int level_display_mode;
 static int altar_id,
 	   vwall_id, trwall_id,
 	   room_id, darkroom_id,
-	   ndoor_id, vcdoor_id, hcdoor_id;
+	   ndoor_id, vcdoor_id, hcdoor_id,
+	   upstair_id, upladder_id, upsstair_id,
+	   dnstair_id, dnladder_id, dnsstair_id,
+	   mportal_id, vibsquare_id;
 static int corpse_id;
 struct curses_drawing_info *default_drawing, *cur_drawing;
 static struct curses_drawing_info *unicode_drawing, *rogue_drawing;
@@ -72,8 +75,6 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"altar",	-1,	{0x03A9, 0},	0},	/* Ω GREEK CAPITAL LETTER OMEGA */
     {"grave",	-1,	{0x2020, 0},	0},	/* † DAGGER */
     {"ice",	-1,	{0x00B7, 0},	0},	/* · centered dot */
-    {"vodbridge",-1,	{0x00B7, 0},	0},	/* · centered dot */
-    {"hodbridge",-1,	{0x00B7, 0},	0},	/* · centered dot */
     
     /* zap */
     {"zap_v",	-1,	{0x2502, 0},	0},	/* │ vertical rule */
@@ -352,14 +353,34 @@ void init_displaychars(void)
 	    vcdoor_id = i;
 	else if (!strcmp("hcdoor", cur_drawing->bgelements[i].symname))
 	    hcdoor_id = i;
+	else if (!strcmp("upstair", cur_drawing->bgelements[i].symname))
+	    upstair_id = i;
+	else if (!strcmp("upladder", cur_drawing->bgelements[i].symname))
+	    upladder_id = i;
+	else if (!strcmp("upsstair", cur_drawing->bgelements[i].symname))
+	    upsstair_id = i;
+	else if (!strcmp("dnstair", cur_drawing->bgelements[i].symname))
+	    dnstair_id = i;
+	else if (!strcmp("dnladder", cur_drawing->bgelements[i].symname))
+	    dnladder_id = i;
+	else if (!strcmp("dnsstair", cur_drawing->bgelements[i].symname))
+	    dnsstair_id = i;
     }
 
-    /* find objects that need special treatment */
+    /* find traps that could use special treatment */
+    for (i = 0; i < cur_drawing->num_traps; i++) {
+	if (!strcmp("magic portal", cur_drawing->traps[i].symname))
+	    mportal_id = i;
+	else if (!strcmp("vibrating square", cur_drawing->traps[i].symname))
+	    vibsquare_id = i;
+    }
+
+    /* find objects that could use special treatment */
     for (i = 0; i < cur_drawing->num_objects; i++) {
 	if (!strcmp("corpse", cur_drawing->objects[i].symname))
 	    corpse_id = i;
     }
-    
+
     /* options are parsed before display is initialized, so redo switch */
     switch_graphics(settings.graphics);
 }
@@ -511,7 +532,7 @@ void object_symdef(int otyp, int obj_mn, struct curses_symdef *sym)
 }
 
 
-int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
+int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms, int *bg_color)
 {
     int id, count = 0;
 
@@ -570,15 +591,23 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))
 	    darken_symdef(&syms[count]);
 
+	if (dbe->objflags & DOBJ_STACKS)
+	    *bg_color = CLR_BLUE;
+
 	count++;
     }
     
     if (dbe->trap) {
 	id = dbe->trap - 1;
 	syms[count] = cur_drawing->traps[id];
+
 	valley_symdef(&syms[count]);
 	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))
 	    darken_symdef(&syms[count]);
+
+	if (id == mportal_id || id == vibsquare_id)
+	    *bg_color = CLR_RED;
+
 	count++;
     } 
     
@@ -590,6 +619,12 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms)
 	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))
 	    darken_symdef(&syms[count]);
 	count++;
+    }
+
+    if (dbe->bg == upstair_id  || dbe->bg == dnstair_id  ||
+	dbe->bg == upladder_id || dbe->bg == dnladder_id ||
+	dbe->bg == upsstair_id || dbe->bg == dnsstair_id) {
+	*bg_color = CLR_RED;
     }
 
     return count; /* count <= 4 */
@@ -631,7 +666,8 @@ void switch_graphics(enum nh_text_mode mode)
 }
 
 
-void print_sym(WINDOW *win, struct curses_symdef *sym, int extra_attrs)
+void print_sym(WINDOW *win, struct curses_symdef *sym,
+	       int extra_attrs, int bg_color)
 {
     int attr;
     cchar_t uni_out;
@@ -639,7 +675,7 @@ void print_sym(WINDOW *win, struct curses_symdef *sym, int extra_attrs)
     /* nitrohack color index -> curses color */
     attr = A_NORMAL | extra_attrs;
     if (ui_flags.color) {
-	attr |= curses_color_attr(sym->color & CLR_MASK);
+	attr |= curses_color_attr(sym->color & CLR_MASK, bg_color);
 	if (sym->color & HI_ULINE) attr |= A_UNDERLINE;
     }
 

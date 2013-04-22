@@ -135,7 +135,7 @@ void draw_msgwin(void)
 	if (pos < 0)
 	    pos += MAX_MSGLINES;
 	if (pos == start_of_turn_curline) {
-	    wattron(msgwin, curses_color_attr(COLOR_BLUE));
+	    wattron(msgwin, curses_color_attr(COLOR_BLUE, 0));
 	    drew_older = TRUE;
 	}
 	wmove(msgwin, i, 0);
@@ -146,7 +146,7 @@ void draw_msgwin(void)
     }
 
     if (drew_older) {
-	wattroff(msgwin, curses_color_attr(COLOR_BLUE));
+	wattroff(msgwin, curses_color_attr(COLOR_BLUE, 0));
     } else {
 	/* Don't dim out messages if the message buffer wraps. */
 	start_of_turn_curline = -1;

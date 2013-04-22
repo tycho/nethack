@@ -162,8 +162,8 @@ const struct nh_symdef defsyms[] = {
 	{'#', "bars",		HI_METAL},
 /*30*/	{'#', "tree",		CLR_GREEN},
 	{'#', "deadtree",	CLR_BLACK},
-	{'<', "upstair",	CLR_GRAY},
-	{'>', "dnstair",	CLR_GRAY},
+	{'<', "upstair",	CLR_WHITE},
+	{'>', "dnstair",	CLR_WHITE},
 	{'<', "upladder",	CLR_BROWN},
 	{'>', "dnladder",	CLR_BROWN},
 	{'<', "upsstair",	CLR_YELLOW},
@@ -173,10 +173,10 @@ const struct nh_symdef defsyms[] = {
 /*40*/	{'\\',"throne",		HI_GOLD},
 	{'#', "sink",		CLR_GRAY},
 	{'{', "fountain",	CLR_BLUE},
-	{'.', "vodbridge",	CLR_BROWN},
-	{'.', "hodbridge",	CLR_BROWN},
-	{'#', "vcdbridge",	CLR_BROWN},
-	{'#', "hcdbridge",	CLR_BROWN}
+	{'#', "vodbridge",	CLR_BROWN},
+	{'#', "hodbridge",	CLR_BROWN},
+	{'+', "vcdbridge",	CLR_YELLOW},
+	{'+', "hcdbridge",	CLR_YELLOW}
 };
 
 static const struct nh_symdef trapsyms[] = {

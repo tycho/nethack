@@ -23,7 +23,8 @@ void init_nhcolors(void)
     
     start_color();
     use_default_colors();
-    set_darkgray(); /* this will init pair 1 (black) */
+    set_darkgray(); /* this will init pair 1 (black)
+		     * and other color+darkgray colors */
     init_pair(2, COLOR_RED, -1);
     init_pair(3, COLOR_GREEN, -1);
     init_pair(4, COLOR_YELLOW, -1);
@@ -41,6 +42,18 @@ void init_nhcolors(void)
 	init_pair(14, COLOR_MAGENTA + 8, -1);
 	init_pair(15, COLOR_CYAN + 8, -1);
 	init_pair(16, COLOR_WHITE + 8, -1);
+    }
+
+    /* Set up background colors too. */
+    if (BG_COLOR_SUPPORT) {
+	int bg, fg;
+	for (bg = 1; bg < BG_COLOR_COUNT; bg++) {
+	    /* skip darkgray, use_darkgray does that */
+	    for (fg = 1; fg <= FG_COLOR_COUNT; fg++) {
+		init_pair(bg * FG_COLOR_COUNT + fg + 1,
+			  fg == bg ? COLOR_BLACK : fg, bg);
+	    }
+	}
     }
 
     if (!can_change_color())
@@ -76,20 +89,22 @@ void init_nhcolors(void)
 }
 
 
-int curses_color_attr(int nh_color)
+int curses_color_attr(int nh_color, int bg_color)
 {
     int color = nh_color + 1;
     int cattr = A_NORMAL;
-    
+
     if (COLORS < 16 && color > 8) {
 	color -= 8;
 	cattr = A_BOLD;
     }
+    if (BG_COLOR_SUPPORT)
+	color += bg_color * FG_COLOR_COUNT;
     cattr |= COLOR_PAIR(color);
-    
+
     if (color == 1 && settings.darkgray)
 	cattr |= A_BOLD;
-	
+
     return cattr;
 }
 
@@ -100,6 +115,14 @@ void set_darkgray(void)
 	init_pair(1, COLOR_BLACK, -1);
     else
 	init_pair(1, COLOR_BLUE, -1);
+
+    if (BG_COLOR_SUPPORT) {
+	int bg;
+	for (bg = 1; bg <= BG_COLOR_COUNT; bg++) {
+	    init_pair(bg * FG_COLOR_COUNT + 1,
+		      settings.darkgray ? COLOR_BLACK : COLOR_BLUE, bg);
+	}
+    }
 }
 
 

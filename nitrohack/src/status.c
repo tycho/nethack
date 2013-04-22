@@ -47,7 +47,7 @@ static void status_change_color_on(int *col, int *attr,
 {
     *col = status_change_color(old1, old2, new1, new2);
     if (*col) {
-	*attr = curses_color_attr(*col);
+	*attr = curses_color_attr(*col, 0);
 	wattron(statuswin, *attr);
     }
 }
@@ -126,7 +126,7 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
     if (fill_len > len)
 	fill_len = len;
 
-    colorattr = curses_color_attr(percent_color(val_cur, val_max));
+    colorattr = curses_color_attr(percent_color(val_cur, val_max), 0);
     waddch(statuswin, '[');
     wattron(statuswin, colorattr);
     if (settings.use_inverse) {
@@ -141,7 +141,7 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
 	wprintw(statuswin, "%.*s", fill_len, str);
 	wattroff(statuswin, colorattr);
 	/* use black to avoid confusion with being full */
-	colorattr = curses_color_attr(COLOR_BLACK);
+	colorattr = curses_color_attr(COLOR_BLACK, 0);
 	wattron(statuswin, colorattr);
 	wprintw(statuswin, "%.*s", len - fill_len, &str[fill_len]);
 	wattroff(statuswin, colorattr);
@@ -183,7 +183,7 @@ static void draw_statuses(const struct nh_player_info *pi)
 			!strcmp(st, "Strained") ? notice :
 			!strcmp(st, "Overtaxed") ? notice :
 			!strcmp(st, "Overloaded") ? notice :
-			notice);
+			notice, 0);
 
 	/* Strip trailing spaces. */
 	len = strlen(st);
@@ -218,7 +218,7 @@ static void draw_time(const struct nh_player_info *pi)
 			(movediff >=  50) ? COLOR_YELLOW :
 			(movediff >=  20) ? COLOR_CYAN :
 			(movediff >=  10) ? COLOR_BLUE :
-					    COLOR_GREEN);
+					    COLOR_GREEN, 0);
 	colorchange = TRUE;
     } else {
 	colorchange = FALSE;
@@ -288,13 +288,13 @@ static void classic_status(struct nh_player_info *pi)
     status_change_color_off(stat_ch_col, colorattr);
 
     waddstr(statuswin, " HP:");
-    colorattr = curses_color_attr(percent_color(pi->hp, pi->hpmax));
+    colorattr = curses_color_attr(percent_color(pi->hp, pi->hpmax), 0);
     wattron(statuswin, colorattr);
     wprintw(statuswin, "%d(%d)", pi->hp, pi->hpmax);
     wattroff(statuswin, colorattr);
 
     waddstr(statuswin, " Pw:");
-    colorattr = curses_color_attr(percent_color(pi->en, pi->enmax));
+    colorattr = curses_color_attr(percent_color(pi->en, pi->enmax), 0);
     wattron(statuswin, colorattr);
     wprintw(statuswin, "%d(%d)", pi->en, pi->enmax);
     wattroff(statuswin, colorattr);
@@ -330,7 +330,7 @@ static void draw_bar(int barlen, int val_cur, int val_max, const char *prefix)
     if (fill_len > bl)
 	fill_len = bl;
 
-    colorattr = curses_color_attr(percent_color(val_cur, val_max));
+    colorattr = curses_color_attr(percent_color(val_cur, val_max), 0);
 
     sprintf(str, "%s%d(%d)", prefix, val_cur, val_max);
     sprintf(bar, "%-*s", bl, str);

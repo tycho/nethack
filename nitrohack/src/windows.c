@@ -117,7 +117,7 @@ int frame_hp_color(void)
 	else if (percent < 75) attr = CLR_YELLOW;
 
 	if (attr != -1)
-	    attr = curses_color_attr(attr);
+	    attr = curses_color_attr(attr, 0);
     }
 
     return attr;
