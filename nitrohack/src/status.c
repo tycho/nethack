@@ -154,6 +154,7 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
 
 static void draw_statuses(const struct nh_player_info *pi)
 {
+    const int benefit = CLR_BRIGHT_GREEN;
     const int neutral = CLR_BRIGHT_CYAN;
     const int notice = CLR_YELLOW;
     const int alert = CLR_ORANGE;
@@ -188,6 +189,7 @@ static void draw_statuses(const struct nh_player_info *pi)
 			!strcmp(st, "Lev") ? neutral :
 			!strcmp(st, "Unarmed") ? notice :
 			!strcmp(st, "Trap") ? notice :
+			!strcmp(st, "Elbereth") ? benefit :
 			notice, 0);
 
 	/* Strip trailing spaces. */

@@ -259,7 +259,9 @@ static void make_player_info(struct nh_player_info *pi)
 	    strncpy(pi->statusitems[pi->nr_items++], "Unarmed", ITEMLEN);
 	if (u.utrap) /* 12 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Trap", ITEMLEN);
-	/* maximum == 12 (nh_player_info.statusitems size in nitrohack_types.h) */
+	if (!Blind && sengr_at("Elbereth", u.ux, u.uy)) /* 13 */
+	    strncpy(pi->statusitems[pi->nr_items++], "Elbereth", ITEMLEN);
+	/* maximum == 16 (nh_player_info.statusitems size in nitrohack_types.h) */
 	
 	api_exit();
 }

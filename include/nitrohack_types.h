@@ -408,7 +408,7 @@ struct nh_player_info {
     int x, y, z;
     char rank[PL_NSIZ];
     char level_desc[COLNO];
-    char statusitems[12][ITEMLEN];
+    char statusitems[16][ITEMLEN];
     int score, xp, gold, moves;
     int wt, wtcap, invslots;
     int max_rank_sz;
