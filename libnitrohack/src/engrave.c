@@ -1023,12 +1023,15 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 	}
 
 	/* Tell adventurer what is going on */
-	if (otmp != &zeroobj)
-	    pline("You %s %swith %s %s the %s.", everb, eword, doname(otmp),
-		  eloc, eground);
-	else
-	    pline("You %s %swith your %s %s the %s.", everb, eword,
-		  makeplural(body_part(FINGER)), eloc, eground);
+	if (otmp != &zeroobj) {
+	    pline("You %s%s %swith %s %s the %s.",
+		  everb, auto_elbereth ? " \"Elbereth\"" : "",
+		  eword, doname(otmp), eloc, eground);
+	} else {
+	    pline("You %s%s %swith your %s %s the %s.",
+		  everb, auto_elbereth ? " \"Elbereth\"" : "",
+		  eword, makeplural(body_part(FINGER)), eloc, eground);
+	}
 
 	/* Prompt for engraving! (if literate) */
 	if (u.roleplay.illiterate) {
