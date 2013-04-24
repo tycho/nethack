@@ -198,8 +198,8 @@ int darken(int nh_color)
      * black space that can make the terminal cursor vanish while over it.
      */
     if (nh_color == CLR_GRAY) return CLR_BLACK;
-    if (nh_color <= NO_COLOR) return nh_color;
-    return nh_color - 8;
+    if (nh_color > NO_COLOR && nh_color < CLR_MAX) return nh_color - 8;
+    return nh_color;
 }
 
 /* color.c */
