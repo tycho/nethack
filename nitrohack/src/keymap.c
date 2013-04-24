@@ -449,6 +449,7 @@ static void show_quickref(void)
 	{0, MI_TEXT, "x           swap weapon to or from off-hand"},
 	{0, MI_TEXT, "X           toggle two-weapon combat"},
 	{0, MI_TEXT, "W/T         wear/take off armor, rings or amulet"},
+	{0, MI_TEXT, "A           mass unequip"},
 	{0, MI_TEXT, "t           throw item (wield bow and throw arrows to shoot)"},
 	{0, MI_TEXT, "Q/f         quiver/fire quivered item (throwing shortcut)"},
 	{0, MI_TEXT, "a           apply (use) tool"},
