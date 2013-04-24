@@ -1412,8 +1412,6 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    SET_OBJ_CMD2('a', "apply", "apply");
 	else if (obj->otyp == PICK_AXE || obj->otyp == DWARVISH_MATTOCK)
 	    SET_OBJ_CMD2('a', "apply", "apply (dig)");
-	else if (obj->oclass == WAND_CLASS)
-	    SET_OBJ_CMD2('a', "apply", "apply (break!)");
 
 	/* drop item, works on almost everything
 	   (Yes, this reveals loadstones to be undroppable, but if it's
@@ -1508,6 +1506,8 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 			obj->oartifact || objects[obj->otyp].oc_unique ||
 			obj->otyp == MIRROR) /* deception, according to object_selection_checks */
 	    SET_OBJ_CMD2('V', "invoke", "invoke");
+	else if (obj->oclass == WAND_CLASS)
+	    SET_OBJ_CMD2('V', "invoke", "invoke (break!)");
 	
 	/* wield: hold in hands */
 	if (obj->owornmask & W_WEP) {

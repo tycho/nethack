@@ -2667,8 +2667,10 @@ int doapply(struct obj *obj)
 	    return 1;	/* evading your grasp costs a turn; just be
 			   grateful that you don't drop it as well */
 
-	if (obj->oclass == WAND_CLASS)
-	    return do_break_wand(obj);
+	if (obj->oclass == WAND_CLASS) {
+	    pline("Use the #invoke command to break wands.");
+	    return 0;
+	}
 
 	switch(obj->otyp){
 	case BLINDFOLD:

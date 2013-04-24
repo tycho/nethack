@@ -457,7 +457,7 @@ static void show_quickref(void)
 	{0, MI_TEXT, "Ctrl-E      engrave \"Elbereth\""},
 	{0, MI_TEXT, "q           quaff (drink) potion"},
 	{0, MI_TEXT, "r           read scroll or spellbook"},
-	{0, MI_TEXT, "V           invoke artifact power"},
+	{0, MI_TEXT, "V           invoke artifact power or break wand"},
 	{0, MI_TEXT, "z           zap wand"},
 	{0, MI_TEXT, "#dip        dip item into potion or water"},
 	{0, MI_TEXT, "#rub        rub an item"},
