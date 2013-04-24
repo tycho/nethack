@@ -60,7 +60,7 @@ static char *enlght_combatinc(const char *,int,int,char *);
 
 const struct cmd_desc cmdlist[] = {
 	/* "str", "", defkey, altkey, wiz, buried, func, arg*/
-	{"adjust", "adjust inventory letters", M('a'), 0, TRUE, doorganize, CMD_ARG_NONE | CMD_EXT},
+	{"adjust", "adjust inventory letters", M('a'), 0, TRUE, doorganize, CMD_ARG_NONE | CMD_ARG_OBJ | CMD_EXT},
 	{"annotate", "name the current level", 0, C('f'), TRUE, donamelevel, CMD_ARG_NONE | CMD_EXT},
 	{"apply", "use a tool or dip into a potion", 'a', 0, FALSE, doapply, CMD_ARG_NONE | CMD_ARG_OBJ},
 	{"attributes", "show your attributes", C('x'), 0, TRUE, doattributes, CMD_ARG_NONE},
@@ -1412,6 +1412,11 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    SET_OBJ_CMD2('a', "apply", "apply");
 	else if (obj->otyp == PICK_AXE || obj->otyp == DWARVISH_MATTOCK)
 	    SET_OBJ_CMD2('a', "apply", "apply (dig)");
+
+	/* adjust; avoid non-letter items like gold */
+	if ((obj->invlet >= 'a' && obj->invlet <= 'z') ||
+	    (obj->invlet >= 'A' && obj->invlet <= 'Z'))
+	    SET_OBJ_CMD2('A', "adjust", "adjust letter");
 
 	/* drop item, works on almost everything
 	   (Yes, this reveals loadstones to be undroppable, but if it's

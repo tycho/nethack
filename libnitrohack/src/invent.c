@@ -2166,9 +2166,9 @@ void free_invbuf(void)
 }
 
 
-int doorganize(void)	/* inventory organizer by Del Lamb */
+int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 {
-	struct obj *obj, *otmp;
+	struct obj *otmp;
 	int ix, cur;
 	char let;
 	char alphabet[52+1], buf[52+1];
@@ -2177,7 +2177,7 @@ int doorganize(void)	/* inventory organizer by Del Lamb */
 	const char *adj_type;
 
 	/* get a pointer to the object the user wants to organize */
-	if (!(obj = getobj(allowallcnt,"adjust"))) return 0;
+	if (!obj && !(obj = getobj(allowallcnt,"adjust"))) return 0;
 
 	/* initialize the list with all upper and lower case letters */
 	for (let = 'a', ix = 0;  let <= 'z';) alphabet[ix++] = let++;
