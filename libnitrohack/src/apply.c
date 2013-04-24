@@ -4,8 +4,10 @@
 #include "hack.h"
 #include "edog.h"
 
-static const char tools[] = { TOOL_CLASS, WEAPON_CLASS, WAND_CLASS, 0 };
-static const char tools_too[] = { ALL_CLASSES, TOOL_CLASS, POTION_CLASS,
+static const char tools[] = { ALLOW_NONE, NONE_ON_COMMA,
+			      TOOL_CLASS, WEAPON_CLASS, WAND_CLASS, 0 };
+static const char tools_too[] = { ALL_CLASSES, ALLOW_NONE, NONE_ON_COMMA,
+				  TOOL_CLASS, POTION_CLASS,
 				  WEAPON_CLASS, WAND_CLASS, GEM_CLASS, 0 };
 
 static int use_camera(struct obj *);
@@ -2662,6 +2664,11 @@ int doapply(struct obj *obj)
 	else if (!obj)
 	    obj = getobj(class_list, "use or apply");
 	if (!obj) return 0;
+
+	if (obj == &zeroobj) {
+	    /* "a," for #looting. */
+	    return doloot();
+	}
 
 	if (obj->oartifact && !touch_artifact(obj, &youmonst))
 	    return 1;	/* evading your grasp costs a turn; just be
