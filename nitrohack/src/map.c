@@ -266,7 +266,7 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 		sprintf(printbuf, "Can't find dungeon feature '%c'.", (char)key);
 		curses_msgwin(printbuf);
 	    } else {
-		sprintf(printbuf, "Unknown direction%s.", 
+		sprintf(printbuf, "Unknown targeting key%s.",
 			!force ? " (ESC to abort)" : "");
 		curses_msgwin(printbuf);
 	    }
