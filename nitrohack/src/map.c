@@ -235,6 +235,9 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 		cx = monpos[monidx].x;
 		cy = monpos[monidx].y;
 	    }
+	} else if (key == '@') {
+	    cx = player.x;
+	    cy = player.y;
 	} else {
 	    int k = 0, tx, ty;
 	    int pass, lo_x, lo_y, hi_x, hi_y;
