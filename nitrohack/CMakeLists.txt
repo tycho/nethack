@@ -63,7 +63,13 @@ link_directories (${NitroHack_BINARY_DIR}/libnitrohack/src)
 link_directories (${NitroHack_BINARY_DIR}/libnitrohack_client)
 add_executable (nitrohack_curses ${NH_CURSES_SRC} )
 set_target_properties(nitrohack_curses PROPERTIES OUTPUT_NAME unnitrohack)
-target_link_libraries(nitrohack_curses nitrohack z)
+target_link_libraries(nitrohack_curses nitrohack)
+if (ALL_STATIC)
+    # kludge like the one below for jansson and libnitrohack_client.
+    # It's actually libnitrohack that requires zlib, not nitrohack_curses,
+    # but CMake can't chain dependencies transitively, AFAIK.
+    target_link_libraries(nitrohack_curses z)
+endif ()
 
 if (USE_PDCURSES)
     target_link_libraries (nitrohack_curses ${PDCURSES_LIBNAME})
