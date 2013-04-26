@@ -154,10 +154,11 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
     int moncount, monidx;
     
     werase(statuswin);
-    mvwaddstr(statuswin, 0, 0, "Move the cursor with the direction keys. Press "
-                               "the letter of a dungeon symbol");
-    mvwaddstr(statuswin, 1, 0, "to select it or use m/M to move to a nearby "
-                               "monster. Finish with one of .,;:");
+    mvwaddstr(statuswin, 0, 0, "Select a target location with the cursor: "
+			       "'.' to confirm");
+    if (!force) waddstr(statuswin, ", ESC to cancel.");
+    else waddstr(statuswin, ".");
+    mvwaddstr(statuswin, 1, 0, "Press '?' for help and tips.");
     wrefresh(statuswin);
     
     cx = *x >= 1 ? *x : player.x;
@@ -238,6 +239,33 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 	} else if (key == '@') {
 	    cx = player.x;
 	    cy = player.y;
+	} else if (key == '?') {
+	    static struct nh_menuitem helpitems[] = {
+		{0, MI_TEXT, "Move the cursor with the direction keys:"},
+		{0, MI_TEXT, ""},
+		{0, MI_TEXT, "7 8 9   y k u"},
+		{0, MI_TEXT, " \\|/     \\|/"},
+		{0, MI_TEXT, "4- -6   h- -l"},
+		{0, MI_TEXT, " /|\\     /|\\"},
+		{0, MI_TEXT, "1 2 3   b j n"},
+		{0, MI_TEXT, ""},
+		{0, MI_TEXT, "Hold shift to move the cursor further."},
+		{0, MI_TEXT, "Confirm your chosen location with one of .,;:"},
+		{0, MI_TEXT, "Cancel with ESC (not always possible)."},
+		{0, MI_TEXT, ""},
+		{0, MI_TEXT, "Targeting shortcuts:"},
+		{0, MI_TEXT, ""},
+		{0, MI_TEXT, "@    self"},
+		{0, MI_TEXT, "m/M  next/previous monster"},
+		{0, MI_TEXT, "<    upstairs"},
+		{0, MI_TEXT, ">    downstairs"},
+		{0, MI_TEXT, "_    altar"},
+		{0, MI_TEXT, "#    sink"},
+		{0, MI_TEXT, "     (other dungeon symbols also work)"},
+	    };
+	    curses_display_menu(helpitems, ARRAY_SIZE(helpitems),
+				"Targeting Help (default keys)",
+				PICK_NONE, NULL);
 	} else {
 	    int k = 0, tx, ty;
 	    int pass, lo_x, lo_y, hi_x, hi_y;
@@ -269,8 +297,8 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 		sprintf(printbuf, "Can't find dungeon feature '%c'.", (char)key);
 		curses_msgwin(printbuf);
 	    } else {
-		sprintf(printbuf, "Unknown targeting key%s.",
-			!force ? " (ESC to abort)" : "");
+		sprintf(printbuf, "Unknown targeting key %s.",
+			!force ? "(ESC to abort, '?' for help)" : "('?' for help)");
 		curses_msgwin(printbuf);
 	    }
 	}
