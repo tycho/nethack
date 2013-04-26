@@ -39,14 +39,22 @@ char msgbuf[BUFSZ];
 #define CANNIBAL_ALLOWED() (Role_if (PM_CAVEMAN) || \
 			    Race_if(PM_ORC) || Race_if(PM_VAMPIRE))
 
-static const char comestibles[] = { FOOD_CLASS, 0 };
+static const char comestibles_ground[] = {
+	ALLOW_NONE, NONE_ON_COMMA,
+	FOOD_CLASS, 0 };
+static const char *comestibles = comestibles_ground + 2;
 
-static const char sacrifice_types[] = { AMULET_CLASS, FOOD_CLASS, 0 };
+static const char sacrifice_types_ground[] = {
+	ALLOW_NONE, NONE_ON_COMMA,
+	AMULET_CLASS, FOOD_CLASS, 0 };
+static const char *sacrifice_types = sacrifice_types_ground + 2;
 
-static const char allobj[] = {
+static const char allobj_ground[] = {
+	ALLOW_NONE, NONE_ON_COMMA,
 	COIN_CLASS, WEAPON_CLASS, ARMOR_CLASS, POTION_CLASS, SCROLL_CLASS,
 	WAND_CLASS, RING_CLASS, AMULET_CLASS, FOOD_CLASS, TOOL_CLASS,
 	GEM_CLASS, ROCK_CLASS, BALL_CLASS, CHAIN_CLASS, SPBOOK_CLASS, 0 };
+static const char *allobj = allobj_ground + 2;
 
 static boolean force_save_hs = FALSE;
 static unsigned newuhs_save_hs;
@@ -2360,6 +2368,8 @@ struct obj *floorfood(/* get food from floor or pack */
 	char c;
 	boolean feeding = (!strcmp(verb, "eat"));
 	boolean sacrificing = (!strcmp(verb, "sacrifice"));
+	boolean can_floorfood = FALSE;
+	boolean checking_can_floorfood = TRUE;
 
 	/* if we can't touch floor objects then use invent food only */
 	if (!can_reach_floor() ||
@@ -2369,37 +2379,54 @@ struct obj *floorfood(/* get food from floor or pack */
 			(Flying && !Breathless))))
 	    goto skipfloor;
 
+    eat_floorfood:
+	/* Two passes:
+	 *
+	 * 1) Check if anything on the floor can be chosen and make it available
+	 *    from the object picking prompt.
+	 * 2) If the floor was chosen (,) from that prompt, go through again,
+	 *    this time asking for each specific floor option.
+	 */
+
 	if (feeding && metallivorous(youmonst.data)) {
 	    struct obj *gold;
 	    struct trap *ttmp = t_at(level, u.ux, u.uy);
 
 	    if (ttmp && ttmp->tseen && ttmp->ttyp == BEAR_TRAP) {
-		/* If not already stuck in the trap, perhaps there should
-		   be a chance to becoming trapped?  Probably not, because
-		   then the trap would just get eaten on the _next_ turn... */
-		sprintf(qbuf, "There is a bear trap here (%s); eat it?",
-			(u.utrap && u.utraptype == TT_BEARTRAP) ?
-				"holding you" : "armed");
-		if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
-		    u.utrap = u.utraptype = 0;
-		    deltrap(level, ttmp);
-		    return mksobj(level, BEARTRAP, TRUE, FALSE);
-		} else if (c == 'q') {
-		    return NULL;
+		if (checking_can_floorfood) {
+		    can_floorfood = TRUE;
+		} else {
+		    /* If not already stuck in the trap, perhaps there should
+		       be a chance to becoming trapped?  Probably not, because
+		       then the trap would just get eaten on the _next_ turn... */
+		    sprintf(qbuf, "There is a bear trap here (%s); eat it?",
+			    (u.utrap && u.utraptype == TT_BEARTRAP) ?
+			    "holding you" : "armed");
+		    if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
+			u.utrap = u.utraptype = 0;
+			deltrap(level, ttmp);
+			return mksobj(level, BEARTRAP, TRUE, FALSE);
+		    } else if (c == 'q') {
+			return NULL;
+		    }
 		}
 	    }
 
 	    if (youmonst.data != &mons[PM_RUST_MONSTER] &&
 		(gold = gold_at(level, u.ux, u.uy)) != 0) {
-		if (gold->quan == 1L)
-		    sprintf(qbuf, "There is 1 gold piece here; eat it?");
-		else
-		    sprintf(qbuf, "There are %d gold pieces here; eat them?",
-			    gold->quan);
-		if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
-		    return gold;
-		} else if (c == 'q') {
-		    return NULL;
+		if (checking_can_floorfood) {
+		    can_floorfood = TRUE;
+		} else {
+		    if (gold->quan == 1L)
+			sprintf(qbuf, "There is 1 gold piece here; eat it?");
+		    else
+			sprintf(qbuf, "There are %d gold pieces here; eat them?",
+				gold->quan);
+		    if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
+			return gold;
+		    } else if (c == 'q') {
+			return NULL;
+		    }
 		}
 	    }
 	}
@@ -2408,42 +2435,63 @@ struct obj *floorfood(/* get food from floor or pack */
 	    for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
 		if (otmp->otyp == AMULET_OF_YENDOR ||
 		    otmp->otyp == FAKE_AMULET_OF_YENDOR) {
-		    sprintf(qbuf, "There %s %s here; %s %s?",
-			    otense(otmp, "are"),
-			    doname(otmp), verb,
-			    "it");
-		    if ((c = yn_function(qbuf,ynqchars,'n')) == 'y')
-			return otmp;
-		    else if(c == 'q')
-			return NULL;
+		    if (checking_can_floorfood) {
+			can_floorfood = TRUE;
+			break;
+		    } else {
+			sprintf(qbuf, "There %s %s here; %s %s?",
+				otense(otmp, "are"),
+				doname(otmp), verb,
+				"it");
+			if ((c = yn_function(qbuf,ynqchars,'n')) == 'y')
+			    return otmp;
+			else if(c == 'q')
+			    return NULL;
+		    }
 		}
 	    }
 	}
 
 	/* Is there some food (probably a heavy corpse) here on the ground? */
 	for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
-		if (corpsecheck ?
-		(otmp->otyp==CORPSE && (corpsecheck == 1 || tinnable(otmp))) :
-		    feeding ? (otmp->oclass != COIN_CLASS && is_edible(otmp)) :
-						otmp->oclass==FOOD_CLASS) {
-			sprintf(qbuf, "There %s %s here; %s %s?",
-				otense(otmp, "are"),
-				doname(otmp), verb,
-				(otmp->quan == 1L) ? "it" : "one");
-			if ((c = yn_function(qbuf,ynqchars,'n')) == 'y')
-				return otmp;
-			else if (c == 'q')
-				return NULL;
+	    if (corpsecheck ?
+		    (otmp->otyp == CORPSE && (corpsecheck == 1 || tinnable(otmp))) :
+		feeding ?
+		    (otmp->oclass != COIN_CLASS && is_edible(otmp)) :
+		    otmp->oclass == FOOD_CLASS) {
+		if (checking_can_floorfood) {
+		    can_floorfood = TRUE;
+		    break;
+		} else {
+		    sprintf(qbuf, "There %s %s here; %s %s?",
+			otense(otmp, "are"),
+			doname(otmp), verb,
+			(otmp->quan == 1L) ? "it" : "one");
+		    if ((c = yn_function(qbuf,ynqchars,'n')) == 'y')
+			return otmp;
+		    else if (c == 'q')
+			return NULL;
 		}
+	    }
 	}
 
- skipfloor:
-	/* We cannot use ALL_CLASSES since that causes getobj() to skip its
-	 * "ugly checks" and we need to check for inedible items.
-	 */
-	otmp = getobj(sacrificing ? (const char *)sacrifice_types :
-		      feeding     ? (const char *)allobj :
-				    (const char *)comestibles, verb);
+    skipfloor:
+	if (checking_can_floorfood) {
+	    /* We cannot use ALL_CLASSES since that causes getobj() to skip its
+	     * "ugly checks" and we need to check for inedible items.
+	     */
+	    otmp = getobj(
+		    sacrificing ?
+			(can_floorfood ? sacrifice_types_ground : sacrifice_types) :
+		    feeding ?
+			(can_floorfood ? allobj_ground : allobj) :
+			(can_floorfood ? comestibles_ground : comestibles),
+		    verb);
+	    if (otmp == &zeroobj) {
+		checking_can_floorfood = FALSE;
+		goto eat_floorfood;
+	    }
+	}
 	if (corpsecheck && otmp) {
 	    if ((otmp->otyp != AMULET_OF_YENDOR &&
 		 otmp->otyp != FAKE_AMULET_OF_YENDOR) &&
