@@ -35,7 +35,6 @@ struct flag {
 	boolean  mv;
 	boolean  bypasses;	/* bypass flag is set on at least one fobj */
 	boolean  nopick;	/* do not pickup objects (as when running) */
-	boolean  null;		/* OK to send nulls to the terminal */
 	boolean  pickup;	/* whether you pickup or move and look */
 
 	boolean  pushweapon;	/* When wielding, push old weapon into second slot */

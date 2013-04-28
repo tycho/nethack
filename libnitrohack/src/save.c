@@ -140,7 +140,6 @@ static void save_flags(struct memfile *mf)
 	mwrite8(mf, flags.move);
 	mwrite8(mf, flags.mv);
 	mwrite8(mf, flags.nopick);
-	mwrite8(mf, flags.null);
 	mwrite8(mf, flags.pickup);
 	mwrite8(mf, flags.pushweapon);
 	mwrite8(mf, flags.rest_on_space);

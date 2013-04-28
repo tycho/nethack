@@ -567,7 +567,6 @@ void restore_flags(struct memfile *mf, struct flag *f)
 	f->move = mread8(mf);
 	f->mv = mread8(mf);
 	f->nopick = mread8(mf);
-	f->null = mread8(mf);
 	f->pickup = mread8(mf);
 	f->pushweapon = mread8(mf);
 	f->rest_on_space = mread8(mf);
