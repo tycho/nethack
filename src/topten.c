@@ -79,7 +79,9 @@ STATIC_DCL int FDECL(score_wanted,
 #ifdef RECORD_ACHIEVE
 STATIC_DCL long FDECL(encodeachieve, (void));
 #endif
+#ifdef XLOGFILE
 STATIC_DCL long FDECL(encode_xlogflags, (void));
+#endif
 #ifdef NO_SCAN_BRACK
 STATIC_DCL void FDECL(nsb_mung_line,(char*));
 STATIC_DCL void FDECL(nsb_unmung_line,(char*));
@@ -1037,6 +1039,7 @@ int uid;
 	return 0;
 }
 
+#ifdef XLOGFILE
 long
 encode_xlogflags(void)
 {
@@ -1050,6 +1053,7 @@ encode_xlogflags(void)
 
 	return e;
 }
+#endif
 
 #ifdef RECORD_CONDUCT
 long
