@@ -278,9 +278,6 @@ bot1()
 #endif
 	char *nb;
 	int i=0,j;
-#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	int save_botlx = flags.botlx;
-#endif
 
 	Strcpy(newbot1, "");
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
@@ -429,9 +426,6 @@ bot2()
 	register char *nb;
 	int hp, hpmax;
 	int cap = near_capacity();
-#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-	int save_botlx = flags.botlx;
-#endif
 
 	hp = Upolyd ? u.mh : u.uhp;
 	hpmax = Upolyd ? u.mhmax : u.uhpmax;
