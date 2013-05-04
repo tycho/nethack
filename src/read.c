@@ -22,9 +22,7 @@ static NEARDATA const char readable[] =
 static const char all_count[] = { ALLOW_COUNT, ALL_CLASSES, 0 };
 
 static void FDECL(wand_explode, (struct obj *));
-#if 0
 static void NDECL(do_class_genocide);
-#endif
 static void FDECL(stripspe,(struct obj *));
 static void FDECL(p_glow1,(struct obj *));
 static void FDECL(p_glow2,(struct obj *,const char *));
@@ -1360,8 +1358,8 @@ register struct obj	*sobj;
 	case SCR_GENOCIDE:
 		You("have found a scroll of genocide!");
 		known = TRUE;
-		do_genocide((!sobj->cursed) | (2 * !!Confusion),
-		             !sobj->blessed);
+		if (sobj->blessed) do_class_genocide();
+		else do_genocide(!sobj->cursed | (2 * !!Confusion), FALSE);
 		break;
 	case SCR_LIGHT:
 		if (!confused) {
@@ -1748,7 +1746,6 @@ do_it:
 	vision_full_recalc = 1;	/* delayed vision recalculation */
 }
 
-#if 0
 static void
 do_class_genocide()
 {
@@ -1901,7 +1898,6 @@ do_class_genocide()
 		return;
 	}
 }
-#endif
 
 #define REALLY 1
 #define PLAYER 2
