@@ -1028,7 +1028,7 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 		if(rnd_tmp<2) rnd_tmp = 2;
 		if(youdefend) {
 			make_blinded(Blinded+rnd_tmp, FALSE);
-			if (!Blind) Your(vision_clears);
+			if (!Blind) Your("%s", vision_clears);
 		} else {
 		    if ((rnd_tmp += mdef->mblinded) > 127) rnd_tmp = 127;
 		    mdef->mblinded = rnd_tmp;
