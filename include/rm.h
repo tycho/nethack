@@ -331,10 +331,10 @@ extern const struct symdef def_warnsyms[WARNCOUNT];
 /*
  * What's under a drawbridge.
  */
-//#define DB_MOAT		0
-//#define DB_LAVA		4
-//#define DB_ICE		8
-//#define DB_FLOOR	16
+/*#define DB_MOAT	0*/
+/*#define DB_LAVA	4*/
+/*#define DB_ICE	8*/
+/*#define DB_FLOOR	16*/
 #define DB_MOAT		0x00
 #define DB_LAVA		0x04
 #define DB_ICE		0x08
