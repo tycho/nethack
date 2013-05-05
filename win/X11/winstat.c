@@ -470,7 +470,51 @@ update_val(attr_rec, new_value)
 	    return;
 #endif
 	}
+        /* special case: weight can be enabled & disabled - clive */
+        else if (attr_rec == &shown_stats[F_WEIGHT]) {
+		static boolean flagweight = TRUE;
+#ifdef SHOW_WEIGHT
+		if (flags.showweight && !flagweight) {
+			set_name(attr_rec->w, shown_stats[F_WEIGHT].name);
+			force_update = TRUE;
+			flagweight = flags.showweight;
+		} else if (!flags.showweight && flagweight) {
+			set_name(attr_rec->w, "");
+			set_value(attr_rec->w, "");
+			flagweight = flags.showweight;
+		}
+		if (!flagweight) return;
+#else
+		if (flagweight) {
+			set_name(attr_rec->w, "");
+			set_value(attr_rec->w, "");
+			flagweight = FALSE;
+		}
+		return;
+#endif
+        } else if (attr_rec == &shown_stats[F_WEIGHTCAP]) {
+		static boolean flagweightcap = TRUE;
+#ifdef SHOW_WEIGHT
+		if (flags.showweight && !flagweightcap) {
+			set_name(attr_rec->w, shown_stats[F_WEIGHTCAP].name);
+			force_update = TRUE;
+			flagweightcap = flags.showweight;
+		} else if (!flags.showweight && flagweightcap) {
+			set_name(attr_rec->w, "");
+			set_value(attr_rec->w, "");
+			flagweightcap = flags.showweight;
+		}
 
+		if (!flagweightcap) return;
+#else
+		if (flagweightcap) {
+			set_name(attr_rec->w, "");
+			set_value(attr_rec->w, "");
+			flagweightcap = FALSE;
+		}
+		return;
+#endif
+	}
 	/* special case: when polymorphed, show "HD", disable exp */
 	else if (attr_rec == &shown_stats[F_LEVEL]) {
 	    static boolean lev_was_poly = FALSE;

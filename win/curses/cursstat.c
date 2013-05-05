@@ -66,6 +66,9 @@ static nhstat prevtime;
 #ifdef SCORE_ON_BOTL
 static nhstat prevscore;
 #endif
+#ifdef SHOW_WEIGHT
+static nhstat prevweight;
+#endif
 static nhstat prevhunger;
 static nhstat prevconf;
 static nhstat prevblind;
@@ -1048,6 +1051,55 @@ void curses_update_stats(boolean redraw)
     prevscore.value = botl_score(); /* Track it even when it's not displayed */
 #endif  /* SCORE_ON_BOTL */
 
+    /* Weight */
+#ifdef SHOW_WEIGHT
+    if (prevweight.display != flags.showweight)   /* Setting has changed */
+    {
+        prevweight.display = flags.showweight;
+    }
+    if (prevweight.display)
+    {
+		long weight = inv_weight() + weight_cap();
+        if (weight != prevweight.value)
+	    {
+	        if (weight > prevweight.value)
+	        {
+	            prevweight.highlight_color = STAT_UP_COLOR;
+	        }
+	        else    /* Not sure this is possible */
+	        {
+                prevweight.highlight_color = STAT_DOWN_COLOR;
+	        }
+            sprintf(buf, "%ld", weight);
+            free(prevweight.txt);
+            prevweight.txt = curses_copy_of(buf);
+            prevweight.highlight_turns = 3;
+	    }
+
+        if (prevweight.label != NULL)
+        {
+            mvwaddstr(win, sy, sx, prevweight.label);
+            sx += strlen(prevweight.label);
+        }
+
+        color_stat(prevweight, ON);
+        mvwaddstr(win, sy, sx, prevweight.txt);
+        color_stat(prevweight, OFF);
+
+        if (horiz)
+        {
+            sx += strlen(prevweight.txt) + 1;
+        }
+        else
+        {
+            sx = sx_start;
+            sy++;
+        }
+    }
+
+    prevweight.value = inv_weight() + weight_cap(); /* Track it even when it's not displayed */
+#endif  /* Weight */
+
     /* Hunger */
     if (u.uhs != prevhunger.value)
 	{
@@ -1622,6 +1674,16 @@ void curses_decrement_highlight()
         }
     }
 #endif
+#ifdef SHOW_WEIGHT
+    if (prevweight.highlight_turns > 0)
+    {
+        prevweight.highlight_turns--;
+        if (prevweight.highlight_turns == 0)
+        {
+            unhighlight = TRUE;
+        }
+    }
+#endif
     if (prevhunger.highlight_turns > 0)
     {
         prevhunger.highlight_turns--;
@@ -1987,6 +2049,18 @@ static void init_stats()
     set_stat_color(&prevscore);
 #endif
 
+    /* Weight */
+#ifdef SHOW_WEIGHT
+    prevweight.value = inv_weight() + weight_cap();
+    sprintf(buf, "%ld", prevweight.value);
+    prevweight.txt = curses_copy_of(buf);
+	prevweight.display = flags.showweight;
+	prevweight.highlight_turns = 0;
+    prevweight.label = NULL;
+    prevweight.id = "weight";
+    set_stat_color(&prevweight);
+#endif
+
     /* Hunger */
     prevhunger.value = u.uhs;
     for (count = 0; count < strlen(hu_stat[u.uhs]); count++)
@@ -2269,6 +2343,14 @@ static void set_labels(int label_width)
             }
             prevscore.label = curses_copy_of("S:");
 #endif
+#ifdef SHOW_WEIGHT
+            /* Weight */
+            if (prevweight.label)
+            {
+                free (prevweight.label);
+            }
+            prevweight.label = curses_copy_of("Wgt:");
+#endif
             break;
         }
         case NORMAL_LABELS:
@@ -2403,6 +2485,14 @@ static void set_labels(int label_width)
             }
             prevscore.label = curses_copy_of("S:");
 #endif
+#ifdef SHOW_WEIGHT
+            /* Weight */
+            if (prevweight.label)
+            {
+                free (prevweight.label);
+            }
+            prevweight.label = curses_copy_of("Wgt:");
+#endif
             break;
         }
         case WIDE_LABELS:
@@ -2535,6 +2625,14 @@ static void set_labels(int label_width)
                 free (prevscore.label);
             }
             prevscore.label = curses_copy_of("Score:         ");
+#endif
+#ifdef SHOW_WEIGHT
+            /* Weight */
+            if (prevweight.label)
+            {
+                free (prevweight.label);
+            }
+            prevweight.label = curses_copy_of("Weight:         ");
 #endif
             break;
         }

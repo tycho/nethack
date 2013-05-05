@@ -2207,6 +2207,7 @@ NetHackQtStatusWindow::NetHackQtStatusWindow() :
     align(this,"Alignment"),
     time(this,"Time"),
     score(this,"Score"),
+    weight(this,"Weight"),
     hunger(this,""),
     confused(this,"Confused"),
     sick_fp(this,"Sick"),
@@ -2300,6 +2301,7 @@ void NetHackQtStatusWindow::doUpdate()
     align.setFont(normal);
     time.setFont(normal);
     score.setFont(normal);
+    weight.setFont(normal);
     hunger.setFont(normal);
     confused.setFont(normal);
     sick_fp.setFont(normal);
@@ -2338,7 +2340,7 @@ void NetHackQtStatusWindow::resizeEvent(QResizeEvent*)
     const float SP_hln1=0.02; // ---
     const float SP_atr2=0.09; //  Au    HP    PW    AC    LVL   EXP
     const float SP_hln2=0.02; // ---
-    const float SP_time=0.09; //      time    score
+    const float SP_time=0.09; //      time    score    weight
     const float SP_hln3=0.02; // ---
     const float SP_stat=0.25; // Alignment, Poisoned, Hungry, Sick, etc.
 
@@ -2386,6 +2388,7 @@ void NetHackQtStatusWindow::resizeEvent(QResizeEvent*)
     iw=width()/3; x+=iw/2;
     time.setGeometry(x,y,iw,lh); x+=iw;
     score.setGeometry(x,y,iw,lh); x+=iw;
+    weight.setGeometry(x,y,iw,lh); x+=iw;
     x=0; y+=lh;
 
     lh=int(h*SP_stat);
@@ -2434,6 +2437,7 @@ void NetHackQtStatusWindow::fadeHighlighting()
 
     time.dissipateHighlight();
     score.dissipateHighlight();
+    weight.dissipateHighlight();
 
     hunger.dissipateHighlight();
     confused.dissipateHighlight();
@@ -2455,7 +2459,7 @@ void NetHackQtStatusWindow::fadeHighlighting()
  *
  * Information on the second line:
  *    dlvl, gold, hp, power, ac, {level & exp or HD **}
- *    status (hunger, conf, halu, stun, sick, blind), time, encumbrance
+ *    status (hunger, conf, halu, stun, sick, blind), time, weight, encumbrance
  *
  * [**] HD is shown instead of level and exp if mtimedone is non-zero.
  */
@@ -2597,6 +2601,15 @@ void NetHackQtStatusWindow::updateStats()
     {
 	score.setLabel("");
     }
+#ifdef SHOW_WEIGHT
+    if (::flags.showweight) {
+        Sprintf(buf, "/%ld", (long)weight_cap());
+        weight.setLabel("Weight:",(long)(inv_weight()+weight_cap()),buf);
+    } else
+#endif
+    {
+        weight.setLabel("");
+    }
 
     if (first_set)
     {
@@ -2622,6 +2635,7 @@ void NetHackQtStatusWindow::updateStats()
 
 	//time.highlightWhenChanging();
 	score.highlightWhenChanging();
+	weight.highlightWhenChanging();
 
 	hunger.highlightWhenChanging();
 	confused.highlightWhenChanging();
