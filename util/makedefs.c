@@ -737,6 +737,9 @@ static const char *build_opts[] = {
 #ifdef SHELL
 		"shell command",
 #endif
+#ifdef SHOW_WEIGHT
+		"show weight of inventory",
+#endif
 #ifdef SINKS
 		"sinks",
 #endif

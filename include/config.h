@@ -324,6 +324,7 @@ typedef unsigned char	uchar;
  */
 
 #define SHOW_BORN	/* show born/extinct patch */
+#define SHOW_WEIGHT /* display of object weight */
 #define SORTLOOT	/* optional item sorting by name */
 #define PARANOID	/* make sure the user isn't making a mistake */
 
