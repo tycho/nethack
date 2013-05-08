@@ -133,7 +133,7 @@ static void m_initthrow(struct monst *mtmp, int otyp, int oquan)
 {
 	struct obj *otmp;
 
-	otmp = mksobj(level, otyp, TRUE, FALSE);
+	otmp = mksobj(mtmp->dlevel, otyp, TRUE, FALSE);
 	otmp->quan = (long) rn1(oquan, 3);
 	otmp->owt = weight(otmp);
 	if (otyp == ORCISH_ARROW) otmp->opoisoned = TRUE;
