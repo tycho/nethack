@@ -214,7 +214,7 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 	    }
 
 	    if (weapon != STRANGE_OBJECT) {
-		otmp = mksobj(level, weapon, TRUE, FALSE);
+		otmp = mksobj(lev, weapon, TRUE, FALSE);
 		otmp->spe = (special ? rn1(5,4) : rn2(4));
 		if (!rn2(3)) otmp->oerodeproof = 1;
 		else if (!rn2(2)) otmp->greased = 1;
@@ -238,7 +238,7 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 					       GAUNTLETS_OF_DEXTERITY));
 		if (rn2(8))
 		    mk_mplayer_armor(mtmp, rnd_class(LOW_BOOTS, LEVITATION_BOOTS));
-		m_dowear(level, mtmp, TRUE);
+		m_dowear(lev, mtmp, TRUE);
 
 		quan = rn2(3) ? rn2(3) : rn2(16);
 		while (quan--)
@@ -248,7 +248,7 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 		mkmonmoney(mtmp, rn2(1000));
 		quan = rn2(10);
 		while (quan--)
-		    mpickobj(mtmp, mkobj(level, RANDOM_CLASS, FALSE));
+		    mpickobj(mtmp, mkobj(lev, RANDOM_CLASS, FALSE));
 	    }
 	    quan = rnd(3);
 	    while (quan--)
