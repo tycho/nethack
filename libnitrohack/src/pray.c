@@ -1507,7 +1507,7 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 	    /* The chance goes down as the number of artifacts goes up */
 	    if (u.ulevel > 2 && u.uluck >= 0 &&
 		!rn2(10 + (2 * u.ugifts * nartifacts))) {
-		otmp = mk_artifact(NULL, a_align(u.ux,u.uy));
+		otmp = mk_artifact(level, NULL, a_align(u.ux,u.uy));
 		if (otmp) {
 		    if (otmp->spe < 0) otmp->spe = 0;
 		    if (otmp->cursed) uncurse(otmp);
