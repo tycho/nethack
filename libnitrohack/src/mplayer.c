@@ -86,7 +86,7 @@ static void mk_mplayer_armor(struct monst *mon, short typ)
 	struct obj *obj;
 
 	if (typ == STRANGE_OBJECT) return;
-	obj = mksobj(level, typ, FALSE, FALSE);
+	obj = mksobj(mon->dlevel, typ, FALSE, FALSE);
 	if (!rn2(3)) obj->oerodeproof = 1;
 	if (!rn2(3)) curse(obj);
 	if (!rn2(3)) bless(obj);
