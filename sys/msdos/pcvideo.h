@@ -233,7 +233,7 @@ E int  NDECL(txt_monoadapt_check);
 E void NDECL(txt_nhbell);
 E void FDECL(txt_startup,(int*,int*));
 E void FDECL(txt_xputs, (const char *, int, int));
-E void FDECL(txt_xputc, (CHAR_P, int));
+E void FDECL(txt_xputc, (char, int));
 
 /* ### vidvga.c ### */
 
@@ -267,11 +267,11 @@ E void FDECL(vga_tty_startup,(int*,int*));
 E void FDECL(vga_WriteChar, (int, int, int, int));
 E void FDECL(vga_WriteStr, (char *, int, int, int, int));
 E void FDECL(vga_xputs, (const char *, int, int));
-E void FDECL(vga_xputc, (CHAR_P, int));
+E void FDECL(vga_xputc, (char, int));
 E void FDECL(vga_xputg, (int, int, unsigned));
-E void FDECL(vga_userpan, (BOOL_P));
-E void FDECL(vga_overview, (BOOL_P));
-E void FDECL(vga_traditional, (BOOL_P));
+E void FDECL(vga_userpan, (bool));
+E void FDECL(vga_overview, (bool));
+E void FDECL(vga_traditional, (bool));
 E void NDECL(vga_refresh);
 #  endif /* SCREEN_VGA */
 # endif /* NO_TERMS   */

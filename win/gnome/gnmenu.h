@@ -15,11 +15,11 @@ struct _GHackMenuItem
 {
   int		glyph; 
   const ANY_P *identifier;
-  CHAR_P       accelerator;
-  CHAR_P       group_accel;
+  char       accelerator;
+  char       group_accel;
   int          attr;
   const char*  str;
-  BOOL_P    presel;
+  bool    presel;
 };
 
 typedef struct _GHackMenuItem GHackMenuItem;

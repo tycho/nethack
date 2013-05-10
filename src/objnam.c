@@ -10,12 +10,12 @@
 
 STATIC_DCL char *FDECL(strprepend,(char *,const char *));
 #ifdef OVLB
-static bool FDECL(wishymatch, (const char *,const char *,BOOL_P));
+static bool FDECL(wishymatch, (const char *,const char *,bool));
 #endif
 static char *NDECL(nextobuf);
 static void FDECL(add_erosion_words, (struct obj *, char *));
 #ifdef SORTLOOT
-char * FDECL(xname2, (struct obj *, BOOL_P));
+char * FDECL(xname2, (struct obj *, bool));
 #endif
 
 struct Jitem {
@@ -200,7 +200,7 @@ struct obj *obj;
 char *
 distant_name(obj, func)
 struct obj *obj;
-char *FDECL((*func), (OBJ_P));
+char *FDECL((*func), (struct obj*));
 {
 	char *str;
 
@@ -933,7 +933,7 @@ struct obj *obj;
 const char *
 singular(otmp, func)
 struct obj *otmp;
-char *FDECL((*func), (OBJ_P));
+char *FDECL((*func), (struct obj*));
 {
 	long savequan;
 #ifdef SHOW_WEIGHT

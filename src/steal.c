@@ -7,7 +7,7 @@ STATIC_PTR int NDECL(stealarm);
 
 #ifdef OVLB
 STATIC_DCL const char *FDECL(equipname, (struct obj *));
-STATIC_DCL void FDECL(mdrop_obj, (struct monst *,struct obj *,BOOL_P));
+STATIC_DCL void FDECL(mdrop_obj, (struct monst *,struct obj *,bool));
 
 STATIC_OVL const char *
 equipname(otmp)

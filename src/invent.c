@@ -20,9 +20,9 @@ STATIC_PTR int FDECL(ckunpaid,(struct obj *));
 STATIC_PTR int FDECL(ckvalidcat,(struct obj *));
 #ifdef DUMP_LOG
 static char FDECL(display_pickinv,
-		 (const char *,BOOL_P, long *, BOOL_P, BOOL_P));
+		 (const char *,bool, long *, bool, bool));
 #else
-static char FDECL(display_pickinv, (const char *,BOOL_P, long *));
+static char FDECL(display_pickinv, (const char *,bool, long *));
 #endif /* DUMP_LOG */
 #ifdef OVLB
 STATIC_DCL bool FDECL(this_type_only, (struct obj *));
@@ -1183,12 +1183,12 @@ static NEARDATA const char removeables[] =
 int
 ggetobj(word, fn, mx, combo, resultflags)
 const char *word;
-int FDECL((*fn),(OBJ_P)), mx;
+int FDECL((*fn),(struct obj*)), mx;
 bool combo;		/* combination menu flag */
 unsigned *resultflags;
 {
-	int FDECL((*ckfn),(OBJ_P)) = (int FDECL((*),(OBJ_P))) 0;
-	bool FDECL((*filter),(OBJ_P)) = (bool FDECL((*),(OBJ_P))) 0;
+	int FDECL((*ckfn),(struct obj*)) = (int FDECL((*),(struct obj*))) 0;
+	bool FDECL((*filter),(struct obj*)) = (bool FDECL((*),(struct obj*))) 0;
 	bool takeoff, ident, allflag, m_seen;
 	int itemcount;
 #ifndef GOLDOBJ
@@ -1379,7 +1379,7 @@ askchain(objchn, olets, allflag, fn, ckfn, mx, word)
 struct obj **objchn;
 int allflag, mx;
 const char *olets, *word;	/* olets is an Obj Class char array */
-int FDECL((*fn),(OBJ_P)), FDECL((*ckfn),(OBJ_P));
+int FDECL((*fn),(struct obj*)), FDECL((*ckfn),(struct obj*));
 {
 	struct obj *otmp, *otmp2, *otmpo;
 	char sym, ilet;
@@ -2163,7 +2163,7 @@ dotypeinv()
 #ifndef GOLDOBJ
 					      (u.ugold != 0),
 #endif
-					      (bool FDECL((*),(OBJ_P))) 0, &itemcount);
+					      (bool FDECL((*),(struct obj*))) 0, &itemcount);
 	    if (unpaid_count) {
 		Strcat(types, "u");
 		class_count++;

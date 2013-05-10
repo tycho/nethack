@@ -11,18 +11,18 @@ STATIC_DCL bool FDECL(emergency_disrobe,(bool *));
 STATIC_DCL int FDECL(untrap_prob, (struct trap *ttmp));
 STATIC_DCL void FDECL(cnv_trap_obj, (int, int, struct trap *));
 STATIC_DCL void FDECL(move_into_trap, (struct trap *));
-STATIC_DCL int FDECL(try_disarm, (struct trap *,BOOL_P));
+STATIC_DCL int FDECL(try_disarm, (struct trap *,bool));
 STATIC_DCL void FDECL(reward_untrap, (struct trap *, struct monst *));
 STATIC_DCL int FDECL(disarm_holdingtrap, (struct trap *));
 STATIC_DCL int FDECL(disarm_landmine, (struct trap *));
 STATIC_DCL int FDECL(disarm_squeaky_board, (struct trap *));
 STATIC_DCL int FDECL(disarm_shooting_trap, (struct trap *, int));
-STATIC_DCL int FDECL(try_lift, (struct monst *, struct trap *, int, BOOL_P));
+STATIC_DCL int FDECL(try_lift, (struct monst *, struct trap *, int, bool));
 STATIC_DCL int FDECL(help_monster_out, (struct monst *, struct trap *));
-STATIC_DCL bool FDECL(thitm, (int,struct monst *,struct obj *,int,BOOL_P));
+STATIC_DCL bool FDECL(thitm, (int,struct monst *,struct obj *,int,bool));
 STATIC_DCL int FDECL(mkroll_launch,
-			(struct trap *,XCHAR_P,XCHAR_P,SHORT_P,long));
-STATIC_DCL bool FDECL(isclearpath,(coord *, int, SCHAR_P, SCHAR_P));
+			(struct trap *,xchar,xchar,short,long));
+STATIC_DCL bool FDECL(isclearpath,(coord *, int, schar, schar));
 #ifdef STEED
 STATIC_OVL int FDECL(steedintrap, (struct trap *, struct obj *));
 STATIC_OVL bool FDECL(keep_saddle_with_steedcorpse,

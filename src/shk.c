@@ -14,9 +14,9 @@
 
 #ifdef KOPS
 STATIC_DCL void FDECL(makekops, (coord *));
-STATIC_DCL void FDECL(call_kops, (struct monst *,BOOL_P));
+STATIC_DCL void FDECL(call_kops, (struct monst *,bool));
 # ifdef OVLB
-STATIC_DCL void FDECL(kops_gone, (BOOL_P));
+STATIC_DCL void FDECL(kops_gone, (bool));
 # endif /* OVLB */
 #endif /* KOPS */
 
@@ -30,8 +30,8 @@ STATIC_VAR NEARDATA long int followmsg;	/* last time of follow message */
 STATIC_DCL void FDECL(setpaid, (struct monst *));
 STATIC_DCL long FDECL(addupbill, (struct monst *));
 STATIC_DCL void FDECL(pacify_shk, (struct monst *));
-STATIC_DCL struct bill_x *FDECL(onbill, (struct obj *, struct monst *, BOOL_P));
-STATIC_DCL struct monst *FDECL(next_shkp, (struct monst *, BOOL_P));
+STATIC_DCL struct bill_x *FDECL(onbill, (struct obj *, struct monst *, bool));
+STATIC_DCL struct monst *FDECL(next_shkp, (struct monst *, bool));
 STATIC_DCL long FDECL(shop_debt, (struct eshk *));
 STATIC_DCL char *FDECL(shk_owns, (char *,struct obj *));
 STATIC_DCL char *FDECL(mon_owns, (char *,struct obj *));
@@ -41,13 +41,13 @@ STATIC_DCL void FDECL(pay, (long, struct monst *));
 STATIC_DCL long FDECL(get_cost, (struct obj *, struct monst *));
 STATIC_DCL long FDECL(set_cost, (struct obj *, struct monst *));
 STATIC_DCL const char *FDECL(shk_embellish, (struct obj *, long));
-STATIC_DCL long FDECL(cost_per_charge, (struct monst *,struct obj *,BOOL_P));
+STATIC_DCL long FDECL(cost_per_charge, (struct monst *,struct obj *,bool));
 STATIC_DCL long FDECL(cheapest_item, (struct monst *));
 STATIC_DCL int FDECL(dopayobj, (struct monst *, struct bill_x *,
-			    struct obj **, int, BOOL_P));
+			    struct obj **, int, bool));
 STATIC_DCL long FDECL(stolen_container, (struct obj *, struct monst *, long,
-				     BOOL_P));
-STATIC_DCL long FDECL(getprice, (struct obj *,BOOL_P));
+				     bool));
+STATIC_DCL long FDECL(getprice, (struct obj *,bool));
 STATIC_DCL void FDECL(shk_names_obj,
 		 (struct monst *,struct obj *,const char *,long,const char *));
 STATIC_DCL struct obj *FDECL(bp_to_obj, (struct bill_x *));
@@ -55,14 +55,14 @@ STATIC_DCL bool FDECL(inherits, (struct monst *,int,int));
 STATIC_DCL void FDECL(set_repo_loc, (struct eshk *));
 STATIC_DCL bool NDECL(angry_shk_exists);
 STATIC_DCL void FDECL(rile_shk, (struct monst *));
-STATIC_DCL void FDECL(rouse_shk, (struct monst *,BOOL_P));
-STATIC_DCL void FDECL(remove_damage, (struct monst *, BOOL_P));
+STATIC_DCL void FDECL(rouse_shk, (struct monst *,bool));
+STATIC_DCL void FDECL(remove_damage, (struct monst *, bool));
 STATIC_DCL void FDECL(sub_one_frombill, (struct obj *, struct monst *));
-STATIC_DCL void FDECL(add_one_tobill, (struct obj *, BOOL_P));
+STATIC_DCL void FDECL(add_one_tobill, (struct obj *, bool));
 STATIC_DCL void FDECL(dropped_container, (struct obj *, struct monst *,
-				      BOOL_P));
+				      bool));
 STATIC_DCL void FDECL(add_to_billobjs, (struct obj *));
-STATIC_DCL void FDECL(bill_box_content, (struct obj *, BOOL_P, BOOL_P,
+STATIC_DCL void FDECL(bill_box_content, (struct obj *, bool, bool,
 				     struct monst *));
 #ifdef OVL1
 static bool FDECL(rob_shop, (struct monst *));

@@ -7,15 +7,15 @@
 
 #include "hack.h"
 
-STATIC_DCL void FDECL(simple_look, (struct obj *,BOOL_P));
+STATIC_DCL void FDECL(simple_look, (struct obj *,bool));
 #ifndef GOLDOBJ
 STATIC_DCL bool FDECL(query_classes, (char *,bool *,bool *,
-		const char *,struct obj *,BOOL_P,BOOL_P,int *));
+		const char *,struct obj *,bool,bool,int *));
 #else
 STATIC_DCL bool FDECL(query_classes, (char *,bool *,bool *,
-		const char *,struct obj *,BOOL_P,int *));
+		const char *,struct obj *,bool,int *));
 #endif
-STATIC_DCL void FDECL(check_here, (BOOL_P));
+STATIC_DCL void FDECL(check_here, (bool));
 STATIC_DCL bool FDECL(n_or_more, (struct obj *));
 STATIC_DCL bool FDECL(all_but_uchain, (struct obj *));
 #if 0 /* not used */
@@ -24,17 +24,17 @@ STATIC_DCL bool FDECL(allow_cat_no_uchain, (struct obj *));
 STATIC_DCL int FDECL(autopick, (struct obj*, int, menu_item **));
 STATIC_DCL int FDECL(count_categories, (struct obj *,int));
 STATIC_DCL long FDECL(carry_count,
-		      (struct obj *,struct obj *,long,BOOL_P,int *,int *));
-STATIC_DCL int FDECL(lift_object, (struct obj *,struct obj *,long *,BOOL_P));
+		      (struct obj *,struct obj *,long,bool,int *,int *));
+STATIC_DCL int FDECL(lift_object, (struct obj *,struct obj *,long *,bool));
 STATIC_DCL bool FDECL(mbag_explodes, (struct obj *,int));
 STATIC_PTR int FDECL(in_container,(struct obj *));
 STATIC_PTR int FDECL(ck_bag,(struct obj *));
 STATIC_PTR int FDECL(out_container,(struct obj *));
 STATIC_DCL long FDECL(mbag_item_gone, (int,struct obj *));
 STATIC_DCL void FDECL(observe_quantum_cat, (struct obj *));
-STATIC_DCL int FDECL(menu_loot, (int, struct obj *, BOOL_P));
-STATIC_DCL int FDECL(in_or_out_menu, (const char *,struct obj *, BOOL_P, BOOL_P));
-STATIC_DCL int FDECL(container_at, (int, int, BOOL_P));
+STATIC_DCL int FDECL(menu_loot, (int, struct obj *, bool));
+STATIC_DCL int FDECL(in_or_out_menu, (const char *,struct obj *, bool, bool));
+STATIC_DCL int FDECL(container_at, (int, int, bool));
 STATIC_DCL bool FDECL(able_to_loot, (int, int));
 STATIC_DCL bool FDECL(mon_beside, (int, int));
 
@@ -92,7 +92,7 @@ collect_obj_classes(ilets, otmp, here, incl_gold, filter, itemcount)
 char ilets[];
 struct obj *otmp;
 bool here, incl_gold;
-bool FDECL((*filter),(OBJ_P));
+bool FDECL((*filter),(struct obj*));
 int *itemcount;
 #else
 int
@@ -100,7 +100,7 @@ collect_obj_classes(ilets, otmp, here, filter, itemcount)
 char ilets[];
 struct obj *otmp;
 bool here;
-bool FDECL((*filter),(OBJ_P));
+bool FDECL((*filter),(struct obj*));
 int *itemcount;
 #endif
 {
@@ -171,7 +171,7 @@ int *menu_on_demand;
 #ifndef GOLDOBJ
 				     incl_gold,
 #endif
-				     (bool FDECL((*),(OBJ_P))) 0, &itemcount);
+				     (bool FDECL((*),(struct obj*))) 0, &itemcount);
 	if (iletct == 0) {
 		return FALSE;
 	} else if (iletct == 1) {
@@ -687,7 +687,7 @@ struct obj *olist;		/* the list to pick from */
 int qflags;			/* options to control the query */
 menu_item **pick_list;		/* return list of items picked */
 int how;			/* type of query */
-bool FDECL((*allow), (OBJ_P));/* allow function */
+bool FDECL((*allow), (struct obj*));/* allow function */
 {
 #ifdef SORTLOOT
 	int i, j;
@@ -2230,7 +2230,7 @@ ask_again2:
 			if (askchain((struct obj **)&current_container->cobj,
 				     (one_by_one ? (char *)0 : select),
 				     allflag, out_container,
-				     (int FDECL((*),(OBJ_P)))0,
+				     (int FDECL((*),(struct obj*)))0,
 				     0, "nodot"))
 			    used = 1;
 		    } else if (menu_on_request < 0) {

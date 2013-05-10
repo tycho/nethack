@@ -97,7 +97,7 @@ int skill;
 
 #endif	/* OVLB */
 
-STATIC_DCL bool FDECL(can_advance, (int, BOOL_P));
+STATIC_DCL bool FDECL(can_advance, (int, bool));
 STATIC_DCL bool FDECL(could_advance, (int));
 STATIC_DCL bool FDECL(peaked_skill, (int));
 STATIC_DCL int FDECL(slots_required, (int));

@@ -33,19 +33,19 @@ STATIC_PTR void FDECL(done_intr, (int));
 static void FDECL(done_hangup, (int));
 # endif
 #endif
-STATIC_DCL void FDECL(disclose,(int,BOOL_P));
+STATIC_DCL void FDECL(disclose,(int,bool));
 STATIC_DCL void FDECL(get_valuables, (struct obj *));
 STATIC_DCL void FDECL(sort_valuables, (struct valuable_data *,int));
-STATIC_DCL void FDECL(artifact_score, (struct obj *,BOOL_P,winid));
+STATIC_DCL void FDECL(artifact_score, (struct obj *,bool,winid));
 STATIC_DCL void FDECL(savelife, (int));
-void FDECL(list_vanquished, (CHAR_P,BOOL_P));  /* showborn patch */
+void FDECL(list_vanquished, (char,bool));  /* showborn patch */
 #ifdef DUMP_LOG
 extern char msgs[][BUFSZ];
 extern int lastmsg;
-void FDECL(do_vanquished, (int, BOOL_P, BOOL_P));
-STATIC_DCL void FDECL(list_genocided, (int, BOOL_P, BOOL_P));
+void FDECL(do_vanquished, (int, bool, bool));
+STATIC_DCL void FDECL(list_genocided, (int, bool, bool));
 #else
-STATIC_DCL void FDECL(list_genocided, (CHAR_P,BOOL_P));
+STATIC_DCL void FDECL(list_genocided, (char,bool));
 #endif /* DUMP_LOG */
 STATIC_DCL bool FDECL(should_query_disclose_option, (int,char *));
 

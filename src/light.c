@@ -46,7 +46,7 @@
 static light_source *light_base = 0;
 
 STATIC_DCL void FDECL(write_ls, (int, light_source *));
-STATIC_DCL int FDECL(maybe_write_ls, (int, int, BOOL_P));
+STATIC_DCL int FDECL(maybe_write_ls, (int, int, bool));
 
 /* imported from vision.c, for small circles */
 extern char circle_data[];

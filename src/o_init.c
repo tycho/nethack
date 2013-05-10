@@ -5,7 +5,7 @@
 #include "lev.h"	/* save & restore info */
 
 STATIC_DCL void FDECL(setgemprobs, (d_level*));
-STATIC_DCL void FDECL(shuffle,(int,int,BOOL_P));
+STATIC_DCL void FDECL(shuffle,(int,int,bool));
 STATIC_DCL void NDECL(shuffle_all);
 STATIC_DCL bool FDECL(interesting_to_discover,(int));
 

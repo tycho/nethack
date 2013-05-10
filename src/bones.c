@@ -11,7 +11,7 @@ extern long bytes_counted;
 
 STATIC_DCL bool FDECL(no_bones_level, (d_level *));
 STATIC_DCL void FDECL(goodfruit, (int));
-STATIC_DCL void FDECL(resetobjs,(struct obj *,BOOL_P));
+STATIC_DCL void FDECL(resetobjs,(struct obj *,bool));
 STATIC_DCL void FDECL(drop_upon_death, (struct monst *, struct obj *));
 
 STATIC_OVL bool

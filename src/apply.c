@@ -37,9 +37,9 @@ STATIC_DCL int FDECL(use_cream_pie, (struct obj *));
 STATIC_DCL int FDECL(use_grapple, (struct obj *));
 STATIC_DCL int FDECL(do_break_wand, (struct obj *));
 STATIC_DCL bool FDECL(figurine_location_checks,
-				(struct obj *, coord *, BOOL_P));
+				(struct obj *, coord *, bool));
 STATIC_DCL bool NDECL(uhave_graystone);
-STATIC_DCL void FDECL(add_class, (char *, CHAR_P));
+STATIC_DCL void FDECL(add_class, (char *, char));
 
 #ifdef	AMIGA
 void FDECL( amii_speaker, ( struct obj *, char *, int ) );
@@ -77,8 +77,8 @@ use_camera(obj)
 	} else if (!u.dx && !u.dy) {
 		(void) zapyourself(obj, TRUE);
 	} else if ((mtmp = bhit(u.dx, u.dy, COLNO, FLASHED_LIGHT,
-				(int FDECL((*),(MONST_P,OBJ_P)))0,
-				(int FDECL((*),(OBJ_P,OBJ_P)))0,
+				(int FDECL((*),(struct monst*,struct obj*)))0,
+				(int FDECL((*),(struct obj*,struct obj*)))0,
 				obj)) != 0) {
 		obj->ox = u.ux,  obj->oy = u.uy;
 		(void) flash_hits_mon(mtmp, obj);
@@ -667,8 +667,8 @@ struct obj *obj;
 		return 1;
 	}
 	mtmp = bhit(u.dx, u.dy, COLNO, INVIS_BEAM,
-		    (int FDECL((*),(MONST_P,OBJ_P)))0,
-		    (int FDECL((*),(OBJ_P,OBJ_P)))0,
+		    (int FDECL((*),(struct monst*,struct obj*)))0,
+		    (int FDECL((*),(struct obj*,struct obj*)))0,
 		    obj);
 	if (!mtmp || !haseyes(mtmp->data))
 		return 1;
