@@ -5,7 +5,7 @@
 
 STATIC_DCL const char *NDECL(dev_name);
 STATIC_DCL void FDECL(get_mplname, (struct monst *, char *));
-STATIC_DCL void FDECL(mk_mplayer_armor, (struct monst *, short));
+STATIC_DCL void FDECL(mk_mplayer_armor, (struct monst *, int));
 
 /* These are the names of those who
  * contributed to the development of NetHack 3.2/3.3/3.4.

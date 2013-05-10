@@ -1282,11 +1282,11 @@ do_storms()
  */
 
 #ifdef WIZARD
-STATIC_DCL const char *FDECL(kind_name, (short));
+STATIC_DCL const char *FDECL(kind_name, (int));
 STATIC_DCL void FDECL(print_queue, (winid, timer_element *));
 #endif
 STATIC_DCL void FDECL(insert_timer, (timer_element *));
-STATIC_DCL timer_element *FDECL(remove_timer, (timer_element **, short,
+STATIC_DCL timer_element *FDECL(remove_timer, (timer_element **, int,
 								genericptr_t));
 STATIC_DCL void FDECL(write_timer, (int, timer_element *));
 STATIC_DCL bool FDECL(mon_is_local, (struct monst *));

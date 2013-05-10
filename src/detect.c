@@ -12,8 +12,8 @@
 extern bool known;	/* from read.c */
 
 STATIC_DCL void FDECL(do_dknown_of, (struct obj *));
-STATIC_DCL bool FDECL(check_map_spot, (int,int,char,unsigned));
-STATIC_DCL bool FDECL(clear_stale_map, (char,unsigned));
+STATIC_DCL bool FDECL(check_map_spot, (int,int,int,unsigned));
+STATIC_DCL bool FDECL(clear_stale_map, (int,unsigned));
 STATIC_DCL void FDECL(sense_trap, (struct trap *,xchar,xchar,int));
 STATIC_DCL void FDECL(show_map_spot, (int,int));
 STATIC_PTR void FDECL(findone,(int,int,genericptr_t));
