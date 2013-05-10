@@ -810,7 +810,7 @@ void mswin_clear_nhwindow(winid wid)
                 -- Calling display_nhwindow(WIN_MESSAGE,???) will do a
                    --more--, if necessary, in the tty window-port.
 */
-void mswin_display_nhwindow(winid wid, BOOL_P block)
+void mswin_display_nhwindow(winid wid, bool block)
 {
 	logDebug("mswin_display_nhwindow(%d, %d)\n", wid, block);
 	if (GetNHApp()->windowlist[wid].win != NULL)
@@ -986,7 +986,7 @@ void mswin_putstr_ex(winid wid, int attr, const char *text, int app)
 /* Display the file named str.  Complain about missing files
                    iff complain is TRUE.
 */
-void mswin_display_file(const char *filename,BOOL_P must_exist)
+void mswin_display_file(const char *filename,bool must_exist)
 {
 	dlb *f;
 	TCHAR wbuf[BUFSZ];
@@ -1076,8 +1076,8 @@ add_menu(windid window, int glyph, const anything identifier,
                    menu is displayed, set preselected to TRUE.
 */
 void mswin_add_menu(winid wid, int glyph, const ANY_P * identifier,
-		CHAR_P accelerator, CHAR_P group_accel, int attr, 
-		const char *str, BOOL_P presel)
+		char accelerator, char group_accel, int attr, 
+		const char *str, bool presel)
 {
 	logDebug("mswin_add_menu(%d, %d, %p, %c, %c, %d, %s, %d)\n",
 		     wid, glyph, identifier, (char)accelerator, (char)group_accel,
@@ -1232,7 +1232,7 @@ print_glyph(window, x, y, glyph)
                    port wants (symbol, font, color, attributes, ...there's
                    a 1-1 map between glyphs and distinct things on the map).
 */
-void mswin_print_glyph(winid wid,XCHAR_P x,XCHAR_P y,int glyph)
+void mswin_print_glyph(winid wid,xchar x,xchar y,int glyph)
 {
     logDebug("mswin_print_glyph(%d, %d, %d, %d)\n", wid, x, y, glyph);
 
@@ -1381,7 +1381,7 @@ char yn_function(const char *ques, const char *choices, char default)
                    ports might use a popup.
 */
 char mswin_yn_function(const char *question, const char *choices,
-		CHAR_P def)
+		char def)
 {
     char ch;
     char yn_esc_map='\033';

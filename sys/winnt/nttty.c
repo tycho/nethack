@@ -21,7 +21,7 @@
 void FDECL(cmov, (int, int));
 void FDECL(nocmov, (int, int));
 int FDECL(process_keystroke, (INPUT_RECORD *, bool *,
-    BOOL_P numberpad, int portdebug));
+    bool numberpad, int portdebug));
 
 /*
  * The following WIN32 Console API routines are used in this file.
@@ -68,7 +68,7 @@ typedef int (__stdcall * PROCESS_KEYSTROKE)(
     HANDLE,
     INPUT_RECORD *,
     bool *,
-    BOOL_P,
+    bool,
     int
 );
 
@@ -81,7 +81,7 @@ typedef int (__stdcall * CHECKINPUT)(
 	HANDLE,
 	INPUT_RECORD *,
 	DWORD *,
-	BOOL_P,
+	bool,
 	int,
 	int *,
 	coord *

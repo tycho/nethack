@@ -11,10 +11,10 @@ STATIC_DCL void NDECL(autoquiver);
 STATIC_DCL int FDECL(gem_accept, (struct monst *, struct obj *));
 STATIC_DCL void FDECL(tmiss, (struct obj *, struct monst *));
 STATIC_DCL int FDECL(throw_gold, (struct obj *));
-STATIC_DCL void FDECL(check_shop_obj, (struct obj *,XCHAR_P,XCHAR_P,BOOL_P));
-STATIC_DCL void FDECL(breakobj, (struct obj *,XCHAR_P,XCHAR_P,BOOL_P,BOOL_P));
-STATIC_DCL void FDECL(breakmsg, (struct obj *,BOOL_P));
-STATIC_DCL bool FDECL(toss_up,(struct obj *, BOOL_P));
+STATIC_DCL void FDECL(check_shop_obj, (struct obj *,xchar,xchar,bool));
+STATIC_DCL void FDECL(breakobj, (struct obj *,xchar,xchar,bool,bool));
+STATIC_DCL void FDECL(breakmsg, (struct obj *,bool));
+STATIC_DCL bool FDECL(toss_up,(struct obj *, bool));
 STATIC_DCL bool FDECL(throwing_weapon, (struct obj *));
 STATIC_DCL void FDECL(sho_obj_return_to_u, (struct obj *obj));
 STATIC_DCL bool FDECL(mhurtle_step, (genericptr_t,int,int));
@@ -980,8 +980,8 @@ bool twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 		if (Underwater) range = 1;
 
 		mon = bhit(u.dx, u.dy, range, THROWN_WEAPON,
-			   (int FDECL((*),(MONST_P,OBJ_P)))0,
-			   (int FDECL((*),(OBJ_P,OBJ_P)))0,
+			   (int FDECL((*),(struct monst*,struct obj*)))0,
+			   (int FDECL((*),(struct obj*,struct obj*)))0,
 			   obj);
 
 		/* have to do this after bhit() so u.ux & u.uy are correct */
@@ -1745,8 +1745,8 @@ struct obj *obj;
 			bhitpos.y = u.uy;
 		} else {
 			mon = bhit(u.dx, u.dy, range, THROWN_WEAPON,
-				   (int FDECL((*),(MONST_P,OBJ_P)))0,
-				   (int FDECL((*),(OBJ_P,OBJ_P)))0,
+				   (int FDECL((*),(struct monst*,struct obj*)))0,
+				   (int FDECL((*),(struct obj*,struct obj*)))0,
 				   obj);
 			if(mon) {
 			    if (ghitm(mon, obj))	/* was it caught? */

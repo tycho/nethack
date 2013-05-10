@@ -29,7 +29,7 @@
 #define CLC_FIRE_PILLAR	 8
 #define CLC_GEYSER	 9
 
-STATIC_DCL void FDECL(cursetxt,(struct monst *,BOOL_P));
+STATIC_DCL void FDECL(cursetxt,(struct monst *,bool));
 STATIC_DCL int FDECL(choose_magic_spell, (int));
 STATIC_DCL int FDECL(choose_clerical_spell, (int));
 STATIC_DCL void FDECL(cast_wizard_spell,(struct monst *, int,int));

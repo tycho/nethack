@@ -13,12 +13,12 @@ static NEARDATA const char *gate_str;
 
 extern bool notonhead;	/* for long worms */
 
-STATIC_DCL void FDECL(kickdmg, (struct monst *, BOOL_P));
-STATIC_DCL void FDECL(kick_monster, (XCHAR_P, XCHAR_P));
-STATIC_DCL int FDECL(kick_object, (XCHAR_P, XCHAR_P));
+STATIC_DCL void FDECL(kickdmg, (struct monst *, bool));
+STATIC_DCL void FDECL(kick_monster, (xchar, xchar));
+STATIC_DCL int FDECL(kick_object, (xchar, xchar));
 STATIC_DCL char *FDECL(kickstr, (char *));
-STATIC_DCL void FDECL(otransit_msg, (struct obj *, BOOL_P, long));
-STATIC_DCL void FDECL(drop_to, (coord *,SCHAR_P));
+STATIC_DCL void FDECL(otransit_msg, (struct obj *, bool, long));
+STATIC_DCL void FDECL(drop_to, (coord *,schar));
 
 static NEARDATA struct obj *kickobj;
 
@@ -550,8 +550,8 @@ xchar x, y;
 	(void) snuff_candle(kickobj);
 	newsym(x, y);
 	mon = bhit(u.dx, u.dy, range, KICKED_WEAPON,
-		   (int FDECL((*),(MONST_P,OBJ_P)))0,
-		   (int FDECL((*),(OBJ_P,OBJ_P)))0,
+		   (int FDECL((*),(struct monst*,struct obj*)))0,
+		   (int FDECL((*),(struct obj*,struct obj*)))0,
 		   kickobj);
 
 	if(mon) {

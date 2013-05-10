@@ -19,16 +19,16 @@ static int NDECL(mgetc);
 #endif
 STATIC_DCL void NDECL(find_lev_obj);
 STATIC_DCL void FDECL(restlevchn, (int));
-STATIC_DCL void FDECL(restdamage, (int,BOOL_P));
-STATIC_DCL struct obj *FDECL(restobjchn, (int,BOOL_P,BOOL_P));
-STATIC_DCL struct monst *FDECL(restmonchn, (int,BOOL_P));
+STATIC_DCL void FDECL(restdamage, (int,bool));
+STATIC_DCL struct obj *FDECL(restobjchn, (int,bool,bool));
+STATIC_DCL struct monst *FDECL(restmonchn, (int,bool));
 STATIC_DCL struct fruit *FDECL(loadfruitchn, (int));
 STATIC_DCL void FDECL(freefruitchn, (struct fruit *));
 STATIC_DCL void FDECL(ghostfruit, (struct obj *));
 STATIC_DCL bool FDECL(restgamestate, (int, unsigned int *, unsigned int *));
 STATIC_DCL void FDECL(restlevelstate, (unsigned int, unsigned int));
-STATIC_DCL int FDECL(restlevelfile, (int,XCHAR_P));
-STATIC_DCL void FDECL(reset_oattached_mids, (BOOL_P));
+STATIC_DCL int FDECL(restlevelfile, (int,xchar));
+STATIC_DCL void FDECL(reset_oattached_mids, (bool));
 
 /*
  * Save a mapping of IDs from ghost levels to the current level.  This

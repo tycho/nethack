@@ -170,7 +170,7 @@ char *shortdllname;
 
 int FDECL(__declspec(dllexport) __stdcall
 ProcessKeystroke, (HANDLE hConIn, INPUT_RECORD *ir, 
-    bool *valid, BOOL_P numberpad, int portdebug));
+    bool *valid, bool numberpad, int portdebug));
 
 static INPUT_RECORD bogus_key;
 

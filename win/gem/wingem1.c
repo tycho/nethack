@@ -22,22 +22,22 @@ typedef signed char schar;
 
 #define NDECL(f)	f(void)
 #define FDECL(f,p)	f p
-#define CHAR_P char
-#define SCHAR_P schar
-#define UCHAR_P uchar
-#define XCHAR_P xchar
-#define SHORT_P short
-#define BOOL_P bool
-#define ALIGNTYP_P aligntyp
+#define char char
+#define schar schar
+#define uchar uchar
+#define xchar xchar
+#define short short
+#define bool bool
+#define aligntyp aligntyp
 typedef signed char	xchar;
 #include "wingem.h"
-#undef CHAR_P
-#undef SCHAR_P
-#undef UCHAR_P
-#undef XCHAR_P
-#undef SHORT_P
-#undef BOOL_P
-#undef ALIGNTYP_P
+#undef char
+#undef schar
+#undef uchar
+#undef xchar
+#undef short
+#undef bool
+#undef aligntyp
 #undef NDECL
 #undef FDECL
 

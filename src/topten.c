@@ -62,13 +62,13 @@ STATIC_DCL void FDECL(topten_print, (const char *));
 STATIC_DCL void FDECL(topten_print_bold, (const char *));
 STATIC_DCL xchar FDECL(observable_depth, (d_level *));
 STATIC_DCL void NDECL(outheader);
-STATIC_DCL void FDECL(outentry, (int,struct toptenentry *,BOOL_P));
+STATIC_DCL void FDECL(outentry, (int,struct toptenentry *,bool));
 STATIC_DCL void FDECL(readentry, (FILE *,struct toptenentry *));
 STATIC_DCL void FDECL(writeentry, (FILE *,struct toptenentry *));
 STATIC_DCL void FDECL(free_ttlist, (struct toptenentry *));
-STATIC_DCL int FDECL(classmon, (char *,BOOL_P));
+STATIC_DCL int FDECL(classmon, (char *,bool));
 STATIC_DCL int FDECL(score_wanted,
-		(BOOL_P, int,struct toptenentry *,int,const char **,int));
+		(bool, int,struct toptenentry *,int,const char **,int));
 #ifdef NO_SCAN_BRACK
 STATIC_DCL void FDECL(nsb_mung_line,(char*));
 STATIC_DCL void FDECL(nsb_unmung_line,(char*));

@@ -16,7 +16,7 @@
 
 #ifdef OVLB
 STATIC_DCL bool FDECL(isbig, (struct mkroom *));
-STATIC_DCL struct mkroom * FDECL(pick_room,(BOOL_P));
+STATIC_DCL struct mkroom * FDECL(pick_room,(bool));
 STATIC_DCL void NDECL(mkshop), FDECL(mkzoo,(int)), NDECL(mkswamp);
 STATIC_DCL void NDECL(mktemple);
 STATIC_DCL coord * FDECL(shrine_pos, (int));

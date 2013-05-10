@@ -19,12 +19,12 @@ STATIC_PTR int NDECL(opentin);
 STATIC_PTR int NDECL(unfaint);
 
 #ifdef OVLB
-STATIC_DCL const char *FDECL(food_xname, (struct obj *,BOOL_P));
+STATIC_DCL const char *FDECL(food_xname, (struct obj *,bool));
 STATIC_DCL void FDECL(choke, (struct obj *));
 STATIC_DCL void NDECL(recalc_wt);
 STATIC_DCL struct obj *FDECL(touchfood, (struct obj *));
 STATIC_DCL void NDECL(do_reset_eat);
-STATIC_DCL void FDECL(done_eating, (BOOL_P));
+STATIC_DCL void FDECL(done_eating, (bool));
 STATIC_DCL void FDECL(cprefx, (int));
 STATIC_DCL int FDECL(intrinsic_possible, (int,struct permonst *));
 STATIC_DCL void FDECL(givit, (int,struct permonst *));
@@ -41,7 +41,7 @@ STATIC_DCL int FDECL(rottenfood, (struct obj *));
 STATIC_DCL void NDECL(eatspecial);
 STATIC_DCL void FDECL(eataccessory, (struct obj *));
 STATIC_DCL const char *FDECL(foodword, (struct obj *));
-STATIC_DCL bool FDECL(maybe_cannibal, (int,BOOL_P));
+STATIC_DCL bool FDECL(maybe_cannibal, (int,bool));
 
 char msgbuf[BUFSZ];
 

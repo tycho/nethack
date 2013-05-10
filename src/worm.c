@@ -13,9 +13,9 @@ struct wseg {
     xchar  wx, wy;	/* the segment's position */
 };
 
-STATIC_DCL void FDECL(toss_wsegs, (struct wseg *,BOOL_P));
+STATIC_DCL void FDECL(toss_wsegs, (struct wseg *,bool));
 STATIC_DCL void FDECL(shrink_worm, (int));
-STATIC_DCL void FDECL(random_dir, (XCHAR_P,XCHAR_P,xchar *,xchar *));
+STATIC_DCL void FDECL(random_dir, (xchar,xchar,xchar *,xchar *));
 STATIC_DCL struct wseg *FDECL(create_worm_tail, (int));
 
 /*  Description of long worm implementation.

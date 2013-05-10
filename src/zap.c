@@ -25,7 +25,7 @@ STATIC_DCL void FDECL(polyuse, (struct obj*, int, int));
 STATIC_DCL void FDECL(create_polymon, (struct obj *, int));
 STATIC_DCL bool FDECL(zap_updown, (struct obj *));
 STATIC_DCL int FDECL(zhitm, (struct monst *,int,int,struct obj **));
-STATIC_DCL void FDECL(zhitu, (int,int,const char *,XCHAR_P,XCHAR_P));
+STATIC_DCL void FDECL(zhitu, (int,int,const char *,xchar,xchar));
 STATIC_DCL void FDECL(revive_egg, (struct obj *));
 #ifdef STEED
 STATIC_DCL bool FDECL(zap_steed, (struct obj *));
@@ -1709,7 +1709,7 @@ smell:
 int
 bhitpile(obj,fhito,tx,ty)
     struct obj *obj;
-    int FDECL((*fhito), (OBJ_P,OBJ_P));
+    int FDECL((*fhito), (struct obj*,struct obj*));
     int tx, ty;
 {
     int hitanything = 0;
@@ -2617,8 +2617,8 @@ struct monst *
 bhit(ddx,ddy,range,weapon,fhitm,fhito,obj)
 int ddx,ddy,range;		/* direction and range */
 int weapon;				/* see values in hack.h */
-int FDECL((*fhitm), (MONST_P, OBJ_P)),	/* fns called when mon/obj hit */
-    FDECL((*fhito), (OBJ_P, OBJ_P));
+int FDECL((*fhitm), (struct monst*, struct obj*)),	/* fns called when mon/obj hit */
+    FDECL((*fhito), (struct obj*, struct obj*));
 struct obj *obj;			/* object tossed/used */
 {
 	struct monst *mtmp;

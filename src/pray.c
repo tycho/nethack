@@ -8,19 +8,19 @@ STATIC_PTR int NDECL(prayer_done);
 STATIC_DCL struct obj *NDECL(worst_cursed_item);
 STATIC_DCL int NDECL(in_trouble);
 STATIC_DCL void FDECL(fix_worst_trouble,(int));
-STATIC_DCL void FDECL(angrygods,(ALIGNTYP_P));
+STATIC_DCL void FDECL(angrygods,(aligntyp));
 STATIC_DCL void FDECL(at_your_feet, (const char *));
 #ifdef ELBERETH
 STATIC_DCL void NDECL(gcrownu);
 #endif	/*ELBERETH*/
-STATIC_DCL void FDECL(pleased,(ALIGNTYP_P));
-STATIC_DCL void FDECL(godvoice,(ALIGNTYP_P,const char*));
-STATIC_DCL void FDECL(god_zaps_you,(ALIGNTYP_P));
-STATIC_DCL void FDECL(fry_by_god,(ALIGNTYP_P));
-STATIC_DCL void FDECL(gods_angry,(ALIGNTYP_P));
-STATIC_DCL void FDECL(gods_upset,(ALIGNTYP_P));
+STATIC_DCL void FDECL(pleased,(aligntyp));
+STATIC_DCL void FDECL(godvoice,(aligntyp,const char*));
+STATIC_DCL void FDECL(god_zaps_you,(aligntyp));
+STATIC_DCL void FDECL(fry_by_god,(aligntyp));
+STATIC_DCL void FDECL(gods_angry,(aligntyp));
+STATIC_DCL void FDECL(gods_upset,(aligntyp));
 STATIC_DCL void FDECL(consume_offering,(struct obj *));
-STATIC_DCL bool FDECL(water_prayer,(BOOL_P));
+STATIC_DCL bool FDECL(water_prayer,(bool));
 STATIC_DCL bool FDECL(blocked_boulder,(int,int));
 
 /* simplify a few tests */
