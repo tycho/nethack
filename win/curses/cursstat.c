@@ -12,7 +12,7 @@ typedef struct nhs
     long value;
     char *txt;
     aligntyp alignment;
-    boolean display;
+    bool display;
     int highlight_turns;
     int highlight_color;
     int stat_color;
@@ -34,7 +34,7 @@ extern struct color_option text_color_of(const char *text,
 struct color_option percentage_color_of(int value, int max,
  const struct percent_color_option *color_options);
 
-static boolean stat_colored(const char *id);
+static bool stat_colored(const char *id);
 #endif
 
 static void init_stats(void);
@@ -89,18 +89,18 @@ extern const char *enc_stat[]; /* from botl.c */
 write to the status window, so we know somwthing has changed.  We
 override the write and update what needs to be updated ourselves. */
 
-void curses_update_stats(boolean redraw)
+void curses_update_stats(bool redraw)
 {
     char buf[BUFSZ];
     int count, enc, orient, sx_start, hp, hpmax, labels, swidth,
      sheight, sx_end, sy_end;
     WINDOW *win = curses_get_nhwin(STATUS_WIN);
     static int prev_labels = -1;
-    static boolean first = TRUE;
-    static boolean horiz;
+    static bool first = TRUE;
+    static bool horiz;
     int sx = 0;
     int sy = 0;
-    boolean border = curses_window_has_border(STATUS_WIN);
+    bool border = curses_window_has_border(STATUS_WIN);
 
     curses_get_window_size(STATUS_WIN, &sheight, &swidth);
 
@@ -1516,7 +1516,7 @@ if needed to unhighlight a stat */
 
 void curses_decrement_highlight()
 {
-    boolean unhighlight = FALSE;
+    bool unhighlight = FALSE;
 
     if (prevname.highlight_turns > 0)
     {
@@ -2804,7 +2804,7 @@ static void color_stat(nhstat stat, int onoff)
 /* Determine if a stat is configured via statuscolors. */
 
 #ifdef STATUS_COLORS
-static boolean stat_colored(const char *id)
+static bool stat_colored(const char *id)
 {
     struct text_color_option *cur_option =
      (struct text_color_option *)text_colors;

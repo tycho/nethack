@@ -15,17 +15,17 @@ STATIC_DCL struct artifact artilist[];
  *	  the contents, just the total size.
  */
 
-extern boolean notonhead;	/* for long worms */
+extern bool notonhead;	/* for long worms */
 
 #define get_artifact(o) \
 		(((o)&&(o)->oartifact) ? &artilist[(int) (o)->oartifact] : 0)
 
 STATIC_DCL int FDECL(spec_applies, (const struct artifact *,struct monst *));
 STATIC_DCL int FDECL(arti_invoke, (struct obj*));
-STATIC_DCL boolean FDECL(Mb_hit, (struct monst *magr,struct monst *mdef,
-				  struct obj *,int *,int,BOOLEAN_P,char *));
+STATIC_DCL bool FDECL(Mb_hit, (struct monst *magr,struct monst *mdef,
+				  struct obj *,int *,int,BOOL_P,char *));
 
-STATIC_DCL int FDECL(brave_little_tailor, (struct monst *magr,BOOLEAN_P));
+STATIC_DCL int FDECL(brave_little_tailor, (struct monst *magr,BOOL_P));
 
 /* The amount added to the victim's total hit points to insure that the
    victim will be killed even after damage bonus/penalty adjustments.
@@ -45,12 +45,12 @@ STATIC_DCL xchar artidisco[NROFARTIFACTS];
 STATIC_OVL int spec_dbon_applies = 0;
 
 /* flags including which artifacts have already been created */
-static boolean artiexist[1+NROFARTIFACTS+1];
+static bool artiexist[1+NROFARTIFACTS+1];
 /* and a discovery list for them (no dummy first entry here) */
 STATIC_OVL xchar artidisco[NROFARTIFACTS];
 
 STATIC_DCL void NDECL(hack_artifacts);
-STATIC_DCL boolean FDECL(attacks, (int,struct obj *));
+STATIC_DCL bool FDECL(attacks, (int,struct obj *));
 
 /* handle some special cases; must be called after u_init() */
 STATIC_OVL void
@@ -127,9 +127,9 @@ aligntyp alignment;	/* target alignment, or A_NONE */
 {
 	const struct artifact *a;
 	int n, m;
-	boolean by_align = (alignment != A_NONE);
+	bool by_align = (alignment != A_NONE);
 	short o_typ = (by_align || !otmp) ? 0 : otmp->otyp;
-	boolean unique = !by_align && otmp && objects[o_typ].oc_unique;
+	bool unique = !by_align && otmp && objects[o_typ].oc_unique;
 	short eligible[NROFARTIFACTS];
 
 	/* gather eligible artifacts */
@@ -196,13 +196,13 @@ short *otyp;
     return (char *)0;
 }
 
-boolean
+bool
 exist_artifact(otyp, name)
 register int otyp;
 register const char *name;
 {
 	register const struct artifact *a;
-	register boolean *arex;
+	register bool *arex;
 
 	if (otyp && *name)
 	    for (a = artilist+1,arex = artiexist+1; a->otyp; a++,arex++)
@@ -215,7 +215,7 @@ void
 artifact_exists(otmp, name, mod)
 register struct obj *otmp;
 register const char *name;
-register boolean mod;
+register bool mod;
 {
 	register const struct artifact *a;
 
@@ -247,18 +247,18 @@ nartifact_exist()
 #endif /* OVLB */
 #ifdef OVL0
 
-boolean
+bool
 spec_ability(otmp, abil)
 struct obj *otmp;
 unsigned long abil;
 {
 	const struct artifact *arti = get_artifact(otmp);
 
-	return((boolean)(arti && (arti->spfx & abil)));
+	return((bool)(arti && (arti->spfx & abil)));
 }
 
 /* used so that callers don't need to known about SPFX_ codes */
-boolean
+bool
 confers_luck(obj)
 struct obj *obj;
 {
@@ -269,7 +269,7 @@ struct obj *obj;
 }
 
 /* used to check whether a monster is getting reflection from an artifact */
-boolean
+bool
 arti_reflects(obj)
 struct obj *obj;
 {
@@ -288,7 +288,7 @@ struct obj *obj;
 #endif /* OVL0 */
 #ifdef OVLB
 
-boolean
+bool
 restrict_name(otmp, name)  /* returns 1 if name is restricted for otmp->otyp */
 register struct obj *otmp;
 register const char *name;
@@ -308,14 +308,14 @@ register const char *name;
 	    aname = a->name;
 	    if (!strncmpi(aname, "the ", 4)) aname += 4;
 	    if (!strcmp(aname, name))
-		return ((boolean)((a->spfx & (SPFX_NOGEN|SPFX_RESTR)) != 0 ||
+		return ((bool)((a->spfx & (SPFX_NOGEN|SPFX_RESTR)) != 0 ||
 			otmp->quan > 1L));
 	}
 
 	return FALSE;
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 attacks(adtyp, otmp)
 register int adtyp;
 register struct obj *otmp;
@@ -323,11 +323,11 @@ register struct obj *otmp;
 	register const struct artifact *weap;
 
 	if ((weap = get_artifact(otmp)) != 0)
-		return((boolean)(weap->attk.adtyp == adtyp));
+		return((bool)(weap->attk.adtyp == adtyp));
 	return FALSE;
 }
 
-boolean
+bool
 defends(adtyp, otmp)
 register int adtyp;
 register struct obj *otmp;
@@ -335,12 +335,12 @@ register struct obj *otmp;
 	register const struct artifact *weap;
 
 	if ((weap = get_artifact(otmp)) != 0)
-		return((boolean)(weap->defn.adtyp == adtyp));
+		return((bool)(weap->defn.adtyp == adtyp));
 	return FALSE;
 }
 
 /* used for monsters */
-boolean
+bool
 protects(adtyp, otmp)
 int adtyp;
 struct obj *otmp;
@@ -348,7 +348,7 @@ struct obj *otmp;
 	register const struct artifact *weap;
 
 	if ((weap = get_artifact(otmp)) != 0)
-		return (boolean)(weap->cary.adtyp == adtyp);
+		return (bool)(weap->cary.adtyp == adtyp);
 	return FALSE;
 }
 
@@ -359,7 +359,7 @@ struct obj *otmp;
 void
 set_artifact_intrinsic(otmp,on,wp_mask)
 register struct obj *otmp;
-boolean on;
+bool on;
 long wp_mask;
 {
 	long *mask = 0;
@@ -506,7 +506,7 @@ touch_artifact(obj,mon)
     struct monst *mon;
 {
     register const struct artifact *oart = get_artifact(obj);
-    boolean badclass, badalign, self_willed, yours;
+    bool badclass, badalign, self_willed, yours;
 
     if(!oart) return 1;
 
@@ -572,7 +572,7 @@ register const struct artifact *weap;
 struct monst *mtmp;
 {
 	struct permonst *ptr;
-	boolean yours;
+	bool yours;
 
 	if(!(weap->spfx & (SPFX_DBONUS | SPFX_ATTK)))
 	    return(weap->attk.adtyp == AD_PHYS);
@@ -689,7 +689,7 @@ xchar m;
 }
 
 /* used to decide whether an artifact has been fully identified */
-boolean
+bool
 undiscovered_artifact(m)
 xchar m;
 {
@@ -761,18 +761,18 @@ static const char * const mb_verb[2][4] = {
 #define MB_INDEX_CANCEL		3
 
 /* called when someone is being hit by Magicbane */
-STATIC_OVL boolean
+STATIC_OVL bool
 Mb_hit(magr, mdef, mb, dmgptr, dieroll, vis, hittee)
 struct monst *magr, *mdef;	/* attacker and defender */
 struct obj *mb;			/* Magicbane */
 int *dmgptr;			/* extra damage target will suffer */
 int dieroll;			/* d20 that has already scored a hit */
-boolean vis;			/* whether the action can be seen */
+bool vis;			/* whether the action can be seen */
 char *hittee;			/* target's name: "you" or mon_nam(mdef) */
 {
     struct permonst *old_uasmon;
     const char *verb;
-    boolean youattack = (magr == &youmonst),
+    bool youattack = (magr == &youmonst),
 	    youdefend = (mdef == &youmonst),
 	    resisted = FALSE, do_stun, do_confuse, result;
     int attack_indx, scare_dieroll = MB_MAX_DIEROLL / 2;
@@ -940,19 +940,19 @@ char *hittee;			/* target's name: "you" or mon_nam(mdef) */
  * extension: change the killer so that when an orc kills you with
  * Stormbringer it's "killed by Stormbringer" instead of "killed by an orc".
  */
-boolean
+bool
 artifact_hit(magr, mdef, otmp, dmgptr, dieroll)
 struct monst *magr, *mdef;
 struct obj *otmp;
 int *dmgptr;
 int dieroll; /* needed for Magicbane and vorpal blades */
 {
-	boolean youattack = (magr == &youmonst);
-	boolean youdefend = (mdef == &youmonst);
-	boolean vis = (!youattack && magr && cansee(magr->mx, magr->my))
+	bool youattack = (magr == &youmonst);
+	bool youdefend = (mdef == &youmonst);
+	bool vis = (!youattack && magr && cansee(magr->mx, magr->my))
 	    || (!youdefend && cansee(mdef->mx, mdef->my))
 	    || (youattack && u.uswallow && mdef == u.ustuck && !Blind);
-	boolean realizes_damage;
+	bool realizes_damage;
 	const char *wepdesc;
 	static const char you[] = "you";
 	char hittee[BUFSZ];
@@ -1113,7 +1113,7 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 					pline("Somehow, %s misses wildly.",
 						mon_nam(magr));
 				*dmgptr = 0;
-				return ((boolean)(youattack || vis));
+				return ((bool)(youattack || vis));
 			}
 			if (mdef->data==&mons[PM_CHROMATIC_DRAGON])
 			{
@@ -1302,7 +1302,7 @@ arti_invoke(obj)
 	  }
 	case CHARGE_OBJ: {
 	    struct obj *otmp = getobj(recharge_type, "charge");
-	    boolean b_effect;
+	    bool b_effect;
 
 	    if (!otmp) {
 		obj->age = 0;
@@ -1399,7 +1399,7 @@ arti_invoke(obj)
     } else {
 	long eprop = (u.uprops[oart->inv_prop].extrinsic ^= W_ARTI),
 	     iprop = u.uprops[oart->inv_prop].intrinsic;
-	boolean on = (eprop & W_ARTI) != 0; /* true if invoked prop just set */
+	bool on = (eprop & W_ARTI) != 0; /* true if invoked prop just set */
 
 	if(on && obj->age > monstermoves) {
 	    /* the artifact is tired :-) */
@@ -1450,7 +1450,7 @@ nothing_special:
 
 
 /* WAC return TRUE if artifact is always lit */
-boolean
+bool
 artifact_light(obj)
     struct obj *obj;
 {
@@ -1479,14 +1479,14 @@ arti_speak(obj)
 	return;
 }
 
-boolean
+bool
 artifact_has_invprop(otmp, inv_prop)
 struct obj *otmp;
 uchar inv_prop;
 {
 	const struct artifact *arti = get_artifact(otmp);
 
-	return((boolean)(arti && (arti->inv_prop == inv_prop)));
+	return((bool)(arti && (arti->inv_prop == inv_prop)));
 }
 
 /* Return the price sold to the hero of a given artifact or unique item */
@@ -1506,11 +1506,11 @@ struct obj *otmp;
 STATIC_OVL int
 brave_little_tailor(magr,vis)
 struct monst *magr;	/* attacker */
-boolean vis;		/* whether the action can be seen */
+bool vis;		/* whether the action can be seen */
 {
 	int blow,count, i,j, x,y;
 	struct monst* mtmp;
-	boolean youattack = (magr == &youmonst);
+	bool youattack = (magr == &youmonst);
 	static const char *numbers[] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven" };
 
 	if(youattack) {

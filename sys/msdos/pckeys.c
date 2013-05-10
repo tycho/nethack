@@ -12,10 +12,10 @@
 #include "wintty.h" 
 #include "pcvideo.h"
 
-boolean FDECL(pckeys, (unsigned char, unsigned char));
+bool FDECL(pckeys, (unsigned char, unsigned char));
 
 extern struct WinDesc *wins[MAXWIN];	/* from wintty.c */
-extern boolean inmap;			/* from video.c */
+extern bool inmap;			/* from video.c */
 
 #define SHIFT		(0x1 | 0x2)
 #define CTRL		0x4
@@ -26,12 +26,12 @@ extern boolean inmap;			/* from video.c */
  * Returns TRUE if the scan code triggered something.
  *
  */
-boolean
+bool
 pckeys(scancode, shift)
 unsigned char scancode;
 unsigned char shift;
 {
-   boolean opening_dialog;
+   bool opening_dialog;
 
    opening_dialog = pl_character[0] ? FALSE : TRUE;
 #  ifdef SIMULATE_CURSOR

@@ -98,7 +98,7 @@ struct level_ftrack {
 int init;
 int fd;					/* file descriptor for level file     */
 int oflag;				/* open flags                         */
-boolean nethack_thinks_it_is_open;	/* Does NetHack think it's open?       */
+bool nethack_thinks_it_is_open;	/* Does NetHack think it's open?       */
 } lftrack;
 # if defined(WIN32)
 #include <share.h>
@@ -147,24 +147,24 @@ extern int n_dgns;		/* from dungeon.c */
 STATIC_DCL char *FDECL(set_bonesfile_name, (char *,d_level*));
 STATIC_DCL char *NDECL(set_bonestemp_name);
 #ifdef COMPRESS
-STATIC_DCL void FDECL(redirect, (const char *,const char *,FILE *,BOOLEAN_P));
-STATIC_DCL void FDECL(docompress_file, (const char *,BOOLEAN_P));
+STATIC_DCL void FDECL(redirect, (const char *,const char *,FILE *,BOOL_P));
+STATIC_DCL void FDECL(docompress_file, (const char *,BOOL_P));
 #endif
 STATIC_DCL char *FDECL(make_lockname, (const char *,char *));
 STATIC_DCL FILE *FDECL(fopen_config_file, (const char *));
-STATIC_DCL int FDECL(get_uchars, (FILE *,char *,char *,uchar *,BOOLEAN_P,int,const char *));
+STATIC_DCL int FDECL(get_uchars, (FILE *,char *,char *,uchar *,BOOL_P,int,const char *));
 int FDECL(parse_config_line, (FILE *,char *,char *,char *));
 #ifdef NOCWD_ASSUMPTIONS
 STATIC_DCL void FDECL(adjust_prefix, (char *, int));
 #endif
 #ifdef SELF_RECOVER
-STATIC_DCL boolean FDECL(copy_bytes, (int, int));
+STATIC_DCL bool FDECL(copy_bytes, (int, int));
 #endif
 #ifdef HOLD_LOCKFILE_OPEN
 STATIC_DCL int FDECL(open_levelfile_exclusively, (const char *, int, int));
 #endif
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
-extern boolean FDECL(parse_status_color_options, (char *start));
+extern bool FDECL(parse_status_color_options, (char *start));
 #endif
 
 /*
@@ -1052,7 +1052,7 @@ STATIC_OVL void
 redirect(filename, mode, stream, uncomp)
 const char *filename, *mode;
 FILE *stream;
-boolean uncomp;
+bool uncomp;
 {
 	if (freopen(filename, mode, stream) == (FILE *)0) {
 		(void) fprintf(stderr, "freopen of %s for %scompress failed\n",
@@ -1071,7 +1071,7 @@ boolean uncomp;
 STATIC_OVL void
 docompress_file(filename, uncomp)
 const char *filename;
-boolean uncomp;
+bool uncomp;
 {
 	char cfn[80];
 	FILE *cf;
@@ -1082,7 +1082,7 @@ boolean uncomp;
 	int i = 0;
 	int f;
 # ifdef TTY_GRAPHICS
-	boolean istty = !strncmpi(windowprocs.name, "tty", 3);
+	bool istty = !strncmpi(windowprocs.name, "tty", 3);
 # endif
 
 	Strcpy(cfn, filename);
@@ -1102,7 +1102,7 @@ boolean uncomp;
 	{
 	    /* we can't guarantee there's only one additional option, sigh */
 	    char *opt;
-	    boolean inword = FALSE;
+	    bool inword = FALSE;
 
 	    Strcpy(opts, COMPRESS_OPTIONS);
 	    opt = opts;
@@ -1288,7 +1288,7 @@ char *lockname;
 
 
 /* lock a file */
-boolean
+bool
 lock_file(filename, whichprefix, retryct)
 const char *filename;
 int whichprefix;
@@ -1603,13 +1603,13 @@ get_uchars(fp, buf, bufp, list, modlist, size, name)
     char *buf;		/* read buffer, must be of size BUFSZ */
     char *bufp;		/* current pointer */
     uchar *list;	/* return list */
-    boolean modlist;	/* TRUE: list is being modified in place */
+    bool modlist;	/* TRUE: list is being modified in place */
     int  size;		/* return list size */
     const char *name;		/* name of option for error message */
 {
     unsigned int num = 0;
     int count = 0;
-    boolean havenum = FALSE;
+    bool havenum = FALSE;
 
     while (1) {
 	switch(*bufp) {
@@ -1978,7 +1978,7 @@ char		*tmp_levels;
 }
 
 #ifdef USER_SOUNDS
-boolean
+bool
 can_read_file(filename)
 const char *filename;
 {
@@ -2126,7 +2126,7 @@ read_wizkit()
 	FILE *fp;
 	char *ep, buf[BUFSZ];
 	struct obj *otmp;
-	boolean bad_items = FALSE, skip = FALSE;
+	bool bad_items = FALSE, skip = FALSE;
 
 	if (!wizard || !(fp = fopen_wizkit_file())) return;
 
@@ -2277,7 +2277,7 @@ const char *reason;	/* explanation */
 #ifdef SELF_RECOVER
 
 /* ----------  BEGIN INTERNAL RECOVER ----------- */
-boolean
+bool
 recover_savefile()
 {
 	int gfd, lfd, sfd;
@@ -2414,7 +2414,7 @@ recover_savefile()
 	return TRUE;
 }
 
-boolean
+bool
 copy_bytes(ifd, ofd)
 int ifd, ofd;
 {

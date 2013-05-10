@@ -152,11 +152,11 @@ ghack_glyph_width()
 
 
 /* NAME:
- *     ghack_image_from_glyph( int glyph, gboolean force)
+ *     ghack_image_from_glyph( int glyph, gbool force)
  *
  * ARGUMENTS:
  *     int glyph  -- The glyph number.
- *     gboolean force -- force it to re-render.
+ *     gbool force -- force it to re-render.
  *
  * RETURNS:
  *     GdkImlibImage* -- The glyph image, as a GdkImlibImage.
@@ -166,7 +166,7 @@ ghack_glyph_width()
  */
 
 GdkImlibImage*
-ghack_image_from_glyph( int glyph, gboolean force )
+ghack_image_from_glyph( int glyph, gbool force )
 {
   int tile = glyph2tile[glyph];
 

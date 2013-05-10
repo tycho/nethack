@@ -38,7 +38,7 @@
 SHARED_DCL char orgdir[PATHLEN];	/* also used in pcsys.c, amidos.c */
 
 #ifdef TOS
-boolean run_from_desktop = TRUE;	/* should we pause before exiting?? */
+bool run_from_desktop = TRUE;	/* should we pause before exiting?? */
 # ifdef __GNUC__
 long _stksize = 16*1024;
 # endif
@@ -59,7 +59,7 @@ extern void FDECL(nethack_exit,(int));
 #endif
 
 #ifdef WIN32
-extern boolean getreturn_enabled;	/* from sys/share/pcsys.c */
+extern bool getreturn_enabled;	/* from sys/share/pcsys.c */
 #endif
 
 #if defined(MSWIN_GRAPHICS)
@@ -403,7 +403,7 @@ char *argv[];
 		/* Since wizard is actually flags.debug, restoring might
 		 * overwrite it.
 		 */
-		boolean remember_wiz_mode = wizard;
+		bool remember_wiz_mode = wizard;
 #endif
 #ifndef NO_SIGNAL
 		(void) signal(SIGINT, (SIG_RET_TYPE) done1);
@@ -635,7 +635,7 @@ nhusage()
 void
 chdirx(dir, wr)
 char *dir;
-boolean wr;
+bool wr;
 {
 # ifdef AMIGA
 	static char thisdir[] = "";

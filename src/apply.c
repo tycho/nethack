@@ -14,7 +14,7 @@ static const char tools_too[] = { ALL_CLASSES, TOOL_CLASS, POTION_CLASS,
 STATIC_DCL int FDECL(use_camera, (struct obj *));
 #endif
 STATIC_DCL int FDECL(use_towel, (struct obj *));
-STATIC_DCL boolean FDECL(its_dead, (int,int,int *));
+STATIC_DCL bool FDECL(its_dead, (int,int,int *));
 STATIC_DCL int FDECL(use_stethoscope, (struct obj *));
 STATIC_DCL void FDECL(use_whistle, (struct obj *));
 STATIC_DCL void FDECL(use_magic_whistle, (struct obj *));
@@ -36,9 +36,9 @@ STATIC_DCL int FDECL(use_pole, (struct obj *));
 STATIC_DCL int FDECL(use_cream_pie, (struct obj *));
 STATIC_DCL int FDECL(use_grapple, (struct obj *));
 STATIC_DCL int FDECL(do_break_wand, (struct obj *));
-STATIC_DCL boolean FDECL(figurine_location_checks,
-				(struct obj *, coord *, BOOLEAN_P));
-STATIC_DCL boolean NDECL(uhave_graystone);
+STATIC_DCL bool FDECL(figurine_location_checks,
+				(struct obj *, coord *, BOOL_P));
+STATIC_DCL bool NDECL(uhave_graystone);
 STATIC_DCL void FDECL(add_class, (char *, CHAR_P));
 
 #ifdef	AMIGA
@@ -157,7 +157,7 @@ use_towel(obj)
 }
 
 /* maybe give a stethoscope message based on floor objects */
-STATIC_OVL boolean
+STATIC_OVL bool
 its_dead(rx, ry, resp)
 int rx, ry, *resp;
 {
@@ -208,7 +208,7 @@ use_stethoscope(obj)
 	struct monst *mtmp;
 	struct rm *lev;
 	int rx, ry, res;
-	boolean interference = (u.uswallow && is_whirly(u.ustuck->data) &&
+	bool interference = (u.uswallow && is_whirly(u.ustuck->data) &&
 				!rn2(Role_if(PM_HEALER) ? 10 : 3));
 
 	if (nohands(youmonst.data)) {	/* should also check for no ears and/or deaf */
@@ -346,11 +346,11 @@ struct obj *obj;
 	}
 }
 
-boolean
+bool
 um_dist(x,y,n)
 register xchar x, y, n;
 {
-	return((boolean)(abs(u.ux - x) > n  || abs(u.uy - y) > n));
+	return((bool)(abs(u.ux - x) > n  || abs(u.uy - y) > n));
 }
 
 int
@@ -379,7 +379,7 @@ register struct obj *otmp;
 void
 m_unleash(mtmp, feedback)	/* mtmp is about to die, or become untame */
 register struct monst *mtmp;
-boolean feedback;
+bool feedback;
 {
 	register struct obj *otmp;
 
@@ -504,7 +504,7 @@ register struct monst *mtmp;
 #endif /* OVLB */
 #ifdef OVL1
 
-boolean
+bool
 next_to_u()
 {
 	register struct monst *mtmp;
@@ -608,7 +608,7 @@ struct obj *obj;
 {
 	register struct monst *mtmp;
 	register char mlet;
-	boolean vis;
+	bool vis;
 
 	if(!getdir((char *)0)) return 0;
 	if(obj->cursed && !rn2(2)) {
@@ -745,7 +745,7 @@ struct obj **optr;
 {
 	register struct obj *obj = *optr;
 	struct monst *mtmp;
-	boolean wakem = FALSE, learno = FALSE,
+	bool wakem = FALSE, learno = FALSE,
 		ordinary = (obj->otyp != BELL_OF_OPENING || !obj->spe),
 		invoking = (obj->otyp == BELL_OF_OPENING &&
 			 invocation_pos(u.ux, u.uy) && !On_stairs(u.ux, u.uy));
@@ -972,17 +972,17 @@ struct obj **optr;
 	}
 }
 
-boolean
+bool
 snuff_candle(otmp)  /* call in drop, throw, and put in box, etc. */
 register struct obj *otmp;
 {
-	register boolean candle = Is_candle(otmp);
+	register bool candle = Is_candle(otmp);
 
 	if ((candle || otmp->otyp == CANDELABRUM_OF_INVOCATION) &&
 		otmp->lamplit) {
 	    char buf[BUFSZ];
 	    xchar x, y;
-	    register boolean many = candle ? otmp->quan > 1L : otmp->spe > 1;
+	    register bool many = candle ? otmp->quan > 1L : otmp->spe > 1;
 
 	    (void) get_obj_location(otmp, &x, &y, 0);
 	    if (otmp->where == OBJ_MINVENT ? cansee(x,y) : !Blind)
@@ -999,7 +999,7 @@ register struct obj *otmp;
 /* called when lit lamp is hit by water or put into a container or
    you've been swallowed by a monster; obj might be in transit while
    being thrown or dropped so don't assume that its location is valid */
-boolean
+bool
 snuff_lit(obj)
 struct obj *obj;
 {
@@ -1021,7 +1021,7 @@ struct obj *obj;
 
 /* Called when potentially lightable object is affected by fire_damage().
    Return TRUE if object was lit and FALSE otherwise --ALI */
-boolean
+bool
 catch_lit(obj)
 struct obj *obj;
 {
@@ -1364,7 +1364,7 @@ int magic; /* 0=Physical, otherwise skill level */
 	}
 }
 
-boolean
+bool
 tinnable(corpse)
 struct obj *corpse;
 {
@@ -1597,8 +1597,8 @@ long timeout;
 	struct obj *figurine = (struct obj *)arg;
 	struct monst *mtmp;
 	coord cc;
-	boolean cansee_spot, silent, okay_spot;
-	boolean redraw = FALSE;
+	bool cansee_spot, silent, okay_spot;
+	bool redraw = FALSE;
 	char monnambuf[BUFSZ], carriedby[BUFSZ];
 
 	if (!figurine) {
@@ -1678,11 +1678,11 @@ long timeout;
 	if (redraw) newsym(cc.x, cc.y);
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 figurine_location_checks(obj, cc, quietly)
 struct obj *obj;
 coord *cc;
-boolean quietly;
+bool quietly;
 {
 	xchar x,y;
 
@@ -1820,7 +1820,7 @@ static struct trapinfo {
 	struct obj *tobj;
 	xchar tx, ty;
 	int time_needed;
-	boolean force_bungle;
+	bool force_bungle;
 } trapinfo;
 
 void
@@ -1836,7 +1836,7 @@ use_stone(tstone)
 struct obj *tstone;
 {
     struct obj *obj;
-    boolean do_scratch;
+    bool do_scratch;
     const char *streak_color, *choices;
     char stonebuf[QBUFSZ];
     static const char scritch[] = "\"scritch, scritch\"";
@@ -2028,7 +2028,7 @@ struct obj *otmp;
 	   should be incorporated here instead of in set_trap]*/
 #ifdef STEED
 	if (u.usteed && P_SKILL(P_RIDING) < P_BASIC) {
-	    boolean chance;
+	    bool chance;
 
 	    if (Fumbling || otmp->cursed) chance = (rnl(10) > 3);
 	    else  chance = (rnl(10) > 5);
@@ -2249,7 +2249,7 @@ struct obj *obj;
 	if (otmp) {
 	    char onambuf[BUFSZ];
 	    const char *mon_hand;
-	    boolean gotit = proficient && (!Fumbling || !rn2(10));
+	    bool gotit = proficient && (!Fumbling || !rn2(10));
 
 	    Strcpy(onambuf, cxname(otmp));
 	    if (gotit) {
@@ -2433,9 +2433,9 @@ STATIC_OVL int
 use_cream_pie(obj)
 struct obj *obj;
 {
-	boolean wasblind = Blind;
-	boolean wascreamed = u.ucreamed;
-	boolean several = FALSE;
+	bool wasblind = Blind;
+	bool wascreamed = u.ucreamed;
+	bool several = FALSE;
 
 	if (obj->quan > 1L) {
 		several = TRUE;
@@ -2603,8 +2603,8 @@ do_break_wand(obj)
     register int i, x, y;
     register struct monst *mon;
     int dmg, damage;
-    boolean affects_objects;
-    boolean shop_damage = FALSE;
+    bool affects_objects;
+    bool shop_damage = FALSE;
     int expltype = EXPL_MAGICAL;
     char confirm[QBUFSZ], the_wand[BUFSZ], buf[BUFSZ];
 
@@ -2753,7 +2753,7 @@ do_break_wand(obj)
     return 1;
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 uhave_graystone()
 {
 	register struct obj *otmp;
@@ -3024,7 +3024,7 @@ doapply()
  */
 int
 unfixable_trouble_count(is_horn)
-	boolean is_horn;
+	bool is_horn;
 {
 	int unfixable_trbl = 0;
 

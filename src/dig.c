@@ -7,11 +7,11 @@
 
 #ifdef OVLB
 
-static NEARDATA boolean did_dig_msg;
+static NEARDATA bool did_dig_msg;
 
-STATIC_DCL boolean NDECL(rm_waslit);
-STATIC_DCL void FDECL(mkcavepos, (XCHAR_P,XCHAR_P,int,BOOLEAN_P,BOOLEAN_P));
-STATIC_DCL void FDECL(mkcavearea, (BOOLEAN_P));
+STATIC_DCL bool NDECL(rm_waslit);
+STATIC_DCL void FDECL(mkcavepos, (XCHAR_P,XCHAR_P,int,BOOL_P,BOOL_P));
+STATIC_DCL void FDECL(mkcavearea, (BOOL_P));
 STATIC_DCL int FDECL(dig_typ, (struct obj *,XCHAR_P,XCHAR_P));
 STATIC_DCL int NDECL(dig);
 STATIC_DCL schar FDECL(fillholetyp, (int, int));
@@ -26,7 +26,7 @@ STATIC_DCL void NDECL(dig_up_grave);
 #define DIGTYP_TREE       5
 
 
-STATIC_OVL boolean
+STATIC_OVL bool
 rm_waslit()
 {
     register xchar x, y;
@@ -47,7 +47,7 @@ STATIC_OVL void
 mkcavepos(x, y, dist, waslit, rockit)
     xchar x,y;
     int dist;
-    boolean waslit, rockit;
+    bool waslit, rockit;
 {
     register struct rm *lev;
 
@@ -84,13 +84,13 @@ mkcavepos(x, y, dist, waslit, rockit)
 
 STATIC_OVL void
 mkcavearea(rockit)
-register boolean rockit;
+register bool rockit;
 {
     int dist;
     xchar xmin = u.ux, xmax = u.ux;
     xchar ymin = u.uy, ymax = u.uy;
     register xchar i;
-    register boolean waslit = rm_waslit();
+    register bool waslit = rm_waslit();
 
     if(rockit) pline("Crash!  The ceiling collapses around you!");
     else pline("A mysterious force %s cave around you!",
@@ -134,7 +134,7 @@ dig_typ(otmp, x, y)
 struct obj *otmp;
 xchar x, y;
 {
-	boolean ispick = is_pick(otmp);
+	bool ispick = is_pick(otmp);
 
 	return (ispick && sobj_at(STATUE, x, y) ? DIGTYP_STATUE :
 		ispick && sobj_at(BOULDER, x, y) ? DIGTYP_BOULDER :
@@ -146,7 +146,7 @@ xchar x, y;
 			DIGTYP_ROCK : DIGTYP_UNDIGGABLE);
 }
 
-boolean
+bool
 is_digging()
 {
 	if (occupation == dig) {
@@ -158,10 +158,10 @@ is_digging()
 #define BY_YOU		(&youmonst)
 #define BY_OBJECT	((struct monst *)0)
 
-boolean
+bool
 dig_check(madeby, verbose, x, y)
 	struct monst	*madeby;
-	boolean		verbose;
+	bool		verbose;
 	int		x, y;
 {
 	struct trap *ttmp = t_at(x, y);
@@ -210,7 +210,7 @@ dig()
 {
 	register struct rm *lev;
 	register xchar dpx = digging.pos.x, dpy = digging.pos.y;
-	register boolean ispick = uwep && is_pick(uwep);
+	register bool ispick = uwep && is_pick(uwep);
 	const char *verb =
 	    (!uwep || is_pick(uwep)) ? "dig into" : "chop through";
 
@@ -302,7 +302,7 @@ dig()
 	if (digging.effort > 100) {
 		register const char *digtxt, *dmgtxt = (const char*) 0;
 		register struct obj *obj;
-		register boolean shopedge = *in_rooms(dpx, dpy, SHOPBASE);
+		register bool shopedge = *in_rooms(dpx, dpy, SHOPBASE);
 
 		if ((obj = sobj_at(STATUE, dpx, dpy)) != 0) {
 			if (break_statue(obj))
@@ -484,12 +484,12 @@ int ttyp;
 	register struct trap *ttmp;
 	char surface_type[BUFSZ];
 	struct rm *lev = &levl[x][y];
-	boolean shopdoor;
+	bool shopdoor;
 	struct monst *mtmp = m_at(x, y);	/* may be madeby */
-	boolean madeby_u = (madeby == BY_YOU);
-	boolean madeby_obj = (madeby == BY_OBJECT);
-	boolean at_u = (x == u.ux) && (y == u.uy);
-	boolean wont_fall = Levitation || Flying;
+	bool madeby_u = (madeby == BY_YOU);
+	bool madeby_obj = (madeby == BY_OBJECT);
+	bool at_u = (x == u.ux) && (y == u.uy);
+	bool wont_fall = Levitation || Flying;
 
 	if (u.utrap && u.utraptype == TT_INFLOOR) u.utrap = 0;
 
@@ -644,15 +644,15 @@ int ttyp;
 }
 
 /* return TRUE if digging succeeded, FALSE otherwise */
-boolean
+bool
 dighole(pit_only)
-boolean pit_only;
+bool pit_only;
 {
 	register struct trap *ttmp = t_at(u.ux, u.uy);
 	struct rm *lev = &levl[u.ux][u.uy];
 	struct obj *boulder_here;
 	schar typ;
-	boolean nohole = !Can_dig_down(&u.uz);
+	bool nohole = !Can_dig_down(&u.uz);
 
 	if ((ttmp && (ttmp->ttyp == MAGIC_PORTAL || nohole)) ||
 	   (IS_ROCK(lev->typ) && lev->typ != SDOOR &&
@@ -810,7 +810,7 @@ int
 use_pick_axe(obj)
 struct obj *obj;
 {
-	boolean ispick;
+	bool ispick;
 	char dirsyms[12];
 	char qbuf[QBUFSZ];
 	register char *dsp = dirsyms;
@@ -866,7 +866,7 @@ struct obj *obj;
 	register int rx, ry;
 	register struct rm *lev;
 	int dig_target;
-	boolean ispick = is_pick(obj);
+	bool ispick = is_pick(obj);
 	const char *verbing = ispick ? "digging" : "chopping";
 
 	if (u.uswallow && attack(u.ustuck)) {
@@ -926,7 +926,7 @@ struct obj *obj;
 			    You("need a pick to dig rock.");
 			else if (!ispick && (sobj_at(STATUE, rx, ry) ||
 					     sobj_at(BOULDER, rx, ry))) {
-			    boolean vibrate = !rn2(3);
+			    bool vibrate = !rn2(3);
 			    pline("Sparks fly as you whack the %s.%s",
 				sobj_at(STATUE, rx, ry) ? "statue" : "boulder",
 				vibrate ? " The axe-handle vibrates violently!" : "");
@@ -1016,7 +1016,7 @@ void
 watch_dig(mtmp, x, y, zap)
     struct monst *mtmp;
     xchar x, y;
-    boolean zap;
+    bool zap;
 {
 	struct rm *lev = &levl[x][y];
 
@@ -1062,7 +1062,7 @@ watch_dig(mtmp, x, y, zap)
 #ifdef OVL0
 
 /* Return TRUE if monster died, FALSE otherwise.  Called from m_move(). */
-boolean
+bool
 mdig_tunnel(mtmp)
 register struct monst *mtmp;
 {
@@ -1145,7 +1145,7 @@ zap_dig()
 	struct monst *mtmp;
 	struct obj *otmp;
 	int zx, zy, digdepth;
-	boolean shopdoor, shopwall, maze_dig;
+	bool shopdoor, shopwall, maze_dig;
 	/*
 	 * Original effect (approximately):
 	 * from CORR: dig until we pierce a wall
@@ -1286,7 +1286,7 @@ bury_an_obj(otmp)
 	struct obj *otmp;
 {
 	struct obj *otmp2;
-	boolean under_ice;
+	bool under_ice;
 
 #ifdef DEBUG
 	pline("bury_an_obj: %s", xname(otmp));
@@ -1417,7 +1417,7 @@ long timeout;	/* unused */
 {
 	xchar x = 0, y = 0;
 	struct obj *obj = (struct obj *) arg;
-	boolean on_floor = obj->where == OBJ_FLOOR,
+	bool on_floor = obj->where == OBJ_FLOOR,
 		in_invent = obj->where == OBJ_INVENT;
 
 	if (on_floor) {
@@ -1517,7 +1517,7 @@ escape_tomb()
 		You("attempt a teleport spell.");
 		(void) dotele();	/* calls unearth_you() */
 	} else if(u.uburied) { /* still buried after 'port attempt */
-		boolean good;
+		bool good;
 
 		if(amorphous(youmonst.data) || Passes_walls ||
 		   noncorporeal(youmonst.data) || unsolid(youmonst.data) ||

@@ -49,15 +49,15 @@ void gnome_resume_nhwindows(void);
 winid gnome_create_nhwindow(int type);
 void gnome_create_nhwindow_by_id(int type, winid i);
 void gnome_clear_nhwindow(winid wid);
-void gnome_display_nhwindow(winid wid, BOOLEAN_P block);
+void gnome_display_nhwindow(winid wid, BOOL_P block);
 void gnome_destroy_nhwindow(winid wid);
 void gnome_curs(winid wid, int x, int y);
 void gnome_putstr(winid wid, int attr, const char *text);
-void gnome_display_file(const char *filename,BOOLEAN_P must_exist);
+void gnome_display_file(const char *filename,BOOL_P must_exist);
 void gnome_start_menu(winid wid);
 void gnome_add_menu(winid wid, int glyph, const ANY_P * identifier,
 		CHAR_P accelerator, CHAR_P group_accel, int attr, 
-		const char *str, BOOLEAN_P presel);
+		const char *str, BOOL_P presel);
 void gnome_end_menu(winid wid, const char *prompt);
 int  gnome_select_menu(winid wid, int how, MENU_ITEM_P **selected);
 /* No need for message_menu -- we'll use genl_message_menu instead */	

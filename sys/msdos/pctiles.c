@@ -39,8 +39,8 @@ extern short glyph2tile[];              /* in tile.c (made from tilemap.c) */
 #ifdef TILES_IN_RAM
 struct planar_cell_struct *ramtiles;
 struct overview_planar_cell_struct *oramtiles;
-boolean tiles_in_ram = FALSE;
-boolean otiles_in_ram = FALSE;
+bool tiles_in_ram = FALSE;
+bool otiles_in_ram = FALSE;
 extern int total_tiles_used;		/* tile.c */
 #endif
 
@@ -56,7 +56,7 @@ extern int total_tiles_used;		/* tile.c */
  */
 int ReadTileFileHeader(tibhdr, filestyle)
 struct tibhdr_struct *tibhdr;
-boolean filestyle;
+bool filestyle;
 {
 	FILE *x;
 	x = filestyle ? tilefile_O : tilefile;
@@ -87,7 +87,7 @@ boolean filestyle;
 int
 OpenTileFile(tilefilename, filestyle)
 char *tilefilename;
-boolean filestyle;
+bool filestyle;
 {
 #ifdef TILES_IN_RAM
 	int k;
@@ -147,7 +147,7 @@ boolean filestyle;
 
 void
 CloseTileFile(filestyle)
-boolean filestyle;
+bool filestyle;
 {
 	fclose(filestyle ? tilefile_O : tilefile);
 #ifdef TILES_IN_RAM

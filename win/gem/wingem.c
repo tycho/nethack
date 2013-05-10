@@ -550,7 +550,7 @@ Gem_start_screen()
 {}
 
 extern void mar_exit_nhwindows(void);
-extern boolean run_from_desktop;
+extern bool run_from_desktop;
 
 void
 Gem_exit_nhwindows(str)
@@ -631,7 +631,7 @@ extern void mar_more(void);
 void
 Gem_display_nhwindow(window, blocking)
     winid window;
-    boolean blocking;
+    bool blocking;
 {
 	if(window == WIN_ERR)
 		panic(winpanicstr,  window);
@@ -731,7 +731,7 @@ Gem_putstr(window, attr, str)
 void
 Gem_display_file(fname, complain)
 const char *fname;
-boolean complain;
+bool complain;
 {
 	dlb *f;
 	char buf[BUFSZ];
@@ -770,7 +770,7 @@ Gem_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     char gch;		/* group accelerator (0 = no group) */
     int attr;		/* attribute for string (like Gem_putstr()) */
     const char *str;	/* menu string */
-    boolean preselected; /* item is marked as selected */
+    bool preselected; /* item is marked as selected */
 {
 	Gem_menu_item *G_item;
 	const char *newstr;

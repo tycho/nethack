@@ -28,7 +28,7 @@ static char NDECL(BIOSgetch);
 static void NDECL(init_aline);
 char *_a_line;			/* for Line A variables */
 # ifdef TEXTCOLOR
-boolean colors_changed = FALSE;
+bool colors_changed = FALSE;
 # endif
 
 int

@@ -26,7 +26,7 @@ typedef struct mswin_nhmsg_add_wnd {
 typedef struct mswin_nhmsg_putstr {
   int		  attr;
   const char* text;
-  boolean	  append;
+  bool	  append;
 } MSNHMsgPutstr, *PMSNHMsgPutstr;
 
 typedef struct mswin_nhmsg_print_glyph {
@@ -47,7 +47,7 @@ typedef struct mswin_nhmsg_add_menu {
 	CHAR_P			group_accel;
 	int				attr;
 	const char *	str;
-	BOOLEAN_P		presel;
+	BOOL_P		presel;
 } MSNHMsgAddMenu, *PMSNHMsgAddMenu;
 
 typedef struct mswin_nhmsg_cursor {

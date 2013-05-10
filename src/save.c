@@ -32,7 +32,7 @@ STATIC_DCL void FDECL(savetrapchn, (int,struct trap *,int));
 STATIC_DCL void FDECL(savegamestate, (int,int));
 #ifdef MFLOPPY
 STATIC_DCL void FDECL(savelev0, (int,XCHAR_P,int));
-STATIC_DCL boolean NDECL(swapout_oldest);
+STATIC_DCL bool NDECL(swapout_oldest);
 STATIC_DCL void FDECL(copyfile, (char *,char *));
 #endif /* MFLOPPY */
 #ifdef GCC_WARN
@@ -305,8 +305,8 @@ register int fd, mode;
 	}
 	bwrite(fd, (genericptr_t) mvitals, sizeof(mvitals));
 
-	save_dungeon(fd, (boolean)!!perform_bwrite(mode),
-			 (boolean)!!release_data(mode));
+	save_dungeon(fd, (bool)!!perform_bwrite(mode),
+			 (bool)!!release_data(mode));
 	savelevchn(fd, mode);
 	bwrite(fd, (genericptr_t) &moves, sizeof moves);
 	bwrite(fd, (genericptr_t) &monstermoves, sizeof monstermoves);
@@ -335,7 +335,7 @@ void
 savestateinlock()
 {
 	int fd, hpid;
-	static boolean havestate = TRUE;
+	static bool havestate = TRUE;
 	char whynot[BUFSZ];
 
 	/* When checkpointing is on, the full state needs to be written
@@ -406,7 +406,7 @@ savestateinlock()
 #endif
 
 #ifdef MFLOPPY
-boolean
+bool
 savelev(fd, lev, mode)
 int fd;
 xchar lev;
@@ -580,7 +580,7 @@ static NEARDATA unsigned char outbuf[ZEROCOMP_BUFSIZ];
 static NEARDATA unsigned short outbufp = 0;
 static NEARDATA short outrunlength = -1;
 static NEARDATA int bwritefd;
-static NEARDATA boolean compressing = FALSE;
+static NEARDATA bool compressing = FALSE;
 
 /*dbg()
 {
@@ -702,7 +702,7 @@ int fd;
 
 static int bw_fd = -1;
 static FILE *bw_FILE = 0;
-static boolean buffering = FALSE;
+static bool buffering = FALSE;
 
 void
 bufon(fd)
@@ -745,7 +745,7 @@ register int fd;
 register genericptr_t loc;
 register unsigned num;
 {
-	boolean failed;
+	bool failed;
 
 #ifdef MFLOPPY
 	bytes_counted += num;
@@ -1084,7 +1084,7 @@ freedynamicdata()
 }
 
 #ifdef MFLOPPY
-boolean
+bool
 swapin_file(lev)
 int lev;
 {
@@ -1111,7 +1111,7 @@ int lev;
 	return TRUE;
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 swapout_oldest() {
 	char to[PATHLEN], from[PATHLEN];
 	int i, oldest;

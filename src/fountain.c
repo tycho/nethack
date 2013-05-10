@@ -147,7 +147,7 @@ dofindgem() /* Find a gem in the sparkling waters. */
 void
 dryup(x, y, isyou)
 xchar x, y;
-boolean isyou;
+bool isyou;
 {
 	if (IS_FOUNTAIN(levl[x][y].typ) &&
 	    (!rn2(3) || FOUNTAIN_IS_WARNED(x,y))) {
@@ -194,7 +194,7 @@ void
 drinkfountain()
 {
 	/* What happens when you drink from a fountain? */
-	register boolean mgkftn = (levl[u.ux][u.uy].blessedftn == 1);
+	register bool mgkftn = (levl[u.ux][u.uy].blessedftn == 1);
 	register int fate = rnd(30);
 
 	if (Levitation) {

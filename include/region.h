@@ -6,12 +6,12 @@
 
 /* generic callback function */
 
-typedef boolean FDECL((*callback_proc), (genericptr_t, genericptr_t));
+typedef bool FDECL((*callback_proc), (genericptr_t, genericptr_t));
 
 /*
  * Overload the old player_inside field with two values, coded in such
  * a way as to retain compatibility with 3.4.0 save and bones files;
- * this relies on the fact that nethack's `boolean' is really stored
+ * this relies on the fact that nethack's `bool' is really stored
  * in a `char' (or bigger type) rather than in a single bit.
  *
  * 3.4.1 save and bones files will be correct.
@@ -33,7 +33,7 @@ typedef struct {
   NhRect bounding_box;		/* Bounding box of the region */
   NhRect *rects;		/* Rectangles composing the region */
   short  nrects;		/* Number of rectangles  */
-  boolean attach_2_u;		/* Region attached to player ? */
+  bool attach_2_u;		/* Region attached to player ? */
   unsigned int attach_2_m;	/* Region attached to monster ? */
   /*struct obj *attach_2_o;*/	/* Region attached to object ? UNUSED YET */
   const char* enter_msg;	/* Message when entering */
@@ -48,7 +48,7 @@ typedef struct {
   short leave_f;		/* Function to call when the player leaves */
   short inside_f;		/* Function to call every turn if player's
 				   inside */
-  boolean player_flags;	/* (see above) */
+  bool player_flags;	/* (see above) */
   unsigned int* monsters;	/* Monsters currently inside this region */
   short n_monst;		/* Number of monsters inside this region */
   short max_monst;		/* Maximum number of monsters that can be
@@ -57,7 +57,7 @@ typedef struct {
 
   /* Should probably do the same thing about objects */
 
-  boolean visible;		/* Is the region visible ? */
+  bool visible;		/* Is the region visible ? */
   int glyph;			/* Which glyph to use if visible */
   genericptr_t arg;		/* Optional user argument (Ex: strength of
 				   force field, damage of a fire zone, ...*/

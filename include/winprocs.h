@@ -17,14 +17,14 @@ struct window_procs {
     void NDECL((*win_resume_nhwindows));
     winid FDECL((*win_create_nhwindow), (int));
     void FDECL((*win_clear_nhwindow), (winid));
-    void FDECL((*win_display_nhwindow), (winid, BOOLEAN_P));
+    void FDECL((*win_display_nhwindow), (winid, BOOL_P));
     void FDECL((*win_destroy_nhwindow), (winid));
     void FDECL((*win_curs), (winid,int,int));
     void FDECL((*win_putstr), (winid, int, const char *));
-    void FDECL((*win_display_file), (const char *, BOOLEAN_P));
+    void FDECL((*win_display_file), (const char *, BOOL_P));
     void FDECL((*win_start_menu), (winid));
     void FDECL((*win_add_menu), (winid,int,const ANY_P *,
-		CHAR_P,CHAR_P,int,const char *, BOOLEAN_P));
+		CHAR_P,CHAR_P,int,const char *, BOOL_P));
     void FDECL((*win_end_menu), (winid, const char *));
     int FDECL((*win_select_menu), (winid, int, MENU_ITEM_P **));
     char FDECL((*win_message_menu), (CHAR_P,int,const char *));

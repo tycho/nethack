@@ -793,7 +793,7 @@ static const uchar IBM_r_oc_syms[MAXOCLASSES] = {	/* a la EPYX Rogue */
 
 void
 assign_rogue_graphics(is_rlevel)
-boolean is_rlevel;
+bool is_rlevel;
 {
     /* Adjust graphics display characters on Rogue levels */
 

@@ -12,7 +12,7 @@
 struct rogueroom {
 	xchar rlx, rly;
 	xchar dx, dy;
-	boolean real;
+	bool real;
 	uchar doortable;
 	int nroom; /* Only meaningful for "real" rooms */
 };
@@ -256,7 +256,7 @@ makeroguerooms() {
 			 * encountered below level 10, use !rn2(7).
 			 */
 			add_room(lowx, lowy, hix, hiy,
-				 (boolean) !rn2(7), OROOM, FALSE);
+				 (bool) !rn2(7), OROOM, FALSE);
 		}
 	}
 

@@ -29,13 +29,13 @@
 #define CLC_FIRE_PILLAR	 8
 #define CLC_GEYSER	 9
 
-STATIC_DCL void FDECL(cursetxt,(struct monst *,BOOLEAN_P));
+STATIC_DCL void FDECL(cursetxt,(struct monst *,BOOL_P));
 STATIC_DCL int FDECL(choose_magic_spell, (int));
 STATIC_DCL int FDECL(choose_clerical_spell, (int));
 STATIC_DCL void FDECL(cast_wizard_spell,(struct monst *, int,int));
 STATIC_DCL void FDECL(cast_cleric_spell,(struct monst *, int,int));
-STATIC_DCL boolean FDECL(is_undirected_spell,(unsigned int,int));
-STATIC_DCL boolean FDECL(spell_would_be_useless,(struct monst *,unsigned int,int));
+STATIC_DCL bool FDECL(is_undirected_spell,(unsigned int,int));
+STATIC_DCL bool FDECL(spell_would_be_useless,(struct monst *,unsigned int,int));
 
 #ifdef OVL0
 
@@ -46,7 +46,7 @@ STATIC_OVL
 void
 cursetxt(mtmp, undirected)
 struct monst *mtmp;
-boolean undirected;
+bool undirected;
 {
 	if (canseemon(mtmp) && couldsee(mtmp->mx, mtmp->my)) {
 	    const char *point_msg;  /* spellcasting monsters are impolite */
@@ -161,8 +161,8 @@ int
 castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 	register struct monst *mtmp;
 	register struct attack *mattk;
-	boolean thinks_it_foundyou;
-	boolean foundyou;
+	bool thinks_it_foundyou;
+	bool foundyou;
 {
 	int	dmg, ml = mtmp->m_lev;
 	int ret;
@@ -510,7 +510,7 @@ int spellnum;
 	break;
     case CLC_LIGHTNING:
     {
-	boolean reflects;
+	bool reflects;
 
 	pline("A bolt of lightning strikes down at you from above!");
 	reflects = ureflects("It bounces off your %s%s.", "");
@@ -538,7 +538,7 @@ int spellnum;
 	struct permonst *pm = mkclass(S_ANT,0);
 	struct monst *mtmp2 = (struct monst *)0;
 	char let = (pm ? S_ANT : S_SNAKE);
-	boolean success;
+	bool success;
 	int i;
 	coord bypos;
 	int quan;
@@ -614,7 +614,7 @@ int spellnum;
 	    shieldeff(u.ux, u.uy);
 	    You_feel("momentarily dizzy.");
 	} else {
-	    boolean oldprop = !!Confusion;
+	    bool oldprop = !!Confusion;
 
 	    dmg = (int)mtmp->m_lev;
 	    if (Half_spell_damage) dmg = (dmg + 1) / 2;
@@ -660,7 +660,7 @@ int spellnum;
 }
 
 STATIC_DCL
-boolean
+bool
 is_undirected_spell(adtyp, spellnum)
 unsigned int adtyp;
 int spellnum;
@@ -691,7 +691,7 @@ int spellnum;
 
 /* Some spells are useless under some circumstances. */
 STATIC_DCL
-boolean
+bool
 spell_would_be_useless(mtmp, adtyp, spellnum)
 struct monst *mtmp;
 unsigned int adtyp;
@@ -703,7 +703,7 @@ int spellnum;
      * This check isn't quite right because it always uses your real position.
      * We really want something like "if the monster could see mux, muy".
      */
-    boolean mcouldseeu = couldsee(mtmp->mx, mtmp->my);
+    bool mcouldseeu = couldsee(mtmp->mx, mtmp->my);
 
     if (adtyp == AD_SPEL) {
 	/* aggravate monsters, etc. won't be cast by peaceful monsters */

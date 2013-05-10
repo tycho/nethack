@@ -37,7 +37,7 @@
 struct lan_mail_struct {
 	char sender[120];
 	char subject[120];
-	boolean body_in_ram;	/* TRUE means body in memory not file */
+	bool body_in_ram;	/* TRUE means body in memory not file */
 	char filename[_MAX_PATH];
 	char body[MAX_BODY_SIZE];
 };

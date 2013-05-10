@@ -20,12 +20,12 @@ static NEARDATA struct obj *book;	/* last/current book being xscribed */
 	((char)((spell < 26) ? ('a' + spell) : ('A' + spell - 26)))
 
 STATIC_DCL int FDECL(spell_let_to_idx, (CHAR_P));
-STATIC_DCL boolean FDECL(cursed_book, (struct obj *bp));
-STATIC_DCL boolean FDECL(confused_book, (struct obj *));
+STATIC_DCL bool FDECL(cursed_book, (struct obj *bp));
+STATIC_DCL bool FDECL(confused_book, (struct obj *));
 STATIC_DCL void FDECL(deadbook, (struct obj *));
 STATIC_PTR int NDECL(learn);
-STATIC_DCL boolean FDECL(getspell, (int *));
-STATIC_DCL boolean FDECL(dospellmenu, (const char *,int,int *));
+STATIC_DCL bool FDECL(getspell, (int *));
+STATIC_DCL bool FDECL(dospellmenu, (const char *,int,int *));
 STATIC_DCL int FDECL(percent_success, (int));
 STATIC_DCL int NDECL(throwspell);
 STATIC_DCL void NDECL(cast_protection);
@@ -104,7 +104,7 @@ char ilet;
 }
 
 /* TRUE: book should be destroyed by caller */
-STATIC_OVL boolean
+STATIC_OVL bool
 cursed_book(bp)
 	struct obj *bp;
 {
@@ -174,11 +174,11 @@ cursed_book(bp)
 }
 
 /* study while confused: returns TRUE if the book is destroyed */
-STATIC_OVL boolean
+STATIC_OVL bool
 confused_book(spellbook)
 struct obj *spellbook;
 {
-	boolean gone = FALSE;
+	bool gone = FALSE;
 
 	if (!rn2(3) && spellbook->otyp != SPE_BOOK_OF_THE_DEAD) {
 	    spellbook->in_use = TRUE;	/* in case called from learn */
@@ -212,7 +212,7 @@ struct obj *book2;
     book2->known = 1;
     if(invocation_pos(u.ux, u.uy) && !On_stairs(u.ux, u.uy)) {
 	register struct obj *otmp;
-	register boolean arti1_primed = FALSE, arti2_primed = FALSE,
+	register bool arti1_primed = FALSE, arti2_primed = FALSE,
 			 arti_cursed = FALSE;
 
 	if(book2->cursed) {
@@ -317,7 +317,7 @@ learn()
 	int i;
 	short booktype;
 	char splname[BUFSZ];
-	boolean costly = TRUE;
+	bool costly = TRUE;
 
 	/* JDS: lenses give 50% faster reading; 33% smaller read time */
 	if (delay && ublindf && ublindf->otyp == LENSES && rn2(2)) delay++;
@@ -390,8 +390,8 @@ study_book(spellbook)
 register struct obj *spellbook;
 {
 	register int	 booktype = spellbook->otyp;
-	register boolean confused = (Confusion != 0);
-	boolean too_hard = FALSE;
+	register bool confused = (Confusion != 0);
+	bool too_hard = FALSE;
 
 	if (delay && !confused && spellbook == book &&
 		    /* handle the sequence: start reading, get interrupted,
@@ -460,7 +460,7 @@ register struct obj *spellbook;
 		}
 
 		if (too_hard) {
-		    boolean gone = cursed_book(spellbook);
+		    bool gone = cursed_book(spellbook);
 
 		    nomul(delay);			/* study time */
 		    delay = 0;
@@ -533,7 +533,7 @@ age_spells()
  * Return TRUE if a spell was picked, with the spell index in the return
  * parameter.  Otherwise return FALSE.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 getspell(spell_no)
 	int *spell_no;
 {
@@ -711,11 +711,11 @@ int spell;
 int
 spelleffects(spell, atme)
 int spell;
-boolean atme;
+bool atme;
 {
 	int energy, damage, chance, n, intell;
 	int skill, role_skill;
-	boolean confused = (Confusion != 0);
+	bool confused = (Confusion != 0);
 	struct obj *pseudo;
 	coord cc;
 
@@ -1002,7 +1002,7 @@ throwspell()
 void
 losespells()
 {
-	boolean confused = (Confusion != 0);
+	bool confused = (Confusion != 0);
 	int  n, nzap, i;
 
 	book = 0;
@@ -1043,7 +1043,7 @@ dovspell()
 	return 0;
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 dospellmenu(prompt, splaction, spell_no)
 const char *prompt;
 int splaction;	/* SPELLMENU_CAST, SPELLMENU_VIEW, or spl_book[] index */

@@ -228,7 +228,7 @@ tgetnum(which)
     return atoi(numbuf);
 }
 
-/* look up a boolean entry */
+/* look up a bool entry */
 int
 tgetflag(which)
     const char *which;

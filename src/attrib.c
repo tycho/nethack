@@ -100,7 +100,7 @@ STATIC_DCL void NDECL(exerper);
 STATIC_DCL void FDECL(postadjabil, (long *));
 
 /* adjust an attribute; return TRUE if change is made, FALSE otherwise */
-boolean
+bool
 adjattrib(ndx, incr, msgflg)
 	int	ndx, incr;
 	int	msgflg;	    /* positive => no message, zero => message, and */
@@ -205,7 +205,7 @@ change_luck(n)
 
 int
 stone_luck(parameter)
-boolean parameter; /* So I can't think up of a good name.  So sue me. --KAA */
+bool parameter; /* So I can't think up of a good name.  So sue me. --KAA */
 {
 	register struct obj *otmp;
 	register long bonchance = 0;
@@ -261,7 +261,7 @@ restore_attrib()
 void
 exercise(i, inc_or_dec)
 int	i;
-boolean	inc_or_dec;
+bool	inc_or_dec;
 {
 #ifdef DEBUG
 	pline("Exercise:");

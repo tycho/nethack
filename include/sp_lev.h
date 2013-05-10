@@ -36,9 +36,9 @@ typedef union str_or_len {
 } Str_or_Len;
 
 typedef struct {
-	boolean init_present, padding;
+	bool init_present, padding;
 	char	fg, bg;
-	boolean smoothed, joined;
+	bool smoothed, joined;
 	xchar	lit, walled;
 } lev_init;
 
@@ -105,7 +105,7 @@ typedef struct {
 typedef struct {
 	struct { xchar x1, y1, x2, y2; } inarea;
 	struct { xchar x1, y1, x2, y2; } delarea;
-	boolean in_islev, del_islev;
+	bool in_islev, del_islev;
 	xchar rtype, padding;
 	Str_or_Len rname;
 } lev_region;

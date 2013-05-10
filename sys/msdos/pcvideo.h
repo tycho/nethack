@@ -269,9 +269,9 @@ E void FDECL(vga_WriteStr, (char *, int, int, int, int));
 E void FDECL(vga_xputs, (const char *, int, int));
 E void FDECL(vga_xputc, (CHAR_P, int));
 E void FDECL(vga_xputg, (int, int, unsigned));
-E void FDECL(vga_userpan, (BOOLEAN_P));
-E void FDECL(vga_overview, (BOOLEAN_P));
-E void FDECL(vga_traditional, (BOOLEAN_P));
+E void FDECL(vga_userpan, (BOOL_P));
+E void FDECL(vga_overview, (BOOL_P));
+E void FDECL(vga_traditional, (BOOL_P));
 E void NDECL(vga_refresh);
 #  endif /* SCREEN_VGA */
 # endif /* NO_TERMS   */

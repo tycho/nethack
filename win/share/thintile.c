@@ -37,7 +37,7 @@ copy_colormap()
 	}
 }
 
-static boolean
+static bool
 read_txttile()
 {
 	int i, j;

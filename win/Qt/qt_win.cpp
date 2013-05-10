@@ -4735,7 +4735,7 @@ void NetHackQtBind::qt_clear_nhwindow(winid wid)
     window->Clear();
 }
 
-void NetHackQtBind::qt_display_nhwindow(winid wid, BOOLEAN_P block)
+void NetHackQtBind::qt_display_nhwindow(winid wid, BOOL_P block)
 {
     NetHackQtWindow* window=id_to_window[wid];
     window->Display(block);
@@ -4762,7 +4762,7 @@ void NetHackQtBind::qt_putstr(winid wid, int attr, const char *text)
     window->PutStr(attr,text);
 }
 
-void NetHackQtBind::qt_display_file(const char *filename, BOOLEAN_P must_exist)
+void NetHackQtBind::qt_display_file(const char *filename, BOOL_P must_exist)
 {
     NetHackQtTextWindow* window=new NetHackQtTextWindow(keybuffer);
     bool complain = FALSE;
@@ -4820,7 +4820,7 @@ void NetHackQtBind::qt_start_menu(winid wid)
 
 void NetHackQtBind::qt_add_menu(winid wid, int glyph,
     const ANY_P * identifier, CHAR_P ch, CHAR_P gch, int attr,
-    const char *str, BOOLEAN_P presel)
+    const char *str, BOOL_P presel)
 {
     NetHackQtWindow* window=id_to_window[wid];
     window->AddMenu(glyph, identifier, ch, gch, attr, str, presel);

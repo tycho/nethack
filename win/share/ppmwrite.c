@@ -43,7 +43,7 @@ WriteTileStrip()
 	}
 }
 
-boolean
+bool
 fopen_ppm_file(filename, type)
 const char *filename;
 const char *type;
@@ -82,7 +82,7 @@ const char *type;
 	return TRUE;
 }
 
-boolean
+bool
 write_ppm_tile(pixels)
 pixel (*pixels)[TILE_X];
 {

@@ -23,7 +23,7 @@ static vms_handler_type FDECL(vms_handler, (genericptr_t,genericptr_t));
 
 static void NDECL(wd_message);
 #ifdef WIZARD
-static boolean wiz_error_flag = FALSE;
+static bool wiz_error_flag = FALSE;
 #endif
 
 int
@@ -180,7 +180,7 @@ char *argv[];
 		/* Since wizard is actually flags.debug, restoring might
 		 * overwrite it.
 		 */
-		boolean remember_wiz_mode = wizard;
+		bool remember_wiz_mode = wizard;
 #endif
 		const char *fq_save = fqname(SAVEF, SAVEPREFIX, 1);
 
@@ -326,7 +326,7 @@ char *argv[];
 void
 chdirx(dir, wr)
 const char *dir;
-boolean wr;
+bool wr;
 {
 # ifndef HACKDIR
 	static const char *defdir = ".";

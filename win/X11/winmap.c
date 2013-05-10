@@ -57,10 +57,10 @@ extern int total_tiles_used;
 #define USE_WHITE	/* almost always use white as a tile cursor border */
 
 
-static boolean FDECL(init_tiles, (struct xwindow *));
+static bool FDECL(init_tiles, (struct xwindow *));
 static void FDECL(set_button_values, (Widget,int,int,unsigned));
 static void FDECL(map_check_size_change, (struct xwindow *));
-static void FDECL(map_update, (struct xwindow *,int,int,int,int,BOOLEAN_P));
+static void FDECL(map_update, (struct xwindow *,int,int,int,int,BOOL_P));
 static void FDECL(init_text, (struct xwindow *));
 static void FDECL(map_exposed, (Widget,XtPointer,XtPointer));
 static void FDECL(set_gc, (Widget,Font,char *,Pixel,GC *,GC *));
@@ -77,7 +77,7 @@ X11_print_glyph(window, x, y, glyph)
     int glyph;
 {
     struct map_info_t *map_info;
-    boolean update_bbox;
+    bool update_bbox;
 
     check_winid(window);
     if (window_list[window].type != NHW_MAP) {
@@ -234,7 +234,7 @@ post_process_tiles()
  * Open and read the tile file.  Return TRUE if there were no problems.
  * Return FALSE otherwise.
  */
-static boolean
+static bool
 init_tiles(wp)
     struct xwindow *wp;
 {
@@ -258,7 +258,7 @@ init_tiles(wp)
     struct map_info_t *map_info = (struct map_info_t *)0;
     struct tile_map_info_t *tile_info = (struct tile_map_info_t *)0;
     unsigned int image_height = 0, image_width = 0;
-    boolean result = TRUE;
+    bool result = TRUE;
     XGCValues values;
     XtGCMask mask;
 
@@ -964,7 +964,7 @@ map_input(w, event, params, num_params)
 {
     XKeyEvent *key;
     XButtonEvent *button;
-    boolean meta = FALSE;
+    bool meta = FALSE;
     int i, nbytes;
     Cardinal in_nparams = (num_params ? *num_params : 0);
     char c;
@@ -1165,7 +1165,7 @@ static void
 map_update(wp, start_row, stop_row, start_col, stop_col, inverted)
     struct xwindow *wp;
     int start_row, stop_row, start_col, stop_col;
-    boolean inverted;
+    bool inverted;
 {
     int win_start_row, win_start_col;
     struct map_info_t *map_info = wp->map_information;
@@ -1363,7 +1363,7 @@ static char map_translations[] =
 void
 create_map_window(wp, create_popup, parent)
     struct xwindow *wp;
-    boolean create_popup;	/* parent is a popup shell that we create */
+    bool create_popup;	/* parent is a popup shell that we create */
     Widget parent;
 {
     struct map_info_t *map_info;	/* map info pointer */
@@ -1556,7 +1556,7 @@ destroy_map_window(wp)
 
 
 
-boolean exit_x_event;	/* exit condition for the event loop */
+bool exit_x_event;	/* exit condition for the event loop */
 /*******
 pkey(k)
     int k;
@@ -1575,10 +1575,10 @@ x_event(exit_condition)
 {
     XEvent  event;
     int     retval = 0;
-    boolean keep_going = TRUE;
+    bool keep_going = TRUE;
 
     /* Hold globals so function is re-entrant */
-    boolean hold_exit_x_event = exit_x_event;
+    bool hold_exit_x_event = exit_x_event;
 
     click_button = NO_CLICK;	/* reset click exit condition */
     exit_x_event = FALSE;	/* reset callback exit condition */

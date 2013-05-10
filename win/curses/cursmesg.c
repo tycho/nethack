@@ -19,7 +19,7 @@ static void scroll_window(winid wid);
 
 static void mesg_add_line(char *mline);
 
-static nhprev_mesg *get_msg_line(boolean reverse, int mindex);
+static nhprev_mesg *get_msg_line(bool reverse, int mindex);
 
 static int turn_lines = 1;
 static int mx = 0;
@@ -33,12 +33,12 @@ static int num_messages = 0;
 
 /* Write a string to the message window.  Attributes set by calling function. */
 
-void curses_message_win_puts(const char *message, boolean recursed)
+void curses_message_win_puts(const char *message, bool recursed)
 {
     int height, width, linespace;
     char *tmpstr;
     WINDOW *win = curses_get_nhwin(MESSAGE_WIN);
-    boolean border = curses_window_has_border(MESSAGE_WIN);
+    bool border = curses_window_has_border(MESSAGE_WIN);
     int message_length = strlen(message);
     int border_space = 0;
     static long suppress_turn = -1;
@@ -184,7 +184,7 @@ int curses_more()
 void curses_clear_unhighlight_message_window()
 {
     int mh, mw, count;
-    boolean border = curses_window_has_border(MESSAGE_WIN);
+    bool border = curses_window_has_border(MESSAGE_WIN);
     WINDOW *win = curses_get_nhwin(MESSAGE_WIN);
 
     turn_lines = 1;
@@ -232,7 +232,7 @@ recent messages. */
 
 void curses_last_messages()
 {
-    boolean border = curses_window_has_border(MESSAGE_WIN);
+    bool border = curses_window_has_border(MESSAGE_WIN);
 
     if (border)
     {
@@ -373,7 +373,7 @@ void curses_count_window(const char *count_text)
 static void scroll_window(winid wid)
 {
     int wh, ww, s_top, s_bottom;
-    boolean border = curses_window_has_border(wid);
+    bool border = curses_window_has_border(wid);
     WINDOW *win = curses_get_nhwin(wid);
 
     curses_get_window_size(wid, &wh, &ww);
@@ -450,7 +450,7 @@ static void mesg_add_line(char *mline)
 
 /* Returns specified line from message history, or NULL if out of bounds */
 
-static nhprev_mesg *get_msg_line(boolean reverse, int mindex)
+static nhprev_mesg *get_msg_line(bool reverse, int mindex)
 {
     int count;
     nhprev_mesg *current_mesg;

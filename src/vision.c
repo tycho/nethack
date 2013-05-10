@@ -71,7 +71,7 @@ char circle_start[] = {
 
 #if 0	/* (moved to decl.c) */
 /* True if we need to run a full vision recalculation. */
-boolean	vision_full_recalc = 0;
+bool	vision_full_recalc = 0;
 
 /* Pointers to the current vision array. */
 char	**viz_array;
@@ -1497,7 +1497,7 @@ _q3_path(srow,scol,y2,x2)
  *		m_canseeu()
  *		do_light_sources()
  */
-boolean
+bool
 clear_path(col1,row1,col2,row2)
     int col1, row1, col2, row2;
 {
@@ -1521,7 +1521,7 @@ clear_path(col1,row1,col2,row2)
 #ifdef MACRO_CPATH
 cleardone:
 #endif
-    return((boolean)result);
+    return((bool)result);
 }
 
 #ifdef VISION_TABLES

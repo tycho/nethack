@@ -14,9 +14,9 @@
 STATIC_DCL void NDECL(on_start);
 STATIC_DCL void NDECL(on_locate);
 STATIC_DCL void NDECL(on_goal);
-STATIC_DCL boolean NDECL(not_capable);
-STATIC_DCL int FDECL(is_pure, (BOOLEAN_P));
-STATIC_DCL void FDECL(expulsion, (BOOLEAN_P));
+STATIC_DCL bool NDECL(not_capable);
+STATIC_DCL int FDECL(is_pure, (BOOL_P));
+STATIC_DCL void FDECL(expulsion, (BOOL_P));
 STATIC_DCL void NDECL(chat_with_leader);
 STATIC_DCL void NDECL(chat_with_nemesis);
 STATIC_DCL void NDECL(chat_with_guardian);
@@ -91,22 +91,22 @@ artitouch()
 }
 
 /* external hook for do.c (level change check) */
-boolean
+bool
 ok_to_quest()
 {
-	return((boolean)((Qstat(got_quest) || Qstat(got_thanks)))
+	return((bool)((Qstat(got_quest) || Qstat(got_thanks)))
 			&& (is_pure(FALSE) > 0));
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 not_capable()
 {
-	return((boolean)(u.ulevel < MIN_QUEST_LEVEL));
+	return((bool)(u.ulevel < MIN_QUEST_LEVEL));
 }
 
 STATIC_OVL int
 is_pure(talk)
-boolean talk;
+bool talk;
 {
     int purity;
     aligntyp original_alignment = u.ualignbase[A_ORIGINAL];
@@ -141,7 +141,7 @@ boolean talk;
  */
 STATIC_OVL void
 expulsion(seal)
-boolean seal;
+bool seal;
 {
     branch *br;
     d_level *dest;

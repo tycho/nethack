@@ -63,7 +63,7 @@ amii_add_menu(window,glyph, id, ch, gch, attr, str, preselected)
     register char gch;
     register int attr;
     register const char *str;
-    register BOOLEAN_P preselected;
+    register BOOL_P preselected;
 {
     register struct amii_WinDesc *cw;
     amii_menu_item *mip;

@@ -6,18 +6,18 @@
 #include "mfndpos.h"
 #include "edog.h"
 
-extern boolean notonhead;
+extern bool notonhead;
 
 #ifdef OVL0
 
-STATIC_DCL boolean FDECL(dog_hunger,(struct monst *,struct edog *));
+STATIC_DCL bool FDECL(dog_hunger,(struct monst *,struct edog *));
 STATIC_DCL int FDECL(dog_invent,(struct monst *,struct edog *,int));
 STATIC_DCL int FDECL(dog_goal,(struct monst *,struct edog *,int,int,int));
 
 STATIC_DCL struct obj *FDECL(DROPPABLES, (struct monst *));
-STATIC_DCL boolean FDECL(can_reach_location,(struct monst *,XCHAR_P,XCHAR_P,
+STATIC_DCL bool FDECL(can_reach_location,(struct monst *,XCHAR_P,XCHAR_P,
     XCHAR_P,XCHAR_P));
-STATIC_DCL boolean FDECL(could_reach_item,(struct monst *, XCHAR_P,XCHAR_P));
+STATIC_DCL bool FDECL(could_reach_item,(struct monst *, XCHAR_P,XCHAR_P));
 
 STATIC_OVL struct obj *
 DROPPABLES(mon)
@@ -25,7 +25,7 @@ register struct monst *mon;
 {
 	register struct obj *obj;
 	struct obj *wep = MON_WEP(mon);
-	boolean item1 = FALSE, item2 = FALSE;
+	bool item1 = FALSE, item2 = FALSE;
 
 	if (is_animal(mon->data) || mindless(mon->data))
 		item1 = item2 = TRUE;
@@ -50,14 +50,14 @@ static NEARDATA const char nofetch[] = { BALL_CLASS, CHAIN_CLASS, ROCK_CLASS, 0 
 
 #endif /* OVL0 */
 
-STATIC_OVL boolean FDECL(cursed_object_at, (int, int));
+STATIC_OVL bool FDECL(cursed_object_at, (int, int));
 
 STATIC_VAR xchar gtyp, gx, gy;	/* type and position of dog's current goal */
 
 STATIC_PTR void FDECL(wantdoor, (int, int, genericptr_t));
 
 #ifdef OVLB
-STATIC_OVL boolean
+STATIC_OVL bool
 cursed_object_at(x, y)
 int x, y;
 {
@@ -123,10 +123,10 @@ dog_eat(mtmp, obj, x, y, devour)
 register struct monst *mtmp;
 register struct obj * obj;
 int x, y;
-boolean devour;
+bool devour;
 {
 	register struct edog *edog = EDOG(mtmp);
-	boolean poly = FALSE, grow = FALSE, heal = FALSE;
+	bool poly = FALSE, grow = FALSE, heal = FALSE;
 	int nutrit;
 
 	if(edog->hungrytime < monstermoves)
@@ -208,7 +208,7 @@ boolean devour;
 #ifdef OVL0
 
 /* hunger effects -- returns TRUE on starvation */
-STATIC_OVL boolean
+STATIC_OVL bool
 dog_hunger(mtmp, edog)
 register struct monst *mtmp;
 register struct edog *edog;
@@ -333,7 +333,7 @@ struct edog *edog;
 int after, udist, whappr;
 {
 	register int omx, omy;
-	boolean in_masters_sight, dog_has_minvent;
+	bool in_masters_sight, dog_has_minvent;
 	register struct obj *obj;
 	xchar otyp;
 	int appr;
@@ -485,7 +485,7 @@ register int after;	/* this is extra fast monster movement */
 	register struct edog *edog = EDOG(mtmp);
 	struct obj *obj = (struct obj *) 0;
 	xchar otyp;
-	boolean has_edog, cursemsg[9], do_eat = FALSE;
+	bool has_edog, cursemsg[9], do_eat = FALSE;
 	xchar nix, niy;		/* position mtmp is (considering) moving to */
 	register int nx, ny;	/* temporary coordinates */
 	xchar cnt, uncursedcnt, chcnt;
@@ -791,7 +791,7 @@ dognext:
 }
 
 /* check if a monster could pick up objects from a location */
-STATIC_OVL boolean
+STATIC_OVL bool
 could_reach_item(mon, nx, ny)
 struct monst *mon;
 xchar nx, ny;
@@ -810,7 +810,7 @@ xchar nx, ny;
  * Since the maximum food distance is 5, this should never be more than 5 calls
  * deep.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 can_reach_location(mon, mx, my, fx, fy)
 struct monst *mon;
 xchar mx, my, fx, fy;

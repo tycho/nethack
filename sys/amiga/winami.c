@@ -1068,7 +1068,7 @@ char def;
 {
 	register char q;
 	char rtmp[40];
-	boolean digit_ok, allow_num;
+	bool digit_ok, allow_num;
 	char prompt[QBUFSZ];
 	register struct amii_WinDesc *cw;
 
@@ -1186,7 +1186,7 @@ char def;
 void
 amii_display_file(fn, complain)
 const char *fn;
-boolean complain;
+bool complain;
 {
     register struct amii_WinDesc *cw;
     register int win;

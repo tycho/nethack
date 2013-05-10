@@ -111,9 +111,9 @@
 void FDECL(vga_gotoloc, (int,int));  /* This should be made a macro */
 void NDECL(vga_backsp);
 #ifdef SCROLLMAP
-STATIC_DCL void FDECL(vga_scrollmap,(BOOLEAN_P));
+STATIC_DCL void FDECL(vga_scrollmap,(BOOL_P));
 #endif
-STATIC_DCL void FDECL(vga_redrawmap,(BOOLEAN_P));
+STATIC_DCL void FDECL(vga_redrawmap,(BOOL_P));
 void FDECL(vga_cliparound,(int, int));
 STATIC_OVL void FDECL(decal_planar,(struct planar_cell_struct *, unsigned));
 
@@ -123,7 +123,7 @@ static void FDECL(vga_special,(int, int, int));
 #endif
 
 extern int clipx, clipxmax;	/* current clipping column from wintty.c */
-extern boolean clipping;	/* clipping on? from wintty.c */
+extern bool clipping;	/* clipping on? from wintty.c */
 extern int savevmode;		/* store the original video mode */
 extern int curcol,currow;	/* current column and row        */
 extern int g_attribute;
@@ -131,7 +131,7 @@ extern int attrib_text_normal;	/* text mode normal attribute */
 extern int attrib_gr_normal;	/* graphics mode normal attribute */
 extern int attrib_text_intense;	/* text mode intense attribute */
 extern int attrib_gr_intense;	/* graphics mode intense attribute */
-extern boolean inmap;		/* in the map window */
+extern bool inmap;		/* in the map window */
 
 /*
  * Global Variables
@@ -448,7 +448,7 @@ void
 vga_cliparound(x, y)
 int x, y;
 {
-	extern boolean restoring;
+	extern bool restoring;
 	int oldx = clipx;
 
 	if (!iflags.tile_view || iflags.over_view || iflags.traditional_view)
@@ -471,7 +471,7 @@ int x, y;
 
 STATIC_OVL void
 vga_redrawmap(clearfirst)
-boolean clearfirst;
+bool clearfirst;
 {
 	int j,x,y,t;
 	char __far *pch;
@@ -541,7 +541,7 @@ boolean clearfirst;
 
 void
 vga_userpan(left)
-boolean left;
+bool left;
 {
 	int x;
 
@@ -558,7 +558,7 @@ boolean left;
 
 
 void vga_overview(on)
-boolean on;
+bool on;
 {
 /*	vga_HideCursor(); */
 	if (on) {
@@ -575,7 +575,7 @@ boolean on;
 }
 
 void vga_traditional(on)
-boolean on;
+bool on;
 {
 /*	vga_HideCursor(); */
 	if (on) {
@@ -604,7 +604,7 @@ void vga_refresh()
 #  ifdef SCROLLMAP
 STATIC_OVL void
 vga_scrollmap(left)
-boolean left;
+bool left;
 {
 	int j,x,y,t;
 	int i,pixx,pixy,x1,y1,x2,y2;
@@ -1067,7 +1067,7 @@ positionbar()
 
 	int startk, stopk;
 	char volatile a;
-	boolean nowhere = FALSE;
+	bool nowhere = FALSE;
 	int pixy = (PBAR_ROW * MAX_ROWS_PER_CELL);
 	int tmp;
 
@@ -1208,11 +1208,11 @@ vga_DrawCursor()
 /*	char on[2] =  {0xFF,0xFF}; */
 /*	char off[2] = {0x00,0x00}; */
 #ifdef REINCARNATION
-	boolean isrogue = Is_rogue_level(&u.uz);
-	boolean singlebyte = (isrogue || iflags.over_view
+	bool isrogue = Is_rogue_level(&u.uz);
+	bool singlebyte = (isrogue || iflags.over_view
 			      || iflags.traditional_view || !inmap);
 #else
-	boolean singlebyte = (iflags.over_view
+	bool singlebyte = (iflags.over_view
 			      || iflags.traditional_view || !inmap);
 #endif
 	int curtyp;
@@ -1413,11 +1413,11 @@ vga_HideCursor()
 	char __far *tmp1;
 	char __far *tmp2;
 #ifdef REINCARNATION
-	boolean isrogue = Is_rogue_level(&u.uz);
-	boolean singlebyte = (isrogue || iflags.over_view
+	bool isrogue = Is_rogue_level(&u.uz);
+	bool singlebyte = (isrogue || iflags.over_view
 			      || iflags.traditional_view || !inmap);
 #else
-	boolean singlebyte = (iflags.over_view
+	bool singlebyte = (iflags.over_view
 			      || iflags.traditional_view || !inmap);
 #endif
 	int curtyp;

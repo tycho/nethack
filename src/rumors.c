@@ -66,7 +66,7 @@ char *
 getrumor(truth, rumor_buf, exclude_cookie)
 int truth; /* 1=true, -1=false, 0=either */
 char *rumor_buf;
-boolean exclude_cookie; 
+bool exclude_cookie; 
 {
 	dlb	*rumors;
 	long tidbit, beginning;
@@ -142,7 +142,7 @@ int mechanism;
 		"This cookie has a scrap of paper inside.";
 	const char *line;
 	char buf[BUFSZ];
-	boolean reading = (mechanism == BY_COOKIE ||
+	bool reading = (mechanism == BY_COOKIE ||
 			   mechanism == BY_PAPER);
 
 	if (reading) {
@@ -231,8 +231,8 @@ int fd;
 
 void
 outoracle(special, delphi)
-boolean special;
-boolean delphi;
+bool special;
+bool delphi;
 {
 	char	line[COLNO];
 	char	*endp;
@@ -363,7 +363,7 @@ register struct monst *oracl;
 		    /* 5 pts if very 1st, or 2 pts if major already done */
 		u.uevent.minor_oracle = TRUE;
 	} else {
-		boolean cheapskate = u_pay < major_cost;
+		bool cheapskate = u_pay < major_cost;
 		outoracle(cheapskate, TRUE);
 		if (!cheapskate && !u.uevent.major_oracle)
 		    add_xpts = u_pay / (u.uevent.minor_oracle ? 25 : 10);

@@ -6,18 +6,18 @@
 #ifdef OVLB
 
 STATIC_DCL void FDECL(do_oname, (struct obj *));
-static void FDECL(getpos_help, (BOOLEAN_P,const char *));
+static void FDECL(getpos_help, (BOOL_P,const char *));
 
 extern const char what_is_an_unknown_object[];		/* from pager.c */
 
 /* the response for '?' help request in getpos() */
 static void
 getpos_help(force, goal)
-boolean force;
+bool force;
 const char *goal;
 {
     char sbuf[BUFSZ];
-    boolean doing_what_is;
+    bool doing_what_is;
     winid tmpwin = create_nhwindow(NHW_MENU);
 
     Sprintf(sbuf, "Use [%s] to move the cursor to %s.",
@@ -41,13 +41,13 @@ const char *goal;
 int
 getpos(cc, force, goal)
 coord *cc;
-boolean force;
+bool force;
 const char *goal;
 {
     int result = 0;
     int cx, cy, i, c;
     int sidx, tx, ty;
-    boolean msg_given = TRUE;	/* clear message window by default */
+    bool msg_given = TRUE;	/* clear message window by default */
     static const char pick_chars[] = ".,;:";
     const char *cp;
     const char *sdp;
@@ -361,7 +361,7 @@ const char *name;
 	}
 
 	if (obj->owornmask) {
-		boolean save_twoweap = u.twoweap;
+		bool save_twoweap = u.twoweap;
 		/* unwearing the old instance will clear dual-wield mode
 		   if this object is either of the two weapons */
 		setworn((struct obj *)0, obj->owornmask);
@@ -581,12 +581,12 @@ int suppress;
 /* SUPPRESS_IT, SUPPRESS_INVISIBLE, SUPPRESS_HALLUCINATION, SUPPRESS_SADDLE.
  * EXACT_NAME: combination of all the above
  */
-boolean called;
+bool called;
 {
 	static char buf[BUFSZ];
 	struct permonst *mdat = mtmp->data;
-	boolean do_hallu, do_invis, do_it, do_saddle;
-	boolean name_at_start, has_adjectives;
+	bool do_hallu, do_invis, do_it, do_saddle;
+	bool name_at_start, has_adjectives;
 	char *bp;
 
 	if (program_state.gameover)
@@ -684,7 +684,7 @@ boolean called;
 		name_at_start = TRUE;
 	    } else if (called) {
 		Sprintf(eos(buf), "%s called %s", mdat->mname, name);
-		name_at_start = (boolean)type_is_pname(mdat);
+		name_at_start = (bool)type_is_pname(mdat);
 	    } else if (is_mplayer(mdat) && (bp = strstri(name, " the ")) != 0) {
 		/* <name> the <adjective> <invisible> <saddled> <rank> */
 		char pbuf[BUFSZ];
@@ -705,12 +705,12 @@ boolean called;
 	    char pbuf[BUFSZ];
 	    Strcpy(pbuf, rank_of((int)mtmp->m_lev,
 				 monsndx(mdat),
-				 (boolean)mtmp->female));
+				 (bool)mtmp->female));
 	    Strcat(buf, lcase(pbuf));
 	    name_at_start = FALSE;
 	} else {
 	    Strcat(buf, mdat->mname);
-	    name_at_start = (boolean)type_is_pname(mdat);
+	    name_at_start = (bool)type_is_pname(mdat);
 	}
 
 	if (name_at_start && (article == ARTICLE_YOUR || !has_adjectives)) {

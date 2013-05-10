@@ -16,7 +16,7 @@ typedef struct tty_mi {
     long count;			/* user count */
     char *str;			/* description string (including accelerator) */
     int attr;			/* string attribute */
-    boolean selected;		/* TRUE if selected by user */
+    bool selected;		/* TRUE if selected by user */
     char selector;		/* keyboard accelerator */
     char gselector;		/* group accelerator */
 } tty_menu_item;
@@ -25,7 +25,7 @@ typedef struct tty_mi {
 struct WinDesc {
     int flags;			/* window flags */
     xchar type;			/* type of window */
-    boolean active;		/* true if window is active */
+    bool active;		/* true if window is active */
     uchar offx, offy;		/* offset from topleft of display */
     short rows, cols;		/* dimensions */
     short curx, cury;		/* current cursor position */
@@ -173,15 +173,15 @@ E void FDECL(tty_suspend_nhwindows, (const char *));
 E void NDECL(tty_resume_nhwindows);
 E winid FDECL(tty_create_nhwindow, (int));
 E void FDECL(tty_clear_nhwindow, (winid));
-E void FDECL(tty_display_nhwindow, (winid, BOOLEAN_P));
+E void FDECL(tty_display_nhwindow, (winid, BOOL_P));
 E void FDECL(tty_dismiss_nhwindow, (winid));
 E void FDECL(tty_destroy_nhwindow, (winid));
 E void FDECL(tty_curs, (winid,int,int));
 E void FDECL(tty_putstr, (winid, int, const char *));
-E void FDECL(tty_display_file, (const char *, BOOLEAN_P));
+E void FDECL(tty_display_file, (const char *, BOOL_P));
 E void FDECL(tty_start_menu, (winid));
 E void FDECL(tty_add_menu, (winid,int,const ANY_P *,
-			CHAR_P,CHAR_P,int,const char *, BOOLEAN_P));
+			CHAR_P,CHAR_P,int,const char *, BOOL_P));
 E void FDECL(tty_end_menu, (winid, const char *));
 E int FDECL(tty_select_menu, (winid, int, MENU_ITEM_P **));
 E char FDECL(tty_message_menu, (CHAR_P,int,const char *));

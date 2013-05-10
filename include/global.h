@@ -51,13 +51,11 @@
  * since otherwise comparisons with signed quantities are done incorrectly
  */
 typedef schar	xchar;
-#ifndef SKIP_BOOLEAN
-typedef xchar	boolean;		/* 0 or 1 */
-#endif
+#include <stdbool.h>
 
 #ifndef TRUE		/* defined in some systems' native include files */
-#define TRUE	((boolean)1)
-#define FALSE	((boolean)0)
+#define TRUE	((bool)1)
+#define FALSE	((bool)0)
 #endif
 
 #ifndef STRNCMPI
@@ -90,7 +88,7 @@ typedef xchar	boolean;		/* 0 or 1 */
 # define XCHAR_P xchar
 # define SHORT_P short
 #ifndef SKIP_BOOLEAN
-# define BOOLEAN_P boolean
+# define BOOL_P bool
 #endif
 # define ALIGNTYP_P aligntyp
 #else
@@ -100,7 +98,7 @@ typedef xchar	boolean;		/* 0 or 1 */
 #  define UCHAR_P int
 #  define XCHAR_P int
 #  define SHORT_P int
-#  define BOOLEAN_P int
+#  define BOOL_P int
 #  define ALIGNTYP_P int
 # endif
 #endif

@@ -23,7 +23,7 @@ moveloop()
     int abort_lev;
 #endif
     int moveamt = 0, wtcap = 0, change = 0;
-    boolean didmove = FALSE, monscanmove = FALSE;
+    bool didmove = FALSE, monscanmove = FALSE;
 
     flags.moonphase = phase_of_the_moon();
     if(flags.moonphase == FULL_MOON) {
@@ -544,10 +544,10 @@ newgame()
 /* show "welcome [back] to nethack" message at program startup */
 void
 welcome(new_game)
-boolean new_game;	/* false => restoring an old game */
+bool new_game;	/* false => restoring an old game */
 {
     char buf[BUFSZ];
-    boolean currentgend = Upolyd ? u.mfemale : flags.female;
+    bool currentgend = Upolyd ? u.mfemale : flags.female;
 
     /*
      * The "welcome back" message always describes your innate form

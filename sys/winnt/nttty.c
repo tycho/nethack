@@ -20,8 +20,8 @@
 
 void FDECL(cmov, (int, int));
 void FDECL(nocmov, (int, int));
-int FDECL(process_keystroke, (INPUT_RECORD *, boolean *,
-    BOOLEAN_P numberpad, int portdebug));
+int FDECL(process_keystroke, (INPUT_RECORD *, bool *,
+    BOOL_P numberpad, int portdebug));
 
 /*
  * The following WIN32 Console API routines are used in this file.
@@ -58,17 +58,17 @@ int GUILaunched;
 static BOOL FDECL(CtrlHandler, (DWORD));
 
 #ifdef PORT_DEBUG
-static boolean display_cursor_info = FALSE;
+static bool display_cursor_info = FALSE;
 #endif
 
-extern boolean getreturn_enabled;	/* from sys/share/pcsys.c */
+extern bool getreturn_enabled;	/* from sys/share/pcsys.c */
 
 /* dynamic keystroke handling .DLL support */
 typedef int (__stdcall * PROCESS_KEYSTROKE)(
     HANDLE,
     INPUT_RECORD *,
-    boolean *,
-    BOOLEAN_P,
+    bool *,
+    BOOL_P,
     int
 );
 
@@ -81,7 +81,7 @@ typedef int (__stdcall * CHECKINPUT)(
 	HANDLE,
 	INPUT_RECORD *,
 	DWORD *,
-	BOOLEAN_P,
+	BOOL_P,
 	int,
 	int *,
 	coord *
@@ -303,8 +303,8 @@ nttty_open()
 
 int process_keystroke(ir, valid, numberpad, portdebug)
 INPUT_RECORD *ir;
-boolean *valid;
-boolean numberpad;
+bool *valid;
+bool numberpad;
 int portdebug;
 {
 	int ch = pProcessKeystroke(hConIn, ir, valid, numberpad, portdebug);
@@ -761,7 +761,7 @@ void
 win32con_debug_keystrokes()
 {
 	DWORD count;
-	boolean valid = 0;
+	bool valid = 0;
 	int ch;
 	xputs("\n");
 	while (!valid || ch != 27) {

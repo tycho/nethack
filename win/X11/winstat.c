@@ -43,7 +43,7 @@ static void FDECL(destroy_fancy_status, (struct xwindow *));
 void
 create_status_window(wp, create_popup, parent)
     struct xwindow *wp;			/* window pointer */
-    boolean create_popup;
+    bool create_popup;
     Widget parent;
 {
     XFontStruct *fs;
@@ -185,8 +185,8 @@ struct X_status_value {
     Widget  w;			/* widget of name/value pair */
     long    last_value;		/* value displayed */
     int	    turn_count;		/* last time the value changed */
-    boolean set;		/* if hilighed */
-    boolean after_init;		/* don't hilight on first change (init) */
+    bool set;		/* if hilighed */
+    bool after_init;		/* don't hilight on first change (init) */
 };
 
 /* valid type values */
@@ -403,11 +403,11 @@ update_val(attr_rec, new_value)
 	XtSetValues(attr_rec->w, args, ONE);
 
     } else {	/* a value pair */
-	boolean force_update = FALSE;
+	bool force_update = FALSE;
 
 	/* special case: time can be enabled & disabled */
 	if (attr_rec == &shown_stats[F_TIME]) {
-	    static boolean flagtime = TRUE;
+	    static bool flagtime = TRUE;
 
 	    if(flags.time && !flagtime) {
 		set_name(attr_rec->w, shown_stats[F_TIME].name);
@@ -423,7 +423,7 @@ update_val(attr_rec, new_value)
 
 	/* special case: exp can be enabled & disabled */
 	else if (attr_rec == &shown_stats[F_EXP]) {
-	    static boolean flagexp = TRUE;
+	    static bool flagexp = TRUE;
 #ifdef EXP_ON_BOTL
 
 	    if (flags.showexp && !flagexp) {
@@ -448,7 +448,7 @@ update_val(attr_rec, new_value)
 
 	/* special case: score can be enabled & disabled */
 	else if (attr_rec == &shown_stats[F_SCORE]) {
-	    static boolean flagscore = TRUE;
+	    static bool flagscore = TRUE;
 #ifdef SCORE_ON_BOTL
 
 	    if(flags.showscore && !flagscore) {
@@ -472,7 +472,7 @@ update_val(attr_rec, new_value)
 	}
         /* special case: weight can be enabled & disabled - clive */
         else if (attr_rec == &shown_stats[F_WEIGHT]) {
-		static boolean flagweight = TRUE;
+		static bool flagweight = TRUE;
 #ifdef SHOW_WEIGHT
 		if (flags.showweight && !flagweight) {
 			set_name(attr_rec->w, shown_stats[F_WEIGHT].name);
@@ -493,7 +493,7 @@ update_val(attr_rec, new_value)
 		return;
 #endif
         } else if (attr_rec == &shown_stats[F_WEIGHTCAP]) {
-		static boolean flagweightcap = TRUE;
+		static bool flagweightcap = TRUE;
 #ifdef SHOW_WEIGHT
 		if (flags.showweight && !flagweightcap) {
 			set_name(attr_rec->w, shown_stats[F_WEIGHTCAP].name);
@@ -517,7 +517,7 @@ update_val(attr_rec, new_value)
 	}
 	/* special case: when polymorphed, show "HD", disable exp */
 	else if (attr_rec == &shown_stats[F_LEVEL]) {
-	    static boolean lev_was_poly = FALSE;
+	    static bool lev_was_poly = FALSE;
 
 	    if (u.mtimedone && !lev_was_poly) {
 		force_update = TRUE;
@@ -529,7 +529,7 @@ update_val(attr_rec, new_value)
 		lev_was_poly = FALSE;
 	    }
 	} else if (attr_rec == &shown_stats[F_EXP]) {
-	    static boolean exp_was_poly = FALSE;
+	    static bool exp_was_poly = FALSE;
 
 	    if (u.mtimedone && !exp_was_poly) {
 		force_update = TRUE;
@@ -628,7 +628,7 @@ update_fancy_status(wp)
 	    /*
 	     * Label stats.  With the exceptions of hunger, encumbrance, sick
 	     * these are either on or off.  Pleae leave the ternary operators
-	     * the way they are.  I want to specify 0 or 1, not a boolean.
+	     * the way they are.  I want to specify 0 or 1, not a bool.
 	     */
 	    case F_HUNGER:	val = (long) u.uhs;			break;
 	    case F_CONFUSED:	val = (long) Confusion     ? 1L : 0L;	break;
@@ -679,7 +679,7 @@ update_fancy_status(wp)
 		 *
 		 * Break out with this.
 		 */
-		static boolean active = FALSE;
+		static bool active = FALSE;
 		if (!active) {
 		    active = TRUE;
 		    impossible("update_other: unknown shown value");

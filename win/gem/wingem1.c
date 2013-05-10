@@ -27,7 +27,7 @@ typedef signed char schar;
 #define UCHAR_P uchar
 #define XCHAR_P xchar
 #define SHORT_P short
-#define BOOLEAN_P boolean
+#define BOOL_P bool
 #define ALIGNTYP_P aligntyp
 typedef signed char	xchar;
 #include "wingem.h"
@@ -36,7 +36,7 @@ typedef signed char	xchar;
 #undef UCHAR_P
 #undef XCHAR_P
 #undef SHORT_P
-#undef BOOLEAN_P
+#undef BOOL_P
 #undef ALIGNTYP_P
 #undef NDECL
 #undef FDECL
@@ -248,7 +248,7 @@ void mar_clear_messagewin(void){
 	mar_display_nhwindow(WIN_MESSAGE);
 }
 
-void clipbrd_save(void *data,int cnt,boolean append,boolean is_inv){
+void clipbrd_save(void *data,int cnt,bool append,bool is_inv){
 	char path[MAX_PATH],*text,*crlf="\r\n";
 	long handle;
 	int i;
@@ -847,7 +847,7 @@ static USERBLK ub_lines={draw_lines, 0L}, ub_msg={draw_msgline, 0L},
 
 /**************************** rsc_funktionen *****************************/
 
-void my_close_dialog(DIAINFO *dialog,boolean shrink_box){
+void my_close_dialog(DIAINFO *dialog,bool shrink_box){
 	close_dialog(dialog,shrink_box);
 	Event_Timer(0,0,TRUE);
 }

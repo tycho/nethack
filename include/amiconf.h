@@ -98,7 +98,7 @@ extern void FDECL(ami_mkargline, (int *, char **[]));
 extern void ami_wininit_data(void);
 
 #define FromWBench 0 /* A hint for compiler ... */
-/* extern boolean FromWBench;	/* how were we run? */
+/* extern bool FromWBench;	/* how were we run? */
 extern int ami_argc;
 extern char **ami_argv;
 

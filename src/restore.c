@@ -19,16 +19,16 @@ static int NDECL(mgetc);
 #endif
 STATIC_DCL void NDECL(find_lev_obj);
 STATIC_DCL void FDECL(restlevchn, (int));
-STATIC_DCL void FDECL(restdamage, (int,BOOLEAN_P));
-STATIC_DCL struct obj *FDECL(restobjchn, (int,BOOLEAN_P,BOOLEAN_P));
-STATIC_DCL struct monst *FDECL(restmonchn, (int,BOOLEAN_P));
+STATIC_DCL void FDECL(restdamage, (int,BOOL_P));
+STATIC_DCL struct obj *FDECL(restobjchn, (int,BOOL_P,BOOL_P));
+STATIC_DCL struct monst *FDECL(restmonchn, (int,BOOL_P));
 STATIC_DCL struct fruit *FDECL(loadfruitchn, (int));
 STATIC_DCL void FDECL(freefruitchn, (struct fruit *));
 STATIC_DCL void FDECL(ghostfruit, (struct obj *));
-STATIC_DCL boolean FDECL(restgamestate, (int, unsigned int *, unsigned int *));
+STATIC_DCL bool FDECL(restgamestate, (int, unsigned int *, unsigned int *));
 STATIC_DCL void FDECL(restlevelstate, (unsigned int, unsigned int));
 STATIC_DCL int FDECL(restlevelfile, (int,XCHAR_P));
-STATIC_DCL void FDECL(reset_oattached_mids, (BOOLEAN_P));
+STATIC_DCL void FDECL(reset_oattached_mids, (BOOL_P));
 
 /*
  * Save a mapping of IDs from ghost levels to the current level.  This
@@ -57,7 +57,7 @@ extern int amii_numcolors;
 
 #include "quest.h"
 
-boolean restoring = FALSE;
+bool restoring = FALSE;
 static NEARDATA struct fruit *oldfruit;
 static NEARDATA long omoves;
 
@@ -99,7 +99,7 @@ find_lev_obj()
  */
 void
 inven_inuse(quietly)
-boolean quietly;
+bool quietly;
 {
 	register struct obj *otmp, *otmp2;
 
@@ -149,7 +149,7 @@ register int fd;
 STATIC_OVL void
 restdamage(fd, ghostly)
 int fd;
-boolean ghostly;
+bool ghostly;
 {
 	int counter;
 	struct damage *tmp_dam;
@@ -192,7 +192,7 @@ boolean ghostly;
 STATIC_OVL struct obj *
 restobjchn(fd, ghostly, frozen)
 register int fd;
-boolean ghostly, frozen;
+bool ghostly, frozen;
 {
 	register struct obj *otmp, *otmp2 = 0;
 	register struct obj *first = (struct obj *)0;
@@ -242,13 +242,13 @@ boolean ghostly, frozen;
 STATIC_OVL struct monst *
 restmonchn(fd, ghostly)
 register int fd;
-boolean ghostly;
+bool ghostly;
 {
 	register struct monst *mtmp, *mtmp2 = 0;
 	register struct monst *first = (struct monst *)0;
 	int xl;
 	struct permonst *monbegin;
-	boolean moved;
+	bool moved;
 
 	/* get the original base address */
 	mread(fd, (genericptr_t)&monbegin, sizeof(monbegin));
@@ -352,13 +352,13 @@ register struct obj *otmp;
 }
 
 STATIC_OVL
-boolean
+bool
 restgamestate(fd, stuckid, steedid)
 register int fd;
 unsigned int *stuckid, *steedid;	/* STEED */
 {
 	/* discover is actually flags.explore */
-	boolean remember_discover = discover;
+	bool remember_discover = discover;
 	struct obj *otmp;
 	int uid;
 
@@ -695,7 +695,7 @@ void
 getlev(fd, pid, lev, ghostly)
 int fd, pid;
 xchar lev;
-boolean ghostly;
+bool ghostly;
 {
 	register struct trap *trap;
 	register struct monst *mtmp;
@@ -942,7 +942,7 @@ add_id_mapping(gid, nid)
  * in the new ID value.  Otherwise, return false and return -1 in the new
  * ID.
  */
-boolean
+bool
 lookup_id_mapping(gid, nidp)
     unsigned gid, *nidp;
 {
@@ -970,7 +970,7 @@ lookup_id_mapping(gid, nidp)
 
 STATIC_OVL void
 reset_oattached_mids(ghostly)
-boolean ghostly;
+bool ghostly;
 {
     struct obj *otmp;
     unsigned oldid, nid;

@@ -13,7 +13,7 @@ int FDECL(vms_link, (const char *,const char *));
 int FDECL(vms_unlink, (const char *));
 int FDECL(vms_creat, (const char *,unsigned int));
 int FDECL(vms_open, (const char *,int,unsigned int));
-boolean FDECL(same_dir, (const char *,const char *));
+bool FDECL(same_dir, (const char *,const char *));
 int FDECL(c__translate, (int));
 char *FDECL(vms_basename, (const char *));
 
@@ -152,7 +152,7 @@ unsigned int mode;
    when HACKDIR is defined in the environment (or specified via -d on
    the command line).  This version doesn't handle Unix-style file specs.
  */
-boolean
+bool
 same_dir(d1, d2)
 const char *d1, *d2;
 {

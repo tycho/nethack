@@ -31,10 +31,10 @@ STATIC_OVL void
 polyman(fmt, arg)
 const char *fmt, *arg;
 {
-	boolean sticky = sticks(youmonst.data) && u.ustuck && !u.uswallow,
+	bool sticky = sticks(youmonst.data) && u.ustuck && !u.uswallow,
 		was_mimicking = (youmonst.m_ap_type == M_AP_OBJECT);
-	boolean could_pass_walls = Passes_walls;
-	boolean was_blind = !!Blind;
+	bool could_pass_walls = Passes_walls;
+	bool was_blind = !!Blind;
 
 	if (Upolyd) {
 		u.acurr = u.macurr;	/* restore old attribs */
@@ -100,7 +100,7 @@ change_sex()
 {
 	/* setting u.umonster for caveman/cavewoman or priest/priestess
 	   swap unintentionally makes `Upolyd' appear to be true */
-	boolean already_polyd = (boolean) Upolyd;
+	bool already_polyd = (bool) Upolyd;
 
 	/* Some monsters are always of one sex and their sex can't be changed */
 	/* succubi/incubi can change, but are handled below */
@@ -218,18 +218,18 @@ dead: /* we come directly here if their experience level went to 0 or less */
 
 void
 polyself(forcecontrol)
-boolean forcecontrol;     
+bool forcecontrol;     
 {
 	char buf[BUFSZ];
 	int old_light, new_light;
 	int mntmp = NON_PM;
 	int tries=0;
-	boolean draconian = (uarm &&
+	bool draconian = (uarm &&
 				uarm->otyp >= GRAY_DRAGON_SCALE_MAIL &&
 				uarm->otyp <= YELLOW_DRAGON_SCALES);
-	boolean iswere = (u.ulycn >= LOW_PM || is_were(youmonst.data));
-	boolean isvamp = (youmonst.data->mlet == S_VAMPIRE || u.umonnum == PM_VAMPIRE_BAT);
-	boolean was_floating = (Levitation || Flying);
+	bool iswere = (u.ulycn >= LOW_PM || is_were(youmonst.data));
+	bool isvamp = (youmonst.data->mlet == S_VAMPIRE || u.umonnum == PM_VAMPIRE_BAT);
+	bool was_floating = (Levitation || Flying);
 
         if(!Polymorph_control && !forcecontrol && !draconian && !iswere && !isvamp) {
 	    if (rn2(20) > ACURR(A_CON)) {
@@ -329,9 +329,9 @@ int
 polymon(mntmp)	/* returns 1 if polymorph successful */
 int	mntmp;
 {
-	boolean sticky = sticks(youmonst.data) && u.ustuck && !u.uswallow,
+	bool sticky = sticks(youmonst.data) && u.ustuck && !u.uswallow,
 		was_blind = !!Blind, dochange = FALSE;
-	boolean could_pass_walls = Passes_walls;
+	bool could_pass_walls = Passes_walls;
 	int mlvl;
 
 	if (mvitals[mntmp].mvflags & G_GENOD) {	/* allow G_EXTINCT */
@@ -1050,7 +1050,7 @@ dogaze()
 int
 dohide()
 {
-	boolean ismimic = youmonst.data->mlet == S_MIMIC;
+	bool ismimic = youmonst.data->mlet == S_MIMIC;
 
 	if (u.uundetected || (ismimic && youmonst.m_ap_type != M_AP_NOTHING)) {
 		You("are already hiding.");
@@ -1113,7 +1113,7 @@ uunstick()
 
 void
 skinback(silently)
-boolean silently;
+bool silently;
 {
 	if (uskin) {
 		if (!silently) Your("skin returns to its original form.");

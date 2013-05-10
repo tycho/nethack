@@ -110,7 +110,7 @@ void curses_create_main_windows()
     int status_orientation = 0;
     int border_space = 0;
     int hspace = term_cols - 80;
-    boolean borders = FALSE;
+    bool borders = FALSE;
 
     switch (iflags.wc2_windowborders)
     {

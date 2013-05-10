@@ -62,13 +62,13 @@ STATIC_DCL void FDECL(topten_print, (const char *));
 STATIC_DCL void FDECL(topten_print_bold, (const char *));
 STATIC_DCL xchar FDECL(observable_depth, (d_level *));
 STATIC_DCL void NDECL(outheader);
-STATIC_DCL void FDECL(outentry, (int,struct toptenentry *,BOOLEAN_P));
+STATIC_DCL void FDECL(outentry, (int,struct toptenentry *,BOOL_P));
 STATIC_DCL void FDECL(readentry, (FILE *,struct toptenentry *));
 STATIC_DCL void FDECL(writeentry, (FILE *,struct toptenentry *));
 STATIC_DCL void FDECL(free_ttlist, (struct toptenentry *));
-STATIC_DCL int FDECL(classmon, (char *,BOOLEAN_P));
+STATIC_DCL int FDECL(classmon, (char *,BOOL_P));
 STATIC_DCL int FDECL(score_wanted,
-		(BOOLEAN_P, int,struct toptenentry *,int,const char **,int));
+		(BOOL_P, int,struct toptenentry *,int,const char **,int));
 #ifdef NO_SCAN_BRACK
 STATIC_DCL void FDECL(nsb_mung_line,(char*));
 STATIC_DCL void FDECL(nsb_unmung_line,(char*));
@@ -250,7 +250,7 @@ int how;
 	struct toptenentry *t1;
 	FILE *rfile;
 	register int flg = 0;
-	boolean t0_used;
+	bool t0_used;
 #ifdef LOGFILE
 	FILE *lfile;
 #endif /* LOGFILE */
@@ -583,9 +583,9 @@ STATIC_OVL void
 outentry(rank, t1, so)
 struct toptenentry *t1;
 int rank;
-boolean so;
+bool so;
 {
-	boolean second_line = TRUE;
+	bool second_line = TRUE;
 	char linebuf[BUFSZ];
 	char *bp, hpbuf[24], linebuf3[BUFSZ];
 	int hppos, lngr;
@@ -734,7 +734,7 @@ boolean so;
 
 STATIC_OVL int
 score_wanted(current_ver, rank, t1, playerct, players, uid)
-boolean current_ver;
+bool current_ver;
 int rank;
 struct toptenentry *t1;
 int playerct;
@@ -786,10 +786,10 @@ char **argv;
 {
 	const char **players;
 	int playerct, rank;
-	boolean current_ver = TRUE, init_done = FALSE;
+	bool current_ver = TRUE, init_done = FALSE;
 	register struct toptenentry *t1;
 	FILE *rfile;
-	boolean match_found = FALSE;
+	bool match_found = FALSE;
 	register int i;
 	char pbuf[BUFSZ];
 	int uid = -1;
@@ -923,7 +923,7 @@ char **argv;
 STATIC_OVL int
 classmon(plch, fem)
 	char *plch;
-	boolean fem;
+	bool fem;
 {
 	int i;
 

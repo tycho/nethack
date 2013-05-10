@@ -283,7 +283,7 @@ ClearDialogResponse(w)
 void
 positionpopup(w, bottom)
     Widget w;
-    boolean bottom;	/* position y on bottom? */
+    bool bottom;	/* position y on bottom? */
 {
     Arg args[3];
     Cardinal num_args;

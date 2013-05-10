@@ -33,21 +33,21 @@ STATIC_PTR void FDECL(done_intr, (int));
 static void FDECL(done_hangup, (int));
 # endif
 #endif
-STATIC_DCL void FDECL(disclose,(int,BOOLEAN_P));
+STATIC_DCL void FDECL(disclose,(int,BOOL_P));
 STATIC_DCL void FDECL(get_valuables, (struct obj *));
 STATIC_DCL void FDECL(sort_valuables, (struct valuable_data *,int));
-STATIC_DCL void FDECL(artifact_score, (struct obj *,BOOLEAN_P,winid));
+STATIC_DCL void FDECL(artifact_score, (struct obj *,BOOL_P,winid));
 STATIC_DCL void FDECL(savelife, (int));
-void FDECL(list_vanquished, (CHAR_P,BOOLEAN_P));  /* showborn patch */
+void FDECL(list_vanquished, (CHAR_P,BOOL_P));  /* showborn patch */
 #ifdef DUMP_LOG
 extern char msgs[][BUFSZ];
 extern int lastmsg;
-void FDECL(do_vanquished, (int, BOOLEAN_P, BOOLEAN_P));
-STATIC_DCL void FDECL(list_genocided, (int, BOOLEAN_P, BOOLEAN_P));
+void FDECL(do_vanquished, (int, BOOL_P, BOOL_P));
+STATIC_DCL void FDECL(list_genocided, (int, BOOL_P, BOOL_P));
 #else
-STATIC_DCL void FDECL(list_genocided, (CHAR_P,BOOLEAN_P));
+STATIC_DCL void FDECL(list_genocided, (CHAR_P,BOOL_P));
 #endif /* DUMP_LOG */
-STATIC_DCL boolean FDECL(should_query_disclose_option, (int,char *));
+STATIC_DCL bool FDECL(should_query_disclose_option, (int,char *));
 
 #if defined(__BEOS__) || defined(MICRO) || defined(WIN32) || defined(OS2)
 extern void FDECL(nethack_exit,(int));
@@ -259,7 +259,7 @@ done_in_by(mtmp)
 register struct monst *mtmp;
 {
 	char buf[BUFSZ];
-	boolean distorted = (boolean)(Hallucination && canspotmon(mtmp));
+	bool distorted = (bool)(Hallucination && canspotmon(mtmp));
 
 	You("die...");
 	mark_synch();	/* flush buffered screen output */
@@ -385,7 +385,7 @@ panic VA_DECL(const char *, str)
 	done(PANICKED);
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 should_query_disclose_option(category, defquery)
 int category;
 char *defquery;
@@ -426,11 +426,11 @@ char *defquery;
 STATIC_OVL void
 disclose(how,taken)
 int how;
-boolean taken;
+bool taken;
 {
 	char	c = 0, defquery;
 	char	qbuf[QBUFSZ];
-	boolean ask;
+	bool ask;
 
 	if (invent) {
 	    if(taken)
@@ -447,7 +447,7 @@ boolean taken;
 	    }
 		{
 #ifdef DUMP_LOG
-			boolean want_disp = (c == 'y')? TRUE: FALSE;
+			bool want_disp = (c == 'y')? TRUE: FALSE;
 #endif
 			struct obj *obj;
 
@@ -605,7 +605,7 @@ int size;		/* max value is less than 20 */
 STATIC_OVL void
 artifact_score(list, counting, endwin)
 struct obj *list;
-boolean counting;	/* true => add up points; false => display them */
+bool counting;	/* true => add up points; false => display them */
 winid endwin;
 {
     char pbuf[BUFSZ];
@@ -653,10 +653,10 @@ int how;
 	char paranoid_buf[BUFSZ];
 	int really_bon = TRUE;
 #endif
-	boolean taken;
+	bool taken;
 	char kilbuf[BUFSZ], pbuf[BUFSZ];
 	winid endwin = WIN_ERR;
-	boolean bones_ok, have_windows = iflags.window_inited;
+	bool bones_ok, have_windows = iflags.window_inited;
 	struct obj *corpse = (struct obj *)0;
 	long umoney;
 	int i;
@@ -1105,7 +1105,7 @@ die:
 void
 container_contents(list, identified, all_containers)
 struct obj *list;
-boolean identified, all_containers;
+bool identified, all_containers;
 #ifdef DUMP_LOG
 {
 	do_containerconts(list, identified, all_containers, FALSE, TRUE);
@@ -1113,7 +1113,7 @@ boolean identified, all_containers;
 
 void do_containerconts(list, identified, all_containers, want_dump, want_disp)
 struct obj *list;
-boolean identified, all_containers, want_dump, want_disp;
+bool identified, all_containers, want_dump, want_disp;
 #endif
 /* The original container_contents function */
 {
@@ -1254,7 +1254,7 @@ int status;
 void		/* showborn patch */
 list_vanquished(defquery, ask)
 char defquery;
-boolean ask;
+bool ask;
 #ifdef DUMP_LOG
 {
   do_vanquished(defquery, ask, FALSE);
@@ -1263,8 +1263,8 @@ boolean ask;
 void
 do_vanquished(defquery, ask, want_dump)
 int defquery;
-boolean ask;
-boolean want_dump;
+bool ask;
+bool want_dump;
 #endif
 {
     register int i, lev;
@@ -1376,13 +1376,13 @@ num_genocides()
 STATIC_OVL void
 list_genocided(defquery, ask, want_dump)
 int defquery;
-boolean ask;
-boolean want_dump;
+bool ask;
+bool want_dump;
 #else
 STATIC_OVL void
 list_genocided(defquery, ask)
 char defquery;
-boolean ask;
+bool ask;
 #endif
 {
     register int i;

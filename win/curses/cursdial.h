@@ -20,13 +20,13 @@ void curses_create_nhmenu(winid wid);
 
 void curses_add_nhmenu_item(winid wid, const ANY_P *identifier,
  CHAR_P accelerator, CHAR_P group_accel, int attr, const char *str,
- BOOLEAN_P presel);
+ BOOL_P presel);
 
 void curses_finalize_nhmenu(winid wid, const char *prompt);
 
 int curses_display_nhmenu(winid wid, int how, MENU_ITEM_P **_selected);
 
-boolean curses_menu_exists(winid wid);
+bool curses_menu_exists(winid wid);
 
 void curses_del_menu(winid wid);
 

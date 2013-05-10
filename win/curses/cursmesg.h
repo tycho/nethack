@@ -4,7 +4,7 @@
 
 /* Global declarations */
 
-void curses_message_win_puts(const char *message, boolean recursed);
+void curses_message_win_puts(const char *message, bool recursed);
 
 int curses_more(void);
 

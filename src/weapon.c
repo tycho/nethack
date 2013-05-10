@@ -9,7 +9,7 @@
 #include "hack.h"
 
 #ifdef DUMP_LOG
-STATIC_DCL int FDECL(enhance_skill, (boolean));
+STATIC_DCL int FDECL(enhance_skill, (bool));
 #endif
 
 /* Categories whose names don't come from OBJ_NAME(objects[type])
@@ -97,9 +97,9 @@ int skill;
 
 #endif	/* OVLB */
 
-STATIC_DCL boolean FDECL(can_advance, (int, BOOLEAN_P));
-STATIC_DCL boolean FDECL(could_advance, (int));
-STATIC_DCL boolean FDECL(peaked_skill, (int));
+STATIC_DCL bool FDECL(can_advance, (int, BOOL_P));
+STATIC_DCL bool FDECL(could_advance, (int));
+STATIC_DCL bool FDECL(peaked_skill, (int));
 STATIC_DCL int FDECL(slots_required, (int));
 
 #ifdef OVL1
@@ -131,7 +131,7 @@ struct monst *mon;
 {
 	int	tmp = 0;
 	struct permonst *ptr = mon->data;
-	boolean Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
+	bool Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
 
 	if (Is_weapon)
 		tmp += otmp->spe;
@@ -202,7 +202,7 @@ struct monst *mon;
 {
 	int tmp = 0, otyp = otmp->otyp;
 	struct permonst *ptr = mon->data;
-	boolean Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
+	bool Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
 
 	if (otyp == CREAM_PIE) return 0;
 
@@ -490,8 +490,8 @@ register struct monst *mtmp;
 {
 	register struct obj *otmp;
 	register int i;
-	boolean strong = strongmonst(mtmp->data);
-	boolean wearing_shield = (mtmp->misc_worn_check & W_ARMS) != 0;
+	bool strong = strongmonst(mtmp->data);
+	bool wearing_shield = (mtmp->misc_worn_check & W_ARMS) != 0;
 
 	/* prefer artifacts to everything else */
 	for(otmp=mtmp->minvent; otmp; otmp = otmp->nobj) {
@@ -528,7 +528,7 @@ register struct monst *mtmp;
 void
 possibly_unwield(mon, polyspot)
 struct monst *mon;
-boolean polyspot;
+bool polyspot;
 {
 	struct obj *obj, *mw_tmp;
 
@@ -782,10 +782,10 @@ int skill;
 
 /* return true if this skill can be advanced */
 /*ARGSUSED*/
-STATIC_OVL boolean
+STATIC_OVL bool
 can_advance(skill, speedy)
 int skill;
-boolean speedy;
+bool speedy;
 {
     return !P_RESTRICTED(skill)
 	    && P_SKILL(skill) < P_MAX_SKILL(skill) && (
@@ -799,7 +799,7 @@ boolean speedy;
 }
 
 /* return true if this skill could be advanced if more slots were available */
-STATIC_OVL boolean
+STATIC_OVL bool
 could_advance(skill)
 int skill;
 {
@@ -812,7 +812,7 @@ int skill;
 
 /* return true if this skill has reached its maximum and there's been enough
    practice to become eligible for the next step if that had been possible */
-STATIC_OVL boolean
+STATIC_OVL bool
 peaked_skill(skill)
 int skill;
 {
@@ -864,7 +864,7 @@ void dump_weapon_skill()
 	enhance_skill(TRUE);
 }
 
-int enhance_skill(boolean want_dump)
+int enhance_skill(bool want_dump)
 /* This is the original enhance_weapon_skill() function slightly modified
  * to write the skills to the dump file. I added the wrapper functions just
  * because it looked like the easiest way to add a parameter to the
@@ -879,10 +879,10 @@ int enhance_skill(boolean want_dump)
     menu_item *selected;
     anything any;
     winid win;
-    boolean speedy = FALSE;
+    bool speedy = FALSE;
 #ifdef DUMP_LOG
     char buf2[BUFSZ];
-    boolean logged;
+    bool logged;
 #endif
 
 #ifdef WIZARD
@@ -1079,7 +1079,7 @@ use_skill(skill,degree)
 int skill;
 int degree;
 {
-    boolean advance_before;
+    bool advance_before;
 
     if (skill != P_NONE && !P_RESTRICTED(skill)) {
 	advance_before = can_advance(skill, FALSE);

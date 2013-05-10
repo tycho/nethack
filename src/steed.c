@@ -11,7 +11,7 @@ static NEARDATA const char steeds[] = {
 	S_QUADRUPED, S_UNICORN, S_ANGEL, S_CENTAUR, S_DRAGON, S_JABBERWOCK, '\0'
 };
 
-STATIC_DCL boolean FDECL(landing_spot, (coord *, int, int));
+STATIC_DCL bool FDECL(landing_spot, (coord *, int, int));
 
 /* caller has decided that hero can't reach something while mounted */
 void
@@ -23,7 +23,7 @@ rider_cant_reach()
 /*** Putting the saddle on ***/
 
 /* Can this monster wear a saddle? */
-boolean
+bool
 can_saddle(mtmp)
 	struct monst *mtmp;
 {
@@ -156,7 +156,7 @@ use_saddle(otmp)
 /*** Riding the monster ***/
 
 /* Can we ride this monster?  Caller should also check can_saddle() */
-boolean
+bool
 can_ride(mtmp)
 	struct monst *mtmp;
 {
@@ -169,7 +169,7 @@ can_ride(mtmp)
 int
 doride()
 {
-	boolean forcemount = FALSE;
+	bool forcemount = FALSE;
 
 	if (u.usteed)
 	    dismount_steed(DISMOUNT_BYCHOICE);
@@ -186,10 +186,10 @@ doride()
 
 
 /* Start riding, with the given monster */
-boolean
+bool
 mount_steed(mtmp, force)
 	struct monst *mtmp;	/* The animal */
-	boolean force;		/* Quietly force this animal */
+	bool force;		/* Quietly force this animal */
 {
 	struct obj *otmp;
 	char buf[BUFSZ];
@@ -413,14 +413,14 @@ kick_steed()
  * room's walls, which is not what we want.
  * Adapted from mail daemon code.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 landing_spot(spot, reason, forceit)
 coord *spot;	/* landing position (we fill it in) */
 int reason;
 int forceit;
 {
     int i = 0, x, y, distance, min_distance = -1;
-    boolean found = FALSE;
+    bool found = FALSE;
     struct trap *t;
 
     /* avoid known traps (i == 0) and boulders, but allow them as a backup */
@@ -465,9 +465,9 @@ dismount_steed(reason)
 	struct obj *otmp;
 	coord cc;
 	const char *verb = "fall";
-	boolean repair_leg_damage = TRUE;
+	bool repair_leg_damage = TRUE;
 	unsigned save_utrap = u.utrap;
-	boolean have_spot = landing_spot(&cc,reason,0);
+	bool have_spot = landing_spot(&cc,reason,0);
 	
 	mtmp = u.usteed;		/* make a copy of steed pointer */
 	/* Sanity check */

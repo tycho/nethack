@@ -42,7 +42,7 @@ dev_name()
 {
 	register int i, m = 0, n = SIZE(developers);
 	register struct monst *mtmp;
-	register boolean match;
+	register bool match;
 
 	do {
 	    match = FALSE;
@@ -67,7 +67,7 @@ get_mplname(mtmp, nam)
 register struct monst *mtmp;
 char *nam;
 {
-	boolean fmlkind = is_female(mtmp->data);
+	bool fmlkind = is_female(mtmp->data);
 	const char *devnam;
 
 	devnam = dev_name();
@@ -84,7 +84,7 @@ char *nam;
 	Strcat(nam, " the ");
 	Strcat(nam, rank_of((int)mtmp->m_lev,
 			    monsndx(mtmp->data),
-			    (boolean)mtmp->female));
+			    (bool)mtmp->female));
 }
 
 STATIC_OVL void
@@ -111,7 +111,7 @@ struct monst *
 mk_mplayer(ptr, x, y, special)
 register struct permonst *ptr;
 xchar x, y;
-register boolean special;
+register bool special;
 {
 	register struct monst *mtmp;
 	char nam[PL_NSIZ];
@@ -288,7 +288,7 @@ register boolean special;
 void
 create_mplayers(num, special)
 register int num;
-boolean special;
+bool special;
 {
 	int pm, x, y;
 	struct monst fakemon;

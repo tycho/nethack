@@ -17,7 +17,7 @@ extern void NDECL(vms_abort);
 #endif
 
 /*VARARGS1*/
-boolean panicking;
+bool panicking;
 void VDECL(panic, (char *,...));
 
 void

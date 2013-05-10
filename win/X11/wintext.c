@@ -150,7 +150,7 @@ add_to_text_window(wp, attr, str)
 void
 display_text_window(wp, blocking)
     struct xwindow *wp;
-    boolean blocking;
+    bool blocking;
 {
     struct text_info_t *text_info;
     Arg args[8];
@@ -348,7 +348,7 @@ void
 append_text_buffer(tb, str, concat)
     struct text_buffer *tb;
     const char *str;
-    boolean concat;
+    bool concat;
 {
     char *copy;
     int length;

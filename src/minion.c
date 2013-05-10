@@ -85,7 +85,7 @@ struct monst *mon;
 void
 summon_minion(alignment, talk)
 aligntyp alignment;
-boolean talk;
+bool talk;
 {
     register struct monst *mon;
     int mnum;

@@ -13,7 +13,7 @@ STATIC_OVL NEARDATA long takeoff_mask = 0L;
 static NEARDATA long taking_off = 0L;
 
 static NEARDATA int todelay;
-static boolean cancelled_don = FALSE;
+static bool cancelled_don = FALSE;
 
 static NEARDATA const char see_yourself[] = "see yourself";
 static NEARDATA const char unknown_type[] = "Unknown type of %s (%d)";
@@ -51,7 +51,7 @@ STATIC_PTR int NDECL(Shield_on);
 STATIC_PTR int NDECL(Shirt_on);
 #endif
 STATIC_DCL void NDECL(Amulet_on);
-STATIC_DCL void FDECL(Ring_off_or_gone, (struct obj *, BOOLEAN_P));
+STATIC_DCL void FDECL(Ring_off_or_gone, (struct obj *, BOOL_P));
 STATIC_PTR int FDECL(select_off, (struct obj *));
 STATIC_DCL struct obj *NDECL(do_takeoff);
 STATIC_PTR int NDECL(take_off);
@@ -786,7 +786,7 @@ register struct obj *obj;
 STATIC_OVL void
 Ring_off_or_gone(obj,gone)
 register struct obj *obj;
-boolean gone;
+bool gone;
 {
     long mask = (obj->owornmask & W_RING);
     int old_attrib, which;
@@ -907,7 +907,7 @@ void
 Blindf_on(otmp)
 register struct obj *otmp;
 {
-	boolean already_blind = Blind, changed = FALSE;
+	bool already_blind = Blind, changed = FALSE;
 
 	if (otmp == uwep)
 	    setuwep((struct obj *) 0);
@@ -940,7 +940,7 @@ void
 Blindf_off(otmp)
 register struct obj *otmp;
 {
-	boolean was_blind = Blind, changed = FALSE;
+	bool was_blind = Blind, changed = FALSE;
 
 	takeoff_mask &= ~W_TOOL;
 	setworn((struct obj *)0, otmp->owornmask);
@@ -987,13 +987,13 @@ set_wear()
 }
 
 /* check whether the target object is currently being put on (or taken off) */
-boolean
+bool
 donning(otmp)		/* also checks for doffing */
 register struct obj *otmp;
 {
  /* long what = (occupation == take_off) ? taking_off : 0L; */
     long what = taking_off;	/* if nonzero, occupation is implied */
-    boolean result = FALSE;
+    bool result = FALSE;
 
     if (otmp == uarm)
 	result = (afternmv == Armor_on || afternmv == Armor_off ||
@@ -1260,7 +1260,7 @@ int
 canwearobj(otmp,mask,noisy)
 struct obj *otmp;
 long *mask;
-boolean noisy;
+bool noisy;
 {
     int err = 0;
     const char *which;
@@ -1631,7 +1631,7 @@ glibr()
 {
 	register struct obj *otmp;
 	int xfl = 0;
-	boolean leftfall, rightfall;
+	bool leftfall, rightfall;
 	const char *otherwep = 0;
 
 	leftfall = (uleft && !uleft->cursed &&
@@ -1718,7 +1718,7 @@ struct monst *victim;
 void
 erode_armor(victim, acid_dmg)
 struct monst *victim;
-boolean acid_dmg;
+bool acid_dmg;
 {
 	struct obj *otmph = some_armor(victim);
 
@@ -2070,7 +2070,7 @@ int retry;
 {
     int n, i = 0;
     menu_item *pick_list;
-    boolean all_worn_categories = TRUE;
+    bool all_worn_categories = TRUE;
 
     if (retry) {
 	all_worn_categories = (retry == -2);

@@ -6,7 +6,7 @@
 #include "artifact.h"
 #include "epri.h"
 
-extern boolean notonhead;
+extern bool notonhead;
 
 #ifdef OVL0
 
@@ -18,7 +18,7 @@ STATIC_DCL void FDECL(watch_on_duty,(struct monst *));
 #endif /* OVL0 */
 #ifdef OVLB
 
-boolean /* TRUE : mtmp died */
+bool /* TRUE : mtmp died */
 mb_trapped(mtmp)
 register struct monst *mtmp;
 {
@@ -83,7 +83,7 @@ dochugw(mtmp)
 	register struct monst *mtmp;
 {
 	register int x = mtmp->mx, y = mtmp->my;
-	boolean already_saw_mon = !occupation ? 0 : canspotmon(mtmp);
+	bool already_saw_mon = !occupation ? 0 : canspotmon(mtmp);
 	int rd = dochug(mtmp);
 #if 0
 	/* part of the original warning code which was replaced in 3.3.1 */
@@ -125,7 +125,7 @@ dochugw(mtmp)
 #endif /* OVL1 */
 #ifdef OVL2
 
-boolean
+bool
 onscary(x, y, mtmp)
 int x, y;
 struct monst *mtmp;
@@ -136,7 +136,7 @@ struct monst *mtmp;
 	    is_rider(mtmp->data) || mtmp->data == &mons[PM_MINOTAUR])
 		return(FALSE);
 
-	return (boolean)(sobj_at(SCR_SCARE_MONSTER, x, y)
+	return (bool)(sobj_at(SCR_SCARE_MONSTER, x, y)
 #ifdef ELBERETH
 			 || sengr_at("Elbereth", x, y)
 #endif
@@ -151,7 +151,7 @@ struct monst *mtmp;
 void
 mon_regen(mon, digest_meal)
 struct monst *mon;
-boolean digest_meal;
+bool digest_meal;
 {
 	if (mon->mhp < mon->mhpmax &&
 	    (moves % 20 == 0 || regenerates(mon->data))) mon->mhp++;
@@ -208,8 +208,8 @@ void
 monflee(mtmp, fleetime, first, fleemsg)
 struct monst *mtmp;
 int fleetime;
-boolean first;
-boolean fleemsg;
+bool first;
+bool fleemsg;
 {
 	if (u.ustuck == mtmp) {
 	    if (u.uswallow)
@@ -415,7 +415,7 @@ register struct monst *mtmp;
 		    (!Conflict || resist(mtmp, RING_CLASS, 0, 0)))
 			pline("It feels quite soothing.");
 		else {
-			register boolean m_sen = sensemon(mtmp);
+			register bool m_sen = sensemon(mtmp);
 
 			if (m_sen || (Blind_telepat && rn2(2)) || !rn2(10)) {
 				int dmg;
@@ -572,7 +572,7 @@ static NEARDATA const char indigestion[] = { BALL_CLASS, ROCK_CLASS, 0 };
 static NEARDATA const char boulder_class[] = { ROCK_CLASS, 0 };
 static NEARDATA const char gem_class[] = { GEM_CLASS, 0 };
 
-boolean
+bool
 itsstuck(mtmp)
 register struct monst *mtmp;
 {
@@ -597,11 +597,11 @@ register int after;
 	register int appr;
 	xchar gx,gy,nix,niy,chcnt;
 	int chi;	/* could be schar except for stupid Sun-2 compiler */
-	boolean likegold=0, likegems=0, likeobjs=0, likemagic=0, conceals=0;
-	boolean likerock=0, can_tunnel=0;
-	boolean can_open=0, can_unlock=0, doorbuster=0;
-	boolean uses_items=0, setlikes=0;
-	boolean avoid=FALSE;
+	bool likegold=0, likegems=0, likeobjs=0, likemagic=0, conceals=0;
+	bool likerock=0, can_tunnel=0;
+	bool can_open=0, can_unlock=0, doorbuster=0;
+	bool uses_items=0, setlikes=0;
+	bool avoid=FALSE;
 	struct permonst *ptr;
 	struct monst *mtoo;
 	schar mmoved = 0;	/* not strictly nec.: chi >= 0 will do */
@@ -719,7 +719,7 @@ not_special:
 #ifdef GOLDOBJ
 		struct obj *lepgold, *ygold;
 #endif
-		boolean should_see = (couldsee(omx, omy) &&
+		bool should_see = (couldsee(omx, omy) &&
 				      (levl[gx][gy].lit ||
 				       !levl[omx][omy].lit) &&
 				      (dist2(omx, omy, gx, gy) <= 36));
@@ -758,7 +758,7 @@ not_special:
 				    && (!Is_rogue_level(&u.uz))
 #endif
 							    ) {
-	    boolean in_line = lined_up(mtmp) &&
+	    bool in_line = lined_up(mtmp) &&
 		(distmin(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <=
 		    (throws_rocks(youmonst.data) ? 20 : ACURRSTR/2+1)
 		);
@@ -1041,7 +1041,7 @@ not_special:
 	}
 postmov:
 	if(mmoved == 1 || mmoved == 3) {
-	    boolean canseeit = cansee(mtmp->mx, mtmp->my);
+	    bool canseeit = cansee(mtmp->mx, mtmp->my);
 
 	    if(mmoved == 1) {
 		newsym(omx,omy);		/* update the old position */
@@ -1057,7 +1057,7 @@ postmov:
 			&& !can_tunnel /* taken care of below */
 		      ) {
 		    struct rm *here = &levl[mtmp->mx][mtmp->my];
-		    boolean btrapped = (here->doormask & D_TRAPPED);
+		    bool btrapped = (here->doormask & D_TRAPPED);
 
 		    if(here->doormask & (D_LOCKED|D_CLOSED) && amorphous(ptr)) {
 			if (flags.verbose && canseemon(mtmp))
@@ -1179,7 +1179,7 @@ postmov:
 		}
 
 		if(!*in_rooms(mtmp->mx, mtmp->my, SHOPBASE) || !rn2(25)) {
-		    boolean picked = FALSE;
+		    bool picked = FALSE;
 
 		    if(likeobjs) picked |= mpickstuff(mtmp, practical);
 		    if(likemagic) picked |= mpickstuff(mtmp, magical);
@@ -1216,19 +1216,19 @@ postmov:
 #endif /* OVL0 */
 #ifdef OVL2
 
-boolean
+bool
 closed_door(x, y)
 register int x, y;
 {
-	return((boolean)(IS_DOOR(levl[x][y].typ) &&
+	return((bool)(IS_DOOR(levl[x][y].typ) &&
 			(levl[x][y].doormask & (D_LOCKED | D_CLOSED))));
 }
 
-boolean
+bool
 accessible(x, y)
 register int x, y;
 {
-	return((boolean)(ACCESSIBLE(levl[x][y].typ) && !closed_door(x, y)));
+	return((bool)(ACCESSIBLE(levl[x][y].typ) && !closed_door(x, y)));
 }
 
 #endif /* OVL2 */
@@ -1239,7 +1239,7 @@ void
 set_apparxy(mtmp)
 register struct monst *mtmp;
 {
-	boolean notseen, gotu;
+	bool notseen, gotu;
 	register int disp, mx = mtmp->mux, my = mtmp->muy;
 #ifdef GOLDOBJ
 	long umoney = money_cnt(invent);
@@ -1307,7 +1307,7 @@ found_you:
 	mtmp->muy = my;
 }
 
-boolean
+bool
 can_ooze(mtmp)
 struct monst *mtmp;
 {

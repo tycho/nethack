@@ -52,16 +52,16 @@ extern int FDECL(get_room_type, (char *));
 extern int FDECL(get_trap_type, (char *));
 extern int FDECL(get_monster_id, (char *,CHAR_P));
 extern int FDECL(get_object_id, (char *,CHAR_P));
-extern boolean FDECL(check_monster_char, (CHAR_P));
-extern boolean FDECL(check_object_char, (CHAR_P));
+extern bool FDECL(check_monster_char, (CHAR_P));
+extern bool FDECL(check_object_char, (CHAR_P));
 extern char FDECL(what_map_char, (CHAR_P));
 extern void FDECL(scan_map, (char *));
 extern void NDECL(wallify_map);
-extern boolean NDECL(check_subrooms);
+extern bool NDECL(check_subrooms);
 extern void FDECL(check_coord, (int,int,const char *));
 extern void NDECL(store_part);
 extern void NDECL(store_room);
-extern boolean FDECL(write_level_file, (char *,splev *,specialmaze *));
+extern bool FDECL(write_level_file, (char *,splev *,specialmaze *));
 extern void FDECL(free_rooms, (splev *));
 
 static struct reg {

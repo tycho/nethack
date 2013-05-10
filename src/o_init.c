@@ -5,9 +5,9 @@
 #include "lev.h"	/* save & restore info */
 
 STATIC_DCL void FDECL(setgemprobs, (d_level*));
-STATIC_DCL void FDECL(shuffle,(int,int,BOOLEAN_P));
+STATIC_DCL void FDECL(shuffle,(int,int,BOOL_P));
 STATIC_DCL void NDECL(shuffle_all);
-STATIC_DCL boolean FDECL(interesting_to_discover,(int));
+STATIC_DCL bool FDECL(interesting_to_discover,(int));
 
 
 static NEARDATA short disco[NUM_OBJECTS] = DUMMY;
@@ -70,7 +70,7 @@ d_level *dlev;
 STATIC_OVL void
 shuffle(o_low, o_high, domaterial)
 	int o_low, o_high;
-	boolean domaterial;
+	bool domaterial;
 {
 	int i, j, num_to_shuffle;
 	short sw;
@@ -299,8 +299,8 @@ register int fd;
 void
 discover_object(oindx, mark_as_known, credit_hero)
 register int oindx;
-boolean mark_as_known;
-boolean credit_hero;
+bool mark_as_known;
+bool credit_hero;
 {
     if (!objects[oindx].oc_name_known) {
 	register int dindx, acls = objects[oindx].oc_class;
@@ -328,7 +328,7 @@ register int oindx;
 {
     if (!objects[oindx].oc_name_known) {
 	register int dindx, acls = objects[oindx].oc_class;
-	register boolean found = FALSE;
+	register bool found = FALSE;
 
 	/* find the object; shift those behind it forward one slot */
 	for (dindx = bases[acls];
@@ -346,12 +346,12 @@ register int oindx;
     }
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 interesting_to_discover(i)
 register int i;
 {
 	/* Pre-discovered objects are now printed with a '*' */
-    return((boolean)(objects[i].oc_uname != (char *)0 ||
+    return((bool)(objects[i].oc_uname != (char *)0 ||
 	    (objects[i].oc_name_known && OBJ_DESCR(objects[i]) != (char *)0)));
 }
 

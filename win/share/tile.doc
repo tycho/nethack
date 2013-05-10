@@ -42,17 +42,17 @@ algorithm they claim.)
 
 The text I/O routines are:
 
-boolean fopen_text_file(const char *filename, const char *type);
+bool fopen_text_file(const char *filename, const char *type);
 	select file for subsequent tile I/O
 	"type" a la fopen
 	returns FALSE if file not opened, otherwise reads/writes header
 	(including colormap) and sets up to decode/encode tiles
 int fclose_text_file();
 	close file
-boolean read_text_tile(pixel[TILE_Y][TILE_X]);
+bool read_text_tile(pixel[TILE_Y][TILE_X]);
 	returns FALSE if no next tile in current file
 	otherwise TRUE and insert the tile in the provided array
-boolean write_text_tile(pixel[TILE_Y][TILE_X]);
+bool write_text_tile(pixel[TILE_Y][TILE_X]);
 	writes tile
 
 There are two additional shared routines provided for writers:
@@ -99,7 +99,7 @@ n*TILE_X pixels across.
 
 The gif I/O routines are:
 
-boolean fopen_gif_file(const char *filename, const char *type);
+bool fopen_gif_file(const char *filename, const char *type);
 	select file for subsequent tile I/O
 	"type" a la fopen
 	returns FALSE if file not opened, otherwise reads gif header
@@ -107,7 +107,7 @@ boolean fopen_gif_file(const char *filename, const char *type);
 int fclose_gif_file();
 	tear down decode mechanism
 	close file
-boolean read_gif_tile(pixel[TILE_Y][TILE_X]);
+bool read_gif_tile(pixel[TILE_Y][TILE_X]);
 	returns FALSE if no next tile in current file (including when any
 	remaining tiles are "blank"),
 	otherwise TRUE and insert the tile in the provided array

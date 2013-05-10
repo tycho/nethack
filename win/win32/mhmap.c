@@ -20,8 +20,8 @@ typedef struct mswin_nethack_map_window {
 	int map[COLNO][ROWNO];		/* glyph map */
 
 	int	 mapMode;				/* current map mode */
-	boolean bAsciiMode;			/* switch ASCII/tiled mode */
-	boolean bFitToScreenMode;	/* switch Fit map to screen mode on/off */
+	bool bAsciiMode;			/* switch ASCII/tiled mode */
+	bool bFitToScreenMode;	/* switch Fit map to screen mode on/off */
 	int  xPos, yPos;			/* scroll position */
 	int  xPageSize, yPageSize;	/* scroll page size */
 	int  xCur, yCur;			/* position of the cursor */

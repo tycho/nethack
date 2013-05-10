@@ -509,7 +509,7 @@ STATIC_DCL int FDECL(race_alignmentcount, (int));
 static char NEARDATA randomstr[] = "random";
 
 
-boolean
+bool
 validrole(rolenum)
 	int rolenum;
 {
@@ -557,7 +557,7 @@ str2role(str)
 }
 
 
-boolean
+bool
 validrace(rolenum, racenum)
 	int rolenum, racenum;
 {
@@ -622,7 +622,7 @@ str2race(str)
 }
 
 
-boolean
+bool
 validgend(rolenum, racenum, gendnum)
 	int rolenum, racenum, gendnum;
 {
@@ -688,7 +688,7 @@ str2gend(str)
 }
 
 
-boolean
+bool
 validalign(rolenum, racenum, alignnum)
 	int rolenum, racenum, alignnum;
 {
@@ -754,7 +754,7 @@ str2align(str)
 }
 
 /* is rolenum compatible with any racenum/gendnum/alignnum constraints? */
-boolean
+bool
 ok_role(rolenum, racenum, gendnum, alignnum)
 int rolenum, racenum, gendnum, alignnum;
 {
@@ -820,7 +820,7 @@ int racenum, gendnum, alignnum, pickhow;
 }
 
 /* is racenum compatible with any rolenum/gendnum/alignnum constraints? */
-boolean
+bool
 ok_race(rolenum, racenum, gendnum, alignnum)
 int rolenum, racenum, gendnum, alignnum;
 {
@@ -887,7 +887,7 @@ int rolenum, gendnum, alignnum, pickhow;
 
 /* is gendnum compatible with any rolenum/racenum/alignnum constraints? */
 /* gender and alignment are not comparable (and also not constrainable) */
-boolean
+bool
 ok_gend(rolenum, racenum, gendnum, alignnum)
 int rolenum, racenum, gendnum, alignnum;
 {
@@ -949,7 +949,7 @@ int rolenum, racenum, alignnum, pickhow;
 
 /* is alignnum compatible with any rolenum/racenum/gendnum constraints? */
 /* alignment and gender are not comparable (and also not constrainable) */
-boolean
+bool
 ok_align(rolenum, racenum, gendnum, alignnum)
 int rolenum, racenum, gendnum, alignnum;
 {
@@ -1100,7 +1100,7 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 	int k, gendercount = 0, aligncount = 0;
 	char buf[BUFSZ];
 	static char err_ret[] = " character's";
-	boolean donefirst = FALSE;
+	bool donefirst = FALSE;
 
 	if (!suppliedbuf || buflen < 1) return err_ret;
 

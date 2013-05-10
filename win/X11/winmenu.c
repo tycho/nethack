@@ -291,7 +291,7 @@ menu_key(w, event, params, num_params)
 		X11_nhbell();
 	    return;
 	} else {
-	    boolean selected_something = FALSE;
+	    bool selected_something = FALSE;
 	    for (count = 0, curr = menu_info->curr_menu.base; curr;
 						    curr = curr->next, count++)
 		if (curr->identifier.a_void != 0 && curr->selector == ch) break;
@@ -403,7 +403,7 @@ select_all(wp)
 {
     x11_menu_item *curr;
     int count;
-    boolean changed = FALSE;
+    bool changed = FALSE;
 
     reset_menu_count(wp->menu_information);
     for (count = 0, curr = wp->menu_information->curr_menu.base; curr;
@@ -427,7 +427,7 @@ select_none(wp)
 {
     x11_menu_item *curr;
     int count;
-    boolean changed = FALSE;
+    bool changed = FALSE;
 
     reset_menu_count(wp->menu_information);
     for (count = 0, curr = wp->menu_information->curr_menu.base; curr;
@@ -471,7 +471,7 @@ invert_match(wp, match)
 {
     x11_menu_item *curr;
     int count;
-    boolean changed = FALSE;
+    bool changed = FALSE;
 
     reset_menu_count(wp->menu_information);
     for (count = 0, curr = wp->menu_information->curr_menu.base; curr;
@@ -590,7 +590,7 @@ X11_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     char gch;			/* group accelerator (0 = no group) */
     int attr;
     const char *str;
-    boolean preselected;
+    bool preselected;
 {
     x11_menu_item *item;
     struct menu_info_t *menu_info;
@@ -683,7 +683,7 @@ X11_select_menu(window, how, menu_list)
     String *ptr;
     int retval;
     Dimension v_pixel_width, v_pixel_height;
-    boolean labeled;
+    bool labeled;
     Widget viewport_widget, form, label, ok, cancel, all, none, invert, search;
     Boolean sens;
 #ifdef USE_FWF

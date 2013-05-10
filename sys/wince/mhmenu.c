@@ -24,7 +24,7 @@ typedef struct mswin_menu_item {
 	CHAR_P			group_accel;
 	int				attr;
 	char			str[NHMENU_STR_SIZE];
-	BOOLEAN_P		presel;
+	BOOL_P		presel;
 	int				count;
 	BOOL			has_focus;
 	BOOL			has_tab;
@@ -1026,7 +1026,7 @@ BOOL onListChar(HWND hWnd, HWND hwndList, WORD ch)
 	int i = 0;
 	PNHMenuWindow data;
 	int curIndex, topIndex, pageSize;
-	boolean is_accelerator = FALSE;
+	bool is_accelerator = FALSE;
 
 	data = (PNHMenuWindow)GetWindowLong(hWnd, GWL_USERDATA);
 

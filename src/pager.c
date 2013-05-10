@@ -7,19 +7,19 @@
 #include "hack.h"
 #include "dlb.h"
 
-STATIC_DCL boolean FDECL(is_swallow_sym, (int));
+STATIC_DCL bool FDECL(is_swallow_sym, (int));
 STATIC_DCL int FDECL(append_str, (char *, const char *));
 STATIC_DCL struct permonst * FDECL(lookat, (int, int, char *, char *));
 STATIC_DCL void FDECL(checkfile,
-		      (char *,struct permonst *,BOOLEAN_P,BOOLEAN_P));
-STATIC_DCL int FDECL(do_look, (BOOLEAN_P));
-STATIC_DCL boolean FDECL(help_menu, (int *));
+		      (char *,struct permonst *,BOOL_P,BOOL_P));
+STATIC_DCL int FDECL(do_look, (BOOL_P));
+STATIC_DCL bool FDECL(help_menu, (int *));
 #ifdef PORT_HELP
 extern void NDECL(port_help);
 #endif
 
 /* Returns "true" for characters that could represent a monster's stomach. */
-STATIC_OVL boolean
+STATIC_OVL bool
 is_swallow_sym(c)
 int c;
 {
@@ -125,7 +125,7 @@ lookat(x, y, buf, monbuf)
 	mtmp = m_at(x,y);
 	if (mtmp != (struct monst *) 0) {
 	    char *name, monnambuf[BUFSZ];
-	    boolean accurate = !Hallucination;
+	    bool accurate = !Hallucination;
 
 	    if (mtmp->data == &mons[PM_COYOTE] && accurate)
 		name = coyotename(mtmp, monnambuf);
@@ -159,7 +159,7 @@ lookat(x, y, buf, monbuf)
 
 	    {
 		int ways_seen = 0, normal = 0, xraydist;
-		boolean useemon = (boolean) canseemon(mtmp);
+		bool useemon = (bool) canseemon(mtmp);
 
 		xraydist = (u.xray_range<0) ? -1 : u.xray_range * u.xray_range;
 		/* normal vision */
@@ -301,14 +301,14 @@ STATIC_OVL void
 checkfile(inp, pm, user_typed_name, without_asking)
     char *inp;
     struct permonst *pm;
-    boolean user_typed_name, without_asking;
+    bool user_typed_name, without_asking;
 {
     dlb *fp;
     char buf[BUFSZ], newstr[BUFSZ];
     char *ep, *dbase_str;
     long txt_offset;
     int chk_skip;
-    boolean found_in_file = FALSE, skipping_entry = FALSE;
+    bool found_in_file = FALSE, skipping_entry = FALSE;
 
     fp = dlb_fopen(DATAFILE, "r");
     if (!fp) {
@@ -455,7 +455,7 @@ const char what_is_an_unknown_object[] = "an unknown object";
 
 STATIC_OVL int
 do_look(quick)
-    boolean quick;	/* use cursor && don't search for "more info" */
+    bool quick;	/* use cursor && don't search for "more info" */
 {
     char    out_str[BUFSZ], look_buf[BUFSZ];
     const char *x_str, *firstmatch = 0;
@@ -464,10 +464,10 @@ do_look(quick)
     int     sym;		/* typed symbol or converted glyph */
     int	    found;		/* count of matching syms found */
     coord   cc;			/* screen pos of unknown glyph */
-    boolean save_verbose;	/* saved value of flags.verbose */
-    boolean from_screen;	/* question from the screen */
-    boolean need_to_look;	/* need to get explan. from glyph */
-    boolean hit_trap;		/* true if found trap explanation */
+    bool save_verbose;	/* saved value of flags.verbose */
+    bool from_screen;	/* question from the screen */
+    bool need_to_look;	/* need to get explan. from glyph */
+    bool hit_trap;		/* true if found trap explanation */
     int skipped_venom;		/* non-zero if we ignored "splash of venom" */
     static const char *mon_interior = "the interior of a monster";
 
@@ -733,7 +733,7 @@ do_look(quick)
 			(ans == LOOK_VERBOSE || (flags.help && !quick))) {
 		char temp_buf[BUFSZ];
 		Strcpy(temp_buf, firstmatch);
-		checkfile(temp_buf, pm, FALSE, (boolean)(ans == LOOK_VERBOSE));
+		checkfile(temp_buf, pm, FALSE, (bool)(ans == LOOK_VERBOSE));
 	    }
 	} else {
 	    pline("I've never heard of such things.");
@@ -881,7 +881,7 @@ static const char *help_menu_items[] = {
 	(char *)0
 };
 
-STATIC_OVL boolean
+STATIC_OVL bool
 help_menu(sel)
 	int *sel;
 {

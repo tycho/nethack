@@ -42,7 +42,7 @@ int Enable_Abort = 0;   /* for stdio package */
 /* Initial path, so we can find NetHack.cnf */
 char PATH[PATHLEN] = "NetHack:";
 
-static boolean record_exists(void);
+static bool record_exists(void);
 
 void
 flushout()
@@ -314,7 +314,7 @@ saveDiskPrompt(start)
 }
 
 /* Return 1 if the record file was found */
-static boolean
+static bool
 record_exists()
 {
     FILE *file;

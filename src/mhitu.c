@@ -8,7 +8,7 @@ STATIC_VAR NEARDATA struct obj *otmp;
 
 STATIC_DCL void FDECL(urustm, (struct monst *, struct obj *));
 # ifdef OVL1
-STATIC_DCL boolean FDECL(u_slip_free, (struct monst *,struct attack *));
+STATIC_DCL bool FDECL(u_slip_free, (struct monst *,struct attack *));
 STATIC_DCL int FDECL(passiveum, (struct permonst *,struct monst *,struct attack *));
 # endif /* OVL1 */
 
@@ -18,11 +18,11 @@ STATIC_DCL void FDECL(mayberem, (struct obj *, const char *));
 # endif
 #endif /* OVLB */
 
-STATIC_DCL boolean FDECL(diseasemu, (struct permonst *));
+STATIC_DCL bool FDECL(diseasemu, (struct permonst *));
 STATIC_DCL int FDECL(hitmu, (struct monst *,struct attack *));
 STATIC_DCL int FDECL(gulpmu, (struct monst *,struct attack *));
-STATIC_DCL int FDECL(explmu, (struct monst *,struct attack *,BOOLEAN_P));
-STATIC_DCL void FDECL(missmu,(struct monst *,BOOLEAN_P,struct attack *));
+STATIC_DCL int FDECL(explmu, (struct monst *,struct attack *,BOOL_P));
+STATIC_DCL void FDECL(missmu,(struct monst *,BOOL_P,struct attack *));
 STATIC_DCL void FDECL(mswings,(struct monst *,struct obj *));
 STATIC_DCL void FDECL(wildmiss, (struct monst *,struct attack *));
 
@@ -84,7 +84,7 @@ register struct attack *mattk;
 STATIC_OVL void
 missmu(mtmp, nearmiss, mattk)		/* monster missed you */
 register struct monst *mtmp;
-register boolean nearmiss;
+register bool nearmiss;
 register struct attack *mattk;
 {
 	if (!canspotmon(mtmp))
@@ -219,7 +219,7 @@ void
 expels(mtmp, mdat, message)
 register struct monst *mtmp;
 register struct permonst *mdat; /* if mtmp is polymorphed, mdat != mtmp->data */
-boolean message;
+bool message;
 {
 	if (message) {
 		if (is_animal(mdat))
@@ -305,13 +305,13 @@ mattacku(mtmp)
 	struct	attack	*mattk, alt_attk;
 	int	i, j, tmp, sum[NATTK];
 	struct	permonst *mdat = mtmp->data;
-	boolean ranged = (distu(mtmp->mx, mtmp->my) > 3);
+	bool ranged = (distu(mtmp->mx, mtmp->my) > 3);
 		/* Is it near you?  Affects your actions */
-	boolean range2 = !monnear(mtmp, mtmp->mux, mtmp->muy);
+	bool range2 = !monnear(mtmp, mtmp->mux, mtmp->muy);
 		/* Does it think it's near you?  Affects its actions */
-	boolean foundyou = (mtmp->mux==u.ux && mtmp->muy==u.uy);
+	bool foundyou = (mtmp->mux==u.ux && mtmp->muy==u.uy);
 		/* Is it attacking you or your image? */
-	boolean youseeit = canseemon(mtmp);
+	bool youseeit = canseemon(mtmp);
 		/* Might be attacking your image around the corner, or
 		 * invisible, or you might be blind....
 		 */
@@ -763,7 +763,7 @@ int attk;
 #endif /* OVLB */
 #ifdef OVL1
 
-STATIC_OVL boolean
+STATIC_OVL bool
 diseasemu(mdat)
 struct permonst *mdat;
 {
@@ -778,7 +778,7 @@ struct permonst *mdat;
 }
 
 /* check whether slippery clothing protects from hug or wrap attack */
-STATIC_OVL boolean
+STATIC_OVL bool
 u_slip_free(mtmp, mattk)
 struct monst *mtmp;
 struct attack *mattk;
@@ -1231,7 +1231,7 @@ dopois:
 		    } else if(u.ustuck == mtmp) {
 			if (is_pool(mtmp->mx,mtmp->my) && !Swimming
 			    && !Amphibious) {
-			    boolean moat =
+			    bool moat =
 				(levl[mtmp->mx][mtmp->my].typ != POOL) &&
 				(levl[mtmp->mx][mtmp->my].typ != WATER) &&
 				!Is_medusa_level(&u.uz) &&
@@ -1383,7 +1383,7 @@ dopois:
 		   && !uarmu
 #endif
 		   && !uarm && !uarmh && !uarms && !uarmg && !uarmc && !uarmf) {
-		    boolean goaway = FALSE;
+		    bool goaway = FALSE;
 		    pline("%s hits!  (I hope you don't mind.)", Monnam(mtmp));
 		    if (Upolyd) {
 			u.mh += rnd(7);
@@ -1813,7 +1813,7 @@ STATIC_OVL int
 explmu(mtmp, mattk, ufound)	/* monster explodes in your face */
 register struct monst *mtmp;
 register struct attack  *mattk;
-boolean ufound;
+bool ufound;
 {
     if (mtmp->mcan) return(0);
 
@@ -1824,7 +1824,7 @@ boolean ufound;
 		? "empty water" : "thin air");
     else {
 	register int tmp = d((int)mattk->damn, (int)mattk->damd);
-	register boolean not_affected = defends((int)mattk->adtyp, uwep);
+	register bool not_affected = defends((int)mattk->adtyp, uwep);
 
 	hitmsg(mtmp, mattk);
 
@@ -1871,7 +1871,7 @@ common:
 			 u.umonnum == PM_VIOLET_FUNGUS ||
 			 dmgtype(youmonst.data, AD_STUN));
 		if (!not_affected) {
-		    boolean chg;
+		    bool chg;
 		    if (!Hallucination)
 			You("are caught in a blast of kaleidoscopic light!");
 		    chg = make_hallucinated(HHallucination + (long)tmp,FALSE,0L);
@@ -1911,7 +1911,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		if (Reflecting && couldsee(mtmp->mx, mtmp->my) &&
 			mtmp->data == &mons[PM_MEDUSA]) {
 		    /* hero has line of sight to Medusa and she's not blind */
-		    boolean useeit = canseemon(mtmp);
+		    bool useeit = canseemon(mtmp);
 
 		    if (useeit)
 			(void) ureflects("%s gaze is reflected by your %s.",
@@ -2064,8 +2064,8 @@ urustm(mon, obj)
 register struct monst *mon;
 register struct obj *obj;
 {
-	boolean vis;
-	boolean is_acid;
+	bool vis;
+	bool is_acid;
 
 	if (!mon || !obj) return; /* just in case */
 	if (dmgtype(youmonst.data, AD_CORR))
@@ -2109,7 +2109,7 @@ struct attack *mattk;
  *	   2 if wrong gender for nymph */
 {
 	register struct permonst *pagr;
-	boolean agrinvis, defperc;
+	bool agrinvis, defperc;
 	xchar genagr, gendef;
 
 	if (is_animal(magr->data)) return (0);
@@ -2161,7 +2161,7 @@ doseduce(mon)
 register struct monst *mon;
 {
 	register struct obj *ring, *nring;
-	boolean fem = (mon->data == &mons[PM_SUCCUBUS]); /* otherwise incubus */
+	bool fem = (mon->data == &mons[PM_SUCCUBUS]); /* otherwise incubus */
 	char qbuf[QBUFSZ];
 
 	if (mon->mcan || mon->mspec_used) {

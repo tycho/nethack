@@ -158,7 +158,7 @@ E NEARDATA struct sinfo {
 #endif
 } program_state;
 
-E boolean restoring;
+E bool restoring;
 
 E const char quitchars[];
 E const char vowels[];
@@ -202,26 +202,26 @@ E const schar xdir[], ydir[], zdir[];
 
 E NEARDATA schar tbx, tby;		/* set in mthrowu.c */
 
-E NEARDATA struct multishot { int n, i; short o; boolean s; } m_shot;
+E NEARDATA struct multishot { int n, i; short o; bool s; } m_shot;
 
 E NEARDATA struct dig_info {		/* apply.c, hack.c */
 	int	effort;
 	d_level level;
 	coord	pos;
 	long lastdigtime;
-	boolean down, chew, warned, quiet;
+	bool down, chew, warned, quiet;
 } digging;
 
 E NEARDATA long moves, monstermoves;
 E NEARDATA long wailmsg;
 
-E NEARDATA boolean in_mklev;
-E NEARDATA boolean stoned;
-E NEARDATA boolean unweapon;
-E NEARDATA boolean mrg_to_wielded;
+E NEARDATA bool in_mklev;
+E NEARDATA bool stoned;
+E NEARDATA bool unweapon;
+E NEARDATA bool mrg_to_wielded;
 E NEARDATA struct obj *current_wand;
 
-E NEARDATA boolean in_steed_dismounting;
+E NEARDATA bool in_steed_dismounting;
 
 E const int shield_static[];
 
@@ -326,7 +326,7 @@ E const char *materialnm[];
 #define EXACT_NAME		0x0F
 
 /* Vision */
-E NEARDATA boolean vision_full_recalc;	/* TRUE if need vision recalc */
+E NEARDATA bool vision_full_recalc;	/* TRUE if need vision recalc */
 E NEARDATA char **viz_array;		/* could see/in sight row pointers */
 
 /* Window system stuff */
@@ -382,7 +382,7 @@ E char *fqn_prefix_names[PREFIX_COUNT];
 #ifdef AUTOPICKUP_EXCEPTIONS
 struct autopickup_exception {
 	char *pattern;
-	boolean grab;
+	bool grab;
 	struct autopickup_exception *next;
 };
 #endif /* AUTOPICKUP_EXCEPTIONS */

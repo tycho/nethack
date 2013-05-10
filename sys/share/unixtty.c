@@ -133,7 +133,7 @@ short	ospeed = 0;	/* gets around "not defined" error message */
 unsigned
 #endif
 	char erase_char, intr_char, kill_char;
-static boolean settty_needed = FALSE;
+static bool settty_needed = FALSE;
 struct termstruct inittyb, curttyb;
 
 #ifdef POSIX_TYPES

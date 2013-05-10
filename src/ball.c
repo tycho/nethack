@@ -11,10 +11,10 @@ STATIC_DCL void NDECL(litter);
 void
 ballfall()
 {
-	boolean gets_hit;
+	bool gets_hit;
 
 	gets_hit = (((uball->ox != u.ux) || (uball->oy != u.uy)) &&
-		    ((uwep == uball)? FALSE : (boolean)rn2(5)));
+		    ((uwep == uball)? FALSE : (bool)rn2(5)));
 	if (carried(uball)) {
 		pline("Startled, you drop the iron ball.");
 		if (uwep == uball)
@@ -355,17 +355,17 @@ xchar ballx, bally, chainx, chainy;	/* only matter !before */
  * drag the chain, while an identical-looking movement must drag both the ball
  * and chain.
  */
-boolean
+bool
 drag_ball(x, y, bc_control, ballx, bally, chainx, chainy, cause_delay,
     allow_drag)
 xchar x, y;
 int *bc_control;
 xchar *ballx, *bally, *chainx, *chainy;
-boolean *cause_delay;
-boolean allow_drag;
+bool *cause_delay;
+bool allow_drag;
 {
 	struct trap *t = (struct trap *)0;
-	boolean already_in_rock;
+	bool already_in_rock;
 
 	*ballx  = uball->ox;
 	*bally  = uball->oy;
@@ -745,7 +745,7 @@ litter()
 void
 drag_down()
 {
-	boolean forward;
+	bool forward;
 	uchar dragchance = 3;
 
 	/*

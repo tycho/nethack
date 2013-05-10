@@ -29,7 +29,7 @@ char *shortdllname;
 
 int FDECL(__declspec(dllexport) __stdcall
 ProcessKeystroke, (HANDLE hConIn, INPUT_RECORD *ir, 
-    boolean *valid, BOOLEAN_P numberpad, int portdebug));
+    bool *valid, BOOL_P numberpad, int portdebug));
 
 int WINAPI DllMain(HINSTANCE hInstance, DWORD fdwReason, PVOID pvReserved)
 {
@@ -102,8 +102,8 @@ int __declspec(dllexport) __stdcall
 ProcessKeystroke(hConIn,ir, valid, numberpad, portdebug)
 HANDLE hConIn;
 INPUT_RECORD *ir;
-boolean *valid;
-boolean numberpad;
+bool *valid;
+bool numberpad;
 int portdebug;
 {
 	int metaflags = 0, k = 0;
@@ -254,13 +254,13 @@ CheckInput(hConIn, ir, count, numpad, mode, mod, cc)
 HANDLE hConIn;
 INPUT_RECORD *ir;
 DWORD *count; 
-boolean numpad;
+bool numpad;
 int mode;
 int *mod;
 coord *cc;
 {
 	int ch;
-	boolean valid = 0, done = 0;
+	bool valid = 0, done = 0;
 	while (!done) {
 		ReadConsoleInput(hConIn,ir,1,count);
 		if (mode == 0) {

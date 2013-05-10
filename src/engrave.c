@@ -129,10 +129,10 @@ unsigned seed;		/* for semi-controlled randomization */
 	while (lth && engr[lth-1] == ' ') engr[--lth] = 0;
 }
 
-boolean
+bool
 can_reach_floor()
 {
-	return (boolean)(!u.uswallow &&
+	return (bool)(!u.uswallow &&
 #ifdef STEED
 			/* Restricted/unskilled riders can't reach the floor */
 			!(u.usteed && P_SKILL(P_RIDING) < P_BASIC) &&
@@ -435,14 +435,14 @@ static NEARDATA const char styluses[] =
 int
 doengrave()
 {
-	boolean dengr = FALSE;	/* TRUE if we wipe out the current engraving */
-	boolean doblind = FALSE;/* TRUE if engraving blinds the player */
-	boolean doknown = FALSE;/* TRUE if we identify the stylus */
-	boolean eow = FALSE;	/* TRUE if we are overwriting oep */
-	boolean jello = FALSE;	/* TRUE if we are engraving in slime */
-	boolean ptext = TRUE;	/* TRUE if we must prompt for engrave text */
-	boolean teleengr =FALSE;/* TRUE if we move the old engraving */
-	boolean zapwand = FALSE;/* TRUE if we remove a wand charge */
+	bool dengr = FALSE;	/* TRUE if we wipe out the current engraving */
+	bool doblind = FALSE;/* TRUE if engraving blinds the player */
+	bool doknown = FALSE;/* TRUE if we identify the stylus */
+	bool eow = FALSE;	/* TRUE if we are overwriting oep */
+	bool jello = FALSE;	/* TRUE if we are engraving in slime */
+	bool ptext = TRUE;	/* TRUE if we must prompt for engrave text */
+	bool teleengr =FALSE;/* TRUE if we move the old engraving */
+	bool zapwand = FALSE;/* TRUE if we remove a wand charge */
 	xchar type = DUST;	/* Type of engraving made */
 	char buf[BUFSZ];	/* Buffer for final/poly engraving text */
 	char ebuf[BUFSZ];	/* Buffer for initial engraving text */

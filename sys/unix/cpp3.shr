@@ -83,7 +83,7 @@ X#define	OP_RPA_PREC	0013
 X#define OP_QUE_PREC	0034
 X
 X/*
-X * S_ANDOR and S_QUEST signal "short-circuit" boolean evaluation, so that
+X * S_ANDOR and S_QUEST signal "short-circuit" bool evaluation, so that
 X *	#if FOO != 0 && 10 / FOO ...
 X * doesn't generate an error message.  They are stored in optab.skip.
 X */

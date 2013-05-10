@@ -73,7 +73,7 @@ typedef struct branch {
     int		  type;		/* type of branch */
     d_level	  end1;		/* "primary" end point */
     d_level	  end2;		/* other end point */
-    boolean	  end1_up;	/* does end1 go up? */
+    bool	  end1_up;	/* does end1 go up? */
 } branch;
 
 /* branch types */

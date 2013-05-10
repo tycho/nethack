@@ -10,12 +10,12 @@
 
 STATIC_DCL char *FDECL(strprepend,(char *,const char *));
 #ifdef OVLB
-static boolean FDECL(wishymatch, (const char *,const char *,BOOLEAN_P));
+static bool FDECL(wishymatch, (const char *,const char *,BOOL_P));
 #endif
 static char *NDECL(nextobuf);
 static void FDECL(add_erosion_words, (struct obj *, char *));
 #ifdef SORTLOOT
-char * FDECL(xname2, (struct obj *, BOOLEAN_P));
+char * FDECL(xname2, (struct obj *, BOOL_P));
 #endif
 
 struct Jitem {
@@ -180,11 +180,11 @@ int otyp;
     return bufp;
 }
 
-boolean
+bool
 obj_is_pname(obj)
 register struct obj *obj;
 {
-    return((boolean)(obj->dknown && obj->known && obj->onamelth &&
+    return((bool)(obj->dknown && obj->known && obj->onamelth &&
 		     /* Since there aren't any objects which are both
 		        artifacts and unique, the last check is redundant. */
 		     obj->oartifact && !objects[obj->otyp].oc_unique));
@@ -215,7 +215,7 @@ char *FDECL((*func), (OBJ_P));
    ("slice of pizza" -> "pizza juice" rather than "slice of pizza juice") */
 char *
 fruitname(juice)
-boolean juice;	/* whether or not to append " juice" to the name */
+bool juice;	/* whether or not to append " juice" to the name */
 {
     char *buf = nextobuf();
     const char *fruit_nam = strstri(pl_fruit, " of ");
@@ -242,7 +242,7 @@ register struct obj *obj;
 char *
 xname2(obj, ignore_oquan)
 register struct obj *obj;
-boolean ignore_oquan;
+bool ignore_oquan;
 #endif
 {
 	register char *buf;
@@ -518,7 +518,7 @@ struct obj *obj;
 #ifdef OVL0
 
 /* used for naming "the unique_item" instead of "a unique_item" */
-boolean
+bool
 the_unique_obj(obj)
 register struct obj *obj;
 {
@@ -527,7 +527,7 @@ register struct obj *obj;
     else if (obj->otyp == FAKE_AMULET_OF_YENDOR && !obj->known)
 	return TRUE;		/* lie */
     else
-	return (boolean)(objects[obj->otyp].oc_unique &&
+	return (bool)(objects[obj->otyp].oc_unique &&
 			 (obj->known || obj->otyp == AMULET_OF_YENDOR));
 }
 
@@ -536,7 +536,7 @@ add_erosion_words(obj,prefix)
 struct obj *obj;
 char *prefix;
 {
-	boolean iscrys = (obj->otyp == CRYSKNIFE);
+	bool iscrys = (obj->otyp == CRYSKNIFE);
 
 
 	if (!is_damageable(obj) && !iscrys) return;
@@ -571,7 +571,7 @@ char *
 doname(obj)
 register struct obj *obj;
 {
-	boolean ispoisoned = FALSE;
+	bool ispoisoned = FALSE;
 	char prefix[PREFIX];
 	char tmpbuf[PREFIX+1];
 	/* when we have to add something at the start of prefix instead of the
@@ -815,7 +815,7 @@ ring:
 #ifdef OVLB
 
 /* used from invent.c */
-boolean
+bool
 not_fully_identified(otmp)
 register struct obj *otmp;
 {
@@ -846,7 +846,7 @@ register struct obj *otmp;
 			 otmp->oclass != BALL_CLASS))	    /* (useless) */
 	return FALSE;
     else	/* lack of `rknown' only matters for vulnerable objects */
-	return (boolean)(is_rustprone(otmp) ||
+	return (bool)(is_rustprone(otmp) ||
 			 is_corrodeable(otmp) ||
 			 is_flammable(otmp));
 }
@@ -854,7 +854,7 @@ register struct obj *otmp;
 char *
 corpse_xname(otmp, ignore_oquan)
 struct obj *otmp;
-boolean ignore_oquan;	/* to force singular */
+bool ignore_oquan;	/* to force singular */
 {
 	char *nambuf = nextobuf();
 
@@ -1004,7 +1004,7 @@ the(str)
 const char *str;
 {
 	char *buf = nextobuf();
-	boolean insert_the = FALSE;
+	bool insert_the = FALSE;
 
 	if (!strncmpi(str, "the ", 4)) {
 	    buf[0] = lowc(*str);
@@ -1680,11 +1680,11 @@ const char *oldstr;
 }
 
 /* compare user string against object name string using fuzzy matching */
-static boolean
+static bool
 wishymatch(u_str, o_str, retry_inverted)
 const char *u_str;	/* from user, so might be variant spelling */
 const char *o_str;	/* from objects[], so is in canonical form */
-boolean retry_inverted;	/* optional extra "of" handling */
+bool retry_inverted;	/* optional extra "of" handling */
 {
 	/* special case: wizards can wish for traps.  The object is "beartrap"
 	 * and the trap is "bear trap", so to let wizards wish for both we
@@ -1792,7 +1792,7 @@ struct obj *
 readobjnam(bp, no_wish, from_user)
 register char *bp;
 struct obj *no_wish;
-boolean from_user;
+bool from_user;
 {
 	register char *p;
 	register int i;

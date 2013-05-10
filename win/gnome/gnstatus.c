@@ -13,7 +13,7 @@ extern const char *enc_stat[]; /* from botl.c */
 void ghack_status_window_update_stats();
 void ghack_status_window_clear(GtkWidget *win, gpointer data);
 void ghack_status_window_destroy(GtkWidget *win, gpointer data);
-void ghack_status_window_display(GtkWidget *win, boolean block, gpointer data);
+void ghack_status_window_display(GtkWidget *win, bool block, gpointer data);
 void ghack_status_window_cursor_to(GtkWidget *win, int x, int y, gpointer data);
 void ghack_status_window_put_string(GtkWidget *win, int attr, const char* text, gpointer data);
 
@@ -125,7 +125,7 @@ void ghack_status_window_destroy(GtkWidget *win, gpointer data)
     g_list_free( s_HighLightList );
 }
 
-void ghack_status_window_display( GtkWidget *win, boolean block, gpointer data)
+void ghack_status_window_display( GtkWidget *win, bool block, gpointer data)
 {
     gtk_widget_show_all( GTK_WIDGET(win));
 }
