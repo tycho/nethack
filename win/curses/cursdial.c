@@ -18,8 +18,8 @@ typedef struct nhmi
     CHAR_P group_accel; /* Group accelerator for menu item, if any */
     int attr;  /* Text attributes for item */
     const char *str;  /* Text of menu item */
-    BOOLEAN_P presel; /* Whether menu item should be preselected */
-    boolean selected;   /* Whether item is currently selected */
+    BOOL_P presel; /* Whether menu item should be preselected */
+    bool selected;   /* Whether item is currently selected */
     int page_num;   /* Display page number for entry */
     int line_num;   /* Line number on page where entry begins */
     int num_lines;  /* Number of lines entry uses on page */
@@ -37,7 +37,7 @@ typedef struct nhm
     int num_pages;            /* Number of display pages for entry */
     int height;               /* Window height of menu */
     int width;                /* Window width of menu */
-    boolean reuse_accels;     /* Non-unique accelerators per page */
+    bool reuse_accels;     /* Non-unique accelerators per page */
     struct nhm *prev_menu;    /* Pointer to previous entry */
     struct nhm *next_menu;    /* Pointer to next entry */
 } nhmenu;
@@ -55,11 +55,11 @@ extern struct menucoloring *menu_colorings;
 
 static nhmenu *get_menu(winid wid);
 
-static char menu_get_accel(boolean first);
+static char menu_get_accel(bool first);
 
 static void menu_determine_pages(nhmenu *menu);
 
-static boolean menu_is_multipage(nhmenu *menu, int width, int height);
+static bool menu_is_multipage(nhmenu *menu, int width, int height);
 
 static void menu_win_size(nhmenu *menu);
 
@@ -74,7 +74,7 @@ static int menu_operation(WINDOW *win, nhmenu *menu, menu_op operation,
 
 static void menu_clear_selections(nhmenu *menu);
 
-static boolean get_menu_coloring(char *str, int *color, int *attr);
+static bool get_menu_coloring(char *str, int *color, int *attr);
 
 static int menu_max_height(void);
 
@@ -170,8 +170,8 @@ int curses_character_input_dialog(const char *prompt, const char *choices, CHAR_
     char choicestr[QBUFSZ];
     int prompt_width = strlen(prompt);
     int prompt_height = 1;
-    boolean any_choice = FALSE;
-    boolean accept_count = FALSE;
+    bool any_choice = FALSE;
+    bool accept_count = FALSE;
 
     if (invent || (moves > 1))
     {
@@ -536,7 +536,7 @@ void curses_create_nhmenu(winid wid)
 
 void curses_add_nhmenu_item(winid wid, const ANY_P *identifier,
  CHAR_P accelerator, CHAR_P group_accel, int attr, const char *str,
- BOOLEAN_P presel)
+ BOOL_P presel)
 {
     char *new_str;
     nhmenu_item *new_item, *current_items, *menu_item_ptr;
@@ -702,7 +702,7 @@ int curses_display_nhmenu(winid wid, int how, MENU_ITEM_P **_selected)
 }
 
 
-boolean curses_menu_exists(winid wid)
+bool curses_menu_exists(winid wid)
 {
     if (get_menu(wid) != NULL)
     {
@@ -784,7 +784,7 @@ static nhmenu *get_menu(winid wid)
 }
 
 
-static char menu_get_accel(boolean first)
+static char menu_get_accel(bool first)
 {
     char ret;
     static char next_letter = 'a';
@@ -816,7 +816,7 @@ static char menu_get_accel(boolean first)
 
 /* Determine if menu will require multiple pages to display */
 
-static boolean menu_is_multipage(nhmenu *menu, int width, int height)
+static bool menu_is_multipage(nhmenu *menu, int width, int height)
 {
     int num_lines;
     int curline = 0;
@@ -1012,11 +1012,11 @@ static void menu_display_page(nhmenu *menu, WINDOW *win, int page_num)
 {
     nhmenu_item *menu_item_ptr;
     int count, curletter, entry_cols, start_col, num_lines, footer_x;
-    boolean first_accel = TRUE;
+    bool first_accel = TRUE;
 #ifdef MENU_COLOR
     int color = NO_COLOR;
     int attr = A_NORMAL;
-    boolean menu_color = FALSE;
+    bool menu_color = FALSE;
 #endif /* MENU_COLOR */
 
     /* Cycle through entries until we are on the correct page */
@@ -1179,7 +1179,7 @@ static int menu_get_selections(WINDOW *win, nhmenu *menu, int how)
     int count_letter = '\0';
     int curpage = 1;
     int num_selected = 0;
-    boolean dismiss = FALSE;
+    bool dismiss = FALSE;
     char search_key[BUFSZ];
     nhmenu_item *menu_item_ptr = menu->entries;
 
@@ -1559,7 +1559,7 @@ static void menu_clear_selections(nhmenu *menu)
  applied */
 
 #ifdef MENU_COLOR
-static boolean get_menu_coloring(char *str, int *color, int *attr)
+static bool get_menu_coloring(char *str, int *color, int *attr)
 {
     struct menucoloring *tmpmc;
     if (iflags.use_menu_color)

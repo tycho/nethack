@@ -45,9 +45,9 @@ extern unsigned short __far __cdecl _movefpaused;
 #endif /* MOVERLAY */
 
 #ifdef MFLOPPY
-STATIC_DCL boolean NDECL(record_exists);
+STATIC_DCL bool NDECL(record_exists);
 # ifndef TOS
-STATIC_DCL boolean NDECL(comspec_exists);
+STATIC_DCL bool NDECL(comspec_exists);
 # endif
 #endif
 
@@ -305,7 +305,7 @@ int start;
 }
 
 /* Return 1 if the record file was found */
-STATIC_OVL boolean
+STATIC_OVL bool
 record_exists()
 {
 	FILE *fp;
@@ -324,7 +324,7 @@ record_exists()
 # else
 #  ifdef MFLOPPY
 /* Return 1 if the comspec was found */
-STATIC_OVL boolean
+STATIC_OVL bool
 comspec_exists()
 {
 	int fd;
@@ -388,7 +388,7 @@ char *name;
 }
 
 #ifdef WIN32
-boolean getreturn_enabled;
+bool getreturn_enabled;
 #endif
 
 void
@@ -495,7 +495,7 @@ int code;
 /* Chdir back to original directory
  */
 #ifdef TOS
-extern boolean run_from_desktop;	/* set in pcmain.c */
+extern bool run_from_desktop;	/* set in pcmain.c */
 #endif
 
 static void msexit()

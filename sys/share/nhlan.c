@@ -26,8 +26,8 @@
 #ifdef LAN_MAIL
 /* Port specific code needs to implement these routines for LAN_MAIL */
 extern char *FDECL(get_username, (int *));
-extern boolean NDECL(mail_check);
-extern boolean FDECL(mail_fetch, (struct lan_mail_struct *)); 
+extern bool NDECL(mail_check);
+extern bool FDECL(mail_fetch, (struct lan_mail_struct *)); 
 extern void FDECL(mail_init, (char *));
 extern void NDECL(mail_finish);
 
@@ -120,7 +120,7 @@ struct lan_mail_struct *msg;
 }
 
 /* this returns TRUE if there is mail ready to be read */
-boolean lan_mail_check()
+bool lan_mail_check()
 {
 	if (flags.biff) {
 		if (mail_check()) return TRUE;

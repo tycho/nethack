@@ -810,7 +810,7 @@ void mswin_clear_nhwindow(winid wid)
                 -- Calling display_nhwindow(WIN_MESSAGE,???) will do a
                    --more--, if necessary, in the tty window-port.
 */
-void mswin_display_nhwindow(winid wid, BOOLEAN_P block)
+void mswin_display_nhwindow(winid wid, BOOL_P block)
 {
 	logDebug("mswin_display_nhwindow(%d, %d)\n", wid, block);
 	if (GetNHApp()->windowlist[wid].win != NULL)
@@ -986,7 +986,7 @@ void mswin_putstr_ex(winid wid, int attr, const char *text, int app)
 /* Display the file named str.  Complain about missing files
                    iff complain is TRUE.
 */
-void mswin_display_file(const char *filename,BOOLEAN_P must_exist)
+void mswin_display_file(const char *filename,BOOL_P must_exist)
 {
 	dlb *f;
 	TCHAR wbuf[BUFSZ];
@@ -1047,7 +1047,7 @@ void mswin_start_menu(winid wid)
 /*
 add_menu(windid window, int glyph, const anything identifier,
                                 char accelerator, char groupacc,
-                                int attr, char *str, boolean preselected)
+                                int attr, char *str, bool preselected)
                 -- Add a text line str to the given menu window.  If identifier
                    is 0, then the line cannot be selected (e.g. a title).
                    Otherwise, identifier is the value returned if the line is
@@ -1077,7 +1077,7 @@ add_menu(windid window, int glyph, const anything identifier,
 */
 void mswin_add_menu(winid wid, int glyph, const ANY_P * identifier,
 		CHAR_P accelerator, CHAR_P group_accel, int attr, 
-		const char *str, BOOLEAN_P presel)
+		const char *str, BOOL_P presel)
 {
 	logDebug("mswin_add_menu(%d, %d, %p, %c, %c, %d, %s, %d)\n",
 		     wid, glyph, identifier, (char)accelerator, (char)group_accel,
@@ -1388,7 +1388,7 @@ char mswin_yn_function(const char *question, const char *choices,
     char message[BUFSZ];
 	char res_ch[2];
     int createcaret;
-	boolean digit_ok, allow_num;
+	bool digit_ok, allow_num;
 
 	logDebug("mswin_yn_function(%s, %s, %d)\n", question, choices, def);
 

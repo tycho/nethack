@@ -11,16 +11,16 @@ STATIC_DCL int FDECL(still_chewing,(XCHAR_P,XCHAR_P));
 #ifdef SINKS
 STATIC_DCL void NDECL(dosinkfall);
 #endif
-STATIC_DCL boolean FDECL(findtravelpath, (BOOLEAN_P));
-STATIC_DCL boolean FDECL(monstinroom, (struct permonst *,int));
+STATIC_DCL bool FDECL(findtravelpath, (BOOL_P));
+STATIC_DCL bool FDECL(monstinroom, (struct permonst *,int));
 
-STATIC_DCL void FDECL(move_update, (BOOLEAN_P));
+STATIC_DCL void FDECL(move_update, (BOOL_P));
 
 #define IS_SHOP(x)	(rooms[x].rtype >= SHOPBASE)
 
 #ifdef OVL2
 
-boolean
+bool
 revive_nasty(x, y, msg)
 int x,y;
 const char *msg;
@@ -28,7 +28,7 @@ const char *msg;
     register struct obj *otmp, *otmp2;
     struct monst *mtmp;
     coord cc;
-    boolean revived = FALSE;
+    bool revived = FALSE;
 
     for(otmp = level.objects[x][y]; otmp; otmp = otmp2) {
 	otmp2 = otmp->nexthere;
@@ -498,42 +498,42 @@ dosinkfall()
 }
 #endif
 
-boolean
+bool
 may_dig(x,y)
 register xchar x,y;
 /* intended to be called only on ROCKs */
 {
-    return (boolean)(!(IS_STWALL(levl[x][y].typ) &&
+    return (bool)(!(IS_STWALL(levl[x][y].typ) &&
 			(levl[x][y].wall_info & W_NONDIGGABLE)));
 }
 
-boolean
+bool
 may_passwall(x,y)
 register xchar x,y;
 {
-   return (boolean)(!(IS_STWALL(levl[x][y].typ) &&
+   return (bool)(!(IS_STWALL(levl[x][y].typ) &&
 			(levl[x][y].wall_info & W_NONPASSWALL)));
 }
 
 #endif /* OVLB */
 #ifdef OVL1
 
-boolean
+bool
 bad_rock(mdat,x,y)
 struct permonst *mdat;
 register xchar x,y;
 {
-	return((boolean) ((In_sokoban(&u.uz) && sobj_at(BOULDER,x,y)) ||
+	return((bool) ((In_sokoban(&u.uz) && sobj_at(BOULDER,x,y)) ||
 	       (IS_ROCK(levl[x][y].typ)
 		    && (!tunnels(mdat) || needspick(mdat) || !may_dig(x,y))
 		    && !(passes_walls(mdat) && may_passwall(x,y)))));
 }
 
-boolean
+bool
 invocation_pos(x, y)
 xchar x, y;
 {
-	return((boolean)(Invocation_lev(&u.uz) && x == inv_pos.x && y == inv_pos.y));
+	return((bool)(Invocation_lev(&u.uz) && x == inv_pos.x && y == inv_pos.y));
 }
 
 #endif /* OVL1 */
@@ -542,7 +542,7 @@ xchar x, y;
 /* return TRUE if (dx,dy) is an OK place to move
  * mode is one of DO_MOVE, TEST_MOVE or TEST_TRAV
  */
-boolean 
+bool 
 test_move(ux, uy, dx, dy, mode)
 int ux, uy, dx, dy;
 int mode;
@@ -708,9 +708,9 @@ int mode;
  * inaccessible locations as valid intermediate path points.
  * Returns TRUE if a path was found.
  */
-static boolean
+static bool
 findtravelpath(guess)
-boolean guess;
+bool guess;
 {
     /* if travel to adjacent, reachable location, use normal movement rules */
     if (!guess && iflags.travel1 && distmin(u.ux, u.uy, u.tx, u.ty) == 1) {
@@ -866,10 +866,10 @@ domove()
 	register xchar x,y;
 	struct trap *trap;
 	int wtcap;
-	boolean on_ice;
+	bool on_ice;
 	xchar chainx, chainy, ballx, bally;	/* ball&chain new positions */
 	int bc_control;				/* control for ball&chain */
-	boolean cause_delay = FALSE;	/* dragging ball will skip a move */
+	bool cause_delay = FALSE;	/* dragging ball will skip a move */
 	const char *predicament;
 
 	u_wipe_engr(rnd(5));
@@ -1098,7 +1098,7 @@ domove()
 	if (flags.forcefight ||
 	    /* remembered an 'I' && didn't use a move command */
 	    (glyph_is_invisible(levl[x][y].glyph) && !flags.nopick)) {
-		boolean expl = (Upolyd && attacktype(youmonst.data, AT_EXPL));
+		bool expl = (Upolyd && attacktype(youmonst.data, AT_EXPL));
 	    	char buf[BUFSZ];
 		Sprintf(buf,"a vacant spot on the %s", surface(x,y));
 		You("%s %s.",
@@ -1455,7 +1455,7 @@ invocation_message()
 
 void
 spoteffects(pick)
-boolean pick;
+bool pick;
 {
 	register struct monst *mtmp;
 
@@ -1516,7 +1516,7 @@ stillinwater:;
 #endif
 	if (!in_steed_dismounting) { /* if dismounting, we'll check again later */
 		struct trap *trap = t_at(u.ux, u.uy);
-		boolean pit;
+		bool pit;
 		pit = (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT));
 		if (trap && pit)
 			dotrap(trap, 0);	/* fall into pit */
@@ -1564,7 +1564,7 @@ stillinwater:;
 	}
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 monstinroom(mdat,roomno)
 struct permonst *mdat;
 int roomno;
@@ -1647,13 +1647,13 @@ register int typewanted;
 }
 
 /* is (x,y) in a town? */
-boolean
+bool
 in_town(x, y)
 register int x, y;
 {
 	s_level *slev = Is_special(&u.uz);
 	register struct mkroom *sroom;
-	boolean has_subrooms = FALSE;
+	bool has_subrooms = FALSE;
 
 	if (!slev || !slev->flags.town) return FALSE;
 
@@ -1673,7 +1673,7 @@ register int x, y;
 
 STATIC_OVL void
 move_update(newlev)
-register boolean newlev;
+register bool newlev;
 {
 	char *ptr1, *ptr2, *ptr3, *ptr4;
 
@@ -1715,7 +1715,7 @@ register boolean newlev;
 
 void
 check_special_room(newlev)
-register boolean newlev;
+register bool newlev;
 {
 	register struct monst *mtmp;
 	char *ptr;
@@ -1851,7 +1851,7 @@ dopickup()
 		return(1);
 	    } else {
 	    	int tmpcount = -count;
-		return loot_mon(u.ustuck, &tmpcount, (boolean *)0);
+		return loot_mon(u.ustuck, &tmpcount, (bool *)0);
 	    }
 	}
 	if(is_pool(u.ux, u.uy)) {
@@ -2126,7 +2126,7 @@ void
 losehp(n, knam, k_format)
 register int n;
 register const char *knam;
-boolean k_format;
+bool k_format;
 {
 	if (Upolyd) {
 		u.mh -= n;
@@ -2250,7 +2250,7 @@ max_capacity()
     return (wt - (2 * wc));
 }
 
-boolean
+bool
 check_capacity(str)
 const char *str;
 {

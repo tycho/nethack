@@ -69,7 +69,7 @@ set_message_slider(wp)
 void
 create_message_window(wp, create_popup, parent)
     struct xwindow *wp;			/* window pointer */
-    boolean create_popup;
+    bool create_popup;
     Widget parent;
 {
     Arg args[8];

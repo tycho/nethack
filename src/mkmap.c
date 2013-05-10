@@ -161,8 +161,8 @@ flood_fill_rm(sx, sy, rmno, lit, anyroom)
     int sx;
     register int sy;
     register int rmno;
-    boolean lit;
-    boolean anyroom;
+    bool lit;
+    bool anyroom;
 {
     register int i;
     int nx;
@@ -337,7 +337,7 @@ joinm:
 STATIC_OVL void
 finish_map(fg_typ, bg_typ, lit, walled)
 	schar	fg_typ, bg_typ;
-	boolean	lit, walled;
+	bool	lit, walled;
 {
 	int	i, j;
 
@@ -439,7 +439,7 @@ mkmap(init_lev)
 {
 	schar	bg_typ = init_lev->bg,
 		fg_typ = init_lev->fg;
-	boolean smooth = init_lev->smoothed,
+	bool smooth = init_lev->smoothed,
 		join = init_lev->joined;
 	xchar   lit = init_lev->lit,
 		walled = init_lev->walled;
@@ -466,7 +466,7 @@ mkmap(init_lev)
 	if(join)
 	    join_map(bg_typ, fg_typ);
 
-	finish_map(fg_typ, bg_typ, (boolean)lit, (boolean)walled);
+	finish_map(fg_typ, bg_typ, (bool)lit, (bool)walled);
 	/* a walled, joined level is cavernous, not mazelike -dlc */
 	if (walled && join) {
 	    level.flags.is_maze_lev = FALSE;

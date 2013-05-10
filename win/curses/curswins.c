@@ -16,7 +16,7 @@ typedef struct nhw
     int x;  /* start of window on terminal (left) */
     int y;  /* start of window on termial (top) */
     int orientation;    /* Placement of window relative to map */
-    boolean border; /* Whether window has a visible border */
+    bool border; /* Whether window has a visible border */
 } nethack_window;
 
 typedef struct nhwd
@@ -33,7 +33,7 @@ typedef struct nhchar
     int attr;   /* attributes of character */
 } nethack_char;
 
-static boolean map_clipped; /* Map window smaller than 80x21 */
+static bool map_clipped; /* Map window smaller than 80x21 */
 
 static nethack_window nhwins[NHWIN_MAX];    /* NetHack window array */
 
@@ -41,7 +41,7 @@ static nethack_char map[ROWNO][COLNO];  /* Map window contents */
 
 static nethack_wid *nhwids = NULL;  /* NetHack wid array */
 
-static boolean is_main_window(winid wid);
+static bool is_main_window(winid wid);
 
 static void write_char(WINDOW *win, int x, int y, nethack_char ch);
 
@@ -55,7 +55,7 @@ WINDOW *curses_create_window(int width, int height, orient orientation)
     int startx = 0;
     int starty = 0;
     WINDOW *win;
-    boolean map_border = FALSE;
+    bool map_border = FALSE;
     int mapb_offset = 0;
 
     if ((orientation == UP) || (orientation == DOWN) ||
@@ -226,7 +226,7 @@ WINDOW *curses_get_nhwin(winid wid)
 /* Add curses window pointer and window info to list for given NetHack winid */
 
 void curses_add_nhwin(winid wid, int height, int width, int y, int x,
-  orient orientation, boolean border)
+  orient orientation, bool border)
 {
     WINDOW *win;
     int real_width = width;
@@ -390,9 +390,9 @@ void curses_del_wid(winid wid)
 void curses_putch(winid wid, int x, int y, int ch, int color, int attr)
 {
     int sx, sy, ex, ey;
-    boolean border = curses_window_has_border(wid);
+    bool border = curses_window_has_border(wid);
     nethack_char nch;
-    static boolean map_initted = FALSE;
+    static bool map_initted = FALSE;
 
     if (wid == STATUS_WIN)
     {
@@ -457,7 +457,7 @@ void curses_get_window_size(winid wid, int *height, int *width)
 
 /* Determine if given window has a visible border */
 
-boolean curses_window_has_border(winid wid)
+bool curses_window_has_border(winid wid)
 {
     return nhwins[wid].border;
 }
@@ -465,7 +465,7 @@ boolean curses_window_has_border(winid wid)
 
 /* Determine if window for given winid exists */
 
-boolean curses_window_exists(winid wid)
+bool curses_window_exists(winid wid)
 {
     if (nhwins[wid].nhwin == wid)
     {
@@ -540,7 +540,7 @@ void curses_puts(winid wid, int attr, const char *text)
 void curses_clear_nhwin(winid wid)
 {
     WINDOW *win = curses_get_nhwin(wid);
-    boolean border = curses_window_has_border(wid);
+    bool border = curses_window_has_border(wid);
 
     if (wid == MAP_WIN)
     {
@@ -559,7 +559,7 @@ void curses_clear_nhwin(winid wid)
 
 /* Return true if given wid is a main NetHack window */
 
-static boolean is_main_window(winid wid)
+static bool is_main_window(winid wid)
 {
     if ((wid == MESSAGE_WIN) || (wid == MAP_WIN) ||
      (wid == STATUS_WIN))
@@ -702,7 +702,7 @@ static void clear_map()
 /* Determine visible boundaries of map, and determine if it needs to be
 based on the location of the player. */
 
-boolean curses_map_borders(int *sx, int *sy, int *ex, int *ey, int ux,
+bool curses_map_borders(int *sx, int *sy, int *ex, int *ey, int ux,
  int uy)
 {
     static int width = 0;

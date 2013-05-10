@@ -7,25 +7,25 @@ extern const char * const destroy_strings[];	/* from zap.c */
 
 STATIC_DCL void FDECL(dofiretrap, (struct obj *));
 STATIC_DCL void NDECL(domagictrap);
-STATIC_DCL boolean FDECL(emergency_disrobe,(boolean *));
+STATIC_DCL bool FDECL(emergency_disrobe,(bool *));
 STATIC_DCL int FDECL(untrap_prob, (struct trap *ttmp));
 STATIC_DCL void FDECL(cnv_trap_obj, (int, int, struct trap *));
 STATIC_DCL void FDECL(move_into_trap, (struct trap *));
-STATIC_DCL int FDECL(try_disarm, (struct trap *,BOOLEAN_P));
+STATIC_DCL int FDECL(try_disarm, (struct trap *,BOOL_P));
 STATIC_DCL void FDECL(reward_untrap, (struct trap *, struct monst *));
 STATIC_DCL int FDECL(disarm_holdingtrap, (struct trap *));
 STATIC_DCL int FDECL(disarm_landmine, (struct trap *));
 STATIC_DCL int FDECL(disarm_squeaky_board, (struct trap *));
 STATIC_DCL int FDECL(disarm_shooting_trap, (struct trap *, int));
-STATIC_DCL int FDECL(try_lift, (struct monst *, struct trap *, int, BOOLEAN_P));
+STATIC_DCL int FDECL(try_lift, (struct monst *, struct trap *, int, BOOL_P));
 STATIC_DCL int FDECL(help_monster_out, (struct monst *, struct trap *));
-STATIC_DCL boolean FDECL(thitm, (int,struct monst *,struct obj *,int,BOOLEAN_P));
+STATIC_DCL bool FDECL(thitm, (int,struct monst *,struct obj *,int,BOOL_P));
 STATIC_DCL int FDECL(mkroll_launch,
 			(struct trap *,XCHAR_P,XCHAR_P,SHORT_P,long));
-STATIC_DCL boolean FDECL(isclearpath,(coord *, int, SCHAR_P, SCHAR_P));
+STATIC_DCL bool FDECL(isclearpath,(coord *, int, SCHAR_P, SCHAR_P));
 #ifdef STEED
 STATIC_OVL int FDECL(steedintrap, (struct trap *, struct obj *));
-STATIC_OVL boolean FDECL(keep_saddle_with_steedcorpse,
+STATIC_OVL bool FDECL(keep_saddle_with_steedcorpse,
 			(unsigned, struct obj *, struct obj *));
 #endif
 
@@ -50,7 +50,7 @@ STATIC_VAR const char * const blindgas[6] =
 #ifdef OVLB
 
 /* called when you're hit by fire (dofiretrap,buzz,zapyourself,explode) */
-boolean			/* returns TRUE if hit on torso */
+bool			/* returns TRUE if hit on torso */
 burnarmor(victim)
 struct monst *victim;
 {
@@ -111,20 +111,20 @@ struct monst *victim;
  * if the item could not be rusted; otherwise a message is printed and TRUE is
  * returned only for rustable items.
  */
-boolean
+bool
 rust_dmg(otmp, ostr, type, print, victim)
 register struct obj *otmp;
 register const char *ostr;
 int type;
-boolean print;
+bool print;
 struct monst *victim;
 {
 	static NEARDATA const char * const action[] = { "smoulder", "rust", "rot", "corrode" };
 	static NEARDATA const char * const msg[] =  { "burnt", "rusted", "rotten", "corroded" };
-	boolean vulnerable = FALSE;
-	boolean grprot = FALSE;
-	boolean is_primary = TRUE;
-	boolean vismon = (victim != &youmonst) && canseemon(victim);
+	bool vulnerable = FALSE;
+	bool grprot = FALSE;
+	bool is_primary = TRUE;
+	bool vismon = (victim != &youmonst) && canseemon(victim);
 	int erosion;
 
 	if (!otmp) return(FALSE);
@@ -206,7 +206,7 @@ register const char *ostr;
 struct monst *victim;
 {
 	static const char txt[] = "protected by the layer of grease!";
-	boolean vismon = victim && (victim != &youmonst) && canseemon(victim);
+	bool vismon = victim && (victim != &youmonst) && canseemon(victim);
 
 	if (ostr) {
 	    if (victim == &youmonst)
@@ -235,7 +235,7 @@ register int x, y, typ;
 {
 	register struct trap *ttmp;
 	register struct rm *lev;
-	register boolean oldplace;
+	register bool oldplace;
 
 	if ((ttmp = t_at(x,y)) != 0) {
 	    if (ttmp->ttyp == MAGIC_PORTAL) return (struct trap *)0;
@@ -319,7 +319,7 @@ register int x, y, typ;
 
 void
 fall_through(td)
-boolean td;	/* td == TRUE : trap door or hole */
+bool td;	/* td == TRUE : trap door or hole */
 {
 	d_level dtmp;
 	char msgbuf[BUFSZ];
@@ -408,7 +408,7 @@ int *fail_reason;
 	struct monst *mon = 0;
 	struct obj *item;
 	coord cc;
-	boolean historic = (Role_if(PM_ARCHEOLOGIST) && !flags.mon_moving && (statue->spe & STATUE_HISTORIC));
+	bool historic = (Role_if(PM_ARCHEOLOGIST) && !flags.mon_moving && (statue->spe & STATUE_HISTORIC));
 	char statuename[BUFSZ];
 
 	Strcpy(statuename,the(xname(statue)));
@@ -522,7 +522,7 @@ struct monst *
 activate_statue_trap(trap, x, y, shatter)
 struct trap *trap;
 xchar x, y;
-boolean shatter;
+bool shatter;
 {
 	struct monst *mtmp = (struct monst *)0;
 	struct obj *otmp = sobj_at(STATUE, x, y);
@@ -549,7 +549,7 @@ boolean shatter;
 }
 
 #ifdef STEED
-STATIC_OVL boolean
+STATIC_OVL bool
 keep_saddle_with_steedcorpse(steed_mid, objchn, saddle)
 unsigned steed_mid;
 struct obj *objchn, *saddle;
@@ -586,9 +586,9 @@ unsigned trflags;
 {
 	register int ttype = trap->ttyp;
 	register struct obj *otmp;
-	boolean already_seen = trap->tseen;
-	boolean webmsgok = (!(trflags & NOWEBMSG));
-	boolean forcebungle = (trflags & FORCEBUNGLE);
+	bool already_seen = trap->tseen;
+	bool webmsgok = (!(trflags & NOWEBMSG));
+	bool forcebungle = (trflags & FORCEBUNGLE);
 
 	nomul(0);
 
@@ -1131,7 +1131,7 @@ glovecheck:		(void) rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		     * the ground, and you being affected again by the same
 		     * mine because it hasn't been deleted yet
 		     */
-		    static boolean recursive_mine = FALSE;
+		    static bool recursive_mine = FALSE;
 
 		    if (recursive_mine) break;
 #endif
@@ -1194,9 +1194,9 @@ struct obj *otmp;
 	struct monst *mtmp = u.usteed;
 	struct permonst *mptr;
 	int tt;
-	boolean in_sight;
-	boolean trapkilled = FALSE;
-	boolean steedhit = FALSE;
+	bool in_sight;
+	bool trapkilled = FALSE;
+	bool steedhit = FALSE;
 
 	if (!u.usteed || !trap) return 0;
 	mptr = mtmp->data;
@@ -1316,8 +1316,8 @@ int style;
 	register struct obj *otmp, *otmp2;
 	register int dx,dy;
 	struct obj *singleobj;
-	boolean used_up = FALSE;
-	boolean otherside = FALSE;
+	bool used_up = FALSE;
+	bool otherside = FALSE;
 	int dist;
 	int tmp;
 	int delaycnt = 0;
@@ -1568,7 +1568,7 @@ long ocount;
 	coord cc;
 	coord bcc;
 	int trycount = 0;
-	boolean success = FALSE;
+	bool success = FALSE;
 	int mindist = 4;
 
 	if (ttmp->ttyp == ROLLING_BOULDER_TRAP) mindist = 2;
@@ -1584,7 +1584,7 @@ long ocount;
 			success = FALSE;
 		else success = isclearpath(&cc, distance, dx, dy);
 		if (ttmp->ttyp == ROLLING_BOULDER_TRAP) {
-			boolean success_otherway;
+			bool success_otherway;
 			bcc.x = x; bcc.y = y;
 			success_otherway = isclearpath(&bcc, distance,
 						-(dx), -(dy));
@@ -1616,7 +1616,7 @@ long ocount;
 	return 1;
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 isclearpath(cc,distance,dx,dy)
 coord *cc;
 int distance;
@@ -1646,7 +1646,7 @@ mintrap(mtmp)
 register struct monst *mtmp;
 {
 	register struct trap *trap = t_at(mtmp->mx, mtmp->my);
-	boolean trapkilled = FALSE;
+	bool trapkilled = FALSE;
 	struct permonst *mptr = mtmp->data;
 	struct obj *otmp;
 
@@ -1692,7 +1692,7 @@ register struct monst *mtmp;
 	    }
 	} else {
 	    register int tt = trap->ttyp;
-	    boolean in_sight, tear_web, see_it,
+	    bool in_sight, tear_web, see_it,
 		    inescapable = ((tt == HOLE || tt == PIT) &&
 				   In_sokoban(&u.uz) && !trap->madeby_u);
 	    const char *fallverb;
@@ -1902,7 +1902,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			    }
 			} else {
 			    int num = d(2,4), alt;
-			    boolean immolate = FALSE;
+			    bool immolate = FALSE;
 
 			    /* paper burns very fast, assume straw is tightly
 			     * packed and burns a bit slower */
@@ -2083,7 +2083,7 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 			if(rn2(3))
 				break; /* monsters usually don't set it off */
 			if(is_flyer(mptr)) {
-				boolean already_seen = trap->tseen;
+				bool already_seen = trap->tseen;
 				if (in_sight && !already_seen) {
 	pline("A trigger appears in a pile of soil below %s.", mon_nam(mtmp));
 					seetrap(trap);
@@ -2176,7 +2176,7 @@ const char *str;
 void
 minstapetrify(mon,byplayer)
 struct monst *mon;
-boolean byplayer;
+bool byplayer;
 {
 	if (resists_ston(mon)) return;
 	if (poly_when_stoned(mon->data)) {
@@ -2223,7 +2223,7 @@ void
 mselftouch(mon,arg,byplayer)
 struct monst *mon;
 const char *arg;
-boolean byplayer;
+bool byplayer;
 {
 	struct obj *mwep = MON_WEP(mon);
 
@@ -2306,7 +2306,7 @@ long hmask, emask;     /* might cancel timeout */
 {
 	register struct trap *trap = (struct trap *)0;
 	d_level current_dungeon_level;
-	boolean no_msg = FALSE;
+	bool no_msg = FALSE;
 
 	HLevitation &= ~hmask;
 	ELevitation &= ~emask;
@@ -2369,7 +2369,7 @@ long hmask, emask;     /* might cancel timeout */
 		if (!(emask & W_SADDLE))
 #endif
 		{
-		    boolean sokoban_trap = (In_sokoban(&u.uz) && trap);
+		    bool sokoban_trap = (In_sokoban(&u.uz) && trap);
 		    if (Hallucination)
 			pline("Bummer!  You've %s.",
 			      is_pool(u.ux,u.uy) ?
@@ -2429,7 +2429,7 @@ STATIC_OVL void
 dofiretrap(box)
 struct obj *box;	/* null for floor trap */
 {
-	boolean see_it = !Blind;
+	bool see_it = !Blind;
 	int num, alt;
 
 /* Bug: for box case, the equivalent of burn_floor_paper() ought
@@ -2586,7 +2586,7 @@ domagictrap()
 int
 fire_damage(chain, force, here, x, y)
 struct obj *chain;
-boolean force, here;
+bool force, here;
 xchar x, y;
 {
     int chance;
@@ -2680,7 +2680,7 @@ xchar x, y;
 void
 water_damage(obj, force, here)
 register struct obj *obj;
-register boolean force, here;
+register bool force, here;
 {
 	struct obj *otmp;
 
@@ -2748,9 +2748,9 @@ register boolean force, here;
  * Returns TRUE if disrobing made player unencumbered enough to
  * crawl out of the current predicament.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 emergency_disrobe(lostsome)
-boolean *lostsome;
+bool *lostsome;
 {
 	int invc = inv_cnt();
 
@@ -2819,10 +2819,10 @@ boolean *lostsome;
 /*
  *  return(TRUE) == player relocated
  */
-boolean
+bool
 drown()
 {
-	boolean inpool_ok = FALSE, crawl_ok;
+	bool inpool_ok = FALSE, crawl_ok;
 	int i, x, y;
 
 	/* happily wading in the same contiguous pool */
@@ -2924,9 +2924,9 @@ drown()
 			}
  crawl:
 	if (crawl_ok) {
-		boolean lost = FALSE;
+		bool lost = FALSE;
 		/* time to do some strip-tease... */
-		boolean succ = Is_waterlevel(&u.uz) ? TRUE :
+		bool succ = Is_waterlevel(&u.uz) ? TRUE :
 				emergency_disrobe(&lost);
 
 		You("try to crawl out of the water.");
@@ -3049,7 +3049,7 @@ struct trap *ttmp;
 {
 	int bc;
 	xchar x = ttmp->tx, y = ttmp->ty, bx, by, cx, cy;
-	boolean unused;
+	bool unused;
 
 	/* we know there's no monster in the way, and we're not trapped */
 	if (!Punished || drag_ball(x, y, &bc, &bx, &by, &cx, &cy, &unused,
@@ -3073,12 +3073,12 @@ struct trap *ttmp;
 STATIC_OVL int
 try_disarm(ttmp, force_failure)
 struct trap *ttmp;
-boolean force_failure;
+bool force_failure;
 {
 	struct monst *mtmp = m_at(ttmp->tx,ttmp->ty);
 	int ttype = ttmp->ttyp;
-	boolean under_u = (!u.dx && !u.dy);
-	boolean holdingtrap = (ttype == BEAR_TRAP || ttype == WEB);
+	bool under_u = (!u.dx && !u.dy);
+	bool holdingtrap = (ttype == BEAR_TRAP || ttype == WEB);
 	
 	/* Test for monster first, monsters are displayed instead of trap. */
 	if (mtmp && (!mtmp->mtrapped || !holdingtrap)) {
@@ -3232,7 +3232,7 @@ disarm_squeaky_board(ttmp)
 struct trap *ttmp;
 {
 	struct obj *obj;
-	boolean bad_tool;
+	bool bad_tool;
 	int fails;
 
 	obj = getobj(oil, "untrap with");
@@ -3281,7 +3281,7 @@ try_lift(mtmp, ttmp, wt, stuff)
 struct monst *mtmp;
 struct trap *ttmp;
 int wt;
-boolean stuff;
+bool stuff;
 {
 	int wc = weight_cap();
 
@@ -3308,7 +3308,7 @@ struct trap *ttmp;
 {
 	int wt;
 	struct obj *otmp;
-	boolean uprob;
+	bool uprob;
 
 	/*
 	 * This works when levitating too -- consistent with the ability
@@ -3393,17 +3393,17 @@ struct trap *ttmp;
 
 int
 untrap(force)
-boolean force;
+bool force;
 {
 	register struct obj *otmp;
-	register boolean confused = (Confusion > 0 || Hallucination > 0);
+	register bool confused = (Confusion > 0 || Hallucination > 0);
 	register int x,y;
 	int ch;
 	struct trap *ttmp;
 	struct monst *mtmp;
-	boolean trap_skipped = FALSE;
-	boolean box_here = FALSE;
-	boolean deal_with_floor_trap = FALSE;
+	bool trap_skipped = FALSE;
+	bool box_here = FALSE;
+	bool deal_with_floor_trap = FALSE;
 	char the_trap[BUFSZ], qbuf[QBUFSZ];
 	int containercnt = 0;
 
@@ -3595,11 +3595,11 @@ boolean force;
 #ifdef OVLB
 
 /* only called when the player is doing something to the chest directly */
-boolean
+bool
 chest_trap(obj, bodypart, disarm)
 register struct obj *obj;
 register int bodypart;
-boolean disarm;
+bool disarm;
 {
 	register struct obj *otmp = obj, *otmp2;
 	char	buf[80];
@@ -3642,7 +3642,7 @@ boolean disarm;
 		case 21: {
 			  struct monst *shkp = 0;
 			  long loss = 0L;
-			  boolean costly, insider;
+			  bool costly, insider;
 			  register xchar ox = obj->ox, oy = obj->oy;
 
 			  /* the obj location need not be that of player */
@@ -3657,7 +3657,7 @@ boolean disarm;
 
 			  if(costly)
 			      loss += stolen_value(obj, ox, oy,
-						(boolean)shkp->mpeaceful, TRUE);
+						(bool)shkp->mpeaceful, TRUE);
 			  delete_contents(obj);
 			  /* we're about to delete all things at this location,
 			   * which could include the ball & chain.
@@ -3676,7 +3676,7 @@ boolean disarm;
 			      otmp2 = otmp->nexthere;
 			      if(costly)
 				  loss += stolen_value(otmp, otmp->ox,
-					  otmp->oy, (boolean)shkp->mpeaceful,
+					  otmp->oy, (bool)shkp->mpeaceful,
 					  TRUE);
 			      delobj(otmp);
 			  }
@@ -3806,7 +3806,7 @@ register struct trap *trap;
 	dealloc_trap(trap);
 }
 
-boolean
+bool
 delfloortrap(ttmp)
 register struct trap *ttmp;
 {
@@ -3858,16 +3858,16 @@ register int bodypart;
 
 /* Monster is hit by trap. */
 /* Note: doesn't work if both obj and d_override are null */
-STATIC_OVL boolean
+STATIC_OVL bool
 thitm(tlev, mon, obj, d_override, nocorpse)
 int tlev;
 struct monst *mon;
 struct obj *obj;
 int d_override;
-boolean nocorpse;
+bool nocorpse;
 {
 	int strike;
-	boolean trapkilled = FALSE;
+	bool trapkilled = FALSE;
 
 	if (d_override) strike = 1;
 	else if (obj) strike = (find_mac(mon) + tlev + obj->spe <= rnd(20));
@@ -3908,10 +3908,10 @@ boolean nocorpse;
 	return trapkilled;
 }
 
-boolean
+bool
 unconscious()
 {
-	return((boolean)(multi < 0 && (!nomovemsg ||
+	return((bool)(multi < 0 && (!nomovemsg ||
 		u.usleep ||
 		!strncmp(nomovemsg,"You regain con", 14) ||
 		!strncmp(nomovemsg,"You are consci", 14))));
@@ -3919,12 +3919,12 @@ unconscious()
 
 static const char lava_killer[] = "molten lava";
 
-boolean
+bool
 lava_effects()
 {
     register struct obj *obj, *obj2;
     int dmg;
-    boolean usurvive;
+    bool usurvive;
 
     burn_away_slime();
     if (likes_lava(youmonst.data)) return FALSE;

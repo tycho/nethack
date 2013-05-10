@@ -380,14 +380,14 @@ macunlink(const char *name)
 
 /* ---------------------------------------------------------------------- */
 
-boolean rsrc_dlb_init(void) {
+bool rsrc_dlb_init(void) {
 	return TRUE;
 }
 
 void rsrc_dlb_cleanup(void) {
 }
 
-boolean rsrc_dlb_fopen(dlb *dp, const char *name, const char *mode) {
+bool rsrc_dlb_fopen(dlb *dp, const char *name, const char *mode) {
 #if defined(__SC__) || defined(__MRC__)
 # pragma unused(mode)
 #endif

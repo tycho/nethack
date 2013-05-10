@@ -48,7 +48,7 @@ struct monst *
 make_familiar(otmp,x,y,quietly)
 register struct obj *otmp;
 xchar x, y;
-boolean quietly;
+bool quietly;
 {
 	struct permonst *pm;
 	struct monst *mtmp = 0;
@@ -217,7 +217,7 @@ losedogs()
 void
 mon_arrive(mtmp, with_you)
 struct monst *mtmp;
-boolean with_you;
+bool with_you;
 {
 	struct trap *t;
 	xchar xlocale, ylocale, xyloc, xyflags, wander;
@@ -481,12 +481,12 @@ long nmv;		/* number of moves */
 /* called when you move to another level */
 void
 keepdogs(pets_only)
-boolean pets_only;	/* true for ascension or final escape */
+bool pets_only;	/* true for ascension or final escape */
 {
 	register struct monst *mtmp, *mtmp2;
 	register struct obj *obj;
 	int num_segs;
-	boolean stay_behind;
+	bool stay_behind;
 
 	for (mtmp = fmon; mtmp; mtmp = mtmp2) {
 	    mtmp2 = mtmp->nmon;
@@ -646,10 +646,10 @@ dogfood(mon,obj)
 struct monst *mon;
 register struct obj *obj;
 {
-	boolean carni = carnivorous(mon->data);
-	boolean herbi = herbivorous(mon->data);
+	bool carni = carnivorous(mon->data);
+	bool herbi = herbivorous(mon->data);
 	struct permonst *fptr = &mons[obj->corpsenm];
-	boolean starving;
+	bool starving;
 
 	if (is_quest_artifact(obj) || obj_resists(obj, 0, 95))
 	    return (obj->cursed ? TABU : APPORT);
@@ -780,7 +780,7 @@ register struct obj *obj;
 		 (tasty <= ACCFOOD && EDOG(mtmp)->hungrytime <= monstermoves))) {
 		/* pet will "catch" and eat this thrown food */
 		if (canseemon(mtmp)) {
-		    boolean big_corpse = (obj->otyp == CORPSE &&
+		    bool big_corpse = (obj->otyp == CORPSE &&
 					  obj->corpsenm >= LOW_PM &&
 				mons[obj->corpsenm].msize > mtmp->data->msize);
 		    pline("%s catches %s%s",
@@ -845,10 +845,10 @@ register struct obj *obj;
 void
 wary_dog(mtmp, was_dead)
 struct monst *mtmp;
-boolean was_dead;
+bool was_dead;
 {
     struct edog *edog;
-    boolean quietly = was_dead;
+    bool quietly = was_dead;
 
     mtmp->meating = 0;
     if (!mtmp->mtame) return;

@@ -9,12 +9,12 @@ extern char bones[];	/* from files.c */
 extern long bytes_counted;
 #endif
 
-STATIC_DCL boolean FDECL(no_bones_level, (d_level *));
+STATIC_DCL bool FDECL(no_bones_level, (d_level *));
 STATIC_DCL void FDECL(goodfruit, (int));
-STATIC_DCL void FDECL(resetobjs,(struct obj *,BOOLEAN_P));
+STATIC_DCL void FDECL(resetobjs,(struct obj *,BOOL_P));
 STATIC_DCL void FDECL(drop_upon_death, (struct monst *, struct obj *));
 
-STATIC_OVL boolean
+STATIC_OVL bool
 no_bones_level(lev)
 d_level *lev;
 {
@@ -23,7 +23,7 @@ d_level *lev;
 
 	if (ledger_no(&save_dlevel)) assign_level(lev, &save_dlevel);
 
-	return (boolean)(((sptr = Is_special(lev)) != 0 && !sptr->boneid)
+	return (bool)(((sptr = Is_special(lev)) != 0 && !sptr->boneid)
 		|| !dungeons[lev->dnum].boneid
 		   /* no bones on the last or multiway branch levels */
 		   /* in any dungeon (level 1 isn't multiway).       */
@@ -55,7 +55,7 @@ int id;
 STATIC_OVL void
 resetobjs(ochain,restore)
 struct obj *ochain;
-boolean restore;
+bool restore;
 {
 	struct obj *otmp;
 
@@ -157,7 +157,7 @@ struct obj *cont;
 }
 
 /* check whether bones are feasible */
-boolean
+bool
 can_make_bones()
 {
 	register struct trap *ttmp;

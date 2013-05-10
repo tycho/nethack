@@ -31,7 +31,7 @@ extern struct tc_gbl_data {   /* also declared in decl.h; defined in decl.c */
 extern struct tc_lcl_data {   /* defined and set up in termcap.c */
     char *tc_CM, *tc_ND, *tc_CD;
     char *tc_HI, *tc_HE, *tc_US, *tc_UE;
-    boolean tc_ul_hack;
+    bool tc_ul_hack;
 } tc_lcl_data;
 /* some curses.h declare CM etc. */
 #define nh_CM tc_lcl_data.tc_CM

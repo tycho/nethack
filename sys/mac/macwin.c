@@ -1122,7 +1122,7 @@ adjust_window_pos(NhWindow *aWin, short width, short height)
  * until presumed seen.
  */
 void
-mac_display_nhwindow (winid win, BOOLEAN_P f) {
+mac_display_nhwindow (winid win, BOOL_P f) {
 	NhWindow *aWin = &theWindows [win];
 	WindowPtr theWindow = aWin->its_window;
 
@@ -2519,8 +2519,8 @@ mac_select_menu (winid win, int how, menu_item **selected_list) {
 
 static void
 mac_display_file (name, complain)
-const char *name;	/* not ANSI prototype because of boolean parameter */
-boolean complain;
+const char *name;	/* not ANSI prototype because of bool parameter */
+bool complain;
 {
 	Ptr buf;
 	int win;

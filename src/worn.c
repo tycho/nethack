@@ -4,7 +4,7 @@
 #include "hack.h"
 
 STATIC_DCL void FDECL(m_lose_armor, (struct monst *,struct obj *));
-STATIC_DCL void FDECL(m_dowear_type, (struct monst *,long, BOOLEAN_P, BOOLEAN_P));
+STATIC_DCL void FDECL(m_dowear_type, (struct monst *,long, BOOL_P, BOOL_P));
 STATIC_DCL int FDECL(extra_pref, (struct monst *, struct obj *));
 
 const struct worn {
@@ -146,7 +146,7 @@ int adjust;	/* positive => increase speed, negative => decrease */
 struct obj *obj;	/* item to make known if effect can be seen */
 {
     struct obj *otmp;
-    boolean give_msg = !in_mklev, petrify = FALSE;
+    bool give_msg = !in_mklev, petrify = FALSE;
     unsigned int oldspeed = mon->mspeed;
 
     switch (adjust) {
@@ -210,7 +210,7 @@ void
 update_mon_intrinsics(mon, obj, on, silently)
 struct monst *mon;
 struct obj *obj;
-boolean on, silently;
+bool on, silently;
 {
     int unseen;
     uchar mask;
@@ -227,7 +227,7 @@ boolean on, silently;
 	    break;
 	 case FAST:
 	  {
-	    boolean save_in_mklev = in_mklev;
+	    bool save_in_mklev = in_mklev;
 	    if (silently) in_mklev = TRUE;
 	    mon_adjust_speed(mon, 0, obj);
 	    in_mklev = save_in_mklev;
@@ -267,7 +267,7 @@ boolean on, silently;
 	    break;
 	 case FAST:
 	  {
-	    boolean save_in_mklev = in_mklev;
+	    bool save_in_mklev = in_mklev;
 	    if (silently) in_mklev = TRUE;
 	    mon_adjust_speed(mon, 0, obj);
 	    in_mklev = save_in_mklev;
@@ -357,7 +357,7 @@ register struct monst *mon;
 void
 m_dowear(mon, creation)
 register struct monst *mon;
-boolean creation;
+bool creation;
 {
 #define RACE_EXCEPTION TRUE
 	/* Note the restrictions here are the same as in dowear in do_wear.c
@@ -398,8 +398,8 @@ STATIC_OVL void
 m_dowear_type(mon, flag, creation, racialexception)
 struct monst *mon;
 long flag;
-boolean creation;
-boolean racialexception;
+bool creation;
+bool racialexception;
 {
 	struct obj *old, *best, *obj;
 	int m_delay = 0;
@@ -592,12 +592,12 @@ struct obj *obj;
 void
 mon_break_armor(mon, polyspot)
 struct monst *mon;
-boolean polyspot;
+bool polyspot;
 {
 	register struct obj *otmp;
 	struct permonst *mdat = mon->data;
-	boolean vis = cansee(mon->mx, mon->my);
-	boolean handless_or_tiny = (nohands(mdat) || verysmall(mdat));
+	bool vis = cansee(mon->mx, mon->my);
+	bool handless_or_tiny = (nohands(mdat) || verysmall(mdat));
 	const char *pronoun = mhim(mon),
 			*ppronoun = mhis(mon);
 

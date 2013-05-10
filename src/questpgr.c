@@ -176,11 +176,11 @@ intermed()	/* return your intermediate target string */
 	return (urole.intermed);
 }
 
-boolean
+bool
 is_quest_artifact(otmp)
 struct obj *otmp;
 {
-	return((boolean)(otmp->oartifact == urole.questarti));
+	return((bool)(otmp->oartifact == urole.questarti));
 }
 
 STATIC_OVL const char *

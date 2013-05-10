@@ -31,11 +31,11 @@ FILE *dbgfile;
  *  of the code in here is at all portable between platforms)
  */
 static long __stdcall start_mailthread(LPVOID ThreadParam);
-static boolean MAPI_mail_check(char *);
-static boolean MAPI_mail_fetch(char *);
+static bool MAPI_mail_check(char *);
+static bool MAPI_mail_fetch(char *);
 static void MAPI_mail_finish(void);
 static int MAPI_mail_context(int *);
-static boolean MAPI_mail_init(char *);
+static bool MAPI_mail_init(char *);
 static int InitMAPI(void);
 static int DeInitMAPI(void);
 static void MAPI_mail_abort(unsigned long);
@@ -68,7 +68,7 @@ long mailthread_stopping = 0;   /* mapi -> nh thread: MAPI is ill!  */
  *
  */
 char MAPI_username[120];
-boolean debugmapi;
+bool debugmapi;
 
 /*
  * Data updated by the MAPI-mail thread only
@@ -93,7 +93,7 @@ char msgID[80];         /* message ID of msg under manipulation     */
  * sys/share/nhlan.c and they are prototyped in include/extern.h
  *===============================================================
  */
-boolean mail_check()
+bool mail_check()
 {
 	if (!mailthread_stopping) {
 		if (mail_fetched > 0)
@@ -103,7 +103,7 @@ boolean mail_check()
 }
 
 
-boolean mail_fetch(msg)
+bool mail_fetch(msg)
 struct lan_mail_struct *msg;
 {
 	/* shouldn't need to check mailthread_stopping here
@@ -254,7 +254,7 @@ int *mcount;
 	return status;
 }
 
-static boolean
+static bool
 MAPI_mail_check(mID)
 char *mID;
 {
@@ -296,7 +296,7 @@ char *mID;
 	return FALSE;
 }
 
-static boolean
+static bool
 MAPI_mail_fetch(mID)
 char *mID;
 {
@@ -376,7 +376,7 @@ unsigned long reason;
 	MAPI_mail_finish();
 }
 
-static boolean
+static bool
 MAPI_mail_init(uname)
 char *uname;
 {

@@ -42,7 +42,7 @@ void ghack_text_window_destroy()
     TW_window = NULL;
 }
 
-void ghack_text_window_display(GtkWidget *widget, boolean block,
+void ghack_text_window_display(GtkWidget *widget, bool block,
                               gpointer data)
 {
     if(showRIP == 1) {

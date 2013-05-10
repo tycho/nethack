@@ -11,7 +11,7 @@
 GtkWidget* ghack_init_text_window ( );
 void ghack_text_window_clear(GtkWidget *widget, gpointer data);
 void ghack_text_window_destroy();
-void ghack_text_window_display(GtkWidget *widget, boolean block,
+void ghack_text_window_display(GtkWidget *widget, bool block,
                               gpointer data);
 void ghack_text_window_put_string(GtkWidget *widget, int attr,
                                   const char* text, gpointer data);

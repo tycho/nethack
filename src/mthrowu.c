@@ -3,7 +3,7 @@
 
 #include "hack.h"
 
-STATIC_DCL int FDECL(drop_throw,(struct obj *,BOOLEAN_P,int,int));
+STATIC_DCL int FDECL(drop_throw,(struct obj *,BOOL_P,int,int));
 
 #define URETREATING(x,y) (distmin(u.ux,u.uy,x,y) > distmin(u.ux0,u.uy0,x,y))
 
@@ -39,7 +39,7 @@ struct obj *obj;
 const char *name;	/* if null, then format `obj' */
 {
 	const char *onm, *knm;
-	boolean is_acid;
+	bool is_acid;
 	int kprefix = KILLED_BY_AN;
 	char onmbuf[BUFSZ], knmbuf[BUFSZ];
 
@@ -94,7 +94,7 @@ const char *name;	/* if null, then format `obj' */
 STATIC_OVL int
 drop_throw(obj, ohit, x, y)
 register struct obj *obj;
-boolean ohit;
+bool ohit;
 int x,y;
 {
 	int retvalu = 1;
@@ -143,10 +143,10 @@ struct obj *otmp;	/* missile; might be destroyed by drop_throw */
 int range;		/* how much farther will object travel if it misses */
 			/* Use -1 to signify to keep going even after hit, */
 			/* unless its gone (used for rolling_boulder_traps) */
-boolean verbose;  /* give message(s) even when you can't see what happened */
+bool verbose;  /* give message(s) even when you can't see what happened */
 {
 	int damage, tmp;
-	boolean vis, ismimic;
+	bool vis, ismimic;
 	int objgone = 1;
 
 	ismimic = mtmp->m_ap_type && mtmp->m_ap_type != M_AP_MONSTER;
@@ -697,7 +697,7 @@ breamu(mtmp, mattk)			/* monster breathes at you (ranged) */
 	return(1);
 }
 
-boolean
+bool
 linedup(ax, ay, bx, by)
 register xchar ax, ay, bx, by;
 {
@@ -710,13 +710,13 @@ register xchar ax, ay, bx, by;
 
 	if((!tbx || !tby || abs(tbx) == abs(tby)) /* straight line or diagonal */
 	   && distmin(tbx, tby, 0, 0) < BOLT_LIM) {
-	    if(ax == u.ux && ay == u.uy) return((boolean)(couldsee(bx,by)));
+	    if(ax == u.ux && ay == u.uy) return((bool)(couldsee(bx,by)));
 	    else if(clear_path(ax,ay,bx,by)) return TRUE;
 	}
 	return FALSE;
 }
 
-boolean
+bool
 lined_up(mtmp)		/* is mtmp in position to use ranged attack? */
 	register struct monst *mtmp;
 {
@@ -742,7 +742,7 @@ int type;
 }
 
 /* TRUE iff thrown/kicked/rolled object doesn't pass through iron bars */
-boolean
+bool
 hits_bars(obj_p, x, y, always_hit, whodidit)
 struct obj **obj_p;	/* *obj_p will be set to NULL if object breaks */
 int x, y;
@@ -751,7 +751,7 @@ int whodidit;	/* 1==hero, 0=other, -1==just check whether it'll pass thru */
 {
     struct obj *otmp = *obj_p;
     int obj_type = otmp->otyp;
-    boolean hits = always_hit;
+    bool hits = always_hit;
 
     if (!hits)
 	switch (otmp->oclass) {

@@ -13,7 +13,7 @@ struct wseg {
     xchar  wx, wy;	/* the segment's position */
 };
 
-STATIC_DCL void FDECL(toss_wsegs, (struct wseg *,BOOLEAN_P));
+STATIC_DCL void FDECL(toss_wsegs, (struct wseg *,BOOL_P));
 STATIC_DCL void FDECL(shrink_worm, (int));
 STATIC_DCL void FDECL(random_dir, (XCHAR_P,XCHAR_P,xchar *,xchar *));
 STATIC_DCL struct wseg *FDECL(create_worm_tail, (int));
@@ -140,7 +140,7 @@ STATIC_OVL
 void
 toss_wsegs(curr, display_update)
     register struct wseg *curr;
-    register boolean display_update;
+    register bool display_update;
 {
     register struct wseg *seg;
 
@@ -437,7 +437,7 @@ see_wsegs(worm)
 void
 detect_wsegs(worm, use_detection_glyph)
     struct monst *worm;
-    boolean use_detection_glyph;
+    bool use_detection_glyph;
 {
     int num;
     struct wseg *curr = wtails[worm->wormno];
@@ -731,7 +731,7 @@ create_worm_tail(num_segs)
  *  invisibility and telepathy (which should only show the head anyway).
  *  Mostly used in the canseemon() macro.
  */
-boolean
+bool
 worm_known(worm)
 struct monst *worm;
 {

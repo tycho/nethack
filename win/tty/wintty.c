@@ -134,10 +134,10 @@ extern struct menucoloring *menu_colorings;
 
 #ifdef CLIPPING
 # if defined(USE_TILES) && defined(MSDOS)
-boolean clipping = FALSE;	/* clipping on? */
+bool clipping = FALSE;	/* clipping on? */
 int clipx = 0, clipxmax = 0;
 # else
-static boolean clipping = FALSE;	/* clipping on? */
+static bool clipping = FALSE;	/* clipping on? */
 static int clipx = 0, clipxmax = 0;
 # endif
 static int clipy = 0, clipymax = 0;
@@ -148,8 +148,8 @@ extern void FDECL(adjust_cursor_flags, (struct WinDesc *));
 #endif
 
 #if defined(ASCIIGRAPH) && !defined(NO_TERMS)
-boolean GFlag = FALSE;
-boolean HE_resets_AS;	/* see termcap.c */
+bool GFlag = FALSE;
+bool HE_resets_AS;	/* see termcap.c */
 #endif
 
 #if defined(MICRO) || defined(WIN32CON)
@@ -158,8 +158,8 @@ static const char to_continue[] = "to continue";
 #else
 STATIC_DCL void NDECL(getret);
 #endif
-STATIC_DCL void FDECL(erase_menu_or_text, (winid, struct WinDesc *, BOOLEAN_P));
-STATIC_DCL void FDECL(free_window_info, (struct WinDesc *, BOOLEAN_P));
+STATIC_DCL void FDECL(erase_menu_or_text, (winid, struct WinDesc *, BOOL_P));
+STATIC_DCL void FDECL(free_window_info, (struct WinDesc *, BOOL_P));
 STATIC_DCL void FDECL(dmore,(struct WinDesc *, const char *));
 STATIC_DCL void FDECL(set_item_state, (winid, int, tty_menu_item *));
 STATIC_DCL void FDECL(set_all_on_page, (winid,tty_menu_item *,tty_menu_item *));
@@ -915,7 +915,7 @@ STATIC_OVL void
 erase_menu_or_text(window, cw, clear)
     winid window;
     struct WinDesc *cw;
-    boolean clear;
+    bool clear;
 {
     if(cw->offx == 0)
 	if(cw->offy) {
@@ -932,7 +932,7 @@ erase_menu_or_text(window, cw, clear)
 STATIC_OVL void
 free_window_info(cw, free_data)
     struct WinDesc *cw;
-    boolean free_data;
+    bool free_data;
 {
     int i;
 
@@ -1112,7 +1112,7 @@ invert_all(window, page_start, page_end, acc)
     char acc;	/* group accelerator, 0 => all */
 {
     tty_menu_item *curr;
-    boolean on_curr_page;
+    bool on_curr_page;
     struct WinDesc *cw =  wins[window];
 
     invert_all_on_page(window, page_start, page_end, acc);
@@ -1136,7 +1136,7 @@ invert_all(window, page_start, page_end, acc)
 }
 
 #ifdef MENU_COLOR
-STATIC_OVL boolean
+STATIC_OVL bool
 get_menu_coloring(str, color, attr)
 char *str;
 int *color, *attr;
@@ -1169,7 +1169,7 @@ struct WinDesc *cw;
     tty_menu_item *page_start, *page_end, *curr;
     long count;
     int n, curr_page, page_lines;
-    boolean finished, counting, reset_count;
+    bool finished, counting, reset_count;
     char *cp, *rp, resp[QBUFSZ], gacc[QBUFSZ],
 	 *msave, *morestr;
 
@@ -1239,7 +1239,7 @@ struct WinDesc *cw;
 			page_lines++, curr = curr->next) {
 #ifdef MENU_COLOR
 		    int color = NO_COLOR, attr = ATR_NONE;
-		    boolean menucolr = FALSE;
+		    bool menucolr = FALSE;
 #endif
 		    if (curr->selector)
 			*rp++ = curr->selector;
@@ -1538,7 +1538,7 @@ struct WinDesc *cw;
 void
 tty_display_nhwindow(window, blocking)
     winid window;
-    boolean blocking;	/* with ttys, all windows are blocking */
+    bool blocking;	/* with ttys, all windows are blocking */
 {
     register struct WinDesc *cw = 0;
 
@@ -1945,7 +1945,7 @@ tty_putstr(window, attr, str)
 void
 tty_display_file(fname, complain)
 const char *fname;
-boolean complain;
+bool complain;
 {
 #ifdef DEF_PAGER			/* this implies that UNIX is defined */
     {
@@ -1989,7 +1989,7 @@ boolean complain;
 	    } else if(u.ux) docrt();
 	} else {
 	    winid datawin = tty_create_nhwindow(NHW_TEXT);
-	    boolean empty = TRUE;
+	    bool empty = TRUE;
 
 	    if(complain
 #ifndef NO_TERMS
@@ -2042,7 +2042,7 @@ tty_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     char gch;		/* group accelerator (0 = no group) */
     int attr;		/* attribute for string (like tty_putstr()) */
     const char *str;	/* menu string */
-    boolean preselected; /* item is marked as selected */
+    bool preselected; /* item is marked as selected */
 {
     register struct WinDesc *cw = 0;
     tty_menu_item *item;
@@ -2418,7 +2418,7 @@ void
 tty_cliparound(x, y)
 int x, y;
 {
-	extern boolean restoring;
+	extern bool restoring;
 	int oldx = clipx, oldy = clipy;
 
 	if (!clipping) return;
@@ -2462,7 +2462,7 @@ tty_print_glyph(window, x, y, glyph)
     int glyph;
 {
     int ch;
-    boolean reverse_on = FALSE;
+    bool reverse_on = FALSE;
     int	    color;
     unsigned special;
     

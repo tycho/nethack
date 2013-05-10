@@ -5,11 +5,11 @@
 #include "artifact.h"
 #include "edog.h"
 
-extern boolean notonhead;
+extern bool notonhead;
 
 #ifdef OVLB
 
-static NEARDATA boolean vis, far_noise;
+static NEARDATA bool vis, far_noise;
 static NEARDATA long noisetime;
 static NEARDATA struct obj *otmp;
 
@@ -26,7 +26,7 @@ STATIC_DCL int FDECL(mdamagem, (struct monst *,struct monst *,struct attack *));
 STATIC_DCL void FDECL(mswingsm, (struct monst *, struct monst *, struct obj *));
 STATIC_DCL void FDECL(noises,(struct monst *,struct attack *));
 STATIC_DCL void FDECL(missmm,(struct monst *,struct monst *,struct attack *));
-STATIC_DCL int FDECL(passivemm, (struct monst *, struct monst *, BOOLEAN_P, int));
+STATIC_DCL int FDECL(passivemm, (struct monst *, struct monst *, BOOL_P, int));
 
 /* Needed for the special case of monsters wielding vorpal blades (rare).
  * If we use this a lot it should probably be a parameter to mdamagem()
@@ -56,7 +56,7 @@ noises(magr, mattk)
 	register struct monst *magr;
 	register struct	attack *mattk;
 {
-	boolean farq = (distu(magr->mx, magr->my) > 15);
+	bool farq = (distu(magr->mx, magr->my) > 15);
 
 	if(flags.soundok && (farq != far_noise || moves-noisetime > 10)) {
 		far_noise = farq;
@@ -591,7 +591,7 @@ mdamagem(magr, mdef, mattk)
 	char buf[BUFSZ];
 	struct permonst *pa = magr->data, *pd = mdef->data;
 	int armpro, num, tmp = d((int)mattk->damn, (int)mattk->damd);
-	boolean cancelled;
+	bool cancelled;
 
 	if (touch_petrifies(pd) && !resists_ston(magr)) {
 	    long protector = attk_protection((int)mattk->aatyp),
@@ -1228,7 +1228,7 @@ mrustm(magr, mdef, obj)
 register struct monst *magr, *mdef;
 register struct obj *obj;
 {
-	boolean is_acid;
+	bool is_acid;
 
 	if (!magr || !mdef || !obj) return; /* just in case */
 
@@ -1280,7 +1280,7 @@ register struct obj *otemp;
 STATIC_OVL int
 passivemm(magr,mdef,mhit,mdead)
 register struct monst *magr, *mdef;
-boolean mhit;
+bool mhit;
 int mdead;
 {
 	register struct permonst *mddat = mdef->data;

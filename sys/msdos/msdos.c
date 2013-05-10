@@ -57,7 +57,7 @@ static char * NDECL(getdta);
 #endif
 static unsigned int FDECL(dos_ioctl, (int,int,unsigned));
 #ifdef USE_TILES
-extern boolean FDECL(pckeys,(unsigned char, unsigned char));	/* pckeys.c */
+extern bool FDECL(pckeys,(unsigned char, unsigned char));	/* pckeys.c */
 #endif
 
 int

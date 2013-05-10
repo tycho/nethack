@@ -20,7 +20,7 @@ extern void FDECL(free,(genericptr_t));
 static void NDECL(heapmon_init);
 
 static FILE *heaplog = 0;
-static boolean tried_heaplog = FALSE;
+static bool tried_heaplog = FALSE;
 #endif
 
 long *FDECL(alloc,(unsigned int));

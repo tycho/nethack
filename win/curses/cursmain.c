@@ -266,7 +266,7 @@ void curses_clear_nhwindow(winid wid)
                 -- Calling display_nhwindow(WIN_MESSAGE,???) will do a
                    --more--, if necessary, in the tty window-port.
 */
-void curses_display_nhwindow(winid wid, BOOLEAN_P block)
+void curses_display_nhwindow(winid wid, BOOL_P block)
 {
     menu_item *selected = NULL;
 
@@ -336,7 +336,7 @@ void curses_putstr(winid wid, int attr, const char *text)
 /* Display the file named str.  Complain about missing files
                    iff complain is TRUE.
 */
-void curses_display_file(const char *filename,BOOLEAN_P must_exist)
+void curses_display_file(const char *filename,BOOL_P must_exist)
 {
     curses_view_file(filename, must_exist);
 }
@@ -354,7 +354,7 @@ void curses_start_menu(winid wid)
 /*
 add_menu(winid wid, int glyph, const anything identifier,
                                 char accelerator, char groupacc,
-                                int attr, char *str, boolean preselected)
+                                int attr, char *str, bool preselected)
                 -- Add a text line str to the given menu window.  If identifier
                    is 0, then the line cannot be selected (e.g. a title).
                    Otherwise, identifier is the value returned if the line is
@@ -384,7 +384,7 @@ add_menu(winid wid, int glyph, const anything identifier,
 */
 void curses_add_menu(winid wid, int glyph, const ANY_P * identifier,
 		CHAR_P accelerator, CHAR_P group_accel, int attr,
-		const char *str, BOOLEAN_P presel)
+		const char *str, BOOL_P presel)
 {
     int curses_attr = curses_convert_attr(attr);
 
@@ -472,7 +472,7 @@ cliparound(x, y)-- Make sure that the user is more-or-less centered on the
 void curses_cliparound(int x, int y)
 {
     int sx, sy, ex, ey;
-    boolean redraw = curses_map_borders(&sx, &sy, &ex, &ey, x, y);
+    bool redraw = curses_map_borders(&sx, &sy, &ex, &ey, x, y);
 
     if (redraw)
     {

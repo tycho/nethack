@@ -81,7 +81,7 @@ struct obj *
 mkobj_at(let, x, y, artif)
 char let;
 int x, y;
-boolean artif;
+bool artif;
 {
 	struct obj *otmp;
 
@@ -93,7 +93,7 @@ boolean artif;
 struct obj *
 mksobj_at(otyp, x, y, init, artif)
 int otyp, x, y;
-boolean init, artif;
+bool init, artif;
 {
 	struct obj *otmp;
 
@@ -105,7 +105,7 @@ boolean init, artif;
 struct obj *
 mkobj(oclass, artif)
 char oclass;
-boolean artif;
+bool artif;
 {
 	int tprob, i, prob = rnd(1000);
 
@@ -361,8 +361,8 @@ static const char dknowns[] = {
 struct obj *
 mksobj(otyp, init, artif)
 int otyp;
-boolean init;
-boolean artif;
+bool init;
+bool artif;
 {
 	int mndx, tryct;
 	struct obj *otmp;
@@ -908,7 +908,7 @@ int objtype;	/* CORPSE or STATUE */
 struct monst *mtmp;
 struct permonst *ptr;
 int x, y;
-boolean init;
+bool init;
 {
 	register struct obj *otmp;
 
@@ -1010,7 +1010,7 @@ struct monst *mtmp;
 struct monst *
 get_mtraits(obj, copyof)
 struct obj *obj;
-boolean copyof;
+bool copyof;
 {
 	struct monst *mtmp = (struct monst *)0;
 	struct monst *mnew = (struct monst *)0;
@@ -1042,7 +1042,7 @@ int objtype; /* CORPSE or STATUE */
 register int x, y;
 {
 	register struct obj *otmp, *otmp2;
-	boolean initialize_it;
+	bool initialize_it;
 
 	/* player statues never contain books */
 	initialize_it = (objtype != STATUE);
@@ -1064,13 +1064,13 @@ const char *nm;
 	struct obj *otmp;
 
 	otmp = mkcorpstat(objtype, (struct monst *)0, ptr,
-				x, y, (boolean)(objtype != STATUE));
+				x, y, (bool)(objtype != STATUE));
 	if (nm)
 		otmp = oname(otmp, nm);
 	return(otmp);
 }
 
-boolean
+bool
 is_flammable(otmp)
 register struct obj *otmp;
 {
@@ -1080,16 +1080,16 @@ register struct obj *otmp;
 	if (objects[otyp].oc_oprop == FIRE_RES || otyp == WAN_FIRE)
 		return FALSE;
 
-	return((boolean)((omat <= WOOD && omat != LIQUID) || omat == PLASTIC));
+	return((bool)((omat <= WOOD && omat != LIQUID) || omat == PLASTIC));
 }
 
-boolean
+bool
 is_rottable(otmp)
 register struct obj *otmp;
 {
 	int otyp = otmp->otyp;
 
-	return((boolean)(objects[otyp].oc_material <= WOOD &&
+	return((bool)(objects[otyp].oc_material <= WOOD &&
 			objects[otyp].oc_material != LIQUID));
 }
 
@@ -1145,7 +1145,7 @@ int x, y;
 void
 obj_ice_effects(x, y, do_buried)
 int x, y;
-boolean do_buried;
+bool do_buried;
 {
 	struct obj *otmp;
 
@@ -1196,9 +1196,9 @@ int force;	/* 0 = no force so do checks, <0 = force off, >0 force on */
 {
     long tleft = 0L;
     short action = ROT_CORPSE;
-    boolean restart_timer = FALSE;
-    boolean on_floor = (otmp->where == OBJ_FLOOR);
-    boolean buried = (otmp->where == OBJ_BURIED);
+    bool restart_timer = FALSE;
+    bool on_floor = (otmp->where == OBJ_FLOOR);
+    bool buried = (otmp->where == OBJ_BURIED);
 
     /* Check for corpses just placed on or in ice */
     if (otmp->otyp == CORPSE && (on_floor || buried) && is_ice(x,y)) {

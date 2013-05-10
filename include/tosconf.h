@@ -74,7 +74,7 @@ extern int FDECL(strncmpi,(const char *, const char *, size_t));
 #endif
 
 #ifdef TEXTCOLOR
-extern boolean colors_changed;	/* in tos.c */
+extern bool colors_changed;	/* in tos.c */
 #endif
 
 #ifdef __GNUC__

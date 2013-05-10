@@ -129,7 +129,7 @@ static unsigned int hiding_privileges = 0;
 
 int
 hide_privileges(flag)
-boolean flag;
+bool flag;
 {
     if (flag)
 	hiding_privileges++;
@@ -199,7 +199,7 @@ nh_getegid()
 # ifdef GNOME_GRAPHICS 
 int
 hide_privileges(flag)
-boolean flag;
+bool flag;
 {
     return 0;
 }

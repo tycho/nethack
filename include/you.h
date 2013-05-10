@@ -237,7 +237,7 @@ struct you {
 	d_level uz, uz0;	/* your level on this and the previous turn */
 	d_level utolev;		/* level monster teleported you to, or uz */
 	uchar utotype;		/* bitmask of goto_level() flags for utolev */
-	boolean umoved;		/* changed map location (post-move) */
+	bool umoved;		/* changed map location (post-move) */
 	int last_str_turn;	/* 0: none, 1: half turn, 2: full turn */
 				/* +: turn right, -: turn left */
 	int ulevel;		/* 1 to MAXULEV */
@@ -358,7 +358,7 @@ struct you {
 	int	skills_advanced;		/* # of advances made so far */
 	xchar	skill_record[P_SKILL_LIMIT];	/* skill advancements */
 	struct skills weapon_skills[P_NUM_SKILLS];
-	boolean twoweap;		/* KMH -- Using two-weapon combat */
+	bool twoweap;		/* KMH -- Using two-weapon combat */
 
 };	/* end of `struct you' */
 

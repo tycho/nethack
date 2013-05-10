@@ -428,7 +428,7 @@ char *curses_str_remainder(const char *str, int width, int line_num)
 
 /* Determine if the given NetHack winid is a menu window */
 
-boolean curses_is_menu(winid wid)
+bool curses_is_menu(winid wid)
 {
     if ((wid > 19) && !(wid % 2))   /* Even number */
     {
@@ -443,7 +443,7 @@ boolean curses_is_menu(winid wid)
 
 /* Determine if the given NetHack winid is a text window */
 
-boolean curses_is_text(winid wid)
+bool curses_is_text(winid wid)
 {
     if ((wid > 19) && (wid % 2))   /* Odd number */
     {
@@ -601,7 +601,7 @@ void curses_posthousekeeping()
 }
 
 
-void curses_view_file(const char *filename, boolean must_exist)
+void curses_view_file(const char *filename, bool must_exist)
 {
     winid wid;
     anything *identifier;

@@ -42,7 +42,7 @@ int atyp, dtyp;
     return (struct attack *)0;
 }
 
-boolean
+bool
 attacktype(ptr, atyp)
 struct permonst *ptr;
 int atyp;
@@ -53,28 +53,28 @@ int atyp;
 #endif /* OVL0 */
 #ifdef OVLB
 
-boolean
+bool
 poly_when_stoned(ptr)
     struct permonst *ptr;
 {
-    return((boolean)(is_golem(ptr) && ptr != &mons[PM_STONE_GOLEM] &&
+    return((bool)(is_golem(ptr) && ptr != &mons[PM_STONE_GOLEM] &&
 	    !(mvitals[PM_STONE_GOLEM].mvflags & G_GENOD)));
 	    /* allow G_EXTINCT */
 }
 
-boolean
+bool
 resists_drli(mon)	/* returns TRUE if monster is drain-life resistant */
 struct monst *mon;
 {
 	struct permonst *ptr = mon->data;
 	struct obj *wep = ((mon == &youmonst) ? uwep : MON_WEP(mon));
 
-	return (boolean)(is_undead(ptr) || is_demon(ptr) || is_were(ptr) ||
+	return (bool)(is_undead(ptr) || is_demon(ptr) || is_were(ptr) ||
 			 ptr == &mons[PM_DEATH] ||
 			 (wep && wep->oartifact && defends(AD_DRLI, wep)));
 }
 
-boolean
+bool
 resists_magm(mon)	/* TRUE if monster is magic-missile resistant */
 struct monst *mon;
 {
@@ -99,12 +99,12 @@ struct monst *mon;
 }
 
 /* TRUE iff monster is resistant to light-induced blindness */
-boolean
+bool
 resists_blnd(mon)
 struct monst *mon;
 {
 	struct permonst *ptr = mon->data;
-	boolean is_you = (mon == &youmonst);
+	bool is_you = (mon == &youmonst);
 	struct obj *o;
 
 	if (is_you ? (Blind || u.usleep) :
@@ -130,15 +130,15 @@ struct monst *mon;
 
 /* TRUE iff monster can be blinded by the given attack */
 /* Note: may return TRUE when mdef is blind (e.g. new cream-pie attack) */
-boolean
+bool
 can_blnd(magr, mdef, aatyp, obj)
 struct monst *magr;		/* NULL == no specific aggressor */
 struct monst *mdef;
 uchar aatyp;
 struct obj *obj;		/* aatyp == AT_WEAP, AT_SPIT */
 {
-	boolean is_you = (mdef == &youmonst);
-	boolean check_visor = FALSE;
+	bool is_you = (mdef == &youmonst);
+	bool check_visor = FALSE;
 	struct obj *o;
 	const char *s;
 
@@ -214,7 +214,7 @@ struct obj *obj;		/* aatyp == AT_WEAP, AT_SPIT */
 #endif /* OVLB */
 #ifdef OVL0
 
-boolean
+bool
 ranged_attk(ptr)	/* returns TRUE if monster can attack at range */
 struct permonst *ptr;
 {
@@ -236,22 +236,22 @@ struct permonst *ptr;
 	return FALSE;
 }
 
-boolean
+bool
 hates_silver(ptr)
 register struct permonst *ptr;
 /* returns TRUE if monster is especially affected by silver weapons */
 {
-	return((boolean)(is_were(ptr) || ptr->mlet==S_VAMPIRE || is_demon(ptr) ||
+	return((bool)(is_were(ptr) || ptr->mlet==S_VAMPIRE || is_demon(ptr) ||
 		ptr == &mons[PM_SHADE] ||
 		(ptr->mlet==S_IMP && ptr != &mons[PM_TENGU])));
 }
 
 /* true iff the type of monster pass through iron bars */
-boolean
+bool
 passes_bars(mptr)
 struct permonst *mptr;
 {
-    return (boolean) (passes_walls(mptr) || amorphous(mptr) ||
+    return (bool) (passes_walls(mptr) || amorphous(mptr) ||
 		      is_whirly(mptr) || verysmall(mptr) ||
 		      (slithy(mptr) && !bigmonst(mptr)));
 }
@@ -259,28 +259,28 @@ struct permonst *mptr;
 #endif /* OVL0 */
 #ifdef OVL1
 
-boolean
+bool
 can_track(ptr)		/* returns TRUE if monster can track well */
 	register struct permonst *ptr;
 {
 	if (uwep && uwep->oartifact == ART_EXCALIBUR)
 		return TRUE;
 	else
-		return((boolean)haseyes(ptr));
+		return((bool)haseyes(ptr));
 }
 
 #endif /* OVL1 */
 #ifdef OVLB
 
-boolean
+bool
 sliparm(ptr)	/* creature will slide out of armor */
 	register struct permonst *ptr;
 {
-	return((boolean)(is_whirly(ptr) || ptr->msize <= MZ_SMALL ||
+	return((bool)(is_whirly(ptr) || ptr->msize <= MZ_SMALL ||
 			 noncorporeal(ptr)));
 }
 
-boolean
+bool
 breakarm(ptr)	/* creature will break out of armor */
 	register struct permonst *ptr;
 {
@@ -292,11 +292,11 @@ breakarm(ptr)	/* creature will break out of armor */
 #endif /* OVLB */
 #ifdef OVL1
 
-boolean
+bool
 sticks(ptr)	/* creature sticks other creatures it hits */
 	register struct permonst *ptr;
 {
-	return((boolean)(dmgtype(ptr,AD_STCK) || dmgtype(ptr,AD_WRAP) ||
+	return((bool)(dmgtype(ptr,AD_STCK) || dmgtype(ptr,AD_WRAP) ||
 		attacktype(ptr,AT_HUGS)));
 }
 
@@ -336,7 +336,7 @@ int dtyp, atyp;
     return (struct attack *)0;
 }
 
-boolean
+bool
 dmgtype(ptr, dtyp)
 struct permonst *ptr;
 int dtyp;
@@ -535,7 +535,7 @@ register struct monst *mtmp;
 #ifdef OVLB
 
 /* used for nearby monsters when you go to another level */
-boolean
+bool
 levl_follower(mtmp)
 struct monst *mtmp;
 {
@@ -547,7 +547,7 @@ struct monst *mtmp;
 
 	/* stalking types follow, but won't when fleeing unless you hold
 	   the Amulet */
-	return (boolean)((mtmp->data->mflags2 & M2_STALK) &&
+	return (bool)((mtmp->data->mflags2 & M2_STALK) &&
 				(!mtmp->mflee || u.uhave.amulet));
 }
 

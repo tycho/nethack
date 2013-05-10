@@ -104,7 +104,7 @@ dosounds()
 	if(gd_sound())
 	    switch (rn2(2)+hallu) {
 		case 1: {
-		    boolean gold_in_vault = FALSE;
+		    bool gold_in_vault = FALSE;
 
 		    for (vx = sroom->lx;vx <= sroom->hx; vx++)
 			for (vy = sroom->ly; vy <= sroom->hy; vy++)
@@ -463,10 +463,10 @@ register struct monst *mtmp;
 	case MS_VAMPIRE:
 	    {
 	    /* vampire messages are varied by tameness, peacefulness, and time of night */
-		boolean isnight = night();
-		boolean kindred =    (Upolyd && (u.umonnum == PM_VAMPIRE ||
+		bool isnight = night();
+		bool kindred =    (Upolyd && (u.umonnum == PM_VAMPIRE ||
 				       u.umonnum == PM_VAMPIRE_LORD));
-		boolean nightchild = (Upolyd && (u.umonnum == PM_WOLF ||
+		bool nightchild = (Upolyd && (u.umonnum == PM_WOLF ||
 				       u.umonnum == PM_WINTER_WOLF ||
 	    			       u.umonnum == PM_WINTER_WOLF_CUB));
 		const char *racenoun = (flags.female && urace.individual.f) ?
@@ -824,7 +824,7 @@ int
 dotalk()
 {
     int result;
-    boolean save_soundok = flags.soundok;
+    bool save_soundok = flags.soundok;
     flags.soundok = 1;	/* always allow sounds while chatting */
     result = dochat();
     flags.soundok = save_soundok;

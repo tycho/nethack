@@ -24,9 +24,9 @@ extern struct passwd *FDECL(getpwuid,(int));
 #endif
 extern struct passwd *FDECL(getpwnam,(const char *));
 #ifdef CHDIR
-static void FDECL(chdirx, (const char *,BOOLEAN_P));
+static void FDECL(chdirx, (const char *,BOOL_P));
 #endif /* CHDIR */
-static boolean NDECL(whoami);
+static bool NDECL(whoami);
 static void FDECL(process_options, (int, char **));
 
 #ifdef _M_UNIX
@@ -40,7 +40,7 @@ extern void NDECL(init_linux_cons);
 
 static void NDECL(wd_message);
 #ifdef WIZARD
-static boolean wiz_error_flag = FALSE;
+static bool wiz_error_flag = FALSE;
 #endif
 
 int
@@ -52,7 +52,7 @@ char *argv[];
 #ifdef CHDIR
 	register char *dir;
 #endif
-	boolean exact_username;
+	bool exact_username;
 #ifdef SIMPLE_MAIL
 	char* e_simple = NULL;
 #endif
@@ -248,7 +248,7 @@ char *argv[];
 		/* Since wizard is actually flags.debug, restoring might
 		 * overwrite it.
 		 */
-		boolean remember_wiz_mode = wizard;
+		bool remember_wiz_mode = wizard;
 #endif
 		const char *fq_save = fqname(SAVEF, SAVEPREFIX, 1);
 
@@ -416,7 +416,7 @@ char *argv[];
 static void
 chdirx(dir, wr)
 const char *dir;
-boolean wr;
+bool wr;
 {
 	if (dir					/* User specified directory? */
 # ifdef HACKDIR
@@ -470,7 +470,7 @@ boolean wr;
 }
 #endif /* CHDIR */
 
-static boolean
+static bool
 whoami() {
 	/*
 	 * Who am i? Algorithm: 1. Use name as specified in NETHACKOPTIONS

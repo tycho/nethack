@@ -497,7 +497,7 @@ void gnome_clear_nhwindow(winid wid)
                 -- Calling display_nhwindow(WIN_MESSAGE,???) will do a
                    --more--, if necessary, in the tty window-port.
 */
-void gnome_display_nhwindow(winid wid, BOOLEAN_P block)
+void gnome_display_nhwindow(winid wid, BOOL_P block)
 {
   if (gnome_windowlist[wid].win != NULL)
     {
@@ -582,7 +582,7 @@ void gnome_putstr(winid wid, int attr, const char *text)
 /* Display the file named str.  Complain about missing files
                    iff complain is TRUE.
 */
-void gnome_display_file(const char *filename,BOOLEAN_P must_exist)
+void gnome_display_file(const char *filename,BOOL_P must_exist)
 {
 	/* Strange -- for some reason it makes us create a new text window
 	 * instead of reusing any existing ones -- perhaps we can work out
@@ -686,7 +686,7 @@ void gnome_start_menu(winid wid)
 /*
 add_menu(windid window, int glyph, const anything identifier,
                                 char accelerator, char groupacc,
-                                int attr, char *str, boolean preselected)
+                                int attr, char *str, bool preselected)
                 -- Add a text line str to the given menu window.  If identifier
                    is 0, then the line cannot be selected (e.g. a title).
                    Otherwise, identifier is the value returned if the line is
@@ -716,7 +716,7 @@ add_menu(windid window, int glyph, const anything identifier,
 */
 void gnome_add_menu(winid wid, int glyph, const ANY_P * identifier,
 		CHAR_P accelerator, CHAR_P group_accel, int attr, 
-		const char *str, BOOLEAN_P presel)
+		const char *str, BOOL_P presel)
 {
   GHackMenuItem item;
   item.glyph =  glyph;

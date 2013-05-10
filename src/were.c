@@ -88,7 +88,7 @@ register struct monst *mon;
 int
 were_summon(ptr,yours,visible,genbuf)	/* were-creature (even you) summons a horde */
 register struct permonst *ptr;
-register boolean yours;
+register bool yours;
 int *visible;			/* number of visible helpers created */
 char *genbuf;
 {
@@ -148,7 +148,7 @@ you_were()
 
 void
 you_unwere(purify)
-boolean purify;
+bool purify;
 {
 	if (purify) {
 	    You_feel("purified.");

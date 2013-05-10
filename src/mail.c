@@ -32,9 +32,9 @@
  *			 random intervals.
  */
 
-STATIC_DCL boolean FDECL(md_start,(coord *));
-STATIC_DCL boolean FDECL(md_stop,(coord *, coord *));
-STATIC_DCL boolean FDECL(md_rush,(struct monst *,int,int));
+STATIC_DCL bool FDECL(md_start,(coord *));
+STATIC_DCL bool FDECL(md_stop,(coord *, coord *));
+STATIC_DCL bool FDECL(md_rush,(struct monst *,int,int));
 STATIC_DCL void FDECL(newmail, (struct mail_info *));
 
 int mailckfreq = 0;
@@ -127,7 +127,7 @@ getmailstatus()
  * Pick coordinates for a starting position for the mail daemon.  Called
  * from newmail() and newphone().
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 md_start(startp)
     coord *startp;
 {
@@ -228,7 +228,7 @@ retry:
  * enexto().  Use enexto() as a last resort because enexto() chooses
  * its point randomly, which is not what we want.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 md_stop(stopp, startp)
     coord *stopp;	/* stopping position (we fill it in) */
     coord *startp;	/* starting positon (read only) */
@@ -272,7 +272,7 @@ static NEARDATA const char *mail_text[] = {
  * FALSE if the md gets stuck in a position where there is a monster.  Return
  * TRUE otherwise.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 md_rush(md,tx,ty)
     struct monst *md;
     register int tx, ty;		/* destination of mail daemon */
@@ -374,7 +374,7 @@ struct mail_info *info;
 {
     struct monst *md;
     coord start, stop;
-    boolean message_seen = FALSE;
+    bool message_seen = FALSE;
 
     /* Try to find good starting and stopping places. */
     if (!md_start(&start) || !md_stop(&stop,&start)) goto give_up;
@@ -516,7 +516,7 @@ struct obj *otmp;
 	{
 		FILE* mb = fopen(mailbox, "r");
 		char curline[102], *msg;
-		boolean seen_one_already = FALSE;
+		bool seen_one_already = FALSE;
 		struct flock fl = { 0 };
 
 		fl.l_type = F_RDLCK;

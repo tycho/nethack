@@ -24,8 +24,8 @@ static const char *text_sets[] = { "monsters.txt", "objects.txt", "other.txt" };
 
 extern const char *FDECL(tilename, (int, int));
 static void FDECL(read_text_colormap, (FILE *));
-static boolean FDECL(write_text_colormap, (FILE *));
-static boolean FDECL(read_txttile, (FILE *, pixel(*)[TILE_X]));
+static bool FDECL(write_text_colormap, (FILE *));
+static bool FDECL(read_txttile, (FILE *, pixel(*)[TILE_X]));
 static void FDECL(write_txttile, (FILE *, pixel(*)[TILE_X]));
 
 /* Ugh.  DICE doesn't like %[A-Z], so we have to spell it out... */
@@ -55,7 +55,7 @@ FILE *txtfile;
 
 #undef FORMAT_STRING
 
-static boolean
+static bool
 write_text_colormap(txtfile)
 FILE *txtfile;
 {
@@ -81,7 +81,7 @@ FILE *txtfile;
 	return TRUE;
 }
 
-static boolean
+static bool
 read_txttile(txtfile, pixels)
 FILE *txtfile;
 pixel (*pixels)[TILE_X];
@@ -249,7 +249,7 @@ merge_colormap()
 	}
 }
 
-boolean
+bool
 fopen_text_file(filename, type)
 const char *filename;
 const char *type;
@@ -305,14 +305,14 @@ const char *type;
 	}
 }
 
-boolean
+bool
 read_text_tile(pixels)
 pixel (*pixels)[TILE_X];
 {
 	return(read_txttile(tile_file, pixels));
 }
 
-boolean
+bool
 write_text_tile(pixels)
 pixel (*pixels)[TILE_X];
 {

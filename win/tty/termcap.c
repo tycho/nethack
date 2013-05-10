@@ -74,7 +74,7 @@ static char nullstr[] = "";
 #endif /* OVLB */
 
 #if defined(ASCIIGRAPH) && !defined(NO_TERMS)
-extern boolean HE_resets_AS;
+extern bool HE_resets_AS;
 #endif
 
 #ifndef TERMLIB

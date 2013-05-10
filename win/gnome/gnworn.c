@@ -33,7 +33,7 @@ static GtkWidget *worn_contents[WORN_HEIGHT][WORN_WIDTH];
 static struct obj *last_worn_objects[WORN_HEIGHT][WORN_WIDTH];
 
 GdkImlibImage *image_of_worn_object(struct obj *o);
-void ghack_worn_display(GtkWidget *win, boolean block, gpointer data);
+void ghack_worn_display(GtkWidget *win, bool block, gpointer data);
 
 GtkWidget*
 ghack_init_worn_window()
@@ -87,7 +87,7 @@ image_of_worn_object(struct obj *o)
 }
 
 void
-ghack_worn_display(GtkWidget *win, boolean block, gpointer data)
+ghack_worn_display(GtkWidget *win, bool block, gpointer data)
 {
     int i, j;
     struct obj *worn_objects[WORN_HEIGHT][WORN_WIDTH] = WORN_OBJECT_LIST;

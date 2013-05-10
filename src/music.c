@@ -478,7 +478,7 @@ struct obj *instr;
     char buf[BUFSZ], c = 'y';
     char *s;
     int x,y;
-    boolean ok;
+    bool ok;
 
     if (Underwater) {
 	You_cant("play music underwater!");
@@ -565,7 +565,7 @@ struct obj *instr;
 				ok = TRUE;
 		if(ok) { /* There is a drawbridge near */
 		    int tumblers, gears;
-		    boolean matched[5];
+		    bool matched[5];
 
 		    tumblers = gears = 0;
 		    for(x=0; x < 5; x++)

@@ -219,13 +219,13 @@ E void NDECL(mac_get_nh_event);
 E void FDECL(mac_exit_nhwindows, (const char *));
 E winid FDECL(mac_create_nhwindow, (int));
 E void FDECL(mac_clear_nhwindow, (winid));
-E void FDECL(mac_display_nhwindow, (winid, BOOLEAN_P));
+E void FDECL(mac_display_nhwindow, (winid, BOOL_P));
 E void FDECL(mac_destroy_nhwindow, (winid));
 E void FDECL(mac_curs, (winid,int,int));
 E void FDECL(mac_putstr, (winid, int, const char *));
 E void FDECL(mac_start_menu, (winid));
 E void FDECL(mac_add_menu, (winid,int,const anything *,
-		CHAR_P,CHAR_P,int,const char *, BOOLEAN_P));
+		CHAR_P,CHAR_P,int,const char *, BOOL_P));
 E void FDECL(mac_end_menu, (winid, const char *));
 E int FDECL(mac_select_menu, (winid, int, menu_item **));
 #ifdef CLIPPING

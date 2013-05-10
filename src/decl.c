@@ -120,14 +120,14 @@ NEARDATA dest_area updest = { 0, 0, 0, 0, 0, 0, 0, 0 };
 NEARDATA dest_area dndest = { 0, 0, 0, 0, 0, 0, 0, 0 };
 NEARDATA coord inv_pos = { 0, 0 };
 
-NEARDATA boolean in_mklev = FALSE;
-NEARDATA boolean stoned = FALSE;	/* done to monsters hit by 'c' */
-NEARDATA boolean unweapon = FALSE;
-NEARDATA boolean mrg_to_wielded = FALSE;
+NEARDATA bool in_mklev = FALSE;
+NEARDATA bool stoned = FALSE;	/* done to monsters hit by 'c' */
+NEARDATA bool unweapon = FALSE;
+NEARDATA bool mrg_to_wielded = FALSE;
 			 /* weapon picked is merged with wielded one */
 NEARDATA struct obj *current_wand = 0;	/* wand currently zapped/applied */
 
-NEARDATA boolean in_steed_dismounting = FALSE;
+NEARDATA bool in_steed_dismounting = FALSE;
 
 NEARDATA coord bhitpos = DUMMY;
 NEARDATA coord doors[DOORMAX] = {DUMMY};
@@ -264,7 +264,7 @@ const char *materialnm[] = {
 };
 
 /* Vision */
-NEARDATA boolean vision_full_recalc = 0;
+NEARDATA bool vision_full_recalc = 0;
 NEARDATA char	 **viz_array = 0;/* used in cansee() and couldsee() macros */
 
 /* Global windowing data, defined here for multi-window-system support */

@@ -118,7 +118,7 @@ char *buf;			/* input: filtered broadcast text */
     const char *nam, *cmd;
 # ifdef SHELL		/* only parse if spawned commands are enabled */
     register char *p, *q;
-    boolean is_jnet_send;
+    bool is_jnet_send;
     char cmd_buf[127+1], user[127+1], node[127+1], sentinel;
 
     /* Check these first; otherwise, their arbitrary text would enable

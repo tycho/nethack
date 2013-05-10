@@ -38,7 +38,7 @@ void amii_getret ( void );
 
 /* winmenu.c */
 void amii_start_menu ( winid window );
-void FDECL(amii_add_menu, (winid,int,const anything *,CHAR_P,CHAR_P,int,const char *,BOOLEAN_P));
+void FDECL(amii_add_menu, (winid,int,const anything *,CHAR_P,CHAR_P,int,const char *,BOOL_P));
 void FDECL(amii_end_menu, (winid, const char *));
 int FDECL(amii_select_menu, (winid, int, menu_item **));
 int DoMenuScroll ( int win , int blocking, int how, menu_item ** );
@@ -86,7 +86,7 @@ void amii_setfillpens( struct Window *, int type );
 void amii_clear_nhwindow ( winid win );
 void dismiss_nhwindow ( winid win );
 void amii_exit_nhwindows ( const char *str );
-void amii_display_nhwindow ( winid win , boolean blocking );
+void amii_display_nhwindow ( winid win , bool blocking );
 void amii_curs ( winid window , int x , int y );
 void kill_nhwindows ( int all );
 void amii_cl_end ( struct amii_WinDesc *cw , int i );
@@ -122,7 +122,7 @@ void RandomWindow ( char *name );
 int amii_get_ext_cmd ( void );
 char amii_yn_function ( const char *prompt , const char *resp , char def );
 char amii_yn_function ( const char *query , const char *resp , char def );
-void amii_display_file ( const char *fn , boolean complain );
+void amii_display_file ( const char *fn , bool complain );
 void SetBorder ( struct Gadget *gd );
 void *malloc ( register unsigned size );
 void free ( void *q );

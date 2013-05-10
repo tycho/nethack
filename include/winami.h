@@ -39,8 +39,8 @@ struct amii_menu
 struct amii_WinDesc {
     xchar type;			/* type of window */
     struct amii_menu menu;
-    boolean active;		/* true if window is active */
-    boolean wasup;		/* true if menu/text window was already open */
+    bool active;		/* true if window is active */
+    bool wasup;		/* true if menu/text window was already open */
     short disprows;		/* Rows displayed so far (used for paging in message win) */
     xchar offx, offy;		/* offset from topleft of display */
     short vwx, vwy, vcx, vcy;	/* View cursor location */

@@ -11,7 +11,7 @@
 #include "edog.h"
 #include <ctype.h>
 
-STATIC_DCL boolean FDECL(restrap,(struct monst *));
+STATIC_DCL bool FDECL(restrap,(struct monst *));
 STATIC_DCL long FDECL(mm_aggression, (struct monst *,struct monst *));
 #ifdef OVL2
 STATIC_DCL int NDECL(pick_animal);
@@ -380,7 +380,7 @@ int
 minliquid(mtmp)
 register struct monst *mtmp;
 {
-    boolean inpool, inlava, infountain;
+    bool inpool, inlava, infountain;
 
     inpool = is_pool(mtmp->mx,mtmp->my) &&
 	     !is_flyer(mtmp->data) && !is_floater(mtmp->data);
@@ -553,7 +553,7 @@ int
 movemon()
 {
     register struct monst *mtmp, *nmtmp;
-    register boolean somebody_can_move = FALSE;
+    register bool somebody_can_move = FALSE;
 #if 0
     /* part of the original warning code which was replaced in 3.3.1 */
     warnlevel = 0;
@@ -862,7 +862,7 @@ mpickgold(mtmp)
 #endif /* OVLB */
 #ifdef OVL2
 
-boolean
+bool
 mpickstuff(mtmp, str)
 	register struct monst *mtmp;
 	register const char *str;
@@ -952,7 +952,7 @@ register struct monst *mtmp;
 }
 
 /* for restricting monsters' object-pickup */
-boolean
+bool
 can_carry(mtmp,otmp)
 struct monst *mtmp;
 struct obj *otmp;
@@ -987,7 +987,7 @@ struct obj *otmp;
 
 	/* nymphs deal in stolen merchandise, but not boulders or statues */
 	if (mdat->mlet == S_NYMPH)
-		return (boolean)(otmp->oclass != ROCK_CLASS);
+		return (bool)(otmp->oclass != ROCK_CLASS);
 
 	if (curr_mon_load(mtmp) + newload > max_mon_load(mtmp)) return FALSE;
 
@@ -1007,8 +1007,8 @@ mfndpos(mon, poss, info, flag)
 	register int cnt = 0;
 	register uchar ntyp;
 	uchar nowtyp;
-	boolean wantpool,poolok,lavaok,nodiag;
-	boolean rockok = FALSE, treeok = FALSE, thrudoor;
+	bool wantpool,poolok,lavaok,nodiag;
+	bool rockok = FALSE, treeok = FALSE, thrudoor;
 	int maxx, maxy;
 
 	x = mon->mx;
@@ -1079,8 +1079,8 @@ nexttry:	/* eels prefer the water, but if there is no water nearby,
 	    if((is_pool(nx,ny) == wantpool || poolok) &&
 	       (lavaok || !is_lava(nx,ny))) {
 		int dispx, dispy;
-		boolean monseeu = (mon->mcansee && (!Invis || perceives(mdat)));
-		boolean checkobj = OBJ_AT(nx,ny);
+		bool monseeu = (mon->mcansee && (!Invis || perceives(mdat)));
+		bool checkobj = OBJ_AT(nx,ny);
 
 		/* Displacement also displaces the Elbereth/scare monster,
 		 * as long as you are visible.
@@ -1259,7 +1259,7 @@ struct monst *magr,	/* monster that is currently deciding where to move */
 	return 0L;
 }
 
-boolean
+bool
 monnear(mon, x, y)
 register struct monst *mon;
 register int x,y;
@@ -1267,7 +1267,7 @@ register int x,y;
 {
 	register int distance = dist2(mon->mx, mon->my, x, y);
 	if (distance==2 && mon->data==&mons[PM_GRID_BUG]) return 0;
-	return((boolean)(distance < 3));
+	return((bool)(distance < 3));
 }
 
 /* really free dead monsters */
@@ -1518,11 +1518,11 @@ register struct monst *mtmp;
 }
 
 /* TRUE if corpse might be dropped, magr may die if mon was swallowed */
-boolean
+bool
 corpse_chance(mon, magr, was_swallowed)
 struct monst *mon;
 struct monst *magr;			/* killer, if swallowed */
-boolean was_swallowed;			/* digestion */
+bool was_swallowed;			/* digestion */
 {
 	struct permonst *mdat = mon->data;
 	int i, tmp;
@@ -1584,7 +1584,7 @@ boolean was_swallowed;			/* digestion */
 		   || is_mplayer(mdat)
 		   || is_rider(mdat))
 		return TRUE;
-	return (boolean) (!rn2((int)
+	return (bool) (!rn2((int)
 		(2 + ((int)(mdat->geno & G_FREQ)<2) + verysmall(mdat))));
 }
 
@@ -1631,7 +1631,7 @@ register struct monst *mdef;
 {
 	struct obj *otmp, *obj, *oldminvent;
 	xchar x = mdef->mx, y = mdef->my;
-	boolean wasinside = FALSE;
+	bool wasinside = FALSE;
 
 	/* we have to make the statue before calling mondead, to be able to
 	 * put inventory in it, and we have to check for lifesaving before
@@ -1717,7 +1717,7 @@ register struct monst *mdef;
 const char *fltxt;
 int how;
 {
-	boolean be_sad = FALSE;		/* true if unseen pet is killed */
+	bool be_sad = FALSE;		/* true if unseen pet is killed */
 
 	if ((mdef->wormno ? worm_known(mdef) : cansee(mdef->mx, mdef->my))
 		&& fltxt)
@@ -1779,8 +1779,8 @@ xkilled(mtmp, dest)
 	int mndx;
 	register struct obj *otmp;
 	register struct trap *t;
-	boolean redisp = FALSE;
-	boolean wasinside = u.uswallow && (u.ustuck == mtmp);
+	bool redisp = FALSE;
+	bool wasinside = u.uswallow && (u.ustuck == mtmp);
 
 
 	/* KMH, conduct */
@@ -1981,11 +1981,11 @@ mnexto(mtmp)	/* Make monster mtmp next to you (if possible) */
  *	1 - if a monster was moved from x, y to put mtmp at x, y.
  *	0 - in most cases.
  */
-boolean
+bool
 mnearto(mtmp,x,y,move_other)
 register struct monst *mtmp;
 xchar x, y;
-boolean move_other;	/* make sure mtmp gets to x, y! so move m_at(x, y) */
+bool move_other;	/* make sure mtmp gets to x, y! so move m_at(x, y) */
 {
 	struct monst *othermon = (struct monst *)0;
 	xchar newx, newy;
@@ -2046,7 +2046,7 @@ const char *string, *pname;
 int  typ, fatal;
 {
 	int i, plural, kprefix = KILLED_BY_AN;
-	boolean thrown_weapon = (fatal < 0);
+	bool thrown_weapon = (fatal < 0);
 
 	if (thrown_weapon) fatal = -fatal;
 	if(strcmp(string, "blast") && !thrown_weapon) {
@@ -2300,7 +2300,7 @@ struct monst *mon;
 }
 
 /* unwatched hiders may hide again; if so, a 1 is returned.  */
-STATIC_OVL boolean
+STATIC_OVL bool
 restrap(mtmp)
 register struct monst *mtmp;
 {
@@ -2326,7 +2326,7 @@ int animal_list_count;
 
 void
 mon_animal_list(construct)
-boolean construct;
+bool construct;
 {
 	if (construct) {
 	    short animal_temp[SPECIAL_PM];
@@ -2413,8 +2413,8 @@ int
 newcham(mtmp, mdat, polyspot, msg)
 struct monst *mtmp;
 struct permonst *mdat;
-boolean polyspot;	/* change is the result of wand or spell of polymorph */
-boolean msg;		/* "The oldmon turns into a newmon!" */
+bool polyspot;	/* change is the result of wand or spell of polymorph */
+bool msg;		/* "The oldmon turns into a newmon!" */
 {
 	int mhp, hpn, hpd;
 	int mndx, tryct;
@@ -2633,7 +2633,7 @@ int mnum;
 int
 egg_type_from_parent(mnum, force_ordinary)
 int mnum;	/* parent monster; caller must handle lays_eggs() check */
-boolean force_ordinary;
+bool force_ordinary;
 {
     if (force_ordinary || !BREEDER_EGG) {
 	if (mnum == PM_QUEEN_BEE) mnum = PM_KILLER_BEE;
@@ -2644,10 +2644,10 @@ boolean force_ordinary;
 
 /* decide whether an egg of the indicated monster type is viable; */
 /* also used to determine whether an egg or tin can be created... */
-boolean
+bool
 dead_species(m_idx, egg)
 int m_idx;
-boolean egg;
+bool egg;
 {
 	/*
 	 * For monsters with both baby and adult forms, genociding either
@@ -2656,7 +2656,7 @@ boolean egg;
 	 * fortunately, none of them have eggs.  Species extinction due to
 	 * overpopulation does not kill eggs.
 	 */
-	return (boolean)
+	return (bool)
 		(m_idx >= LOW_PM &&
 		 ((mvitals[m_idx].mvflags & G_GENOD) != 0 ||
 		  (egg &&
@@ -2699,7 +2699,7 @@ void
 kill_genocided_monsters()
 {
 	struct monst *mtmp, *mtmp2;
-	boolean kill_cham[CHAM_MAX_INDX+1];
+	bool kill_cham[CHAM_MAX_INDX+1];
 	int mndx;
 
 	kill_cham[CHAM_ORDINARY] = FALSE;	/* (this is mndx==0) */
@@ -2767,9 +2767,9 @@ int damtype, dam;
     }
 }
 
-boolean
+bool
 angry_guards(silent)
-register boolean silent;
+register bool silent;
 {
 	register struct monst *mtmp;
 	register int ct = 0, nct = 0, sct = 0, slct = 0;

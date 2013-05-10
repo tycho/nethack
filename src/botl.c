@@ -166,7 +166,7 @@ const char *
 rank_of(lev, monnum, female)
 	int lev;
 	short monnum;
-	boolean female;
+	bool female;
 {
 	register struct Role *role;
 	register int i;

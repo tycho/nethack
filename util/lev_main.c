@@ -79,28 +79,28 @@ int FDECL(get_room_type, (char *));
 int FDECL(get_trap_type, (char *));
 int FDECL(get_monster_id, (char *,CHAR_P));
 int FDECL(get_object_id, (char *,CHAR_P));
-boolean FDECL(check_monster_char, (CHAR_P));
-boolean FDECL(check_object_char, (CHAR_P));
+bool FDECL(check_monster_char, (CHAR_P));
+bool FDECL(check_object_char, (CHAR_P));
 char FDECL(what_map_char, (CHAR_P));
 void FDECL(scan_map, (char *));
 void NDECL(wallify_map);
-boolean NDECL(check_subrooms);
+bool NDECL(check_subrooms);
 void FDECL(check_coord, (int,int,const char *));
 void NDECL(store_part);
 void NDECL(store_room);
-boolean FDECL(write_level_file, (char *,splev *,specialmaze *));
+bool FDECL(write_level_file, (char *,splev *,specialmaze *));
 void FDECL(free_rooms, (splev *));
 
 extern void NDECL(monst_init);
 extern void NDECL(objects_init);
 extern void NDECL(decl_init);
 
-static boolean FDECL(write_common_data, (int,int,lev_init *,long));
-static boolean FDECL(write_monsters, (int,char *,monster ***));
-static boolean FDECL(write_objects, (int,char *,object ***));
-static boolean FDECL(write_engravings, (int,char *,engraving ***));
-static boolean FDECL(write_maze, (int,specialmaze *));
-static boolean FDECL(write_rooms, (int,splev *));
+static bool FDECL(write_common_data, (int,int,lev_init *,long));
+static bool FDECL(write_monsters, (int,char *,monster ***));
+static bool FDECL(write_objects, (int,char *,object ***));
+static bool FDECL(write_engravings, (int,char *,engraving ***));
+static bool FDECL(write_maze, (int,specialmaze *));
+static bool FDECL(write_rooms, (int,splev *));
 static void NDECL(init_obj_classes);
 
 static struct {
@@ -216,7 +216,7 @@ char **argv;
 {
 	FILE *fin;
 	int i;
-	boolean errors_encountered = FALSE;
+	bool errors_encountered = FALSE;
 #if defined(MAC) && (defined(THINK_C) || defined(__MWERKS__))
 	static char *mac_argv[] = {	"lev_comp",	/* dummy argv[0] */
 				":dat:Arch.des",
@@ -445,7 +445,7 @@ init_obj_classes()
 /*
  * Is the character 'c' a valid monster class ?
  */
-boolean
+bool
 check_monster_char(c)
 char c;
 {
@@ -455,7 +455,7 @@ char c;
 /*
  * Is the character 'c' a valid object class ?
  */
-boolean
+bool
 check_object_char(c)
 char c;
 {
@@ -614,11 +614,11 @@ wallify_map()
 /*
  * We need to check the subrooms apartenance to an existing room.
  */
-boolean
+bool
 check_subrooms()
 {
 	unsigned i, j, n_subrooms;
-	boolean	found, ok = TRUE;
+	bool	found, ok = TRUE;
 	char	*last_parent, msg[256];
 
 	for (i = 0; i < nrooms; i++)
@@ -966,7 +966,7 @@ store_room()
 /*
  * Output some info common to all special levels.
  */
-static boolean
+static bool
 write_common_data(fd, typ, init, flgs)
 int fd, typ;
 lev_init *init;
@@ -995,7 +995,7 @@ long flgs;
 /*
  * Output monster info, which needs string fixups, then release memory.
  */
-static boolean
+static bool
 write_monsters(fd, nmonster_p, monsters_p)
 int fd;
 char *nmonster_p;
@@ -1035,7 +1035,7 @@ monster ***monsters_p;
 /*
  * Output object info, which needs string fixup, then release memory.
  */
-static boolean
+static bool
 write_objects(fd, nobject_p, objects_p)
 int fd;
 char *nobject_p;
@@ -1069,7 +1069,7 @@ object ***objects_p;
 /*
  * Output engraving info, which needs string fixup, then release memory.
  */
-static boolean
+static bool
 write_engravings(fd, nengraving_p, engravings_p)
 int fd;
 char *nengraving_p;
@@ -1102,7 +1102,7 @@ engraving ***engravings_p;
  * Open and write maze or rooms file, based on which pointer is non-null.
  * Return TRUE on success, FALSE on failure.
  */
-boolean
+bool
 write_level_file(filename, room_level, maze_level)
 char *filename;
 splev *room_level;
@@ -1142,7 +1142,7 @@ specialmaze *maze_level;
  * Here we write the structure of the maze in the specified file (fd).
  * Also, we have to free the memory allocated via alloc().
  */
-static boolean
+static bool
 write_maze(fd, maze)
 int fd;
 specialmaze *maze;
@@ -1352,7 +1352,7 @@ specialmaze *maze;
 /*
  * Here we write the structure of the room level in the specified file (fd).
  */
-static boolean
+static bool
 write_rooms(fd, lev)
 int fd;
 splev *lev;

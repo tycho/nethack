@@ -162,17 +162,17 @@ static char *FDECL(version_id_string, (char *,const char *));
 static char *FDECL(xcrypt, (const char *));
 static int FDECL(check_control, (char *));
 static char *FDECL(without_control, (char *));
-static boolean FDECL(d_filter, (char *));
-static boolean FDECL(h_filter, (char *));
-static boolean FDECL(ranged_attk,(struct permonst*));
+static bool FDECL(d_filter, (char *));
+static bool FDECL(h_filter, (char *));
+static bool FDECL(ranged_attk,(struct permonst*));
 static int FDECL(mstrength,(struct permonst *));
 static void NDECL(build_savebones_compat_string);
 
-static boolean FDECL(qt_comment, (char *));
-static boolean FDECL(qt_control, (char *));
+static bool FDECL(qt_comment, (char *));
+static bool FDECL(qt_control, (char *));
 static int FDECL(get_hdr, (char *));
-static boolean FDECL(new_id, (char *));
-static boolean FDECL(known_msg, (int,int));
+static bool FDECL(new_id, (char *));
+static bool FDECL(known_msg, (int,int));
 static void FDECL(new_msg, (char *,int,int));
 static void FDECL(do_qt_control, (char *));
 static void FDECL(do_qt_text, (char *));
@@ -256,7 +256,7 @@ void
 do_makedefs(options)
 char	*options;
 {
-	boolean more_than_one;
+	bool more_than_one;
 
 	/* Note:  these initializers don't do anything except guarantee that
 		we're linked properly.
@@ -874,7 +874,7 @@ do_options()
 }
 
 /* routine to decide whether to discard something from data.base */
-static boolean
+static bool
 d_filter(line)
     char *line;
 {
@@ -908,7 +908,7 @@ void
 do_data()
 {
 	char	infile[60], tempfile[60];
-	boolean ok;
+	bool ok;
 	long	txt_offset;
 	int	entry_cnt, line_cnt;
 
@@ -1003,11 +1003,11 @@ dead_data:  perror(in_line);	/* report the problem */
 }
 
 /* routine to decide whether to discard something from oracles.txt */
-static boolean
+static bool
 h_filter(line)
     char *line;
 {
-    static boolean skip = FALSE;
+    static bool skip = FALSE;
     char tag[sizeof in_line];
 
     SpinCursor(3);
@@ -1051,7 +1051,7 @@ void
 do_oracles()
 {
 	char	infile[60], tempfile[60];
-	boolean in_oracle, ok;
+	bool in_oracle, ok;
 	long	txt_offset, offset, fpos;
 	int	oracle_cnt;
 	register int i;
@@ -1186,7 +1186,7 @@ dead_data:  perror(in_line);	/* report the problem */
 static	struct deflist {
 
 	const char	*defname;
-	boolean	true_or_false;
+	bool	true_or_false;
 } deflist[] = {
 #ifdef REINCARNATION
 	      {	"REINCARNATION", TRUE },
@@ -1266,7 +1266,7 @@ recheck:
 	return;
 }
 
-static boolean
+static bool
 ranged_attk(ptr)	/* returns TRUE if monster can attack at range */
 	register struct permonst *ptr;
 {
@@ -1432,22 +1432,22 @@ static struct qtmsg	*curr_msg;
 
 static int	qt_line;
 
-static boolean	in_msg;
+static bool	in_msg;
 #define NO_MSG	1	/* strlen of a null line returned by fgets() */
 
-static boolean
+static bool
 qt_comment(s)
 	char *s;
 {
 	if(s[0] == '#') return(TRUE);
-	return((boolean)(!in_msg  && strlen(s) == NO_MSG));
+	return((bool)(!in_msg  && strlen(s) == NO_MSG));
 }
 
-static boolean
+static bool
 qt_control(s)
 	char *s;
 {
-	return((boolean)(s[0] == '%' && (s[1] == 'C' || s[1] == 'E')));
+	return((bool)(s[0] == '%' && (s[1] == 'C' || s[1] == 'E')));
 }
 
 static int
@@ -1462,7 +1462,7 @@ get_hdr (code)
 	return(0);
 }
 
-static boolean
+static bool
 new_id (code)
 	char *code;
 {
@@ -1477,7 +1477,7 @@ new_id (code)
 	return(TRUE);
 }
 
-static boolean
+static bool
 known_msg(num, id)
 	int num, id;
 {
@@ -1702,7 +1702,7 @@ do_objs()
 	int nspell = 0;
 	int prefix = 0;
 	char class = '\0';
-	boolean	sumerr = FALSE;
+	bool	sumerr = FALSE;
 
 	filename[0]='\0';
 #ifdef FILE_PREFIX

@@ -7,7 +7,7 @@ STATIC_PTR int NDECL(stealarm);
 
 #ifdef OVLB
 STATIC_DCL const char *FDECL(equipname, (struct obj *));
-STATIC_DCL void FDECL(mdrop_obj, (struct monst *,struct obj *,BOOLEAN_P));
+STATIC_DCL void FDECL(mdrop_obj, (struct monst *,struct obj *,BOOL_P));
 
 STATIC_OVL const char *
 equipname(otmp)
@@ -178,7 +178,7 @@ botm:   stealoid = 0;
 void
 remove_worn_item(obj, unchain_ball)
 struct obj *obj;
-boolean unchain_ball;	/* whether to unpunish or just unwield */
+bool unchain_ball;	/* whether to unpunish or just unwield */
 {
 	if (donning(obj))
 	    cancel_don();
@@ -235,7 +235,7 @@ char *objnambuf;
 {
 	struct obj *otmp;
 	int tmp, could_petrify, named = 0, armordelay;
-	boolean monkey_business; /* true iff an animal is doing the thievery */
+	bool monkey_business; /* true iff an animal is doing the thievery */
 
 	if (objnambuf) *objnambuf = '\0';
 	/* the following is true if successful on first of two attacks. */
@@ -306,7 +306,7 @@ gotobj:
 
 	/* animals can't overcome curse stickiness nor unlock chains */
 	if (monkey_business) {
-	    boolean ostuck;
+	    bool ostuck;
 	    /* is the player prevented from voluntarily giving up this item?
 	       (ignores loadstones; the !can_carry() check will catch those) */
 	    if (otmp == uball)
@@ -361,7 +361,7 @@ gotobj:
 		    } else {
 			int curssv = otmp->cursed;
 			int slowly;
-			boolean seen = canspotmon(mtmp);
+			bool seen = canspotmon(mtmp);
 
 			otmp->cursed = 0;
 			/* can't charm you without first waking you */
@@ -442,7 +442,7 @@ register struct obj *otmp;
 	freed_otmp = 1;
     } else {
 #endif
-    boolean snuff_otmp = FALSE;
+    bool snuff_otmp = FALSE;
     /* don't want hidden light source inside the monster; assumes that
        engulfers won't have external inventories; whirly monsters cause
        the light to be extinguished rather than letting it shine thru */
@@ -522,7 +522,7 @@ STATIC_OVL void
 mdrop_obj(mon, obj, verbosely)
 struct monst *mon;
 struct obj *obj;
-boolean verbosely;
+bool verbosely;
 {
     int omx = mon->mx, omy = mon->my;
 
@@ -575,13 +575,13 @@ void
 relobj(mtmp,show,is_pet)
 register struct monst *mtmp;
 register int show;
-boolean is_pet;		/* If true, pet should keep wielded/worn items */
+bool is_pet;		/* If true, pet should keep wielded/worn items */
 {
 	register struct obj *otmp;
 	register int omx = mtmp->mx, omy = mtmp->my;
 	struct obj *keepobj = 0;
 	struct obj *wep = MON_WEP(mtmp);
-	boolean item1 = FALSE, item2 = FALSE;
+	bool item1 = FALSE, item2 = FALSE;
 
 	if (!is_pet || mindless(mtmp->data) || is_animal(mtmp->data))
 		item1 = item2 = TRUE;

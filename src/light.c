@@ -46,7 +46,7 @@
 static light_source *light_base = 0;
 
 STATIC_DCL void FDECL(write_ls, (int, light_source *));
-STATIC_DCL int FDECL(maybe_write_ls, (int, int, BOOLEAN_P));
+STATIC_DCL int FDECL(maybe_write_ls, (int, int, BOOL_P));
 
 /* imported from vision.c, for small circles */
 extern char circle_data[];
@@ -297,7 +297,7 @@ restore_light_sources(fd)
 /* Relink all lights that are so marked. */
 void
 relink_light_sources(ghostly)
-    boolean ghostly;
+    bool ghostly;
 {
     char which;
     unsigned nid;
@@ -337,7 +337,7 @@ relink_light_sources(ghostly)
 STATIC_OVL int
 maybe_write_ls(fd, range, write_it)
     int fd, range;
-    boolean write_it;
+    bool write_it;
 {
     int count = 0, is_global;
     light_source *ls;
@@ -426,7 +426,7 @@ obj_move_light_source(src, dest)
 }
 
 /* return true if there exist any light sources */
-boolean
+bool
 any_light_source()
 {
     return light_base != (light_source *) 0;
@@ -470,7 +470,7 @@ snuff_light_source(x, y)
 }
 
 /* Return TRUE if object sheds any light at all. */
-boolean
+bool
 obj_sheds_light(obj)
     struct obj *obj;
 {
@@ -479,7 +479,7 @@ obj_sheds_light(obj)
 }
 
 /* Return TRUE if sheds light AND will be snuffed by end_burn(). */
-boolean
+bool
 obj_is_burning(obj)
     struct obj *obj;
 {

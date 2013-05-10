@@ -36,7 +36,7 @@ void ghack_message_window_destroy( GtkWidget *win, gpointer data)
 
 }
 
-void ghack_message_window_display(GtkWidget *widget, boolean block,
+void ghack_message_window_display(GtkWidget *widget, bool block,
                                  gpointer data)
 {
 

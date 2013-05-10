@@ -83,9 +83,9 @@ typedef struct mswin_nethack_cmd_window {
 	HBITMAP				images;						/* key images map */
 	int					active_cell;				/* current active cell */
 
-	boolean				is_caps;					/* is CAPS selected */
-	boolean				is_ctrl;					/* is CRTL selected */
-	boolean				is_shift;					/* is SHIFT selected */
+	bool				is_caps;					/* is CAPS selected */
+	bool				is_ctrl;					/* is CRTL selected */
+	bool				is_shift;					/* is SHIFT selected */
 
 	PNHCmdLayout		layout_current;				/* current layout */
 	PNHCmdLayout		layout_save;				/* saved layout */

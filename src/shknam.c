@@ -492,7 +492,7 @@ register struct mkroom *sroom;
 #ifdef OVL0
 
 /* does shkp's shop stock this item type? */
-boolean
+bool
 saleable(shkp, obj)
 struct monst *shkp;
 struct obj *obj;

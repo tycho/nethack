@@ -123,7 +123,7 @@ STATIC_DCL void FDECL(display_warning,(struct monst *));
 
 STATIC_DCL int FDECL(check_pos, (int, int, int));
 #ifdef WA_VERBOSE
-STATIC_DCL boolean FDECL(more_than_one, (int, int, int, int, int));
+STATIC_DCL bool FDECL(more_than_one, (int, int, int, int, int));
 #endif
 STATIC_DCL int FDECL(set_twall, (int,int, int,int, int,int, int,int));
 STATIC_DCL int FDECL(set_wall, (int, int, int));
@@ -362,7 +362,7 @@ display_monster(x, y, mon, sightflags, worm_tail)
     				/* 2 if detected using Detect_monsters */
     register xchar worm_tail;	/* mon is actually a worm tail */
 {
-    register boolean mon_mimic = (mon->m_ap_type != M_AP_NOTHING);
+    register bool mon_mimic = (mon->m_ap_type != M_AP_NOTHING);
     register int sensed = mon_mimic &&
 	(Protection_from_shape_changers || sensemon(mon));
     /*
@@ -979,7 +979,7 @@ under_water(mode)
     int mode;
 {
     static xchar lastx, lasty;
-    static boolean dela;
+    static bool dela;
     register int x, y;
 
     /* swallowing has a higher precedence than under water */
@@ -1023,7 +1023,7 @@ void
 under_ground(mode)
     int mode;
 {
-    static boolean dela;
+    static bool dela;
 
     /* swallowing has a higher precedence than under ground */
     if (u.uswallow) return;
@@ -1342,8 +1342,8 @@ flush_screen(cursor_on_u)
     /* Prevent infinite loops on errors:
      *	    flush_screen->print_glyph->impossible->pline->flush_screen
      */
-    static   boolean flushing = 0;
-    static   boolean delay_flushing = 0;
+    static   bool flushing = 0;
+    static   bool delay_flushing = 0;
     register int x,y;
 
     if (cursor_on_u == -1) delay_flushing = !delay_flushing;
@@ -1699,7 +1699,7 @@ check_pos(x, y, which)
 /* Return TRUE if more than one is non-zero. */
 /*ARGSUSED*/
 #ifdef WA_VERBOSE
-STATIC_OVL boolean
+STATIC_OVL bool
 more_than_one(x, y, a, b, c)
     int x, y, a, b, c;
 {

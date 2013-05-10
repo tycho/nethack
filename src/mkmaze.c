@@ -10,21 +10,21 @@ extern char *lev_message;
 extern lev_region *lregions;
 extern int num_lregions;
 
-STATIC_DCL boolean FDECL(iswall,(int,int));
-STATIC_DCL boolean FDECL(iswall_or_stone,(int,int));
-STATIC_DCL boolean FDECL(is_solid,(int,int));
+STATIC_DCL bool FDECL(iswall,(int,int));
+STATIC_DCL bool FDECL(iswall_or_stone,(int,int));
+STATIC_DCL bool FDECL(is_solid,(int,int));
 STATIC_DCL int FDECL(extend_spine, (int [3][3], int, int, int));
-STATIC_DCL boolean FDECL(okay,(int,int,int));
+STATIC_DCL bool FDECL(okay,(int,int,int));
 STATIC_DCL void FDECL(maze0xy,(coord *));
-STATIC_DCL boolean FDECL(put_lregion_here,(XCHAR_P,XCHAR_P,XCHAR_P,
-	XCHAR_P,XCHAR_P,XCHAR_P,XCHAR_P,BOOLEAN_P,d_level *));
+STATIC_DCL bool FDECL(put_lregion_here,(XCHAR_P,XCHAR_P,XCHAR_P,
+	XCHAR_P,XCHAR_P,XCHAR_P,XCHAR_P,BOOL_P,d_level *));
 STATIC_DCL void NDECL(fixup_special);
 STATIC_DCL void FDECL(move, (int *,int *,int));
 STATIC_DCL void NDECL(setup_waterlevel);
 STATIC_DCL void NDECL(unsetup_waterlevel);
 
 
-STATIC_OVL boolean
+STATIC_OVL bool
 iswall(x,y)
 int x,y;
 {
@@ -36,7 +36,7 @@ int x,y;
 	    type == SDOOR || type == IRONBARS);
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 iswall_or_stone(x,y)
     int x,y;
 {
@@ -51,7 +51,7 @@ iswall_or_stone(x,y)
 }
 
 /* return TRUE if out of bounds, wall or rock */
-STATIC_OVL boolean
+STATIC_OVL bool
 is_solid(x,y)
     int x, y;
 {
@@ -193,7 +193,7 @@ int x1, y1, x2, y2;
 	    }
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 okay(x,y,dir)
 int x,y;
 register int dir;
@@ -220,12 +220,12 @@ maze0xy(cc)	/* find random starting point for maze generation */
  *	pos is inside restricted region (lx,ly,hx,hy) OR
  *	NOT (pos is corridor and a maze level OR pos is a room OR pos is air)
  */
-boolean
+bool
 bad_location(x, y, lx, ly, hx, hy)
     xchar x, y;
     xchar lx, ly, hx, hy;
 {
-    return((boolean)(occupied(x, y) ||
+    return((bool)(occupied(x, y) ||
 	   within_bounded_area(x,y, lx,ly, hx,hy) ||
 	   !((levl[x][y].typ == CORR && level.flags.is_maze_lev) ||
 	       levl[x][y].typ == ROOM || levl[x][y].typ == AIR)));
@@ -241,7 +241,7 @@ place_lregion(lx, ly, hx, hy, nlx, nly, nhx, nhy, rtype, lev)
     d_level	*lev;
 {
     int trycnt;
-    boolean oneshot;
+    bool oneshot;
     xchar x, y;
 
     if(!lx) { /* default to whole level */
@@ -279,12 +279,12 @@ place_lregion(lx, ly, hx, hy, nlx, nly, nhx, nhy, rtype, lev)
     impossible("Couldn't place lregion type %d!", rtype);
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 put_lregion_here(x,y,nlx,nly,nhx,nhy,rtype,oneshot,lev)
 xchar x, y;
 xchar nlx, nly, nhx, nhy;
 xchar rtype;
-boolean oneshot;
+bool oneshot;
 d_level *lev;
 {
     if (bad_location(x, y, nlx, nly, nhx, nhy)) {
@@ -326,7 +326,7 @@ d_level *lev;
     return(TRUE);
 }
 
-static boolean was_waterlevel; /* ugh... this shouldn't be needed */
+static bool was_waterlevel; /* ugh... this shouldn't be needed */
 
 /* this is special stuff that the level compiler cannot (yet) handle */
 STATIC_OVL void
@@ -336,7 +336,7 @@ fixup_special()
     struct d_level lev;
     register int x, y;
     struct mkroom *croom;
-    boolean added_branch = FALSE;
+    bool added_branch = FALSE;
 
     if (was_waterlevel) {
 	was_waterlevel = FALSE;
@@ -808,7 +808,7 @@ bound_digging()
 	register int x,y;
 	register unsigned typ;
 	register struct rm *lev;
-	boolean found, nonwall;
+	bool found, nonwall;
 	int xmin,xmax,ymin,ymax;
 
 	if(Is_earthlevel(&u.uz)) return; /* everything diggable here */
@@ -927,12 +927,12 @@ static int xmin, ymin, xmax, ymax;	/* level boundaries */
 
 STATIC_DCL void NDECL(set_wportal);
 STATIC_DCL void FDECL(mk_bubble, (int,int,int));
-STATIC_DCL void FDECL(mv_bubble, (struct bubble *,int,int,BOOLEAN_P));
+STATIC_DCL void FDECL(mv_bubble, (struct bubble *,int,int,BOOL_P));
 
 void
 movebubbles()
 {
-	static boolean up;
+	static bool up;
 	register struct bubble *b;
 	register int x, y, i, j;
 	struct trap *btrap;
@@ -1057,7 +1057,7 @@ void
 water_friction()
 {
 	register int x, y, dx, dy;
-	register boolean eff = FALSE;
+	register bool eff = FALSE;
 
 	if (Swimming && rn2(4))
 		return;		/* natural swimmers have advantage */
@@ -1284,7 +1284,7 @@ STATIC_OVL void
 mv_bubble(b,dx,dy,ini)
 register struct bubble *b;
 register int dx, dy;
-register boolean ini;
+register bool ini;
 {
 	register int x, y, i, j, colli = 0;
 	struct container *cons, *ctemp;

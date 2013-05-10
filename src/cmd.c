@@ -124,7 +124,7 @@ STATIC_PTR int NDECL(wiz_mon_polycontrol);
 STATIC_PTR int NDECL(wiz_show_wmodes);
 #ifdef SHOW_BORN
 STATIC_PTR int NDECL(wiz_showkills);	/* showborn patch */
-extern void FDECL(list_vanquished, (int, BOOLEAN_P)); /* showborn patch */
+extern void FDECL(list_vanquished, (int, BOOL_P)); /* showborn patch */
 #endif /* SHOW_BORN */
 #if defined(__BORLANDC__) && !defined(_WIN32)
 extern void FDECL(show_borlandc_stats, (winid));
@@ -132,7 +132,7 @@ extern void FDECL(show_borlandc_stats, (winid));
 #ifdef DEBUG_MIGRATING_MONS
 STATIC_PTR int NDECL(wiz_migrate_mons);
 #endif
-STATIC_DCL void FDECL(count_obj, (struct obj *, long *, long *, BOOLEAN_P, BOOLEAN_P));
+STATIC_DCL void FDECL(count_obj, (struct obj *, long *, long *, BOOL_P, BOOL_P));
 STATIC_DCL void FDECL(obj_chain, (winid, const char *, struct obj *, long *, long *));
 STATIC_DCL void FDECL(mon_invent_chain, (winid, const char *, struct monst *, long *, long *));
 STATIC_DCL void FDECL(mon_chain, (winid, const char *, struct monst *, long *, long *));
@@ -145,7 +145,7 @@ STATIC_DCL int NDECL(wiz_port_debug);
 STATIC_PTR int NDECL(enter_explore_mode);
 STATIC_PTR int NDECL(doattributes);
 STATIC_PTR int NDECL(doconduct); /**/
-STATIC_PTR boolean NDECL(minimal_enlightenment);
+STATIC_PTR bool NDECL(minimal_enlightenment);
 
 #ifdef OVLB
 STATIC_DCL void FDECL(enlght_line, (const char *,const char *,const char *));
@@ -158,7 +158,7 @@ static void NDECL(end_of_input);
 static const char* readchar_queue="";
 
 STATIC_DCL char *NDECL(parse);
-STATIC_DCL boolean FDECL(help_dir, (CHAR_P,const char *));
+STATIC_DCL bool FDECL(help_dir, (CHAR_P,const char *));
 
 #ifdef OVL1
 
@@ -520,7 +520,7 @@ STATIC_PTR int
 wiz_wish()	/* Unlimited wishes for debug mode by Paul Polderman */
 {
 	if (wizard) {
-	    boolean save_verbose = flags.verbose;
+	    bool save_verbose = flags.verbose;
 
 	    flags.verbose = FALSE;
 	    makewish();
@@ -1460,7 +1460,7 @@ int final;
  * to help refresh them about who/what they are.
  * Returns FALSE if menu cancelled (dismissed with ESC), TRUE otherwise.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 minimal_enlightenment()
 {
 	winid tmpwin;
@@ -2018,8 +2018,8 @@ count_obj(chain, total_count, total_size, top, recurse)
 	struct obj *chain;
 	long *total_count;
 	long *total_size;
-	boolean top;
-	boolean recurse;
+	bool top;
+	bool recurse;
 {
 	long count, size;
 	struct obj *obj;
@@ -2230,7 +2230,7 @@ void
 rhack(cmd)
 register char *cmd;
 {
-	boolean do_walk, do_rush, prefix_seen, bad_command,
+	bool do_walk, do_rush, prefix_seen, bad_command,
 		firsttime = (cmd == 0);
 
 	iflags.menu_requested = FALSE;
@@ -2520,7 +2520,7 @@ const char *s;
 	if(dirsym == '.' || dirsym == 's')
 		u.dx = u.dy = u.dz = 0;
 	else if(!movecmd(dirsym) && !u.dz) {
-		boolean did_help = FALSE;
+		bool did_help = FALSE;
 		if(!index(quitchars, dirsym)) {
 		    if (iflags.cmdassist) {
 			did_help = help_dir((s && *s == '^') ? dirsym : 0,
@@ -2534,7 +2534,7 @@ const char *s;
 	return 1;
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 help_dir(sym, msg)
 char sym;
 const char *msg;
@@ -2751,7 +2751,7 @@ parse()
 	static char in_line[COLNO];
 #endif
 	register int foo;
-	boolean prezero = FALSE;
+	bool prezero = FALSE;
 
 	multi = 0;
 	flags.move = 1;

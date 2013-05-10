@@ -178,7 +178,7 @@ newexplevel()
 
 void
 pluslvl(incr)
-boolean incr;	/* true iff via incremental experience growth */
+bool incr;	/* true iff via incremental experience growth */
 {		/*	(false for potion of gain level)      */
 	register int num;
 
@@ -221,7 +221,7 @@ boolean incr;	/* true iff via incremental experience growth */
    level plus a random portion of what it takes to get to the next level */
 long
 rndexp(gaining)
-boolean gaining;	/* gaining XP via potion vs setting XP for polyself */
+bool gaining;	/* gaining XP via potion vs setting XP for polyself */
 {
 	long minexp, maxexp, diff, factor, result;
 

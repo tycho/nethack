@@ -11,16 +11,16 @@ STATIC_DCL struct monst *NDECL(findgd);
 
 #ifdef OVLB
 
-STATIC_DCL boolean FDECL(clear_fcorr, (struct monst *,BOOLEAN_P));
+STATIC_DCL bool FDECL(clear_fcorr, (struct monst *,BOOL_P));
 STATIC_DCL void FDECL(restfakecorr,(struct monst *));
-STATIC_DCL boolean FDECL(in_fcorridor, (struct monst *,int,int));
+STATIC_DCL bool FDECL(in_fcorridor, (struct monst *,int,int));
 STATIC_DCL void FDECL(move_gold,(struct obj *,int));
 STATIC_DCL void FDECL(wallify_vault,(struct monst *));
 
-STATIC_OVL boolean
+STATIC_OVL bool
 clear_fcorr(grd, forceshow)
 register struct monst *grd;
-register boolean forceshow;
+register bool forceshow;
 {
 	register int fcx, fcy, fcbeg;
 	register struct monst *mtmp;
@@ -66,11 +66,11 @@ register struct monst *grd;
 	if(clear_fcorr(grd, FALSE)) mongone(grd);
 }
 
-boolean
+bool
 grddead(grd)				/* called in mon.c */
 register struct monst *grd;
 {
-	register boolean dispose = clear_fcorr(grd, TRUE);
+	register bool dispose = clear_fcorr(grd, TRUE);
 
 	if(!dispose) {
 		/* see comment by newpos in gd_move() */
@@ -84,7 +84,7 @@ register struct monst *grd;
 	return(dispose);
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 in_fcorridor(grd, x, y)
 register struct monst *grd;
 int x, y;
@@ -376,8 +376,8 @@ struct monst *grd;
 	struct monst *mon;
 	struct obj *gold;
 	struct trap *trap;
-	boolean fixed = FALSE;
-	boolean movedgold = FALSE;
+	bool fixed = FALSE;
+	bool movedgold = FALSE;
 
 	for (x = lox; x <= hix; x++)
 	    for (y = loy; y <= hiy; y++) {
@@ -442,18 +442,18 @@ register struct monst *grd;
 	struct fakecorridor *fcp;
 	register struct egd *egrd = EGD(grd);
 	register struct rm *crm;
-	register boolean goldincorridor = FALSE,
+	register bool goldincorridor = FALSE,
 			 u_in_vault = vault_occupied(u.urooms)? TRUE : FALSE,
 			 grd_in_vault = *in_rooms(grd->mx, grd->my, VAULT)?
 					TRUE : FALSE;
-	boolean disappear_msg_seen = FALSE, semi_dead = (grd->mhp <= 0);
+	bool disappear_msg_seen = FALSE, semi_dead = (grd->mhp <= 0);
 #ifndef GOLDOBJ
-	register boolean u_carry_gold = ((u.ugold + hidden_gold()) > 0L);
+	register bool u_carry_gold = ((u.ugold + hidden_gold()) > 0L);
 #else
         long umoney = money_cnt(invent);
-	register boolean u_carry_gold = ((umoney + hidden_gold()) > 0L);
+	register bool u_carry_gold = ((umoney + hidden_gold()) > 0L);
 #endif
-	boolean see_guard;
+	bool see_guard;
 
 	if(!on_level(&(egrd->gdlevel), &u.uz)) return(-1);
 	nx = ny = m = n = 0;
@@ -811,13 +811,13 @@ hidden_gold()
 	return(value);
 }
 
-boolean
+bool
 gd_sound()  /* prevent "You hear footsteps.." when inappropriate */
 {
 	register struct monst *grd = findgd();
 
 	if (vault_occupied(u.urooms)) return(FALSE);
-	else return((boolean)(grd == (struct monst *)0));
+	else return((bool)(grd == (struct monst *)0));
 }
 
 #endif /* OVLB */

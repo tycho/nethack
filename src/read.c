@@ -16,7 +16,7 @@
 
 #ifdef OVLB
 
-boolean	known;
+bool	known;
 
 static NEARDATA const char readable[] =
 		   { ALL_CLASSES, SCROLL_CLASS, SPBOOK_CLASS, 0 };
@@ -38,7 +38,7 @@ int
 doread()
 {
 	register struct obj *scroll;
-	register boolean confused;
+	register bool confused;
 
 	known = FALSE;
 	if(check_capacity((char *)0)) return (0);
@@ -188,19 +188,19 @@ register const char *color;
 
 /* Is the object chargeable?  For purposes of inventory display; it is */
 /* possible to be able to charge things for which this returns FALSE. */
-boolean
+bool
 is_chargeable(obj)
 struct obj *obj;
 {
 	if (obj->oclass == WAND_CLASS) return TRUE;
 	/* known && !uname is possible after amnesia/mind flayer */
 	if (obj->oclass == RING_CLASS)
-	    return (boolean)(objects[obj->otyp].oc_charged &&
+	    return (bool)(objects[obj->otyp].oc_charged &&
 			(obj->known || objects[obj->otyp].oc_uname));
 	if (is_weptool(obj))	/* specific check before general tools */
 	    return FALSE;
 	if (obj->oclass == TOOL_CLASS)
-	    return (boolean)(objects[obj->otyp].oc_charged);
+	    return (bool)(objects[obj->otyp].oc_charged);
 	return FALSE; /* why are weapons/armor considered charged anyway? */
 }
 
@@ -214,7 +214,7 @@ struct obj *obj;
 int curse_bless;
 {
 	register int n;
-	boolean is_cursed, is_blessed;
+	bool is_cursed, is_blessed;
 
 	is_cursed = curse_bless < 0;
 	is_blessed = curse_bless > 0;
@@ -270,7 +270,7 @@ int curse_bless;
 					objects[obj->otyp].oc_charged) {
 	    /* charging does not affect ring's curse/bless status */
 	    int s = is_blessed ? rnd(3) : is_cursed ? -rnd(2) : 1;
-	    boolean is_on = (obj == uleft || obj == uright);
+	    bool is_on = (obj == uleft || obj == uright);
 
 	    /* destruction depends on current state, not adjustment */
 	    if (obj->spe > rn2(7) || obj->spe <= -5) {
@@ -396,7 +396,7 @@ int curse_bless;
 				if (*u.ushops && (shkp = shop_keeper(*u.ushops)) != 0) {
 					if(curr->unpaid)
 						loss += stolen_value(curr, u.ux, u.uy,
-								 (boolean)shkp->mpeaceful, TRUE);
+								 (bool)shkp->mpeaceful, TRUE);
 				}
 				/* obfree() will free all contained objects */
 				obfree(curr, (struct obj *) 0);
@@ -675,7 +675,7 @@ seffects(sobj)
 register struct obj	*sobj;
 {
 	register int cval;
-	register boolean confused = (Confusion != 0);
+	register bool confused = (Confusion != 0);
 	register struct obj *otmp;
 
 	if (objects[sobj->otyp].oc_magic)
@@ -695,8 +695,8 @@ register struct obj	*sobj;
 	case SCR_ENCHANT_ARMOR:
 	    {
 		register schar s;
-		boolean special_armor;
-		boolean same_color;
+		bool special_armor;
+		bool same_color;
 
 		otmp = some_armor(&youmonst);
 		if(!otmp) {
@@ -1358,7 +1358,7 @@ genericptr_t val;
 
 void
 litroom(on,obj)
-register boolean on;
+register bool on;
 struct obj *obj;
 {
 	char is_lit;	/* value is irrelevant; we use its address
@@ -1456,7 +1456,7 @@ do_class_genocide()
 {
 	int i, j, immunecnt, gonecnt, goodcnt, class, feel_dead = 0;
 	char buf[BUFSZ];
-	boolean gameover = FALSE;	/* true iff killed self */
+	bool gameover = FALSE;	/* true iff killed self */
 
 	for(j=0; ; j++) {
 		if (j >= 5) {
@@ -1581,7 +1581,7 @@ do_class_genocide()
 			/* non-leader/nemesis/guardian role-specific monster */
 			   && (i != PM_NINJA ||		/* nuisance */
 			       Role_if(PM_SAMURAI))) {
-				boolean named, uniq;
+				bool named, uniq;
 
 				named = type_is_pname(&mons[i]) ? TRUE : FALSE;
 				uniq = (mons[i].geno & G_UNIQ) ? TRUE : FALSE;
@@ -1804,10 +1804,10 @@ unpunish()
  * normal locations -- if the player tries to create one elsewhere, or to revive
  * one, the disoriented creature becomes a zombie
  */
-boolean
+bool
 cant_create(mtype, revival)
 int *mtype;
-boolean revival;
+bool revival;
 {
 
 	/* SHOPKEEPERS can be revived now */
@@ -1830,15 +1830,15 @@ boolean revival;
  * "strange object" (']') symbol produces a random monster rather
  * than a mimic; this behavior quirk is useful so don't "fix" it...
  */
-boolean
+bool
 create_particular()
 {
 	char buf[BUFSZ], *bufp, monclass = MAXMCLASSES;
 	int which, tries, i;
 	struct permonst *whichpm;
 	struct monst *mtmp;
-	boolean madeany = FALSE;
-	boolean maketame, makepeaceful, makehostile;
+	bool madeany = FALSE;
+	bool maketame, makepeaceful, makehostile;
 
 	tries = 0;
 	do {

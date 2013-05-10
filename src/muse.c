@@ -10,7 +10,7 @@
 
 extern const int monstr[];
 
-boolean m_using = FALSE;
+bool m_using = FALSE;
 
 /* Let monsters use magic items.  Arbitrary assumptions: Monsters only use
  * scrolls when they can see, monsters know when wands have 0 charges, monsters
@@ -20,7 +20,7 @@ boolean m_using = FALSE;
 
 STATIC_DCL struct permonst *FDECL(muse_newcham_mon, (struct monst *));
 STATIC_DCL int FDECL(precheck, (struct monst *,struct obj *));
-STATIC_DCL void FDECL(mzapmsg, (struct monst *,struct obj *,BOOLEAN_P));
+STATIC_DCL void FDECL(mzapmsg, (struct monst *,struct obj *,BOOL_P));
 STATIC_DCL void FDECL(mreadmsg, (struct monst *,struct obj *));
 STATIC_DCL void FDECL(mquaffmsg, (struct monst *,struct obj *));
 STATIC_PTR int FDECL(mbhitm, (struct monst *,struct obj *));
@@ -29,7 +29,7 @@ STATIC_DCL void FDECL(mbhit,
 	int FDECL((*),(OBJ_P,OBJ_P)),struct obj *));
 STATIC_DCL void FDECL(you_aggravate, (struct monst *));
 STATIC_DCL void FDECL(mon_consume_unstone, (struct monst *,struct obj *,
-	BOOLEAN_P,BOOLEAN_P));
+	BOOL_P,BOOL_P));
 
 static struct musable {
 	struct obj *offensive;
@@ -41,7 +41,7 @@ static struct musable {
 	 */
 } m;
 static int trapx, trapy;
-static boolean zap_oseen;
+static bool zap_oseen;
 	/* for wands which use mbhitm and are zapped at players.  We usually
 	 * want an oseen local to the function, but this is impossible since the
 	 * function mbhitm has to be compatible with the normal zap routines,
@@ -57,7 +57,7 @@ precheck(mon, obj)
 struct monst *mon;
 struct obj *obj;
 {
-	boolean vis;
+	bool vis;
 
 	if (!obj) return 0;
 	vis = cansee(mon->mx, mon->my);
@@ -146,7 +146,7 @@ STATIC_OVL void
 mzapmsg(mtmp, otmp, self)
 struct monst *mtmp;
 struct obj *otmp;
-boolean self;
+bool self;
 {
 	if (!canseemon(mtmp)) {
 		if (flags.soundok)
@@ -167,7 +167,7 @@ mreadmsg(mtmp, otmp)
 struct monst *mtmp;
 struct obj *otmp;
 {
-	boolean vismon = canseemon(mtmp);
+	bool vismon = canseemon(mtmp);
 	char onambuf[BUFSZ];
 	short saverole;
 	unsigned savebknown;
@@ -248,15 +248,15 @@ struct obj *otmp;
 /* Select a defensive item/action for a monster.  Returns TRUE iff one is
  * found.
  */
-boolean
+bool
 find_defensive(mtmp)
 struct monst *mtmp;
 {
 	register struct obj *obj = 0;
 	struct trap *t;
 	int x=mtmp->mx, y=mtmp->my;
-	boolean stuck = (mtmp == u.ustuck);
-	boolean immobile = (mtmp->data->mmove == 0);
+	bool stuck = (mtmp == u.ustuck);
+	bool immobile = (mtmp->data->mmove == 0);
 	int fraction;
 
 	if (is_animal(mtmp->data) || mindless(mtmp->data))
@@ -513,7 +513,7 @@ struct monst *mtmp;
 			m.has_defense = MUSE_SCR_CREATE_MONSTER;
 		}
 	}
-botm:	return((boolean)(!!m.has_defense));
+botm:	return((bool)(!!m.has_defense));
 #undef nomore
 }
 
@@ -527,7 +527,7 @@ struct monst *mtmp;
 {
 	int i, fleetim, how = 0;
 	struct obj *otmp = m.defensive;
-	boolean vis, vismon, oseen;
+	bool vis, vismon, oseen;
 	const char *mcsa = "%s can see again.";
 
 	if ((i = precheck(mtmp, otmp)) != 0) return i;
@@ -696,7 +696,7 @@ mon_tele:
 		struct permonst *pm = 0, *fish = 0;
 		int cnt = 1;
 		struct monst *mon;
-		boolean known = FALSE;
+		bool known = FALSE;
 
 		if (!rn2(73)) cnt += rnd(4);
 		if (mtmp->mconf || otmp->cursed) cnt += 12;
@@ -960,13 +960,13 @@ struct monst *mtmp;
 /* Select an offensive item/action for a monster.  Returns TRUE iff one is
  * found.
  */
-boolean
+bool
 find_offensive(mtmp)
 struct monst *mtmp;
 {
 	register struct obj *obj;
-	boolean ranged_stuff = lined_up(mtmp);
-	boolean reflection_skip = (Reflecting && rn2(2));
+	bool ranged_stuff = lined_up(mtmp);
+	bool reflection_skip = (Reflecting && rn2(2));
 	struct obj *helmet = which_armor(mtmp, W_ARMH);
 
 	m.offensive = (struct obj *)0;
@@ -1088,7 +1088,7 @@ struct monst *mtmp;
 		}
 #endif
 	}
-	return((boolean)(!!m.has_offense));
+	return((bool)(!!m.has_offense));
 #undef nomore
 }
 
@@ -1100,7 +1100,7 @@ register struct obj *otmp;
 {
 	int tmp;
 
-	boolean reveal_invis = FALSE;
+	bool reveal_invis = FALSE;
 	if (mtmp != &youmonst) {
 		mtmp->msleeping = 0;
 		if (mtmp->m_ap_type) seemimic(mtmp);
@@ -1267,7 +1267,7 @@ struct monst *mtmp;
 {
 	int i;
 	struct obj *otmp = m.offensive;
-	boolean oseen;
+	bool oseen;
 
 	/* offensive potions are not drunk, they're thrown */
 	if (otmp->oclass != POTION_CLASS && (i = precheck(mtmp, otmp)) != 0)
@@ -1319,7 +1319,7 @@ struct monst *mtmp;
 		/* TODO: handle steeds */
 	    	register int x, y;
 		/* don't use monster fields after killing it */
-		boolean confused = (mtmp->mconf ? TRUE : FALSE);
+		bool confused = (mtmp->mconf ? TRUE : FALSE);
 		int mmx = mtmp->mx, mmy = mtmp->my;
 
 		mreadmsg(mtmp, otmp);
@@ -1445,7 +1445,7 @@ struct monst *mtmp;
 #if 0
 	case MUSE_SCR_FIRE:
 	      {
-		boolean vis = cansee(mtmp->mx, mtmp->my);
+		bool vis = cansee(mtmp->mx, mtmp->my);
 
 		mreadmsg(mtmp, otmp);
 		if (mtmp->mconf) {
@@ -1561,7 +1561,7 @@ struct monst *mtmp;
 #define MUSE_BULLWHIP 8
 #define MUSE_POT_POLYMORPH 9
 
-boolean
+bool
 find_misc(mtmp)
 struct monst *mtmp;
 {
@@ -1570,8 +1570,8 @@ struct monst *mtmp;
 	int x = mtmp->mx, y = mtmp->my;
 	struct trap *t;
 	int xx, yy;
-	boolean immobile = (mdat->mmove == 0);
-	boolean stuck = (mtmp == u.ustuck);
+	bool immobile = (mdat->mmove == 0);
+	bool stuck = (mtmp == u.ustuck);
 
 	m.misc = (struct obj *)0;
 	m.has_misc = 0;
@@ -1587,7 +1587,7 @@ struct monst *mtmp;
 		return FALSE;
 
 	if (!stuck && !immobile && !mtmp->cham && monstr[monsndx(mdat)] < 6) {
-	  boolean ignore_boulders = (verysmall(mdat) ||
+	  bool ignore_boulders = (verysmall(mdat) ||
 				     throws_rocks(mdat) ||
 				     passes_walls(mdat));
 	  for(xx = x-1; xx <= x+1; xx++)
@@ -1668,7 +1668,7 @@ struct monst *mtmp;
 			m.has_misc = MUSE_POT_POLYMORPH;
 		}
 	}
-	return((boolean)(!!m.has_misc));
+	return((bool)(!!m.has_misc));
 #undef nomore
 }
 
@@ -1695,7 +1695,7 @@ struct monst *mtmp;
 {
 	int i;
 	struct obj *otmp = m.misc;
-	boolean vis, vismon, oseen;
+	bool vis, vismon, oseen;
 	char nambuf[BUFSZ];
 
 	if ((i = precheck(mtmp, otmp)) != 0) return i;
@@ -1940,7 +1940,7 @@ struct monst *mtmp;
 	return 0;
 }
 
-boolean
+bool
 searches_for_item(mon, obj)
 struct monst *mon;
 struct obj *obj;
@@ -1953,18 +1953,18 @@ struct obj *obj;
 	    return FALSE;
 
 	if (typ == WAN_MAKE_INVISIBLE || typ == POT_INVISIBILITY)
-	    return (boolean)(!mon->minvis && !mon->invis_blkd && !attacktype(mon->data, AT_GAZE));
+	    return (bool)(!mon->minvis && !mon->invis_blkd && !attacktype(mon->data, AT_GAZE));
 	if (typ == WAN_SPEED_MONSTER || typ == POT_SPEED)
-	    return (boolean)(mon->mspeed != MFAST);
+	    return (bool)(mon->mspeed != MFAST);
 
 	switch (obj->oclass) {
 	case WAND_CLASS:
 	    if (obj->spe <= 0)
 		return FALSE;
 	    if (typ == WAN_DIGGING)
-		return (boolean)(!is_floater(mon->data));
+		return (bool)(!is_floater(mon->data));
 	    if (typ == WAN_POLYMORPH)
-		return (boolean)(monstr[monsndx(mon->data)] < 6);
+		return (bool)(monstr[monsndx(mon->data)] < 6);
 	    if (objects[typ].oc_dir == RAY ||
 		    typ == WAN_STRIKING ||
 		    typ == WAN_TELEPORTATION ||
@@ -1992,28 +1992,28 @@ struct obj *obj;
 	    break;
 	case AMULET_CLASS:
 	    if (typ == AMULET_OF_LIFE_SAVING)
-		return (boolean)(!nonliving(mon->data));
+		return (bool)(!nonliving(mon->data));
 	    if (typ == AMULET_OF_REFLECTION)
 		return TRUE;
 	    break;
 	case TOOL_CLASS:
 	    if (typ == PICK_AXE)
-		return (boolean)needspick(mon->data);
+		return (bool)needspick(mon->data);
 	    if (typ == UNICORN_HORN)
-		return (boolean)(!obj->cursed && !is_unicorn(mon->data));
+		return (bool)(!obj->cursed && !is_unicorn(mon->data));
 	    if (typ == FROST_HORN || typ == FIRE_HORN)
 		return (obj->spe > 0);
 	    break;
 	case FOOD_CLASS:
 	    if (typ == CORPSE)
-		return (boolean)(((mon->misc_worn_check & W_ARMG) &&
+		return (bool)(((mon->misc_worn_check & W_ARMG) &&
 				    touch_petrifies(&mons[obj->corpsenm])) ||
 				(!resists_ston(mon) &&
 				    (obj->corpsenm == PM_LIZARD ||
 					(acidic(&mons[obj->corpsenm]) &&
 					 obj->corpsenm != PM_GREEN_SLIME))));
 	    if (typ == EGG)
-		return (boolean)(touch_petrifies(&mons[obj->corpsenm]));
+		return (bool)(touch_petrifies(&mons[obj->corpsenm]));
 	    break;
 	default:
 	    break;
@@ -2022,7 +2022,7 @@ struct obj *obj;
 	return FALSE;
 }
 
-boolean
+bool
 mon_reflects(mon,str)
 struct monst *mon;
 const char *str;
@@ -2062,7 +2062,7 @@ const char *str;
 	return FALSE;
 }
 
-boolean
+bool
 ureflects (fmt, str)
 const char *fmt, *str;
 {
@@ -2098,10 +2098,10 @@ const char *fmt, *str;
 
 
 /* TRUE if the monster ate something */
-boolean
+bool
 munstone(mon, by_you)
 struct monst *mon;
-boolean by_you;
+bool by_you;
 {
 	struct obj *obj;
 
@@ -2123,8 +2123,8 @@ STATIC_OVL void
 mon_consume_unstone(mon, obj, by_you, stoning)
 struct monst *mon;
 struct obj *obj;
-boolean by_you;
-boolean stoning;
+bool by_you;
+bool stoning;
 {
     int nutrit = (obj->otyp == CORPSE) ? dog_nutrition(mon, obj) : 0;
     /* also sets meating */

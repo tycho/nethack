@@ -166,7 +166,7 @@ static void NDECL(init_standard_windows);
 /*
  * Local variables.
  */
-static boolean x_inited = FALSE;	/* TRUE if window system is set up. */
+static bool x_inited = FALSE;	/* TRUE if window system is set up. */
 static winid message_win = WIN_ERR,	/* These are the winids of the	    */
 	     map_win     = WIN_ERR,	/*   message, map, and status	    */
 	     status_win  = WIN_ERR;	/*   windows, when they are created */
@@ -684,7 +684,7 @@ X11_clear_nhwindow(window)
 void
 X11_display_nhwindow(window, blocking)
     winid window;
-    boolean blocking;
+    bool blocking;
 {
     struct xwindow *wp;
 
@@ -1264,7 +1264,7 @@ X11_getlin(question, input)
     const char *question;
     char *input;
 {
-    static boolean need_to_init = True;
+    static bool need_to_init = True;
 
     getline_input = input;
 
@@ -1337,7 +1337,7 @@ dismiss_file(w, event, params, num_params)
 void
 X11_display_file(str, complain)
     const char *str;
-    boolean complain;
+    bool complain;
 {
     dlb *fp;
     Arg args[12];
@@ -1459,7 +1459,7 @@ static char yn_return;		/* return value */
 static char yn_esc_map;		/* ESC maps to this char. */
 static Widget yn_popup;		/* popup for the yn fuction (created once) */
 static Widget yn_label;		/* label for yn function (created once) */
-static boolean yn_getting_num;	/* TRUE if accepting digits */
+static bool yn_getting_num;	/* TRUE if accepting digits */
 static int yn_ndigits;		/* digit count */
 static long yn_val;		/* accumulated value */
 
@@ -1478,7 +1478,7 @@ key_event_to_char(key)
 {
     char keystring[MAX_KEY_STRING];
     int nbytes;
-    boolean meta = !!(key->state & Mod1Mask);
+    bool meta = !!(key->state & Mod1Mask);
 
     nbytes = XLookupString(key, keystring, MAX_KEY_STRING,
 			   (KeySym *)0, (XComposeStatus *)0);

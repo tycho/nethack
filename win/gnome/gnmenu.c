@@ -134,7 +134,7 @@ ghack_menu_window_clear(GtkWidget *menuWin, gpointer data)
 }
 
 void
-ghack_menu_window_display(GtkWidget *menuWin, gboolean blocking,
+ghack_menu_window_display(GtkWidget *menuWin, gbool blocking,
                           gpointer data)
 {
     //if(blocking) {
@@ -281,9 +281,9 @@ ghack_menu_window_add_menu( GtkWidget *menuWin, gpointer menu_item,
     gint nCurrentRow = -1, numItems = -1;
     MenuWinType isMenu;
     GtkStyle *bigStyle = NULL;
-    gboolean item_selectable;
+    gbool item_selectable;
     GdkImlibImage* image;
-    static gboolean special;
+    static gbool special;
 
     g_assert (menu_item != NULL);
     item = (GHackMenuItem*) menu_item;

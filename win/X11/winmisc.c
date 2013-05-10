@@ -44,7 +44,7 @@ static const char ps_randchars[] = "*@";
 static const char ps_quitchars[] = "\033qQ";
 
 #define EC_NCHARS 32
-static boolean ec_active = FALSE;
+static bool ec_active = FALSE;
 static int ec_nchars = 0;
 static char ec_chars[EC_NCHARS];
 static Time ec_time;

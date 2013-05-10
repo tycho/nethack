@@ -53,7 +53,7 @@ static void NDECL(resettty);
 
 extern short ospeed;
 char erase_char, intr_char, kill_char;
-static boolean settty_needed = FALSE,  bombing = FALSE;
+static bool settty_needed = FALSE,  bombing = FALSE;
 static unsigned long kb = 0;
 #ifdef USE_QIO_INPUT
 static char inputbuf[15+1], *inp = 0;

@@ -21,7 +21,7 @@ static void FDECL(xexit, (int));
 #define LIBLISTFILE "dlb.lst"		/* default list file */
 
 /* library functions (from dlb.c) */
-extern boolean FDECL(open_library,(const char *,library *));
+extern bool FDECL(open_library,(const char *,library *));
 extern void FDECL(close_library,(library *));
 
 char *FDECL(eos, (char *));	/* also used by dlb.c */
@@ -352,7 +352,7 @@ main(argc, argv)
 	char buf[BUFSIZ];
 	int fd, out, nfiles = 0;
 	long dir_size, slen, flen, fsiz;
-	boolean rewrite_directory = FALSE;
+	bool rewrite_directory = FALSE;
 
 	/*
 	 * Get names from either/both an argv list and a file

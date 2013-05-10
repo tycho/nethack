@@ -14,7 +14,7 @@
 
 #ifndef __BORLANDC__
 #include <shlwapi.h>
-#else /* Borland redefines "boolean" in shlwapi.h so just use the little bit we need */
+#else /* Borland redefines "bool" in shlwapi.h so just use the little bit we need */
 typedef struct _DLLVERSIONINFO
 {
     DWORD cbSize;

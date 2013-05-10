@@ -15,8 +15,8 @@
 #include "hack.h"
 
 #ifdef OVLB
-STATIC_DCL boolean FDECL(isbig, (struct mkroom *));
-STATIC_DCL struct mkroom * FDECL(pick_room,(BOOLEAN_P));
+STATIC_DCL bool FDECL(isbig, (struct mkroom *));
+STATIC_DCL struct mkroom * FDECL(pick_room,(BOOL_P));
 STATIC_DCL void NDECL(mkshop), FDECL(mkzoo,(int)), NDECL(mkswamp);
 STATIC_DCL void NDECL(mktemple);
 STATIC_DCL coord * FDECL(shrine_pos, (int));
@@ -33,13 +33,13 @@ extern const struct shclass shtypes[];	/* defined in shknam.c */
 
 #ifdef OVLB
 
-STATIC_OVL boolean
+STATIC_OVL bool
 isbig(sroom)
 register struct mkroom *sroom;
 {
 	register int area = (sroom->hx - sroom->lx + 1)
 			   * (sroom->hy - sroom->ly + 1);
-	return((boolean)( area > 20 ));
+	return((bool)( area > 20 ));
 }
 
 void
@@ -183,7 +183,7 @@ gottype:
 
 STATIC_OVL struct mkroom *
 pick_room(strict)
-register boolean strict;
+register bool strict;
 /* pick an unused room, preferably with only one door */
 {
 	register struct mkroom *sroom;
@@ -393,7 +393,7 @@ struct mkroom *sroom;
 void
 mkundead(mm, revive_corpses, mm_flags)
 coord *mm;
-boolean revive_corpses;
+bool revive_corpses;
 int mm_flags;
 {
 	int cnt = (level_difficulty() + 1)/10 + rnd(5);
@@ -515,7 +515,7 @@ mktemple()
 	level.flags.has_temple = 1;
 }
 
-boolean
+bool
 nexttodoor(sx,sy)
 register int sx, sy;
 {
@@ -530,25 +530,25 @@ register int sx, sy;
 	return(FALSE);
 }
 
-boolean
+bool
 has_dnstairs(sroom)
 register struct mkroom *sroom;
 {
 	if (sroom == dnstairs_room)
 		return TRUE;
 	if (sstairs.sx && !sstairs.up)
-		return((boolean)(sroom == sstairs_room));
+		return((bool)(sroom == sstairs_room));
 	return FALSE;
 }
 
-boolean
+bool
 has_upstairs(sroom)
 register struct mkroom *sroom;
 {
 	if (sroom == upstairs_room)
 		return TRUE;
 	if (sstairs.sx && sstairs.up)
-		return((boolean)(sroom == sstairs_room));
+		return((bool)(sroom == sstairs_room));
 	return FALSE;
 }
 
@@ -569,16 +569,16 @@ register struct mkroom *croom;
 	return rn2(croom->hy-croom->ly+1) + croom->ly;
 }
 
-boolean
+bool
 inside_room(croom, x, y)
 struct mkroom *croom;
 xchar x, y;
 {
-	return((boolean)(x >= croom->lx-1 && x <= croom->hx+1 &&
+	return((bool)(x >= croom->lx-1 && x <= croom->hx+1 &&
 		y >= croom->ly-1 && y <= croom->hy+1));
 }
 
-boolean
+bool
 somexy(croom, c)
 struct mkroom *croom;
 coord *c;

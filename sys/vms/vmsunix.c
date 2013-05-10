@@ -29,8 +29,8 @@ extern unsigned long smg$init_term_table_by_type(), smg$del_term_table();
 static int FDECL(veryold, (int));
 static char *NDECL(verify_term);
 #if defined(SHELL) || defined(SUSPEND)
-static void FDECL(hack_escape, (BOOLEAN_P,const char *));
-static void FDECL(hack_resume, (BOOLEAN_P));
+static void FDECL(hack_escape, (BOOL_P,const char *));
+static void FDECL(hack_resume, (BOOL_P));
 #endif
 
 static int
@@ -154,7 +154,7 @@ vms_getuid()
 #define FAB$C_STMLF 5
 #endif
 /* check whether the open file specified by `fd' is in stream-lf format */
-boolean
+bool
 file_is_stmlf(fd)
 int fd;
 {
@@ -337,7 +337,7 @@ privon()
 #if defined(SHELL) || defined(SUSPEND)
 static void
 hack_escape(screen_manip, msg_str)
-boolean screen_manip;
+bool screen_manip;
 const char *msg_str;
 {
 	if (screen_manip)
@@ -348,7 +348,7 @@ const char *msg_str;
 
 static void
 hack_resume(screen_manip)
-boolean screen_manip;
+bool screen_manip;
 {
 	(void) signal(SIGINT, (SIG_RET_TYPE) done1);
 # ifdef WIZARD
@@ -384,7 +384,7 @@ int dosh()
 int
 vms_doshell(execstring, screenoutput)
 const char *execstring;
-boolean screenoutput;
+bool screenoutput;
 {
 	unsigned long status, new_pid, spawnflags = 0;
 	struct dsc$descriptor_s comstring, *command, *inoutfile = 0;

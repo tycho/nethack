@@ -19,7 +19,7 @@ struct _GHackMenuItem
   CHAR_P       group_accel;
   int          attr;
   const char*  str;
-  BOOLEAN_P    presel;
+  BOOL_P    presel;
 };
 
 typedef struct _GHackMenuItem GHackMenuItem;

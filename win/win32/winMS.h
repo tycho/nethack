@@ -58,8 +58,8 @@ typedef struct mswin_nhwindow_app {
 	int			mapTile_Y;	/* tile height */
 	int			mapTilesPerLine;	/* number of tile per row in the bitmap */
 
-	boolean		bNoHScroll;	/* disable cliparound for horizontal grid (map) */
-	boolean		bNoVScroll; /* disable cliparound for vertical grid (map) */
+	bool		bNoHScroll;	/* disable cliparound for horizontal grid (map) */
+	bool		bNoVScroll; /* disable cliparound for vertical grid (map) */
 
 	int			mapDisplayModeSave;	/* saved map display mode */
 
@@ -96,16 +96,16 @@ void mswin_suspend_nhwindows(const char *);
 void mswin_resume_nhwindows(void);
 winid mswin_create_nhwindow(int type);
 void mswin_clear_nhwindow(winid wid);
-void mswin_display_nhwindow(winid wid, BOOLEAN_P block);
+void mswin_display_nhwindow(winid wid, BOOL_P block);
 void mswin_destroy_nhwindow(winid wid);
 void mswin_curs(winid wid, int x, int y);
 void mswin_putstr(winid wid, int attr, const char *text);
 void mswin_putstr_ex(winid wid, int attr, const char *text, int);
-void mswin_display_file(const char *filename,BOOLEAN_P must_exist);
+void mswin_display_file(const char *filename,BOOL_P must_exist);
 void mswin_start_menu(winid wid);
 void mswin_add_menu(winid wid, int glyph, const ANY_P * identifier,
 		CHAR_P accelerator, CHAR_P group_accel, int attr, 
-		const char *str, BOOLEAN_P presel);
+		const char *str, BOOL_P presel);
 void mswin_end_menu(winid wid, const char *prompt);
 int  mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected);
 void mswin_update_inventory(void);

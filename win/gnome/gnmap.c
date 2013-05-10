@@ -30,7 +30,7 @@ void ghack_map_cursor_to( GtkWidget *win, int x, int y, gpointer data);
 void ghack_map_putstr( GtkWidget *win, int attr, const char* text, gpointer data);
 void ghack_map_print_glyph( GtkObject *win, guint x, guint y, GdkImlibImage *im, gpointer data);
 void ghack_map_clear( GtkWidget *win, gpointer data);
-static void ghack_map_display( GtkWidget *win, boolean block, gpointer data);
+static void ghack_map_display( GtkWidget *win, bool block, gpointer data);
 static void ghack_map_cliparound( GtkWidget *win, int x, int y, gpointer data);
 static void ghack_map_window_zoom( GtkAdjustment *adj, gpointer data);
 
@@ -466,7 +466,7 @@ ghack_map_clear( GtkWidget *win, gpointer data)
 
 
 void
-ghack_map_display( GtkWidget *win, boolean block, gpointer data)
+ghack_map_display( GtkWidget *win, bool block, gpointer data)
 {
   gtk_widget_show_all( GTK_WIDGET(win));
 }

@@ -82,7 +82,7 @@ int MAIN(int argc, char **argv)
 		/* Since wizard is actually flags.debug, restoring might
 		 * overwrite it.
 		 */
-		boolean remember_wiz_mode = wizard;
+		bool remember_wiz_mode = wizard;
 #endif
 #ifdef NEWS
 		if(iflags.news) {

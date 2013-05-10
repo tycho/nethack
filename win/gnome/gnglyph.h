@@ -34,7 +34,7 @@ extern int            ghack_init_glyphs( const char *);
 extern void           ghack_free_glyphs( void);
 extern void           ghack_dispose_glyphs( void);
 extern int            ghack_glyph_count( void);
-extern GdkImlibImage* ghack_image_from_glyph( int, gboolean);
+extern GdkImlibImage* ghack_image_from_glyph( int, gbool);
 extern int            ghack_glyph_height( void);
 extern int            ghack_glyph_width( void);
 

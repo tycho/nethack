@@ -5,7 +5,7 @@
 #define VISION_H
 
 #if 0	/* (moved to decl.h) */
-extern boolean vision_full_recalc;	/* TRUE if need vision recalc */
+extern bool vision_full_recalc;	/* TRUE if need vision recalc */
 extern char **viz_array;		/* could see/in sight row pointers */
 extern char *viz_rmin;			/* min could see indices */
 extern char *viz_rmax;			/* max could see indices */

@@ -182,7 +182,7 @@ player_selection()
 		   player_selection() offers a Quit option, it is its
 		   responsibility to clean up and terminate the process.
 		   You need to fill in pl_character[0].
-display_file(str, boolean complain)
+display_file(str, bool complain)
 		-- Display the file named str.  Complain about missing files
 		   iff complain is TRUE.
 update_inventory()
@@ -228,7 +228,7 @@ window = create_nhwindow(type)
 		-- Create a window of type "type."
 clear_nhwindow(window)
 		-- Clear the given window, when appropriate.
-display_nhwindow(window, boolean blocking)
+display_nhwindow(window, bool blocking)
 		-- Display the window on the screen.  If there is data
 		   pending for output in that window, it should be sent.
 		   If blocking is TRUE, display_nhwindow() will not
@@ -247,7 +247,7 @@ start_menu(window)
 		   be used for menus.
 add_menu(windid window, int glyph, const anything identifier,
 				char accelerator, char groupacc,
-				int attr, char *str, boolean preselected)
+				int attr, char *str, bool preselected)
 		-- Add a text line str to the given menu window.  If identifier
 		   is 0, then the line cannot be selected (e.g. a title).
 		   Otherwise, identifier is the value returned if the line is
@@ -472,9 +472,9 @@ to support:
   |--------------------+--------------------+--------------------+--------+
   |  align_message     | WC_ALIGN_MESSAGE   | wc_align_message   |int     |
   |  align_status      | WC_ALIGN_STATUS    | wc_align_status    |int     |
-  |  ascii_map         | WC_ASCII_MAP       | wc_ascii_map       |boolean |
-  |  color             | WC_COLOR           | wc_color           |boolean |
-  |  eight_bit_tty     | WC_EIGHT_BIT_IN    | wc_eight_bit_input |boolean |
+  |  ascii_map         | WC_ASCII_MAP       | wc_ascii_map       |bool    |
+  |  color             | WC_COLOR           | wc_color           |bool    |
+  |  eight_bit_tty     | WC_EIGHT_BIT_IN    | wc_eight_bit_input |bool    |
   |  font_map          | WC_FONT_MAP        | wc_font_map        |char *  |
   |  font_menu         | WC_FONT_MENU       | wc_font_menu       |char *  |
   |  font_message      | WC_FONT_MESSAGE    | wc_font_message    |char *  |
@@ -485,19 +485,19 @@ to support:
   |  font_size_message | WC_FONTSIZ_MESSAGE | wc_fontsiz_message |int     |
   |  font_size_status  | WC_FONTSIZ_STATUS  | wc_fontsiz_status  |int     |
   |  font_size_text    | WC_FONTSIZ_TEXT    | wc_fontsiz_text    |int     |
-  |  hilite_pet        | WC_HILITE_PET      | wc_hilite_pet      |boolean |
+  |  hilite_pet        | WC_HILITE_PET      | wc_hilite_pet      |bool    |
   |  map_mode          | WC_MAP_MODE        | wc_map_mode        |int     |
   |  player_selection  | WC_PLAYER_SELECTION| wc_player_selection|int     |
-  |  popup_dialog      | WC_POPUP_DIALOG    | wc_popup_dialog    |boolean |
-  |  preload_tiles     | WC_PRELOAD_TILES   | wc_preload_tiles   |boolean |
+  |  popup_dialog      | WC_POPUP_DIALOG    | wc_popup_dialog    |bool    |
+  |  preload_tiles     | WC_PRELOAD_TILES   | wc_preload_tiles   |bool    |
   |  scroll_amount     | WC_SCROLL_AMOUNT   | wc_scroll_amount   |int     |
   |  scroll_margin     | WC_SCROLL_MARGIN   | wc_scroll_margin   |int     |
-  |  splash_screen     | WC_SPLASH_SCREEN   | wc_splash_screen   |boolean |
-  |  tiled_map         | WC_TILED_MAP       | wc_tiled_map       |boolean |
+  |  splash_screen     | WC_SPLASH_SCREEN   | wc_splash_screen   |bool    |
+  |  tiled_map         | WC_TILED_MAP       | wc_tiled_map       |bool    |
   |  tile_width        | WC_TILE_WIDTH      | wc_tile_width      |int     |
   |  tile_height       | WC_TILE_HEIGHT     | wc_tile_height     |int     |
   |  tile_file         | WC_TILE_FILE       | wc_tile_file       |char *  |
-  |  use_inverse       | WC_INVERSE         | wc_inverse         |boolean |
+  |  use_inverse       | WC_INVERSE         | wc_inverse         |bool    |
   |  vary_msgcount     | WC_VARY_MSGCOUNT   | wc_vary_msgcount   |int     |
   |  windowcolors      | WC_WINDOWCOLORS    | wc_foregrnd_menu   |char *  |
   |                    |                    | wc_backgrnd_menu   |char *  |
@@ -507,7 +507,7 @@ to support:
   |                    |                    | wc_backgrnd_status |char *  |
   |                    |                    | wc_foregrnd_text   |char *  |
   |                    |                    | wc_backgrnd_text   |char *  |
-  |  mouse             | WC_MOUSE_SUPPORT   | wc_mouse_support   |boolean |
+  |  mouse             | WC_MOUSE_SUPPORT   | wc_mouse_support   |bool    |
   +--------------------+--------------------+--------------------+--------+
 
   wincap2
@@ -515,9 +515,9 @@ to support:
   |                    |                    | iflags field       | data   |
   | player option      | bit in wincap mask |   for value        | type   |
   |--------------------+--------------------+--------------------+--------+
-  |  fullscreen        | WC2_FULLSCREEN     | wc2_fullscreen     |boolean |
-  |  softkeyboard      | WC2_SOFTKEYBOARD   | wc2_softkeyboard   |boolean |
-  |  wraptext          | WC2_WRAPTEXT       | wc2_wraptext       |boolean |
+  |  fullscreen        | WC2_FULLSCREEN     | wc2_fullscreen     |bool    |
+  |  softkeyboard      | WC2_SOFTKEYBOARD   | wc2_softkeyboard   |bool    |
+  |  wraptext          | WC2_WRAPTEXT       | wc2_wraptext       |bool    |
   |  term_cols         | WC2_TERM_COLS      | wc2_term_cols      |int     |
   |  term_rows         | WC2_TERM_ROWS      | wc2_term_rows      |int     |
   |  windowborders     | WC2_WINDOWBORDERS  | wc2_windowborders  |int     |

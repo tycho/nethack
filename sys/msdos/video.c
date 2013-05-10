@@ -130,8 +130,8 @@ int attrib_text_normal;   /* text mode normal attribute */
 int attrib_gr_normal;	  /* graphics mode normal attribute */
 int attrib_text_intense;  /* text mode intense attribute */
 int attrib_gr_intense;	  /* graphics mode intense attribute */
-boolean traditional = FALSE; /* traditonal TTY character mode */
-boolean inmap = FALSE;	  /* in the map window */
+bool traditional = FALSE; /* traditonal TTY character mode */
+bool inmap = FALSE;	  /* in the map window */
 #  ifdef TEXTCOLOR
 char ttycolors[CLR_MAX];	/* also used/set in options.c */
 #  endif /* TEXTCOLOR */
@@ -144,8 +144,8 @@ extern int attrib_text_normal;
 extern int attrib_gr_normal;
 extern int attrib_text_intense;
 extern int attrib_gr_intense;
-extern boolean traditonal;
-extern boolean inmap;
+extern bool traditonal;
+extern bool inmap;
 #  ifdef TEXTCOLOR
 extern char ttycolors[CLR_MAX];	/* also used/set in options.c */
 #  endif /* TEXTCOLOR */
@@ -951,7 +951,7 @@ char *sopt;
 # ifdef OVL0
 
 void tileview(enable)
-boolean enable;
+bool enable;
 {
 #ifdef SCREEN_VGA
 	if (iflags.grmode) vga_traditional(enable ? FALSE : TRUE);
@@ -961,7 +961,7 @@ boolean enable;
 #endif /* NO_TERMS  */
 #else	/* STUBVIDEO */
 void tileview(enable)
-boolean enable;
+bool enable;
 {
 }
 #endif /* STUBVIDEO */

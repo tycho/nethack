@@ -1539,7 +1539,7 @@ amii_exit_nhwindows(str)
 void
 amii_display_nhwindow(win,blocking)
     winid win;
-    boolean blocking;
+    bool blocking;
 {
     menu_item *mip;
     int cnt;
@@ -2248,7 +2248,7 @@ void
 amii_cliparound(x,y)
     register int x,y;
 {
-    extern boolean restoring;
+    extern bool restoring;
 #ifdef	CLIPPING
     int oldx = clipx, oldy = clipy;
     int oldxmax = clipxmax, oldymax = clipymax;

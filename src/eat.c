@@ -19,12 +19,12 @@ STATIC_PTR int NDECL(opentin);
 STATIC_PTR int NDECL(unfaint);
 
 #ifdef OVLB
-STATIC_DCL const char *FDECL(food_xname, (struct obj *,BOOLEAN_P));
+STATIC_DCL const char *FDECL(food_xname, (struct obj *,BOOL_P));
 STATIC_DCL void FDECL(choke, (struct obj *));
 STATIC_DCL void NDECL(recalc_wt);
 STATIC_DCL struct obj *FDECL(touchfood, (struct obj *));
 STATIC_DCL void NDECL(do_reset_eat);
-STATIC_DCL void FDECL(done_eating, (BOOLEAN_P));
+STATIC_DCL void FDECL(done_eating, (BOOL_P));
 STATIC_DCL void FDECL(cprefx, (int));
 STATIC_DCL int FDECL(intrinsic_possible, (int,struct permonst *));
 STATIC_DCL void FDECL(givit, (int,struct permonst *));
@@ -41,7 +41,7 @@ STATIC_DCL int FDECL(rottenfood, (struct obj *));
 STATIC_DCL void NDECL(eatspecial);
 STATIC_DCL void FDECL(eataccessory, (struct obj *));
 STATIC_DCL const char *FDECL(foodword, (struct obj *));
-STATIC_DCL boolean FDECL(maybe_cannibal, (int,BOOLEAN_P));
+STATIC_DCL bool FDECL(maybe_cannibal, (int,BOOL_P));
 
 char msgbuf[BUFSZ];
 
@@ -63,7 +63,7 @@ char msgbuf[BUFSZ];
 
 STATIC_DCL NEARDATA const char comestibles[];
 STATIC_DCL NEARDATA const char allobj[];
-STATIC_DCL boolean force_save_hs;
+STATIC_DCL bool force_save_hs;
 
 #else
 
@@ -75,7 +75,7 @@ STATIC_OVL NEARDATA const char allobj[] = {
 	WAND_CLASS, RING_CLASS, AMULET_CLASS, FOOD_CLASS, TOOL_CLASS,
 	GEM_CLASS, ROCK_CLASS, BALL_CLASS, CHAIN_CLASS, SPBOOK_CLASS, 0 };
 
-STATIC_OVL boolean force_save_hs = FALSE;
+STATIC_OVL bool force_save_hs = FALSE;
 
 const char *hu_stat[] = {
 	"Satiated",
@@ -94,7 +94,7 @@ const char *hu_stat[] = {
  * Decide whether a particular object can be eaten by the possibly
  * polymorphed character.  Not used for monster checks.
  */
-boolean
+bool
 is_edible(obj)
 register struct obj *obj;
 {
@@ -114,8 +114,8 @@ register struct obj *obj;
 	    !Has_contents(obj))
 		return TRUE;
 
-     /* return((boolean)(!!index(comestibles, obj->oclass))); */
-	return (boolean)(obj->oclass == FOOD_CLASS);
+     /* return((bool)(!!index(comestibles, obj->oclass))); */
+	return (bool)(obj->oclass == FOOD_CLASS);
 }
 
 #endif /* OVL1 */
@@ -196,7 +196,7 @@ eatmdone()		/* called after mimicing is over */
 STATIC_OVL const char *
 food_xname(food, the_pfx)
 struct obj *food;
-boolean the_pfx;
+bool the_pfx;
 {
 	const char *result;
 	int mnum = food->corpsenm;
@@ -415,7 +415,7 @@ eatfood()		/* called each move during eating process */
 
 STATIC_OVL void
 done_eating(message)
-boolean message;
+bool message;
 {
 	victual.piece->in_use = TRUE;
 	occupation = 0; /* do this early, so newuhs() knows we're done */
@@ -437,10 +437,10 @@ boolean message;
 	victual.fullwarn = victual.eating = victual.doreset = FALSE;
 }
 
-STATIC_OVL boolean
+STATIC_OVL bool
 maybe_cannibal(pm, allowmsg)
 int pm;
-boolean allowmsg;
+bool allowmsg;
 {
 	if (!CANNIBAL_ALLOWED() && your_race(&mons[pm])) {
 		if (allowmsg) {
@@ -784,7 +784,7 @@ cpostfx(pm)		/* called after completely consuming a corpse */
 register int pm;
 {
 	register int tmp = 0;
-	boolean catch_lycanthropy = FALSE;
+	bool catch_lycanthropy = FALSE;
 
 	/* in case `afternmv' didn't get called for previously mimicking
 	   gold, clean up now to avoid `eatmbuf' memory leak */
@@ -1237,9 +1237,9 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 {
 	int tp = 0, mnum = otmp->corpsenm;
 	long rotted = 0L;
-	boolean uniq = !!(mons[mnum].geno & G_UNIQ);
+	bool uniq = !!(mons[mnum].geno & G_UNIQ);
 	int retcode = 0;
-	boolean stoneable = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
+	bool stoneable = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
 				!poly_when_stoned(youmonst.data));
 
 	/* KMH, conduct */
@@ -1255,7 +1255,7 @@ eatcorpse(otmp)		/* called when a corpse is selected as food */
 	}
 
 	if (mnum != PM_ACID_BLOB && !stoneable && rotted > 5L) {
-		boolean cannibal = maybe_cannibal(mnum, FALSE);
+		bool cannibal = maybe_cannibal(mnum, FALSE);
 		pline("Ulch - that %s was tainted%s!",
 		      mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
 		      !vegetarian(&mons[mnum]) ? "meat" : "protoplasm",
@@ -1757,7 +1757,7 @@ struct obj *otmp;
 
 	char buf[BUFSZ], foodsmell[BUFSZ],
 	     it_or_they[QBUFSZ], eat_it_anyway[QBUFSZ];
-	boolean cadaver = (otmp->otyp == CORPSE),
+	bool cadaver = (otmp->otyp == CORPSE),
 		stoneorslime = FALSE;
 	int material = objects[otmp->otyp].oc_material,
 	    mnum = otmp->corpsenm;
@@ -1879,7 +1879,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 {
 	register struct obj *otmp;
 	int basenutrit;			/* nutrition of full item */
-	boolean dont_start = FALSE;
+	bool dont_start = FALSE;
 	
 	if (Strangled) {
 		pline("If you can't breathe air, how can you consume solids?");
@@ -2190,7 +2190,7 @@ lesshungry(num)	/* called after eating (and after drinking fruit juice) */
 register int num;
 {
 	/* See comments in newuhs() for discussion on force_save_hs */
-	boolean iseating = (occupation == eatfood) || force_save_hs;
+	bool iseating = (occupation == eatfood) || force_save_hs;
 #ifdef DEBUG
 	debugpline("lesshungry(%d)", num);
 #endif
@@ -2245,10 +2245,10 @@ unfaint()
 #endif /* OVLB */
 #ifdef OVL0
 
-boolean
+bool
 is_fainted()
 {
-	return((boolean)(u.uhs == FAINTED));
+	return((bool)(u.uhs == FAINTED));
 }
 
 void
@@ -2274,11 +2274,11 @@ sync_hunger()
 
 void
 newuhs(incr)		/* compute and comment on your (new?) hunger status */
-boolean incr;
+bool incr;
 {
 	unsigned newhs;
 	static unsigned save_hs;
-	static boolean saved_hs = FALSE;
+	static bool saved_hs = FALSE;
 	int h = u.uhunger;
 
 	newhs = (h > 1000) ? SATIATED :
@@ -2415,7 +2415,7 @@ floorfood(verb,corpsecheck)	/* get food from floor or pack */
 	register struct obj *otmp;
 	char qbuf[QBUFSZ];
 	char c;
-	boolean feeding = (!strcmp(verb, "eat"));
+	bool feeding = (!strcmp(verb, "eat"));
 
 	/* if we can't touch floor objects then use invent food only */
 	if (!can_reach_floor() ||
@@ -2578,9 +2578,9 @@ int amt;
 
 /* called when eatfood occupation has been interrupted,
    or in the case of theft, is about to be interrupted */
-boolean
+bool
 maybe_finished_meal(stopping)
-boolean stopping;
+bool stopping;
 {
 	/* in case consume_oeaten() has decided that the food is all gone */
 	if (occupation == eatfood && victual.usedtime >= victual.reqtime) {

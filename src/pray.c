@@ -20,8 +20,8 @@ STATIC_DCL void FDECL(fry_by_god,(ALIGNTYP_P));
 STATIC_DCL void FDECL(gods_angry,(ALIGNTYP_P));
 STATIC_DCL void FDECL(gods_upset,(ALIGNTYP_P));
 STATIC_DCL void FDECL(consume_offering,(struct obj *));
-STATIC_DCL boolean FDECL(water_prayer,(BOOLEAN_P));
-STATIC_DCL boolean FDECL(blocked_boulder,(int,int));
+STATIC_DCL bool FDECL(water_prayer,(BOOL_P));
+STATIC_DCL bool FDECL(blocked_boulder,(int,int));
 
 /* simplify a few tests */
 #define Cursed_obj(obj,typ) ((obj) && (obj)->otyp == (typ) && (obj)->cursed)
@@ -637,7 +637,7 @@ STATIC_OVL void
 gcrownu()
 {
     struct obj *obj;
-    boolean already_exists, in_hand;
+    bool already_exists, in_hand;
     short class_gift;
     int sp_no;
 #define ok_wep(o) ((o) && ((o)->oclass == WEAPON_CLASS || is_weptool(o)))
@@ -1027,13 +1027,13 @@ pleased(g_align)
 /* either blesses or curses water on the altar,
  * returns true if it found any water here.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 water_prayer(bless_water)
-    boolean bless_water;
+    bool bless_water;
 {
     register struct obj* otmp;
     register long changed = 0;
-    boolean other = FALSE, bc_known = !(Blind || Hallucination);
+    bool other = FALSE, bc_known = !(Blind || Hallucination);
 
     for(otmp = level.objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
 	/* turn water into (un)holy water */
@@ -1053,7 +1053,7 @@ water_prayer(bless_water)
 	      ((other || changed > 1L) ? "s" : ""), (changed > 1L ? "" : "s"),
 	      (bless_water ? hcolor(NH_LIGHT_BLUE) : hcolor(NH_BLACK)));
     }
-    return((boolean)(changed > 0L));
+    return((bool)(changed > 0L));
 }
 
 STATIC_OVL void
@@ -1502,9 +1502,9 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 
 
 /* determine prayer results in advance; also used for enlightenment */
-boolean
+bool
 can_pray(praying)
-boolean praying;	/* false means no messages should be given */
+bool praying;	/* false means no messages should be given */
 {
     int alignment;
 
@@ -1547,7 +1547,7 @@ boolean praying;	/* false means no messages should be given */
        return value a non-deterministic approximation for enlightenment.
        This case should be uncommon enough to live with... */
 
-    return !praying ? (boolean)(p_type == 3 && !Inhell) : TRUE;
+    return !praying ? (bool)(p_type == 3 && !Inhell) : TRUE;
 }
 
 int
@@ -1840,7 +1840,7 @@ register int x, y;
 }
 
 /* assumes isok() at one space away, but not necessarily at two */
-STATIC_OVL boolean
+STATIC_OVL bool
 blocked_boulder(dx,dy)
 int dx,dy;
 {

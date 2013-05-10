@@ -68,7 +68,7 @@ struct map_info_t {
 		    square_height,	/*   we can calculate the correct */
 		    square_ascent,	/*   placement of changes.	  */
 		    square_lbearing;
-    boolean	    is_tile;
+    bool	    is_tile;
     union {
 	struct text_map_info_t *text_map;
 	struct tile_map_info_t *tile_map;
@@ -122,7 +122,7 @@ typedef struct x11_mi {
     long pick_count;		/* specific selection count; -1 if none */
     char *str;			/* The text of the item. */
     int  attr;			/* Attribute for the line. */
-    boolean selected;		/* Been selected? */
+    bool selected;		/* Been selected? */
     char selector;		/* Char used to select this entry. */
     char gselector;		/* Group selector. */
 } x11_menu_item;
@@ -149,12 +149,12 @@ struct menu_info_t {
     Dimension internal_height;	/* Internal height between widget & border */
     Dimension internal_width;	/* Internal width between widget & border */
     short how;			/* Menu mode PICK_NONE, PICK_ONE, PICK_ANY */
-    boolean valid_widgets;	/* TRUE if widgets have been created. */
-    boolean is_menu;		/* Has been confirmed to being a menu window. */
-    boolean is_active;		/* TRUE when waiting for user input. */
-    boolean is_up;		/* TRUE when window is popped-up. */
-    boolean cancelled;	/* Menu has been explicitly cancelled. */
-    boolean counting;	/* true when menu_count has a valid value */
+    bool valid_widgets;	/* TRUE if widgets have been created. */
+    bool is_menu;		/* Has been confirmed to being a menu window. */
+    bool is_active;		/* TRUE when waiting for user input. */
+    bool is_up;		/* TRUE when window is popped-up. */
+    bool cancelled;	/* Menu has been explicitly cancelled. */
+    bool counting;	/* true when menu_count has a valid value */
 };
 
 /*
@@ -166,10 +166,10 @@ struct text_info_t {
     int		max_width;	/* Width of widest line so far. */
     int		extra_width,	/* Sum of left and right border widths. */
 		extra_height;	/* Sum of top and bottom border widths. */
-    boolean	blocked;	/*  */
-    boolean	destroy_on_ack; /* Destroy this window when acknowleged. */
+    bool	blocked;	/*  */
+    bool	destroy_on_ack; /* Destroy this window when acknowleged. */
 #ifdef GRAPHIC_TOMBSTONE
-    boolean	is_rip;		/* This window needs a tombstone. */
+    bool	is_rip;		/* This window needs a tombstone. */
 #endif
 };
 
@@ -193,7 +193,7 @@ struct xwindow {
 	struct menu_info_t   *Menu_info;    /* menu window info */
 	struct text_info_t   *Text_info;    /* menu window info */
     } Win_info;
-    boolean	keep_window;
+    bool	keep_window;
 };
 
 /* Defines to use for the window information union. */
@@ -229,7 +229,7 @@ E struct xwindow window_list[MAX_WINDOWS];
 E XtAppContext	 app_context;		/* context of application */
 E Widget	 toplevel;		/* toplevel widget */
 E Atom		 wm_delete_window;	/* delete window protocol */
-E boolean	 exit_x_event;		/* exit condition for event loop */
+E bool	 exit_x_event;		/* exit condition for event loop */
 #define EXIT_ON_KEY_PRESS	    0	/* valid values for exit_x_event */
 #define EXIT_ON_KEY_OR_BUTTON_PRESS 1
 #define EXIT_ON_EXIT		    2
@@ -273,7 +273,7 @@ E Widget FDECL(CreateDialog, (Widget, String, XtCallbackProc, XtCallbackProc));
 E void FDECL(SetDialogPrompt,(Widget, String));
 E String FDECL(GetDialogResponse,(Widget));
 E void FDECL(SetDialogResponse,(Widget, String));
-E void FDECL(positionpopup,(Widget,BOOLEAN_P));
+E void FDECL(positionpopup,(Widget,BOOL_P));
 
 /* ### winX.c ### */
 E struct xwindow *FDECL(find_widget,(Widget));
@@ -288,7 +288,7 @@ E void FDECL(nh_keyscroll, (Widget, XEvent*, String*, Cardinal*));
 
 /* ### winmesg.c ### */
 E void FDECL(set_message_slider, (struct xwindow*));
-E void FDECL(create_message_window,(struct xwindow*, BOOLEAN_P, Widget));
+E void FDECL(create_message_window,(struct xwindow*, BOOL_P, Widget));
 E void FDECL(destroy_message_window,(struct xwindow*));
 E void FDECL(display_message_window, (struct xwindow*));
 E void FDECL(append_message,(struct xwindow*, const char*));
@@ -301,7 +301,7 @@ E void FDECL(display_map_window,(struct xwindow*));
 E void FDECL(clear_map_window,(struct xwindow*));
 E void FDECL(map_input, (Widget, XEvent*, String*, Cardinal*));
 E void FDECL(set_map_size,(struct xwindow*, DIMENSION_P, DIMENSION_P));
-E void FDECL(create_map_window,(struct xwindow*, BOOLEAN_P, Widget));
+E void FDECL(create_map_window,(struct xwindow*, BOOL_P, Widget));
 E void FDECL(destroy_map_window,(struct xwindow*));
 E int  FDECL(x_event,(int));
 
@@ -320,7 +320,7 @@ E void FDECL(ec_delete, (Widget, XEvent*, String*, Cardinal*));
 E void FDECL(ec_key,(Widget, XEvent*, String*, Cardinal*)); /* extended command action */
 
 /* ### winstatus.c ### */
-E void FDECL(create_status_window,(struct xwindow*, BOOLEAN_P, Widget));
+E void FDECL(create_status_window,(struct xwindow*, BOOL_P, Widget));
 E void FDECL(destroy_status_window,(struct xwindow*));
 E void FDECL(adjust_status,(struct xwindow*, const char*));
 E void NDECL(null_out_status);
@@ -334,11 +334,11 @@ E void FDECL(key_dismiss_text,(Widget, XEvent*, String*, Cardinal*));
 E void FDECL(rip_dismiss_text,(Widget, XEvent*, String*, Cardinal*));
 #endif
 E void FDECL(add_to_text_window,(struct xwindow*, int, const char*));
-E void FDECL(display_text_window,(struct xwindow*, BOOLEAN_P));
+E void FDECL(display_text_window,(struct xwindow*, BOOL_P));
 E void FDECL(create_text_window,(struct xwindow*));
 E void FDECL(destroy_text_window,(struct xwindow*));
 E void FDECL(clear_text_window,(struct xwindow*));
-E void FDECL(append_text_buffer,(struct text_buffer*, const char*, BOOLEAN_P)); /* text buffer routines */
+E void FDECL(append_text_buffer,(struct text_buffer*, const char*, BOOL_P)); /* text buffer routines */
 E void FDECL(init_text_buffer,(struct text_buffer*));
 E void FDECL(clear_text_buffer,(struct text_buffer*));
 E void FDECL(free_text_buffer,(struct text_buffer*));
@@ -368,14 +368,14 @@ E void FDECL(X11_suspend_nhwindows, (const char *));
 E void NDECL(X11_resume_nhwindows);
 E winid FDECL(X11_create_nhwindow, (int));
 E void FDECL(X11_clear_nhwindow, (winid));
-E void FDECL(X11_display_nhwindow, (winid, BOOLEAN_P));
+E void FDECL(X11_display_nhwindow, (winid, BOOL_P));
 E void FDECL(X11_destroy_nhwindow, (winid));
 E void FDECL(X11_curs, (winid,int,int));
 E void FDECL(X11_putstr, (winid, int, const char *));
-E void FDECL(X11_display_file, (const char *, BOOLEAN_P));
+E void FDECL(X11_display_file, (const char *, BOOL_P));
 E void FDECL(X11_start_menu, (winid));
 E void FDECL(X11_add_menu, (winid,int,const ANY_P *,
-			CHAR_P, CHAR_P, int, const char *, BOOLEAN_P));
+			CHAR_P, CHAR_P, int, const char *, BOOL_P));
 E void FDECL(X11_end_menu, (winid, const char *));
 E int FDECL(X11_select_menu, (winid, int, MENU_ITEM_P **));
 E void NDECL(X11_update_inventory);

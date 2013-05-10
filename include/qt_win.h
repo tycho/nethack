@@ -803,15 +803,15 @@ public:
 	static void qt_resume_nhwindows();
 	static winid qt_create_nhwindow(int type);
 	static void qt_clear_nhwindow(winid wid);
-	static void qt_display_nhwindow(winid wid, BOOLEAN_P block);
+	static void qt_display_nhwindow(winid wid, BOOL_P block);
 	static void qt_destroy_nhwindow(winid wid);
 	static void qt_curs(winid wid, int x, int y);
 	static void qt_putstr(winid wid, int attr, const char *text);
-	static void qt_display_file(const char *filename, BOOLEAN_P must_exist);
+	static void qt_display_file(const char *filename, BOOL_P must_exist);
 	static void qt_start_menu(winid wid);
 	static void qt_add_menu(winid wid, int glyph,
 		const ANY_P * identifier, CHAR_P ch, CHAR_P gch, int attr,
-		const char *str, BOOLEAN_P presel);
+		const char *str, BOOL_P presel);
 	static void qt_end_menu(winid wid, const char *prompt);
 	static int qt_select_menu(winid wid, int how, MENU_ITEM_P **menu_list);
 	static void qt_update_inventory();

@@ -30,9 +30,9 @@ extern int colorsinmainmap;
 #define Fprintf (void) fprintf
 
 
-extern boolean FDECL(fopen_text_file, (const char *, const char *));
-extern boolean FDECL(read_text_tile, (pixel (*)[TILE_X]));
-extern boolean FDECL(write_text_tile, (pixel (*)[TILE_X]));
+extern bool FDECL(fopen_text_file, (const char *, const char *));
+extern bool FDECL(read_text_tile, (pixel (*)[TILE_X]));
+extern bool FDECL(write_text_tile, (pixel (*)[TILE_X]));
 extern int NDECL(fclose_text_file);
 
 extern void NDECL(init_colormap);

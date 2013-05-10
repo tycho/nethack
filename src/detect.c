@@ -9,11 +9,11 @@
 #include "hack.h"
 #include "artifact.h"
 
-extern boolean known;	/* from read.c */
+extern bool known;	/* from read.c */
 
 STATIC_DCL void FDECL(do_dknown_of, (struct obj *));
-STATIC_DCL boolean FDECL(check_map_spot, (int,int,CHAR_P,unsigned));
-STATIC_DCL boolean FDECL(clear_stale_map, (CHAR_P,unsigned));
+STATIC_DCL bool FDECL(check_map_spot, (int,int,CHAR_P,unsigned));
+STATIC_DCL bool FDECL(clear_stale_map, (CHAR_P,unsigned));
 STATIC_DCL void FDECL(sense_trap, (struct trap *,XCHAR_P,XCHAR_P,int));
 STATIC_DCL void FDECL(show_map_spot, (int,int));
 STATIC_PTR void FDECL(findone,(int,int,genericptr_t));
@@ -73,7 +73,7 @@ struct obj *obj;
 }
 
 /* Check whether the location has an outdated object displayed on it. */
-STATIC_OVL boolean
+STATIC_OVL bool
 check_map_spot(x, y, oclass, material)
 int x, y;
 register char oclass;
@@ -87,7 +87,7 @@ unsigned material;
 	if (glyph_is_object(glyph)) {
 	    /* there's some object shown here */
 	    if (oclass == ALL_CLASSES) {
-		return((boolean)( !(level.objects[x][y] ||     /* stale if nothing here */
+		return((bool)( !(level.objects[x][y] ||     /* stale if nothing here */
 			    ((mtmp = m_at(x,y)) != 0 &&
 				(
 #ifndef GOLDOBJ
@@ -139,13 +139,13 @@ unsigned material;
    reappear after the detection has completed.  Return true if noticeable
    change occurs.
  */
-STATIC_OVL boolean
+STATIC_OVL bool
 clear_stale_map(oclass, material)
 register char oclass;
 unsigned material;
 {
 	register int zx, zy;
-	register boolean change_made = FALSE;
+	register bool change_made = FALSE;
 
 	for (zx = 1; zx < COLNO; zx++)
 	    for (zy = 0; zy < ROWNO; zy++)
@@ -166,7 +166,7 @@ register struct obj *sobj;
     register struct monst *mtmp;
     int uw = u.uinwater;
     struct obj *temp;
-    boolean stale;
+    bool stale;
 
     known = stale = clear_stale_map(COIN_CLASS,
 				(unsigned)(sobj->blessed ? GOLD : 0));
@@ -296,7 +296,7 @@ register struct obj	*sobj;
     register struct obj *obj;
     register struct monst *mtmp;
     register int ct = 0, ctu = 0;
-    boolean confused = (Confusion || (sobj && sobj->cursed)), stale;
+    bool confused = (Confusion || (sobj && sobj->cursed)), stale;
     char oclass = confused ? POTION_CLASS : FOOD_CLASS;
     const char *what = confused ? something : "food";
     int uw = u.uinwater;
@@ -331,7 +331,7 @@ register struct obj	*sobj;
 	    Sprintf(buf, "Your %s twitches%s.", body_part(NOSE),
 			(sobj->blessed && !u.uedibility) ? " then starts to tingle" : "");
 	    if (sobj->blessed && !u.uedibility) {
-		boolean savebeginner = flags.beginner;	/* prevent non-delivery of */
+		bool savebeginner = flags.beginner;	/* prevent non-delivery of */
 		flags.beginner = FALSE;			/* 	message            */
 		strange_feeling(sobj, buf);
 		flags.beginner = savebeginner;
@@ -605,7 +605,7 @@ int mclass;			/* monster class, 0 for all */
 			    "You feel threatened.");
 	return 1;
     } else {
-	boolean woken = FALSE;
+	bool woken = FALSE;
 
 	cls();
 	for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
@@ -684,7 +684,7 @@ register struct obj *sobj;
     register struct obj *obj;
     register int door;
     int uw = u.uinwater;
-    boolean found = FALSE;
+    bool found = FALSE;
     coord cc;
 
     for (ttmp = ftrap; ttmp; ttmp = ttmp->ntrap) {
@@ -748,7 +748,7 @@ level_distance(where)
 d_level *where;
 {
     register schar ll = depth(&u.uz) - depth(where);
-    register boolean indun = (u.uz.dnum == where->dnum);
+    register bool indun = (u.uz.dnum == where->dnum);
 
     if (ll < 0) {
 	if (ll < (-8 - rn2(3)))
@@ -1129,7 +1129,7 @@ find_trap(trap)
 struct trap *trap;
 {
     int tt = what_trap(trap->ttyp);
-    boolean cleared = FALSE;
+    bool cleared = FALSE;
 
     trap->tseen = 1;
     exercise(A_WIS, TRUE);
