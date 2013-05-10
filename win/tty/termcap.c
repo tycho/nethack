@@ -64,7 +64,7 @@ STATIC_VAR char tbuf[512];
 # ifdef TOS
 const char *hilites[CLR_MAX];	/* terminal escapes for the various colors */
 # else
-char NEARDATA *hilites[CLR_MAX]; /* terminal escapes for the various colors */
+char *hilites[CLR_MAX]; /* terminal escapes for the various colors */
 # endif
 #endif
 

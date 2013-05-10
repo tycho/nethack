@@ -1563,7 +1563,7 @@ struct tc_lcl_data tc_lcl_data;
 #  ifdef TOS
 const char *hilites[CLR_MAX];
 #  else
-char NEARDATA *hilites[CLR_MAX];
+char *hilites[CLR_MAX];
 #  endif
 # endif
 /* trap.c */

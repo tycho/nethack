@@ -224,7 +224,7 @@ moverock()
 		lastmovetime = 0;
 #else
 		/* note: reset to zero after save/restore cycle */
-		static NEARDATA long lastmovetime;
+		static long lastmovetime;
 #endif
 #ifdef STEED
 		if (!u.usteed) {
@@ -444,7 +444,7 @@ xchar ox, oy;
 }
 
 #ifdef SINKS
-static NEARDATA const char fell_on_sink[] = "fell onto a sink";
+static const char fell_on_sink[] = "fell onto a sink";
 
 STATIC_OVL void
 dosinkfall()

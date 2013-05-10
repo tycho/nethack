@@ -119,8 +119,8 @@ int type;
 bool print;
 struct monst *victim;
 {
-	static NEARDATA const char * const action[] = { "smoulder", "rust", "rot", "corrode" };
-	static NEARDATA const char * const msg[] =  { "burnt", "rusted", "rotten", "corroded" };
+	static const char * const action[] = { "smoulder", "rust", "rot", "corrode" };
+	static const char * const msg[] =  { "burnt", "rusted", "rotten", "corroded" };
 	bool vulnerable = FALSE;
 	bool grprot = FALSE;
 	bool is_primary = TRUE;
@@ -3224,7 +3224,7 @@ struct trap *ttmp;
 }
 
 /* getobj will filter down to cans of grease and known potions of oil */
-static NEARDATA const char oil[] = { ALL_CLASSES, TOOL_CLASS, POTION_CLASS, 0 };
+static const char oil[] = { ALL_CLASSES, TOOL_CLASS, POTION_CLASS, 0 };
 
 /* it may not make much sense to use grease on floor boards, but so what? */
 STATIC_OVL int

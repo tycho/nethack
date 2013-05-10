@@ -10,7 +10,7 @@ STATIC_DCL void NDECL(shuffle_all);
 STATIC_DCL bool FDECL(interesting_to_discover,(int));
 
 
-static NEARDATA short disco[NUM_OBJECTS] = DUMMY;
+static short disco[NUM_OBJECTS] = DUMMY;
 
 #ifdef USE_TILES
 STATIC_DCL void NDECL(shuffle_tiles);

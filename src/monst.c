@@ -89,7 +89,7 @@ void NDECL(monst_init);
  */
 
 #ifndef SPLITMON_2
-NEARDATA struct permonst mons[] = {
+struct permonst mons[] = {
 /*
  * ants
  */

@@ -34,7 +34,6 @@
 # undef UNIX
 #endif
 
-#define NEARDATA
 
 /*
  * Atari auto-detection

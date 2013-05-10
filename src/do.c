@@ -27,7 +27,7 @@ STATIC_DCL void NDECL(final_level);
 
 #ifdef OVLB
 
-static NEARDATA const char drop_types[] =
+static const char drop_types[] =
 	{ ALLOW_COUNT, COIN_CLASS, ALL_CLASSES, 0 };
 
 /* 'd' command: drop one inventory item */
@@ -744,7 +744,7 @@ int retry;
 #ifdef OVL2
 
 /* on a ladder, used in goto_level */
-static NEARDATA bool at_ladder = FALSE;
+static bool at_ladder = FALSE;
 
 int
 dodown()
@@ -1619,7 +1619,7 @@ int
 dowipe()
 {
 	if(u.ucreamed)  {
-		static NEARDATA char buf[39];
+		static char buf[39];
 
 		Sprintf(buf, "wiping off your %s", body_part(FACE));
 		set_occupation(wipeoff, buf, 0);

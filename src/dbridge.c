@@ -231,7 +231,7 @@ struct entity {
 
 #define ENTITIES 2
 
-static NEARDATA struct entity occupants[ENTITIES];
+static struct entity occupants[ENTITIES];
 
 STATIC_OVL
 struct entity *
