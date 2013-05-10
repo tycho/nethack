@@ -60,10 +60,10 @@ int bitmap_to_img(FILE_TYP typ,	int ww, int wh,
 	XIMG_RGB xrgb;
 	IMG_MODE mode;
 	UBYTE *line_buf, *write_buf;
-	register UBYTE *startpnt, *bufpnt;
+	UBYTE *startpnt, *bufpnt;
 	unsigned int colind, line_len, line, bit;
-	register unsigned int byte;
-	register UBYTE count;
+	unsigned int byte;
+	UBYTE count;
 
 	/* fill in (X) IMG-Header */
 

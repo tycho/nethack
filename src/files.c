@@ -529,7 +529,7 @@ clearlocks()
 	if (ramdisk)
 		eraseall(permbones, alllevels);
 #else
-	register int x;
+	int x;
 
 # if defined(UNIX) || defined(VMS)
 	(void) signal(SIGHUP, SIG_IGN);
@@ -1318,7 +1318,7 @@ int retryct;
 # else
 	while (link(filename, lockname) == -1) {
 # endif
-	    register int errnosv = errno;
+	    int errnosv = errno;
 
 	    switch (errnosv) {	/* George Barbanis */
 	    case EEXIST:

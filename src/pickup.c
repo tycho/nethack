@@ -90,7 +90,7 @@ bool here;		/* flag for type of obj list linkage */
 int
 collect_obj_classes(ilets, otmp, here, incl_gold, filter, itemcount)
 char ilets[];
-register struct obj *otmp;
+struct obj *otmp;
 bool here, incl_gold;
 bool FDECL((*filter),(OBJ_P));
 int *itemcount;
@@ -98,14 +98,14 @@ int *itemcount;
 int
 collect_obj_classes(ilets, otmp, here, filter, itemcount)
 char ilets[];
-register struct obj *otmp;
+struct obj *otmp;
 bool here;
 bool FDECL((*filter),(OBJ_P));
 int *itemcount;
 #endif
 {
-	register int iletct = 0;
-	register char c;
+	int iletct = 0;
+	char c;
 
 	*itemcount = 0;
 #ifndef GOLDOBJ
@@ -184,7 +184,7 @@ int *menu_on_demand;
 		}
 	} else  {	/* more than one choice available */
 		const char *where = 0;
-		register char sym, oc_of_sym, *p;
+		char sym, oc_of_sym, *p;
 		/* additional choices */
 		ilets[iletct++] = ' ';
 		ilets[iletct++] = 'a';
@@ -255,8 +255,8 @@ STATIC_OVL void
 check_here(picked_some)
 bool picked_some;
 {
-	register struct obj *obj;
-	register int ct = 0;
+	struct obj *obj;
+	int ct = 0;
 
 	/* count the objects here */
 	for (obj = level.objects[u.ux][u.uy]; obj; obj = obj->nexthere) {
@@ -361,7 +361,7 @@ struct obj *obj;
 /* query_objlist callback: return TRUE if valid class and worn */
 bool
 is_worn_by_type(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	return((bool)(!!(otmp->owornmask &
 			(W_ARMOR | W_RING | W_AMUL | W_TOOL | W_WEP | W_SWAPWEP | W_QUIVER)))
@@ -1545,8 +1545,8 @@ int x, y;
 int
 doloot()	/* loot a container on the floor or loot saddle from mon. */
 {
-    register struct obj *cobj, *nobj;
-    register int c = -1;
+    struct obj *cobj, *nobj;
+    int c = -1;
     int timepassed = 0;
     coord cc;
     bool underfoot = TRUE;
@@ -1808,7 +1808,7 @@ static NEARDATA struct obj *current_container;
 /* Returns: -1 to stop, 1 item was inserted, 0 item was not inserted. */
 STATIC_PTR int
 in_container(obj)
-register struct obj *obj;
+struct obj *obj;
 {
 	bool floor_container = !carried(current_container);
 	bool was_unpaid = FALSE;
@@ -1966,9 +1966,9 @@ struct obj *obj;
 /* Returns: -1 to stop, 1 item was removed, 0 item was not removed. */
 STATIC_PTR int
 out_container(obj)
-register struct obj *obj;
+struct obj *obj;
 {
-	register struct obj *otmp;
+	struct obj *otmp;
 	bool is_gold = (obj->oclass == COIN_CLASS);
 	int res, loadlev;
 	long count;
@@ -2110,8 +2110,8 @@ struct obj *box;
 
 int
 use_container(obj, held)
-register struct obj *obj;
-register int held;
+struct obj *obj;
+int held;
 {
 	struct obj *curr, *otmp;
 #ifndef GOLDOBJ

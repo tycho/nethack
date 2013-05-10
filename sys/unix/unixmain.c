@@ -48,9 +48,9 @@ main(argc,argv)
 int argc;
 char *argv[];
 {
-	register int fd;
+	int fd;
 #ifdef CHDIR
-	register char *dir;
+	char *dir;
 #endif
 	bool exact_username;
 #ifdef SIMPLE_MAIL
@@ -483,7 +483,7 @@ whoami() {
 	 * Note that we trust the user here; it is possible to play under
 	 * somebody else's name.
 	 */
-	register char *s;
+	char *s;
 
 	if (*plname) return FALSE;
 	if(/* !*plname && */ (s = nh_getenv("USER")))

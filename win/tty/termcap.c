@@ -92,10 +92,10 @@ void
 tty_startup(wid, hgt)
 int *wid, *hgt;
 {
-	register int i;
+	int i;
 #ifdef TERMLIB
-	register const char *term;
-	register char *tptr;
+	const char *term;
+	char *tptr;
 	char *tbufptr, *pc;
 
 # ifdef VMS
@@ -435,7 +435,7 @@ static void NDECL(tty_ascgraphics_hilite_fixup);
 static void
 tty_ascgraphics_hilite_fixup()
 {
-    register int c;
+    int c;
 
     for (c = 0; c < CLR_MAX / 2; c++)
 	if (c != CLR_BLACK) {
@@ -542,7 +542,7 @@ int x,y;
 
 void
 cmov(x, y)
-register int x, y;
+int x, y;
 {
 	xputs(tgoto(nh_CM, x, y));
 	ttyDisplay->cury = y;
@@ -584,7 +584,7 @@ cl_end()
 	else {	/* no-CE fix - free after Harold Rynes */
 		/* this looks terrible, especially on a slow terminal
 		   but is better than nothing */
-		register int cx = ttyDisplay->curx+1;
+		int cx = ttyDisplay->curx+1;
 
 		while(cx < CO) {
 			xputc(' ');
@@ -723,7 +723,7 @@ void
 tty_delay_output()
 {
 #if defined(MICRO)
-	register int i;
+	int i;
 #endif
 #ifdef TIMED_DELAY
 	if (flags.nap) {
@@ -759,9 +759,9 @@ tty_delay_output()
 
 	else if(ospeed > 0 && ospeed < SIZE(tmspc10) && nh_CM) {
 		/* delay by sending cm(here) an appropriate number of times */
-		register int cmlen = strlen(tgoto(nh_CM, ttyDisplay->curx,
+		int cmlen = strlen(tgoto(nh_CM, ttyDisplay->curx,
 							ttyDisplay->cury));
-		register int i = 500 + tmspc10[ospeed]/2;
+		int i = 500 + tmspc10[ospeed]/2;
 
 		while(i > 0) {
 			cmov((int)ttyDisplay->curx, (int)ttyDisplay->cury);
@@ -781,7 +781,7 @@ cl_eos()			/* free after Robert Viduya */
 	if(nh_CD)
 		xputs(nh_CD);
 	else {
-		register int cy = ttyDisplay->cury+1;
+		int cy = ttyDisplay->cury+1;
 		while(cy <= LI-2) {
 			cl_end();
 			xputc('\n');
@@ -868,7 +868,7 @@ const struct {int ti_color, nh_color, nh_bright_color;} ti_map[6] =
 static void
 init_hilite()
 {
-	register int c;
+	int c;
 	char *setf, *scratch;
 	int length_md;
 
@@ -977,7 +977,7 @@ analyze_seq (str, fg, bg)
 char *str;
 int *fg, *bg;
 {
-	register int c, code;
+	int c, code;
 	int len;
 
 #   ifdef MICRO
@@ -1035,7 +1035,7 @@ int *fg, *bg;
 static void
 init_hilite()
 {
-	register int c;
+	int c;
 #  ifdef TOS
 	extern unsigned long tos_numcolors;	/* in tos.c */
 	static char NOCOL[] = "\033b0", COLHE[] = "\033q\033b0";
@@ -1117,7 +1117,7 @@ static void
 kill_hilite()
 {
 # ifndef TOS
-	register int c;
+	int c;
 
 	for (c = 0; c < CLR_MAX / 2; c++) {
 	    if (hilites[c|BRIGHT] == hilites[c])  hilites[c|BRIGHT] = 0;

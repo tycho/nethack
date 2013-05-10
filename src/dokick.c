@@ -26,11 +26,11 @@ static const char kick_passes_thru[] = "kick passes harmlessly through";
 
 STATIC_OVL void
 kickdmg(mon, clumsy)
-register struct monst *mon;
-register bool clumsy;
+struct monst *mon;
+bool clumsy;
 {
-	register int mdx, mdy;
-	register int dmg = ( ACURRSTR + ACURR(A_DEX) + ACURR(A_CON) )/ 15;
+	int mdx, mdy;
+	int dmg = ( ACURRSTR + ACURR(A_DEX) + ACURR(A_CON) )/ 15;
 	int kick_skill = P_NONE;
 	int blessed_foot_damage = 0;
 	bool trapkilled = FALSE;
@@ -115,11 +115,11 @@ register bool clumsy;
 
 STATIC_OVL void
 kick_monster(x, y)
-register xchar x, y;
+xchar x, y;
 {
-	register bool clumsy = FALSE;
-	register struct monst *mon = m_at(x, y);
-	register int i, j;
+	bool clumsy = FALSE;
+	struct monst *mon = m_at(x, y);
+	int i, j;
 
 	bhitpos.x = x;
 	bhitpos.y = y;
@@ -233,8 +233,8 @@ doit:
  */
 bool
 ghitm(mtmp, gold)
-register struct monst *mtmp;
-register struct obj *gold;
+struct monst *mtmp;
+struct obj *gold;
 {
 	bool msg_given = FALSE;
 
@@ -400,7 +400,7 @@ kick_object(x, y)
 xchar x, y;
 {
 	int range;
-	register struct monst *mon, *shkp;
+	struct monst *mon, *shkp;
 	struct trap *trap;
 	char bhitroom;
 	bool costly, isgold, slide = FALSE;
@@ -622,7 +622,7 @@ dokick()
 {
 	int x, y;
 	int avrg_attrib;
-	register struct monst *mtmp;
+	struct monst *mtmp;
 	bool no_kick = FALSE;
 	char buf[BUFSZ];
 
@@ -825,7 +825,7 @@ dokick()
 		    } else goto ouch;
 		}
 		if(IS_THRONE(maploc->typ)) {
-		    register int i;
+		    int i;
 		    if(Levitation) goto dumb;
 		    if((Luck < 0 || maploc->doormask) && !rn2(3)) {
 			maploc->typ = ROOM;
@@ -1151,8 +1151,8 @@ struct obj *missile;
 xchar x, y, dlev;
 {
 	schar toloc;
-	register struct obj *obj, *obj2;
-	register struct monst *shkp;
+	struct obj *obj, *obj2;
+	struct monst *shkp;
 	long oct, dct, price, debit, robbed;
 	bool angry, costly, isrock;
 	coord cc;
@@ -1389,8 +1389,8 @@ bool shop_floor_obj;
 void
 obj_delivery()
 {
-	register struct obj *otmp, *otmp2;
-	register int nx, ny;
+	struct obj *otmp, *otmp2;
+	int nx, ny;
 	long where;
 
 	for (otmp = migrating_objs; otmp; otmp = otmp2) {
@@ -1429,8 +1429,8 @@ obj_delivery()
 
 STATIC_OVL void
 otransit_msg(otmp, nodrop, num)
-register struct obj *otmp;
-register bool nodrop;
+struct obj *otmp;
+bool nodrop;
 long num;
 {
 	char obuf[BUFSZ];

@@ -60,8 +60,8 @@ STATIC_OVL void
 awaken_monsters(distance)
 int distance;
 {
-	register struct monst *mtmp = fmon;
-	register int distm;
+	struct monst *mtmp = fmon;
+	int distm;
 
 	while(mtmp) {
 	    if (!DEADMONSTER(mtmp)) {
@@ -88,7 +88,7 @@ STATIC_OVL void
 put_monsters_to_sleep(distance)
 int distance;
 {
-	register struct monst *mtmp = fmon;
+	struct monst *mtmp = fmon;
 
 	while(mtmp) {
 		if (!DEADMONSTER(mtmp) && distu(mtmp->mx, mtmp->my) < distance &&
@@ -108,7 +108,7 @@ STATIC_OVL void
 charm_snakes(distance)
 int distance;
 {
-	register struct monst *mtmp = fmon;
+	struct monst *mtmp = fmon;
 	int could_see_mon, was_peaceful;
 
 	while (mtmp) {
@@ -142,7 +142,7 @@ STATIC_OVL void
 calm_nymphs(distance)
 int distance;
 {
-	register struct monst *mtmp = fmon;
+	struct monst *mtmp = fmon;
 
 	while (mtmp) {
 	    if (!DEADMONSTER(mtmp) && mtmp->data->mlet == S_NYMPH && mtmp->mcanmove &&
@@ -164,7 +164,7 @@ int distance;
 void
 awaken_soldiers()
 {
-	register struct monst *mtmp = fmon;
+	struct monst *mtmp = fmon;
 
 	while(mtmp) {
 	    if (!DEADMONSTER(mtmp) &&
@@ -215,7 +215,7 @@ STATIC_OVL void
 do_earthquake(force)
 int force;
 {
-	register int x,y;
+	int x,y;
 	struct monst *mtmp;
 	struct obj *otmp;
 	struct trap *chasm;

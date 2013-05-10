@@ -161,8 +161,8 @@ adjattrib(ndx, incr, msgflg)
 
 void
 gainstr(otmp, incr)
-	register struct obj *otmp;
-	register int incr;
+	struct obj *otmp;
+	int incr;
 {
 	int num = 1;
 
@@ -176,7 +176,7 @@ gainstr(otmp, incr)
 
 void
 losestr(num)	/* may kill you; cause may be poison or monster like 'a' */
-	register int num;
+	int num;
 {
 	int ustr = ABASE(A_STR) - num;
 
@@ -196,7 +196,7 @@ losestr(num)	/* may kill you; cause may be poison or monster like 'a' */
 
 void
 change_luck(n)
-	register schar n;
+	schar n;
 {
 	u.uluck += n;
 	if (u.uluck < 0 && u.uluck < LUCKMIN)	u.uluck = LUCKMIN;
@@ -207,8 +207,8 @@ int
 stone_luck(parameter)
 bool parameter; /* So I can't think up of a good name.  So sue me. --KAA */
 {
-	register struct obj *otmp;
-	register long bonchance = 0;
+	struct obj *otmp;
+	long bonchance = 0;
 
 	for (otmp = invent; otmp; otmp = otmp->nobj)
 	    if (confers_luck(otmp)) {
@@ -454,9 +454,9 @@ reset_attribute_clock()
 
 void
 init_attr(np)
-	register int	np;
+	int	np;
 {
-	register int	i, x, tryct;
+	int	i, x, tryct;
 
 
 	for(i = 0; i < A_MAX; i++) {
@@ -505,7 +505,7 @@ init_attr(np)
 void
 redist_attr()
 {
-	register int i, tmp;
+	int i, tmp;
 
 	for(i = 0; i < A_MAX; i++) {
 	    if (i==A_INT || i==A_WIS) continue;
@@ -535,7 +535,7 @@ void
 adjabil(oldlevel,newlevel)
 int oldlevel, newlevel;
 {
-	register const struct innate *abil, *rabil;
+	const struct innate *abil, *rabil;
 	long mask = FROMEXPER;
 
 
@@ -664,7 +664,7 @@ schar
 acurr(x)
 int x;
 {
-	register int tmp = (u.abon.a[x] + u.atemp.a[x] + u.acurr.a[x]);
+	int tmp = (u.abon.a[x] + u.atemp.a[x] + u.acurr.a[x]);
 
 	if (x == A_STR) {
 		if (uarmg && uarmg->otyp == GAUNTLETS_OF_POWER) return(125);
@@ -695,7 +695,7 @@ int x;
 schar
 acurrstr()
 {
-	register int str = ACURR(A_STR);
+	int str = ACURR(A_STR);
 
 	if (str <= 18) return((schar)str);
 	if (str <= 121) return((schar)(19 + str / 50)); /* map to 19-21 */
@@ -710,9 +710,9 @@ acurrstr()
  */
 void
 adjalign(n)
-register int n;
+int n;
 {
-	register int newalign = u.ualign.record + n;
+	int newalign = u.ualign.record + n;
 
 	if(n < 0) {
 		if(newalign < u.ualign.record)

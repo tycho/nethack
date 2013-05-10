@@ -287,7 +287,7 @@ align_str(alignment)
 
 void
 mstatusline(mtmp)
-register struct monst *mtmp;
+struct monst *mtmp;
 {
 	aligntyp alignment;
 	char info[BUFSZ], monnambuf[BUFSZ];

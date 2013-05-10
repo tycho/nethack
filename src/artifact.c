@@ -179,8 +179,8 @@ artifact_name(name, otyp)
 const char *name;
 short *otyp;
 {
-    register const struct artifact *a;
-    register const char *aname;
+    const struct artifact *a;
+    const char *aname;
 
     if(!strncmpi(name, "the ", 4)) name += 4;
 
@@ -198,11 +198,11 @@ short *otyp;
 
 bool
 exist_artifact(otyp, name)
-register int otyp;
-register const char *name;
+int otyp;
+const char *name;
 {
-	register const struct artifact *a;
-	register bool *arex;
+	const struct artifact *a;
+	bool *arex;
 
 	if (otyp && *name)
 	    for (a = artilist+1,arex = artiexist+1; a->otyp; a++,arex++)
@@ -213,16 +213,16 @@ register const char *name;
 
 void
 artifact_exists(otmp, name, mod)
-register struct obj *otmp;
-register const char *name;
-register bool mod;
+struct obj *otmp;
+const char *name;
+bool mod;
 {
-	register const struct artifact *a;
+	const struct artifact *a;
 
 	if (otmp && *name)
 	    for (a = artilist+1; a->otyp; a++)
 		if (a->otyp == otmp->otyp && !strcmp(a->name, name)) {
-		    register int m = a - artilist;
+		    int m = a - artilist;
 		    otmp->oartifact = (char)(mod ? m : 0);
 		    otmp->age = 0;
 		    if(otmp->otyp == RIN_INCREASE_DAMAGE)
@@ -290,11 +290,11 @@ struct obj *obj;
 
 bool
 restrict_name(otmp, name)  /* returns 1 if name is restricted for otmp->otyp */
-register struct obj *otmp;
-register const char *name;
+struct obj *otmp;
+const char *name;
 {
-	register const struct artifact *a;
-	register const char *aname;
+	const struct artifact *a;
+	const char *aname;
 
 	if (!*name) return FALSE;
 	if (!strncmpi(name, "the ", 4)) name += 4;
@@ -317,10 +317,10 @@ register const char *name;
 
 STATIC_OVL bool
 attacks(adtyp, otmp)
-register int adtyp;
-register struct obj *otmp;
+int adtyp;
+struct obj *otmp;
 {
-	register const struct artifact *weap;
+	const struct artifact *weap;
 
 	if ((weap = get_artifact(otmp)) != 0)
 		return((bool)(weap->attk.adtyp == adtyp));
@@ -329,10 +329,10 @@ register struct obj *otmp;
 
 bool
 defends(adtyp, otmp)
-register int adtyp;
-register struct obj *otmp;
+int adtyp;
+struct obj *otmp;
 {
-	register const struct artifact *weap;
+	const struct artifact *weap;
 
 	if ((weap = get_artifact(otmp)) != 0)
 		return((bool)(weap->defn.adtyp == adtyp));
@@ -345,7 +345,7 @@ protects(adtyp, otmp)
 int adtyp;
 struct obj *otmp;
 {
-	register const struct artifact *weap;
+	const struct artifact *weap;
 
 	if ((weap = get_artifact(otmp)) != 0)
 		return (bool)(weap->cary.adtyp == adtyp);
@@ -358,12 +358,12 @@ struct obj *otmp;
  */
 void
 set_artifact_intrinsic(otmp,on,wp_mask)
-register struct obj *otmp;
+struct obj *otmp;
 bool on;
 long wp_mask;
 {
 	long *mask = 0;
-	register const struct artifact *oart = get_artifact(otmp);
+	const struct artifact *oart = get_artifact(otmp);
 	uchar dtyp;
 	long spfx;
 
@@ -388,10 +388,10 @@ long wp_mask;
 	if (mask && wp_mask == W_ART && !on) {
 	    /* find out if some other artifact also confers this intrinsic */
 	    /* if so, leave the mask alone */
-	    register struct obj* obj;
+	    struct obj* obj;
 	    for(obj = invent; obj; obj = obj->nobj)
 		if(obj != otmp && obj->oartifact) {
-		    register const struct artifact *art = get_artifact(obj);
+		    const struct artifact *art = get_artifact(obj);
 		    if(art->cary.adtyp == dtyp) {
 			mask = (long *) 0;
 			break;
@@ -407,10 +407,10 @@ long wp_mask;
 	spfx = (wp_mask != W_ART) ? oart->spfx : oart->cspfx;
 	if(spfx && wp_mask == W_ART && !on) {
 	    /* don't change any spfx also conferred by other artifacts */
-	    register struct obj* obj;
+	    struct obj* obj;
 	    for(obj = invent; obj; obj = obj->nobj)
 		if(obj != otmp && obj->oartifact) {
-		    register const struct artifact *art = get_artifact(obj);
+		    const struct artifact *art = get_artifact(obj);
 		    spfx &= ~art->cspfx;
 		}
 	}
@@ -505,7 +505,7 @@ touch_artifact(obj,mon)
     struct obj *obj;
     struct monst *mon;
 {
-    register const struct artifact *oart = get_artifact(obj);
+    const struct artifact *oart = get_artifact(obj);
     bool badclass, badalign, self_willed, yours;
 
     if(!oart) return 1;
@@ -568,7 +568,7 @@ touch_artifact(obj,mon)
 /* decide whether an artifact's special attacks apply against mtmp */
 STATIC_OVL int
 spec_applies(weap, mtmp)
-register const struct artifact *weap;
+const struct artifact *weap;
 struct monst *mtmp;
 {
 	struct permonst *ptr;
@@ -627,7 +627,7 @@ long
 spec_m2(otmp)
 struct obj *otmp;
 {
-	register const struct artifact *artifact = get_artifact(otmp);
+	const struct artifact *artifact = get_artifact(otmp);
 	if (artifact)
 		return artifact->mtype;
 	return 0L;
@@ -639,7 +639,7 @@ spec_abon(otmp, mon)
 struct obj *otmp;
 struct monst *mon;
 {
-	register const struct artifact *weap = get_artifact(otmp);
+	const struct artifact *weap = get_artifact(otmp);
 
 	/* no need for an extra check for `NO_ATTK' because this will
 	   always return 0 for any artifact which has that attribute */
@@ -656,7 +656,7 @@ struct obj *otmp;
 struct monst *mon;
 int tmp;
 {
-	register const struct artifact *weap = get_artifact(otmp);
+	const struct artifact *weap = get_artifact(otmp);
 
 	if (!weap || (weap->attk.adtyp == AD_PHYS && /* check for `NO_ATTK' */
 			weap->attk.damn == 0 && weap->attk.damd == 0))
@@ -1219,7 +1219,7 @@ static NEARDATA const char invoke_types[] = { ALL_CLASSES, 0 };
 int
 doinvoke()
 {
-    register struct obj *obj;
+    struct obj *obj;
 
     obj = getobj(invoke_types, "invoke");
     if (!obj) return 0;
@@ -1229,9 +1229,9 @@ doinvoke()
 
 STATIC_OVL int
 arti_invoke(obj)
-    register struct obj *obj;
+    struct obj *obj;
 {
-    register const struct artifact *oart = get_artifact(obj);
+    const struct artifact *oart = get_artifact(obj);
 
     if(!oart || !oart->inv_prop) {
 	if(obj->otyp == CRYSTAL_BALL)
@@ -1462,7 +1462,7 @@ void
 arti_speak(obj)
     struct obj *obj;
 {
-	register const struct artifact *oart = get_artifact(obj);
+	const struct artifact *oart = get_artifact(obj);
 	const char *line;
 	char buf[BUFSZ];
 

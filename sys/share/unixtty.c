@@ -215,13 +215,13 @@ const char *s;
 void
 setftty()
 {
-register int ef = 0;			/* desired value of flags & ECHO */
+int ef = 0;			/* desired value of flags & ECHO */
 #ifdef LINT	/* cf = CBRKON(CBRKMASK); const expr to initialize is ok */
-register int cf = 0;
+int cf = 0;
 #else
-register int cf = CBRKON(CBRKMASK);	/* desired value of flags & CBREAK */
+int cf = CBRKON(CBRKMASK);	/* desired value of flags & CBREAK */
 #endif
-register int change = 0;
+int change = 0;
 	iflags.cbreak = ON;
 	iflags.echo = OFF;
 	/* Should use (ECHO|CRMOD) here instead of ECHO */
