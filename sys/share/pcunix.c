@@ -76,7 +76,7 @@ int fd;
 static int
 eraseoldlocks()
 {
-	register int i;
+	int i;
 
 	/* cannot use maxledgerno() here, because we need to find a lock name
 	 * before starting everything (including the dungeon initialization
@@ -99,7 +99,7 @@ eraseoldlocks()
 void
 getlock()
 {
-	register int fd, c, ci, ct, ern;
+	int fd, c, ci, ct, ern;
 	char tbuf[BUFSZ];
 	const char *fq_lock;
 # if defined(MSDOS) && defined(NO_TERMS)
@@ -266,9 +266,9 @@ regularize(s)
  * normalize file name - we don't like .'s, /'s, spaces, and
  * lots of other things
  */
-register char *s;
+char *s;
 {
-	register char *lp;
+	char *lp;
 
 	for (lp = s; *lp; lp++)
 		if (*lp <= ' ' || *lp == '"' || (*lp >= '*' && *lp <= ',') ||

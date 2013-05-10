@@ -59,7 +59,7 @@ static unsigned int rdrand()
 
 int
 rn2(x)		/* 0 <= rn2(x) < x */
-register int x;
+int x;
 {
 #ifdef DEBUG
 	if (x <= 0) {
@@ -78,9 +78,9 @@ register int x;
 
 int
 rnl(x)		/* 0 <= rnl(x) < x; sometimes subtracting Luck */
-register int x;	/* good luck approaches 0, bad luck approaches (x-1) */
+int x;	/* good luck approaches 0, bad luck approaches (x-1) */
 {
-	register int i;
+	int i;
 
 #ifdef DEBUG
 	if (x <= 0) {
@@ -104,7 +104,7 @@ register int x;	/* good luck approaches 0, bad luck approaches (x-1) */
 
 int
 rnd(x)		/* 1 <= rnd(x) <= x */
-register int x;
+int x;
 {
 #ifdef DEBUG
 	if (x <= 0) {
@@ -123,9 +123,9 @@ register int x;
 
 int
 d(n,x)		/* n <= d(n,x) <= (n*x) */
-register int n, x;
+int n, x;
 {
-	register int tmp = n;
+	int tmp = n;
 
 #ifdef DEBUG
 	if (x < 0 || n < 0 || (x == 0 && n != 0)) {
@@ -142,9 +142,9 @@ register int n, x;
 
 int
 rne(x)
-register int x;
+int x;
 {
-	register int tmp, utmp;
+	int tmp, utmp;
 
 	utmp = (u.ulevel < 15) ? 5 : u.ulevel/3;
 	tmp = 1;
@@ -169,8 +169,8 @@ int i;
 	int x = i;
 	int tmp = 1000;
 #else
-	register long x = i;
-	register long tmp = 1000;
+	long x = i;
+	long tmp = 1000;
 #endif
 	tmp += rn2(1000);
 	tmp *= rne(4);

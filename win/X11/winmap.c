@@ -99,11 +99,11 @@ X11_print_glyph(window, x, y, glyph)
 
     } else {
 	uchar			ch;
-	register unsigned char *ch_ptr;
+	unsigned char *ch_ptr;
 	int			color,och;
 	unsigned		special;
 #ifdef TEXTCOLOR
-	register unsigned char *co_ptr;
+	unsigned char *co_ptr;
 #endif
 	/* map glyph to character and color */
         mapglyph(glyph, &och, &color, &special, x, y);
@@ -827,7 +827,7 @@ void
 display_map_window(wp)
     struct xwindow *wp;
 {
-    register int row;
+    int row;
     struct map_info_t *map_info = wp->map_information;
 
     /*
@@ -835,7 +835,7 @@ display_map_window(wp)
      * cursor position, then update the old cursor position.
      */
     if (wp->prevx != wp->cursx || wp->prevy != wp->cursy) {
-	register unsigned int x = wp->prevx, y = wp->prevy;
+	unsigned int x = wp->prevx, y = wp->prevy;
 	if (x < map_info->t_start[y]) map_info->t_start[y] = x;
 	if (x > map_info->t_stop[y])  map_info->t_stop[y]  = x;
     }
@@ -1170,7 +1170,7 @@ map_update(wp, start_row, stop_row, start_col, stop_col, inverted)
     int win_start_row, win_start_col;
     struct map_info_t *map_info = wp->map_information;
     int row;
-    register int count;
+    int count;
 
     if (start_row < 0 || stop_row >= ROWNO) {
 	impossible("map_update:  bad row range %d-%d\n", start_row, stop_row);
@@ -1252,7 +1252,7 @@ map_update(wp, start_row, stop_row, start_col, stop_col, inverted)
 
 #ifdef TEXTCOLOR
 	if (iflags.use_color) {
-	    register char *c_ptr;
+	    char *c_ptr;
 	    char *t_ptr;
 	    int cur_col, color, win_ystart;
 

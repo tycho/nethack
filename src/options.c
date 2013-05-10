@@ -874,7 +874,7 @@ char *op;
 
 STATIC_OVL void
 graphics_opts(opts, optype, maxlen, offset)
-register char *opts;
+char *opts;
 const char *optype;
 int maxlen, offset;
 {
@@ -895,7 +895,7 @@ int maxlen, offset;
 
 STATIC_OVL void
 warning_opts(opts, optype)
-register char *opts;
+char *opts;
 const char *optype;
 {
 	uchar translate[MAXPCHARS+1];
@@ -916,7 +916,7 @@ const char *optype;
 
 void
 assign_warnings(graph_chars)
-register uchar *graph_chars;
+uchar *graph_chars;
 {
 	int i;
 	for (i = 0; i < WARNCOUNT; i++)
@@ -1317,10 +1317,10 @@ char *start;
 
 void
 parseoptions(opts, tinitial, tfrom_file)
-register char *opts;
+char *opts;
 bool tinitial, tfrom_file;
 {
-	register char *op;
+	char *op;
 	unsigned num;
 	bool negated;
 	int i;
@@ -2141,7 +2141,7 @@ goodfruit:
 		num = 0;
 		prefix_val = -1;
 		while (*op && num < sizeof flags.end_disclose - 1) {
-			register char c, *dop;
+			char c, *dop;
 			static char valid_settings[] = {
 				DISCLOSE_PROMPT_DEFAULT_YES,
 				DISCLOSE_PROMPT_DEFAULT_NO,
@@ -3827,7 +3827,7 @@ void
 option_help()
 {
     char buf[BUFSZ], buf2[BUFSZ];
-    register int i;
+    int i;
     winid datawin;
 
     datawin = create_nhwindow(NHW_TEXT);
@@ -3911,8 +3911,8 @@ int
 fruitadd(str)
 char *str;
 {
-	register int i;
-	register struct fruit *f;
+	int i;
+	struct fruit *f;
 	struct fruit *lastf = 0;
 	int highest_fruit_id = 0;
 	char buf[PL_FSIZ];

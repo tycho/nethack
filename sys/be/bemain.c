@@ -152,7 +152,7 @@ static void whoami(void)
 /* normalize file name - we don't like .'s, /'s, spaces */
 void regularize(char *s)
 {
-	register char *lp;
+	char *lp;
 
 	while((lp=strchr(s, '.')) || (lp=strchr(s, '/')) || (lp=strchr(s,' ')))
 		*lp = '_';

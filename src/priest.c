@@ -21,14 +21,14 @@ STATIC_DCL bool FDECL(has_shrine,(struct monst *));
  */
 int
 move_special(mtmp,in_his_shop,appr,uondoor,avoid,omx,omy,gx,gy)
-register struct monst *mtmp;
+struct monst *mtmp;
 bool in_his_shop;
 schar appr;
 bool uondoor,avoid;
-register xchar omx,omy,gx,gy;
+xchar omx,omy,gx,gy;
 {
-	register xchar nx,ny,nix,niy;
-	register schar i;
+	xchar nx,ny,nix,niy;
+	schar i;
 	schar chcnt,cnt;
 	coord poss[9];
 	long info[9];
@@ -114,9 +114,9 @@ pick_move:
 
 char
 temple_occupied(array)
-register char *array;
+char *array;
 {
-	register char *ptr;
+	char *ptr;
 
 	for (ptr = array; *ptr; ptr++)
 		if (rooms[*ptr - ROOMOFFSET].rtype == TEMPLE)
@@ -129,8 +129,8 @@ register char *array;
 
 STATIC_OVL bool
 histemple_at(priest, x, y)
-register struct monst *priest;
-register xchar x, y;
+struct monst *priest;
+xchar x, y;
 {
 	return((bool)((EPRI(priest)->shroom == *in_rooms(x, y, TEMPLE)) &&
 	       on_level(&(EPRI(priest)->shrlevel), &u.uz)));
@@ -141,9 +141,9 @@ register xchar x, y;
  */
 int
 pri_move(priest)
-register struct monst *priest;
+struct monst *priest;
 {
-	register xchar gx,gy,omx,omy;
+	xchar gx,gy,omx,omy;
 	schar temple;
 	bool avoid = TRUE;
 
@@ -243,7 +243,7 @@ bool sanctum;   /* is it the seat of the high priest? */
  */
 char *
 priestname(mon, pname)
-register struct monst *mon;
+struct monst *mon;
 char *pname;		/* caller-supplied output buffer */
 {
 	const char *what = Hallucination ? rndmonnam() : mon->data->mname;
@@ -308,7 +308,7 @@ struct monst *
 findpriest(roomno)
 char roomno;
 {
-	register struct monst *mtmp;
+	struct monst *mtmp;
 
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
 	    if (DEADMONSTER(mtmp)) continue;
@@ -322,9 +322,9 @@ char roomno;
 /* called from check_special_room() when the player enters the temple room */
 void
 intemple(roomno)
-register int roomno;
+int roomno;
 {
-	register struct monst *priest = findpriest((char)roomno);
+	struct monst *priest = findpriest((char)roomno);
 	bool tended = (priest != (struct monst *)0);
 	bool shrined, sanctum, can_speak;
 	const char *msg1, *msg2;
@@ -401,7 +401,7 @@ register int roomno;
 
 void
 priest_talk(priest)
-register struct monst *priest;
+struct monst *priest;
 {
 	bool coaligned = p_coaligned(priest);
 	bool strayed = (u.ualign.record < 0);
@@ -531,13 +531,13 @@ register struct monst *priest;
 
 struct monst *
 mk_roamer(ptr, alignment, x, y, peaceful)
-register struct permonst *ptr;
+struct permonst *ptr;
 aligntyp alignment;
 xchar x, y;
 bool peaceful;
 {
-	register struct monst *roamer;
-	register bool coaligned = (u.ualign.type == alignment);
+	struct monst *roamer;
+	bool coaligned = (u.ualign.type == alignment);
 
 	if (ptr != &mons[PM_ALIGNED_PRIEST] && ptr != &mons[PM_ANGEL])
 		return((struct monst *)0);
@@ -563,7 +563,7 @@ bool peaceful;
 
 void
 reset_hostility(roamer)
-register struct monst *roamer;
+struct monst *roamer;
 {
 	if(!(roamer->isminion && (roamer->data == &mons[PM_ALIGNED_PRIEST] ||
 				  roamer->data == &mons[PM_ANGEL])))
@@ -581,8 +581,8 @@ in_your_sanctuary(mon, x, y)
 struct monst *mon;	/* if non-null, <mx,my> overrides <x,y> */
 xchar x, y;
 {
-	register char roomno;
-	register struct monst *priest;
+	char roomno;
+	struct monst *priest;
 
 	if (mon) {
 	    if (is_minion(mon->data) || is_rider(mon->data)) return FALSE;
@@ -663,7 +663,7 @@ struct monst *priest;
 void
 angry_priest()
 {
-	register struct monst *priest;
+	struct monst *priest;
 	struct rm *lev;
 
 	if ((priest = findpriest(temple_occupied(u.urooms))) != 0) {
@@ -694,7 +694,7 @@ angry_priest()
 void
 clearpriests()
 {
-    register struct monst *mtmp, *mtmp2;
+    struct monst *mtmp, *mtmp2;
 
     for(mtmp = fmon; mtmp; mtmp = mtmp2) {
 	mtmp2 = mtmp->nmon;
@@ -706,7 +706,7 @@ clearpriests()
 /* munge priest-specific structure when restoring -dlc */
 void
 restpriest(mtmp, ghostly)
-register struct monst *mtmp;
+struct monst *mtmp;
 bool ghostly;
 {
     if(u.uz.dlevel) {

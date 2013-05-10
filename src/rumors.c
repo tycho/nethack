@@ -182,7 +182,7 @@ STATIC_OVL void
 init_oracles(fp)
 dlb *fp;
 {
-	register int i;
+	int i;
 	char line[BUFSZ];
 	int cnt = 0;
 
@@ -284,7 +284,7 @@ bool delphi;
 
 int
 doconsult(oracl)
-register struct monst *oracl;
+struct monst *oracl;
 {
 #ifdef GOLDOBJ
         long umoney = money_cnt(invent);

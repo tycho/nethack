@@ -94,7 +94,7 @@ int attk;
 /* FALSE means it's OK to attack */
 bool
 attack_checks(mtmp, wep)
-register struct monst *mtmp;
+struct monst *mtmp;
 struct obj *wep;	/* uwep for attack(), null for kick_monster() */
 {
 	char qbuf[QBUFSZ];
@@ -245,7 +245,7 @@ struct monst *mtmp;
 
 schar
 find_roll_to_hit(mtmp)
-register struct monst *mtmp;
+struct monst *mtmp;
 {
 	schar tmp;
 	int tmp2;
@@ -308,10 +308,10 @@ register struct monst *mtmp;
 /* u.dx and u.dy must be set */
 bool
 attack(mtmp)
-register struct monst *mtmp;
+struct monst *mtmp;
 {
 	schar tmp;
-	register struct permonst *mdat = mtmp->data;
+	struct permonst *mdat = mtmp->data;
 
 	/* This section of code provides protection against accidentally
 	 * hitting peaceful (like '@') and tame (like 'd') monsters.
@@ -427,11 +427,11 @@ atk_done:
 
 STATIC_OVL bool
 known_hitum(mon, mhit, uattk)	/* returns TRUE if monster still lives */
-register struct monst *mon;
-register int *mhit;
+struct monst *mon;
+int *mhit;
 struct attack *uattk;
 {
-	register bool malive = TRUE;
+	bool malive = TRUE;
 
 	if (override_confirmation) {
 	    /* this may need to be generalized if weapons other than
@@ -1298,11 +1298,11 @@ struct attack *mattk;
 
 int
 damageum(mdef, mattk)
-register struct monst *mdef;
-register struct attack *mattk;
+struct monst *mdef;
+struct attack *mattk;
 {
-	register struct permonst *pd = mdef->data;
-	register int	tmp = d((int)mattk->damn, (int)mattk->damd);
+	struct permonst *pd = mdef->data;
+	int	tmp = d((int)mattk->damn, (int)mattk->damd);
 	int armpro;
 	bool negated;
 
@@ -1681,10 +1681,10 @@ register struct attack *mattk;
 
 STATIC_OVL int
 explum(mdef, mattk)
-register struct monst *mdef;
-register struct attack *mattk;
+struct monst *mdef;
+struct attack *mattk;
 {
-	register int tmp = d((int)mattk->damn, (int)mattk->damd);
+	int tmp = d((int)mattk->damn, (int)mattk->damd);
 
 	You("explode!");
 	switch(mattk->adtyp) {
@@ -1760,11 +1760,11 @@ end_engulf()
 
 STATIC_OVL int
 gulpum(mdef,mattk)
-register struct monst *mdef;
-register struct attack *mattk;
+struct monst *mdef;
+struct attack *mattk;
 {
-	register int tmp;
-	register int dam = d((int)mattk->damn, (int)mattk->damd);
+	int tmp;
+	int dam = d((int)mattk->damn, (int)mattk->damd);
 	struct obj *otmp;
 	/* Not totally the same as for real monsters.  Specifically, these
 	 * don't take multiple moves.  (It's just too hard, for too little
@@ -1941,8 +1941,8 @@ register struct attack *mattk;
 
 void
 missum(mdef,mattk)
-register struct monst *mdef;
-register struct attack *mattk;
+struct monst *mdef;
+struct attack *mattk;
 {
 	if (could_seduce(&youmonst, mdef, mattk))
 		You("pretend to be friendly to %s.", mon_nam(mdef));
@@ -1956,8 +1956,8 @@ register struct attack *mattk;
 
 STATIC_OVL bool
 hmonas(mon, tmp)		/* attack monster as a monster. */
-register struct monst *mon;
-register int tmp;
+struct monst *mon;
+int tmp;
 {
 	struct attack *mattk, alt_attk;
 	int	i, sum[NATTK], hittmp = 0;
@@ -2157,13 +2157,13 @@ use_weapon:
 
 int
 passive(mon, mhit, malive, aatyp)
-register struct monst *mon;
-register bool mhit;
-register int malive;
+struct monst *mon;
+bool mhit;
+int malive;
 uchar aatyp;
 {
-	register struct permonst *ptr = mon->data;
-	register int i, tmp;
+	struct permonst *ptr = mon->data;
+	int i, tmp;
 
 	for(i = 0; ; i++) {
 	    if(i >= NATTK) return(malive | mhit);	/* no passive attacks */
@@ -2366,12 +2366,12 @@ uchar aatyp;
  */
 void
 passive_obj(mon, obj, mattk)
-register struct monst *mon;
-register struct obj *obj;	/* null means pick uwep, uswapwep or uarmg */
+struct monst *mon;
+struct obj *obj;	/* null means pick uwep, uswapwep or uarmg */
 struct attack *mattk;		/* null means we find one internally */
 {
-	register struct permonst *ptr = mon->data;
-	register int i;
+	struct permonst *ptr = mon->data;
+	int i;
 
 	/* if caller hasn't specified an object, use uwep, uswapwep or uarmg */
 	if (!obj) {

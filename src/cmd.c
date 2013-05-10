@@ -247,7 +247,7 @@ popch() {
 
 char
 pgetchar() {		/* curtesy of aeb@cwi.nl */
-	register int ch;
+	int ch;
 
 	if(!(ch = popch()))
 		ch = nhgetch();
@@ -305,7 +305,7 @@ doextcmd()	/* here after # - now read a full-word command */
 int
 doextlist()	/* here after #? - now list all full-word commands */
 {
-	register const struct ext_func_tab *efp;
+	const struct ext_func_tab *efp;
 	char	 buf[BUFSZ];
 	winid datawin;
 
@@ -2228,7 +2228,7 @@ wiz_migrate_mons()
 
 void
 rhack(cmd)
-register char *cmd;
+char *cmd;
 {
 	bool do_walk, do_rush, prefix_seen, bad_command,
 		firsttime = (cmd == 0);
@@ -2373,7 +2373,7 @@ register char *cmd;
 
 	/* handle all other commands */
 	} else {
-	    register const struct func_tab *tlist;
+	    const struct func_tab *tlist;
 	    int res, NDECL((*func));
 
 	    for (tlist = cmdlist; tlist->f_char; tlist++) {
@@ -2402,7 +2402,7 @@ register char *cmd;
 
 	if (bad_command) {
 	    char expcmd[10];
-	    register char *cp = expcmd;
+	    char *cp = expcmd;
 
 	    while (*cmd && (int)(cp - expcmd) < (int)(sizeof expcmd - 3)) {
 		if (*cmd >= 040 && *cmd < 0177) {
@@ -2431,7 +2431,7 @@ int
 xytod(x, y)	/* convert an x,y pair into a direction code */
 schar x, y;
 {
-	register int dd;
+	int dd;
 
 	for(dd = 0; dd < 8; dd++)
 	    if(x == xdir[dd] && y == ydir[dd]) return dd;
@@ -2442,7 +2442,7 @@ schar x, y;
 void
 dtoxy(cc,dd)	/* convert a direction code into an x,y pair */
 coord *cc;
-register int dd;
+int dd;
 {
 	cc->x = xdir[dd];
 	cc->y = ydir[dd];
@@ -2453,8 +2453,8 @@ int
 movecmd(sym)	/* also sets u.dz, but returns false for <> */
 char sym;
 {
-	register const char *dp;
-	register const char *sdp;
+	const char *dp;
+	const char *sdp;
 	if(iflags.num_pad) sdp = ndir; else sdp = sdir;	/* DICE workaround */
 
 	u.dz = 0;
@@ -2620,7 +2620,7 @@ const char *msg;
 void
 confdir()
 {
-	register int x = (u.umonnum == PM_GRID_BUG) ? 2*rn2(4) : rn2(8);
+	int x = (u.umonnum == PM_GRID_BUG) ? 2*rn2(4) : rn2(8);
 	u.dx = xdir[x];
 	u.dy = ydir[x];
 	return;
@@ -2631,7 +2631,7 @@ confdir()
 
 int
 isok(x,y)
-register int x, y;
+int x, y;
 {
 	/* x corresponds to curx, so x==1 is the first column. Ach. %% */
 	return x >= 1 && x <= COLNO-1 && y >= 0 && y <= ROWNO-1;
@@ -2750,7 +2750,7 @@ parse()
 #else
 	static char in_line[COLNO];
 #endif
-	register int foo;
+	int foo;
 	bool prezero = FALSE;
 
 	multi = 0;
@@ -2833,7 +2833,7 @@ end_of_input()
 char
 readchar()
 {
-	register int sym;
+	int sym;
 	int x = u.ux, y = u.uy, mod = 0;
 
 	if ( *readchar_queue )
@@ -2848,7 +2848,7 @@ readchar()
 #ifdef UNIX
 # ifdef NR_OF_EOFS
 	if (sym == EOF) {
-	    register int cnt = NR_OF_EOFS;
+	    int cnt = NR_OF_EOFS;
 	  /*
 	   * Some SYSV systems seem to return EOFs for various reasons
 	   * (?like when one hits break or for interrupted systemcalls?),

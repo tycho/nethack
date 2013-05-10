@@ -325,7 +325,7 @@ ghost_from_bottle()
 int
 dodrink()
 {
-	register struct obj *otmp;
+	struct obj *otmp;
 	const char *potion_descr;
 
 	if (Strangled) {
@@ -384,7 +384,7 @@ dodrink()
 
 int
 dopotion(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	int retval;
 
@@ -410,9 +410,9 @@ register struct obj *otmp;
 
 int
 peffects(otmp)
-	register struct obj	*otmp;
+	struct obj	*otmp;
 {
-	register int i, ii, lim;
+	int i, ii, lim;
 
 	switch(otmp->otyp){
 	case POT_RESTORE_ABILITY:
@@ -763,7 +763,7 @@ peffects(otmp)
 			        You(riseup, ceiling(u.ux,u.uy));
 				goto_level(&earth_level, FALSE, FALSE, FALSE);
 			    } else {
-			        register int newlev = depth(&u.uz)-1;
+			        int newlev = depth(&u.uz)-1;
 				d_level newlevel;
 
 				get_level(&newlevel, newlev);
@@ -844,7 +844,7 @@ peffects(otmp)
 		spoteffects(FALSE);	/* for sinks */
 		break;
 	case POT_GAIN_ENERGY:			/* M. Stephenson */
-		{	register int num;
+		{	int num;
 			if(otmp->cursed)
 			    You_feel("lackluster.");
 			else
@@ -906,7 +906,7 @@ peffects(otmp)
 void
 healup(nhp, nxtra, curesick, cureblind)
 	int nhp, nxtra;
-	register bool curesick, cureblind;
+	bool curesick, cureblind;
 {
 	if (nhp) {
 		if (Upolyd) {
@@ -925,8 +925,8 @@ healup(nhp, nxtra, curesick, cureblind)
 
 void
 strange_feeling(obj,txt)
-register struct obj *obj;
-register const char *txt;
+struct obj *obj;
+const char *txt;
 {
 	if (flags.beginner || !txt)
 		You("have a %s feeling for a moment, then it passes.",
@@ -956,11 +956,11 @@ bottlename()
 
 void
 potionhit(mon, obj, your_fault)
-register struct monst *mon;
-register struct obj *obj;
+struct monst *mon;
+struct obj *obj;
 bool your_fault;
 {
-	register const char *botlnam = bottlename();
+	const char *botlnam = bottlename();
 	bool isyou = (mon == &youmonst);
 	int distance;
 
@@ -1081,7 +1081,7 @@ bool your_fault;
 		break;
 	case POT_BLINDNESS:
 		if(haseyes(mon->data)) {
-		    register int btmp = 64 + rn2(32) +
+		    int btmp = 64 + rn2(32) +
 			rn2(32) * !resist(mon, POTION_CLASS, 0, NOTELL);
 		    btmp += mon->mblinded;
 		    mon->mblinded = min(btmp,127);
@@ -1163,7 +1163,7 @@ bool your_fault;
 		   !objects[obj->otyp].oc_uname && cansee(mon->mx,mon->my))
 		docall(obj);
 	if(*u.ushops && obj->unpaid) {
-	        register struct monst *shkp =
+	        struct monst *shkp =
 			shop_keeper(*in_rooms(u.ux, u.uy, SHOPBASE));
 
 		if(!shkp)
@@ -1180,9 +1180,9 @@ bool your_fault;
 /* vapors are inhaled or get in your eyes */
 void
 potionbreathe(obj)
-register struct obj *obj;
+struct obj *obj;
 {
-	register int i, ii, isdone, kn = 0;
+	int i, ii, isdone, kn = 0;
 
 	switch(obj->otyp) {
 	case POT_RESTORE_ABILITY:
@@ -1426,7 +1426,7 @@ alchemy_init()
 
 STATIC_OVL short
 mixtype(o1, o2)
-register struct obj *o1, *o2;
+struct obj *o1, *o2;
 /* returns the potion type when o1 is dipped in o2 */
 {
 	if(o1->oclass == POTION_CLASS) {
@@ -1496,7 +1496,7 @@ register struct obj *o1, *o2;
 
 bool
 get_wet(obj)
-register struct obj *obj;
+struct obj *obj;
 /* returns TRUE if something happened (potion should be used up) */
 {
 	char Your_buf[BUFSZ];
@@ -1602,7 +1602,7 @@ register struct obj *obj;
 int
 dodip()
 {
-	register struct obj *potion, *obj;
+	struct obj *potion, *obj;
 	struct obj *singlepotion;
 	const char *tmp;
 	uchar here;
@@ -2026,7 +2026,7 @@ dodip()
 
 void
 djinni_from_bottle(obj)
-register struct obj *obj;
+struct obj *obj;
 {
 	struct monst *mtmp;
 	int chance;

@@ -61,7 +61,7 @@ STATIC_DCL void FDECL(already_wearing2, (const char*, const char*));
 
 void
 off_msg(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	if(flags.verbose)
 	    You("were wearing %s.", doname(otmp));
@@ -70,7 +70,7 @@ register struct obj *otmp;
 /* for items that involve no delay */
 STATIC_OVL void
 on_msg(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	if (flags.verbose) {
 	    char how[BUFSZ];
@@ -678,7 +678,7 @@ Amulet_off()
 
 void
 Ring_on(obj)
-register struct obj *obj;
+struct obj *obj;
 {
     long oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
     int old_attrib, which;
@@ -785,7 +785,7 @@ register struct obj *obj;
 
 STATIC_OVL void
 Ring_off_or_gone(obj,gone)
-register struct obj *obj;
+struct obj *obj;
 bool gone;
 {
     long mask = (obj->owornmask & W_RING);
@@ -905,7 +905,7 @@ struct obj *obj;
 
 void
 Blindf_on(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	bool already_blind = Blind, changed = FALSE;
 
@@ -938,7 +938,7 @@ register struct obj *otmp;
 
 void
 Blindf_off(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	bool was_blind = Blind, changed = FALSE;
 
@@ -989,7 +989,7 @@ set_wear()
 /* check whether the target object is currently being put on (or taken off) */
 bool
 donning(otmp)		/* also checks for doffing */
-register struct obj *otmp;
+struct obj *otmp;
 {
  /* long what = (occupation == take_off) ? taking_off : 0L; */
     long what = taking_off;	/* if nonzero, occupation is implied */
@@ -1045,7 +1045,7 @@ static NEARDATA const char accessories[] = {RING_CLASS, AMULET_CLASS, TOOL_CLASS
 int
 dotakeoff()
 {
-	register struct obj *otmp = (struct obj *)0;
+	struct obj *otmp = (struct obj *)0;
 	int armorpieces = 0;
 
 #define MOREARM(x) if (x) { armorpieces++; otmp = x; }
@@ -1112,7 +1112,7 @@ dotakeoff()
 int
 doremring()
 {
-	register struct obj *otmp = 0;
+	struct obj *otmp = 0;
 	int Accessories = 0;
 
 #define MOREACC(x) if (x) { Accessories++; otmp = x; }
@@ -1170,7 +1170,7 @@ doremring()
 /* Check if something worn is cursed _and_ unremovable. */
 int
 cursed(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	/* Curses, like chickens, come home to roost. */
 	if((otmp == uwep) ? welded(otmp) : (int)otmp->cursed) {
@@ -1185,9 +1185,9 @@ register struct obj *otmp;
 
 int
 armoroff(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
-	register int delay = -objects[otmp->otyp].oc_delay;
+	int delay = -objects[otmp->otyp].oc_delay;
 
 	if(cursed(otmp)) return(0);
 	if(delay) {
@@ -1469,7 +1469,7 @@ dowear()
 int
 doputon()
 {
-	register struct obj *otmp;
+	struct obj *otmp;
 	long mask = 0L;
 
 	if(uleft && uright && uamul && ublindf) {
@@ -1629,7 +1629,7 @@ find_ac()
 void
 glibr()
 {
-	register struct obj *otmp;
+	struct obj *otmp;
 	int xfl = 0;
 	bool leftfall, rightfall;
 	const char *otherwep = 0;
@@ -1693,7 +1693,7 @@ struct obj *
 some_armor(victim)
 struct monst *victim;
 {
-	register struct obj *otmph, *otmp;
+	struct obj *otmph, *otmp;
 
 	otmph = (victim == &youmonst) ? uarmc : which_armor(victim, W_ARMC);
 	if (!otmph)
@@ -1765,7 +1765,7 @@ unchanger()
 STATIC_PTR
 int
 select_off(otmp)
-register struct obj *otmp;
+struct obj *otmp;
 {
 	struct obj *why;
 	char buf[BUFSZ];
@@ -1878,7 +1878,7 @@ register struct obj *otmp;
 STATIC_OVL struct obj *
 do_takeoff()
 {
-	register struct obj *otmp = (struct obj *)0;
+	struct obj *otmp = (struct obj *)0;
 
 	if (taking_off == W_WEP) {
 	  if(!cursed(uwep)) {
@@ -1938,8 +1938,8 @@ STATIC_PTR
 int
 take_off()
 {
-	register int i;
-	register struct obj *otmp;
+	int i;
+	struct obj *otmp;
 
 	if (taking_off) {
 	    if (todelay > 0) {
@@ -2109,9 +2109,9 @@ int retry;
 /* hit by destroy armor scroll/black dragon breath/monster spell */
 int
 destroy_arm(atmp)
-register struct obj *atmp;
+struct obj *atmp;
 {
-	register struct obj *otmp;
+	struct obj *otmp;
 #define DESTROY_ARM(o) ((otmp = (o)) != 0 && \
 			(!atmp || atmp == otmp) && \
 			(!obj_resists(otmp, 0, 90)))
@@ -2167,8 +2167,8 @@ register struct obj *atmp;
 
 void
 adj_abon(otmp, delta)
-register struct obj *otmp;
-register schar delta;
+struct obj *otmp;
+schar delta;
 {
 	if (uarmg && uarmg == otmp && otmp->otyp == GAUNTLETS_OF_DEXTERITY) {
 		if (delta) {

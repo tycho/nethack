@@ -35,7 +35,7 @@ extern char erase_char, kill_char;	/* from appropriate tty.c file */
 void
 tty_getlin(query, bufp)
 const char *query;
-register char *bufp;
+char *bufp;
 {
     hooked_tty_getlin(query, bufp, (getlin_hook_proc) 0);
 }
@@ -43,11 +43,11 @@ register char *bufp;
 STATIC_OVL void
 hooked_tty_getlin(query, bufp, hook)
 const char *query;
-register char *bufp;
+char *bufp;
 getlin_hook_proc hook;
 {
-	register char *obufp = bufp;
-	register int c;
+	char *obufp = bufp;
+	int c;
 	struct WinDesc *cw = wins[WIN_MESSAGE];
 	bool doprev = 0;
 
@@ -178,9 +178,9 @@ getlin_hook_proc hook;
 
 void
 xwaitforspace(s)
-register const char *s;	/* chars allowed besides return */
+const char *s;	/* chars allowed besides return */
 {
-    register int c, x = ttyDisplay ? (int) ttyDisplay->dismiss_more : '\n';
+    int c, x = ttyDisplay ? (int) ttyDisplay->dismiss_more : '\n';
 
     morc = 0;
 
