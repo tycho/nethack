@@ -2195,7 +2195,7 @@ clear_path(you_row,you_col,y2,x2)
 #endif /* VISION_TABLES */
 
 #ifdef STRICT_REF_DEF
-NEARDATA struct flag flags;
+struct flag flags;
 # ifdef ATTRIB_H
 struct attribs attrmax, attrmin;
 # endif

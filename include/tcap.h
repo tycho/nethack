@@ -49,7 +49,7 @@ extern short ospeed;		/* set up in termcap.c */
 # ifdef TOS
 extern const char *hilites[CLR_MAX];
 # else
-extern NEARDATA char *hilites[CLR_MAX];
+extern char *hilites[CLR_MAX];
 # endif
 #endif
 
