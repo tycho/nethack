@@ -130,11 +130,11 @@ rip_dismiss_text(w, event, params, num_params)
 
 
 /* ARGSUSED */
-void
-add_to_text_window(wp, attr, str)
-    struct xwindow *wp;
-    int attr;	/* currently unused */
-    const char *str;
+void add_to_text_window(
+	struct xwindow *wp,
+	int attr,	/* currently unused */
+	const char *str
+)
 {
     struct text_info_t *text_info = wp->text_information;
     int width;
@@ -147,10 +147,7 @@ add_to_text_window(wp, attr, str)
 	text_info->max_width = width;
 }
 
-void
-display_text_window(wp, blocking)
-    struct xwindow *wp;
-    bool blocking;
+void display_text_window(struct xwindow *wp, bool blocking)
 {
     struct text_info_t *text_info;
     Arg args[8];
@@ -237,9 +234,7 @@ display_text_window(wp, blocking)
 }
 
 
-void
-create_text_window(wp)
-    struct xwindow *wp;
+void create_text_window(struct xwindow *wp)
 {
     struct text_info_t *text_info;
     Arg args[8];
@@ -309,9 +304,7 @@ create_text_window(wp)
     text_info->extra_height = top_margin + bottom_margin;
 }
 
-void
-destroy_text_window(wp)
-    struct xwindow *wp;
+void destroy_text_window(struct xwindow *wp)
 {
     /* Don't need to pop down, this only called from dismiss_text(). */
 
@@ -333,9 +326,7 @@ destroy_text_window(wp)
     }
 }
 
-void
-clear_text_window(wp)
-    struct xwindow *wp;
+void clear_text_window(struct xwindow *wp)
 {
     clear_text_buffer(&wp->text_information->text);
 }
@@ -344,11 +335,7 @@ clear_text_window(wp)
 /* text buffer routines ---------------------------------------------------- */
 
 /* Append a line to the text buffer. */
-void
-append_text_buffer(tb, str, concat)
-    struct text_buffer *tb;
-    const char *str;
-    bool concat;
+void append_text_buffer(struct text_buffer *tb, const char *str, bool concat)
 {
     char *copy;
     int length;
@@ -402,9 +389,7 @@ append_text_buffer(tb, str, concat)
 }
 
 /* Initialize text buffer. */
-void
-init_text_buffer(tb)
-    struct text_buffer *tb;
+void init_text_buffer(struct text_buffer *tb)
 {
     tb->text	  = (char *) alloc(START_SIZE);
     tb->text[0]   = '\0';
@@ -414,9 +399,7 @@ init_text_buffer(tb)
 }
 
 /* Empty the text buffer */
-void
-clear_text_buffer(tb)
-    struct text_buffer *tb;
+void clear_text_buffer(struct text_buffer *tb)
 {
     tb->text_last = 0;
     tb->text[0]   = '\0';
@@ -424,9 +407,7 @@ clear_text_buffer(tb)
 }
 
 /* Free up allocated memory. */
-void
-free_text_buffer(tb)
-    struct text_buffer *tb;
+void free_text_buffer(struct text_buffer *tb)
 {
     free(tb->text);
     tb->text = (char *) 0;
@@ -517,11 +498,11 @@ calculate_rip_text(int how)
  * RIP image expose callback.
  */
 /*ARGSUSED*/
-static void
-rip_exposed(w, client_data, widget_data)
-    Widget w;
-    XtPointer client_data;	/* unused */
-    XtPointer widget_data;	/* expose event from Window widget */
+static void rip_exposed(
+	Widget w,
+	XtPointer client_data,	/* unused */
+	XtPointer widget_data	/* expose event from Window widget */
+)
 {
     XExposeEvent *event = (XExposeEvent *) widget_data;
     Display* dpy=XtDisplay(w);

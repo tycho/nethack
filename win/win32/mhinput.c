@@ -31,7 +31,7 @@ void mswin_nh_input_init(void)
 }
 
 /* check for input */
-int	mswin_have_input()
+int mswin_have_input(void)
 {
 	return (nhi_read_pos!=nhi_write_pos);
 }

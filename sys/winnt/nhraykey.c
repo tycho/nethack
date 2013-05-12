@@ -254,9 +254,7 @@ static const struct pad {
 int FDECL(process_keystroke2, (HANDLE,INPUT_RECORD *ir, bool *valid));
 static int FDECL(is_altseq, (unsigned long shiftstate));
 
-static int
-is_altseq(shiftstate)
-unsigned long shiftstate;
+static int is_altseq(unsigned long shiftstate)
 {
     /* We need to distinguish the Alt keys from the AltGr key.
      * On NT-based Windows, AltGr signals as right Alt and left Ctrl together;

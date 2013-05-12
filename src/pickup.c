@@ -61,10 +61,10 @@ static const char overloadmsg[] = "You have extreme difficulty lifting";
 /* BUG: this lets you look at cockatrice corpses while blind without
    touching them */
 /* much simpler version of the look-here code; used by query_classes() */
-STATIC_OVL void
-simple_look(otmp, here)
-struct obj *otmp;	/* list of objects */
-bool here;		/* flag for type of obj list linkage */
+STATIC_OVL void simple_look(
+	struct obj *otmp,	/* list of objects */
+	bool here		/* flag for type of obj list linkage */
+)
 {
 	/* Neither of the first two cases is expected to happen, since
 	 * we're only called after multiple classes of objects have been
@@ -87,21 +87,11 @@ bool here;		/* flag for type of obj list linkage */
 }
 
 #ifndef GOLDOBJ
-int
-collect_obj_classes(ilets, otmp, here, incl_gold, filter, itemcount)
-char ilets[];
-struct obj *otmp;
-bool here, incl_gold;
-bool FDECL((*filter),(struct obj*));
-int *itemcount;
+int collect_obj_classes(char *ilets, struct obj *otmp, bool here,
+		bool incl_gold, bool FDECL((*filter),(struct obj*)), int *itemcount)
 #else
-int
-collect_obj_classes(ilets, otmp, here, filter, itemcount)
-char ilets[];
-struct obj *otmp;
-bool here;
-bool FDECL((*filter),(struct obj*));
-int *itemcount;
+int collect_obj_classes(char *ilets, struct obj *otmp, bool here,
+		bool FDECL((*filter),(struct obj*)), int *itemcount)
 #endif
 {
 	int iletct = 0;
@@ -137,25 +127,11 @@ int *itemcount;
  *	    (ie, treated as if it had just been "?a").
  */
 #ifndef GOLDOBJ
-STATIC_OVL bool
-query_classes(oclasses, one_at_a_time, everything, action, objs,
-	      here, incl_gold, menu_on_demand)
-char oclasses[];
-bool *one_at_a_time, *everything;
-const char *action;
-struct obj *objs;
-bool here, incl_gold;
-int *menu_on_demand;
+STATIC_OVL bool query_classes(char *oclasses, bool *one_at_a_time, bool *everything,
+	const char *action, struct obj *objs, bool here, bool incl_gold, int *menu_on_demand)
 #else
-STATIC_OVL bool
-query_classes(oclasses, one_at_a_time, everything, action, objs,
-	      here, menu_on_demand)
-char oclasses[];
-bool *one_at_a_time, *everything;
-const char *action;
-struct obj *objs;
-bool here;
-int *menu_on_demand;
+STATIC_OVL bool query_classes(char *oclasses, bool *one_at_a_time, bool *everything,
+	const char *action, struct obj *objs, bool here, int *menu_on_demand)
 #endif
 {
 	char ilets[20], inbuf[BUFSZ];
@@ -251,9 +227,7 @@ ask_again:
 }
 
 /* look at the objects at our location, unless there are too many of them */
-STATIC_OVL void
-check_here(picked_some)
-bool picked_some;
+STATIC_OVL void check_here(bool picked_some)
 {
 	struct obj *obj;
 	int ct = 0;
@@ -278,9 +252,7 @@ bool picked_some;
 static long val_for_n_or_more;
 
 /* query_objlist callback: return TRUE if obj's count is >= reference value */
-STATIC_OVL bool
-n_or_more(obj)
-struct obj *obj;
+STATIC_OVL bool n_or_more(struct obj *obj)
 {
     if (obj == uchain) return FALSE;
     return (obj->quan >= val_for_n_or_more);
@@ -289,9 +261,7 @@ struct obj *obj;
 /* List of valid menu classes for query_objlist() and allow_category callback */
 static char valid_menu_classes[MAXOCLASSES + 2];
 
-void
-add_valid_menu_class(c)
-int c;
+void add_valid_menu_class(int c)
 {
 	static int vmc_count = 0;
 
@@ -303,25 +273,19 @@ int c;
 }
 
 /* query_objlist callback: return TRUE if not uchain */
-STATIC_OVL bool
-all_but_uchain(obj)
-struct obj *obj;
+STATIC_OVL bool all_but_uchain(struct obj *obj)
 {
     return (obj != uchain);
 }
 
 /* query_objlist callback: return TRUE */
 /*ARGSUSED*/
-bool
-allow_all(obj)
-struct obj *obj;
+bool allow_all(struct obj *obj)
 {
     return TRUE;
 }
 
-bool
-allow_category(obj)
-struct obj *obj;
+bool allow_category(struct obj *obj)
 {
     if (Role_if(PM_PRIEST)) obj->bknown = TRUE;
     if (((index(valid_menu_classes,'u') != (char *)0) && obj->unpaid) ||
@@ -345,9 +309,7 @@ struct obj *obj;
 
 #if 0 /* not used */
 /* query_objlist callback: return TRUE if valid category (class), no uchain */
-STATIC_OVL bool
-allow_cat_no_uchain(obj)
-struct obj *obj;
+STATIC_OVL bool allow_cat_no_uchain(struct obj *obj)
 {
     if ((obj != uchain) &&
 	(((index(valid_menu_classes,'u') != (char *)0) && obj->unpaid) ||
@@ -359,9 +321,7 @@ struct obj *obj;
 #endif
 
 /* query_objlist callback: return TRUE if valid class and worn */
-bool
-is_worn_by_type(otmp)
-struct obj *otmp;
+bool is_worn_by_type(struct obj *otmp)
 {
 	return((bool)(!!(otmp->owornmask &
 			(W_ARMOR | W_RING | W_AMUL | W_TOOL | W_WEP | W_SWAPWEP | W_QUIVER)))
@@ -380,9 +340,9 @@ struct obj *otmp;
  * Returns 1 if tried to pick something up, whether
  * or not it succeeded.
  */
-int
-pickup(what)
-int what;		/* should be a long */
+int pickup(
+	int what		/* should be a long */
+)
 {
 	int i, n, res, count, n_tried = 0, n_picked = 0;
 	menu_item *pick_list = (menu_item *) 0;
@@ -595,10 +555,10 @@ end_query:
 }
 
 #ifdef AUTOPICKUP_EXCEPTIONS
-bool
-is_autopickup_exception(obj, grab)
-struct obj *obj;
-bool grab;	 /* forced pickup, rather than forced leave behind? */
+bool is_autopickup_exception(
+	struct obj *obj,
+	bool grab	 /* forced pickup, rather than forced leave behind? */
+)
 {
 	/*
 	 *  Does the text description of this match an exception?
@@ -622,11 +582,11 @@ bool grab;	 /* forced pickup, rather than forced leave behind? */
  * picked is zero, the pickup list is left alone.  The caller of this
  * function must free the pickup list.
  */
-STATIC_OVL int
-autopick(olist, follow, pick_list)
-struct obj *olist;	/* the object list */
-int follow;		/* how to follow the object list */
-menu_item **pick_list;	/* list of objects and counts to pick up */
+STATIC_OVL int autopick(
+	struct obj *olist,	/* the object list */
+	int follow,		/* how to follow the object list */
+	menu_item **pick_list	/* list of objects and counts to pick up */
+)
 {
 	menu_item *pi;	/* pick item */
 	struct obj *curr;
@@ -680,14 +640,14 @@ menu_item **pick_list;	/* list of objects and counts to pick up */
  *	INVORDER_SORT	  - Use hero's pack order.
  *	SIGNAL_NOMENU	  - Return -1 rather than 0 if nothing passes "allow".
  */
-int
-query_objlist(qstr, olist, qflags, pick_list, how, allow)
-const char *qstr;		/* query string */
-struct obj *olist;		/* the list to pick from */
-int qflags;			/* options to control the query */
-menu_item **pick_list;		/* return list of items picked */
-int how;			/* type of query */
-bool FDECL((*allow), (struct obj*));/* allow function */
+int query_objlist(
+        const char *qstr,		        /* query string */
+        struct obj *olist,		        /* the list to pick from */
+        int qflags,			        /* options to control the query */
+        menu_item **pick_list,		        /* return list of items picked */
+        int how,			        /* type of query */
+        bool FDECL((*allow), (struct obj*))     /* allow function */
+)
 {
 #ifdef SORTLOOT
 	int i, j;
@@ -820,13 +780,13 @@ bool FDECL((*allow), (struct obj*));/* allow function */
  * allow menu-based category (class) selection (for Drop,take off etc.)
  *
  */
-int
-query_category(qstr, olist, qflags, pick_list, how)
-const char *qstr;		/* query string */
-struct obj *olist;		/* the list to pick from */
-int qflags;			/* behaviour modification flags */
-menu_item **pick_list;		/* return list of items picked */
-int how;			/* type of query */
+int query_category(
+        const char *qstr,		/* query string */
+        struct obj *olist,		/* the list to pick from */
+        int qflags,			/* behaviour modification flags */
+        menu_item **pick_list,		/* return list of items picked */
+        int how 			/* type of query */
+)
 {
 	int n;
 	winid win;
@@ -983,10 +943,7 @@ int how;			/* type of query */
 	return n;
 }
 
-STATIC_OVL int
-count_categories(olist, qflags)
-struct obj *olist;
-int qflags;
+STATIC_OVL int count_categories(struct obj *olist, int qflags)
 {
 	char *pack;
 	bool counted_category;
@@ -1014,12 +971,12 @@ int qflags;
 }
 
 /* could we carry `obj'? if not, could we carry some of it/them? */
-STATIC_OVL long
-carry_count(obj, container, count, telekinesis, wt_before, wt_after)
-struct obj *obj, *container;	/* object to pick up, bag it's coming out of */
-long count;
-bool telekinesis;
-int *wt_before, *wt_after;
+STATIC_OVL long carry_count(
+        struct obj *obj, struct obj *container,	/* object to pick up, bag it's coming out of */
+        long count,
+        bool telekinesis,
+        int *wt_before, int *wt_after
+)
 {
     bool adjust_wt = container && carried(container),
 	    is_gold = obj->oclass == COIN_CLASS;
@@ -1177,12 +1134,11 @@ int *wt_before, *wt_after;
 }
 
 /* determine whether character is able and player is willing to carry `obj' */
-STATIC_OVL
-int 
-lift_object(obj, container, cnt_p, telekinesis)
-struct obj *obj, *container;	/* object to pick up, bag it's coming out of */
-long *cnt_p;
-bool telekinesis;
+STATIC_OVL int lift_object(
+        struct obj *obj, struct obj *container,	/* object to pick up, bag it's coming out of */
+        long *cnt_p,
+        bool telekinesis
+)
 {
     int result, old_wt, new_wt, prev_encumbr, next_encumbr;
 
@@ -1248,10 +1204,8 @@ bool telekinesis;
  * finally using the fallback as a last resort.
  * last_restort is expected to be very short.
  */
-const char *
-safe_qbuf(qbuf, padlength, planA, planB, last_resort)
-const char *qbuf, *planA, *planB, *last_resort;
-unsigned padlength;
+const char *safe_qbuf(const char *qbuf, unsigned padlength, const char *planA,
+        const char *planB, const char *last_resort)
 {
 	/* convert size_t (or int for ancient systems) to ordinary unsigned */
 	unsigned len_qbuf = (unsigned)strlen(qbuf),
@@ -1274,11 +1228,11 @@ unsigned padlength;
  * Returns -1 if caller should break out of its loop, 0 if nothing picked
  * up, 1 if otherwise.
  */
-int
-pickup_object(obj, count, telekinesis)
-struct obj *obj;
-long count;
-bool telekinesis;	/* not picking it up directly by hand */
+int pickup_object(
+        struct obj *obj,
+        long count,
+        bool telekinesis	/* not picking it up directly by hand */
+)
 {
 	int res, nearload;
 #ifndef GOLDOBJ
@@ -1409,9 +1363,7 @@ bool telekinesis;	/* not picking it up directly by hand */
  *
  * Gold never reaches this routine unless GOLDOBJ is defined.
  */
-struct obj *
-pick_obj(otmp)
-struct obj *otmp;
+struct obj *pick_obj(struct obj *otmp)
 {
 	obj_extract_self(otmp);
 	if (!u.uswallow && otmp != uball && costly_spot(otmp->ox, otmp->oy)) {
@@ -1441,8 +1393,7 @@ struct obj *otmp;
  * prints a message if encumbrance changed since the last check and
  * returns the new encumbrance value (from near_capacity()).
  */
-int
-encumber_msg()
+int encumber_msg(void)
 {
     static int oldcap = UNENCUMBERED;
     int newcap = near_capacity();
@@ -1481,10 +1432,7 @@ encumber_msg()
 }
 
 /* Is there a container at x,y. Optional: return count of containers at x,y */
-STATIC_OVL int
-container_at(x, y, countem)
-int x,y;
-bool countem;
+STATIC_OVL int container_at(int x, int y, bool countem)
 {
 	struct obj *cobj, *nobj;
 	int container_count = 0;
@@ -1499,9 +1447,7 @@ bool countem;
 	return container_count;
 }
 
-STATIC_OVL bool
-able_to_loot(x, y)
-int x, y;
+STATIC_OVL bool able_to_loot(int x, int y)
 {
 	if (!can_reach_floor()) {
 #ifdef STEED
@@ -1527,9 +1473,7 @@ int x, y;
 	return TRUE;
 }
 
-STATIC_OVL bool
-mon_beside(x,y)
-int x, y;
+STATIC_OVL bool mon_beside(int x, int y)
 {
 	int i,j,nx,ny;
 	for(i = -1; i <= 1; i++)
@@ -1542,8 +1486,7 @@ int x, y;
 	return FALSE;
 }
 
-int
-doloot()	/* loot a container on the floor or loot saddle from mon. */
+int doloot(void) /* loot a container on the floor or loot saddle from mon. */
 {
     struct obj *cobj, *nobj;
     int c = -1;
@@ -1717,11 +1660,7 @@ gotit:
 
 /* loot_mon() returns amount of time passed.
  */
-int
-loot_mon(mtmp, passed_info, prev_loot)
-struct monst *mtmp;
-int *passed_info;
-bool *prev_loot;
+int loot_mon(struct monst *mtmp, int *passed_info, bool *prev_loot)
 {
     int c = -1;
     int timepassed = 0;
@@ -1777,10 +1716,7 @@ bool *prev_loot;
  * Decide whether an object being placed into a magic bag will cause
  * it to explode.  If the object is a bag itself, check recursively.
  */
-STATIC_OVL bool
-mbag_explodes(obj, depthin)
-    struct obj *obj;
-    int depthin;
+STATIC_OVL bool mbag_explodes(struct obj *obj, int depthin)
 {
     /* these won't cause an explosion when they're empty */
     if ((obj->otyp == WAN_CANCELLATION || obj->otyp == BAG_OF_TRICKS) &&
@@ -1806,9 +1742,7 @@ static struct obj *current_container;
 #define Icebox (current_container->otyp == ICE_BOX)
 
 /* Returns: -1 to stop, 1 item was inserted, 0 item was not inserted. */
-STATIC_PTR int
-in_container(obj)
-struct obj *obj;
+STATIC_PTR int in_container(struct obj *obj)
 {
 	bool floor_container = !carried(current_container);
 	bool was_unpaid = FALSE;
@@ -1956,17 +1890,13 @@ struct obj *obj;
 	return(current_container ? 1 : -1);
 }
 
-STATIC_PTR int
-ck_bag(obj)
-struct obj *obj;
+STATIC_PTR int ck_bag(struct obj *obj)
 {
 	return current_container && obj != current_container;
 }
 
 /* Returns: -1 to stop, 1 item was removed, 0 item was not removed. */
-STATIC_PTR int
-out_container(obj)
-struct obj *obj;
+STATIC_PTR int out_container(struct obj *obj)
 {
 	struct obj *otmp;
 	bool is_gold = (obj->oclass == COIN_CLASS);
@@ -2043,10 +1973,7 @@ struct obj *obj;
 }
 
 /* an object inside a cursed bag of holding is being destroyed */
-STATIC_OVL long
-mbag_item_gone(held, item)
-int held;
-struct obj *item;
+STATIC_OVL long mbag_item_gone(int held, struct obj *item)
 {
     struct monst *shkp;
     long loss = 0L;
@@ -2065,9 +1992,7 @@ struct obj *item;
     return loss;
 }
 
-STATIC_OVL void
-observe_quantum_cat(box)
-struct obj *box;
+STATIC_OVL void observe_quantum_cat(struct obj *box)
 {
     static const char sc[] = "Schroedinger's Cat";
     struct obj *deadcat;
@@ -2108,10 +2033,7 @@ struct obj *box;
 
 #undef Icebox
 
-int
-use_container(obj, held)
-struct obj *obj;
-int held;
+int use_container(struct obj *obj, int held)
 {
 	struct obj *curr, *otmp;
 #ifndef GOLDOBJ
@@ -2338,11 +2260,7 @@ ask_again2:
 }
 
 /* Loot a container (take things out, put things in), using a menu. */
-STATIC_OVL int
-menu_loot(retry, container, put_in)
-int retry;
-struct obj *container;
-bool put_in;
+STATIC_OVL int menu_loot(int retry, struct obj *container, bool put_in)
 {
     int n, i, n_looted = 0;
     bool all_categories = TRUE, loot_everything = FALSE;
@@ -2411,11 +2329,7 @@ bool put_in;
     return n_looted;
 }
 
-STATIC_OVL int
-in_or_out_menu(prompt, obj, outokay, inokay)
-const char *prompt;
-struct obj *obj;
-bool outokay, inokay;
+STATIC_OVL int in_or_out_menu(const char *prompt, struct obj *obj, bool outokay, bool inokay)
 {
     winid win;
     anything any;

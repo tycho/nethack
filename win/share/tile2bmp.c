@@ -161,10 +161,7 @@ int yoffset,xoffset;
 char bmpname[128];
 FILE *fp;
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int i, j;
 
@@ -245,9 +242,7 @@ char *argv[];
 }
 
 
-static void
-build_bmfh(pbmfh)
-BITMAPFILEHEADER *pbmfh;
+static void build_bmfh(BITMAPFILEHEADER *pbmfh)
 {
 	pbmfh->bfType = leshort(0x4D42);
 	pbmfh->bfSize = lelong(BMPFILESIZE);
@@ -257,9 +252,7 @@ BITMAPFILEHEADER *pbmfh;
 			   (RGBQUAD_COUNT * sizeof(RGBQUAD)));
 }
 
-static void
-build_bmih(pbmih)
-BITMAPINFOHEADER *pbmih;
+static void build_bmih(BITMAPINFOHEADER *pbmih)
 {
 	WORD cClrBits;
 	int w,h;
@@ -307,9 +300,7 @@ BITMAPINFOHEADER *pbmih;
  	pbmih->biClrImportant = (DWORD)0;
 }
 
-static void
-build_bmptile(pixels)
-pixel (*pixels)[TILE_X];
+static void build_bmptile(pixel (*pixels)[TILE_X])
 {
 	int cur_x, cur_y, cur_color;
 	int x,y;

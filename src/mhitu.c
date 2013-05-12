@@ -36,10 +36,7 @@ static int dieroll;
 #ifdef OVL1
 
 
-STATIC_OVL void
-hitmsg(mtmp, mattk)
-struct monst *mtmp;
-struct attack *mattk;
+STATIC_OVL void hitmsg(struct monst *mtmp, struct attack *mattk)
 {
 	int compat;
 
@@ -81,11 +78,11 @@ struct attack *mattk;
 	    }
 }
 
-STATIC_OVL void
-missmu(mtmp, nearmiss, mattk)		/* monster missed you */
-struct monst *mtmp;
-bool nearmiss;
-struct attack *mattk;
+STATIC_OVL void missmu(		/* monster missed you */
+	struct monst *mtmp,
+	bool nearmiss,
+	struct attack *mattk
+)
 {
 	if (!canspotmon(mtmp))
 	    map_invisible(mtmp->mx, mtmp->my);
@@ -101,10 +98,10 @@ struct attack *mattk;
 	stop_occupation();
 }
 
-STATIC_OVL void
-mswings(mtmp, otemp)		/* monster swings obj */
-struct monst *mtmp;
-struct obj *otemp;
+STATIC_OVL void mswings(		/* monster swings obj */
+	struct monst *mtmp,
+	struct obj *otemp
+)
 {
 	if (!flags.verbose || Blind || !mon_visible(mtmp))
 		return;
@@ -114,10 +111,7 @@ struct obj *otemp;
 }
 
 /* return how a poison attack was delivered */
-const char *
-mpoisons_subj(mtmp, mattk)
-struct monst *mtmp;
-struct attack *mattk;
+const char *mpoisons_subj(struct monst *mtmp, struct attack *mattk)
 {
 	if (mattk->aatyp == AT_WEAP) {
 	    struct obj *mwep = (mtmp == &youmonst) ? uwep : MON_WEP(mtmp);
@@ -132,8 +126,7 @@ struct attack *mattk;
 }
 
 /* called when your intrinsic speed is taken away */
-void
-u_slow_down()
+void u_slow_down(void)
 {
 	HFast = 0L;
 	if (!Fast)
@@ -146,10 +139,10 @@ u_slow_down()
 #endif /* OVL1 */
 #ifdef OVLB
 
-STATIC_OVL void
-wildmiss(mtmp, mattk)		/* monster attacked your displaced image */
-	struct monst *mtmp;
-	struct attack *mattk;
+STATIC_OVL void wildmiss(		/* monster attacked your displaced image */
+	struct monst *mtmp,
+	struct attack *mattk
+)
 {
 	int compat;
 
@@ -215,11 +208,11 @@ wildmiss(mtmp, mattk)		/* monster attacked your displaced image */
 		Monnam(mtmp));
 }
 
-void
-expels(mtmp, mdat, message)
-struct monst *mtmp;
-struct permonst *mdat; /* if mtmp is polymorphed, mdat != mtmp->data */
-bool message;
+void expels(
+	struct monst *mtmp,
+	struct permonst *mdat, /* if mtmp is polymorphed, mdat != mtmp->data */
+	bool message
+)
 {
 	if (message) {
 		if (is_animal(mdat))
@@ -266,11 +259,7 @@ bool message;
 #ifdef OVL0
 
 /* select a monster's next attack, possibly substituting for its usual one */
-struct attack *
-getmattk(mptr, indx, prev_result, alt_attk_buf)
-struct permonst *mptr;
-int indx, prev_result[];
-struct attack *alt_attk_buf;
+struct attack *getmattk(struct permonst *mptr, int indx, int prev_result[], struct attack *alt_attk_buf)
 {
     struct attack *attk = &mptr->mattk[indx];
 
@@ -298,9 +287,7 @@ struct attack *alt_attk_buf;
  *		monster which it attacks by mistake, the caller had better
  *		take care of it...
  */
-int
-mattacku(mtmp)
-	struct monst *mtmp;
+int mattacku(struct monst *mtmp)
 {
 	struct	attack	*mattk, alt_attk;
 	int	i, j, tmp, sum[NATTK];
@@ -701,9 +688,7 @@ mattacku(mtmp)
  * helper function for some compilers that have trouble with hitmu
  */
 
-STATIC_OVL void
-hurtarmor(attk)
-int attk;
+STATIC_OVL void hurtarmor(int attk)
 {
 	int	hurt;
 
@@ -763,9 +748,7 @@ int attk;
 #endif /* OVLB */
 #ifdef OVL1
 
-STATIC_OVL bool
-diseasemu(mdat)
-struct permonst *mdat;
+STATIC_OVL bool diseasemu(struct permonst *mdat)
 {
 	if (Sick_resistance) {
 		You_feel("a slight illness.");
@@ -778,10 +761,7 @@ struct permonst *mdat;
 }
 
 /* check whether slippery clothing protects from hug or wrap attack */
-STATIC_OVL bool
-u_slip_free(mtmp, mattk)
-struct monst *mtmp;
-struct attack *mattk;
+STATIC_OVL bool u_slip_free(struct monst *mtmp, struct attack *mattk)
 {
 	struct obj *obj = (uarmc ? uarmc : uarm);
 
@@ -815,9 +795,7 @@ struct attack *mattk;
 }
 
 /* armor that sufficiently covers the body might be able to block magic */
-int
-magic_negation(mon)
-struct monst *mon;
+int magic_negation(struct monst *mon)
 {
 	struct obj *armor;
 	int armpro = 0;
@@ -865,10 +843,7 @@ struct monst *mon;
  *	  3 if the monster lives but teleported/paralyzed, so it can't keep
  *	       attacking you
  */
-STATIC_OVL int
-hitmu(mtmp, mattk)
-	struct monst *mtmp;
-	struct attack  *mattk;
+STATIC_OVL int hitmu(struct monst *mtmp, struct attack *mattk)
 {
 	struct permonst *mdat = mtmp->data;
 	int uncancelled, ptmp;
@@ -1620,10 +1595,10 @@ dopois:
 #endif /* OVL1 */
 #ifdef OVLB
 
-STATIC_OVL int
-gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
-	struct monst *mtmp;
-	struct attack  *mattk;
+STATIC_OVL int gulpmu(	/* monster swallows you, or damage if u.uswallow */
+	struct monst *mtmp,
+	struct attack *mattk
+)
 {
 	struct trap *t = t_at(u.ux, u.uy);
 	int	tmp = d((int)mattk->damn, (int)mattk->damd);
@@ -1809,11 +1784,11 @@ gulpmu(mtmp, mattk)	/* monster swallows you, or damage if u.uswallow */
 	return(1);
 }
 
-STATIC_OVL int
-explmu(mtmp, mattk, ufound)	/* monster explodes in your face */
-struct monst *mtmp;
-struct attack  *mattk;
-bool ufound;
+STATIC_OVL int explmu(	/* monster explodes in your face */
+	struct monst *mtmp,
+	struct attack *mattk,
+	bool ufound
+)
 {
     if (mtmp->mcan) return(0);
 
@@ -1893,10 +1868,10 @@ common:
     return(2);	/* it dies */
 }
 
-int
-gazemu(mtmp, mattk)	/* monster gazes at you */
-	struct monst *mtmp;
-	struct attack  *mattk;
+int gazemu(	/* monster gazes at you */
+	struct monst *mtmp,
+	struct attack *mattk
+)
 {
 	switch(mattk->adtyp) {
 	    case AD_STON:
@@ -2041,10 +2016,10 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 #endif /* OVLB */
 #ifdef OVL1
 
-void
-mdamageu(mtmp, n)	/* mtmp hits you for n points damage */
-struct monst *mtmp;
-int n;
+void mdamageu(	/* mtmp hits you for n points damage */
+	struct monst *mtmp,
+	int n
+)
 {
 	flags.botl = 1;
 	if (Upolyd) {
@@ -2059,10 +2034,7 @@ int n;
 #endif /* OVL1 */
 #ifdef OVLB
 
-STATIC_OVL void
-urustm(mon, obj)
-struct monst *mon;
-struct obj *obj;
+STATIC_OVL void urustm(struct monst *mon, struct obj *obj)
 {
 	bool vis;
 	bool is_acid;
@@ -2100,10 +2072,7 @@ struct obj *obj;
 #endif /* OVLB */
 #ifdef OVL1
 
-int
-could_seduce(magr,mdef,mattk)
-struct monst *magr, *mdef;
-struct attack *mattk;
+int could_seduce(struct monst *magr, struct monst *mdef, struct attack *mattk)
 /* returns 0 if seduction impossible,
  *	   1 if fine,
  *	   2 if wrong gender for nymph */
@@ -2156,9 +2125,7 @@ struct attack *mattk;
 
 #ifdef SEDUCE
 /* Returns 1 if monster teleported */
-int
-doseduce(mon)
-struct monst *mon;
+int doseduce(struct monst *mon)
 {
 	struct obj *ring, *nring;
 	bool fem = (mon->data == &mons[PM_SUCCUBUS]); /* otherwise incubus */
@@ -2407,10 +2374,7 @@ struct monst *mon;
 	return 1;
 }
 
-STATIC_OVL void
-mayberem(obj, str)
-struct obj *obj;
-const char *str;
+STATIC_OVL void mayberem(struct obj *obj, const char *str)
 {
 	char qbuf[QBUFSZ];
 
@@ -2445,11 +2409,7 @@ const char *str;
 
 #ifdef OVL1
 
-STATIC_OVL int
-passiveum(olduasmon,mtmp,mattk)
-struct permonst *olduasmon;
-struct monst *mtmp;
-struct attack *mattk;
+STATIC_OVL int passiveum(struct permonst *olduasmon, struct monst *mtmp, struct attack *mattk)
 {
 	int i, tmp;
 
@@ -2610,8 +2570,7 @@ struct attack *mattk;
 #ifdef OVLB
 
 #include "edog.h"
-struct monst *
-cloneu()
+struct monst *cloneu(void)
 {
 	struct monst *mon;
 	int mndx = monsndx(youmonst.data);

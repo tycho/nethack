@@ -94,9 +94,7 @@ Norep VA_DECL(const char *, line)
 static char *you_buf = 0;
 static int you_buf_siz = 0;
 
-static char *
-You_buf(siz)
-int siz;
+static char *You_buf(int siz)
 {
 	if (siz > you_buf_siz) {
 		if (you_buf) free((genericptr_t) you_buf);
@@ -106,8 +104,7 @@ int siz;
 	return you_buf;
 }
 
-void
-free_youbuf()
+void free_youbuf(void)
 {
 	if (you_buf) free((genericptr_t) you_buf),  you_buf = (char *)0;
 	you_buf_siz = 0;
@@ -272,9 +269,7 @@ impossible VA_DECL(const char *, s)
 	VA_END();
 }
 
-const char *
-align_str(alignment)
-    aligntyp alignment;
+const char *align_str(aligntyp alignment)
 {
     switch ((int)alignment) {
 	case A_CHAOTIC: return "chaotic";
@@ -285,9 +280,7 @@ align_str(alignment)
     return "unknown";
 }
 
-void
-mstatusline(mtmp)
-struct monst *mtmp;
+void mstatusline(struct monst *mtmp)
 {
 	aligntyp alignment;
 	char info[BUFSZ], monnambuf[BUFSZ];
@@ -364,8 +357,7 @@ struct monst *mtmp;
 		info);
 }
 
-void
-ustatusline()
+void ustatusline(void)
 {
 	char info[BUFSZ];
 
@@ -437,8 +429,7 @@ ustatusline()
 		info);
 }
 
-void
-self_invis_message()
+void self_invis_message(void)
 {
 	pline("%s %s.",
 	    Hallucination ? "Far out, man!  You" : "Gee!  All of a sudden, you",

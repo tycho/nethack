@@ -49,16 +49,13 @@ WIN32_FIND_DATA ffd;
 int def_kbhit(void);
 int (*nt_kbhit)() = def_kbhit;
 
-char
-switchar()
+char switchar(void)
 {
  /* Could not locate a WIN32 API call for this- MJA */
 	return '-';
 }
 
-long
-freediskspace(path)
-char *path;
+long freediskspace(char *path)
 {
 	char tmppath[4];
 	DWORD SectorsPerCluster = 0;
@@ -81,9 +78,7 @@ char *path;
 /*
  * Functions to get filenames using wildcards
  */
-int
-findfirst(path)
-char *path;
+int findfirst(char *path)
 {
 	if (ffhandle){
 		 FindClose(ffhandle);
@@ -94,21 +89,17 @@ char *path;
 	  (ffhandle == INVALID_HANDLE_VALUE) ? 0 : 1;
 }
 
-int
-findnext() 
+int findnext(void) 
 {
 	return FindNextFile(ffhandle,&ffd) ? 1 : 0;
 }
 
-char *
-foundfile_buffer()
+char *foundfile_buffer(void)
 {
 	return &ffd.cFileName[0];
 }
 
-long
-filesize(file)
-char *file;
+long filesize(char *file)
 {
 	if (findfirst(file)) {
 		return ((long)ffd.nFileSizeLow);
@@ -119,9 +110,7 @@ char *file;
 /*
  * Chdrive() changes the default drive.
  */
-void
-chdrive(str)
-char *str;
+void chdrive(char *str)
 {
 	char *ptr;
 	char drive;
@@ -132,8 +121,7 @@ char *str;
 	}
 }
 
-static int
-max_filename()
+static int max_filename(void)
 {
 	DWORD maxflen;
 	int status=0;
@@ -144,8 +132,7 @@ max_filename()
 	else return 0;
 }
 
-int
-def_kbhit()
+int def_kbhit(void)
 {
 	return 0;
 }
@@ -154,9 +141,9 @@ def_kbhit()
  * Strip out troublesome file system characters.
  */
 
-void
-nt_regularize(s)	/* normalize file name */
-char *s;
+void nt_regularize(	/* normalize file name */
+	char *s
+)
 {
 	unsigned char *lp;
 
@@ -170,8 +157,7 @@ char *s;
 /*
  * This is used in nhlan.c to implement some of the LAN_FEATURES.
  */
-char *get_username(lan_username_size)
-int *lan_username_size;
+char *get_username(int *lan_username_size)
 {
 	static TCHAR username_buffer[BUFSZ];
 	unsigned int status;
@@ -186,7 +172,7 @@ int *lan_username_size;
 }
 
 # if 0
-char *getxxx()
+char *getxxx(void)
 {
 char     szFullPath[MAX_PATH] = "";
 HMODULE  hInst = NULL;  	/* NULL gets the filename of this module */
@@ -230,7 +216,7 @@ void Delay(int ms)
 extern void NDECL(backsp);
 #endif
 
-void win32_abort()
+void win32_abort(void)
 {
 #ifdef WIZARD
    	if (wizard) {

@@ -8,8 +8,7 @@
 STATIC_DCL int NDECL(bc_order);
 STATIC_DCL void NDECL(litter);
 
-void
-ballfall()
+void ballfall(void)
 {
 	bool gets_hit;
 
@@ -94,8 +93,7 @@ ballfall()
  *
  *  Should not be called while swallowed.
  */
-void
-placebc()
+void placebc(void)
 {
     if (!uchain || !uball) {
 	impossible("Where are your ball and chain?");
@@ -120,8 +118,7 @@ placebc()
     newsym(u.ux,u.uy);
 }
 
-void
-unplacebc()
+void unplacebc(void)
 {
     if (u.uswallow) return;	/* ball&chain not placed while swallowed */
 
@@ -145,8 +142,7 @@ unplacebc()
  *  Return the stacking of the hero's ball & chain.  This assumes that the
  *  hero is being punished.
  */
-STATIC_OVL int
-bc_order()
+STATIC_OVL int bc_order(void)
 {
     struct obj *obj;
 
@@ -168,9 +164,7 @@ bc_order()
  *  The hero is either about to go blind or already blind and just punished.
  *  Set up the ball and chain variables so that the ball and chain are "felt".
  */
-void
-set_bc(already_blind)
-int already_blind;
+void set_bc(int already_blind)
 {
     int ball_on_floor = !carried(uball);
 
@@ -226,10 +220,10 @@ int already_blind;
  *
  *  Should not be called while swallowed.
  */
-void
-move_bc(before, control, ballx, bally, chainx, chainy)
-int   before, control;
-xchar ballx, bally, chainx, chainy;	/* only matter !before */
+void move_bc(
+	int before, int control,
+	xchar ballx, xchar bally, xchar chainx, xchar chainy	/* only matter !before */
+)
 {
     if (Blind) {
 	/*
@@ -355,14 +349,8 @@ xchar ballx, bally, chainx, chainy;	/* only matter !before */
  * drag the chain, while an identical-looking movement must drag both the ball
  * and chain.
  */
-bool
-drag_ball(x, y, bc_control, ballx, bally, chainx, chainy, cause_delay,
-    allow_drag)
-xchar x, y;
-int *bc_control;
-xchar *ballx, *bally, *chainx, *chainy;
-bool *cause_delay;
-bool allow_drag;
+bool drag_ball(xchar x, xchar y, int *bc_control, xchar *ballx, xchar *bally,
+		xchar *chainx, xchar *chainy, bool *cause_delay, bool allow_drag)
 {
 	struct trap *t = (struct trap *)0;
 	bool already_in_rock;
@@ -638,9 +626,7 @@ drag:
  *
  *  Should not be called while swallowed.
  */
-void
-drop_ball(x, y)
-xchar x, y;
+void drop_ball(xchar x, xchar y)
 {
     if (Blind) {
 	u.bc_order = bc_order();			/* get the order */
@@ -723,8 +709,7 @@ xchar x, y;
 }
 
 
-STATIC_OVL void
-litter()
+STATIC_OVL void litter(void)
 {
 	struct obj *otmp = invent, *nextobj;
 	int capacity = weight_cap();
@@ -742,8 +727,7 @@ litter()
 	}
 }
 
-void
-drag_down()
+void drag_down(void)
 {
 	bool forward;
 	uchar dragchance = 3;

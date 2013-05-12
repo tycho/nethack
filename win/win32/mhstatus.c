@@ -55,7 +55,7 @@ HWND mswin_init_status_window () {
 	return ret;
 }
 
-void register_status_window_class()
+void register_status_window_class(void)
 {
 	WNDCLASS wcex;
 	ZeroMemory( &wcex, sizeof(wcex));

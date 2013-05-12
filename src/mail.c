@@ -84,8 +84,7 @@ static long laststattime;
 #  define MAILPATH "/usr/mail/"
 # endif
 
-void
-getmailstatus()
+void getmailstatus(void)
 {
 	if(!mailbox && !(mailbox = nh_getenv("MAIL"))) {
 #  ifdef MAILPATH
@@ -127,9 +126,7 @@ getmailstatus()
  * Pick coordinates for a starting position for the mail daemon.  Called
  * from newmail() and newphone().
  */
-STATIC_OVL bool
-md_start(startp)
-    coord *startp;
+STATIC_OVL bool md_start(coord *startp)
 {
     coord testcc;	/* scratch coordinates */
     int row;		/* current row we are checking */
@@ -228,10 +225,10 @@ retry:
  * enexto().  Use enexto() as a last resort because enexto() chooses
  * its point randomly, which is not what we want.
  */
-STATIC_OVL bool
-md_stop(stopp, startp)
-    coord *stopp;	/* stopping position (we fill it in) */
-    coord *startp;	/* starting positon (read only) */
+STATIC_OVL bool md_stop(
+	coord *stopp,	/* stopping position (we fill it in) */
+	coord *startp	/* starting positon (read only) */
+)
 {
     int x, y, distance, min_distance = -1;
 
@@ -272,10 +269,11 @@ static const char *mail_text[] = {
  * FALSE if the md gets stuck in a position where there is a monster.  Return
  * TRUE otherwise.
  */
-STATIC_OVL bool
-md_rush(md,tx,ty)
-    struct monst *md;
-    int tx, ty;		/* destination of mail daemon */
+STATIC_OVL bool md_rush(
+	struct monst *md,
+	int tx,
+	int ty		/* destination of mail daemon */
+)
 {
     struct monst *mon;			/* displaced monster */
     int dx, dy;		/* direction counters */
@@ -368,9 +366,7 @@ md_rush(md,tx,ty)
 
 /* Deliver a scroll of mail. */
 /*ARGSUSED*/
-STATIC_OVL void
-newmail(info)
-struct mail_info *info;
+STATIC_OVL void newmail(struct mail_info *info)
 {
     struct monst *md;
     coord start, stop;
@@ -419,8 +415,7 @@ give_up:
 
 # if !defined(UNIX) && !defined(VMS) && !defined(LAN_MAIL)
 
-void
-ckmailstatus()
+void ckmailstatus(void)
 {
 	if (u.uswallow || !flags.biff) return;
 	if (mustgetmail < 0) {
@@ -438,9 +433,7 @@ ckmailstatus()
 }
 
 /*ARGSUSED*/
-void
-readmail(otmp)
-struct obj *otmp;
+void readmail(struct obj *otmp)
 {
     static char *junk[] = {
     "Please disregard previous letter.",
@@ -464,8 +457,7 @@ struct obj *otmp;
 
 # ifdef UNIX
 
-void
-ckmailstatus()
+void ckmailstatus(void)
 {
 #ifdef SIMPLE_MAIL
 	if (mailckfreq == 0)
@@ -504,9 +496,7 @@ ckmailstatus()
 }
 
 /*ARGSUSED*/
-void
-readmail(otmp)
-struct obj *otmp;
+void readmail(struct obj *otmp)
 {
 #ifdef DEF_MAILREADER
 	const char *mr = 0;
@@ -603,8 +593,7 @@ extern NDECL(struct mail_info *parse_next_broadcast);
 
 volatile int broadcasts = 0;
 
-void
-ckmailstatus()
+void ckmailstatus(void)
 {
     struct mail_info *brdcst;
 
@@ -619,9 +608,7 @@ ckmailstatus()
     }
 }
 
-void
-readmail(otmp)
-struct obj *otmp;
+void readmail(struct obj *otmp)
 {
 #  ifdef SHELL	/* can't access mail reader without spawning subprocess */
     const char *txt, *cmd;
@@ -653,8 +640,7 @@ struct obj *otmp;
 
 # ifdef LAN_MAIL
 
-void
-ckmailstatus()
+void ckmailstatus(void)
 {
 	static int laststattime = 0;
 	
@@ -678,9 +664,7 @@ ckmailstatus()
 }
 
 /*ARGSUSED*/
-void
-readmail(otmp)
-struct obj *otmp;
+void readmail(struct obj *otmp)
 {
 	lan_mail_read(otmp);
 }

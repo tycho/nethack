@@ -34,9 +34,7 @@ static int NDECL(eraseoldlocks);
 #endif
 
 #if 0
-int
-uptodate(fd)
-int fd;
+int uptodate(int fd)
 {
 # ifdef WANT_GETHDATE
     if(fstat(fd, &buf)) {
@@ -73,8 +71,7 @@ int fd;
 #endif
 
 #ifdef PC_LOCKING
-static int
-eraseoldlocks()
+static int eraseoldlocks(void)
 {
 	int i;
 
@@ -96,8 +93,7 @@ eraseoldlocks()
 	return(1);					/* success! */
 }
 
-void
-getlock()
+void getlock(void)
 {
 	int fd, c, ci, ct, ern;
 	char tbuf[BUFSZ];

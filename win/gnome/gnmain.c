@@ -821,8 +821,7 @@ ghack_main_window_remove_window(GtkWidget *win)
   g_warning("Fixme!!! RemoveWindow is not yet implemented");
 }
 
-void
-ghack_main_window_update_inventory()
+void ghack_main_window_update_inventory(void)
 {
 /* For now, do very little.  Eventually we may allow the inv. window
      to stay active.  When we do this, we'll need to implement this...

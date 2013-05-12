@@ -205,8 +205,7 @@ STATIC_VAR struct tibhdr_struct tibheader;
 /* STATIC_VAR int  g_attribute;	*/	/* Current attribute to use */
 
 #ifdef OVLB
-void
-vga_get_scr_size()
+void vga_get_scr_size(void)
 {
 	CO = 80;
 	LI = 29;
@@ -217,8 +216,7 @@ vga_get_scr_size()
 
 # ifdef OVLB
 
-void
-vga_backsp()
+void vga_backsp(void)
 {
 	int col,row;
 
@@ -232,9 +230,7 @@ vga_backsp()
 # endif /* OVLB */
 # ifdef OVL0
 
-void
-vga_clear_screen(colour)
-int colour;
+void vga_clear_screen(int colour)
 {
 	char __far *pch;
 	int y,j;
@@ -259,9 +255,10 @@ int colour;
 	vga_gotoloc(0,0);	/* is this needed? */
 }
 
-void
-vga_cl_end(col,row)	/* clear to end of line */
-int col,row;
+void vga_cl_end(	/* clear to end of line */
+	int col,
+	int row
+)
 {
 	int count;
 
@@ -275,9 +272,9 @@ int col,row;
 	}
 }
 
-void
-vga_cl_eos(cy)	/* clear to end of screen */
-int cy;
+void vga_cl_eos(	/* clear to end of screen */
+	int cy
+)
 {
 	int count;
 
@@ -295,17 +292,14 @@ int cy;
 # endif /* OVL0 */
 
 # ifdef OVLB
-void
-vga_tty_end_screen()
+void vga_tty_end_screen(void)
 {
 	vga_clear_screen(BACKGROUND_VGA_COLOR);
 	vga_SwitchMode(MODETEXT);
 }
 
 
-void
-vga_tty_startup(wid, hgt)
-    int *wid, *hgt;
+void vga_tty_startup(int *wid, int *hgt)
 {
 
 	/* code to sense display adapter is required here - MJA */
@@ -344,10 +338,7 @@ vga_tty_startup(wid, hgt)
  */
 
 # ifdef OVL0
-void
-vga_xputs(s,col,row)
-const char *s;
-int col,row;
+void vga_xputs(const char *s, int col, int row)
 {
 
 	if (s != (char *)0) {
@@ -355,10 +346,10 @@ int col,row;
 	}
 }
 
-void
-vga_xputc(ch,attr)	/* write out character (and attribute) */
-char ch;
-int attr;
+void vga_xputc(	/* write out character (and attribute) */
+	int ch,
+	int attr
+)
 {
 	int col,row;
 
@@ -379,11 +370,11 @@ int attr;
 }
 
 #  if defined(USE_TILES)
-void
-vga_xputg(glyphnum,ch, special)	/* Place tile represent. a glyph at current location */
-int glyphnum;
-int ch;
-unsigned special;	/* special feature: corpse, invis, detected, pet, ridden - hack.h */
+void vga_xputg(	/* Place tile represent. a glyph at current location */
+	int glyphnum,
+	int ch,
+	unsigned special	/* special feature: corpse, invis, detected, pet, ridden - hack.h */
+)
 {
 	int col,row;
 	int attr;
@@ -435,18 +426,14 @@ unsigned special;	/* special feature: corpse, invis, detected, pet, ridden - hac
  *                       of the player on the NetHack level.
  */
  
-void
-vga_gotoloc(col,row)
-int col,row;
+void vga_gotoloc(int col, int row)
 {
 	curcol = min(col,CO - 1); /* protection from callers */
 	currow = min(row,LI - 1);
 }
 
 #  if defined(USE_TILES) && defined(CLIPPING)
-void
-vga_cliparound(x, y)
-int x, y;
+void vga_cliparound(int x, int y)
 {
 	extern bool restoring;
 	int oldx = clipx;
@@ -469,9 +456,7 @@ int x, y;
 	}
 }
 
-STATIC_OVL void
-vga_redrawmap(clearfirst)
-bool clearfirst;
+STATIC_OVL void vga_redrawmap(bool clearfirst)
 {
 	int j,x,y,t;
 	char __far *pch;

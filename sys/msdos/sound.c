@@ -22,9 +22,7 @@
 
 #define printf	pline
 
-int
-assign_soundcard(sopt)
-char *sopt;
+int assign_soundcard(char *sopt)
 {
 
 	iflags.hassound = 0;
@@ -305,7 +303,7 @@ pc_speaker (struct obj *instr, char *tune)
 
 #else
 
-main ()
+int main(void)
 {
 	char s[80];
 	int tool;

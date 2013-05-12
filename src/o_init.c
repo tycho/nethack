@@ -25,8 +25,7 @@ extern short glyph2tile[];	/* from tile.c */
  * is restored.  So might as well do that the first time instead of writing
  * another routine.
  */
-STATIC_OVL void
-shuffle_tiles()
+STATIC_OVL void shuffle_tiles(void)
 {
 	int i;
 	short tmp_tilemap[NUM_OBJECTS];
@@ -40,9 +39,7 @@ shuffle_tiles()
 }
 #endif	/* USE_TILES */
 
-STATIC_OVL void
-setgemprobs(dlev)
-d_level *dlev;
+STATIC_OVL void setgemprobs(d_level *dlev)
 {
 	int j, first, lev;
 
@@ -67,10 +64,7 @@ d_level *dlev;
 }
 
 /* shuffle descriptions on objects o_low to o_high */
-STATIC_OVL void
-shuffle(o_low, o_high, domaterial)
-	int o_low, o_high;
-	bool domaterial;
+STATIC_OVL void shuffle(int o_low, int o_high, bool domaterial)
 {
 	int i, j, num_to_shuffle;
 	short sw;
@@ -104,8 +98,7 @@ shuffle(o_low, o_high, domaterial)
 	}
 }
 
-void
-init_objects()
+void init_objects(void)
 {
 int i, first, last, sum;
 char oclass;
@@ -175,8 +168,7 @@ char oclass;
 #endif
 }
 
-STATIC_OVL void
-shuffle_all()
+STATIC_OVL void shuffle_all(void)
 {
 	int first, last, oclass;
 
@@ -225,8 +217,7 @@ shuffle_all()
 }
 
 /* find the object index for snow boots; used [once] by slippery ice code */
-int
-find_skates()
+int find_skates(void)
 {
     int i;
     const char *s;
@@ -239,15 +230,12 @@ find_skates()
     return -1;	/* not 0, or caller would try again each move */
 }
 
-void
-oinit()			/* level dependent initialization */
+void oinit(void)			/* level dependent initialization */
 {
 	setgemprobs(&u.uz);
 }
 
-void
-savenames(fd, mode)
-int fd, mode;
+void savenames(int fd, int mode)
 {
 	int i;
 	unsigned int len;
@@ -275,9 +263,7 @@ int fd, mode;
 	    }
 }
 
-void
-restnames(fd)
-int fd;
+void restnames(int fd)
 {
 	int i;
 	unsigned int len;
@@ -296,11 +282,7 @@ int fd;
 #endif
 }
 
-void
-discover_object(oindx, mark_as_known, credit_hero)
-int oindx;
-bool mark_as_known;
-bool credit_hero;
+void discover_object(int oindx, bool mark_as_known, bool credit_hero)
 {
     if (!objects[oindx].oc_name_known) {
 	int dindx, acls = objects[oindx].oc_class;
@@ -322,9 +304,7 @@ bool credit_hero;
 }
 
 /* if a class name has been cleared, we may need to purge it from disco[] */
-void
-undiscover_object(oindx)
-int oindx;
+void undiscover_object(int oindx)
 {
     if (!objects[oindx].oc_name_known) {
 	int dindx, acls = objects[oindx].oc_class;
@@ -346,9 +326,7 @@ int oindx;
     }
 }
 
-STATIC_OVL bool
-interesting_to_discover(i)
-int i;
+STATIC_OVL bool interesting_to_discover(int i)
 {
 	/* Pre-discovered objects are now printed with a '*' */
     return((bool)(objects[i].oc_uname != (char *)0 ||
@@ -363,8 +341,7 @@ static short uniq_objs[] = {
 	BELL_OF_OPENING,
 };
 
-int
-dodiscovered()				/* free after Robert Viduya */
+int dodiscovered(void) /* free after Robert Viduya */
 {
     int i, dis;
     int	ct = 0;

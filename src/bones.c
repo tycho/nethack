@@ -14,9 +14,7 @@ STATIC_DCL void FDECL(goodfruit, (int));
 STATIC_DCL void FDECL(resetobjs,(struct obj *,bool));
 STATIC_DCL void FDECL(drop_upon_death, (struct monst *, struct obj *));
 
-STATIC_OVL bool
-no_bones_level(lev)
-d_level *lev;
+STATIC_OVL bool no_bones_level(d_level *lev)
 {
 	extern d_level save_dlevel;		/* in do.c */
 	s_level *sptr;
@@ -38,9 +36,7 @@ d_level *lev;
  * ID is positive instead of negative).  This way, when we later save the
  * chain of fruit types, we know to only save the types that exist.
  */
-STATIC_OVL void
-goodfruit(id)
-int id;
+STATIC_OVL void goodfruit(int id)
 {
 	struct fruit *f;
 
@@ -52,10 +48,7 @@ int id;
 	}
 }
 
-STATIC_OVL void
-resetobjs(ochain,restore)
-struct obj *ochain;
-bool restore;
+STATIC_OVL void resetobjs(struct obj *ochain, bool restore)
 {
 	struct obj *otmp;
 
@@ -117,10 +110,7 @@ bool restore;
 	}
 }
 
-STATIC_OVL void
-drop_upon_death(mtmp, cont)
-struct monst *mtmp;
-struct obj *cont;
+STATIC_OVL void drop_upon_death(struct monst *mtmp, struct obj *cont)
 {
 	struct obj *otmp;
 
@@ -157,8 +147,7 @@ struct obj *cont;
 }
 
 /* check whether bones are feasible */
-bool
-can_make_bones()
+bool can_make_bones(void)
 {
 	struct trap *ttmp;
 
@@ -188,9 +177,7 @@ can_make_bones()
 }
 
 /* save bones and possessions of a deceased adventurer */
-void
-savebones(corpse)
-struct obj *corpse;
+void savebones(struct obj *corpse)
 {
 	int fd, x, y;
 	struct trap *ttmp;
@@ -370,8 +357,7 @@ struct obj *corpse;
 	compress_bonesfile();
 }
 
-int
-getbones()
+int getbones(void)
 {
 	int fd;
 	int ok;

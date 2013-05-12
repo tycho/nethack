@@ -424,7 +424,7 @@ GtkWidget* ghack_init_status_window ()
 
 
 
-void ghack_status_window_update_stats()
+void ghack_status_window_update_stats(void)
 {
     char buf[BUFSZ];
     gchar *buf1;

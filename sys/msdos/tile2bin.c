@@ -78,10 +78,7 @@ int tilecount;
 int filenum;
 int paletteflag;
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int i;
 	struct tm *newtime;
@@ -212,9 +209,7 @@ struct tibhdr_struct *tibhdr;
 	fwrite(tibhdr, sizeof(struct tibhdr_struct), 1, fileptr);
 }
 
-static void
-build_tibtile(pixels)
-pixel (*pixels)[TILE_X];
+static void build_tibtile(pixel (*pixels)[TILE_X])
 {
 	int i, j, k, co_off;
 	unsigned char co_mask,tmp;
@@ -272,9 +267,7 @@ pixel (*pixels)[TILE_X];
 	}
 }
 
-static void
-write_tibtile(recnum)
-int recnum;
+static void write_tibtile(int recnum)
 {
 	long fpos;
 

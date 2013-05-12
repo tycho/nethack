@@ -27,9 +27,7 @@ long *FDECL(alloc,(unsigned int));
 extern void VDECL(panic, (const char *,...)) PRINTF_F(1,2);
 
 
-long *
-alloc(lth)
-unsigned int lth;
+long *alloc(unsigned int lth)
 {
 #ifdef LINT
 /*
@@ -75,10 +73,7 @@ unsigned int lth;
 # endif
 
 /* format a pointer for display purposes; caller supplies the result buffer */
-char *
-fmt_ptr(ptr, buf)
-const genericptr ptr;
-char *buf;
+char *fmt_ptr(const genericptr ptr, char *buf)
 {
 	Sprintf(buf, PTR_FMT, (PTR_TYP)ptr);
 	return buf;
@@ -90,8 +85,7 @@ char *buf;
 
 /* If ${NH_HEAPLOG} is defined and we can create a file by that name,
    then we'll log the allocation and release information to that file. */
-static void
-heapmon_init()
+static void heapmon_init(void)
 {
 	char *logname = getenv("NH_HEAPLOG");
 
@@ -100,11 +94,7 @@ heapmon_init()
 	tried_heaplog = TRUE;
 }
 
-long *
-nhalloc(lth, file, line)
-unsigned int lth;
-const char *file;
-int line;
+long *nhalloc(unsigned int lth, const char *file, int line)
 {
 	long *ptr = alloc(lth);
 	char ptr_address[20];
@@ -121,11 +111,7 @@ int line;
 	return ptr;
 }
 
-void
-nhfree(ptr, file, line)
-genericptr_t ptr;
-const char *file;
-int line;
+void nhfree(genericptr_t ptr, const char *file, int line)
 {
 	char ptr_address[20];
 

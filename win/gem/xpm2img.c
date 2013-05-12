@@ -22,10 +22,7 @@ int num_colors = 0;
 int width=0, height=0;
 int initflag;
 FILE *fp;
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int i;
 	int row, col, planeno;
@@ -145,8 +142,7 @@ fopen_xpm_file(const char *fn, const char *mode){
 /* This deserves better.  Don't read it too closely - you'll get ill. */
 #define bufsz 2048
 char buf[bufsz];
-char *
-xpmgetline(){
+char *xpmgetline(void){
 	char *bp;
 	do {
 	    if(fgets(buf, bufsz, xpmfh) == 0)return 0;

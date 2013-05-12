@@ -57,11 +57,7 @@ int explcolors[] = {
 #endif
 
 /*ARGSUSED*/
-void
-mapglyph(glyph, ochar, ocolor, ospecial, x, y)
-int glyph, *ocolor, x, y;
-int *ochar;
-unsigned *ospecial;
+void mapglyph(int glyph, int *ochar, int *ocolor, unsigned *ospecial, int x, int y)
 {
 	int offset;
 #if defined(TEXTCOLOR) || defined(ROGUE_COLOR)

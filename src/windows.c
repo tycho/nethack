@@ -89,17 +89,12 @@ struct win_choices {
     { 0, 0 }		/* must be last */
 };
 
-STATIC_OVL
-void
-def_raw_print(s)
-const char *s;
+STATIC_OVL void def_raw_print(const char *s)
 {
     puts(s);
 }
 
-void
-choose_windows(s)
-const char *s;
+void choose_windows(const char *s)
 {
     int i;
 
@@ -127,20 +122,14 @@ const char *s;
  * --More-- prompt; other interfaces generally don't need that.
  */
 /*ARGSUSED*/
-char
-genl_message_menu(let, how, mesg)
-char let;
-int how;
-const char *mesg;
+char genl_message_menu(int let, int how, const char *mesg)
 {
     pline("%s", mesg);
     return 0;
 }
 
 /*ARGSUSED*/
-void
-genl_preference_update(pref)
-const char *pref;
+void genl_preference_update(const char *pref)
 {
 	/* window ports are expected to provide
 	   their own preference update routine

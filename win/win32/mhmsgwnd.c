@@ -98,7 +98,7 @@ HWND mswin_init_message_window () {
 	return ret;
 }
 
-void register_message_window_class()
+void register_message_window_class(void)
 {
 	WNDCLASS wcex;
 	ZeroMemory( &wcex, sizeof(wcex));

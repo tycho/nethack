@@ -328,8 +328,7 @@ short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
 
-void
-init_dungeon()
+void init_dungeon(void)
 {
 	if(++n_dgns > MAXDUNGEON) {
 	    (void) fprintf(stderr, "FATAL - Too many dungeons (limit: %d).\n",
@@ -350,8 +349,7 @@ init_dungeon()
 	tmpdungeon[n_dgns].entry_lev = 0;
 }
 
-void
-init_level()
+void init_level(void)
 {
 	if(++n_levs > LEV_LIMIT) {
 
@@ -367,8 +365,7 @@ init_level()
 	tmplevel[n_levs].chain = -1;
 }
 
-void
-init_branch()
+void init_branch(void)
 {
 	if(++n_brs > BRANCH_LIMIT) {
 
@@ -381,9 +378,7 @@ init_branch()
 	tmpbranch[n_brs].chain = -1;
 }
 
-int
-getchain(s)
-	char	*s;
+int getchain(char *s)
 {
 	int i;
 
@@ -407,8 +402,7 @@ getchain(s)
  *	- A dungeon must have a proper depth (at least (1, 0)).
  */
 
-int
-check_dungeon()
+int check_dungeon(void)
 {
 	int i;
 
@@ -444,8 +438,7 @@ check_dungeon()
  *	  have a 100% chance of existing).
  */
 
-int
-check_level()
+int check_level(void)
 {
 	int i;
 
@@ -486,8 +479,7 @@ check_level()
  *	  have a 100% chance of existing).
  */
 
-int
-check_branch()
+int check_branch(void)
 {
 	int i;
 
@@ -533,8 +525,7 @@ check_branch()
  *	  ...
  */
 
-void
-output_dgn()
+void output_dgn(void)
 {
 	int	nd, cl = 0, nl = 0,
 		    cb = 0, nb = 0;
@@ -577,8 +568,7 @@ output_dgn()
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
 #define YYERROR goto yyerrlab
-int
-yyparse()
+int yyparse(void)
 {
     int yym, yyn, yystate;
 #if YYDEBUG

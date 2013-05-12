@@ -37,7 +37,7 @@ void ghack_text_window_clear(GtkWidget *widget, gpointer data)
     gtk_editable_delete_text (GTK_EDITABLE (gless->text), 0, 0);
 }
 
-void ghack_text_window_destroy()
+void ghack_text_window_destroy(void)
 {
     TW_window = NULL;
 }

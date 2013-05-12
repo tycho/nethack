@@ -21,9 +21,7 @@ unsigned char	x11_colormap[MAXCOLORMAPSIZE][3];
 
 
 /* Look up the given pixel and return its colormap index. */
-static unsigned char
-pix_to_colormap(pix)
-    pixel pix;
+static unsigned char pix_to_colormap(pixel pix)
 {
     int i;
 
@@ -43,10 +41,10 @@ pix_to_colormap(pix)
 
 
 /* Convert the tiles in the file to our format of bytes. */
-static unsigned long
-convert_tiles(tb_ptr, total)
-    unsigned char **tb_ptr;	/* pointer to a tile byte pointer */
-    unsigned long total;	/* total tiles so far */
+static unsigned long convert_tiles(
+	unsigned char **tb_ptr,	/* pointer to a tile byte pointer */
+	unsigned long total	/* total tiles so far */
+)
 {
     unsigned char *tb = *tb_ptr;
     unsigned long count = 0;
@@ -74,8 +72,7 @@ convert_tiles(tb_ptr, total)
 
 
 /* Merge the current text colormap (ColorMap) with ours (x11_colormap). */
-static void
-merge_text_colormap()
+static void merge_text_colormap(void)
 {
     int i, j;
 
@@ -108,9 +105,7 @@ merge_text_colormap()
 
 
 /* Open the given file, read & merge the colormap, convert the tiles. */
-static void
-process_file(fname)
-    char *fname;
+static void process_file(char *fname)
 {
     unsigned long count;
 
@@ -168,10 +163,7 @@ FILE *fp;
 }
 #endif	/* USE_XPM */
 
-int
-main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char **argv)
 {
     FILE *fp;
     int i;

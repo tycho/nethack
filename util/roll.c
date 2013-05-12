@@ -6,9 +6,7 @@
 
 typedef unsigned int u32;
 
-u32 roll(count, sides)
-u32 count;
-u32 sides;
+u32 roll(u32 count, u32 sides)
 {
 	u32 ret = 0, c;
 	for (c = 0; c < count; c++) {
@@ -21,8 +19,7 @@ u32 sides;
 	return ret;
 }
 
-void roll_str(str)
-const char *str;
+void roll_str(const char *str)
 {
 	char *t = strcpy(malloc(strlen(str)), str),
 		 *p = strtok(t, " \t\r\n");

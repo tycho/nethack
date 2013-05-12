@@ -200,8 +200,7 @@ extern unsigned _stklen = STKSIZ;
 
 
 #ifdef MACsansMPWTOOL
-int
-main(void)
+int main(void)
 {
     const char *def_options = "odemvpqrhz";
     char buf[100];
@@ -223,10 +222,7 @@ main(void)
 
 #else /* ! MAC */
 
-int
-main(argc, argv)
-int	argc;
-char	*argv[];
+int main(int argc, char **argv)
 {
 	if ( (argc != 2)
 #ifdef FILE_PREFIX
@@ -252,9 +248,7 @@ char	*argv[];
 
 #endif
 
-void
-do_makedefs(options)
-char	*options;
+void do_makedefs(char *options)
 {
 	bool more_than_one;
 
@@ -320,9 +314,7 @@ char	*options;
 
 
 /* trivial text encryption routine which can't be broken with `tr' */
-static
-char *xcrypt(str)
-const char *str;
+static char *xcrypt(const char *str)
 {				/* duplicated in src/hacklib.c */
 	static char buf[BUFSZ];
 	const char *p;
@@ -338,8 +330,7 @@ const char *str;
 	return buf;
 }
 
-void
-do_rumors()
+void do_rumors(void)
 {
 	char	infile[60];
 	long	true_rumor_size;
@@ -415,8 +406,7 @@ do_rumors()
 				| (1L << 23)	/* TIMED_DELAY */ \
 				)
 
-static void
-make_version()
+static void make_version(void)
 {
 	int i;
 
@@ -503,9 +493,7 @@ make_version()
 	return;
 }
 
-static char *
-version_string(outbuf)
-char *outbuf;
+static char *version_string(char *outbuf)
 {
     Sprintf(outbuf, "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
 #ifdef BETA
@@ -514,10 +502,7 @@ char *outbuf;
     return outbuf;
 }
 
-static char *
-version_id_string(outbuf, build_date)
-char *outbuf;
-const char *build_date;
+static char *version_id_string(char *outbuf, const char *build_date)
 {
     char subbuf[64], versbuf[64];
 
@@ -535,8 +520,7 @@ const char *build_date;
     return outbuf;
 }
 
-void
-do_date()
+void do_date(void)
 {
 	long clocktim = 0;
 	char *c, cbuf[60], buf[BUFSZ];
@@ -602,8 +586,7 @@ do_date()
 
 static char save_bones_compat_buf[BUFSZ];
 
-static void
-build_savebones_compat_string()
+static void build_savebones_compat_string(void)
 {
 #ifdef VERSION_COMPATIBILITY
 	unsigned long uver = VERSION_COMPATIBILITY;
@@ -816,8 +799,7 @@ static const char *window_opts[] = {
 		0
 	};
 
-void
-do_options()
+void do_options(void)
 {
 	int i, length;
 	const char *str, *indent = "    ";
@@ -874,9 +856,7 @@ do_options()
 }
 
 /* routine to decide whether to discard something from data.base */
-static bool
-d_filter(line)
-    char *line;
+static bool d_filter(char *line)
 {
     if (*line == '#') return TRUE;	/* ignore comment lines */
     return FALSE;
@@ -904,8 +884,7 @@ text-b/text-c		at fseek(0x01234567L + 456L)
     *
     */
 
-void
-do_data()
+void do_data(void)
 {
 	char	infile[60], tempfile[60];
 	bool ok;
@@ -1003,9 +982,7 @@ dead_data:  perror(in_line);	/* report the problem */
 }
 
 /* routine to decide whether to discard something from oracles.txt */
-static bool
-h_filter(line)
-    char *line;
+static bool h_filter(char *line)
 {
     static bool skip = FALSE;
     char tag[sizeof in_line];
@@ -1047,8 +1024,7 @@ static const char *special_oracle[] = {
    "-----" lines.
  */
 
-void
-do_oracles()
+void do_oracles(void)
 {
 	char	infile[60], tempfile[60];
 	bool in_oracle, ok;
@@ -1183,8 +1159,7 @@ dead_data:  perror(in_line);	/* report the problem */
 }
 
 
-static	struct deflist {
-
+static struct deflist {
 	const char	*defname;
 	bool	true_or_false;
 } deflist[] = {
@@ -1195,9 +1170,7 @@ static	struct deflist {
 #endif
 	      { 0, 0 } };
 
-static int
-check_control(s)
-	char	*s;
+static int check_control(char *s)
 {
 	int	i;
 
@@ -1210,15 +1183,12 @@ check_control(s)
 	return(-1);
 }
 
-static char *
-without_control(s)
-	char *s;
+static char *without_control(char *s)
 {
 	return(s + 1 + strlen(deflist[check_control(in_line)].defname));
 }
 
-void
-do_dungeon()
+void do_dungeon(void)
 {
 	int rcnt = 0;
 
@@ -1266,9 +1236,7 @@ recheck:
 	return;
 }
 
-static bool
-ranged_attk(ptr)	/* returns TRUE if monster can attack at range */
-	struct permonst *ptr;
+static bool ranged_attk(struct permonst *ptr)	/* returns TRUE if monster can attack at range */
 {
 	int	i, j;
 	int atk_mask = (1<<AT_BREA) | (1<<AT_SPIT) | (1<<AT_GAZE);
@@ -1285,9 +1253,7 @@ ranged_attk(ptr)	/* returns TRUE if monster can attack at range */
  * an approximation of monster strength.  It uses a similar method of
  * determination as "experience()" to arrive at the strength.
  */
-static int
-mstrength(ptr)
-struct permonst *ptr;
+static int mstrength(struct permonst *ptr)
 {
 	int	i, tmp2, n, tmp = ptr->mlevel;
 
@@ -1340,8 +1306,7 @@ struct permonst *ptr;
 	return((tmp >= 0) ? tmp : 0);
 }
 
-void
-do_monstr()
+void do_monstr(void)
 {
     struct permonst *ptr;
     int i, j;
@@ -1373,7 +1338,7 @@ do_monstr()
 
     Fprintf(ofp,"\nvoid NDECL(monstr_init);\n");
     Fprintf(ofp,"\nvoid\n");
-    Fprintf(ofp,"monstr_init()\n");
+    Fprintf(ofp,"monstr_init(void)\n");
     Fprintf(ofp,"{\n");
     Fprintf(ofp,"    return;\n");
     Fprintf(ofp,"}\n");
@@ -1383,8 +1348,7 @@ do_monstr()
     return;
 }
 
-void
-do_permonst()
+void do_permonst(void)
 {
 	int	i;
 	char	*c, *nam;
@@ -1435,24 +1399,18 @@ static int	qt_line;
 static bool	in_msg;
 #define NO_MSG	1	/* strlen of a null line returned by fgets() */
 
-static bool
-qt_comment(s)
-	char *s;
+static bool qt_comment(char *s)
 {
 	if(s[0] == '#') return(TRUE);
 	return((bool)(!in_msg  && strlen(s) == NO_MSG));
 }
 
-static bool
-qt_control(s)
-	char *s;
+static bool qt_control(char *s)
 {
 	return((bool)(s[0] == '%' && (s[1] == 'C' || s[1] == 'E')));
 }
 
-static int
-get_hdr (code)
-	char *code;
+static int get_hdr(char *code)
 {
 	int	i;
 
@@ -1462,9 +1420,7 @@ get_hdr (code)
 	return(0);
 }
 
-static bool
-new_id (code)
-	char *code;
+static bool new_id (char *code)
 {
 	if(qt_hdr.n_hdr >= N_HDR) {
 	    Fprintf(stderr, OUT_OF_HEADERS, qt_line);
@@ -1477,9 +1433,7 @@ new_id (code)
 	return(TRUE);
 }
 
-static bool
-known_msg(num, id)
-	int num, id;
+static bool known_msg(int num, int id)
 {
 	int i;
 
@@ -1490,10 +1444,7 @@ known_msg(num, id)
 }
 
 
-static void
-new_msg(s, num, id)
-	char *s;
-	int num, id;
+static void new_msg(char *s, int num, int id)
 {
 	struct	qtmsg	*qt_msg;
 
@@ -1509,9 +1460,7 @@ new_msg(s, num, id)
 	}
 }
 
-static void
-do_qt_control(s)
-	char *s;
+static void do_qt_control(char *s)
 {
 	char code[BUFSZ];
 	int num, id = 0;
@@ -1548,9 +1497,7 @@ do_qt_control(s)
 	}
 }
 
-static void
-do_qt_text(s)
-	char *s;
+static void do_qt_text(char *s)
 {
 	if (!in_msg) {
 	    Fprintf(stderr, TEXT_NOT_IN_MSG, qt_line);
@@ -1559,8 +1506,7 @@ do_qt_text(s)
 	return;
 }
 
-static void
-adjust_qt_hdrs()
+static void adjust_qt_hdrs(void)
 {
 	int	i, j;
 	long count = 0L, hdr_offset = sizeof(int) +
@@ -1580,8 +1526,7 @@ adjust_qt_hdrs()
 	return;
 }
 
-static void
-put_qt_hdrs()
+static void put_qt_hdrs(void)
 {
 	int	i;
 
@@ -1628,8 +1573,7 @@ put_qt_hdrs()
 	}
 }
 
-void
-do_questtxt()
+void do_questtxt(void)
 {
 	Sprintf(filename, DATA_IN_TEMPLATE, QTXT_I_FILE);
 	if(!(ifp = fopen(filename, RDTMODE))) {
@@ -1684,18 +1628,14 @@ do_questtxt()
 
 static	char	temp[32];
 
-static char *
-limit(name,pref)	/* limit a name to 30 characters length */
-char	*name;
-int	pref;
+static char *limit(char *name, int pref)	/* limit a name to 30 characters length */
 {
 	(void) strncpy(temp, name, pref ? 26 : 30);
 	temp[pref ? 26 : 30] = 0;
 	return temp;
 }
 
-void
-do_objs()
+void do_objs(void)
 {
 	int i, sum = 0;
 	char *c, *objnam;
@@ -1813,9 +1753,7 @@ do_objs()
 	return;
 }
 
-static char *
-tmpdup(str)
-const char *str;
+static char *tmpdup(const char *str)
 {
 	static char buf[128];
 
@@ -1824,9 +1762,7 @@ const char *str;
 	return buf;
 }
 
-static char *
-eos(str)
-char *str;
+static char *eos(char *str)
 {
     while (*str) str++;
     return str;
@@ -1837,8 +1773,7 @@ char *str;
  *      VISION_TABLES => generate tables
  */
 
-void
-do_vision()
+void do_vision(void)
 {
 #ifdef VISION_TABLES
     int i, j;
@@ -1969,8 +1904,7 @@ do_vision()
  *
 \*--------------  vision tables  --------------*/
 
-static void
-H_close_gen()
+static void H_close_gen(void)
 {
     Fprintf(ofp,"\n/* Close */\n");
     Fprintf(ofp,"#define CLOSE_MAX_SB_DY %2d\t/* |src row - block row| - 1\t*/\n",
@@ -1986,8 +1920,7 @@ H_close_gen()
     return;
 }
 
-static void
-H_far_gen()
+static void H_far_gen(void)
 {
     Fprintf(ofp,"\n/* Far */\n");
     Fprintf(ofp,"#define FAR_MAX_SB_DY %2d\t/* |src row - block row|\t*/\n",
@@ -2003,8 +1936,7 @@ H_far_gen()
     return;
 }
 
-static void
-C_close_gen()
+static void C_close_gen(void)
 {
     int i,dx,dy;
     int src_row, src_col;	/* source */
@@ -2063,8 +1995,7 @@ C_close_gen()
     return;
 }
 
-static void
-C_far_gen()
+static void C_far_gen(void)
 {
     int i,dx,dy;
     int src_row, src_col;	/* source */
@@ -2133,9 +2064,7 @@ C_far_gen()
  *  NOTE:  This had better *not* be called from a position on the
  *  same row as the hero.
  */
-static int
-clear_path(you_row,you_col,y2,x2)
-    int you_row, you_col, y2, x2;
+static int clear_path(int you_row, int you_col, int y2, int x2)
 {
     int dx, dy, s1, s2;
     int i, error, x, y, dxs, dys;

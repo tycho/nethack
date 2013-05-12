@@ -3466,8 +3466,7 @@ struct permonst _mons2[] = {
 
 #ifndef SPLITMON_1
 /* dummy routine used to force linkage */
-void
-monst_init()
+void monst_init(void)
 {
     return;
 }

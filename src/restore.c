@@ -64,8 +64,7 @@ static long omoves;
 #define Is_IceBox(o) ((o)->otyp == ICE_BOX ? TRUE : FALSE)
 
 /* Recalculate level.objects[x][y], since this info was not saved. */
-STATIC_OVL void
-find_lev_obj()
+STATIC_OVL void find_lev_obj(void)
 {
 	struct obj *fobjtmp = (struct obj *)0;
 	struct obj *otmp;
@@ -97,9 +96,7 @@ find_lev_obj()
 /* Things that were marked "in_use" when the game was saved (ex. via the
  * infamous "HUP" cheat) get used up here.
  */
-void
-inven_inuse(quietly)
-bool quietly;
+void inven_inuse(bool quietly)
 {
 	struct obj *otmp, *otmp2;
 
@@ -123,9 +120,7 @@ bool quietly;
 	}
 }
 
-STATIC_OVL void
-restlevchn(fd)
-int fd;
+STATIC_OVL void restlevchn(int fd)
 {
 	int cnt;
 	s_level	*tmplev, *x;
@@ -146,10 +141,7 @@ int fd;
 	}
 }
 
-STATIC_OVL void
-restdamage(fd, ghostly)
-int fd;
-bool ghostly;
+STATIC_OVL void restdamage(int fd, bool ghostly)
 {
 	int counter;
 	struct damage *tmp_dam;
@@ -189,10 +181,7 @@ bool ghostly;
 	free((genericptr_t)tmp_dam);
 }
 
-STATIC_OVL struct obj *
-restobjchn(fd, ghostly, frozen)
-int fd;
-bool ghostly, frozen;
+STATIC_OVL struct obj *restobjchn(int fd, bool ghostly, bool frozen)
 {
 	struct obj *otmp, *otmp2 = 0;
 	struct obj *first = (struct obj *)0;
@@ -239,10 +228,7 @@ bool ghostly, frozen;
 	return(first);
 }
 
-STATIC_OVL struct monst *
-restmonchn(fd, ghostly)
-int fd;
-bool ghostly;
+STATIC_OVL struct monst *restmonchn(int fd, bool ghostly)
 {
 	struct monst *mtmp, *mtmp2 = 0;
 	struct monst *first = (struct monst *)0;
@@ -308,9 +294,7 @@ bool ghostly;
 	return(first);
 }
 
-STATIC_OVL struct fruit *
-loadfruitchn(fd)
-int fd;
+STATIC_OVL struct fruit *loadfruitchn(int fd)
 {
 	struct fruit *flist, *fnext;
 
@@ -325,9 +309,7 @@ int fd;
 	return flist;
 }
 
-STATIC_OVL void
-freefruitchn(flist)
-struct fruit *flist;
+STATIC_OVL void freefruitchn(struct fruit *flist)
 {
 	struct fruit *fnext;
 
@@ -338,9 +320,7 @@ struct fruit *flist;
 	}
 }
 
-STATIC_OVL void
-ghostfruit(otmp)
-struct obj *otmp;
+STATIC_OVL void ghostfruit(struct obj *otmp)
 {
 	struct fruit *oldf;
 
@@ -351,11 +331,11 @@ struct obj *otmp;
 	else otmp->spe = fruitadd(oldf->fname);
 }
 
-STATIC_OVL
-bool
-restgamestate(fd, stuckid, steedid)
-int fd;
-unsigned int *stuckid, *steedid;	/* STEED */
+STATIC_OVL bool restgamestate(
+	int fd,
+	unsigned int *stuckid,
+	unsigned int *steedid	/* STEED */
+)
 {
 	/* discover is actually flags.explore */
 	bool remember_discover = discover;
@@ -453,9 +433,10 @@ unsigned int *stuckid, *steedid;	/* STEED */
 /* update game state pointers to those valid for the current level (so we
  * don't dereference a wild u.ustuck when saving the game state, for instance)
  */
-STATIC_OVL void
-restlevelstate(stuckid, steedid)
-unsigned int stuckid, steedid;	/* STEED */
+STATIC_OVL void restlevelstate(
+	unsigned int stuckid,
+	unsigned int steedid	/* STEED */
+)
 {
 	struct monst *mtmp;
 
@@ -477,13 +458,7 @@ unsigned int stuckid, steedid;	/* STEED */
 }
 
 /*ARGSUSED*/	/* fd used in MFLOPPY only */
-STATIC_OVL int
-restlevelfile(fd, ltmp)
-int fd;
-xchar ltmp;
-#if defined(macintosh) && (defined(__SC__) || defined(__MRC__))
-# pragma unused(fd)
-#endif
+STATIC_OVL int restlevelfile(int fd, xchar ltmp)
 {
 	int nfd;
 	char whynot[BUFSZ];
@@ -539,9 +514,7 @@ xchar ltmp;
 	return(2);
 }
 
-int
-dorecover(fd)
-int fd;
+int dorecover(int fd)
 {
 	unsigned int stuckid = 0, steedid = 0;	/* not a register */
 	xchar ltmp;
@@ -680,9 +653,7 @@ int fd;
 	return(1);
 }
 
-void
-trickery(reason)
-char *reason;
+void trickery(char *reason)
 {
 	pline("Strange, this map is not as I remember it.");
 	pline("Somebody is trying some trickery here...");
@@ -691,11 +662,7 @@ char *reason;
 	done(TRICKED);
 }
 
-void
-getlev(fd, pid, lev, ghostly)
-int fd, pid;
-xchar lev;
-bool ghostly;
+void getlev(int fd, int pid, xchar lev, bool ghostly)
 {
 	struct trap *trap;
 	struct monst *mtmp;
@@ -904,8 +871,7 @@ bool ghostly;
 
 
 /* Clear all structures for object and monster ID mapping. */
-STATIC_OVL void
-clear_id_mapping()
+STATIC_OVL void clear_id_mapping(void)
 {
     struct bucket *curr;
 
@@ -917,9 +883,7 @@ clear_id_mapping()
 }
 
 /* Add a mapping to the ID map. */
-STATIC_OVL void
-add_id_mapping(gid, nid)
-    unsigned gid, nid;
+STATIC_OVL void add_id_mapping(unsigned gid, unsigned nid)
 {
     int idx;
 
@@ -942,9 +906,7 @@ add_id_mapping(gid, nid)
  * in the new ID value.  Otherwise, return false and return -1 in the new
  * ID.
  */
-bool
-lookup_id_mapping(gid, nidp)
-    unsigned gid, *nidp;
+bool lookup_id_mapping(unsigned gid, unsigned *nidp)
 {
     int i;
     struct bucket *curr;
@@ -968,9 +930,7 @@ lookup_id_mapping(gid, nidp)
     return FALSE;
 }
 
-STATIC_OVL void
-reset_oattached_mids(ghostly)
-bool ghostly;
+STATIC_OVL void reset_oattached_mids(bool ghostly)
 {
     struct obj *otmp;
     unsigned oldid, nid;
@@ -1006,8 +966,7 @@ static unsigned short inbufsz = 0;
 static short inrunlength = -1;
 static int mreadfd;
 
-static int
-mgetc()
+static int mgetc(void)
 {
     if (inbufp >= inbufsz) {
 	inbufsz = read(mreadfd, (genericptr_t)inbuf, sizeof inbuf);
@@ -1022,19 +981,14 @@ mgetc()
     return inbuf[inbufp++];
 }
 
-void
-minit()
+void minit(void)
 {
     inbufsz = 0;
     inbufp = 0;
     inrunlength = -1;
 }
 
-int
-mread(fd, buf, len)
-int fd;
-genericptr_t buf;
-unsigned len;
+int mread(int fd, genericptr_t buf, unsigned len)
 {
     /*int readlen = 0;*/
     if (fd < 0) error("Restore error; mread attempting to read file %d.", fd);
@@ -1057,17 +1011,12 @@ unsigned len;
 
 #else /* ZEROCOMP */
 
-void
-minit()
+void minit(void)
 {
     return;
 }
 
-void
-mread(fd, buf, len)
-int fd;
-genericptr_t buf;
-unsigned int len;
+void mread(int fd, genericptr_t buf, unsigned int len)
 {
 	int rlen;
 

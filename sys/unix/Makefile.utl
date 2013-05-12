@@ -88,7 +88,7 @@ CC = gcc
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -O2 -std=gnu89 -fno-strict-aliasing -Wundef -Wimplicit -Wshadow -Wstrict-prototypes -U_FORTIFY_SOURCE -I../include
+CFLAGS = -O2 -std=gnu89 -fno-strict-aliasing -Wundef -Wimplicit -Wshadow -Wstrict-prototypes -Werror=old-style-definition -U_FORTIFY_SOURCE -I../include
 
 CFLAGS += -I../include
 ifeq ("$(GRAPHICS)","X11_GRAPHICS")

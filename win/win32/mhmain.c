@@ -82,7 +82,7 @@ HWND mswin_init_main_window () {
 	return ret;
 }
 
-void register_main_window_class()
+void register_main_window_class(void)
 {
 	WNDCLASS wcex;
 	
@@ -865,7 +865,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-void mswin_menu_check_intf_mode()
+void mswin_menu_check_intf_mode(void)
 {
     HMENU hMenu = GetMenu(GetNHApp()->hMainWnd);
 

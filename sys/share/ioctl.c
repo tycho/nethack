@@ -77,16 +77,14 @@ extern void NDECL(linux_mapoff);
 #endif
 
 #ifdef AUX
-void
-catch_stp()
+void catch_stp(void)
 {
     signal(SIGTSTP, SIG_DFL);
     dosuspend();
 }
 #endif /* AUX */
 
-void
-getwindowsz()
+void getwindowsz(void)
 {
 #ifdef USE_WIN_IOCTL
     /*
@@ -108,8 +106,7 @@ getwindowsz()
 #endif
 }
 
-void
-getioctls()
+void getioctls(void)
 {
 #ifdef BSD_JOB_CONTROL
 	(void) ioctl(fileno(stdin), (int) TIOCGLTC, (char *) &ltchars);
@@ -131,8 +128,7 @@ getioctls()
 #endif
 }
 
-void
-setioctls()
+void setioctls(void)
 {
 #ifdef BSD_JOB_CONTROL
 	(void) ioctl(fileno(stdin), (int) TIOCSLTC, (char *) &ltchars);
@@ -150,8 +146,7 @@ setioctls()
 }
 
 #ifdef SUSPEND		/* No longer implies BSD */
-int
-dosuspend()
+int dosuspend(void)
 {
 # ifdef SIGTSTP
 	if(signal(SIGTSTP, SIG_IGN) == SIG_DFL) {

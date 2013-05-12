@@ -519,8 +519,7 @@ ghack_map_cliparound( GtkWidget *win,
 
 
 
-void
-ghack_reinit_map_window ( )
+void ghack_reinit_map_window(void)
 {
   GnomeCanvasImage  *bg;
   double width, height, x, y;

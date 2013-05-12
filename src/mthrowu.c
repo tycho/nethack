@@ -32,11 +32,12 @@ STATIC_OVL const char *breathwep[] = {
 };
 
 /* hero is hit by something other than a monster */
-int
-thitu(tlev, dam, obj, name)
-int tlev, dam;
-struct obj *obj;
-const char *name;	/* if null, then format `obj' */
+int thitu(
+	int tlev,
+	int dam,
+	struct obj *obj,
+	const char *name	/* if null, then format `obj' */
+)
 {
 	const char *onm, *knm;
 	bool is_acid;
@@ -91,11 +92,7 @@ const char *name;	/* if null, then format `obj' */
  * Returns 0 if object still exists (not destroyed).
  */
 
-STATIC_OVL int
-drop_throw(obj, ohit, x, y)
-struct obj *obj;
-bool ohit;
-int x,y;
+STATIC_OVL int drop_throw(struct obj *obj, bool ohit, int x, int y)
 {
 	int retvalu = 1;
 	int create;
@@ -136,14 +133,12 @@ int x,y;
 
 /* an object launched by someone/thing other than player attacks a monster;
    return 1 if the object has stopped moving (hit or its range used up) */
-int
-ohitmon(mtmp, otmp, range, verbose)
-struct monst *mtmp;	/* accidental target */
-struct obj *otmp;	/* missile; might be destroyed by drop_throw */
-int range;		/* how much farther will object travel if it misses */
-			/* Use -1 to signify to keep going even after hit, */
-			/* unless its gone (used for rolling_boulder_traps) */
-bool verbose;  /* give message(s) even when you can't see what happened */
+int ohitmon(
+	struct monst *mtmp,	/* accidental target */
+	struct obj *otmp,	/* missile; might be destroyed by drop_throw */
+	int range,		/* how much farther will object travel if it misses */
+	bool verbose  /* give message(s) even when you can't see what happened */
+)
 {
 	int damage, tmp;
 	bool vis, ismimic;
@@ -240,11 +235,15 @@ bool verbose;  /* give message(s) even when you can't see what happened */
 	return 0;
 }
 
-void
-m_throw(mon, x, y, dx, dy, range, obj)
-	struct monst *mon;
-	int x,y,dx,dy,range;		/* direction and range */
-	struct obj *obj;
+void m_throw(
+	struct monst *mon,
+	int x,
+	int y,
+	int dx,
+	int dy,
+	int range,		/* direction and range */
+	struct obj *obj
+)
 {
 	struct monst *mtmp;
 	struct obj *singleobj;
@@ -457,10 +456,7 @@ m_throw(mon, x, y, dx, dy, range, obj)
 #ifdef OVLB
 
 /* Remove an item from the monster's inventory and destroy it. */
-void
-m_useup(mon, obj)
-struct monst *mon;
-struct obj *obj;
+void m_useup(struct monst *mon, struct obj *obj)
 {
 	if (obj->quan > 1L) {
 		obj->quan--;
@@ -480,9 +476,7 @@ struct obj *obj;
 #ifdef OVL1
 
 /* monster attempts ranged weapon attack against player */
-void
-thrwmu(mtmp)
-struct monst *mtmp;
+void thrwmu(struct monst *mtmp)
 {
 	struct obj *otmp, *mwep;
 	xchar x, y;
@@ -613,10 +607,10 @@ struct monst *mtmp;
 #endif /* OVL1 */
 #ifdef OVLB
 
-int
-spitmu(mtmp, mattk)		/* monster spits substance at you */
-struct monst *mtmp;
-struct attack *mattk;
+int spitmu(		/* monster spits substance at you */
+	struct monst *mtmp,
+	struct attack *mattk
+)
 {
 	struct obj *otmp;
 
@@ -655,10 +649,10 @@ struct attack *mattk;
 #endif /* OVLB */
 #ifdef OVL1
 
-int
-breamu(mtmp, mattk)			/* monster breathes at you (ranged) */
-	struct monst *mtmp;
-	struct attack  *mattk;
+int breamu(			/* monster breathes at you (ranged) */
+	struct monst *mtmp,
+	struct attack *mattk
+)
 {
 	/* if new breath types are added, change AD_ACID to max type */
 	int typ = (mattk->adtyp == AD_RBRE) ? rnd(AD_ACID) : mattk->adtyp ;
@@ -697,9 +691,7 @@ breamu(mtmp, mattk)			/* monster breathes at you (ranged) */
 	return(1);
 }
 
-bool
-linedup(ax, ay, bx, by)
-xchar ax, ay, bx, by;
+bool linedup(xchar ax, xchar ay, xchar bx, xchar by)
 {
 	tbx = ax - bx;	/* These two values are set for use */
 	tby = ay - by;	/* after successful return.	    */
@@ -716,9 +708,9 @@ xchar ax, ay, bx, by;
 	return FALSE;
 }
 
-bool
-lined_up(mtmp)		/* is mtmp in position to use ranged attack? */
-	struct monst *mtmp;
+bool lined_up(		/* is mtmp in position to use ranged attack? */
+	struct monst *mtmp
+)
 {
 	return(linedup(mtmp->mux,mtmp->muy,mtmp->mx,mtmp->my));
 }
@@ -728,10 +720,7 @@ lined_up(mtmp)		/* is mtmp in position to use ranged attack? */
 
 /* Check if a monster is carrying a particular item.
  */
-struct obj *
-m_carrying(mtmp, type)
-struct monst *mtmp;
-int type;
+struct obj *m_carrying(struct monst *mtmp, int type)
 {
 	struct obj *otmp;
 
@@ -742,12 +731,13 @@ int type;
 }
 
 /* TRUE iff thrown/kicked/rolled object doesn't pass through iron bars */
-bool
-hits_bars(obj_p, x, y, always_hit, whodidit)
-struct obj **obj_p;	/* *obj_p will be set to NULL if object breaks */
-int x, y;
-int always_hit;	/* caller can force a hit for items which would fit through */
-int whodidit;	/* 1==hero, 0=other, -1==just check whether it'll pass thru */
+bool hits_bars(
+	struct obj **obj_p,	/* *obj_p will be set to NULL if object breaks */
+	int x,
+	int y,
+	int always_hit,	/* caller can force a hit for items which would fit through */
+	int whodidit	/* 1==hero, 0=other, -1==just check whether it'll pass thru */
+)
 {
     struct obj *otmp = *obj_p;
     int obj_type = otmp->otyp;

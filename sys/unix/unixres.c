@@ -127,9 +127,7 @@ static unsigned int hiding_privileges = 0;
  * Note: returns the value _after_ action.
  */
 
-int
-hide_privileges(flag)
-bool flag;
+int hide_privileges(bool flag)
 {
     if (flag)
 	hiding_privileges++;
@@ -197,9 +195,7 @@ nh_getegid()
 #else	/* GETRES_SUPPORT */
 
 # ifdef GNOME_GRAPHICS 
-int
-hide_privileges(flag)
-bool flag;
+int hide_privileges(bool flag)
 {
     return 0;
 }

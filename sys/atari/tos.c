@@ -123,8 +123,7 @@ static const char scanmap[] = { 	/* ... */
 #define CTRL		0x4
 #define ALT		0x8
 
-static char
-BIOSgetch()
+static char BIOSgetch(void)
 {
 	unsigned char scan, shift, ch;
 	const struct pad *kpad;
@@ -159,16 +158,13 @@ BIOSgetch()
 	return ch;
 }
 
-static char
-DOSgetch()
+static char DOSgetch(void)
 {
 	return (Crawcin() & 0x007f);
 }
 
 
-long
-freediskspace(path)
-char *path;
+long freediskspace(char *path)
 {
 	int drive = 0;
 	struct {
@@ -186,28 +182,22 @@ char *path;
 /*
  * Functions to get filenames using wildcards
  */
-int
-findfirst(path)
-char *path;
+int findfirst(char *path)
 {
 	return (Fsfirst(path, 0) == 0);
 }
 
-int
-findnext()
+int findnext(void)
 {
 	return (Fsnext() == 0);
 }
 
-char *
-foundfile_buffer()
+char *foundfile_buffer(void)
 {
 	return (char *)Fgetdta() + 30;
 }
 
-long
-filesize(file)
-char *file;
+long filesize(char *file)
 {
 	if (findfirst(file))
 		return  (* (long *) ((char *)Fgetdta() + 26));
@@ -218,9 +208,7 @@ char *file;
 /*
  * Chdrive() changes the default drive.
  */
-void
-chdrive(str)
-char *str;
+void chdrive(char *str)
 {
 	char *ptr;
 	char drive;
@@ -233,8 +221,7 @@ char *str;
 }
 
 
-void
-get_scr_size()
+void get_scr_size(void)
 {
 # ifdef MINT
 #  include <ioctl.h>
@@ -261,9 +248,7 @@ get_scr_size()
 
 # define BIGBUF  8192
 
-int
-_copyfile(from, to)
-char *from, *to;
+int _copyfile(char *from, char *to)
 {
 	int fromfd, tofd, r;
 	char *buf;
@@ -286,8 +271,7 @@ int kbhit()
 	return Cconis();
 }
 
-static void
-init_aline()
+static void init_aline(void)
 {
 # ifdef __GNUC__
 /* line A calls nuke registers d0-d2,a0-a2; not all compilers regard these
@@ -308,8 +292,7 @@ init_aline()
 /* used in termcap.c to decide how to set up the hilites */
 unsigned long tos_numcolors = 2;
 
-void
-set_colors()
+void set_colors(void)
 {
 	static char colorHE[] = "\033q\033b0";
 
@@ -326,8 +309,7 @@ set_colors()
 	}
 }
 
-void
-restore_colors()
+void restore_colors(void)
 {
 	static char plainHE[] = "\033q";
 

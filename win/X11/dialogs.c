@@ -262,9 +262,7 @@ SetDialogResponse(w, s)
 
 #if 0
 /* clear the response */
-void
-ClearDialogResponse(w)
-    Widget w;
+void ClearDialogResponse(Widget w)
 {
     Arg args[2];
     Widget response;
@@ -280,10 +278,10 @@ ClearDialogResponse(w)
 /* Not a part of the original dialogs.c from ghostview --------------------- */
 
 /* position popup window under the cursor */
-void
-positionpopup(w, bottom)
-    Widget w;
-    bool bottom;	/* position y on bottom? */
+void positionpopup(
+	Widget w,
+	bool bottom	/* position y on bottom? */
+)
 {
     Arg args[3];
     Cardinal num_args;

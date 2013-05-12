@@ -79,8 +79,7 @@ ghack_init_glyphs(const char *xpmFile)
     return (ghack_tiles == NULL) ? -1 : 0;
 }
 
-void
-ghack_free_glyphs( )
+void ghack_free_glyphs(void)
 {
     int i;
     for ( i=0 ; i<ghack_glyphs.count ; i++)
@@ -104,8 +103,7 @@ ghack_free_glyphs( )
  *     Simply reports the number of glyphs in this object.
  */
 
-int
-ghack_glyph_count( )
+int ghack_glyph_count(void)
 {
   return ghack_glyphs.count;
 }
@@ -124,8 +122,7 @@ ghack_glyph_count( )
  *     Returns the standard glyph height.
  */
 
-int
-ghack_glyph_height()
+int ghack_glyph_height(void)
 {
   return ghack_glyphs.height;
 }
@@ -144,8 +141,7 @@ ghack_glyph_height()
  *     Returns the standard glyph width.
  */
 
-int
-ghack_glyph_width()
+int ghack_glyph_width(void)
 {
   return ghack_glyphs.width;
 }

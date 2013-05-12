@@ -980,7 +980,7 @@ void NDECL(objects_init);
 
 /* dummy routine used to force linkage */
 void
-objects_init()
+objects_init(void)
 {
     return;
 }

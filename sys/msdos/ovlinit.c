@@ -16,8 +16,9 @@
  *  bytes) - the amount to be reserved for heap allocations.
  *
  */
-unsigned memavail(minovl)
-unsigned minovl;			/* minimum size of overlay heap */
+unsigned memavail(
+	unsigned minovl			/* minimum size of overlay heap */
+)
 {
 	unsigned available;
 
@@ -67,7 +68,7 @@ int xmsstatus;
 
 void NDECL(_resizeOvrBuffer);
 
-void _resizeOvrBuffer()
+void _resizeOvrBuffer(void)
 {
    mem_top = (unsigned far *) MK_FP( _psp, 0x02 );
    total = *mem_top - _psp;
@@ -95,8 +96,7 @@ void _resizeOvrBuffer()
 
 #pragma startup _resizeOvrBuffer 0      /* Put function in table */
 
-void
-startup ()
+void startup(void)
 {
 	if (appFail) {
 	    printf ("NetHack fits in memory, but it cannot allocate memory");
@@ -117,9 +117,7 @@ startup ()
      }
 }
 
-void
-show_borlandc_stats(win)
-winid win;
+void show_borlandc_stats(winid win)
 {
 	char buf[BUFSZ];
 

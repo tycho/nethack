@@ -26,10 +26,7 @@ extern bool inmap;			/* from video.c */
  * Returns TRUE if the scan code triggered something.
  *
  */
-bool
-pckeys(scancode, shift)
-unsigned char scancode;
-unsigned char shift;
+bool pckeys(int scancode, int shift)
 {
    bool opening_dialog;
 

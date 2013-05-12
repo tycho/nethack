@@ -99,10 +99,8 @@ lev_init init_lev;
  * Make walls of the area (x1, y1, x2, y2) non diggable/non passwall-able
  */
 
-STATIC_OVL void
-set_wall_property(x1,y1,x2,y2, prop)
-xchar x1, y1, x2, y2;
-int prop;
+STATIC_OVL void set_wall_property(xchar x1, xchar y1, xchar x2, xchar y2,
+	int prop)
 {
 	xchar x, y;
 
@@ -115,8 +113,7 @@ int prop;
 /*
  * Choose randomly the state (nodoor, open, closed or locked) for a door
  */
-STATIC_OVL int
-rnddoor()
+STATIC_OVL int rnddoor(void)
 {
 	int i = 1 << rn2(5);
 	i >>= 1;
@@ -126,8 +123,7 @@ rnddoor()
 /*
  * Select a random trap
  */
-STATIC_OVL int
-rndtrap()
+STATIC_OVL int rndtrap(void)
 {
 	int rtrap;
 
@@ -166,10 +162,7 @@ rndtrap()
 
 STATIC_DCL bool FDECL(is_ok_location, (schar, schar, int));
 
-STATIC_OVL void
-get_location(x, y, humidity)
-schar *x, *y;
-int humidity;
+STATIC_OVL void get_location(schar *x, schar *y, int humidity)
 {
 	int cpt = 0;
 
@@ -205,10 +198,7 @@ found_it:;
 	}
 }
 
-STATIC_OVL bool
-is_ok_location(x, y, humidity)
-schar x, y;
-int humidity;
+STATIC_OVL bool is_ok_location(schar x, schar y, int humidity)
 {
 	int typ;
 
@@ -231,10 +221,7 @@ int humidity;
  * Shuffle the registers for locations, objects or monsters
  */
 
-STATIC_OVL void
-sp_lev_shuffle(list1, list2, n)
-char list1[], list2[];
-int n;
+STATIC_OVL void sp_lev_shuffle(char list1[], char list2[], int n)
 {
 	int i, j;
 	char k;
@@ -257,10 +244,7 @@ int n;
  * negative values for x or y means RANDOM!
  */
 
-STATIC_OVL void
-get_room_loc(x,y, croom)
-schar		*x, *y;
-struct mkroom	*croom;
+STATIC_OVL void get_room_loc(schar *x, schar *y, struct mkroom *croom)
 {
 	coord c;
 
@@ -285,10 +269,7 @@ struct mkroom	*croom;
  * negative values for x or y means RANDOM!
  */
 
-STATIC_OVL void
-get_free_room_loc(x,y, croom)
-schar		*x, *y;
-struct mkroom	*croom;
+STATIC_OVL void get_free_room_loc(schar *x, schar *y, struct mkroom *croom)
 {
 	schar try_x, try_y;
 	int trycnt = 0;
@@ -303,10 +284,7 @@ struct mkroom	*croom;
 	*x = try_x,  *y = try_y;
 }
 
-bool
-check_room(lowx, ddx, lowy, ddy, vault)
-xchar *lowx, *ddx, *lowy, *ddy;
-bool vault;
+bool check_room(xchar *lowx, xchar *ddx, xchar *lowy, xchar *ddy, bool vault)
 {
 	int x,y,hix = *lowx + *ddx, hiy = *lowy + *ddy;
 	struct rm *lev;
@@ -358,12 +336,8 @@ chk:
  * This is still very incomplete...
  */
 
-bool
-create_room(x,y,w,h,xal,yal,rtype,rlit)
-xchar	x,y;
-xchar	w,h;
-xchar	xal,yal;
-xchar	rtype, rlit;
+bool create_room(xchar x, xchar y, xchar w, xchar h, xchar xal, xchar yal,
+		xchar rtype, xchar rlit)
 {
 	xchar	xabs, yabs;
 	int	wtmp, htmp, xaltmp, yaltmp, xtmp, ytmp;
@@ -528,12 +502,8 @@ xchar	rtype, rlit;
  * x & y are relative to the parent room.
  */
 
-STATIC_OVL bool
-create_subroom(proom, x, y, w,  h, rtype, rlit)
-struct mkroom *proom;
-xchar x,y;
-xchar w,h;
-xchar rtype, rlit;
+STATIC_OVL bool create_subroom( struct mkroom *proom, xchar x, xchar y,
+		xchar w, xchar h, xchar rtype, xchar rlit)
 {
 	xchar width, height;
 
@@ -577,10 +547,7 @@ xchar rtype, rlit;
  * It's placed on a wall (north, south, east or west).
  */
 
-STATIC_OVL void
-create_door(dd, broom)
-room_door *dd;
-struct mkroom *broom;
+STATIC_OVL void create_door(room_door *dd, struct mkroom *broom)
 {
 	int	x, y;
 	int	trycnt = 0;
@@ -661,10 +628,10 @@ struct mkroom *broom;
 /*
  * Create a secret door in croom on any one of the specified walls.
  */
-void
-create_secret_door(croom, walls)
-    struct mkroom *croom;
-    xchar walls; /* any of W_NORTH | W_SOUTH | W_EAST | W_WEST (or W_ANY) */
+void create_secret_door(
+    struct mkroom *croom,
+    xchar walls		        /* any of W_NORTH | W_SOUTH | W_EAST | W_WEST (or W_ANY) */
+)
 {
     xchar sx, sy; /* location of the secret door */
     int count;
@@ -703,10 +670,7 @@ create_secret_door(croom, walls)
  * Create a trap in a room.
  */
 
-STATIC_OVL void
-create_trap(t,croom)
-trap	*t;
-struct mkroom	*croom;
+STATIC_OVL void create_trap(trap *t, struct mkroom *croom)
 {
     schar	x,y;
     coord	tm;
@@ -730,9 +694,7 @@ struct mkroom	*croom;
  * Create a monster in a room.
  */
 
-STATIC_OVL int
-noncoalignment(alignment)
-aligntyp alignment;
+STATIC_OVL int noncoalignment(aligntyp alignment)
 {
 	int k;
 
@@ -742,10 +704,7 @@ aligntyp alignment;
 	return(k ? -alignment : 0);
 }
 
-STATIC_OVL void
-create_monster(m,croom)
-monster	*m;
-struct mkroom	*croom;
+STATIC_OVL void create_monster(monster *m, struct mkroom *croom)
 {
     struct monst *mtmp;
     schar x, y;
@@ -903,10 +862,7 @@ struct mkroom	*croom;
  * Create an object in a room.
  */
 
-STATIC_OVL void
-create_object(o,croom)
-object	*o;
-struct mkroom	*croom;
+STATIC_OVL void create_object(object *o, struct mkroom *croom)
 {
     struct obj *otmp;
     schar x, y;
@@ -1041,10 +997,7 @@ struct mkroom	*croom;
 /*
  * Randomly place a specific engraving, then release its memory.
  */
-STATIC_OVL void
-create_engraving(e, croom)
-engraving *e;
-struct mkroom *croom;
+STATIC_OVL void create_engraving(engraving *e, struct mkroom *croom)
 {
 	xchar x, y;
 
@@ -1063,10 +1016,7 @@ struct mkroom *croom;
  *
  */
 
-STATIC_OVL void
-create_stairs(s,croom)
-stair	*s;
-struct mkroom	*croom;
+STATIC_OVL void create_stairs(stair *s, struct mkroom *croom)
 {
 	schar		x,y;
 
@@ -1079,10 +1029,7 @@ struct mkroom	*croom;
  * Create an altar in a room.
  */
 
-STATIC_OVL void
-create_altar(a, croom)
-	altar		*a;
-	struct mkroom	*croom;
+STATIC_OVL void create_altar(altar *a, struct mkroom *croom)
 {
 	schar		sproom,x,y;
 	aligntyp	amask;
@@ -1149,10 +1096,7 @@ create_altar(a, croom)
  * Create a gold pile in a room.
  */
 
-STATIC_OVL void
-create_gold(g,croom)
-gold *g;
-struct mkroom	*croom;
+STATIC_OVL void create_gold(gold *g, struct mkroom *croom)
 {
 	schar		x,y;
 
@@ -1171,11 +1115,7 @@ struct mkroom	*croom;
  * Create a feature (e.g a fountain) in a room.
  */
 
-STATIC_OVL void
-create_feature(fx, fy, croom, typ)
-int		fx, fy;
-struct mkroom	*croom;
-int		typ;
+STATIC_OVL void create_feature(int fx, int fy, struct mkroom *croom, int typ)
 {
 	schar		x,y;
 	int		trycnt = 0;
@@ -1212,12 +1152,8 @@ int		typ;
  * Search for a door in a room on a specified wall.
  */
 
-STATIC_OVL bool
-search_door(croom,x,y,wall,cnt)
-struct mkroom *croom;
-xchar *x, *y;
-xchar wall;
-int cnt;
+STATIC_OVL bool search_door(struct mkroom *croom, xchar *x, xchar *y,
+		xchar wall, int cnt)
 {
 	int dx, dy;
 	int xx,yy;
@@ -1265,11 +1201,7 @@ int cnt;
  * Dig a corridor between two points.
  */
 
-bool
-dig_corridor(org,dest,nxcor,ftyp,btyp)
-coord *org, *dest;
-bool nxcor;
-schar ftyp, btyp;
+bool dig_corridor(coord *org, coord *dest, bool nxcor, schar ftyp, schar btyp)
 {
 	int dx=0, dy=0, dix, diy, cct;
 	struct rm *crm;
@@ -1373,8 +1305,7 @@ schar ftyp, btyp;
  * and dnstairs_room after the rooms have been sorted.  On normal levels,
  * stairs don't get created until _after_ sorting takes place.
  */
-STATIC_OVL void
-fix_stair_rooms()
+STATIC_OVL void fix_stair_rooms(void)
 {
     int i;
     struct mkroom *croom;
@@ -1415,9 +1346,7 @@ fix_stair_rooms()
  * (from a distance).
  */
 
-STATIC_OVL void
-create_corridor(c)
-corridor	*c;
+STATIC_OVL void create_corridor(corridor *c)
 {
 	coord org, dest;
 
@@ -1457,10 +1386,7 @@ corridor	*c;
  * Fill a room (shop, zoo, etc...) with appropriate stuff.
  */
 
-void
-fill_room(croom, prefilled)
-struct mkroom *croom;
-bool prefilled;
+void fill_room(struct mkroom *croom, bool prefilled)
 {
 	if (!croom || croom->rtype == OROOM)
 	    return;
@@ -1518,10 +1444,7 @@ bool prefilled;
 	}
 }
 
-STATIC_OVL void
-free_rooms(ro, n)
-room **ro;
-int n;
+STATIC_OVL void free_rooms(room **ro, int n)
 {
 	short j;
 	room *r;
@@ -1590,9 +1513,7 @@ int n;
 	Free(ro);
 }
 
-STATIC_OVL void
-build_room(r, pr)
-room *r, *pr;
+STATIC_OVL void build_room(room *r, room *pr)
 {
 	bool okroom;
 	struct mkroom	*aroom;
@@ -1671,9 +1592,7 @@ room *r, *pr;
 /*
  * set lighting in a region that will not become a room.
  */
-STATIC_OVL void
-light_region(tmpregion)
-    region  *tmpregion;
+STATIC_OVL void light_region(region *tmpregion)
 {
     bool litstate = tmpregion->rlit ? 1 : 0;
     int hiy = tmpregion->y2;
@@ -1700,10 +1619,7 @@ light_region(tmpregion)
 }
 
 /* initialization common to all special levels */
-STATIC_OVL void
-load_common_data(fd, typ)
-dlb *fd;
-int typ;
+STATIC_OVL void load_common_data(dlb *fd, int typ)
 {
 	uchar	n;
 	long	lev_flags;
@@ -1748,10 +1664,7 @@ int typ;
 	}
 }
 
-STATIC_OVL void
-load_one_monster(fd, m)
-dlb *fd;
-monster *m;
+STATIC_OVL void load_one_monster(dlb *fd, monster *m)
 {
 	int size;
 
@@ -1770,10 +1683,7 @@ monster *m;
 	    m->appear_as.str = (char *) 0;
 }
 
-STATIC_OVL void
-load_one_object(fd, o)
-dlb *fd;
-object *o;
+STATIC_OVL void load_one_object(dlb *fd, object *o)
 {
 	int size;
 
@@ -1786,10 +1696,7 @@ object *o;
 	    o->name.str = (char *) 0;
 }
 
-STATIC_OVL void
-load_one_engraving(fd, e)
-dlb *fd;
-engraving *e;
+STATIC_OVL void load_one_engraving(dlb *fd, engraving *e)
 {
 	int size;
 
@@ -1800,9 +1707,7 @@ engraving *e;
 	e->engr.str[size] = '\0';
 }
 
-STATIC_OVL bool
-load_rooms(fd)
-dlb *fd;
+STATIC_OVL bool load_rooms(dlb *fd)
 {
 	xchar		nrooms, ncorr;
 	char		n;
@@ -2030,10 +1935,7 @@ dlb *fd;
  * the maze outside every part of the special level.
  */
 
-STATIC_OVL void
-maze1xy(m, humidity)
-coord *m;
-int humidity;
+STATIC_OVL void maze1xy(coord *m, int humidity)
 {
 	int x, y, tryct = 2000;
 	/* tryct:  normally it won't take more than ten or so tries due
@@ -2056,9 +1958,7 @@ int humidity;
  * Could be cleaner, but it works.
  */
 
-STATIC_OVL bool
-load_maze(fd)
-dlb *fd;
+STATIC_OVL bool load_maze(dlb *fd)
 {
     xchar   x, y, typ;
     bool prefilled, room_not_needed;
@@ -2626,9 +2526,7 @@ dlb *fd;
  * General loader
  */
 
-bool
-load_special(name)
-const char *name;
+bool load_special(const char *name)
 {
 	dlb *fd;
 	bool result = FALSE;

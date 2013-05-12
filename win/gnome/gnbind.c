@@ -118,8 +118,7 @@ void gnome_init_nhwindows(int* argc, char** argv)
    offers a Quit option, it is its responsibility to clean up and terminate
    the process. You need to fill in pl_character[0].
 */
-void
-gnome_player_selection()
+void gnome_player_selection(void)
 {
     int n, i, sel;
     const char** choices;
@@ -338,7 +337,7 @@ gnome_player_selection()
 
 
 /* Ask the user for a player name. */
-void gnome_askname()
+void gnome_askname(void)
 {
     int ret;
 
@@ -359,7 +358,7 @@ void gnome_askname()
 /* Does window event processing (e.g. exposure events).
    A noop for the tty and X window-ports.
 */
-void gnome_get_nh_event()
+void gnome_get_nh_event(void)
 {
 	/* We handle our own events. */
 	return;
@@ -383,7 +382,7 @@ void gnome_suspend_nhwindows(const char *str)
 
 
 /* Restore the windows after being suspended. */
-void gnome_resume_nhwindows()
+void gnome_resume_nhwindows(void)
 {
 	/* Do Nothing.  Un-necessary since the GUI will refresh itself. */
 	return;
@@ -798,7 +797,7 @@ int gnome_select_menu(winid wid, int how, MENU_ITEM_P **selected)
     -- Merely calls display_inventory() for window-ports that leave the 
 	window up, otherwise empty.
 */
-void gnome_update_inventory()
+void gnome_update_inventory(void)
 {
     ghack_main_window_update_inventory();
 }
@@ -808,7 +807,7 @@ mark_synch()    -- Don't go beyond this point in I/O on any channel until
                    all channels are caught up to here.  Can be an empty call
                    for the moment
 */
-void gnome_mark_synch()
+void gnome_mark_synch(void)
 {
 	/* Do nothing */
 }
@@ -819,7 +818,7 @@ wait_synch()    -- Wait until all pending output is complete (*flush*() for
                 -- May also deal with exposure events etc. so that the
                    display is OK when return from wait_synch().
 */
-void gnome_wait_synch()
+void gnome_wait_synch(void)
 {
 	/* Do nothing */
 }
@@ -902,7 +901,7 @@ int nhgetch()   -- Returns a single character input from the user.
                    will be the routine the OS provides to read a character.
                    Returned character _must_ be non-zero.
 */
-int gnome_nhgetch()
+int gnome_nhgetch(void)
 {
     int key;
     GList *theFirst;
@@ -980,7 +979,7 @@ int gnome_nh_poskey(int *x, int *y, int *mod)
 nhbell()        -- Beep at user.  [This will exist at least until sounds are
                    redone, since sounds aren't attributable to windows anyway.]
 */
-void gnome_nhbell()
+void gnome_nhbell(void)
 {
     /* FIXME!!! Play a cool GNOME sound instead */
     gdk_beep();
@@ -991,7 +990,7 @@ doprev_message()
                 -- Display previous messages.  Used by the ^P command.
                 -- On the tty-port this scrolls WIN_MESSAGE back one line.
 */
-int gnome_doprev_message()
+int gnome_doprev_message(void)
 {
     /* Do Nothing.  They can read old messages using the scrollbar. */
     return 0;
@@ -1094,7 +1093,7 @@ int get_ext_cmd(void)
 	       An index into extcmdlist[] is returned on a successful
 	       selection, -1 otherwise.
 */
-int gnome_get_ext_cmd()
+int gnome_get_ext_cmd(void)
 {
     return ghack_menu_ext_cmd();
 }
@@ -1114,7 +1113,7 @@ delay_output()  -- Causes a visible delay of 50ms in the output.
 	       Conceptually, this is similar to wait_synch() followed
 	       by a nap(50ms), but allows asynchronous operation.
 */
-void gnome_delay_output()
+void gnome_delay_output(void)
 {
     if (gnome_windowlist[WIN_MESSAGE].win != NULL) {
 	gtk_signal_emit( GTK_OBJECT (gnome_windowlist[WIN_MESSAGE].win),
@@ -1130,7 +1129,7 @@ start_screen()  -- Only used on Unix tty ports, but must be declared for
 	       example.  If your window-port does not need this function
 	       just declare an empty function.
 */
-void gnome_start_screen()
+void gnome_start_screen(void)
 {
     /* Do Nothing */
 }
@@ -1139,7 +1138,7 @@ void gnome_start_screen()
 end_screen()    -- Only used on Unix tty ports, but must be declared for
 	       completeness.  The complement of start_screen().
 */
-void gnome_end_screen()
+void gnome_end_screen(void)
 {
     /* Do Nothing */
 }

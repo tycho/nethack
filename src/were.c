@@ -5,9 +5,7 @@
 
 #ifdef OVL0
 
-void
-were_change(mon)
-struct monst *mon;
+void were_change(struct monst *mon)
 {
 	if (!is_were(mon->data))
 	    return;
@@ -39,9 +37,7 @@ struct monst *mon;
 
 STATIC_DCL int FDECL(counter_were,(int));
 
-STATIC_OVL int
-counter_were(pm)
-int pm;
+STATIC_OVL int counter_were(int pm)
 {
 	switch(pm) {
 	    case PM_WEREWOLF:	      return(PM_HUMAN_WEREWOLF);
@@ -54,9 +50,7 @@ int pm;
 	}
 }
 
-void
-new_were(mon)
-struct monst *mon;
+void new_were(struct monst *mon)
 {
 	int pm;
 
@@ -85,12 +79,12 @@ struct monst *mon;
 	possibly_unwield(mon, FALSE);
 }
 
-int
-were_summon(ptr,yours,visible,genbuf)	/* were-creature (even you) summons a horde */
-struct permonst *ptr;
-bool yours;
-int *visible;			/* number of visible helpers created */
-char *genbuf;
+int were_summon(	/* were-creature (even you) summons a horde */
+	struct permonst *ptr,
+	bool yours,
+	int *visible,			/* number of visible helpers created */
+	char *genbuf
+)
 {
 	int i, typ, pm = monsndx(ptr);
 	struct monst *mtmp;
@@ -131,8 +125,7 @@ char *genbuf;
 	return total;
 }
 
-void
-you_were()
+void you_were(void)
 {
 	char qbuf[QBUFSZ];
 
@@ -146,9 +139,7 @@ you_were()
 	(void) polymon(u.ulycn);
 }
 
-void
-you_unwere(purify)
-bool purify;
+void you_unwere(bool purify)
 {
 	if (purify) {
 	    You_feel("purified.");

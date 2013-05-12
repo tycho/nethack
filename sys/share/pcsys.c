@@ -57,8 +57,7 @@ extern int GUILaunched;    /* from nttty.c */
 
 #if defined(MICRO) || defined(WIN32)
 
-void
-flushout()
+void flushout(void)
 {
 	(void) fflush(stdout);
 	return;
@@ -498,7 +497,7 @@ int code;
 extern bool run_from_desktop;	/* set in pcmain.c */
 #endif
 
-static void msexit()
+static void msexit(void)
 {
 #ifdef CHDIR
 	extern char orgdir[];

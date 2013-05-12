@@ -240,8 +240,7 @@ static const char numeric_scanmap[] = { 	/* ... */
 #define ALT		0x8
 #endif /* PC9800 */
 
-static char
-BIOSgetch()
+static char BIOSgetch(void)
 {
       unsigned char scan, shift, ch=0;
       const struct pad *kpad;

@@ -353,7 +353,7 @@ int curses_character_input_dialog(const char *prompt, const char *choices, char 
 
 /* Return an extended command from the user */
 
-int curses_ext_cmd()
+int curses_ext_cmd(void)
 {
     int count, letter, prompt_width, startx, starty, winx, winy;
     int messageh, messagew;

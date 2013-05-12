@@ -49,10 +49,7 @@ int yoffset,xoffset;
 char bmpname[128];
 FILE *fp;
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int i;
 
@@ -130,9 +127,7 @@ void get_pixel(int x, int y, unsigned int *colind){
 	*colind=Bild_daten[y][x];
 }
 
-static void
-build_ximgtile(pixels)
-pixel (*pixels)[TILE_X];
+static void build_ximgtile(pixel (*pixels)[TILE_X])
 {
 	int cur_x, cur_y, cur_color;
 	int x,y;

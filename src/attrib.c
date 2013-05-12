@@ -100,10 +100,11 @@ STATIC_DCL void NDECL(exerper);
 STATIC_DCL void FDECL(postadjabil, (long *));
 
 /* adjust an attribute; return TRUE if change is made, FALSE otherwise */
-bool
-adjattrib(ndx, incr, msgflg)
-	int	ndx, incr;
-	int	msgflg;	    /* positive => no message, zero => message, and */
+bool adjattrib(
+	int ndx,
+	int incr,
+	int msgflg	    /* positive => no message, zero => message, and */
+)
 {			    /* negative => conditional (msg if change made) */
 	if (Fixed_abil || !incr) return FALSE;
 
@@ -159,10 +160,7 @@ adjattrib(ndx, incr, msgflg)
 	return TRUE;
 }
 
-void
-gainstr(otmp, incr)
-	struct obj *otmp;
-	int incr;
+void gainstr(struct obj *otmp, int incr)
 {
 	int num = 1;
 
@@ -174,9 +172,9 @@ gainstr(otmp, incr)
 	(void) adjattrib(A_STR, (otmp && otmp->cursed) ? -num : num, TRUE);
 }
 
-void
-losestr(num)	/* may kill you; cause may be poison or monster like 'a' */
-	int num;
+void losestr(	/* may kill you; cause may be poison or monster like 'a' */
+	int num
+)
 {
 	int ustr = ABASE(A_STR) - num;
 
@@ -194,18 +192,16 @@ losestr(num)	/* may kill you; cause may be poison or monster like 'a' */
 	(void) adjattrib(A_STR, -num, TRUE);
 }
 
-void
-change_luck(n)
-	schar n;
+void change_luck(schar n)
 {
 	u.uluck += n;
 	if (u.uluck < 0 && u.uluck < LUCKMIN)	u.uluck = LUCKMIN;
 	if (u.uluck > 0 && u.uluck > LUCKMAX)	u.uluck = LUCKMAX;
 }
 
-int
-stone_luck(parameter)
-bool parameter; /* So I can't think up of a good name.  So sue me. --KAA */
+int stone_luck(
+	bool parameter /* So I can't think up of a good name.  So sue me. --KAA */
+)
 {
 	struct obj *otmp;
 	long bonchance = 0;
@@ -221,8 +217,7 @@ bool parameter; /* So I can't think up of a good name.  So sue me. --KAA */
 }
 
 /* there has just been an inventory change affecting a luck-granting item */
-void
-set_moreluck()
+void set_moreluck(void)
 {
 	int luckbon = stone_luck(TRUE);
 
@@ -234,8 +229,7 @@ set_moreluck()
 #endif /* OVLB */
 #ifdef OVL1
 
-void
-restore_attrib()
+void restore_attrib(void)
 {
 	int	i;
 
@@ -258,10 +252,7 @@ restore_attrib()
 
 #define AVAL	50		/* tune value for exercise gains */
 
-void
-exercise(i, inc_or_dec)
-int	i;
-bool	inc_or_dec;
+void exercise(int i, bool inc_or_dec)
 {
 #ifdef DEBUG
 	pline("Exercise:");
@@ -301,8 +292,7 @@ bool	inc_or_dec;
 #define FAINTED		5
 #define STARVED		6
 
-STATIC_OVL void
-exerper()
+STATIC_OVL void exerper(void)
 {
 	if(!(moves % 10)) {
 		/* Hunger Checks */
@@ -362,8 +352,7 @@ exerper()
 	}
 }
 
-void
-exerchk()
+void exerchk(void)
 {
 	int	i, mod_val;
 
@@ -445,16 +434,13 @@ exerchk()
 }
 
 /* next_check will otherwise have its initial 600L after a game restore */
-void
-reset_attribute_clock()
+void reset_attribute_clock(void)
 {
 	if (moves > 600L) next_check = moves + rn1(50,800);
 }
 
 
-void
-init_attr(np)
-	int	np;
+void init_attr(int np)
 {
 	int	i, x, tryct;
 
@@ -502,8 +488,7 @@ init_attr(np)
 	}
 }
 
-void
-redist_attr()
+void redist_attr(void)
 {
 	int i, tmp;
 
@@ -521,19 +506,14 @@ redist_attr()
 	(void)encumber_msg();
 }
 
-STATIC_OVL
-void
-postadjabil(ability)
-long *ability;
+STATIC_OVL void postadjabil(long *ability)
 {
 	if (!ability) return;
 	if (ability == &(HWarning) || ability == &(HSee_invisible))
 		see_monsters();
 }
 
-void
-adjabil(oldlevel,newlevel)
-int oldlevel, newlevel;
+void adjabil(int oldlevel, int newlevel)
 {
 	const struct innate *abil, *rabil;
 	long mask = FROMEXPER;
@@ -616,8 +596,7 @@ int oldlevel, newlevel;
 }
 
 
-int
-newhp()
+int newhp(void)
 {
 	int	hp, conplus;
 
@@ -660,9 +639,7 @@ newhp()
 #endif /* OVLB */
 #ifdef OVL0
 
-schar
-acurr(x)
-int x;
+schar acurr(int x)
 {
 	int tmp = (u.abon.a[x] + u.atemp.a[x] + u.acurr.a[x]);
 
@@ -692,8 +669,7 @@ int x;
 
 /* condense clumsy ACURR(A_STR) value into value that fits into game formulas
  */
-schar
-acurrstr()
+schar acurrstr(void)
 {
 	int str = ACURR(A_STR);
 
@@ -708,9 +684,7 @@ acurrstr()
 /* avoid possible problems with alignment overflow, and provide a centralized
  * location for any future alignment limits
  */
-void
-adjalign(n)
-int n;
+void adjalign(int n)
 {
 	int newalign = u.ualign.record + n;
 

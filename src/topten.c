@@ -83,9 +83,7 @@ const char * const killed_by_prefix[] = {
 
 static winid toptenwin = WIN_ERR;
 
-STATIC_OVL void
-topten_print(x)
-const char *x;
+STATIC_OVL void topten_print(const char *x)
 {
 	if (toptenwin == WIN_ERR)
 	    raw_print(x);
@@ -93,9 +91,7 @@ const char *x;
 	    putstr(toptenwin, ATR_NONE, x);
 }
 
-STATIC_OVL void
-topten_print_bold(x)
-const char *x;
+STATIC_OVL void topten_print_bold(const char *x)
 {
 	if (toptenwin == WIN_ERR)
 	    raw_print_bold(x);
@@ -103,9 +99,7 @@ const char *x;
 	    putstr(toptenwin, ATR_BOLD, x);
 }
 
-STATIC_OVL xchar
-observable_depth(lev)
-d_level *lev;
+STATIC_OVL xchar observable_depth(d_level *lev)
 {
 #if 0	/* if we ever randomize the order of the elemental planes, we
 	   must use a constant external representation in the record file */
@@ -121,10 +115,7 @@ d_level *lev;
 	    return depth(lev);
 }
 
-STATIC_OVL void
-readentry(rfile,tt)
-FILE *rfile;
-struct toptenentry *tt;
+STATIC_OVL void readentry(FILE *rfile, struct toptenentry *tt)
 {
 #ifdef NO_SCAN_BRACK /* Version_ Pts DgnLevs_ Hp___ Died__Born id */
 	static const char fmt[] = "%d %d %d %ld %d %d %d %d %d %d %ld %ld %d%*c";
@@ -184,10 +175,7 @@ struct toptenentry *tt;
 	}
 }
 
-STATIC_OVL void
-writeentry(rfile,tt)
-FILE *rfile;
-struct toptenentry *tt;
+STATIC_OVL void writeentry(FILE *rfile, struct toptenentry *tt)
 {
 #ifdef NO_SCAN_BRACK
 	nsb_mung_line(tt->name);
@@ -225,9 +213,7 @@ struct toptenentry *tt;
 #endif
 }
 
-STATIC_OVL void
-free_ttlist(tt)
-struct toptenentry *tt;
+STATIC_OVL void free_ttlist(struct toptenentry *tt)
 {
 	struct toptenentry *ttnext;
 
@@ -239,9 +225,7 @@ struct toptenentry *tt;
 	dealloc_ttentry(tt);
 }
 
-void
-topten(how)
-int how;
+void topten(int how)
 {
 	int uid = getuid();
 	int rank, rank0 = -1, rank1 = 0;
@@ -562,8 +546,7 @@ int how;
 	}
 }
 
-STATIC_OVL void
-outheader()
+STATIC_OVL void outheader(void)
 {
 	char linebuf[BUFSZ];
 	char *bp;
@@ -579,11 +562,7 @@ outheader()
 }
 
 /* so>0: standout line; so=0: ordinary line */
-STATIC_OVL void
-outentry(rank, t1, so)
-struct toptenentry *t1;
-int rank;
-bool so;
+STATIC_OVL void outentry(int rank, struct toptenentry *t1, bool so)
 {
 	bool second_line = TRUE;
 	char linebuf[BUFSZ];
@@ -732,14 +711,7 @@ bool so;
 #endif
 }
 
-STATIC_OVL int
-score_wanted(current_ver, rank, t1, playerct, players, uid)
-bool current_ver;
-int rank;
-struct toptenentry *t1;
-int playerct;
-const char **players;
-int uid;
+STATIC_OVL int score_wanted(bool current_ver, int rank, struct toptenentry *t1, int playerct, const char **players, int uid)
 {
 	int i;
 
@@ -779,10 +751,7 @@ int uid;
  * argc >= 2, with argv[0] untrustworthy (directory names, et al.),
  * and argv[1] starting with "-s".
  */
-void
-prscore(argc,argv)
-int argc;
-char **argv;
+void prscore(int argc, char **argv)
 {
 	const char **players;
 	int playerct, rank;
@@ -920,10 +889,7 @@ char **argv;
 #endif
 }
 
-STATIC_OVL int
-classmon(plch, fem)
-	char *plch;
-	bool fem;
+STATIC_OVL int classmon(char *plch, bool fem)
 {
 	int i;
 
@@ -948,9 +914,7 @@ classmon(plch, fem)
  * Get a random player name and class from the high score list,
  * and attach them to an object (for statues or morgue corpses).
  */
-struct obj *
-tt_oname(otmp)
-struct obj *otmp;
+struct obj *tt_oname(struct obj *otmp)
 {
 	int rank;
 	int i;
@@ -998,16 +962,12 @@ pickentry:
 /* Lattice scanf isn't up to reading the scorefile.  What */
 /* follows deals with that; I admit it's ugly. (KL) */
 /* Now generally available (KL) */
-STATIC_OVL void
-nsb_mung_line(p)
-	char *p;
+STATIC_OVL void nsb_mung_line(char *p)
 {
 	while ((p = index(p, ' ')) != 0) *p = '|';
 }
 
-STATIC_OVL void
-nsb_unmung_line(p)
-	char *p;
+STATIC_OVL void nsb_unmung_line(char *p)
 {
 	while ((p = index(p, '|')) != 0) *p = ' ';
 }

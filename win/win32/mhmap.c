@@ -292,7 +292,7 @@ int mswin_map_mode(HWND hWnd, int mode)
 }
 
 /* register window class for map window */
-void register_map_window_class()
+void register_map_window_class(void)
 {
 	WNDCLASS wcex;
 	ZeroMemory( &wcex, sizeof(wcex));

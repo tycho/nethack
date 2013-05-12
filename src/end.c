@@ -96,8 +96,7 @@ extern const char * const killed_by_prefix[];	/* from topten.c */
 FILE *dump_fp = (FILE *)0;  /* file pointer for dumps */
 /* functions dump_init, dump_exit and dump are from the dump patch */
 
-static void
-dump_init()
+static void dump_init(void)
 {
   if (dump_fn[0]) {
     char *p = (char *) strstr(dump_fn, "%n");
@@ -133,15 +132,13 @@ dump_init()
   }
 }
 
-static void
-dump_exit()
+static void dump_exit(void)
 {
   if (dump_fp)
     fclose (dump_fp);
 }
 
-void dump (pre, str)
-     char *pre, *str;
+void dump(char *pre, char *str)
 {
   if (dump_fp)
     fprintf (dump_fp, "%s%s\n", pre, str);
@@ -149,9 +146,7 @@ void dump (pre, str)
 #endif  /* DUMP_LOG */
 
 /*ARGSUSED*/
-void
-done1(sig_unused)   /* called as signal() handler, so sent at least one arg */
-int sig_unused;
+void done1(int sig_unused)   /* called as signal() handler, so sent at least one arg */
 {
 #ifndef NO_SIGNAL
 	(void) signal(SIGINT,SIG_IGN);
@@ -171,8 +166,7 @@ int sig_unused;
 
 
 /* "#quit" command or keyboard interrupt */
-int
-done2()
+int done2(void)
 {
 #ifdef PARANOID
 	char buf[BUFSZ];
@@ -229,9 +223,7 @@ done2()
 
 #ifndef NO_SIGNAL
 /*ARGSUSED*/
-STATIC_PTR void
-done_intr(sig_unused) /* called as signal() handler, so sent at least one arg */
-int sig_unused;
+STATIC_PTR void done_intr(int sig_unused) /* called as signal() handler, so sent at least one arg */
 {
 	done_stopprint++;
 	(void) signal(SIGINT, SIG_IGN);
@@ -242,9 +234,7 @@ int sig_unused;
 }
 
 # if defined(UNIX) || defined(VMS) || defined(__EMX__)
-static void
-done_hangup(sig)	/* signal() handler */
-int sig;
+static void done_hangup(int sig) /* signal() handler */
 {
 	program_state.done_hup++;
 	(void)signal(SIGHUP, SIG_IGN);
@@ -254,9 +244,7 @@ int sig;
 # endif
 #endif /* NO_SIGNAL */
 
-void
-done_in_by(mtmp)
-struct monst *mtmp;
+void done_in_by(struct monst *mtmp)
 {
 	char buf[BUFSZ];
 	bool distorted = (bool)(Hallucination && canspotmon(mtmp));
@@ -385,10 +373,7 @@ panic VA_DECL(const char *, str)
 	done(PANICKED);
 }
 
-STATIC_OVL bool
-should_query_disclose_option(category, defquery)
-int category;
-char *defquery;
+STATIC_OVL bool should_query_disclose_option(int category, char *defquery)
 {
     int idx;
     char *dop = index(disclosure_options, category);
@@ -423,10 +408,7 @@ char *defquery;
     return TRUE;
 }
 
-STATIC_OVL void
-disclose(how,taken)
-int how;
-bool taken;
+STATIC_OVL void disclose(int how, bool taken)
 {
 	char	c = 0, defquery;
 	char	qbuf[QBUFSZ];
@@ -516,9 +498,7 @@ bool taken;
 }
 
 /* try to get the player back in a viable state after being killed */
-STATIC_OVL void
-savelife(how)
-int how;
+STATIC_OVL void savelife(int how)
 {
 	u.uswldtim = 0;
 	u.uhp = u.uhpmax;
@@ -546,9 +526,9 @@ int how;
  * Get valuables from the given list.  Revised code: the list always remains
  * intact.
  */
-STATIC_OVL void
-get_valuables(list)
-struct obj *list;	/* inventory or container contents */
+STATIC_OVL void get_valuables(
+	struct obj *list	/* inventory or container contents */
+)
 {
     struct obj *obj;
     int i;
@@ -579,10 +559,10 @@ struct obj *list;	/* inventory or container contents */
  *  Sort collected valuables, most frequent to least.  We could just
  *  as easily use qsort, but we don't care about efficiency here.
  */
-STATIC_OVL void
-sort_valuables(list, size)
-struct valuable_data list[];
-int size;		/* max value is less than 20 */
+STATIC_OVL void sort_valuables(
+	struct valuable_data list[],
+	int size		/* max value is less than 20 */
+)
 {
     int i, j;
     struct valuable_data ltmp;
@@ -602,11 +582,11 @@ int size;		/* max value is less than 20 */
 }
 
 /* called twice; first to calculate total, then to list relevant items */
-STATIC_OVL void
-artifact_score(list, counting, endwin)
-struct obj *list;
-bool counting;	/* true => add up points; false => display them */
-winid endwin;
+STATIC_OVL void artifact_score(
+	struct obj *list,
+	bool counting,	/* true => add up points; false => display them */
+	winid endwin
+)
 {
     char pbuf[BUFSZ];
     struct obj *otmp;
@@ -645,9 +625,7 @@ winid endwin;
 }
 
 /* Be careful not to call panic from here! */
-void
-done(how)
-int how;
+void done(int how)
 {
 #if defined(WIZARD) && defined(PARANOID)
 	char paranoid_buf[BUFSZ];
@@ -1102,18 +1080,13 @@ die:
 }
 
 
-void
-container_contents(list, identified, all_containers)
-struct obj *list;
-bool identified, all_containers;
+void container_contents(struct obj *list, bool identified, bool all_containers)
 #ifdef DUMP_LOG
 {
 	do_containerconts(list, identified, all_containers, FALSE, TRUE);
 }
 
-void do_containerconts(list, identified, all_containers, want_dump, want_disp)
-struct obj *list;
-bool identified, all_containers, want_dump, want_disp;
+void do_containerconts(struct obj *list, bool identified, bool all_containers, bool want_dump, bool want_disp)
 #endif
 /* The original container_contents function */
 {
@@ -1234,9 +1207,7 @@ bool identified, all_containers, want_dump, want_disp;
 
 
 /* should be called with either EXIT_SUCCESS or EXIT_FAILURE */
-void
-terminate(status)
-int status;
+void terminate(int status)
 {
 #ifdef MAC
 	getreturn("to exit");
@@ -1251,20 +1222,13 @@ int status;
 	nethack_exit(status);
 }
 
-void		/* showborn patch */
-list_vanquished(defquery, ask)
-char defquery;
-bool ask;
+void list_vanquished(char defquery, bool ask)
 #ifdef DUMP_LOG
 {
   do_vanquished(defquery, ask, FALSE);
 }
 
-void
-do_vanquished(defquery, ask, want_dump)
-int defquery;
-bool ask;
-bool want_dump;
+void do_vanquished(int defquery, bool ask, bool want_dump)
 #endif
 {
     int i, lev;
@@ -1361,8 +1325,7 @@ bool want_dump;
 }
 
 /* number of monster species which have been genocided */
-int
-num_genocides()
+int num_genocides(void)
 {
     int i, n = 0;
 
@@ -1373,16 +1336,9 @@ num_genocides()
 }
 
 #ifdef DUMP_LOG
-STATIC_OVL void
-list_genocided(defquery, ask, want_dump)
-int defquery;
-bool ask;
-bool want_dump;
+STATIC_OVL void list_genocided(int defquery, bool ask, bool want_dump)
 #else
-STATIC_OVL void
-list_genocided(defquery, ask)
-char defquery;
-bool ask;
+STATIC_OVL void list_genocided(char defquery, bool ask)
 #endif
 {
     int i;

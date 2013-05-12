@@ -24,9 +24,7 @@ STATIC_DCL void NDECL(setup_waterlevel);
 STATIC_DCL void NDECL(unsetup_waterlevel);
 
 
-STATIC_OVL bool
-iswall(x,y)
-int x,y;
+STATIC_OVL bool iswall(int x, int y)
 {
     int type;
 
@@ -36,9 +34,7 @@ int x,y;
 	    type == SDOOR || type == IRONBARS);
 }
 
-STATIC_OVL bool
-iswall_or_stone(x,y)
-    int x,y;
+STATIC_OVL bool iswall_or_stone(int x, int y)
 {
     int type;
 
@@ -51,9 +47,7 @@ iswall_or_stone(x,y)
 }
 
 /* return TRUE if out of bounds, wall or rock */
-STATIC_OVL bool
-is_solid(x,y)
-    int x, y;
+STATIC_OVL bool is_solid(int x, int y)
 {
     return (!isok(x,y) || IS_STWALL(levl[x][y].typ));
 }
@@ -77,10 +71,7 @@ is_solid(x,y)
  *		W x W		This would extend a spine from x down.
  *		. W W
  */
-STATIC_OVL int
-extend_spine(locale, wall_there, dx, dy)
-    int locale[3][3];
-    int wall_there, dx, dy;
+STATIC_OVL int extend_spine(int locale[3][3], int wall_there, int dx, int dy)
 {
     int spine, nx, ny;
 
@@ -116,9 +107,7 @@ extend_spine(locale, wall_there, dx, dy)
  * are totally surrounded by stone - they are redundant.  (2) correct
  * the types so that they extend and connect to each other.
  */
-void
-wallification(x1, y1, x2, y2)
-int x1, y1, x2, y2;
+void wallification(int x1, int y1, int x2, int y2)
 {
 	uchar type;
 	int x,y;
@@ -193,10 +182,7 @@ int x1, y1, x2, y2;
 	    }
 }
 
-STATIC_OVL bool
-okay(x,y,dir)
-int x,y;
-int dir;
+STATIC_OVL bool okay(int x, int y, int dir)
 {
 	move(&x,&y,dir);
 	move(&x,&y,dir);
@@ -205,9 +191,9 @@ int dir;
 	return(TRUE);
 }
 
-STATIC_OVL void
-maze0xy(cc)	/* find random starting point for maze generation */
-	coord	*cc;
+STATIC_OVL void maze0xy(	/* find random starting point for maze generation */
+	coord *cc
+)
 {
 	cc->x = 3 + 2*rn2((x_maze_max>>1) - 1);
 	cc->y = 3 + 2*rn2((y_maze_max>>1) - 1);
@@ -220,10 +206,7 @@ maze0xy(cc)	/* find random starting point for maze generation */
  *	pos is inside restricted region (lx,ly,hx,hy) OR
  *	NOT (pos is corridor and a maze level OR pos is a room OR pos is air)
  */
-bool
-bad_location(x, y, lx, ly, hx, hy)
-    xchar x, y;
-    xchar lx, ly, hx, hy;
+bool bad_location(xchar x, xchar y, xchar lx, xchar ly, xchar hx, xchar hy)
 {
     return((bool)(occupied(x, y) ||
 	   within_bounded_area(x,y, lx,ly, hx,hy) ||
@@ -234,11 +217,12 @@ bad_location(x, y, lx, ly, hx, hy)
 /* pick a location in area (lx, ly, hx, hy) but not in (nlx, nly, nhx, nhy) */
 /* and place something (based on rtype) in that region */
 void
-place_lregion(lx, ly, hx, hy, nlx, nly, nhx, nhy, rtype, lev)
-    xchar	lx, ly, hx, hy;
-    xchar	nlx, nly, nhx, nhy;
-    xchar	rtype;
-    d_level	*lev;
+place_lregion(
+    xchar lx, xchar ly, xchar hx, xchar hy,
+    xchar nlx, xchar nly, xchar nhx, xchar nhy,
+    xchar rtype,
+    d_level	*lev
+)
 {
     int trycnt;
     bool oneshot;
@@ -279,13 +263,13 @@ place_lregion(lx, ly, hx, hy, nlx, nly, nhx, nhy, rtype, lev)
     impossible("Couldn't place lregion type %d!", rtype);
 }
 
-STATIC_OVL bool
-put_lregion_here(x,y,nlx,nly,nhx,nhy,rtype,oneshot,lev)
-xchar x, y;
-xchar nlx, nly, nhx, nhy;
-xchar rtype;
-bool oneshot;
-d_level *lev;
+STATIC_OVL bool put_lregion_here(
+	xchar x, xchar y,
+	xchar nlx, xchar nly, xchar nhx, xchar nhy,
+	xchar rtype,
+	bool oneshot,
+	d_level *lev
+)
 {
     if (bad_location(x, y, nlx, nly, nhx, nhy)) {
 	if (!oneshot) {
@@ -329,8 +313,7 @@ d_level *lev;
 static bool was_waterlevel; /* ugh... this shouldn't be needed */
 
 /* this is special stuff that the level compiler cannot (yet) handle */
-STATIC_OVL void
-fixup_special()
+STATIC_OVL void fixup_special(void)
 {
     lev_region *r = lregions;
     struct d_level lev;
@@ -491,9 +474,7 @@ fixup_special()
     num_lregions = 0;
 }
 
-void
-makemaz(s)
-const char *s;
+void makemaz(const char *s)
 {
 	int x,y;
 	char protofile[20];
@@ -657,9 +638,7 @@ const char *s;
  * the program.  This iterative version uses the minimum amount of stack
  * that is totally safe.
  */
-void
-walkfrom(x,y)
-int x,y;
+void walkfrom(int x, int y)
 {
 #define CELLS (ROWNO * COLNO) / 4		/* a maze cell is 4 squares */
 	char mazex[CELLS + 1], mazey[CELLS + 1];	/* char's are OK */
@@ -705,9 +684,7 @@ int x,y;
 }
 #else
 
-void
-walkfrom(x,y)
-int x,y;
+void walkfrom(int x, int y)
 {
 	int q,a,dir;
 	int dirs[4];
@@ -740,10 +717,7 @@ int x,y;
 }
 #endif /* MICRO */
 
-STATIC_OVL void
-move(x,y,dir)
-int *x, *y;
-int dir;
+STATIC_OVL void move(int *x, int *y, int dir)
 {
 	switch(dir){
 		case 0: --(*y); break;
@@ -754,10 +728,10 @@ int dir;
 	}
 }
 
-void
-mazexy(cc)	/* find random point in generated corridors,
+void mazexy(	/* find random point in generated corridors,
 		   so we don't create items in moats, bunkers, or walls */
-	coord	*cc;
+	coord *cc
+)
 {
 	int cpt=0;
 
@@ -792,8 +766,7 @@ mazexy(cc)	/* find random point in generated corridors,
 	return;
 }
 
-void
-bound_digging()
+void bound_digging(void)
 /* put a non-diggable boundary around the initial portion of a level map.
  * assumes that no level will initially put things beyond the isok() range.
  *
@@ -879,9 +852,7 @@ bound_digging()
 	    }
 }
 
-void
-mkportal(x, y, todnum, todlevel)
-xchar x, y, todnum, todlevel;
+void mkportal(xchar x, xchar y, xchar todnum, xchar todlevel)
 {
 	/* a portal "trap" must be matched by a */
 	/* portal in the destination dungeon/dlevel */
@@ -926,8 +897,7 @@ STATIC_DCL void NDECL(set_wportal);
 STATIC_DCL void FDECL(mk_bubble, (int,int,int));
 STATIC_DCL void FDECL(mv_bubble, (struct bubble *,int,int,bool));
 
-void
-movebubbles()
+void movebubbles(void)
 {
 	static bool up;
 	struct bubble *b;
@@ -1050,8 +1020,7 @@ movebubbles()
 }
 
 /* when moving in water, possibly (1 in 3) alter the intended destination */
-void
-water_friction()
+void water_friction(void)
 {
 	int x, y, dx, dy;
 	bool eff = FALSE;
@@ -1083,9 +1052,7 @@ water_friction()
 	if (eff) pline("Water turbulence affects your movements.");
 }
 
-void
-save_waterlevel(fd, mode)
-int fd, mode;
+void save_waterlevel(int fd, int mode)
 {
 	struct bubble *b;
 
@@ -1106,9 +1073,7 @@ int fd, mode;
 	    unsetup_waterlevel();
 }
 
-void
-restore_waterlevel(fd)
-int fd;
+void restore_waterlevel(int fd)
 {
 	struct bubble *b = (struct bubble *)0, *btmp;
 	int i;
@@ -1140,8 +1105,7 @@ int fd;
 	was_waterlevel = TRUE;
 }
 
-const char *waterbody_name(x, y)
-xchar x,y;
+const char *waterbody_name(xchar x, xchar y)
 {
 	struct rm *lev;
 	schar ltyp;
@@ -1168,8 +1132,7 @@ xchar x,y;
 	else return "water";
 }
 
-STATIC_OVL void
-set_wportal()
+STATIC_OVL void set_wportal(void)
 {
 	/* there better be only one magic portal on water level... */
 	for (wportal = ftrap; wportal; wportal = wportal->ntrap)
@@ -1177,8 +1140,7 @@ set_wportal()
 	impossible("set_wportal(): no portal!");
 }
 
-STATIC_OVL void
-setup_waterlevel()
+STATIC_OVL void setup_waterlevel(void)
 {
 	int x, y;
 	int xskip, yskip;
@@ -1206,8 +1168,7 @@ setup_waterlevel()
 			mk_bubble(x,y,rn2(7));
 }
 
-STATIC_OVL void
-unsetup_waterlevel()
+STATIC_OVL void unsetup_waterlevel(void)
 {
 	struct bubble *b, *bb;
 
@@ -1220,9 +1181,7 @@ unsetup_waterlevel()
 	bbubbles = ebubbles = (struct bubble *)0;
 }
 
-STATIC_OVL void
-mk_bubble(x,y,n)
-int x, y, n;
+STATIC_OVL void mk_bubble(int x, int y, int n)
 {
 	/*
 	 * These bit masks make visually pleasing bubbles on a normal aspect
@@ -1277,11 +1236,7 @@ int x, y, n;
  * in the immediate neighborhood of one, he/she may get sucked inside.
  * This property also makes leaving a bubble slightly difficult.
  */
-STATIC_OVL void
-mv_bubble(b,dx,dy,ini)
-struct bubble *b;
-int dx, dy;
-bool ini;
+STATIC_OVL void mv_bubble(struct bubble *b, int dx, int dy, bool ini)
 {
 	int x, y, i, j, colli = 0;
 	struct container *cons, *ctemp;

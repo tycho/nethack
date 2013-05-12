@@ -177,9 +177,7 @@ static Pixmap icon_pixmap = None;	/* Pixmap for icon.		    */
  * Find the window structure that corresponds to the given widget.  Note
  * that this is not the popup widget, nor the viewport, but the child.
  */
-struct xwindow *
-find_widget(w)
-    Widget w;
+struct xwindow *find_widget(Widget w)
 {
     int windex;
     struct xwindow *wp;
@@ -199,8 +197,7 @@ find_widget(w)
 /*
  * Find a free window slot for use.
  */
-static winid
-find_free_window()
+static winid find_free_window(void)
 {
     int windex;
     struct xwindow *wp;
@@ -256,12 +253,12 @@ XtConvertArgRec const nhcolorConvertArgs[] = {
  * The approximate color found is returned in color as well.
  * Return True if something close was found.
  */
-Boolean
-nhApproxColor(screen, colormap, str, color)
-Screen	 *screen;	/* screen to use */
-Colormap colormap;	/* the colormap to use */
-char     *str;		/* color name */
-XColor   *color;	/* the X color structure; changed only if successful */
+Boolean nhApproxColor(
+	Screen *screen,	/* screen to use */
+	Colormap colormap,	/* the colormap to use */
+	char *str,		/* color name */
+	XColor *color	/* the X color structure; changed only if successful */
+)
 {
     int		ncells;
     long	cdiff = 16777216; /* 2^24; hopefully our map is smaller */
@@ -328,14 +325,7 @@ try_again:
     return True;
 }
 
-Boolean
-nhCvtStringToPixel(dpy, args, num_args, fromVal, toVal, closure_ret)
-Display*	dpy;
-XrmValuePtr	args;
-Cardinal	*num_args;
-XrmValuePtr	fromVal;
-XrmValuePtr	toVal;
-XtPointer	*closure_ret;
+Boolean nhCvtStringToPixel(Display *dpy, XrmValuePtr args, Cardinal *num_args, XrmValuePtr fromVal, XrmValuePtr toVal, XtPointer *closure_ret)
 {
     String	    str = (String)fromVal->addr;
     XColor	    screenColor;
@@ -423,13 +413,7 @@ XtPointer	*closure_ret;
 }
 
 /* ARGSUSED */
-static void
-nhFreePixel(app, toVal, closure, args, num_args)
-XtAppContext	app;
-XrmValuePtr	toVal;
-XtPointer	closure;
-XrmValuePtr	args;
-Cardinal	*num_args;
+static void nhFreePixel(XtAppContext app, XrmValuePtr toVal, XtPointer closure, XrmValuePtr args, Cardinal *num_args)
 {
     Screen	    *screen;
     Colormap	    colormap;
@@ -455,9 +439,7 @@ Cardinal	*num_args;
 /* [ALI] Utility function to ask Xaw for font height, since the previous
  * assumption of ascent + descent is not always valid.
  */
-Dimension
-nhFontHeight(w)
-Widget w;
+Dimension nhFontHeight(Widget w)
 #ifdef _XawTextSink_h
 {
     Widget sink;
@@ -485,24 +467,17 @@ Widget w;
 #endif
 
 /* Global Functions ======================================================== */
-void
-X11_raw_print(str)
-    const char *str;
+void X11_raw_print(const char *str)
 {
     (void) puts(str);
 }
 
-void
-X11_raw_print_bold(str)
-    const char *str;
+void X11_raw_print_bold(const char *str)
 {
     (void) puts(str);
 }
 
-void
-X11_curs(window, x, y)
-    winid window;
-    int x, y;
+void X11_curs(winid window, int x, int y)
 {
     check_winid(window);
 
@@ -519,11 +494,7 @@ X11_curs(window, x, y)
     window_list[window].cursy = y;
 }
 
-void
-X11_putstr(window, attr, str)
-    winid window;
-    int attr;
-    const char *str;
+void X11_putstr(winid window, int attr, const char *str)
 {
     winid new_win;
     struct xwindow *wp;
@@ -569,18 +540,15 @@ X11_putstr(window, attr, str)
 }
 
 /* We do event processing as a callback, so this is a null routine. */
-void X11_get_nh_event() { return; }
+void X11_get_nh_event(void) { return; }
 
-int
-X11_nhgetch()
+int X11_nhgetch(void)
 {
     return input_event(EXIT_ON_KEY_PRESS);
 }
 
 
-int
-X11_nh_poskey(x, y, mod)
-    int *x, *y, *mod;
+int X11_nh_poskey(int *x, int *y, int *mod)
 {
     int val = input_event(EXIT_ON_KEY_OR_BUTTON_PRESS);
 
@@ -593,9 +561,7 @@ X11_nh_poskey(x, y, mod)
 }
 
 
-winid
-X11_create_nhwindow(type)
-    int type;
+winid X11_create_nhwindow(int type)
 {
     winid window;
     struct xwindow *wp;
@@ -658,9 +624,7 @@ X11_create_nhwindow(type)
     return window;
 }
 
-void
-X11_clear_nhwindow(window)
-    winid window;
+void X11_clear_nhwindow(winid window)
 {
     struct xwindow *wp;
 
@@ -681,10 +645,7 @@ X11_clear_nhwindow(window)
     }
 }
 
-void
-X11_display_nhwindow(window, blocking)
-    winid window;
-    bool blocking;
+void X11_display_nhwindow(winid window, bool blocking)
 {
     struct xwindow *wp;
 
@@ -744,9 +705,7 @@ X11_display_nhwindow(window, blocking)
     }
 }
 
-void
-X11_destroy_nhwindow(window)
-    winid window;
+void X11_destroy_nhwindow(winid window)
 {
     struct xwindow *wp;
 
@@ -795,8 +754,7 @@ X11_destroy_nhwindow(window)
     }
 }
 
-void
-X11_update_inventory()
+void X11_update_inventory(void)
 {
     if (x_inited && window_list[WIN_INVEN].menu_information->is_up) {
 	updated_inventory = 1;	/* hack to avoid mapping&raising window */
@@ -806,10 +764,9 @@ X11_update_inventory()
 }
 
 /* The current implementation has all of the saved lines on the screen. */
-int X11_doprev_message() { return 0; }
+int X11_doprev_message(void) { return 0; }
 
-void
-X11_nhbell()
+void X11_nhbell(void)
 {
     /* We can't use XBell until toplevel has been initialized. */
     if (x_inited)
@@ -817,7 +774,7 @@ X11_nhbell()
     /* else print ^G ?? */
 }
 
-void X11_mark_synch()
+void X11_mark_synch(void)
 {
     if (x_inited) {
 	/*
@@ -833,27 +790,25 @@ void X11_mark_synch()
     }
 }
 
-void X11_wait_synch() { if (x_inited) XFlush(XtDisplay(toplevel)); }
+void X11_wait_synch(void) { if (x_inited) XFlush(XtDisplay(toplevel)); }
 
 
 /* Both resume_ and suspend_ are called from ioctl.c and unixunix.c. */
-void X11_resume_nhwindows() { return; }
+void X11_resume_nhwindows(void) { return; }
 
 /* ARGSUSED */
-void X11_suspend_nhwindows(str) const char *str; { return; }
+void X11_suspend_nhwindows(const char *str) { return; }
 
 /* Under X, we don't need to initialize the number pad. */
 /* ARGSUSED */
-void X11_number_pad(state) int state; { return; } /* called from options.c */
+void X11_number_pad(int state) { return; } /* called from options.c */
 
 
-void X11_start_screen() { return; } /* called from setftty() in unixtty.c */
-void X11_end_screen() { return; }   /* called from settty() in unixtty.c */
+void X11_start_screen(void) { return; } /* called from setftty() in unixtty.c */
+void X11_end_screen(void) { return; }   /* called from settty() in unixtty.c */
 
 #ifdef GRAPHIC_TOMBSTONE
-void X11_outrip(window, how)
-    winid window;
-    int how;
+void X11_outrip(winid window, int how)
 {
     struct xwindow *wp;
 
@@ -935,10 +890,7 @@ static XtResource resources[] = {
 #endif
 };
 
-void
-X11_init_nhwindows(argcp,argv)
-int* argcp;
-char** argv;
+void X11_init_nhwindows(int *argcp, char **argv)
 {
     static const char *banner_text[] = {
 	COPYRIGHT_BANNER_A,
@@ -1039,8 +991,7 @@ char** argv;
  * All done.
  */
 /* ARGSUSED */
-void X11_exit_nhwindows(dummy)
-    const char *dummy;
+void X11_exit_nhwindows(const char *dummy)
 {
     extern Pixmap tile_pixmap;	/* from winmap.c */
 
@@ -1071,10 +1022,7 @@ void X11_exit_nhwindows(dummy)
  * window.
  */
 /* ARGSUSED */
-static void
-d_timeout(client_data, id)
-    XtPointer client_data;
-    XtIntervalId *id;
+static void d_timeout(XtPointer client_data, XtIntervalId *id)
 {
     XEvent event;
     XClientMessageEvent *mesg;
@@ -1097,8 +1045,7 @@ d_timeout(client_data, id)
  * function will send an event to the map window which will be waiting
  * for a sent event.
  */
-void
-X11_delay_output()
+void X11_delay_output(void)
 {
     if (!x_inited) return;
 
@@ -1136,11 +1083,7 @@ askname_delete(w, event, params, num_params)
 
 /* Callback for askname dialog widget. */
 /* ARGSUSED */
-static void
-askname_done(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data;
-    XtPointer call_data;
+static void askname_done(Widget w, XtPointer client_data, XtPointer call_data)
 {
     int len;
     char *s;
@@ -1166,8 +1109,7 @@ askname_done(w, client_data, call_data)
     exit_x_event = TRUE;
 }
 
-void
-X11_askname()
+void X11_askname(void)
 {
     Widget popup, dialog;
     Arg args[1];
@@ -1206,11 +1148,7 @@ static char *getline_input;
 
 /* Callback for getline dialog widget. */
 /* ARGSUSED */
-static void
-done_button(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data;
-    XtPointer call_data;
+static void done_button(Widget w, XtPointer client_data, XtPointer call_data)
 {
     int len;
     char *s;
@@ -1245,11 +1183,7 @@ getline_delete(w, event, params, num_params)
 
 /* Callback for getline dialog widget. */
 /* ARGSUSED */
-static void
-abort_button(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data;
-    XtPointer call_data;
+static void abort_button(Widget w, XtPointer client_data, XtPointer call_data)
 {
     Widget dialog = (Widget) client_data;
 
@@ -1259,10 +1193,7 @@ abort_button(w, client_data, call_data)
 }
 
 
-void
-X11_getlin(question, input)
-    const char *question;
-    char *input;
+void X11_getlin(const char *question, char *input)
 {
     static bool need_to_init = True;
 
@@ -1334,10 +1265,7 @@ dismiss_file(w, event, params, num_params)
     XtDestroyWidget(popup);
 }
 
-void
-X11_display_file(str, complain)
-    const char *str;
-    bool complain;
+void X11_display_file(const char *str, bool complain)
 {
     dlb *fp;
     Arg args[12];
@@ -1472,9 +1400,7 @@ static const char yn_translations[] =
  * more than one character only the first is returned.  If there is
  * no conversion (i.e. just the CTRL key hit) a NUL is returned.
  */
-char
-key_event_to_char(key)
-    XKeyEvent *key;
+char key_event_to_char(XKeyEvent *key)
 {
     char keystring[MAX_KEY_STRING];
     int nbytes;
@@ -1579,11 +1505,7 @@ yn_key(w, event, params, num_params)
 }
 
 
-char
-X11_yn_function(ques, choices, def)
-    const char *ques;
-    const char *choices;
-    char def;
+char X11_yn_function(const char *ques, const char *choices, int def)
 {
     static Boolean need_to_init = True;
     char buf[QBUFSZ];
@@ -1687,9 +1609,7 @@ X11_yn_function(ques, choices, def)
  * Before we wait for input via nhgetch() and nh_poskey(), we need to
  * do some pre-processing.
  */
-static int
-input_event(exit_condition)
-    int exit_condition;
+static int input_event(int exit_condition)
 {
     if (WIN_STATUS != WIN_ERR)	/* hilighting on the fancy status window */
 	check_turn_events();
@@ -1703,23 +1623,19 @@ input_event(exit_condition)
 
 
 /*ARGSUSED*/
-void
-msgkey(w, data, event)
-    Widget w;
-    XtPointer data;
-    XEvent *event;
+void msgkey(Widget w, XtPointer data, XEvent *event)
 {
     Cardinal num = 0;
     map_input(window_list[WIN_MAP].w, event, (String*) 0, &num);
 }
 
 /*ARGSUSED*/
-static void
-win_visible(w, data, event, flag)	/* only called for autofocus */
-    Widget w;
-    XtPointer data;	/* client_data not used */
-    XEvent *event;
-    Boolean *flag;	/* continue_to_dispatch flag not used */
+static void win_visible(	/* only called for autofocus */
+	Widget w,
+	XtPointer data,	/* client_data not used */
+	XEvent *event,
+	Boolean *flag	/* continue_to_dispatch flag not used */
+)
 {
     XVisibilityEvent *vis_event = (XVisibilityEvent *)event;
 
@@ -1736,8 +1652,7 @@ win_visible(w, data, event, flag)	/* only called for autofocus */
  * Set up the playing console.  This has three major parts:  the
  * message window, the map, and the status window.
  */
-static void
-init_standard_windows()
+static void init_standard_windows(void)
 {
     Widget form, message_viewport, map_viewport, status;
     Arg args[8];
@@ -1948,27 +1863,24 @@ init_standard_windows()
 }
 
 
-void
-nh_XtPopup(w, g, childwid)
-    Widget w;		/* widget */
-    int    g;		/* type of grab */
-    Widget childwid;	/* child to recieve focus (can be None) */
+void nh_XtPopup(
+	Widget w,		/* widget */
+	int g,		/* type of grab */
+	Widget childwid	/* child to recieve focus (can be None) */
+)
 {
     XtPopup(w, (XtGrabKind)g);
     XSetWMProtocols(XtDisplay(w), XtWindow(w), &wm_delete_window, 1);
     if (appResources.autofocus) XtSetKeyboardFocus(toplevel, childwid);
 }
 
-void
-nh_XtPopdown(w)
-    Widget w;
+void nh_XtPopdown(Widget w)
 {
     XtPopdown(w);
     if (appResources.autofocus) XtSetKeyboardFocus(toplevel, None);
 }
 
-void
-win_X11_init()
+void win_X11_init(void)
 {
 #ifdef OPENWINBUG
     /* With the OpenWindows 3.0 libraries and the SunOS 4.1.2 ld, these

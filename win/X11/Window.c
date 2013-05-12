@@ -103,18 +103,18 @@ static char translations[] =
 ";
 
 /* ARGSUSED */
-static void Redisplay(w, event, region)
-    Widget w;
-    XEvent *event;
-    Region region;	/* unused */
+static void Redisplay(
+	Widget w,
+	XEvent *event,
+	Region region	/* unused */
+)
 {
     /* This isn't correct - we need to call the callback with region. */
     XtCallCallbacks(w, XtNexposeCallback, (caddr_t) event);
 }
 
 /* ARGSUSED */
-static void Resize(w)
-    Widget w;
+static void Resize(Widget w)
 {
     XtCallCallbacks(w, XtNresizeCallback, (caddr_t) 0);
 }
@@ -162,8 +162,6 @@ WindowClassRec windowClassRec = {
 
 WidgetClass windowWidgetClass = (WidgetClass)&windowClassRec;
 
-Font
-WindowFont(w) Widget w; { return ((WindowWidget)w)->window.font->fid; }
+Font WindowFont(Widget w) { return ((WindowWidget)w)->window.font->fid; }
 
-XFontStruct *
-WindowFontStruct(w) Widget w; { return ((WindowWidget)w)->window.font; }
+XFontStruct *WindowFontStruct(Widget w) { return ((WindowWidget)w)->window.font; }

@@ -524,10 +524,7 @@ int len;
 
 
 
-bool
-fopen_gif_file(filename, type)
-const char *filename;
-const char *type;
+bool fopen_gif_file(const char *filename, const char *type)
 {
 	int i;
 
@@ -594,9 +591,7 @@ const char *type;
 }
 
 /* Read a tile.  Returns FALSE when there are no more tiles */
-bool
-read_gif_tile(pixels)
-pixel (*pixels)[TILE_X];
+bool read_gif_tile(pixel (*pixels)[TILE_X])
 {
 	int i, j;
 
@@ -639,8 +634,7 @@ pixel (*pixels)[TILE_X];
 	return FALSE;
 }
 
-int
-fclose_gif_file()
+int fclose_gif_file(void)
 {
 	int i;
 
@@ -664,10 +658,7 @@ static char *std_args[] = { "tilemap",	/* dummy argv[0] */
 			"objects.gif",  "objects.txt",
 			"other.gif",    "other.txt" };
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	pixel pixels[TILE_Y][TILE_X];
 

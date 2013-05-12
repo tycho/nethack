@@ -140,7 +140,7 @@ X11_print_glyph(window, x, y, glyph)
  * on this being defined.
  */
 /*ARGSUSED*/
-void X11_cliparound(x, y) int x, y; { }
+void X11_cliparound(int x, int y) { }
 #endif /* CLIPPING */
 
 /* End global functions ==================================================== */
@@ -171,11 +171,7 @@ struct tile_annotation {
 
 static struct tile_annotation pet_annotation;
 
-static void
-init_annotation(annotation, filename, colorpixel)
-struct tile_annotation *annotation;
-char *filename;
-Pixel colorpixel;
+static void init_annotation(struct tile_annotation *annotation, char *filename, Pixel colorpixel)
 {
     Display *dpy = XtDisplay(toplevel);
 
@@ -199,8 +195,7 @@ Pixel colorpixel;
  * realize the top level, but before we start resizing the
  * map viewport.
  */
-void
-post_process_tiles()
+void post_process_tiles(void)
 {
     Display *dpy = XtDisplay(toplevel);
     unsigned int width, height;
@@ -234,9 +229,7 @@ post_process_tiles()
  * Open and read the tile file.  Return TRUE if there were no problems.
  * Return FALSE otherwise.
  */
-static bool
-init_tiles(wp)
-    struct xwindow *wp;
+static bool init_tiles(struct xwindow *wp)
 {
 #ifdef USE_XPM
     XpmAttributes attributes;
@@ -546,9 +539,7 @@ tiledone:
 /*
  * Make sure the map's cursor is always visible.
  */
-void
-check_cursor_visibility(wp)
-    struct xwindow *wp;
+void check_cursor_visibility(struct xwindow *wp)
 {
     Arg arg[2];
     Widget viewport, horiz_sb, vert_sb;
@@ -680,9 +671,7 @@ check_cursor_visibility(wp)
  * sure that the cursor is still on the screen.  We do this to keep the cursor
  * on the screen when the user resizes the nethack window.
  */
-static void
-map_check_size_change(wp)
-    struct xwindow *wp;
+static void map_check_size_change(struct xwindow *wp)
 {
     struct map_info_t *map_info = wp->map_information;
     Arg arg[2];
@@ -729,13 +718,7 @@ map_check_size_change(wp)
  * Using the given background pixel and the foreground pixel optained
  * by querying the widget with the resource name.
  */
-static void
-set_gc(w, font, resource_name, bgpixel, regular, inverse)
-    Widget w;
-    Font font;
-    char *resource_name;
-    Pixel bgpixel;
-    GC   *regular, *inverse;
+static void set_gc(Widget w, Font font, char *resource_name, Pixel bgpixel, GC *regular, GC *inverse)
 {
     XGCValues values;
     XtGCMask mask = GCFunction | GCForeground | GCBackground | GCFont;
@@ -764,10 +747,7 @@ set_gc(w, font, resource_name, bgpixel, regular, inverse)
  * inverse). It might be faster to just modify the foreground and
  * background colors on the current GC as needed.
  */
-static void
-get_text_gc(wp, font)
-    struct xwindow *wp;
-    Font font;
+static void get_text_gc(struct xwindow *wp, Font font)
 {
     struct map_info_t *map_info = wp->map_information;
     Pixel bgpixel;
@@ -810,9 +790,7 @@ get_text_gc(wp, font)
 /*
  * Display the cursor on the map window.
  */
-static void
-display_cursor(wp)
-    struct xwindow *wp;
+static void display_cursor(struct xwindow *wp)
 {
     /* Redisplay the cursor location inverted. */
     map_update(wp, wp->cursy, wp->cursy, wp->cursx, wp->cursx, TRUE);
@@ -823,9 +801,7 @@ display_cursor(wp)
  * Check if there are any changed characters.  If so, then plaster them on
  * the screen.
  */
-void
-display_map_window(wp)
-    struct xwindow *wp;
+void display_map_window(struct xwindow *wp)
 {
     int row;
     struct map_info_t *map_info = wp->map_information;
@@ -857,9 +833,7 @@ display_map_window(wp)
 /*
  * Set all map tiles to S_stone
  */
-static void
-map_all_stone(map_info)
-struct map_info_t *map_info;
+static void map_all_stone(struct map_info_t *map_info)
 {
     int i;
     unsigned short *sp, stone;
@@ -877,9 +851,7 @@ struct map_info_t *map_info;
  * Flush out everything by resetting the "new" bounds and calling
  * display_map_window().
  */
-void
-clear_map_window(wp)
-    struct xwindow *wp;
+void clear_map_window(struct xwindow *wp)
 {
     struct map_info_t *map_info = wp->map_information;
 
@@ -907,9 +879,7 @@ clear_map_window(wp)
  * Retreive the font associated with the map window and save attributes
  * that are used when updating it.
  */
-static void
-get_char_info(wp)
-    struct xwindow *wp;
+static void get_char_info(struct xwindow *wp)
 {
     XFontStruct *fs;
     struct map_info_t *map_info = wp->map_information;
@@ -1055,12 +1025,7 @@ map_input(w, event, params, num_params)
     }
 }
 
-static void
-set_button_values(w, x, y, button)
-    Widget w;
-    int x;
-    int y;
-    unsigned int button;
+static void set_button_values(Widget w, int x, int y, unsigned int button)
 {
     struct xwindow *wp;
     struct map_info_t *map_info;
@@ -1084,11 +1049,11 @@ set_button_values(w, x, y, button)
  * Map window expose callback.
  */
 /*ARGSUSED*/
-static void
-map_exposed(w, client_data, widget_data)
-    Widget w;
-    XtPointer client_data;	/* unused */
-    XtPointer widget_data;	/* expose event from Window widget */
+static void map_exposed(
+	Widget w,
+	XtPointer client_data,	/* unused */
+	XtPointer widget_data	/* expose event from Window widget */
+)
 {
     int x, y;
     struct xwindow *wp;
@@ -1161,11 +1126,7 @@ map_exposed(w, client_data, widget_data)
  * This works for rectangular regions (this includes one line rectangles).
  * The start and stop columns are *inclusive*.
  */
-static void
-map_update(wp, start_row, stop_row, start_col, stop_col, inverted)
-    struct xwindow *wp;
-    int start_row, stop_row, start_col, stop_col;
-    bool inverted;
+static void map_update(struct xwindow *wp, int start_row, int stop_row, int start_col, int stop_col, bool inverted)
 {
     int win_start_row, win_start_col;
     struct map_info_t *map_info = wp->map_information;
@@ -1308,10 +1269,7 @@ map_update(wp, start_row, stop_row, start_col, stop_col, inverted)
 }
 
 /* Adjust the number of rows and columns on the given map window */
-void
-set_map_size(wp, cols, rows)
-    struct xwindow *wp;
-    Dimension cols, rows;
+void set_map_size(struct xwindow *wp, int cols, int rows)
 {
     Arg args[4];
     Cardinal num_args;
@@ -1326,9 +1284,7 @@ set_map_size(wp, cols, rows)
 }
 
 
-static void
-init_text(wp)
-    struct xwindow *wp;
+static void init_text(struct xwindow *wp)
 {
 
     struct map_info_t *map_info = wp->map_information;
@@ -1360,11 +1316,11 @@ static char map_translations[] =
 /*
  * The map window creation routine.
  */
-void
-create_map_window(wp, create_popup, parent)
-    struct xwindow *wp;
-    bool create_popup;	/* parent is a popup shell that we create */
-    Widget parent;
+void create_map_window(
+	struct xwindow *wp,
+	bool create_popup,	/* parent is a popup shell that we create */
+	Widget parent
+)
 {
     struct map_info_t *map_info;	/* map info pointer */
     Widget map, viewport;
@@ -1511,9 +1467,7 @@ create_map_window(wp, create_popup, parent)
 /*
  * Destroy this map window.
  */
-void
-destroy_map_window(wp)
-    struct xwindow *wp;
+void destroy_map_window(struct xwindow *wp)
 {
     struct map_info_t *map_info = wp->map_information;
 
@@ -1569,9 +1523,7 @@ pkey(k)
  * Main X event loop.  Here we accept and dispatch X events.  We only exit
  * under certain circumstances.
  */
-int
-x_event(exit_condition)
-    int exit_condition;
+int x_event(int exit_condition)
 {
     XEvent  event;
     int     retval = 0;

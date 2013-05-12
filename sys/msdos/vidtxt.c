@@ -39,8 +39,7 @@ extern int attrib_gr_intense;	/* graphics mode intense attribute */
 
 #ifdef OVLB
 
-void
-txt_get_scr_size()
+void txt_get_scr_size(void)
 {
 	union REGS regs;
 
@@ -113,8 +112,7 @@ extern int  g_attribute;	/* Current attribute to use */
 extern int  monoflag;		/* 0 = not monochrome, else monochrome */
 
 # ifdef OVLB
-void
-txt_backsp()
+void txt_backsp(void)
 {
 #  ifdef PC9800
 	union REGS regs;
@@ -134,8 +132,7 @@ txt_backsp()
 #  endif
 }
 
-void
-txt_nhbell()
+void txt_nhbell(void)
 {
         union REGS regs;
 
@@ -147,8 +144,7 @@ txt_nhbell()
 # endif /* OVLB */
 
 # ifdef OVL0
-void
-txt_clear_screen()
+void txt_clear_screen(void)
 /* djgpp provides ScreenClear(), but in version 1.09 it is broken
  * so for now we just use the BIOS Routines
  */
@@ -180,9 +176,10 @@ txt_clear_screen()
 #  endif
 }
 
-void
-txt_cl_end(col,row)	/* clear to end of line */
-int col,row;
+void txt_cl_end(	/* clear to end of line */
+	int col,
+	int row
+)
 {
 	union REGS regs;
 #  ifndef PC9800
@@ -216,8 +213,7 @@ int col,row;
 #  endif
 }
 
-void
-txt_cl_eos()	/* clear to end of screen */
+void txt_cl_eos(void)	/* clear to end of screen */
 {
 	union REGS regs;
 #  ifndef PC9800
@@ -256,9 +252,7 @@ txt_cl_eos()	/* clear to end of screen */
 # endif /* OVL0 */
 
 # ifdef OVLB
-void
-txt_startup(wid, hgt)
-    int *wid, *hgt;
+void txt_startup(int *wid, int *hgt)
 {
 	txt_get_scr_size();
 	*wid = CO;
@@ -295,10 +289,7 @@ txt_startup(wid, hgt)
  */
 
 # ifdef OVL0
-void
-txt_xputs(s,col,row)
-const char *s;
-int col,row;
+void txt_xputs(const char *s, int col, int row)
 {
 	char c;
 
@@ -313,10 +304,10 @@ int col,row;
 	}
 }
 
-void
-txt_xputc(ch,attr)	/* write out character (and attribute) */
-char ch;
-int attr;
+void txt_xputc(	/* write out character (and attribute) */
+	int ch,
+	int attr
+)
 {
 #  ifdef PC9800
 	union REGS regs;
@@ -416,9 +407,7 @@ int *x, *y;
 }
 #  endif /* SCREEN_BIOS && !PC9800 */
 
-void
-txt_gotoxy(x,y)
-int x,y;
+void txt_gotoxy(int x, int y)
 {
 #  ifdef SCREEN_BIOS
 	union REGS regs;
@@ -455,7 +444,7 @@ int x,y;
 
 # ifdef OVLB
 #  ifdef MONO_CHECK
-int txt_monoadapt_check()
+int txt_monoadapt_check(void)
 {
 	union REGS regs;
 

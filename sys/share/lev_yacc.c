@@ -904,8 +904,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
 #define YYERROR goto yyerrlab
-int
-yyparse()
+int yyparse(void)
 {
     int yym, yyn, yystate;
 #if YYDEBUG

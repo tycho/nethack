@@ -33,8 +33,7 @@ static char	nambuf[sizeof cvt_buf];
 #ifdef DEBUG
 static void NDECL(dump_qtlist);
 
-static void
-dump_qtlist()	/* dump the character msg list to check appearance */
+static void dump_qtlist(void)	/* dump the character msg list to check appearance */
 {
 	struct	qtmsg	*msg;
 	long	size;
@@ -49,11 +48,7 @@ dump_qtlist()	/* dump the character msg list to check appearance */
 }
 #endif /* DEBUG */
 
-static void
-Fread(ptr, size, nitems, stream)
-genericptr_t	ptr;
-int	size, nitems;
-dlb	*stream;
+static void Fread(genericptr_t ptr, int size, int nitems, dlb *stream)
 {
 	int cnt;
 
@@ -64,9 +59,7 @@ dlb	*stream;
 	}
 }
 
-STATIC_OVL struct qtmsg *
-construct_qtlist(hdr_offset)
-long	hdr_offset;
+STATIC_OVL struct qtmsg *construct_qtlist(long hdr_offset)
 {
 	struct qtmsg *msg_list;
 	int	n_msgs;
@@ -85,8 +78,7 @@ long	hdr_offset;
 	return(msg_list);
 }
 
-void
-load_qtlist()
+void load_qtlist(void)
 {
 
 	int	n_classes, i;
@@ -133,8 +125,7 @@ load_qtlist()
 }
 
 /* called at program exit */
-void
-unload_qtlist()
+void unload_qtlist(void)
 {
 	if (msg_file)
 	    (void) dlb_fclose(msg_file),  msg_file = 0;
@@ -145,9 +136,7 @@ unload_qtlist()
 	return;
 }
 
-short
-quest_info(typ)
-int typ;
+short quest_info(int typ)
 {
 	switch (typ) {
 	    case 0:		return (urole.questarti);
@@ -159,8 +148,7 @@ int typ;
 	return 0;
 }
 
-const char *
-ldrname()	/* return your role leader's name */
+const char *ldrname(void)	/* return your role leader's name */
 {
 	int i = urole.ldrnum;
 
@@ -170,21 +158,17 @@ ldrname()	/* return your role leader's name */
 	return nambuf;
 }
 
-STATIC_OVL const char *
-intermed()	/* return your intermediate target string */
+STATIC_OVL const char *intermed(void)	/* return your intermediate target string */
 {
 	return (urole.intermed);
 }
 
-bool
-is_quest_artifact(otmp)
-struct obj *otmp;
+bool is_quest_artifact(struct obj *otmp)
 {
 	return((bool)(otmp->oartifact == urole.questarti));
 }
 
-STATIC_OVL const char *
-neminame()	/* return your role nemesis' name */
+STATIC_OVL const char *neminame(void)	/* return your role nemesis' name */
 {
 	int i = urole.neminum;
 
@@ -194,24 +178,19 @@ neminame()	/* return your role nemesis' name */
 	return nambuf;
 }
 
-STATIC_OVL const char *
-guardname()	/* return your role leader's guard monster name */
+STATIC_OVL const char *guardname(void)	/* return your role leader's guard monster name */
 {
 	int i = urole.guardnum;
 
 	return(mons[i].mname);
 }
 
-STATIC_OVL const char *
-homebase()	/* return your role leader's location */
+STATIC_OVL const char *homebase(void)	/* return your role leader's location */
 {
 	return(urole.homebase);
 }
 
-STATIC_OVL struct qtmsg *
-msg_in(qtm_list, msgnum)
-struct qtmsg *qtm_list;
-int	msgnum;
+STATIC_OVL struct qtmsg *msg_in(struct qtmsg *qtm_list, int msgnum)
 {
 	struct qtmsg *qt_msg;
 
@@ -221,9 +200,7 @@ int	msgnum;
 	return((struct qtmsg *)0);
 }
 
-STATIC_OVL void
-convert_arg(c)
-char c;
+STATIC_OVL void convert_arg(int c)
 {
 	const char *str;
 
@@ -283,8 +260,7 @@ char c;
 	Strcpy(cvt_buf, str);
 }
 
-STATIC_OVL void
-convert_line()
+STATIC_OVL void convert_line(void)
 {
 	char *c, *cc;
 	char xbuf[BUFSZ];
@@ -354,9 +330,7 @@ convert_line()
 	return;
 }
 
-STATIC_OVL void
-deliver_by_pline(qt_msg)
-struct qtmsg *qt_msg;
+STATIC_OVL void deliver_by_pline(struct qtmsg *qt_msg)
 {
 	long	size;
 
@@ -368,10 +342,7 @@ struct qtmsg *qt_msg;
 
 }
 
-STATIC_OVL void
-deliver_by_window(qt_msg, how)
-struct qtmsg *qt_msg;
-int how;
+STATIC_OVL void deliver_by_window(struct qtmsg *qt_msg, int how)
 {
 	long	size;
 	winid datawin = create_nhwindow(how);
@@ -385,9 +356,7 @@ int how;
 	destroy_nhwindow(datawin);
 }
 
-void
-com_pager(msgnum)
-int	msgnum;
+void com_pager(int msgnum)
 {
 	struct qtmsg *qt_msg;
 
@@ -403,9 +372,7 @@ int	msgnum;
 	return;
 }
 
-void
-qt_pager(msgnum)
-int	msgnum;
+void qt_pager(int msgnum)
 {
 	struct qtmsg *qt_msg;
 
@@ -421,8 +388,7 @@ int	msgnum;
 	return;
 }
 
-struct permonst *
-qt_montype()
+struct permonst *qt_montype(void)
 {
 	int qpm;
 

@@ -88,9 +88,7 @@ STATIC_VAR char tgotobuf[20];
 
 #ifdef OVLB
 
-void
-tty_startup(wid, hgt)
-int *wid, *hgt;
+void tty_startup(int *wid, int *hgt)
 {
 	int i;
 #ifdef TERMLIB
@@ -336,8 +334,7 @@ int *wid, *hgt;
 
 /* note: at present, this routine is not part of the formal window interface */
 /* deallocate resources prior to final termination */
-void
-tty_shutdown()
+void tty_shutdown(void)
 {
 #if defined(TEXTCOLOR) && defined(TERMLIB)
 	kill_hilite();
@@ -346,9 +343,7 @@ tty_shutdown()
 	return;
 }
 
-void
-tty_number_pad(state)
-int state;
+void tty_number_pad(int state)
 {
 	switch (state) {
 	    case -1:	/* activate keypad mode (escape sequences) */
@@ -374,8 +369,7 @@ static void NDECL(tty_decgraphics_termcap_fixup);
    call xputs() from the option setting or graphics assigning routines,
    so this is a convenient hook.
  */
-static void
-tty_decgraphics_termcap_fixup()
+static void tty_decgraphics_termcap_fixup(void)
 {
 	static char ctrlN[]   = "\016";
 	static char ctrlO[]   = "\017";
@@ -432,8 +426,7 @@ extern void NDECL((*ibmgraphics_mode_callback));    /* defined in drawing.c */
 extern void NDECL((*ascgraphics_mode_callback));    /* defined in drawing.c */
 static void NDECL(tty_ascgraphics_hilite_fixup);
 
-static void
-tty_ascgraphics_hilite_fixup()
+static void tty_ascgraphics_hilite_fixup(void)
 {
     int c;
 
@@ -449,8 +442,7 @@ tty_ascgraphics_hilite_fixup()
 }
 #endif /* PC9800 */
 
-void
-tty_start_screen()
+void tty_start_screen(void)
 {
 	xputs(TI);
 	xputs(VS);
@@ -474,8 +466,7 @@ tty_start_screen()
 	if (iflags.num_pad) tty_number_pad(1);	/* make keypad send digits */
 }
 
-void
-tty_end_screen()
+void tty_end_screen(void)
 {
 	clear_screen();
 	xputs(VE);
@@ -493,9 +484,7 @@ tty_end_screen()
    and or xputc() is taken out of the ROOT overlay, then action must be taken
    in trampoli.[ch]. */
 
-void
-nocmov(x, y)
-int x,y;
+void nocmov(int x, int y)
 {
 	if ((int) ttyDisplay->cury > y) {
 		if(UP) {
@@ -540,9 +529,7 @@ int x,y;
 	}
 }
 
-void
-cmov(x, y)
-int x, y;
+void cmov(int x, int y)
 {
 	xputs(tgoto(nh_CM, x, y));
 	ttyDisplay->cury = y;
@@ -550,20 +537,12 @@ int x, y;
 }
 
 /* See note at OVLx ifdef above.   xputc() is a special function. */
-void
-xputc(c)
-#if defined(apollo)
-int c;
-#else
-char c;
-#endif
+void xputc(int c)
 {
 	(void) putchar(c);
 }
 
-void
-xputs(s)
-const char *s;
+void xputs(const char *s)
 {
 # ifndef TERMLIB
 	(void) fputs(s, stdout);
@@ -576,8 +555,7 @@ const char *s;
 # endif
 }
 
-void
-cl_end()
+void cl_end(void)
 {
 	if(CE)
 		xputs(CE);
@@ -598,8 +576,7 @@ cl_end()
 #endif /* OVL0 */
 #ifdef OVLB
 
-void
-clear_screen()
+void clear_screen(void)
 {
 	/* note: if CL is null, then termcap initialization failed,
 		so don't attempt screen-oriented I/O during final cleanup.
@@ -613,8 +590,7 @@ clear_screen()
 #endif /* OVLB */
 #ifdef OVL0
 
-void
-home()
+void home(void)
 {
 	if(HO)
 		xputs(HO);
@@ -625,46 +601,39 @@ home()
 	ttyDisplay->curx = ttyDisplay->cury = 0;
 }
 
-void
-standoutbeg()
+void standoutbeg(void)
 {
 	if(SO) xputs(SO);
 }
 
-void
-standoutend()
+void standoutend(void)
 {
 	if(SE) xputs(SE);
 }
 
 #if 0	/* if you need one of these, uncomment it (here and in extern.h) */
-void
-revbeg()
+void revbeg(void)
 {
 	if(MR) xputs(MR);
 }
 
-void
-boldbeg()
+void boldbeg(void)
 {
 	if(MD) xputs(MD);
 }
 
-void
-blinkbeg()
+void blinkbeg(void)
 {
 	if(MB) xputs(MB);
 }
 
-void
-dimbeg()
+void dimbeg(void)
 /* not in most termcap entries */
 {
 	if(MH) xputs(MH);
 }
 
-void
-m_end()
+void m_end(void)
 {
 	if(ME) xputs(ME);
 }
@@ -673,14 +642,12 @@ m_end()
 #endif /* OVL0 */
 #ifdef OVLB
 
-void
-backsp()
+void backsp(void)
 {
 	xputs(BC);
 }
 
-void
-tty_nhbell()
+void tty_nhbell(void)
 {
 	if (flags.silent) return;
 	(void) putchar('\007');		/* curx does not change */
@@ -691,13 +658,13 @@ tty_nhbell()
 #ifdef OVL0
 
 #ifdef ASCIIGRAPH
-void
-graph_on() {
+void graph_on(void)
+{
 	if (AS) xputs(AS);
 }
 
-void
-graph_off() {
+void graph_off(void)
+{
 	if (AE) xputs(AE);
 }
 #endif
@@ -719,8 +686,7 @@ static const short tmspc10[] = {		/* from termcap */
 #endif
 
 /* delay 50 ms */
-void
-tty_delay_output()
+void tty_delay_output(void)
 {
 #if defined(MICRO)
 	int i;
@@ -774,8 +740,7 @@ tty_delay_output()
 #endif /* OVL1 */
 #ifdef OVLB
 
-void
-cl_eos()			/* free after Robert Viduya */
+void cl_eos(void)			/* free after Robert Viduya */
 {				/* must only be called with curx = 1 */
 
 	if(nh_CD)
@@ -865,8 +830,7 @@ const struct {int ti_color, nh_color, nh_bright_color;} ti_map[6] =
 	{COLOR_CYAN,CLR_CYAN,CLR_BRIGHT_CYAN}
 };
 
-static void
-init_hilite()
+static void init_hilite(void)
 {
 	int c;
 	char *setf, *scratch;
@@ -941,8 +905,7 @@ init_hilite()
 	}
 }
 
-static void
-kill_hilite()
+static void kill_hilite(void)
 {
 	/* if colors weren't usable, no freeing needed */
 	if (hilites[CLR_BLACK] == nh_HI)
@@ -972,10 +935,7 @@ kill_hilite()
 
 #  ifndef TOS
 /* find the foreground and background colors set by nh_HI or nh_HE */
-static void
-analyze_seq (str, fg, bg)
-char *str;
-int *fg, *bg;
+static void analyze_seq(char *str, int *fg, int *bg)
 {
 	int c, code;
 	int len;
@@ -1032,8 +992,7 @@ int *fg, *bg;
  * scanned to find foreground and background colors.
  */
 
-static void
-init_hilite()
+static void init_hilite(void)
 {
 	int c;
 #  ifdef TOS
@@ -1113,8 +1072,7 @@ init_hilite()
 #  endif /* TOS */
 }
 
-static void
-kill_hilite()
+static void kill_hilite(void)
 {
 # ifndef TOS
 	int c;
@@ -1135,9 +1093,7 @@ kill_hilite()
 
 static char nulstr[] = "";
 
-static char *
-s_atr2str(n)
-int n;
+static char *s_atr2str(int n)
 {
     switch (n) {
 	    case ATR_ULINE:
@@ -1154,9 +1110,7 @@ int n;
     return nulstr;
 }
 
-static char *
-e_atr2str(n)
-int n;
+static char *e_atr2str(int n)
 {
     switch (n) {
 	    case ATR_ULINE:
@@ -1171,9 +1125,7 @@ int n;
 }
 
 
-void
-term_start_attr(attr)
-int attr;
+void term_start_attr(int attr)
 {
 	if (attr) {
 		xputs(s_atr2str(attr));
@@ -1181,9 +1133,7 @@ int attr;
 }
 
 
-void
-term_end_attr(attr)
-int attr;
+void term_end_attr(int attr)
 {
 	if(attr) {
 		xputs(e_atr2str(attr));
@@ -1191,15 +1141,13 @@ int attr;
 }
 
 
-void
-term_start_raw_bold()
+void term_start_raw_bold(void)
 {
 	xputs(nh_HI);
 }
 
 
-void
-term_end_raw_bold()
+void term_end_raw_bold(void)
 {
 	xputs(nh_HE);
 }
@@ -1207,24 +1155,19 @@ term_end_raw_bold()
 
 #ifdef TEXTCOLOR
 
-void
-term_end_color()
+void term_end_color(void)
 {
 	xputs(nh_HE);
 }
 
 
-void
-term_start_color(color)
-int color;
+void term_start_color(int color)
 {
 	xputs(hilites[color]);
 }
 
 
-int
-has_color(color)
-int color;
+int has_color(int color)
 {
 #ifdef X11_GRAPHICS
 	/* XXX has_color() should be added to windowprocs */

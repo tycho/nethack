@@ -31,8 +31,7 @@ static const char drop_types[] =
 	{ ALLOW_COUNT, COIN_CLASS, ALL_CLASSES, 0 };
 
 /* 'd' command: drop one inventory item */
-int
-dodrop()
+int dodrop(void)
 {
 #ifndef GOLDOBJ
 	int result, i = (invent || u.ugold) ? 0 : (SIZE(drop_types) - 1);
@@ -55,11 +54,7 @@ dodrop()
  * in a pool, it either fills the pool up or sinks away.  In either case,
  * it's gone for good...  If the destination is not a pool, returns FALSE.
  */
-bool
-boulder_hits_pool(otmp, rx, ry, pushing)
-struct obj *otmp;
-int rx, ry;
-bool pushing;
+bool boulder_hits_pool(struct obj *otmp, int rx, int ry, bool pushing)
 {
 	if (!otmp || otmp->otyp != BOULDER)
 	    impossible("Not a boulder?");
@@ -129,11 +124,7 @@ bool pushing;
  * called with the object not in any chain.  Returns TRUE if the object goes
  * away.
  */
-bool
-flooreffects(obj,x,y,verb)
-struct obj *obj;
-int x,y;
-const char *verb;
+bool flooreffects(struct obj *obj, int x, int y, const char *verb)
 {
 	struct trap *t;
 	struct monst *mtmp;
@@ -227,9 +218,9 @@ const char *verb;
 #endif /* OVL0 */
 #ifdef OVLB
 
-void
-doaltarobj(obj)  /* obj is an object dropped on an altar */
-	struct obj *obj;
+void doaltarobj(  /* obj is an object dropped on an altar */
+	struct obj *obj
+)
 {
 	if (Blind)
 		return;
@@ -250,20 +241,16 @@ doaltarobj(obj)  /* obj is an object dropped on an altar */
 }
 
 #ifdef SINKS
-STATIC_OVL
-void
-trycall(obj)
-struct obj *obj;
+STATIC_OVL void trycall(struct obj *obj)
 {
 	if(!objects[obj->otyp].oc_name_known &&
 	   !objects[obj->otyp].oc_uname)
 	   docall(obj);
 }
 
-STATIC_OVL
-void
-dosinkring(obj)  /* obj is a ring being dropped over a kitchen sink */
-struct obj *obj;
+STATIC_OVL void dosinkring(  /* obj is a ring being dropped over a kitchen sink */
+	struct obj *obj
+)
 {
 	struct obj *otmp,*otmp2;
 	bool ideed = TRUE;
@@ -407,10 +394,7 @@ giveback:
 #ifdef OVL0
 
 /* some common tests when trying to drop or throw items */
-bool
-canletgo(obj,word)
-struct obj *obj;
-const char *word;
+bool canletgo(struct obj *obj, const char *word)
 {
 	if(obj->owornmask & (W_ARMOR | W_RING | W_AMUL | W_TOOL)){
 		if (*word)
@@ -451,10 +435,7 @@ const char *word;
 	return(TRUE);
 }
 
-STATIC_PTR
-int
-drop(obj)
-struct obj *obj;
+STATIC_PTR int drop(struct obj *obj)
 {
 	if(!obj) return(0);
 	if(!canletgo(obj,"drop"))
@@ -513,9 +494,7 @@ struct obj *obj;
 
 /* Called in several places - may produce output */
 /* eg ship_object() and dropy() -> sellobj() both produce output */
-void
-dropx(obj)
-struct obj *obj;
+void dropx(struct obj *obj)
 {
 #ifndef GOLDOBJ
 	if (obj->oclass != COIN_CLASS || obj == invent) freeinv(obj);
@@ -532,9 +511,7 @@ struct obj *obj;
 	dropy(obj);
 }
 
-void
-dropy(obj)
-struct obj *obj;
+void dropy(struct obj *obj)
 {
 	if (obj == uwep) setuwep((struct obj *)0);
 	if (obj == uquiver) setuqwep((struct obj *)0);
@@ -593,9 +570,7 @@ struct obj *obj;
 
 /* things that must change when not held; recurse into containers.
    Called for both player and monsters */
-void
-obj_no_longer_held(obj)
-struct obj *obj;
+void obj_no_longer_held(struct obj *obj)
 {
 	if (!obj) {
 	    return;
@@ -617,8 +592,7 @@ struct obj *obj;
 }
 
 /* 'D' command: drop several things */
-int
-doddrop()
+int doddrop(void)
 {
 	int result = 0;
 
@@ -634,9 +608,7 @@ doddrop()
 }
 
 /* Drop things from the hero's inventory, using a menu. */
-STATIC_OVL int
-menu_drop(retry)
-int retry;
+STATIC_OVL int menu_drop(int retry)
 {
     int n, i, n_dropped = 0;
     long cnt;
@@ -746,8 +718,7 @@ int retry;
 /* on a ladder, used in goto_level */
 static bool at_ladder = FALSE;
 
-int
-dodown()
+int dodown(void)
 {
 	struct trap *trap = 0;
 	bool stairs_down = ((u.ux == xdnstair && u.uy == ydnstair) ||
@@ -834,8 +805,7 @@ dodown()
 	return(1);
 }
 
-int
-doup()
+int doup(void)
 {
 	if( (u.ux != xupstair || u.uy != yupstair)
 	     && (!xupladder || u.ux != xupladder || u.uy != yupladder)
@@ -883,8 +853,7 @@ doup()
 d_level save_dlevel = {0, 0};
 
 /* check that we can write out the current level */
-STATIC_OVL int
-currentlevel_rewrite()
+STATIC_OVL int currentlevel_rewrite(void)
 {
 	int fd;
 	char whynot[BUFSZ];
@@ -919,8 +888,7 @@ currentlevel_rewrite()
 }
 
 #ifdef INSURANCE
-void
-save_currentstate()
+void save_currentstate(void)
 {
 	int fd;
 
@@ -948,10 +916,7 @@ xchar x, y;
 }
 */
 
-void
-goto_level(newlevel, at_stairs, falling, portal)
-d_level *newlevel;
-bool at_stairs, falling, portal;
+void goto_level(d_level *newlevel, bool at_stairs, bool falling, bool portal)
 {
 	int fd, l_idx;
 	xchar new_ledger;
@@ -1357,8 +1322,7 @@ bool at_stairs, falling, portal;
 	(void) pickup(1);
 }
 
-STATIC_OVL void
-final_level()
+STATIC_OVL void final_level(void)
 {
 	struct monst *mtmp;
 	struct obj *otmp;
@@ -1425,12 +1389,8 @@ static char *dfr_pre_msg = 0,	/* pline() before level change */
 	    *dfr_post_msg = 0;	/* pline() after level change */
 
 /* change levels at the end of this turn, after monsters finish moving */
-void
-schedule_goto(tolev, at_stairs, falling, portal_flag, pre_msg, post_msg)
-d_level *tolev;
-bool at_stairs, falling;
-int portal_flag;
-const char *pre_msg, *post_msg;
+void schedule_goto(d_level *tolev, bool at_stairs, bool falling,
+		int portal_flag, const char *pre_msg, const char *post_msg)
 {
 	int typmask = 0100;		/* non-zero triggers `deferred_goto' */
 
@@ -1450,8 +1410,7 @@ const char *pre_msg, *post_msg;
 }
 
 /* handle something like portal ejection */
-void
-deferred_goto()
+void deferred_goto(void)
 {
 	if (!on_level(&u.uz, &u.utolev)) {
 	    d_level dest;
@@ -1484,9 +1443,7 @@ deferred_goto()
  * Return TRUE if we created a monster for the corpse.  If successful, the
  * corpse is gone.
  */
-bool
-revive_corpse(corpse)
-struct obj *corpse;
+bool revive_corpse(struct obj *corpse)
 {
     struct monst *mtmp, *mcarry;
     bool is_uwep, chewed;
@@ -1570,10 +1527,7 @@ struct obj *corpse;
 
 /* Revive the corpse via a timeout. */
 /*ARGSUSED*/
-void
-revive_mon(arg, timeout)
-genericptr_t arg;
-long timeout;
+void revive_mon(genericptr_t arg, long timeout)
 {
     struct obj *body = (struct obj *) arg;
 
@@ -1586,8 +1540,7 @@ long timeout;
     }
 }
 
-int
-donull()
+int donull(void)
 {
 	return(1);	/* Do nothing, but let other things happen */
 }
@@ -1595,8 +1548,7 @@ donull()
 #endif /* OVL3 */
 #ifdef OVLB
 
-STATIC_PTR int
-wipeoff()
+STATIC_PTR int wipeoff(void)
 {
 	if(u.ucreamed < 4)	u.ucreamed = 0;
 	else			u.ucreamed -= 4;
@@ -1615,8 +1567,7 @@ wipeoff()
 	return(1);		/* still busy */
 }
 
-int
-dowipe()
+int dowipe(void)
 {
 	if(u.ucreamed)  {
 		static char buf[39];
@@ -1632,10 +1583,7 @@ dowipe()
 	return(1);
 }
 
-void
-set_wounded_legs(side, timex)
-long side;
-int timex;
+void set_wounded_legs(long side, int timex)
 {
 	/* KMH -- STEED
 	 * If you are riding, your steed gets the wounded legs instead.
@@ -1654,8 +1602,7 @@ int timex;
 	(void)encumber_msg();
 }
 
-void
-heal_legs()
+void heal_legs(void)
 {
 	if(Wounded_legs) {
 		if (ATEMP(A_DEX) < 0) {

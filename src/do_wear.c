@@ -59,18 +59,14 @@ STATIC_DCL int FDECL(menu_remarm, (int));
 STATIC_DCL void FDECL(already_wearing, (const char*));
 STATIC_DCL void FDECL(already_wearing2, (const char*, const char*));
 
-void
-off_msg(otmp)
-struct obj *otmp;
+void off_msg(struct obj *otmp)
 {
 	if(flags.verbose)
 	    You("were wearing %s.", doname(otmp));
 }
 
 /* for items that involve no delay */
-STATIC_OVL void
-on_msg(otmp)
-struct obj *otmp;
+STATIC_OVL void on_msg(struct obj *otmp)
 {
 	if (flags.verbose) {
 	    char how[BUFSZ];
@@ -89,9 +85,7 @@ struct obj *otmp;
  * The Type_off() functions call setworn() themselves.
  */
 
-STATIC_PTR
-int
-Boots_on()
+STATIC_PTR int Boots_on(void)
 {
     long oldprop =
 	u.uprops[objects[uarmf->otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
@@ -137,8 +131,7 @@ Boots_on()
     return 0;
 }
 
-int
-Boots_off()
+int Boots_off(void)
 {
     int otyp = uarmf->otyp;
     long oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
@@ -192,8 +185,7 @@ Boots_off()
     return 0;
 }
 
-STATIC_OVL int
-Cloak_on()
+STATIC_OVL int Cloak_on(void)
 {
     long oldprop =
 	u.uprops[objects[uarmc->otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
@@ -241,8 +233,7 @@ Cloak_on()
     return 0;
 }
 
-int
-Cloak_off()
+int Cloak_off(void)
 {
     int otyp = uarmc->otyp;
     long oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
@@ -287,9 +278,7 @@ Cloak_off()
     return 0;
 }
 
-STATIC_PTR
-int
-Helmet_on()
+STATIC_PTR int Helmet_on(void)
 {
     switch(uarmh->otyp) {
 	case FEDORA:
@@ -345,8 +334,7 @@ Helmet_on()
     return 0;
 }
 
-int
-Helmet_off()
+int Helmet_off(void)
 {
     takeoff_mask &= ~W_ARMH;
 
@@ -387,9 +375,7 @@ Helmet_off()
     return 0;
 }
 
-STATIC_PTR
-int
-Gloves_on()
+STATIC_PTR int Gloves_on(void)
 {
     long oldprop =
 	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
@@ -413,8 +399,7 @@ Gloves_on()
     return 0;
 }
 
-int
-Gloves_off()
+int Gloves_off(void)
 {
     long oldprop =
 	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
@@ -469,8 +454,7 @@ Gloves_off()
     return 0;
 }
 
-STATIC_OVL int
-Shield_on()
+STATIC_OVL int Shield_on(void)
 {
 /*
     switch (uarms->otyp) {
@@ -488,8 +472,7 @@ Shield_on()
     return 0;
 }
 
-int
-Shield_off()
+int Shield_off(void)
 {
     takeoff_mask &= ~W_ARMS;
 /*
@@ -510,8 +493,7 @@ Shield_off()
 }
 
 #ifdef TOURIST
-STATIC_OVL int
-Shirt_on()
+STATIC_OVL int Shirt_on(void)
 {
 /*
     switch (uarmu->otyp) {
@@ -524,8 +506,7 @@ Shirt_on()
     return 0;
 }
 
-int
-Shirt_off()
+int Shirt_off(void)
 {
     takeoff_mask &= ~W_ARMU;
 /*
@@ -545,15 +526,12 @@ Shirt_off()
  * is fire resistance, and we have to immediately set HFire_resistance in worn.c
  * since worn.c will check it before returning.
  */
-STATIC_PTR
-int
-Armor_on()
+STATIC_PTR int Armor_on(void)
 {
     return 0;
 }
 
-int
-Armor_off()
+int Armor_off(void)
 {
     takeoff_mask &= ~W_ARM;
     setworn((struct obj *)0, W_ARM);
@@ -564,8 +542,7 @@ Armor_off()
 /* The gone functions differ from the off functions in that if you die from
  * taking it off and have life saving, you still die.
  */
-int
-Armor_gone()
+int Armor_gone(void)
 {
     takeoff_mask &= ~W_ARM;
     setnotworn(uarm);
@@ -573,8 +550,7 @@ Armor_gone()
     return 0;
 }
 
-STATIC_OVL void
-Amulet_on()
+STATIC_OVL void Amulet_on(void)
 {
     switch(uamul->otyp) {
 	case AMULET_OF_ESP:
@@ -627,8 +603,7 @@ Amulet_on()
     }
 }
 
-void
-Amulet_off()
+void Amulet_off(void)
 {
     takeoff_mask &= ~W_AMUL;
 
@@ -676,9 +651,7 @@ Amulet_off()
     return;
 }
 
-void
-Ring_on(obj)
-struct obj *obj;
+void Ring_on(struct obj *obj)
 {
     long oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
     int old_attrib, which;
@@ -783,10 +756,7 @@ struct obj *obj;
     }
 }
 
-STATIC_OVL void
-Ring_off_or_gone(obj,gone)
-struct obj *obj;
-bool gone;
+STATIC_OVL void Ring_off_or_gone(struct obj *obj, bool gone)
 {
     long mask = (obj->owornmask & W_RING);
     int old_attrib, which;
@@ -889,23 +859,17 @@ bool gone;
     }
 }
 
-void
-Ring_off(obj)
-struct obj *obj;
+void Ring_off(struct obj *obj)
 {
 	Ring_off_or_gone(obj,FALSE);
 }
 
-void
-Ring_gone(obj)
-struct obj *obj;
+void Ring_gone(struct obj *obj)
 {
 	Ring_off_or_gone(obj,TRUE);
 }
 
-void
-Blindf_on(otmp)
-struct obj *otmp;
+void Blindf_on(struct obj *otmp)
 {
 	bool already_blind = Blind, changed = FALSE;
 
@@ -936,9 +900,7 @@ struct obj *otmp;
 	}
 }
 
-void
-Blindf_off(otmp)
-struct obj *otmp;
+void Blindf_off(struct obj *otmp)
 {
 	bool was_blind = Blind, changed = FALSE;
 
@@ -972,8 +934,7 @@ struct obj *otmp;
 }
 
 /* called in main to set intrinsics of worn start-up items */
-void
-set_wear()
+void set_wear(void)
 {
 #ifdef TOURIST
 	if (uarmu) (void) Shirt_on();
@@ -987,9 +948,9 @@ set_wear()
 }
 
 /* check whether the target object is currently being put on (or taken off) */
-bool
-donning(otmp)		/* also checks for doffing */
-struct obj *otmp;
+bool donning(		/* also checks for doffing */
+	struct obj *otmp
+)
 {
  /* long what = (occupation == take_off) ? taking_off : 0L; */
     long what = taking_off;	/* if nonzero, occupation is implied */
@@ -1022,8 +983,7 @@ struct obj *otmp;
     return result;
 }
 
-void
-cancel_don()
+void cancel_don(void)
 {
 	/* the piece of armor we were donning/doffing has vanished, so stop
 	 * wasting time on it (and don't dereference it when donning would
@@ -1042,8 +1002,7 @@ static const char clothes[] = {ARMOR_CLASS, 0};
 static const char accessories[] = {RING_CLASS, AMULET_CLASS, TOOL_CLASS, FOOD_CLASS, 0};
 
 /* the 'T' command */
-int
-dotakeoff()
+int dotakeoff(void)
 {
 	struct obj *otmp = (struct obj *)0;
 	int armorpieces = 0;
@@ -1109,8 +1068,7 @@ dotakeoff()
 }
 
 /* the 'R' command */
-int
-doremring()
+int doremring(void)
 {
 	struct obj *otmp = 0;
 	int Accessories = 0;
@@ -1168,9 +1126,7 @@ doremring()
 }
 
 /* Check if something worn is cursed _and_ unremovable. */
-int
-cursed(otmp)
-struct obj *otmp;
+int cursed(struct obj *otmp)
 {
 	/* Curses, like chickens, come home to roost. */
 	if((otmp == uwep) ? welded(otmp) : (int)otmp->cursed) {
@@ -1183,9 +1139,7 @@ struct obj *otmp;
 	return(0);
 }
 
-int
-armoroff(otmp)
-struct obj *otmp;
+int armoroff(struct obj *otmp)
 {
 	int delay = -objects[otmp->otyp].oc_delay;
 
@@ -1235,16 +1189,12 @@ struct obj *otmp;
 	return(1);
 }
 
-STATIC_OVL void
-already_wearing(cc)
-const char *cc;
+STATIC_OVL void already_wearing(const char *cc)
 {
 	You("are already wearing %s%c", cc, (cc == c_that_) ? '!' : '.');
 }
 
-STATIC_OVL void
-already_wearing2(cc1, cc2)
-const char *cc1, *cc2;
+STATIC_OVL void already_wearing2(const char *cc1, const char *cc2)
 {
 	You_cant("wear %s because you're wearing %s there already.", cc1, cc2);
 }
@@ -1256,11 +1206,7 @@ const char *cc1, *cc2;
  *         noisy (if TRUE give error messages, otherwise be quiet about it)
  * output: mask (otmp's armor type)
  */
-int
-canwearobj(otmp,mask,noisy)
-struct obj *otmp;
-long *mask;
-bool noisy;
+int canwearobj(struct obj *otmp, long *mask, bool noisy)
 {
     int err = 0;
     const char *which;
@@ -1404,8 +1350,7 @@ bool noisy;
 }
 
 /* the 'W' command */
-int
-dowear()
+int dowear(void)
 {
 	struct obj *otmp;
 	int delay;
@@ -1466,8 +1411,7 @@ dowear()
 	return(1);
 }
 
-int
-doputon()
+int doputon(void)
 {
 	struct obj *otmp;
 	long mask = 0L;
@@ -1598,8 +1542,7 @@ doputon()
 
 #ifdef OVL0
 
-void
-find_ac()
+void find_ac(void)
 {
 	int uac = mons[u.umonnum].ac;
 
@@ -1626,8 +1569,7 @@ find_ac()
 #endif /* OVL0 */
 #ifdef OVLB
 
-void
-glibr()
+void glibr(void)
 {
 	struct obj *otmp;
 	int xfl = 0;
@@ -1689,9 +1631,7 @@ glibr()
 	}
 }
 
-struct obj *
-some_armor(victim)
-struct monst *victim;
+struct obj *some_armor(struct monst *victim)
 {
 	struct obj *otmph, *otmp;
 
@@ -1715,10 +1655,7 @@ struct monst *victim;
 }
 
 /* erode some arbitrary armor worn by the victim */
-void
-erode_armor(victim, acid_dmg)
-struct monst *victim;
-bool acid_dmg;
+void erode_armor(struct monst *victim, bool acid_dmg)
 {
 	struct obj *otmph = some_armor(victim);
 
@@ -1729,10 +1666,7 @@ bool acid_dmg;
 }
 
 /* used for praying to check and fix levitation trouble */
-struct obj *
-stuck_ring(ring, otyp)
-struct obj *ring;
-int otyp;
+struct obj *stuck_ring(struct obj *ring, int otyp)
 {
     if (ring != uleft && ring != uright) {
 	impossible("stuck_ring: neither left nor right?");
@@ -1754,18 +1688,14 @@ int otyp;
 }
 
 /* also for praying; find worn item that confers "Unchanging" attribute */
-struct obj *
-unchanger()
+struct obj *unchanger(void)
 {
     if (uamul && uamul->otyp == AMULET_OF_UNCHANGING) return uamul;
     return 0;
 }
 
 /* occupation callback for 'A' */
-STATIC_PTR
-int
-select_off(otmp)
-struct obj *otmp;
+STATIC_PTR int select_off(struct obj *otmp)
 {
 	struct obj *why;
 	char buf[BUFSZ];
@@ -1875,8 +1805,7 @@ struct obj *otmp;
 	return(0);
 }
 
-STATIC_OVL struct obj *
-do_takeoff()
+STATIC_OVL struct obj *do_takeoff(void)
 {
 	struct obj *otmp = (struct obj *)0;
 
@@ -1934,9 +1863,7 @@ do_takeoff()
 
 static const char *disrobing = "";
 
-STATIC_PTR
-int
-take_off()
+STATIC_PTR int take_off(void)
 {
 	int i;
 	struct obj *otmp;
@@ -2020,16 +1947,14 @@ take_off()
 }
 
 /* clear saved context to avoid inappropriate resumption of interrupted 'A' */
-void
-reset_remarm()
+void reset_remarm(void)
 {
 	taking_off = takeoff_mask = 0L;
 	disrobing = nul;
 }
 
 /* the 'A' command -- remove multiple worn items */
-int
-doddoremarm()
+int doddoremarm(void)
 {
     int result = 0;
 
@@ -2064,9 +1989,7 @@ doddoremarm()
     return 0;
 }
 
-STATIC_OVL int
-menu_remarm(retry)
-int retry;
+STATIC_OVL int menu_remarm(int retry)
 {
     int n, i = 0;
     menu_item *pick_list;
@@ -2107,9 +2030,7 @@ int retry;
 }
 
 /* hit by destroy armor scroll/black dragon breath/monster spell */
-int
-destroy_arm(atmp)
-struct obj *atmp;
+int destroy_arm(struct obj *atmp)
 {
 	struct obj *otmp;
 #define DESTROY_ARM(o) ((otmp = (o)) != 0 && \
@@ -2165,10 +2086,7 @@ struct obj *atmp;
 	return(1);
 }
 
-void
-adj_abon(otmp, delta)
-struct obj *otmp;
-schar delta;
+void adj_abon(struct obj *otmp, schar delta)
 {
 	if (uarmg && uarmg == otmp && otmp->otyp == GAUNTLETS_OF_DEXTERITY) {
 		if (delta) {

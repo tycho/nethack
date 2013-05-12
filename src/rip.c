@@ -71,10 +71,7 @@ static const char *rip_txt[] = {
 
 static char **rip;
 
-STATIC_OVL void
-center(line, text)
-int line;
-char *text;
+STATIC_OVL void center(int line, char *text)
 {
 	char *ip,*op;
 	ip = text;
@@ -83,10 +80,7 @@ char *text;
 }
 
 
-void
-genl_outrip(tmpwin, how)
-winid tmpwin;
-int how;
+void genl_outrip(winid tmpwin, int how)
 {
 	char **dp;
 	char *dpx;

@@ -31,8 +31,7 @@ opt_sel_row_selected(GtkCList *cList, int row, int col, GdkEvent *event)
     tileset = row;
 }
 
-void
-ghack_settings_dialog()
+void ghack_settings_dialog(void)
 {
     int i;
     static GtkWidget* dialog;

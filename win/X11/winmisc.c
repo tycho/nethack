@@ -81,30 +81,21 @@ static void FDECL(ps_select, (Widget,XtPointer,XtPointer));
 
 /* Player Selection -------------------------------------------------------- */
 /* ARGSUSED */
-static void
-ps_quit(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data, call_data;
+static void ps_quit(Widget w, XtPointer client_data, XtPointer call_data)
 {
     ps_selected = PS_QUIT;
     exit_x_event = TRUE;		/* leave event loop */
 }
 
 /* ARGSUSED */
-static void
-ps_random(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data, call_data;
+static void ps_random(Widget w, XtPointer client_data, XtPointer call_data)
 {
     ps_selected = PS_RANDOM;
     exit_x_event = TRUE;		/* leave event loop */
 }
 
 /* ARGSUSED */
-static void
-ps_select(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data, call_data;
+static void ps_select(Widget w, XtPointer client_data, XtPointer call_data)
 {
     ps_selected = (int) client_data;
     exit_x_event = TRUE;		/* leave event loop */
@@ -258,8 +249,7 @@ algn_key(w, event, params, num_params)
 }
 
 /* Global functions ========================================================= */
-void
-X11_player_selection()
+void X11_player_selection(void)
 {
     int num_roles, num_races, num_gends, num_algns,
 	i, availcount, availindex;
@@ -529,8 +519,7 @@ X11_player_selection()
 }
 
 
-int
-X11_get_ext_cmd()
+int X11_get_ext_cmd(void)
 {
     static Boolean initialized = False;
 
@@ -555,10 +544,7 @@ X11_get_ext_cmd()
 
 /* Extended Command -------------------------------------------------------- */
 /* ARGSUSED */
-static void
-extend_select(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data, call_data;
+static void extend_select(Widget w, XtPointer client_data, XtPointer call_data)
 {
     int selected = (int) client_data;
 
@@ -580,19 +566,13 @@ extend_select(w, client_data, call_data)
 }
 
 /* ARGSUSED */
-static void
-extend_dismiss(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data, call_data;
+static void extend_dismiss(Widget w, XtPointer client_data, XtPointer call_data)
 {
     ec_dismiss();
 }
 
 /* ARGSUSED */
-static void
-extend_help(w, client_data, call_data)
-    Widget w;
-    XtPointer client_data, call_data;
+static void extend_help(Widget w, XtPointer client_data, XtPointer call_data)
 {
     /* We might need to make it known that we already have one listed. */
     (void) doextlist();
@@ -626,8 +606,7 @@ popup_delete(w, event, params, num_params)
     exit_x_event = TRUE;		/* leave event loop */
 }
 
-static void
-ec_dismiss()
+static void ec_dismiss(void)
 {
     /* unselect while still visible */
     if (extended_command_selected >= 0)
@@ -708,8 +687,7 @@ ec_key(w, event, params, num_params)
  * Use our own home-brewed version menu because simpleMenu is designed to
  * be used from a menubox.
  */
-static void
-init_extended_commands_popup()
+static void init_extended_commands_popup(void)
 {
     int i, num_commands;
     const char **command_list;
@@ -760,23 +738,20 @@ init_extended_commands_popup()
  *		|	nameN	       |
  *		------------------------
  */
-static Widget
-make_menu(popup_name, popup_label, popup_translations,
-		left_name, left_callback,
-		right_name, right_callback,
-		num_names, widget_names, command_widgets, name_callback, formp)
-    const char	   *popup_name;
-    const char	   *popup_label;
-    const char	   *popup_translations;
-    const char	   *left_name;
-    XtCallbackProc left_callback;
-    const char	   *right_name;
-    XtCallbackProc right_callback;
-    int		   num_names;
-    const char	   **widget_names;	/* return array of command widgets */
-    Widget	   **command_widgets;
-    XtCallbackProc name_callback;
-    Widget	   *formp;	/* return */
+static Widget make_menu(
+	const char *popup_name,
+	const char *popup_label,
+	const char *popup_translations,
+	const char *left_name,
+	XtCallbackProc left_callback,
+	const char *right_name,
+	XtCallbackProc right_callback,
+	int num_names,
+	const char **widget_names,	/* return array of command widgets */
+	Widget **command_widgets,
+	XtCallbackProc name_callback,
+	Widget *formp	/* return */
+)
 {
     Widget popup, form, label, above, left, right;
     Widget *commands, *curr;

@@ -43,7 +43,7 @@ has_rdrand(void)
 }
 
 #include <immintrin.h>
-unsigned int rdrand()
+unsigned int rdrand(void)
 {
 	unsigned int x;
 	if (has_rdrand() && _rdrand32_step(&x))
@@ -57,9 +57,9 @@ unsigned int rdrand()
 
 #ifdef OVL0
 
-int
-rn2(x)		/* 0 <= rn2(x) < x */
-int x;
+int rn2(		/* 0 <= rn2(x) < x */
+	int x
+)
 {
 #ifdef DEBUG
 	if (x <= 0) {
@@ -76,9 +76,9 @@ int x;
 #endif /* OVL0 */
 #ifdef OVLB
 
-int
-rnl(x)		/* 0 <= rnl(x) < x; sometimes subtracting Luck */
-int x;	/* good luck approaches 0, bad luck approaches (x-1) */
+int rnl(		/* 0 <= rnl(x) < x; sometimes subtracting Luck */
+	int x	/* good luck approaches 0, bad luck approaches (x-1) */
+)
 {
 	int i;
 
@@ -102,9 +102,9 @@ int x;	/* good luck approaches 0, bad luck approaches (x-1) */
 #endif /* OVLB */
 #ifdef OVL0
 
-int
-rnd(x)		/* 1 <= rnd(x) <= x */
-int x;
+int rnd(		/* 1 <= rnd(x) <= x */
+	int x
+)
 {
 #ifdef DEBUG
 	if (x <= 0) {
@@ -121,9 +121,10 @@ int x;
 #endif /* OVL0 */
 #ifdef OVL1
 
-int
-d(n,x)		/* n <= d(n,x) <= (n*x) */
-int n, x;
+int d(		/* n <= d(n,x) <= (n*x) */
+	int n,
+	int x
+)
 {
 	int tmp = n;
 
@@ -140,9 +141,7 @@ int n, x;
 #endif /* OVL1 */
 #ifdef OVLB
 
-int
-rne(x)
-int x;
+int rne(int x)
 {
 	int tmp, utmp;
 
@@ -161,9 +160,7 @@ int x;
 	 */
 }
 
-int
-rnz(i)
-int i;
+int rnz(int i)
 {
 #ifdef LINT
 	int x = i;

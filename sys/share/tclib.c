@@ -58,10 +58,10 @@ static const char *FDECL(tc_field, (const char *,const char **));
 #endif
 
 /* retrieve the specified terminal entry and return it in `entbuf' */
-int
-tgetent(entbuf, term)
-    char *entbuf;	/* size must be at least [TCBUFSIZ] */
-    const char *term;
+int tgetent(
+	char *entbuf,	/* size must be at least [TCBUFSIZ] */
+	const char *term
+)
 {
     int result;
     FILE *fp;
@@ -93,9 +93,7 @@ tgetent(entbuf, term)
 }
 
 /* copy the entry into the output buffer */
-static int
-tc_store(trm, ent)
-    const char *trm, *ent;
+static int tc_store(const char *trm, const char *ent)
 {
     const char *bar, *col;
     char *s;
@@ -190,10 +188,7 @@ tc_find(fp, term, buffer, bufsiz)
 }
 
 /* check whether `ent' contains `nam'; return start of field entries */
-static char *
-tc_name(nam, ent)
-    const char *nam;
-    char *ent;
+static char *tc_name(const char *nam, char *ent)
 {
     char *nxt, *lst, *p = ent;
     size_t n = strlen(nam);
@@ -210,9 +205,7 @@ tc_name(nam, ent)
 }
 
 /* look up a numeric entry */
-int
-tgetnum(which)
-    const char *which;
+int tgetnum(const char *which)
 {
     const char *q, *p = tc_field(which, &q);
     char numbuf[32];
@@ -229,9 +222,7 @@ tgetnum(which)
 }
 
 /* look up a bool entry */
-int
-tgetflag(which)
-    const char *which;
+int tgetflag(const char *which)
 {
     const char *p = tc_field(which, (const char **)0);
 
@@ -239,10 +230,7 @@ tgetflag(which)
 }
 
 /* look up a string entry; update `*outptr' */
-char *
-tgetstr(which, outptr)
-    const char *which;
-    char **outptr;
+char *tgetstr(const char *which, char **outptr)
 {
     int n;
     char c, *r, *result;
@@ -290,10 +278,7 @@ tgetstr(which, outptr)
 }
 
 /* look for a particular field name */
-static const char *
-tc_field(field, tc_end)
-    const char *field;
-    const char **tc_end;
+static const char *tc_field(const char *field, const char **tc_end)
 {
     const char *end, *q, *p = tc_entry;
 
@@ -319,21 +304,21 @@ tc_field(field, tc_end)
 static char cmbuf[64];
 
 /* produce a string which will position the cursor at <row,col> if output */
-char *
-tgoto(cm, col, row)
-    const char *cm;
-    int col, row;
+char *tgoto(const char *cm, int col, int row)
 {
     return tparam(cm, cmbuf, (int)(sizeof cmbuf), row, col, 0, 0);
 }
 
 /* format a parameterized string, ala sprintf */
-char *
-tparam(ctl, buf, buflen, row, col, row2, col2)
-    const char *ctl;	/* parameter control string */
-    char *buf;		/* output buffer */
-    int buflen;		/* ought to have been `size_t'... */
-    int row, col, row2, col2;
+char *tparam(
+	const char *ctl,	/* parameter control string */
+	char *buf,		/* output buffer */
+	int buflen,		/* ought to have been `size_t'... */
+	int row,
+	int col,
+	int row2,
+	int col2
+)
 {
     int atmp, ac, av[5];
     char c, *r, *z, *bufend, numbuf[32];
@@ -428,11 +413,11 @@ tparam(ctl, buf, buflen, row, col, row2, col2)
 }
 
 /* send a string to the terminal, possibly padded with trailing NULs */
-void
-tputs( string, range, output_func )
-const char *string;	/* characters to output */
-int range;		/* number of lines affected, used for `*' delays */
-int (*output_func)();	/* actual output routine; return value ignored */
+void tputs(
+	const char *string,	/* characters to output */
+	int range,		/* number of lines affected, used for `*' delays */
+	int (*output_func)(void)	/* actual output routine; return value ignored */
+)
 {
     int c, num = 0;
     const char *p = string;

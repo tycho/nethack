@@ -43,7 +43,7 @@ void mswin_init_splashfonts(HWND hWnd)
 	ReleaseDC(hWnd, hdc);
 }
 
-void mswin_destroy_splashfonts()
+void mswin_destroy_splashfonts(void)
 {
 	DeleteObject (version_splash_font);
 }

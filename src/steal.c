@@ -9,9 +9,7 @@ STATIC_PTR int NDECL(stealarm);
 STATIC_DCL const char *FDECL(equipname, (struct obj *));
 STATIC_DCL void FDECL(mdrop_obj, (struct monst *,struct obj *,bool));
 
-STATIC_OVL const char *
-equipname(otmp)
-struct obj *otmp;
+STATIC_OVL const char *equipname(struct obj *otmp)
 {
 	return (
 #ifdef TOURIST
@@ -25,8 +23,7 @@ struct obj *otmp;
 }
 
 #ifndef GOLDOBJ
-long		/* actually returns something that fits in an int */
-somegold()
+long somegold(void)
 {
 #ifdef LINT	/* long conv. ok */
 	return(0L);
@@ -36,9 +33,7 @@ somegold()
 #endif
 }
 
-void
-stealgold(mtmp)
-struct monst *mtmp;
+void stealgold(struct monst *mtmp)
 {
 	struct obj *gold = g_at(u.ux, u.uy);
 	long tmp;
@@ -67,9 +62,7 @@ struct monst *mtmp;
 
 #else /* !GOLDOBJ */
 
-long		/* actually returns something that fits in an int */
-somegold(umoney)
-long umoney;
+long somegold(long umoney)
 {
 #ifdef LINT	/* long conv. ok */
 	return(0L);
@@ -87,9 +80,7 @@ be seized without further searching.
 May search containers too.
 Deals in gold only, as leprechauns don't care for lesser coins.
 */
-struct obj *
-findgold(chain)
-struct obj *chain;
+struct obj *findgold(struct obj *chain)
 {
         while (chain && chain->otyp != GOLD_PIECE) chain = chain->nobj;
         return chain;
@@ -98,9 +89,7 @@ struct obj *chain;
 /* 
 Steal gold coins only.  Leprechauns don't care for lesser coins.
 */
-void
-stealgold(mtmp)
-struct monst *mtmp;
+void stealgold(struct monst *mtmp)
 {
 	struct obj *fgold = g_at(u.ux, u.uy);
 	struct obj *ygold;
@@ -141,8 +130,7 @@ struct monst *mtmp;
 unsigned int stealoid;		/* object to be stolen */
 unsigned int stealmid;		/* monster doing the stealing */
 
-STATIC_PTR int
-stealarm()
+STATIC_PTR int stealarm(void)
 {
 	struct monst *mtmp;
 	struct obj *otmp;
@@ -175,10 +163,10 @@ botm:   stealoid = 0;
 
 /* An object you're wearing has been taken off by a monster (theft or
    seduction).  Also used if a worn item gets transformed (stone to flesh). */
-void
-remove_worn_item(obj, unchain_ball)
-struct obj *obj;
-bool unchain_ball;	/* whether to unpunish or just unwield */
+void remove_worn_item(
+	struct obj *obj,
+	bool unchain_ball	/* whether to unpunish or just unwield */
+)
 {
 	if (donning(obj))
 	    cancel_don();
@@ -228,10 +216,7 @@ bool unchain_ball;	/* whether to unpunish or just unwield */
  * Returns -1 if the monster died in the attempt
  * Avoid stealing the object stealoid
  */
-int
-steal(mtmp, objnambuf)
-struct monst *mtmp;
-char *objnambuf;
+int steal(struct monst *mtmp, char *objnambuf)
 {
 	struct obj *otmp;
 	int tmp, could_petrify, named = 0, armordelay;
@@ -428,10 +413,7 @@ gotobj:
 #ifdef OVL1
 
 /* Returns 1 if otmp is free'd, 0 otherwise. */
-int
-mpickobj(mtmp,otmp)
-struct monst *mtmp;
-struct obj *otmp;
+int mpickobj(struct monst *mtmp, struct obj *otmp)
 {
     int freed_otmp;
 
@@ -470,9 +452,7 @@ struct obj *otmp;
 #endif /* OVL1 */
 #ifdef OVLB
 
-void
-stealamulet(mtmp)
-struct monst *mtmp;
+void stealamulet(struct monst *mtmp)
 {
     struct obj *otmp = (struct obj *)0;
     int real=0, fake=0;
@@ -518,11 +498,7 @@ struct monst *mtmp;
 #ifdef OVL0
 
 /* drop one object taken from a (possibly dead) monster's inventory */
-STATIC_OVL void
-mdrop_obj(mon, obj, verbosely)
-struct monst *mon;
-struct obj *obj;
-bool verbosely;
+STATIC_OVL void mdrop_obj(struct monst *mon, struct obj *obj, bool verbosely)
 {
     int omx = mon->mx, omy = mon->my;
 
@@ -553,9 +529,7 @@ bool verbosely;
 /* some monsters bypass the normal rules for moving between levels or
    even leaving the game entirely; when that happens, prevent them from
    taking the Amulet or invocation tools with them */
-void
-mdrop_special_objs(mon)
-struct monst *mon;
+void mdrop_special_objs(struct monst *mon)
 {
     struct obj *obj, *otmp;
 
@@ -571,11 +545,11 @@ struct monst *mon;
 }
 
 /* release the objects the creature is carrying */
-void
-relobj(mtmp,show,is_pet)
-struct monst *mtmp;
-int show;
-bool is_pet;		/* If true, pet should keep wielded/worn items */
+void relobj(
+	struct monst *mtmp,
+	int show,
+	bool is_pet		/* If true, pet should keep wielded/worn items */
+)
 {
 	struct obj *otmp;
 	int omx = mtmp->mx, omy = mtmp->my;

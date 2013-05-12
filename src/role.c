@@ -509,24 +509,19 @@ STATIC_DCL int FDECL(race_alignmentcount, (int));
 static char randomstr[] = "random";
 
 
-bool
-validrole(rolenum)
-	int rolenum;
+bool validrole(int rolenum)
 {
 	return (rolenum >= 0 && rolenum < SIZE(roles)-1);
 }
 
 
-int
-randrole()
+int randrole(void)
 {
 	return (rn2(SIZE(roles)-1));
 }
 
 
-int
-str2role(str)
-	char *str;
+int str2role(char *str)
 {
 	int i, len;
 
@@ -557,9 +552,7 @@ str2role(str)
 }
 
 
-bool
-validrace(rolenum, racenum)
-	int rolenum, racenum;
+bool validrace(int rolenum, int racenum)
 {
 	/* Assumes validrole */
 	return (racenum >= 0 && racenum < SIZE(races)-1 &&
@@ -567,9 +560,7 @@ validrace(rolenum, racenum)
 }
 
 
-int
-randrace(rolenum)
-	int rolenum;
+int randrace(int rolenum)
 {
 	int i, n = 0;
 
@@ -592,9 +583,7 @@ randrace(rolenum)
 }
 
 
-int
-str2race(str)
-	char *str;
+int str2race(char *str)
 {
 	int i, len;
 
@@ -622,9 +611,7 @@ str2race(str)
 }
 
 
-bool
-validgend(rolenum, racenum, gendnum)
-	int rolenum, racenum, gendnum;
+bool validgend(int rolenum, int racenum, int gendnum)
 {
 	/* Assumes validrole and validrace */
 	return (gendnum >= 0 && gendnum < ROLE_GENDERS &&
@@ -633,9 +620,7 @@ validgend(rolenum, racenum, gendnum)
 }
 
 
-int
-randgend(rolenum, racenum)
-	int rolenum, racenum;
+int randgend(int rolenum, int racenum)
 {
 	int i, n = 0;
 
@@ -659,9 +644,7 @@ randgend(rolenum, racenum)
 }
 
 
-int
-str2gend(str)
-	char *str;
+int str2gend(char *str)
 {
 	int i, len;
 
@@ -688,9 +671,7 @@ str2gend(str)
 }
 
 
-bool
-validalign(rolenum, racenum, alignnum)
-	int rolenum, racenum, alignnum;
+bool validalign(int rolenum, int racenum, int alignnum)
 {
 	/* Assumes validrole and validrace */
 	return (alignnum >= 0 && alignnum < ROLE_ALIGNS &&
@@ -699,9 +680,7 @@ validalign(rolenum, racenum, alignnum)
 }
 
 
-int
-randalign(rolenum, racenum)
-	int rolenum, racenum;
+int randalign(int rolenum, int racenum)
 {
 	int i, n = 0;
 
@@ -725,9 +704,7 @@ randalign(rolenum, racenum)
 }
 
 
-int
-str2align(str)
-	char *str;
+int str2align(char *str)
 {
 	int i, len;
 
@@ -754,9 +731,7 @@ str2align(str)
 }
 
 /* is rolenum compatible with any racenum/gendnum/alignnum constraints? */
-bool
-ok_role(rolenum, racenum, gendnum, alignnum)
-int rolenum, racenum, gendnum, alignnum;
+bool ok_role(int rolenum, int racenum, int gendnum, int alignnum)
 {
     int i;
     short allow;
@@ -794,9 +769,7 @@ int rolenum, racenum, gendnum, alignnum;
 /* pick a random role subject to any racenum/gendnum/alignnum constraints */
 /* If pickhow == PICK_RIGID a role is returned only if there is  */
 /* a single possibility */
-int
-pick_role(racenum, gendnum, alignnum, pickhow)
-int racenum, gendnum, alignnum, pickhow;
+int pick_role(int racenum, int gendnum, int alignnum, int pickhow)
 {
     int i;
     int roles_ok = 0;
@@ -820,9 +793,7 @@ int racenum, gendnum, alignnum, pickhow;
 }
 
 /* is racenum compatible with any rolenum/gendnum/alignnum constraints? */
-bool
-ok_race(rolenum, racenum, gendnum, alignnum)
-int rolenum, racenum, gendnum, alignnum;
+bool ok_race(int rolenum, int racenum, int gendnum, int alignnum)
 {
     int i;
     short allow;
@@ -860,9 +831,7 @@ int rolenum, racenum, gendnum, alignnum;
 /* pick a random race subject to any rolenum/gendnum/alignnum constraints */
 /* If pickhow == PICK_RIGID a race is returned only if there is  */
 /* a single possibility */
-int
-pick_race(rolenum, gendnum, alignnum, pickhow)
-int rolenum, gendnum, alignnum, pickhow;
+int pick_race(int rolenum, int gendnum, int alignnum, int pickhow)
 {
     int i;
     int races_ok = 0;
@@ -887,9 +856,7 @@ int rolenum, gendnum, alignnum, pickhow;
 
 /* is gendnum compatible with any rolenum/racenum/alignnum constraints? */
 /* gender and alignment are not comparable (and also not constrainable) */
-bool
-ok_gend(rolenum, racenum, gendnum, alignnum)
-int rolenum, racenum, gendnum, alignnum;
+bool ok_gend(int rolenum, int racenum, int gendnum, int alignnum)
 {
     int i;
     short allow;
@@ -922,9 +889,7 @@ int rolenum, racenum, gendnum, alignnum;
 /* gender and alignment are not comparable (and also not constrainable) */
 /* If pickhow == PICK_RIGID a gender is returned only if there is  */
 /* a single possibility */
-int
-pick_gend(rolenum, racenum, alignnum, pickhow)
-int rolenum, racenum, alignnum, pickhow;
+int pick_gend(int rolenum, int racenum, int alignnum, int pickhow)
 {
     int i;
     int gends_ok = 0;
@@ -949,9 +914,7 @@ int rolenum, racenum, alignnum, pickhow;
 
 /* is alignnum compatible with any rolenum/racenum/gendnum constraints? */
 /* alignment and gender are not comparable (and also not constrainable) */
-bool
-ok_align(rolenum, racenum, gendnum, alignnum)
-int rolenum, racenum, gendnum, alignnum;
+bool ok_align(int rolenum, int racenum, int gendnum, int alignnum)
 {
     int i;
     short allow;
@@ -984,9 +947,7 @@ int rolenum, racenum, gendnum, alignnum;
 /* alignment and gender are not comparable (and also not constrainable) */
 /* If pickhow == PICK_RIGID an alignment is returned only if there is  */
 /* a single possibility */
-int
-pick_align(rolenum, racenum, gendnum, pickhow)
-int rolenum, racenum, gendnum, pickhow;
+int pick_align(int rolenum, int racenum, int gendnum, int pickhow)
 {
     int i;
     int aligns_ok = 0;
@@ -1009,8 +970,7 @@ int rolenum, racenum, gendnum, pickhow;
     return ROLE_NONE;
 }
 
-void
-rigid_role_checks()
+void rigid_role_checks(void)
 {
     /* Some roles are limited to a single race, alignment, or gender and
      * calling this routine prior to XXX_player_selection() will help
@@ -1051,10 +1011,7 @@ rigid_role_checks()
 
 STATIC_VAR char pa[NUM_BP], post_attribs;
 
-STATIC_OVL char *
-promptsep(buf, num_post_attribs)
-char *buf;
-int num_post_attribs;
+STATIC_OVL char *promptsep(char *buf, int num_post_attribs)
 {
 	const char *conj = "and ";
 	if (num_post_attribs > 1
@@ -1066,9 +1023,7 @@ int num_post_attribs;
 	return buf;
 }
 
-STATIC_OVL int
-role_gendercount(rolenum)
-int rolenum;
+STATIC_OVL int role_gendercount(int rolenum)
 {
 	int gendcount = 0;
 	if (validrole(rolenum)) {
@@ -1079,9 +1034,7 @@ int rolenum;
 	return gendcount;
 }
 
-STATIC_OVL int
-race_alignmentcount(racenum)
-int racenum;
+STATIC_OVL int race_alignmentcount(int racenum)
 {
 	int aligncount = 0;
 	if (racenum != ROLE_NONE && racenum != ROLE_RANDOM) {
@@ -1092,10 +1045,7 @@ int racenum;
 	return aligncount;
 }
 
-char *
-root_plselection_prompt(suppliedbuf, buflen, rolenum, racenum, gendnum, alignnum)
-char *suppliedbuf;
-int buflen, rolenum, racenum, gendnum, alignnum;
+char *root_plselection_prompt(char *suppliedbuf, int buflen, int rolenum, int racenum, int gendnum, int alignnum)
 {
 	int k, gendercount = 0, aligncount = 0;
 	char buf[BUFSZ];
@@ -1227,10 +1177,7 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 		return err_ret;
 }
 
-char *
-build_plselection_prompt(buf, buflen, rolenum, racenum, gendnum, alignnum)
-char *buf;
-int buflen, rolenum, racenum, gendnum, alignnum;
+char *build_plselection_prompt(char *buf, int buflen, int rolenum, int racenum, int gendnum, int alignnum)
 {
 	const char *defprompt = "Shall I pick a character for you? [ynq] ";
 	int num_post_attribs = 0;
@@ -1287,8 +1234,7 @@ int buflen, rolenum, racenum, gendnum, alignnum;
 #undef BP_ROLE
 #undef NUM_BP
 
-void
-plnamesuffix()
+void plnamesuffix(void)
 {
 	char *sptr, *eptr;
 	int i;
@@ -1340,8 +1286,7 @@ plnamesuffix()
  *
  * This code also replaces quest_init().
  */
-void
-role_init()
+void role_init(void)
 {
 	int alignmnt;
 
@@ -1443,9 +1388,7 @@ role_init()
 	return;
 }
 
-const char *
-Hello(mtmp)
-struct monst *mtmp;
+const char *Hello(struct monst *mtmp)
 {
 	switch (Role_switch) {
 	case PM_KNIGHT:
@@ -1468,8 +1411,7 @@ struct monst *mtmp;
 	}
 }
 
-const char *
-Goodbye()
+const char *Goodbye(void)
 {
 	switch (Role_switch) {
 	case PM_KNIGHT:

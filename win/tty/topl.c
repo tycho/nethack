@@ -20,8 +20,7 @@ STATIC_DCL void FDECL(removetopl, (int));
 
 #ifdef OVLB
 
-int
-tty_doprev_message()
+int tty_doprev_message(void)
 {
     struct WinDesc *cw = wins[WIN_MESSAGE];
 
@@ -119,9 +118,7 @@ tty_doprev_message()
 #endif /* OVLB */
 #ifdef OVL1
 
-STATIC_OVL void
-redotoplin(str)
-    const char *str;
+STATIC_OVL void redotoplin(const char *str)
 {
 	int otoplin = ttyDisplay->toplin;
 	home();
@@ -139,8 +136,7 @@ redotoplin(str)
 		more();
 }
 
-STATIC_OVL void
-remember_topl()
+STATIC_OVL void remember_topl(void)
 {
     struct WinDesc *cw = wins[WIN_MESSAGE];
     int idx = cw->maxrow;
@@ -156,9 +152,7 @@ remember_topl()
     cw->maxcol = cw->maxrow = (idx + 1) % cw->rows;
 }
 
-void
-addtopl(s)
-const char *s;
+void addtopl(const char *s)
 {
     struct WinDesc *cw = wins[WIN_MESSAGE];
 
@@ -171,8 +165,7 @@ const char *s;
 #endif /* OVL1 */
 #ifdef OVL2
 
-void
-more()
+void more(void)
 {
     struct WinDesc *cw = wins[WIN_MESSAGE];
 
@@ -209,9 +202,7 @@ more()
     ttyDisplay->inmore = 0;
 }
 
-void
-update_topl(bp)
-	const char *bp;
+void update_topl(const char *bp)
 {
 	char *tl, *otl;
 	int n0;
@@ -257,10 +248,7 @@ update_topl(bp)
 	if(!(cw->flags & WIN_STOP)) redotoplin(toplines);
 }
 
-STATIC_OVL
-void
-topl_putsym(c)
-    char c;
+STATIC_OVL void topl_putsym(int c)
 {
     struct WinDesc *cw = wins[WIN_MESSAGE];
 
@@ -298,17 +286,13 @@ topl_putsym(c)
 #endif
 }
 
-void
-putsyms(str)
-    const char *str;
+void putsyms(const char *str)
 {
     while(*str)
 	topl_putsym(*str++);
 }
 
-STATIC_OVL void
-removetopl(n)
-int n;
+STATIC_OVL void removetopl(int n)
 {
     /* assume addtopl() has been done, so ttyDisplay->toplin is already set */
     while (n-- > 0) putsyms("\b \b");
@@ -316,10 +300,7 @@ int n;
 
 extern char erase_char;		/* from xxxtty.c; don't need kill_char */
 
-char
-tty_yn_function(query,resp, def)
-const char *query,*resp;
-char def;
+char tty_yn_function(const char *query, const char *resp, char def)
 /*
  *   Generic yes/no function. 'def' is the default (returned by space or
  *   return; 'esc' returns 'q', or 'n', or the default, depending on

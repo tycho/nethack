@@ -153,7 +153,7 @@ void curses_message_win_puts(const char *message, bool recursed)
 }
 
 
-int curses_more()
+int curses_more(void)
 {
     int height, width, ret;
     WINDOW *win = curses_get_nhwin(MESSAGE_WIN);
@@ -181,7 +181,7 @@ int curses_more()
 
 /* Clear the message window if one line; otherwise unhighlight old messages */
 
-void curses_clear_unhighlight_message_window()
+void curses_clear_unhighlight_message_window(void)
 {
     int mh, mw, count;
     bool border = curses_window_has_border(MESSAGE_WIN);
@@ -230,7 +230,7 @@ void curses_clear_unhighlight_message_window()
 /* Reset message window cursor to starting position, and display most
 recent messages. */
 
-void curses_last_messages()
+void curses_last_messages(void)
 {
     bool border = curses_window_has_border(MESSAGE_WIN);
 
@@ -251,7 +251,7 @@ void curses_last_messages()
 
 /* Initialize list for message history */
 
-void curses_init_mesg_history()
+void curses_init_mesg_history(void)
 {
     max_messages = iflags.msg_history;
 
@@ -269,7 +269,7 @@ void curses_init_mesg_history()
 
 /* Display previous message window messages in reverse chron order */
 
-void curses_prev_mesg()
+void curses_prev_mesg(void)
 {
     int count;
     winid wid;

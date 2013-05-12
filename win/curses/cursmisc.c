@@ -32,7 +32,7 @@ static int parse_escape_sequence(void);
 
 /* Read a character of input from the user */
 
-int curses_read_char()
+int curses_read_char(void)
 {
     int ch, tmpch;
 
@@ -570,7 +570,7 @@ void curses_move_cursor(winid wid, int x, int y)
 
 /* Perform actions that should be done every turn before nhgetch() */
 
-void curses_prehousekeeping()
+void curses_prehousekeeping(void)
 {
 #ifndef PDCURSES
     WINDOW *win = curses_get_nhwin(MAP_WIN);
@@ -593,7 +593,7 @@ void curses_prehousekeeping()
 
 /* Perform actions that should be done every turn after nhgetch() */
 
-void curses_posthousekeeping()
+void curses_posthousekeeping(void)
 {
     curs_set(0);
     curses_decrement_highlight();
@@ -998,6 +998,6 @@ defined.  Adding stub functions to avoid this. */
 #if defined(STATUS_COLORS) && !defined(TTY_GRAPHICS)
 extern void term_start_color(int color) {}
 extern void term_start_attr(int attr) {}
-extern void term_end_color() {}
+extern void term_end_color(void) {}
 extern void term_end_attr(int attr) {}
 #endif  /* STATUS_COLORS && !TTY_GRAPGICS */

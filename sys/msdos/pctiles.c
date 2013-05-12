@@ -54,9 +54,7 @@ extern int total_tiles_used;		/* tile.c */
  * at the start of the file, including a palette.
  *
  */
-int ReadTileFileHeader(tibhdr, filestyle)
-struct tibhdr_struct *tibhdr;
-bool filestyle;
+int ReadTileFileHeader(struct tibhdr_struct *tibhdr, bool filestyle)
 {
 	FILE *x;
 	x = filestyle ? tilefile_O : tilefile;
@@ -84,10 +82,7 @@ bool filestyle;
  * location 1024.
  *
  */
-int
-OpenTileFile(tilefilename, filestyle)
-char *tilefilename;
-bool filestyle;
+int OpenTileFile(char *tilefilename, bool filestyle)
 {
 #ifdef TILES_IN_RAM
 	int k;
@@ -145,9 +140,7 @@ bool filestyle;
 	return 0;
 }
 
-void
-CloseTileFile(filestyle)
-bool filestyle;
+void CloseTileFile(bool filestyle)
 {
 	fclose(filestyle ? tilefile_O : tilefile);
 #ifdef TILES_IN_RAM
@@ -187,9 +180,7 @@ struct overview_planar_cell_struct oplancell;
  *
  */
 #  ifdef PLANAR_FILE
-int ReadPlanarTileFile(tilenum,gp)
-int tilenum;
-struct planar_cell_struct **gp;
+int ReadPlanarTileFile(int tilenum, struct planar_cell_struct **gp)
 {
 	long fpos;
 
@@ -209,9 +200,7 @@ struct planar_cell_struct **gp;
 	*gp = &plancell;
 	return 0;
 }
-int ReadPlanarTileFile_O(tilenum,gp)
-int tilenum;
-struct overview_planar_cell_struct **gp;
+int ReadPlanarTileFile_O(int tilenum, struct overview_planar_cell_struct **gp)
 {
 	long fpos;
 
@@ -236,9 +225,7 @@ struct overview_planar_cell_struct **gp;
 #  endif
 
 #  ifdef PACKED_FILE
-int ReadPackedTileFile(tilenum,pta)
-int tilenum;
-char (*pta)[TILE_X];
+int ReadPackedTileFile(int tilenum, char (*pta)[TILE_X])
 {
 	long fpos;
 	

@@ -59,8 +59,7 @@ extern struct text_color_option *text_colors;
 /* need to preserve these during save to avoid accessing freed memory */
 static unsigned ustuck_id = 0, usteed_id = 0;
 
-int
-dosave()
+int dosave(void)
 {
 	clear_nhwindow(WIN_MESSAGE);
 	if(yn("Really save?") == 'n') {
@@ -87,9 +86,7 @@ dosave()
 
 #if defined(UNIX) || defined(VMS) || defined (__EMX__) || defined(WIN32)
 /*ARGSUSED*/
-void
-hangup(sig_unused)  /* called as signal() handler, so sent at least one arg */
-int sig_unused;
+void hangup(int sig_unused) /* called as signal() handler, so sent at least one arg */
 {
 # ifdef NOSAVEONHANGUP
 	(void) signal(SIGINT, SIG_IGN);
@@ -117,8 +114,7 @@ int sig_unused;
 #endif
 
 /* returns 1 if save successful */
-int
-dosave0()
+int dosave0(void)
 {
 	const char *fq_save;
 	int fd, ofd;
@@ -277,9 +273,7 @@ dosave0()
 	return(1);
 }
 
-STATIC_OVL void
-savegamestate(fd, mode)
-int fd, mode;
+STATIC_OVL void savegamestate(int fd, int mode)
 {
 	int uid;
 
@@ -331,8 +325,7 @@ int fd, mode;
 }
 
 #ifdef INSURANCE
-void
-savestateinlock()
+void savestateinlock(void)
 {
 	int fd, hpid;
 	static bool havestate = TRUE;
@@ -436,15 +429,10 @@ int mode;
 	return TRUE;
 }
 
-STATIC_OVL void
-savelev0(fd,lev,mode)
+STATIC_OVL void savelev0(int fd, xchar lev, int mode)
 #else
-void
-savelev(fd,lev,mode)
+void savelev(int fd, xchar lev, int mode)
 #endif
-int fd;
-xchar lev;
-int mode;
 {
 #ifdef TOS
 	short tlev;
@@ -587,9 +575,7 @@ static bool compressing = FALSE;
     HUP printf("outbufp %d outrunlength %d\n", outbufp,outrunlength);
 }*/
 
-STATIC_OVL void
-bputc(c)
-int c;
+STATIC_OVL void bputc(int c)
 {
 #ifdef MFLOPPY
     bytes_counted++;
@@ -604,18 +590,14 @@ int c;
 }
 
 /*ARGSUSED*/
-void
-bufon(fd)
-int fd;
+void bufon(int fd)
 {
     compressing = TRUE;
     return;
 }
 
 /*ARGSUSED*/
-void
-bufoff(fd)
-int fd;
+void bufoff(int fd)
 {
     if (outbufp) {
 	outbufp = 0;
@@ -626,9 +608,9 @@ int fd;
     return;
 }
 
-void
-bflush(fd)  /* flush run and buffer */
-int fd;
+void bflush(  /* flush run and buffer */
+	int fd
+)
 {
     bwritefd = fd;
     if (outrunlength >= 0) {	/* flush run */
@@ -651,11 +633,7 @@ int fd;
     }
 }
 
-void
-bwrite(fd, loc, num)
-int fd;
-genericptr_t loc;
-unsigned num;
+void bwrite(int fd, genericptr_t loc, unsigned num)
 {
     unsigned char *bp = (unsigned char *)loc;
 
@@ -689,9 +667,7 @@ unsigned num;
     }
 }
 
-void
-bclose(fd)
-int fd;
+void bclose(int fd)
 {
     bufoff(fd);
     (void) close(fd);
@@ -704,9 +680,7 @@ static int bw_fd = -1;
 static FILE *bw_FILE = 0;
 static bool buffering = FALSE;
 
-void
-bufon(fd)
-    int fd;
+void bufon(int fd)
 {
 #ifdef UNIX
     if(bw_fd >= 0)
@@ -718,17 +692,13 @@ bufon(fd)
     buffering = TRUE;
 }
 
-void
-bufoff(fd)
-int fd;
+void bufoff(int fd)
 {
     bflush(fd);
     buffering = FALSE;
 }
 
-void
-bflush(fd)
-    int fd;
+void bflush(int fd)
 {
 #ifdef UNIX
     if(fd == bw_fd) {
@@ -739,11 +709,7 @@ bflush(fd)
     return;
 }
 
-void
-bwrite(fd,loc,num)
-int fd;
-genericptr_t loc;
-unsigned num;
+void bwrite(int fd, genericptr_t loc, unsigned num)
 {
 	bool failed;
 
@@ -779,9 +745,7 @@ unsigned num;
 	}
 }
 
-void
-bclose(fd)
-    int fd;
+void bclose(int fd)
 {
     bufoff(fd);
 #ifdef UNIX
@@ -796,9 +760,7 @@ bclose(fd)
 }
 #endif /* ZEROCOMP */
 
-STATIC_OVL void
-savelevchn(fd, mode)
-int fd, mode;
+STATIC_OVL void savelevchn(int fd, int mode)
 {
 	s_level	*tmplev, *tmplev2;
 	int cnt = 0;
@@ -818,9 +780,7 @@ int fd, mode;
 	    sp_levchn = 0;
 }
 
-STATIC_OVL void
-savedamage(fd, mode)
-int fd, mode;
+STATIC_OVL void savedamage(int fd, int mode)
 {
 	struct damage *damageptr, *tmp_dam;
 	unsigned int xl = 0;
@@ -843,10 +803,7 @@ int fd, mode;
 	    level.damagelist = 0;
 }
 
-STATIC_OVL void
-saveobjchn(fd, otmp, mode)
-int fd, mode;
-struct obj *otmp;
+STATIC_OVL void saveobjchn(int fd, struct obj *otmp, int mode)
 {
 	struct obj *otmp2;
 	unsigned int xl;
@@ -875,10 +832,7 @@ struct obj *otmp;
 	    bwrite(fd, (genericptr_t) &minusone, sizeof(int));
 }
 
-STATIC_OVL void
-savemonchn(fd, mtmp, mode)
-int fd, mode;
-struct monst *mtmp;
+STATIC_OVL void savemonchn(int fd, struct monst *mtmp, int mode)
 {
 	struct monst *mtmp2;
 	unsigned int xl;
@@ -905,10 +859,7 @@ struct monst *mtmp;
 	    bwrite(fd, (genericptr_t) &minusone, sizeof(int));
 }
 
-STATIC_OVL void
-savetrapchn(fd, trap, mode)
-int fd, mode;
-struct trap *trap;
+STATIC_OVL void savetrapchn(int fd, struct trap *trap, int mode)
 {
 	struct trap *trap2;
 
@@ -929,9 +880,7 @@ struct trap *trap;
  * we only want to save the fruits which exist on the bones level; the bones
  * level routine marks nonexistent fruits by making the fid negative.
  */
-void
-savefruitchn(fd, mode)
-int fd, mode;
+void savefruitchn(int fd, int mode)
 {
 	struct fruit *f2, *f1;
 
@@ -952,18 +901,14 @@ int fd, mode;
 
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 
-static void
-free_percent_color_options(list_head)
-struct percent_color_option *list_head;
+static void free_percent_color_options(struct percent_color_option *list_head)
 {
 	if (list_head == NULL) return;
 	free_percent_color_options(list_head->next);
 	free(list_head);
 }
 
-static void
-free_text_color_options(list_head)
-struct text_color_option *list_head;
+static void free_text_color_options(struct text_color_option *list_head)
 {
 	if (list_head == NULL) return;
 	free_text_color_options(list_head->next);
@@ -971,8 +916,7 @@ struct text_color_option *list_head;
 	free(list_head);
 }
 
-static void
-free_status_colors()
+static void free_status_colors(void)
 {
 	free_percent_color_options(hp_colors); hp_colors = NULL;
 	free_percent_color_options(pw_colors); pw_colors = NULL;
@@ -981,8 +925,7 @@ free_status_colors()
 #endif
 
 /* also called by prscore(); this probably belongs in dungeon.c... */
-void
-free_dungeons()
+void free_dungeons(void)
 {
 #ifdef FREE_ALL_MEMORY
 	savelevchn(0, FREE_SAVE);
@@ -992,8 +935,7 @@ free_dungeons()
 }
 
 #ifdef MENU_COLOR
-static void
-free_menu_coloring()
+static void free_menu_coloring(void)
 {
     struct menucoloring *tmp = menu_colorings;
 
@@ -1010,8 +952,7 @@ free_menu_coloring()
 }
 #endif /* MENU_COLOR */
 
-void
-freedynamicdata()
+void freedynamicdata(void)
 {
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 	free_status_colors();
@@ -1084,9 +1025,7 @@ freedynamicdata()
 }
 
 #ifdef MFLOPPY
-bool
-swapin_file(lev)
-int lev;
+bool swapin_file(int lev)
 {
 	char to[PATHLEN], from[PATHLEN];
 
@@ -1111,8 +1050,7 @@ int lev;
 	return TRUE;
 }
 
-STATIC_OVL bool
-swapout_oldest() {
+STATIC_OVL bool swapout_oldest(void) {
 	char to[PATHLEN], from[PATHLEN];
 	int i, oldest;
 	long oldtime;
@@ -1143,9 +1081,7 @@ swapout_oldest() {
 	return TRUE;
 }
 
-STATIC_OVL void
-copyfile(from, to)
-char *from, *to;
+STATIC_OVL void copyfile(char *from, char *to)
 {
 # ifdef TOS
 
@@ -1171,8 +1107,7 @@ char *from, *to;
 # endif /* TOS */
 }
 
-void
-co_false()	    /* see comment in bones.c */
+void co_false(void)	    /* see comment in bones.c */
 {
     count_only = FALSE;
     return;

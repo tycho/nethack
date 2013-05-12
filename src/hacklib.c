@@ -50,41 +50,41 @@ NetHack, except that rounddiv may call panic().
 #endif
 
 #ifdef OVLB
-bool
-digit(c)		/* is 'c' a digit? */
-    char c;
+bool digit(		/* is 'c' a digit? */
+	int c
+)
 {
     return((bool)('0' <= c && c <= '9'));
 }
 
-bool
-letter(c)		/* is 'c' a letter?  note: '@' classed as letter */
-    char c;
+bool letter(		/* is 'c' a letter?  note: '@' classed as letter */
+	int c
+)
 {
     return((bool)(('@' <= c && c <= 'Z') || ('a' <= c && c <= 'z')));
 }
 #endif /* OVLB */
 
 #ifdef OVL1
-char
-highc(c)			/* force 'c' into uppercase */
-    char c;
+char highc(			/* force 'c' into uppercase */
+	int c
+)
 {
     return((char)(('a' <= c && c <= 'z') ? (c & ~040) : c));
 }
 
-char
-lowc(c)			/* force 'c' into lowercase */
-    char c;
+char lowc(			/* force 'c' into lowercase */
+	int c
+)
 {
     return((char)(('A' <= c && c <= 'Z') ? (c | 040) : c));
 }
 #endif /* OVL1 */
 
 #ifdef OVLB
-char *
-lcase(s)		/* convert a string into all lowercase */
-    char *s;
+char *lcase(		/* convert a string into all lowercase */
+	char *s
+)
 {
     char *p;
 
@@ -93,18 +93,16 @@ lcase(s)		/* convert a string into all lowercase */
     return s;
 }
 
-char *
-upstart(s)		/* convert first character of a string to uppercase */
-    char *s;
+char *upstart(		/* convert first character of a string to uppercase */
+	char *s
+)
 {
     if (s) *s = highc(*s);
     return s;
 }
 
 /* remove excess whitespace from a string buffer (in place) */
-char *
-mungspaces(bp)
-char *bp;
+char *mungspaces(char *bp)
 {
     char c, *p, *p2;
     bool was_space = TRUE;
@@ -122,19 +120,19 @@ char *bp;
 #endif /* OVLB */
 
 #ifdef OVL0
-char *
-eos(s)			/* return the end of a string (pointing at '\0') */
-    char *s;
+char *eos(			/* return the end of a string (pointing at '\0') */
+	char *s
+)
 {
     while (*s) s++;	/* s += strlen(s); */
     return s;
 }
 
 /* strcat(s, {c,'\0'}); */
-char *
-strkitten(s, c)		/* append a character to a string (in place) */
-    char *s;
-    char c;
+char *strkitten(		/* append a character to a string (in place) */
+	char *s,
+	int c
+)
 {
     char *p = eos(s);
 
@@ -143,9 +141,9 @@ strkitten(s, c)		/* append a character to a string (in place) */
     return s;
 }
 
-char *
-s_suffix(s)		/* return a name converted to possessive */
-    const char *s;
+char *s_suffix(		/* return a name converted to possessive */
+	const char *s
+)
 {
     Static char buf[BUFSZ];
 
@@ -159,10 +157,10 @@ s_suffix(s)		/* return a name converted to possessive */
     return buf;
 }
 
-char *
-xcrypt(str, buf)	/* trivial text encryption routine (see makedefs) */
-const char *str;
-char *buf;
+char *xcrypt(	/* trivial text encryption routine (see makedefs) */
+	const char *str,
+	char *buf
+)
 {
     const char *p;
     char *q;
@@ -179,9 +177,9 @@ char *buf;
 #endif /* OVL0 */
 
 #ifdef OVL2
-bool
-onlyspace(s)		/* is a string entirely whitespace? */
-    const char *s;
+bool onlyspace(		/* is a string entirely whitespace? */
+	const char *s
+)
 {
     for (; *s; s++)
 	if (*s != ' ' && *s != '\t') return FALSE;
@@ -190,9 +188,9 @@ onlyspace(s)		/* is a string entirely whitespace? */
 #endif /* OVL2 */
 
 #ifdef OVLB
-char *
-tabexpand(sbuf)		/* expand tabs into proper number of spaces */
-    char *sbuf;
+char *tabexpand(		/* expand tabs into proper number of spaces */
+	char *sbuf
+)
 {
     char buf[BUFSZ];
     char *bp, *s = sbuf;
@@ -212,9 +210,9 @@ tabexpand(sbuf)		/* expand tabs into proper number of spaces */
     return strcpy(sbuf, buf);
 }
 
-char *
-visctrl(c)		/* make a displayable string from a character */
-    char c;
+char *visctrl(		/* make a displayable string from a character */
+	int c
+)
 {
     Static char ccc[3];
 
@@ -236,9 +234,9 @@ visctrl(c)		/* make a displayable string from a character */
 #endif /* OVLB */
 
 #ifdef OVL2
-const char *
-ordin(n)		/* return the ordinal suffix of a number */
-    int n;			/* note: should be non-negative */
+const char *ordin(		/* return the ordinal suffix of a number */
+	int n			/* note: should be non-negative */
+)
 {
     int dd = n % 10;
 
@@ -248,9 +246,9 @@ ordin(n)		/* return the ordinal suffix of a number */
 #endif /* OVL2 */
 
 #ifdef OVL1
-char *
-sitoa(n)		/* make a signed digit string from a number */
-    int n;
+char *sitoa(		/* make a signed digit string from a number */
+	int n
+)
 {
     Static char buf[13];
 
@@ -258,19 +256,19 @@ sitoa(n)		/* make a signed digit string from a number */
     return buf;
 }
 
-int
-sgn(n)			/* return the sign of a number: -1, 0, or 1 */
-    int n;
+int sgn(			/* return the sign of a number: -1, 0, or 1 */
+	int n
+)
 {
     return (n < 0) ? -1 : (n != 0);
 }
 #endif /* OVL1 */
 
 #ifdef OVLB
-int
-rounddiv(x, y)		/* calculate x/y, rounding as appropriate */
-    long x;
-    int  y;
+int rounddiv(		/* calculate x/y, rounding as appropriate */
+	long x,
+	int y
+)
 {
     int r, m;
     int divsgn = 1;
@@ -292,9 +290,12 @@ rounddiv(x, y)		/* calculate x/y, rounding as appropriate */
 #endif /* OVLB */
 
 #ifdef OVL0
-int
-distmin(x0, y0, x1, y1) /* distance between two points, in moves */
-    int x0, y0, x1, y1;
+int distmin( /* distance between two points, in moves */
+	int x0,
+	int y0,
+	int x1,
+	int y1
+)
 {
     int dx = x0 - x1, dy = y0 - y1;
     if (dx < 0) dx = -dx;
@@ -305,17 +306,23 @@ distmin(x0, y0, x1, y1) /* distance between two points, in moves */
     return (dx < dy) ? dy : dx;
 }
 
-int
-dist2(x0, y0, x1, y1)	/* square of euclidean distance between pair of pts */
-    int x0, y0, x1, y1;
+int dist2(	/* square of euclidean distance between pair of pts */
+	int x0,
+	int y0,
+	int x1,
+	int y1
+)
 {
     int dx = x0 - x1, dy = y0 - y1;
     return dx * dx + dy * dy;
 }
 
-bool
-online2(x0, y0, x1, y1) /* are two points lined up (on a straight line)? */
-    int x0, y0, x1, y1;
+bool online2( /* are two points lined up (on a straight line)? */
+	int x0,
+	int y0,
+	int x1,
+	int y1
+)
 {
     int dx = x0 - x1, dy = y0 - y1;
     /*  If either delta is zero then they're on an orthogonal line,
@@ -327,9 +334,10 @@ online2(x0, y0, x1, y1) /* are two points lined up (on a straight line)? */
 #endif /* OVL0 */
 #ifdef OVLB
 
-bool
-pmatch(patrn, strng)	/* match a string against a pattern */
-    const char *patrn, *strng;
+bool pmatch(	/* match a string against a pattern */
+	const char *patrn,
+	const char *strng
+)
 {
     char s, p;
   /*
@@ -352,10 +360,10 @@ pmatch_top:
 
 #ifdef OVL2
 #ifndef STRNCMPI
-int
-strncmpi(s1, s2, n)	/* case insensitive counted string comparison */
-    const char *s1, *s2;
-    int n; /*(should probably be size_t, which is usually unsigned)*/
+int strncmpi( /* case insensitive counted string comparison */
+	const char *s1, const char *s2,
+	int n /*(should probably be size_t, which is usually unsigned)*/
+)
 {					/*{ aka strncasecmp }*/
     char t1, t2;
 
@@ -374,10 +382,10 @@ strncmpi(s1, s2, n)	/* case insensitive counted string comparison */
 #ifdef OVLB
 #ifndef STRSTRI
 
-char *
-strstri(str, sub)	/* case insensitive substring search */
-    const char *str;
-    const char *sub;
+char *strstri(	/* case insensitive substring search */
+	const char *str,
+	const char *sub
+)
 {
     const char *s1, *s2;
     int i, k;
@@ -414,11 +422,7 @@ strstri(str, sub)	/* case insensitive substring search */
 
 /* compare two strings for equality, ignoring the presence of specified
    characters (typically whitespace) and possibly ignoring case */
-bool
-fuzzymatch(s1, s2, ignore_chars, caseblind)
-    const char *s1, *s2;
-    const char *ignore_chars;
-    bool caseblind;
+bool fuzzymatch(const char *s1, const char *s2, const char *ignore_chars, bool caseblind)
 {
     char c1, c2;
 
@@ -456,8 +460,7 @@ extern struct tm *FDECL(localtime,(time_t *));
 #endif
 static struct tm *NDECL(getlt);
 
-void
-setrandom()
+void setrandom(void)
 {
 	/* the types are different enough here that sweeping the different
 	 * routine names into one via #defines is even more confusing
@@ -484,8 +487,7 @@ setrandom()
 #endif
 }
 
-static struct tm *
-getlt()
+static struct tm *getlt(void)
 {
 	time_t date;
 
@@ -501,17 +503,14 @@ getlt()
 #endif
 }
 
-int
-getyear()
+int getyear(void)
 {
 	return(1900 + getlt()->tm_year);
 }
 
 #if 0
 /* This routine is no longer used since in 2000 it will yield "100mmdd". */
-char *
-yymmdd(date)
-time_t date;
+char *yymmdd(time_t date)
 {
 	Static char datestr[10];
 	struct tm *lt;
@@ -531,9 +530,7 @@ time_t date;
 }
 #endif
 
-long
-yyyymmdd(date)
-time_t date;
+long yyyymmdd(time_t date)
 {
 	long datenum;
 	struct tm *lt;
@@ -573,8 +570,7 @@ time_t date;
  * 177 ~= 8 reported phases * 22
  * + 11/22 for rounding
  */
-int
-phase_of_the_moon()		/* 0-7, with 0: new, 4: full */
+int phase_of_the_moon(void)		/* 0-7, with 0: new, 4: full */
 {
 	struct tm *lt = getlt();
 	int epact, diy, goldn;
@@ -588,24 +584,21 @@ phase_of_the_moon()		/* 0-7, with 0: new, 4: full */
 	return( (((((diy + epact) * 6) + 11) % 177) / 22) & 7 );
 }
 
-bool
-friday_13th()
+bool friday_13th(void)
 {
 	struct tm *lt = getlt();
 
 	return((bool)(lt->tm_wday == 5 /* friday */ && lt->tm_mday == 13));
 }
 
-int
-night()
+int night(void)
 {
 	int hour = getlt()->tm_hour;
 
 	return(hour < 6 || hour > 21);
 }
 
-int
-midnight()
+int midnight(void)
 {
 	return(getlt()->tm_hour == 0);
 }

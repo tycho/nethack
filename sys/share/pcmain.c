@@ -92,10 +92,7 @@ extern unsigned _stklen;
  * WinMain exist, the resulting executable won't work correctly.
  */
 #ifndef MSWIN_GRAPHICS
-int
-main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
      pcmain(argc,argv);
 #ifdef LAN_FEATURES
@@ -110,10 +107,7 @@ char *argv[];
 #endif /*OVL0*/
 #ifdef OVL1
 
-void
-pcmain(argc,argv)
-int argc;
-char *argv[];
+void pcmain(int argc, char *argv[])
 {
 
 	int fd;
@@ -455,10 +449,7 @@ not_recovered:
 	return;
 }
 
-STATIC_OVL void
-process_options(argc, argv)
-int argc;
-char *argv[];
+STATIC_OVL void process_options(int argc, char *argv[])
 {
 	int i;
 
@@ -588,8 +579,7 @@ char *argv[];
 	}
 }
 
-STATIC_OVL void 
-nhusage()
+STATIC_OVL void nhusage(void)
 {
 	char buf1[BUFSZ], buf2[BUFSZ], *bufptr;
 
@@ -632,10 +622,7 @@ nhusage()
 }
 
 #ifdef CHDIR
-void
-chdirx(dir, wr)
-char *dir;
-bool wr;
+void chdirx(char *dir, bool wr)
 {
 # ifdef AMIGA
 	static char thisdir[] = "";
@@ -663,8 +650,7 @@ bool wr;
 
 #ifdef PORT_HELP
 # if defined(MSDOS) || defined(WIN32)
-void
-port_help()
+void port_help(void)
 {
     /* display port specific help file */
     display_file( PORT_HELP, 1 );
@@ -682,8 +668,7 @@ port_help()
 #define EXEPATHBUFSZ 256
 char exepathbuf[EXEPATHBUFSZ];
 
-char *exepath(str)
-char *str;
+char *exepath(char *str)
 {
 	char *tmp, *tmp2;
 	int bsize;

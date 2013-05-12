@@ -93,7 +93,7 @@ char msgID[80];         /* message ID of msg under manipulation     */
  * sys/share/nhlan.c and they are prototyped in include/extern.h
  *===============================================================
  */
-bool mail_check()
+bool mail_check(void)
 {
 	if (!mailthread_stopping) {
 		if (mail_fetched > 0)
@@ -103,8 +103,7 @@ bool mail_check()
 }
 
 
-bool mail_fetch(msg)
-struct lan_mail_struct *msg;
+bool mail_fetch(struct lan_mail_struct *msg)
 {
 	/* shouldn't need to check mailthread_stopping here
 	   as the data should be valid anyway */
@@ -117,13 +116,12 @@ struct lan_mail_struct *msg;
 	return TRUE;
 }
 
-void mail_finish()
+void mail_finish(void)
 {
 	InterlockedDecrement(&mailthread_continue);
 }
 
-void mail_init(uname)
-char *uname;
+void mail_init(char *uname)
 {
   /* This routine invokes the _beginthreadex()
    * run-time library call to start the execution
@@ -222,9 +220,7 @@ static long __stdcall start_mailthread(LPVOID ThreadParam)
     return 0;
 }
 
-static int
-MAPI_mail_context(mcount)
-int *mcount;
+static int MAPI_mail_context(int *mcount)
 {
 	unsigned long status;
 	char tmpID[80];
@@ -254,9 +250,7 @@ int *mcount;
 	return status;
 }
 
-static bool
-MAPI_mail_check(mID)
-char *mID;
+static bool MAPI_mail_check(char *mID)
 {
 	unsigned long status;
 	char tmpID[80];
@@ -296,9 +290,7 @@ char *mID;
 	return FALSE;
 }
 
-static bool
-MAPI_mail_fetch(mID)
-char *mID;
+static bool MAPI_mail_fetch(char *mID)
 {
 	unsigned long status;
 
@@ -353,8 +345,7 @@ char *mID;
 	return FALSE;
 }
 
-static void
-MAPI_mail_finish()
+static void MAPI_mail_finish(void)
 {
 	InterlockedIncrement(&mailthread_stopping);
 	(void) fpMAPILogoff(MAPISession,0,0,0);
@@ -365,9 +356,7 @@ MAPI_mail_finish()
 	(void) _endthreadex(0);
 }
 
-static void
-MAPI_mail_abort(reason)
-unsigned long reason;
+static void MAPI_mail_abort(unsigned long reason)
 {
 #ifdef MAPI_VERBOSE
 	if (debugmapi) fprintf(dbgfile,
@@ -376,9 +365,7 @@ unsigned long reason;
 	MAPI_mail_finish();
 }
 
-static bool
-MAPI_mail_init(uname)
-char *uname;
+static bool MAPI_mail_init(char *uname)
 {
 	unsigned long status;
 	int count = 0;
@@ -428,7 +415,7 @@ char *uname;
 	return FALSE;
 }
 
-int InitMAPI()
+int InitMAPI(void)
 {
 
     if (!(hLibrary = LoadLibrary("MAPI32.DLL")))
@@ -465,7 +452,7 @@ int InitMAPI()
     return 0;
 }
 
-int DeInitMAPI()
+int DeInitMAPI(void)
 {
 
     fpMAPILogon = NULL;

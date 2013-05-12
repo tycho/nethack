@@ -166,7 +166,7 @@ GNOMEINC= $(shell ${GNOME_CONFIG} --cflags gnomeui)
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -O2 -std=gnu89 -fno-strict-aliasing -Wundef -Wshadow -Wimplicit -Wstrict-prototypes -U_FORTIFY_SOURCE
+CFLAGS = -O2 -std=gnu89 -fno-strict-aliasing -Wundef -Wshadow -Wimplicit -Wstrict-prototypes -Werror=old-style-definition -U_FORTIFY_SOURCE
 
 CFLAGS += -I../include
 ifeq ("$(GRAPHICS)","CURSES_GRAPHICS")

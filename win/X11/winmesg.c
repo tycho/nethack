@@ -50,9 +50,7 @@ static char mesg_translations[] =
 ";
 
 /* Move the message window's vertical scrollbar's slider to the bottom. */
-void
-set_message_slider(wp)
-    struct xwindow *wp;
+void set_message_slider(struct xwindow *wp)
 {
     Widget scrollbar;
     float top;
@@ -66,11 +64,11 @@ set_message_slider(wp)
 }
 
 
-void
-create_message_window(wp, create_popup, parent)
-    struct xwindow *wp;			/* window pointer */
-    bool create_popup;
-    Widget parent;
+void create_message_window(
+	struct xwindow *wp,			/* window pointer */
+	bool create_popup,
+	Widget parent
+)
 {
     Arg args[8];
     Cardinal num_args;
@@ -198,9 +196,7 @@ create_message_window(wp, create_popup, parent)
 }
 
 
-void
-destroy_message_window(wp)
-    struct xwindow *wp;
+void destroy_message_window(struct xwindow *wp)
 {
     if (wp->popup) {
 	nh_XtPopdown(wp->popup);
@@ -219,9 +215,7 @@ destroy_message_window(wp)
 
 
 /* Redraw message window if new lines have been added. */
-void
-display_message_window(wp)
-    struct xwindow *wp;
+void display_message_window(struct xwindow *wp)
 {
     if (wp->mesg_information->dirty) redraw_message_window(wp);
 }
@@ -231,10 +225,7 @@ display_message_window(wp)
  * Append a line of text to the message window.  Split the line if the
  * rendering of the text is too long for the window.
  */
-void
-append_message(wp, str)
-    struct xwindow *wp;
-    const char *str;
+void append_message(struct xwindow *wp, const char *str)
 {
     char *mark, *remainder, buf[BUFSZ];
 
@@ -256,9 +247,7 @@ append_message(wp, str)
  * Return the element in the circular linked list just before the given
  * element.
  */
-static struct line_element *
-get_previous(mark)
-    struct line_element *mark;
+static struct line_element *get_previous(struct line_element *mark)
 {
     struct line_element *curr;
 
@@ -276,10 +265,7 @@ get_previous(mark)
  * text.  New buffers are created as needed, old ones are freed if they
  * are no longer used.
  */
-static void
-set_circle_buf(mesg_info, count)
-    struct mesg_info_t *mesg_info;
-    int count;
+static void set_circle_buf(struct mesg_info_t *mesg_info, int count)
 {
     int i;
     struct line_element *tail, *curr, *head;
@@ -351,11 +337,11 @@ set_circle_buf(mesg_info, count)
  * Make sure the given string is shorter than the given pixel width.  If
  * not, back up from the end by words until we find a place to split.
  */
-static char *
-split(s, fs, pixel_width)
-    char *s;
-    XFontStruct *fs;		/* Font for the window. */
-    Dimension pixel_width;
+static char *split(
+	char *s,
+	XFontStruct *fs,		/* Font for the window. */
+	int pixel_width
+)
 {
     char save, *end, *remainder;
 
@@ -383,10 +369,7 @@ split(s, fs, pixel_width)
  * old one.  If the line buffer is too small, then allocate a new, larger
  * one.
  */
-static void
-add_line(mesg_info, s)
-    struct mesg_info_t *mesg_info;
-    const char *s;
+static void add_line(struct mesg_info_t *mesg_info, const char *s)
 {
     struct line_element *curr = mesg_info->head;
     int new_line_length = strlen(s);
@@ -414,9 +397,7 @@ add_line(mesg_info, s)
  * line in the message window.  The window redraw routine will draw a
  * line above this saved pointer.
  */
-void
-set_last_pause(wp)
-    struct xwindow *wp;
+void set_last_pause(struct xwindow *wp)
 {
     struct mesg_info_t *mesg_info = wp->mesg_information;
 
@@ -443,9 +424,7 @@ set_last_pause(wp)
 }
 
 
-static void
-redraw_message_window(wp)
-    struct xwindow *wp;
+static void redraw_message_window(struct xwindow *wp)
 {
     struct mesg_info_t *mesg_info = wp->mesg_information;
     struct line_element *curr;
@@ -495,9 +474,7 @@ redraw_message_window(wp)
  * Check the size of the viewport.  If it has shrunk, then we want to
  * move the vertical slider to the bottom.
  */
-static void
-mesg_check_size_change(wp)
-    struct xwindow *wp;
+static void mesg_check_size_change(struct xwindow *wp)
 {
     struct mesg_info_t *mesg_info = wp->mesg_information;
     Arg arg[2];
@@ -523,11 +500,11 @@ mesg_check_size_change(wp)
 
 /* Event handler for message window expose events. */
 /*ARGSUSED*/
-static void
-mesg_exposed(w, client_data, widget_data)
-    Widget w;
-    XtPointer client_data;	/* unused */
-    XtPointer widget_data;	/* expose event from Window widget */
+static void mesg_exposed(
+	Widget w,
+	XtPointer client_data,	/* unused */
+	XtPointer widget_data	/* expose event from Window widget */
+)
 {
     XExposeEvent *event = (XExposeEvent *) widget_data;
 
@@ -553,10 +530,7 @@ mesg_exposed(w, client_data, widget_data)
 }
 
 
-static void
-get_gc(w, mesg_info)
-    Widget w;
-    struct mesg_info_t *mesg_info;
+static void get_gc(Widget w, struct mesg_info_t *mesg_info)
 {
     XGCValues values;
     XtGCMask mask = GCFunction | GCForeground | GCBackground | GCFont;
@@ -585,10 +559,7 @@ get_gc(w, mesg_info)
  * I don't deal with this problem because it isn't worth the trouble.
  */
 /* ARGSUSED */
-static void
-mesg_resized(w, client_data, call_data)
-    Widget w;
-    XtPointer call_data, client_data;
+static void mesg_resized(Widget w, XtPointer client_data, XtPointer call_data)
 {
     Arg args[4];
     Cardinal num_args;

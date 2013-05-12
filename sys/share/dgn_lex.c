@@ -575,7 +575,7 @@ static int NDECL(input);
 	YY_USER_ACTION
 
 int NDECL(yylex);
-int yylex()
+int yylex(void)
 	{
 	yy_state_type yy_current_state;
 	char *yy_cp, *yy_bp;
@@ -948,7 +948,7 @@ case YY_STATE_EOF(INITIAL):
  *	EOB_ACT_END_OF_FILE - end of file
  */
 
-static int yy_get_next_buffer()
+static int yy_get_next_buffer(void)
 	{
 	char *dest = yy_current_buffer->yy_ch_buf;
 	char *source = yytext_ptr;
@@ -1079,7 +1079,7 @@ static int yy_get_next_buffer()
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
-static yy_state_type yy_get_previous_state()
+static yy_state_type yy_get_previous_state(void)
 	{
 	yy_state_type yy_current_state;
 	char *yy_cp;
@@ -1114,8 +1114,7 @@ static yy_state_type yy_get_previous_state()
  *	next_state = yy_try_NUL_trans( current_state );
  */
 
-static yy_state_type yy_try_NUL_trans( yy_current_state )
-yy_state_type yy_current_state;
+static yy_state_type yy_try_NUL_trans(yy_state_type yy_current_state)
 	{
 	int yy_is_jam;
 	char *yy_cp = yy_c_buf_p;
@@ -1140,9 +1139,7 @@ yy_state_type yy_current_state;
 
 
 #ifndef YY_NO_UNPUT
-static void yyunput( c, yy_bp )
-int c;
-char *yy_bp;
+static void yyunput(int c, char *yy_bp)
 	{
 	char *yy_cp = yy_c_buf_p;
 
@@ -1179,7 +1176,7 @@ char *yy_bp;
 #endif	/* ifndef YY_NO_UNPUT */
 
 
-static int input()
+static int input(void)
 	{
 	int c;
 
@@ -1248,8 +1245,7 @@ FILE *input_file;
 	}
 
 
-void yy_switch_to_buffer( new_buffer )
-YY_BUFFER_STATE new_buffer;
+void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer)
 	{
 	if ( yy_current_buffer == new_buffer )
 		return;
@@ -1274,7 +1270,7 @@ YY_BUFFER_STATE new_buffer;
 	}
 
 
-void yy_load_buffer_state()
+void yy_load_buffer_state(void)
 	{
 	yy_n_chars = yy_current_buffer->yy_n_chars;
 	yytext_ptr = yy_c_buf_p = yy_current_buffer->yy_buf_pos;
@@ -1310,8 +1306,7 @@ int size;
 	}
 
 
-void yy_delete_buffer( b )
-YY_BUFFER_STATE b;
+void yy_delete_buffer(YY_BUFFER_STATE b)
 	{
 	if ( ! b )
 		return;
@@ -1353,8 +1348,7 @@ FILE *file;
 	}
 
 
-void yy_flush_buffer( b )
-YY_BUFFER_STATE b;
+void yy_flush_buffer(YY_BUFFER_STATE b)
 	{
 	b->yy_n_chars = 0;
 
@@ -1380,8 +1374,7 @@ YY_BUFFER_STATE b;
 #define YY_EXIT_FAILURE 2
 #endif
 
-static void yy_fatal_error( msg )
-const char msg[];
+static void yy_fatal_error(const char msg[])
 	{
 	(void) fprintf( stderr, "%s\n", msg );
 	exit( YY_EXIT_FAILURE );
@@ -1408,10 +1401,7 @@ const char msg[];
 /* Internal utility routines. */
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy( s1, s2, n )
-char *s1;
-const char *s2;
-int n;
+static void yy_flex_strncpy(char *s1, const char *s2, int n)
 	{
 	int i;
 	for ( i = 0; i < n; ++i )
@@ -1420,18 +1410,14 @@ int n;
 #endif
 
 
-static genericptr_t yy_flex_alloc( size )
-yy_size_t size;
+static genericptr_t yy_flex_alloc(yy_size_t size)
 	{
 	return (genericptr_t) alloc((unsigned)size);
 	}
 
 /* we want to avoid use of realloc(), so we require that caller supply the
    size of the old block of memory */
-static genericptr_t yy_flex_realloc2( ptr, size, old_size )
-genericptr_t ptr;
-yy_size_t size;
-int old_size;
+static genericptr_t yy_flex_realloc2(genericptr_t ptr, yy_size_t size, int old_size)
 	{
 	genericptr_t outptr = yy_flex_alloc(size);
 
@@ -1444,8 +1430,7 @@ int old_size;
 	return outptr;
 	}
 
-static void yy_flex_free( ptr )
-genericptr_t ptr;
+static void yy_flex_free(genericptr_t ptr)
 	{
 	free( ptr );
 	}

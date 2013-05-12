@@ -194,9 +194,7 @@ static const char default_menu_cmds[] = {
 
 
 /* clean up and quit */
-STATIC_OVL void
-bail(mesg)
-const char *mesg;
+STATIC_OVL void bail(const char *mesg)
 {
     clearlocks();
     tty_exit_nhwindows(mesg);
@@ -205,8 +203,7 @@ const char *mesg;
 }
 
 #if defined(SIGWINCH) && defined(CLIPPING)
-STATIC_OVL void
-winch()
+STATIC_OVL void winch(void)
 {
     int oldLI = LI, oldCO = CO, i;
     struct WinDesc *cw;
@@ -261,10 +258,7 @@ winch()
 #endif
 
 /*ARGSUSED*/
-void
-tty_init_nhwindows(argcp,argv)
-int* argcp;
-char** argv;
+void tty_init_nhwindows(int* argcp, char** argv)
 {
     int wid, hgt;
 
@@ -321,8 +315,7 @@ char** argv;
     tty_display_nhwindow(BASE_WINDOW, FALSE);
 }
 
-void
-tty_player_selection()
+void tty_player_selection(void)
 {
 	int i, k, n;
 	char pick4u = 'n', thisch, lastch = 0;
@@ -664,8 +657,7 @@ give_up:	/* Quit */
  * It may still contain a suffix denoting the role, etc.
  * Always called after init_nhwindows() and before display_gamewindows().
  */
-void
-tty_askname()
+void tty_askname(void)
 {
     static char who_are_you[] = "Who are you? ";
     int c, ct, tryct = 0;
@@ -740,15 +732,13 @@ tty_askname()
     tty_curs(BASE_WINDOW, 1, wins[BASE_WINDOW]->cury + 1);
 }
 
-void
-tty_get_nh_event()
+void tty_get_nh_event(void)
 {
     return;
 }
 
 #if !defined(MICRO) && !defined(WIN32CON)
-STATIC_OVL void
-getret()
+STATIC_OVL void getret(void)
 {
 	xputs("\n");
 	if(flags.standout)
@@ -762,25 +752,20 @@ getret()
 }
 #endif
 
-void
-tty_suspend_nhwindows(str)
-    const char *str;
+void tty_suspend_nhwindows(const char *str)
 {
     settty(str);		/* calls end_screen, perhaps raw_print */
     if (!str) tty_raw_print("");	/* calls fflush(stdout) */
 }
 
-void
-tty_resume_nhwindows()
+void tty_resume_nhwindows(void)
 {
     gettty();
     setftty();			/* calls start_screen */
     docrt();
 }
 
-void
-tty_exit_nhwindows(str)
-    const char *str;
+void tty_exit_nhwindows(const char *str)
 {
     winid i;
 
@@ -802,9 +787,7 @@ tty_exit_nhwindows(str)
     iflags.window_inited = 0;
 }
 
-winid
-tty_create_nhwindow(type)
-    int type;
+winid tty_create_nhwindow(int type)
 {
     struct WinDesc* newwin;
     int i;
@@ -911,11 +894,7 @@ tty_create_nhwindow(type)
     return newid;
 }
 
-STATIC_OVL void
-erase_menu_or_text(window, cw, clear)
-    winid window;
-    struct WinDesc *cw;
-    bool clear;
+STATIC_OVL void erase_menu_or_text(winid window, struct WinDesc *cw, bool clear)
 {
     if(cw->offx == 0)
 	if(cw->offy) {
@@ -929,10 +908,7 @@ erase_menu_or_text(window, cw, clear)
 	docorner((int)cw->offx, cw->maxrow+1);
 }
 
-STATIC_OVL void
-free_window_info(cw, free_data)
-    struct WinDesc *cw;
-    bool free_data;
+STATIC_OVL void free_window_info(struct WinDesc *cw, bool free_data)
 {
     int i;
 
@@ -973,9 +949,7 @@ free_window_info(cw, free_data)
     }
 }
 
-void
-tty_clear_nhwindow(window)
-    winid window;
+void tty_clear_nhwindow(winid window)
 {
     struct WinDesc *cw = 0;
 
@@ -1016,10 +990,10 @@ tty_clear_nhwindow(window)
     cw->curx = cw->cury = 0;
 }
 
-STATIC_OVL void
-dmore(cw, s)
-    struct WinDesc *cw;
-    const char *s;			/* valid responses */
+STATIC_OVL void dmore(
+	struct WinDesc *cw,
+	const char *s			/* valid responses */
+)
 {
     const char *prompt = cw->morestr ? cw->morestr : defmorestr;
     int offset = (cw->type == NHW_TEXT) ? 1 : 2;
@@ -1036,11 +1010,7 @@ dmore(cw, s)
     xwaitforspace(s);
 }
 
-STATIC_OVL void
-set_item_state(window, lineno, item)
-    winid window;
-    int lineno;
-    tty_menu_item *item;
+STATIC_OVL void set_item_state(winid window, int lineno, tty_menu_item *item)
 {
     char ch = item->selected ? (item->count == -1L ? '+' : '#') : '-';
     tty_curs(window, 4, lineno);
@@ -1050,10 +1020,7 @@ set_item_state(window, lineno, item)
     term_end_attr(item->attr);
 }
 
-STATIC_OVL void
-set_all_on_page(window, page_start, page_end)
-    winid window;
-    tty_menu_item *page_start, *page_end;
+STATIC_OVL void set_all_on_page(winid window, tty_menu_item *page_start, tty_menu_item *page_end)
 {
     tty_menu_item *curr;
     int n;
@@ -1065,10 +1032,7 @@ set_all_on_page(window, page_start, page_end)
 	}
 }
 
-STATIC_OVL void
-unset_all_on_page(window, page_start, page_end)
-    winid window;
-    tty_menu_item *page_start, *page_end;
+STATIC_OVL void unset_all_on_page(winid window, tty_menu_item *page_start, tty_menu_item *page_end)
 {
     tty_menu_item *curr;
     int n;
@@ -1081,11 +1045,12 @@ unset_all_on_page(window, page_start, page_end)
 	}
 }
 
-STATIC_OVL void
-invert_all_on_page(window, page_start, page_end, acc)
-    winid window;
-    tty_menu_item *page_start, *page_end;
-    char acc;	/* group accelerator, 0 => all */
+STATIC_OVL void invert_all_on_page(
+	winid window,
+	tty_menu_item *page_start,
+	tty_menu_item *page_end,
+	int acc	/* group accelerator, 0 => all */
+)
 {
     tty_menu_item *curr;
     int n;
@@ -1105,11 +1070,12 @@ invert_all_on_page(window, page_start, page_end, acc)
  * Invert all entries that match the give group accelerator (or all if
  * zero).
  */
-STATIC_OVL void
-invert_all(window, page_start, page_end, acc)
-    winid window;
-    tty_menu_item *page_start, *page_end;
-    char acc;	/* group accelerator, 0 => all */
+STATIC_OVL void invert_all(
+	winid window,
+	tty_menu_item *page_start,
+	tty_menu_item *page_end,
+	int acc	/* group accelerator, 0 => all */
+)
 {
     tty_menu_item *curr;
     bool on_curr_page;
@@ -1136,10 +1102,7 @@ invert_all(window, page_start, page_end, acc)
 }
 
 #ifdef MENU_COLOR
-STATIC_OVL bool
-get_menu_coloring(str, color, attr)
-char *str;
-int *color, *attr;
+STATIC_OVL bool get_menu_coloring(char *str, int *color, int *attr)
 {
     struct menucoloring *tmpmc;
     if (iflags.use_menu_color)
@@ -1161,10 +1124,7 @@ int *color, *attr;
 }
 #endif /* MENU_COLOR */
 
-STATIC_OVL void
-process_menu_window(window, cw)
-winid window;
-struct WinDesc *cw;
+STATIC_OVL void process_menu_window(winid window, struct WinDesc *cw)
 {
     tty_menu_item *page_start, *page_end, *curr;
     long count;
@@ -1480,10 +1440,7 @@ struct WinDesc *cw;
     free((genericptr_t)morestr);
 }
 
-STATIC_OVL void
-process_text_window(window, cw)
-winid window;
-struct WinDesc *cw;
+STATIC_OVL void process_text_window(winid window, struct WinDesc *cw)
 {
     int i, n, attr;
     char *cp;
@@ -1535,10 +1492,10 @@ struct WinDesc *cw;
 }
 
 /*ARGSUSED*/
-void
-tty_display_nhwindow(window, blocking)
-    winid window;
-    bool blocking;	/* with ttys, all windows are blocking */
+void tty_display_nhwindow(
+    winid window,
+    bool blocking	/* with ttys, all windows are blocking */
+)
 {
     struct WinDesc *cw = 0;
 
@@ -1603,9 +1560,7 @@ tty_display_nhwindow(window, blocking)
     cw->active = 1;
 }
 
-void
-tty_dismiss_nhwindow(window)
-    winid window;
+void tty_dismiss_nhwindow(winid window)
 {
     struct WinDesc *cw = 0;
 
@@ -1646,9 +1601,7 @@ tty_dismiss_nhwindow(window)
     cw->flags = 0;
 }
 
-void
-tty_destroy_nhwindow(window)
-    winid window;
+void tty_destroy_nhwindow(winid window)
 {
     struct WinDesc *cw = 0;
 
@@ -1668,10 +1621,10 @@ tty_destroy_nhwindow(window)
 }
 
 void
-tty_curs(window, x, y)
-winid window;
-int x, y;	/* not xchar: perhaps xchar is unsigned and
-			   curx-x would be unsigned as well */
+tty_curs(
+    winid window,
+    int x, int y	/* not xchar: perhaps xchar is unsigned and curx-x would be unsigned as well */
+)
 {
     struct WinDesc *cw = 0;
     int cx = ttyDisplay->curx;
@@ -1743,11 +1696,7 @@ int x, y;	/* not xchar: perhaps xchar is unsigned and
     ttyDisplay->cury = y;
 }
 
-STATIC_OVL void
-tty_putsym(window, x, y, ch)
-    winid window;
-    int x, y;
-    char ch;
+STATIC_OVL void tty_putsym(winid window, int x, int y, char ch)
 {
     struct WinDesc *cw = 0;
 
@@ -1772,9 +1721,7 @@ tty_putsym(window, x, y, ch)
 }
 
 
-const char*
-compress_str(str)
-const char *str;
+const char *compress_str(const char *str)
 {
 	static char cbuf[BUFSZ];
 	/* compress in case line too long */
@@ -1795,11 +1742,7 @@ const char *str;
 	return cbuf;
 }
 
-void
-tty_putstr(window, attr, str)
-    winid window;
-    int attr;
-    const char *str;
+void tty_putstr(winid window, int attr, const char *str)
 {
     struct WinDesc *cw = 0;
     char *ob;
@@ -1942,10 +1885,7 @@ tty_putstr(window, attr, str)
     }
 }
 
-void
-tty_display_file(fname, complain)
-const char *fname;
-bool complain;
+void tty_display_file(const char *fname, bool complain)
 {
 #ifdef DEF_PAGER			/* this implies that UNIX is defined */
     {
@@ -2020,9 +1960,7 @@ bool complain;
 #endif /* DEF_PAGER */
 }
 
-void
-tty_start_menu(window)
-    winid window;
+void tty_start_menu(winid window)
 {
     tty_clear_nhwindow(window);
     return;
@@ -2034,15 +1972,16 @@ tty_start_menu(window)
  * later.
  */
 void
-tty_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
-    winid window;	/* window to use, must be of type NHW_MENU */
-    int glyph;		/* glyph to display with item (unused) */
-    const anything *identifier;	/* what to return if selected */
-    char ch;		/* keyboard accelerator (0 = pick our own) */
-    char gch;		/* group accelerator (0 = no group) */
-    int attr;		/* attribute for string (like tty_putstr()) */
-    const char *str;	/* menu string */
-    bool preselected; /* item is marked as selected */
+tty_add_menu(
+    winid window,	/* window to use, must be of type NHW_MENU */
+    int glyph,		/* glyph to display with item (unused) */
+    const anything *identifier,	/* what to return if selected */
+    char ch,		/* keyboard accelerator (0 = pick our own) */
+    char gch,		/* group accelerator (0 = no group) */
+    int attr,		/* attribute for string (like tty_putstr()) */
+    const char *str,	/* menu string */
+    bool preselected	/* item is marked as selected */
+)
 {
     struct WinDesc *cw = 0;
     tty_menu_item *item;
@@ -2085,9 +2024,7 @@ tty_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
 }
 
 /* Invert the given list, can handle NULL as an input. */
-STATIC_OVL tty_menu_item *
-reverse(curr)
-    tty_menu_item *curr;
+STATIC_OVL tty_menu_item *reverse(tty_menu_item *curr)
 {
     tty_menu_item *next, *head = 0;
 
@@ -2106,10 +2043,10 @@ reverse(curr)
  * keyboard accelerators as needed.  Finally we decide on the width and
  * height of the window.
  */
-void
-tty_end_menu(window, prompt)
-    winid window;	/* menu to use */
-    const char *prompt;	/* prompt to for menu */
+void tty_end_menu(
+    winid window,	/* menu to use */
+    const char *prompt	/* prompt to for menu */
+)
 {
     struct WinDesc *cw = 0;
     tty_menu_item *curr;
@@ -2201,11 +2138,7 @@ tty_end_menu(window, prompt)
 	cw->maxrow = cw->rows = cw->nitems + 1;
 }
 
-int
-tty_select_menu(window, how, menu_list)
-    winid window;
-    int how;
-    menu_item **menu_list;
+int tty_select_menu(winid window, int how, menu_item **menu_list)
 {
     struct WinDesc *cw = 0;
     tty_menu_item *curr;
@@ -2244,11 +2177,7 @@ tty_select_menu(window, how, menu_list)
 }
 
 /* special hack for treating top line --More-- as a one item menu */
-char
-tty_message_menu(let, how, mesg)
-char let;
-int how;
-const char *mesg;
+char tty_message_menu(char let, int how, const char *mesg)
 {
     /* "menu" without selection; use ordinary pline, no more() */
     if (how == PICK_NONE) {
@@ -2276,20 +2205,17 @@ const char *mesg;
     return ((how == PICK_ONE && morc == let) || morc == '\033') ? morc : '\0';
 }
 
-void
-tty_update_inventory()
+void tty_update_inventory(void)
 {
     return;
 }
 
-void
-tty_mark_synch()
+void tty_mark_synch(void)
 {
     (void) fflush(stdout);
 }
 
-void
-tty_wait_synch()
+void tty_wait_synch(void)
 {
     /* we just need to make sure all windows are synch'd */
     if(!ttyDisplay || ttyDisplay->rawprint) {
@@ -2312,9 +2238,7 @@ tty_wait_synch()
     }
 }
 
-void
-docorner(xmin, ymax)
-    int xmin, ymax;
+void docorner(int xmin, int ymax)
 {
     int y;
     struct WinDesc *cw = wins[WIN_MAP];
@@ -2353,8 +2277,7 @@ docorner(xmin, ymax)
     }
 }
 
-void
-end_glyphout()
+void end_glyphout(void)
 {
 #if defined(ASCIIGRAPH) && !defined(NO_TERMS)
     if (GFlag) {
@@ -2371,9 +2294,7 @@ end_glyphout()
 }
 
 #ifndef WIN32
-void
-g_putch(in_ch)
-int in_ch;
+void g_putch(int in_ch)
 {
     char ch = (char)in_ch;
 
@@ -2405,8 +2326,7 @@ int in_ch;
 #endif /* !WIN32 */
 
 #ifdef CLIPPING
-void
-setclipped()
+void setclipped(void)
 {
 	clipping = TRUE;
 	clipx = clipy = 0;
@@ -2414,9 +2334,7 @@ setclipped()
 	clipymax = LI - 3;
 }
 
-void
-tty_cliparound(x, y)
-int x, y;
+void tty_cliparound(int x, int y)
 {
 	extern bool restoring;
 	int oldx = clipx, oldy = clipy;
@@ -2455,11 +2373,7 @@ int x, y;
  *  position and glyph are always correct (checked there)!
  */
 
-void
-tty_print_glyph(window, x, y, glyph)
-    winid window;
-    xchar x, y;
-    int glyph;
+void tty_print_glyph(winid window, xchar x, xchar y, int glyph)
 {
     int ch;
     bool reverse_on = FALSE;
@@ -2524,9 +2438,7 @@ tty_print_glyph(window, x, y, glyph)
     ttyDisplay->curx++;		/* the real cursor moved too */
 }
 
-void
-tty_raw_print(str)
-    const char *str;
+void tty_raw_print(const char *str)
 {
     if(ttyDisplay) ttyDisplay->rawprint++;
 #if defined(MICRO) || defined(WIN32CON)
@@ -2536,9 +2448,7 @@ tty_raw_print(str)
 #endif
 }
 
-void
-tty_raw_print_bold(str)
-    const char *str;
+void tty_raw_print_bold(const char *str)
 {
     if(ttyDisplay) ttyDisplay->rawprint++;
     term_start_raw_bold();
@@ -2556,8 +2466,7 @@ tty_raw_print_bold(str)
 #endif
 }
 
-int
-tty_nhgetch()
+int tty_nhgetch(void)
 {
     int i;
 #ifdef UNIX
@@ -2598,9 +2507,7 @@ tty_nhgetch()
  * Since normal tty's don't have mice, just return a key.
  */
 /*ARGSUSED*/
-int
-tty_nh_poskey(x, y, mod)
-    int *x, *y, *mod;
+int tty_nh_poskey(int *x, int *y, int *mod)
 {
 # if defined(WIN32CON)
     int i;
@@ -2623,8 +2530,7 @@ tty_nh_poskey(x, y, mod)
 # endif
 }
 
-void
-win_tty_init()
+void win_tty_init(void)
 {
 # if defined(WIN32CON)
     nttty_open();
@@ -2633,9 +2539,7 @@ win_tty_init()
 }
 
 #ifdef POSITIONBAR
-void
-tty_update_positionbar(posbar)
-char *posbar;
+void tty_update_positionbar(char *posbar)
 {
 # ifdef MSDOS
 	video_update_positionbar(posbar);
@@ -2649,9 +2553,7 @@ char *posbar;
  *
  * This is an exact duplicate of copy_of() in X11/winmenu.c.
  */
-static char *
-copy_of(s)
-    const char *s;
+static char *copy_of(const char *s)
 {
     if (!s) s = "";
     return strcpy((char *) alloc((unsigned) (strlen(s) + 1)), s);

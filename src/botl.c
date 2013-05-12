@@ -40,10 +40,7 @@ extern struct percent_color_option *hp_colors;
 extern struct percent_color_option *pw_colors;
 extern struct text_color_option *text_colors;
 
-struct color_option
-text_color_of(text, color_options)
-const char *text;
-const struct text_color_option *color_options;
+struct color_option text_color_of(const char *text, const struct text_color_option *color_options)
 {
 	if (color_options == NULL) {
 		struct color_option result = {NO_COLOR, 0};
@@ -55,10 +52,8 @@ const struct text_color_option *color_options;
 	return text_color_of(text, color_options->next);
 }
 
-struct color_option
-percentage_color_of(value, max, color_options)
-int value, max;
-const struct percent_color_option *color_options;
+struct color_option percentage_color_of(int value, int max,
+	const struct percent_color_option *color_options)
 {
 	if (color_options == NULL) {
 		struct color_option result = {NO_COLOR, 0};
@@ -69,9 +64,7 @@ const struct percent_color_option *color_options;
 	return percentage_color_of(value, max, color_options->next);
 }
 
-static void
-start_color_option(color_option)
-struct color_option color_option;
+static void start_color_option(struct color_option color_option)
 {
 	int i;
 	if (color_option.color != NO_COLOR)
@@ -81,9 +74,7 @@ struct color_option color_option;
 			term_start_attr(i);
 }
 
-static void
-end_color_option(color_option)
-struct color_option color_option;
+static void end_color_option(struct color_option color_option)
 {
 	int i;
 	if (color_option.color != NO_COLOR)
@@ -93,10 +84,7 @@ struct color_option color_option;
 			term_end_attr(i);
 }
 
-static void
-apply_color_option(color_option, newbot2)
-struct color_option color_option;
-const char *newbot2;
+static void apply_color_option(struct color_option color_option, const char *newbot2)
 {
 	if (!iflags.use_status_colors) return;
 	curs(WIN_STATUS, 1, 1);
@@ -105,10 +93,7 @@ const char *newbot2;
 	end_color_option(color_option);
 }
 
-static void
-add_colored_text(text, newbot2)
-const char *text;
-char *newbot2;
+static void add_colored_text(const char *text, char *newbot2)
 {
 	char *nb;
 	struct color_option color_option;
@@ -145,28 +130,20 @@ STATIC_DCL const char *NDECL(rank);
 #ifdef OVL1
 
 /* convert experience level (1..30) to rank index (0..8) */
-int
-xlev_to_rank(xlev)
-int xlev;
+int xlev_to_rank(int xlev)
 {
 	return (xlev <= 2) ? 0 : (xlev <= 30) ? ((xlev + 2) / 4) : 8;
 }
 
 #if 0	/* not currently needed */
 /* convert rank index (0..8) to experience level (1..30) */
-int
-rank_to_xlev(rank)
-int rank;
+int rank_to_xlev(int rank)
 {
 	return (rank <= 0) ? 1 : (rank <= 8) ? ((rank * 4) - 2) : 30;
 }
 #endif
 
-const char *
-rank_of(lev, monnum, female)
-	int lev;
-	short monnum;
-	bool female;
+const char *rank_of(int lev, int monnum, bool female)
 {
 	struct Role *role;
 	int i;
@@ -192,16 +169,12 @@ rank_of(lev, monnum, female)
 }
 
 
-STATIC_OVL const char *
-rank()
+STATIC_OVL const char *rank(void)
 {
 	return(rank_of(u.ulevel, Role_switch, flags.female));
 }
 
-int
-title_to_mon(str, rank_indx, title_length)
-const char *str;
-int *rank_indx, *title_length;
+int title_to_mon(const char *str, int *rank_indx, int *title_length)
 {
 	int i, j;
 
@@ -229,8 +202,7 @@ int *rank_indx, *title_length;
 #endif /* OVL1 */
 #ifdef OVLB
 
-void
-max_rank_sz()
+void max_rank_sz(void)
 {
 	int i, r, maxr = 0;
 	for (i = 0; i < 9; i++) {
@@ -245,8 +217,7 @@ max_rank_sz()
 #ifdef OVL0
 
 #ifdef SCORE_ON_BOTL
-long
-botl_score()
+long botl_score(void)
 {
     int deepest = deepest_lev_reached(FALSE);
 #ifndef GOLDOBJ
@@ -323,8 +294,7 @@ bot1()
 #endif
 #ifdef DUMP_LOG
 }
-STATIC_OVL void
-bot1()
+STATIC_OVL void bot1(void)
 {
 	char newbot1[MAXCO];
 
@@ -335,9 +305,7 @@ bot1()
 }
 
 /* provide the name of the current level for display by various ports */
-int
-describe_level(buf)
-char *buf;
+int describe_level(char *buf)
 {
 	int ret = 1;
 
@@ -360,11 +328,9 @@ char *buf;
 static int save_botlx;
 
 #ifdef DUMP_LOG
-void bot2str(newbot2)
-char* newbot2;
+void bot2str(char* newbot2)
 #else
-STATIC_OVL void
-bot2()
+STATIC_OVL void bot2(void)
 #endif
 {
 #ifndef DUMP_LOG
@@ -485,8 +451,7 @@ bot2()
 #endif
 #ifdef DUMP_LOG
 }
-STATIC_OVL void
-bot2()
+STATIC_OVL void bot2(void)
 {
 	char newbot2[MAXCO];
 	bot2str(newbot2);
@@ -496,8 +461,7 @@ bot2()
 	flags.botlx = save_botlx;
 }
 
-void
-bot()
+void bot(void)
 {
 	bot1();
 	bot2();
