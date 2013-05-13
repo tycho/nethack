@@ -832,6 +832,11 @@ struct obj *obj, *merge;
 #endif
 		}
 	}
+
+	if (obj == uwep) uwepgone();
+	if (obj == uswapwep) uswapwepgone();
+	if (obj == uquiver) uqwepgone();
+
 	dealloc_obj(obj);
 }
 #endif /* OVLB */
