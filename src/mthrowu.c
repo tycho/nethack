@@ -323,7 +323,7 @@ m_throw(mon, x, y, dx, dy, range, obj)
 		    if (ohitmon(mtmp, singleobj, range, TRUE))
 			break;
 		} else if (bhitpos.x == u.ux && bhitpos.y == u.uy) {
-		    if (multi) nomul(0);
+		    if (multi) nomul(0, NULL);
 
 		    if (singleobj->oclass == GEM_CLASS &&
 			    singleobj->otyp <= LAST_GEM+9 /* 9 glass colors */
@@ -607,7 +607,7 @@ struct monst *mtmp;
 	m_shot.o = STRANGE_OBJECT;
 	m_shot.s = FALSE;
 
-	nomul(0);
+	nomul(0, NULL);
 }
 
 #endif /* OVL1 */
@@ -645,7 +645,7 @@ struct attack *mattk;
 			pline("%s spits venom!", Monnam(mtmp));
 		    m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),
 			distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy), otmp);
-		    nomul(0);
+		    nomul(0, NULL);
 		    return 0;
 		}
 	}
@@ -683,7 +683,7 @@ breamu(mtmp, mattk)			/* monster breathes at you (ranged) */
 			      breathwep[typ-1]);
 		    buzz((int) (-20 - (typ-1)), (int)mattk->damn,
 			 mtmp->mx, mtmp->my, sgn(tbx), sgn(tby));
-		    nomul(0);
+		    nomul(0, NULL);
 		    /* breath runs out sometimes. Also, give monster some
 		     * cunning; don't breath if the player fell asleep.
 		     */

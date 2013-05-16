@@ -266,7 +266,7 @@ bool picked_some;
 
 	/* If there are objects here, take a look. */
 	if (ct) {
-	    if (flags.run) nomul(0);
+	    if (flags.run) nomul(0, NULL);
 	    flush_screen(1);
 	    (void) look_here(ct, picked_some);
 	} else {
@@ -439,7 +439,7 @@ int what;		/* should be a long */
 		}
 
 		/* if there's anything here, stop running */
-		if (OBJ_AT(u.ux,u.uy) && flags.run && flags.run != 8 && !flags.nopick) nomul(0);
+		if (OBJ_AT(u.ux,u.uy) && flags.run && flags.run != 8 && !flags.nopick) nomul(0, NULL);
 	}
 
 	add_valid_menu_class(0);	/* reset */
@@ -1342,7 +1342,7 @@ bool telekinesis;	/* not picking it up directly by hand */
 		    obj->quan -= count;
 	    }
 	    flags.botl = 1;
-	    if (flags.run) nomul(0);
+	    if (flags.run) nomul(0, NULL);
 	    return 1;
 #endif
 	} else if (obj->otyp == CORPSE) {
@@ -2143,7 +2143,7 @@ int held;
 	    (void) chest_trap(obj, HAND, FALSE);
 	    /* even if the trap fails, you've used up this turn */
 	    if (multi >= 0) {	/* in case we didn't become paralyzed */
-		nomul(-1);
+		nomul(-1, "opening a trapped chest");
 		nomovemsg = "";
 	    }
 	    return 1;

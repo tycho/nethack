@@ -590,7 +590,7 @@ unsigned trflags;
 	bool webmsgok = (!(trflags & NOWEBMSG));
 	bool forcebungle = (trflags & FORCEBUNGLE);
 
-	nomul(0);
+	nomul(0, NULL);
 
 	/* KMH -- You can't escape the Sokoban level traps */
 	if (In_sokoban(&u.uz) &&
@@ -1414,7 +1414,7 @@ int style;
 				break;
 			}
 		} else if (bhitpos.x == u.ux && bhitpos.y == u.uy) {
-			if (multi) nomul(0);
+			if (multi) nomul(0, NULL);
 			if (thitu(9 + singleobj->spe,
 				  dmgval(singleobj, &youmonst),
 				  singleobj, (char *)0))
@@ -3746,7 +3746,7 @@ bool disarm;
 		case 3:
 			if (!Free_action) {                        
 			pline("Suddenly you are frozen in place!");
-			nomul(-d(5, 6));
+			nomul(-d(5, 6), "frozen by a trap");
 			exercise(A_DEX, FALSE);
 			nomovemsg = You_can_move_again;
 			} else You("momentarily stiffen.");

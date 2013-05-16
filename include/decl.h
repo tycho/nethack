@@ -25,6 +25,7 @@ E char SAVEP[];
 
 E int bases[MAXOCLASSES];
 
+E char multi_txt[BUFSZ];
 E int multi;
 #if 0
 E int warnlevel;

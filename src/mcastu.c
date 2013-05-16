@@ -227,7 +227,7 @@ castmu(mtmp, mattk, thinks_it_foundyou, foundyou)
 	    return(0);
 	}
 
-	nomul(0);
+	nomul(0, NULL);
 	if(rn2(ml*10) < (mtmp->mconf ? 100 : 20)) {	/* fumbled attack */
 	    if (canseemon(mtmp) && flags.soundok)
 		pline_The("air crackles around %s.", mon_nam(mtmp));
@@ -599,13 +599,13 @@ int spellnum;
 	    shieldeff(u.ux, u.uy);
 	    if (multi >= 0)
 		You("stiffen briefly.");
-	    nomul(-1);
+	    nomul(-1, "paralyzed");
 	} else {
 	    if (multi >= 0)
 		You("are frozen in place!");
 	    dmg = 4 + (int)mtmp->m_lev;
 	    if (Half_spell_damage) dmg = (dmg + 1) / 2;
-	    nomul(-dmg);
+	    nomul(-dmg, "paralyzed");
 	}
 	dmg = 0;
 	break;
@@ -770,7 +770,7 @@ buzzmu(mtmp, mattk)		/* monster uses spell (ranged) */
 	    return(0);
 	}
 	if(lined_up(mtmp) && rn2(3)) {
-	    nomul(0);
+	    nomul(0, NULL);
 	    if(mattk->adtyp && (mattk->adtyp < 11)) { /* no cf unsigned >0 */
 		if(canseemon(mtmp))
 		    pline("%s zaps you with a %s!", Monnam(mtmp),

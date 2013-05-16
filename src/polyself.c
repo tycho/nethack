@@ -728,7 +728,7 @@ rehumanize()
 	    done(DIED);
 	}
 	if (!uarmg) selftouch("No longer petrify-resistant, you");
-	nomul(0);
+	nomul(0, NULL);
 
 	flags.botl = 1;
 	vision_full_recalc = 1;
@@ -1018,7 +1018,7 @@ dogaze()
 			    nomul((u.ulevel > 6 || rn2(4)) ?
 				    -d((int)mtmp->m_lev+1,
 					    (int)mtmp->data->mattk[0].damd)
-				    : -200);
+				    : -200, "frozen by a floating eye's gaze");
 			    return 1;
 			} else
 			    You("stiffen momentarily under %s gaze.",
