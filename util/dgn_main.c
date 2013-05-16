@@ -51,10 +51,7 @@ FILE *FDECL (freopen, (char *,char *,FILE *));
 #if defined(__BORLANDC__) && !defined(_WIN32)
 extern unsigned _stklen = STKSIZ;
 #endif
-int
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	char	infile[64], outfile[64], basename[64];
 	FILE	*fin, *fout;

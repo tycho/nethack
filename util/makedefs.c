@@ -200,8 +200,7 @@ extern unsigned _stklen = STKSIZ;
 
 
 #ifdef MACsansMPWTOOL
-int
-main(void)
+int main(int argc, char *argv[])
 {
     const char *def_options = "odemvpqrhz";
     char buf[100];
@@ -223,10 +222,7 @@ main(void)
 
 #else /* ! MAC */
 
-int
-main(argc, argv)
-int	argc;
-char	*argv[];
+int main(int argc, char *argv[])
 {
 	if ( (argc != 2)
 #ifdef FILE_PREFIX

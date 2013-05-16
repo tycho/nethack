@@ -22,10 +22,8 @@ int num_colors = 0;
 int width=0, height=0;
 int initflag;
 FILE *fp;
-int
-main(argc, argv)
-int argc;
-char *argv[];
+
+int main(int argc, char *argv[])
 {
 	int i;
 	int row, col, planeno;

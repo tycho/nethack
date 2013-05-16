@@ -168,10 +168,7 @@ FILE *fp;
 }
 #endif	/* USE_XPM */
 
-int
-main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char **argv)
 {
     FILE *fp;
     int i;

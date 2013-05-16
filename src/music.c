@@ -740,8 +740,7 @@ char	*buf;
 }
 
 # ifdef DEBUG
-main(argc,argv)
-char *argv[];
+int main(int argc, char **argv)
 {
     if (argc == 2) {
 	playinit();

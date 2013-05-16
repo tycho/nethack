@@ -78,10 +78,7 @@ int tilecount;
 int filenum;
 int paletteflag;
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int i;
 	struct tm *newtime;

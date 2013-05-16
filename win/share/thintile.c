@@ -98,10 +98,8 @@ write_thintile()
 	}
 	Fprintf(outfile, "}\n");
 }
-int
-main(argc, argv)
-int argc;
-char *argv[];
+
+int main(int argc, char *argv[])
 {
 	while (filenum < 3) {
 		tilecount_per_file = 0;

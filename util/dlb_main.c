@@ -174,10 +174,7 @@ const char *filename, *mode;
 #endif	/* DLBLIB */
 #endif	/* DLB */
 
-int
-main(argc, argv)
-    int argc;
-    char **argv;
+int main(int argc, char **argv)
 {
 #ifdef DLB
 #ifdef DLBLIB

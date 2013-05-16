@@ -92,10 +92,7 @@ extern unsigned _stklen;
  * WinMain exist, the resulting executable won't work correctly.
  */
 #ifndef MSWIN_GRAPHICS
-int
-main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
      pcmain(argc,argv);
 #ifdef LAN_FEATURES

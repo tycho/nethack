@@ -209,10 +209,7 @@ extern unsigned int max_x_map, max_y_map;
 
 extern int line_number, colon_line_number;
 
-int
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	FILE *fin;
 	int i;

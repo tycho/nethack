@@ -49,10 +49,7 @@ int yoffset,xoffset;
 char bmpname[128];
 FILE *fp;
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int i;
 

@@ -43,10 +43,7 @@ static void NDECL(wd_message);
 static bool wiz_error_flag = FALSE;
 #endif
 
-int
-main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int fd;
 #ifdef CHDIR

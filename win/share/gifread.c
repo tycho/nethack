@@ -664,10 +664,7 @@ static char *std_args[] = { "tilemap",	/* dummy argv[0] */
 			"objects.gif",  "objects.txt",
 			"other.gif",    "other.txt" };
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv)
 {
 	pixel pixels[TILE_Y][TILE_X];
 

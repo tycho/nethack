@@ -59,10 +59,7 @@ extern unsigned _stklen = STKSIZ;
 char savename[SAVESIZE]; /* holds relative path of save file from playground */
 
 
-int
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
 	int argno;
 	const char *dir = (char *)0;
