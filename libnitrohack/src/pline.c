@@ -54,7 +54,7 @@ static void vpline(const char *line, va_list the_args)
 
 	if (!line || !*line) return;
 
-	vsprintf(pbuf, line, the_args);
+	vsnprintf(pbuf, BUFSZ, line, the_args);
 
 	/* Sanitize, otherwise the line can mess up
 	 * the message window and message history. */
