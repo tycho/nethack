@@ -738,6 +738,8 @@ static void restore_location(struct memfile *mf, struct rm *loc)
 	loc->mem_obj_stacks = (lflags1 >>  1) & ((1 <<  1) - 1);
 	loc->mem_obj_soko   = (lflags1 >>  0) & ((1 <<  1) - 1);
 
+	loc->mem_door_l	    = (lflags2 >> 18) & ((1 <<  1) - 1);
+	loc->mem_door_t	    = (lflags2 >> 17) & ((1 <<  1) - 1);
 	loc->mem_stepped    = (lflags2 >> 16) & ((1 <<  1) - 1);
 	loc->mem_invis	    = (lflags2 >> 15) & ((1 <<  1) - 1);
 	loc->flags	    = (lflags2 >> 10) & ((1 <<  5) - 1);
