@@ -4081,17 +4081,18 @@ int resist(struct monst *mtmp, char oclass, int damage, int domsg)
  * If magical is true, wishing for magical items is allowed. */
 void makewish(boolean magical)
 {
-	char buf[BUFSZ];
+	char buf[BUFSZ], origbuf[BUFSZ];
 	struct obj *otmp, nothing;
 	int tries = 0;
 	boolean magical_object;
 
 	nothing = zeroobj;  /* lint suppression; only its address matters */
 	if (flags.verbose) pline("You may wish for an object.");
-retry:
+ retry:
 	do {
 	    getlin("For what do you wish?", buf);
 	} while (buf[0] == '\033'); /* prevent accidental cancelling of a wish */
+	strcpy(origbuf, buf);
 
 	/*
 	 *  WORKAROUND: Wishing for a random non-magical item is not easily done
@@ -4130,8 +4131,9 @@ retry:
 	    obfree(otmp, NULL);
 	    otmp = &zeroobj;
 	    goto retry;
-	} else
-	    historic_event(FALSE, "wished for \"%s\".", buf);
+	} else {
+	    historic_event(FALSE, "wished for \"%s\".", origbuf);
+	}
 
 	if (magical_object)
 	    u.uconduct.wishmagic++;
