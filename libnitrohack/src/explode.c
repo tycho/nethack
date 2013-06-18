@@ -260,11 +260,11 @@ void explode(int x, int y,
 		    pline("%s is caught in the %s!", Monnam(mtmp), str);
 		}
 
-		idamres += destroy_mitem(mtmp, SCROLL_CLASS, (int) adtyp);
-		idamres += destroy_mitem(mtmp, SPBOOK_CLASS, (int) adtyp);
-		idamnonres += destroy_mitem(mtmp, POTION_CLASS, (int) adtyp);
-		idamnonres += destroy_mitem(mtmp, WAND_CLASS, (int) adtyp);
-		idamnonres += destroy_mitem(mtmp, RING_CLASS, (int) adtyp);
+		destroy_mitem(mtmp, SCROLL_CLASS, adtyp, &idamres);
+		destroy_mitem(mtmp, SPBOOK_CLASS, adtyp, &idamres);
+		destroy_mitem(mtmp, POTION_CLASS, adtyp, &idamnonres);
+		destroy_mitem(mtmp, WAND_CLASS, adtyp, &idamnonres);
+		destroy_mitem(mtmp, RING_CLASS, adtyp, &idamnonres);
 
 		if (explmask[i][j] == 1) {
 			golemeffects(mtmp, (int) adtyp, dam + idamres);
@@ -329,7 +329,11 @@ void explode(int x, int y,
 		    if (Upolyd) {
 			rehumanize();
 		    } else {
-			if (olet == MON_EXPLODE) {
+			if (adtyp == AD_FIRE && olet == WEAPON_CLASS) {
+			    /* projectile of detonation */
+			    killer_format = KILLED_BY_AN;
+			    strcpy(killer_buf, "exploding projectile");
+			} else if (olet == MON_EXPLODE) {
 			    /* killer handled by caller */
 			    if (str != killer_buf && !generic)
 				strcpy(killer_buf, str);
@@ -372,6 +376,7 @@ void explode(int x, int y,
 struct scatter_chain {
 	struct scatter_chain *next;	/* pointer to next scatter item	*/
 	struct obj *obj;		/* pointer to the object	*/
+	struct obj *ostack;		/* stack object was split from	*/
 	xchar ox;			/* location of			*/
 	xchar oy;			/*	item			*/
 	schar dx;			/* direction of			*/
@@ -397,6 +402,7 @@ long scatter(int sx, int sy,	/* location of objects to scatter */
              struct obj *obj)	/* only scatter this obj        */
 {
 	struct obj *otmp;
+	struct obj *ostack;
 	struct level *lev = obj ? obj->olev : level;
 	int tmp;
 	int farthest = 0;
@@ -415,8 +421,10 @@ long scatter(int sx, int sy,	/* location of objects to scatter */
 		qtmp = otmp->quan - 1;
 		if (qtmp > LARGEST_INT) qtmp = LARGEST_INT;
 		qtmp = (long)rnd((int)qtmp);
+		ostack = otmp;
 		otmp = splitobj(otmp, qtmp);
 	    } else {
+		ostack = NULL;
 		obj = NULL; /* all used */
 	    }
 	    obj_extract_self(otmp);
@@ -459,6 +467,7 @@ long scatter(int sx, int sy,	/* location of objects to scatter */
 		stmp = malloc(sizeof(struct scatter_chain));
 		stmp->next = NULL;
 		stmp->obj = otmp;
+		stmp->ostack = ostack;
 		stmp->ox = sx;
 		stmp->oy = sy;
 		tmp = rn2(8);		/* get the direction */
@@ -495,7 +504,8 @@ long scatter(int sx, int sy,	/* location of objects to scatter */
 			} else if ((mtmp = m_at(lev, bhitpos.x, bhitpos.y)) != 0) {
 				if (scflags & MAY_HITMON) {
 				    stmp->range--;
-				    if (ohitmon(mtmp, stmp->obj, 1, FALSE)) {
+				    if (ohitmon(NULL, mtmp, stmp->obj,
+						stmp->ostack, 1, FALSE)) {
 					stmp->obj = NULL;
 					stmp->stopped = TRUE;
 				    }
@@ -508,8 +518,10 @@ long scatter(int sx, int sy,	/* location of objects to scatter */
 				    hitvalu = 8 + stmp->obj->spe;
 				    if (bigmonst(youmonst.data)) hitvalu++;
 				    hitu = thitu(hitvalu,
-						 dmgval(stmp->obj, &youmonst),
-						 stmp->obj, NULL);
+						 dmgval(NULL, stmp->obj, TRUE,
+							&youmonst),
+						 stmp->obj, stmp->ostack, NULL,
+						 NULL);
 				    if (hitu) {
 					stmp->range -= 3;
 					stop_occupation();
@@ -540,6 +552,7 @@ long scatter(int sx, int sy,	/* location of objects to scatter */
 		free(stmp);
 		newsym(x,y);
 	}
+	newsym(sx,sy);
 
 	return total;
 }

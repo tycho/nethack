@@ -2486,7 +2486,7 @@ struct obj *floorfood(/* get food from floor or pack */
 		    feeding ?
 			(can_floorfood ? allobj_ground : allobj) :
 			(can_floorfood ? comestibles_ground : comestibles),
-		    verb);
+		    verb, NULL);
 	    if (otmp == &zeroobj) {
 		checking_can_floorfood = FALSE;
 		goto eat_floorfood;

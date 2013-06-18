@@ -2800,6 +2800,8 @@ void nomul(int nval, const char *txt)
 /* called when a non-movement, multi-turn action has completed */
 void unmul(const char *msg_override)
 {
+	int (*saved_afternmv)(void);
+
 	multi = 0;	/* caller will usually have done this already */
 	memset(multi_txt, 0, BUFSZ);
 	if (msg_override) nomovemsg = msg_override;
@@ -2807,8 +2809,18 @@ void unmul(const char *msg_override)
 	if (*nomovemsg) pline(nomovemsg);
 	nomovemsg = 0;
 	u.usleep = 0;
-	if (afternmv) (*afternmv)();
-	afternmv = 0;
+
+	/*
+	 * Unsetting afternmv is required for donning/donning_on/donning_off()
+	 * to return accurate results, so equip_is_worn() returns accurate
+	 * results, so adj_abon() will do its job when the Foo_on() functions
+	 * call it at the end of armor-wearing delays.
+	 *
+	 * P.S. I checked: no other functions rely on afternmv being set.
+	 */
+	saved_afternmv = afternmv;
+	afternmv = NULL;
+	if (saved_afternmv) (*saved_afternmv)();
 }
 
 

@@ -6,8 +6,8 @@
 static boolean known_hitum(struct monst *,int *, const struct attack *, schar, schar);
 static void steal_it(struct monst *, const struct attack *);
 static boolean hitum(struct monst *, int, const struct attack *, schar, schar);
-static boolean hmon_hitmon(struct monst *,struct obj *,int);
-static void noisy_hit(struct monst *,struct obj *,int);
+static boolean hmon_hitmon(struct monst *, struct obj *, struct obj *, boolean);
+static void noisy_hit(struct monst *,struct obj *,struct obj *,int);
 static int joust(struct monst *,struct obj *);
 static void demonpet(void);
 static boolean m_slips_free(struct monst *mtmp, const struct attack *mattk);
@@ -460,11 +460,11 @@ static boolean known_hitum(struct monst *mon, int *mhit, const struct attack *ua
 	    /* we hit the monster; be careful: it might die or
 	       be knocked into a different location */
 	    notonhead = (mon->mx != x || mon->my != y);
-	    malive = hmon(mon, uwep, 0);
+	    malive = hmon(mon, uwep, NULL, 0);
 	    /* this assumes that Stormbringer was uwep not uswapwep */ 
 	    if (malive && u.twoweap && !override_confirmation &&
 		    m_at(level, x, y) == mon)
-		malive = hmon(mon, uswapwep, 0);
+		malive = hmon(mon, uswapwep, NULL, 0);
 	    if (malive) {
 		/* monster still alive */
 		if (!rn2(25) && mon->mhp < mon->mhpmax/2
@@ -509,7 +509,8 @@ static boolean hitum(struct monst *mon, int tmp, const struct attack *uattk,
 
 /* general "damage monster" routine */
 /* return TRUE if mon still alive */
-boolean hmon(struct monst *mon, struct obj *obj, int thrown)
+boolean hmon(struct monst *mon, struct obj *obj,
+	     struct obj *ostack, boolean thrown)
 {
 	boolean result, anger_guards;
 
@@ -519,10 +520,10 @@ boolean hmon(struct monst *mon, struct obj *obj, int thrown)
 			     mon->data == &mons[PM_WATCH_CAPTAIN]));
 
 	/* check to see if what we're doing would wake up nearby critters */
-	noisy_hit(mon, obj, thrown);
+	noisy_hit(mon, obj, ostack, thrown);
 
 	/* go ahead and 'hit' the monster */
-	result = hmon_hitmon(mon, obj, thrown);
+	result = hmon_hitmon(mon, obj, ostack, thrown);
 
 	if (mon->ispriest && !rn2(2))
 	    ghod_hitsu(mon);
@@ -533,7 +534,8 @@ boolean hmon(struct monst *mon, struct obj *obj, int thrown)
 }
 
 /* guts of hmon() */
-static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
+static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
+			   struct obj *ostack, boolean thrown)
 {
 	int tmp;
 	const struct permonst *mdat = mon->data;
@@ -675,7 +677,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 				tmp++;
 			}
 		    } else {
-			tmp = dmgval(obj, mon);
+			tmp = dmgval(&youmonst, obj, thrown, mon);
 			/* a minimal hit doesn't exercise proficiency */
 			valid_weapon_attack = (tmp > 1);
 			if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
@@ -715,8 +717,8 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 			    hittxt = TRUE;
 			}
 
-			if (obj->oartifact &&
-			    artifact_hit(&youmonst, mon, obj, &tmp, dieroll)) {
+			if (artifact_hit(&youmonst, mon, obj, ostack, thrown,
+					 &tmp, dieroll)) {
 			    if (mon->mhp <= 0) /* artifact killed monster */
 				return FALSE;
 			    if (tmp == 0) return TRUE;
@@ -770,7 +772,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 			case BOULDER:		/* 1d20 */
 			case HEAVY_IRON_BALL:	/* 1d25 */
 			case IRON_CHAIN:		/* 1d4+1 */
-			    tmp = dmgval(obj, mon);
+			    tmp = dmgval(&youmonst, obj, thrown, mon);
 			    break;
 			case MIRROR:
 			    if (breaktest(obj)) {
@@ -926,7 +928,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
 				    tmp = 0;
 			    } else {
 				    pline("Your venom burns %s!", mon_nam(mon));
-				    tmp = dmgval(obj, mon);
+				    tmp = dmgval(&youmonst, obj, thrown, mon);
 			    }
 			    if (thrown) obfree(obj, NULL);
 			    else useup(obj);
@@ -1186,7 +1188,8 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
  * that behavior a bit; fighting is noisy!  This is a place to
  * drop any special noise effects you may want to occur when a
  * particular monster is hit.  */
-static void noisy_hit(struct monst *mtmp, struct obj *otmp, int thrown)
+static void noisy_hit(struct monst *mtmp, struct obj *otmp,
+		      struct obj *ostack, int thrown)
 {
 	struct monst *mtmp2;
 	int noiserange;
@@ -1208,6 +1211,10 @@ static void noisy_hit(struct monst *mtmp, struct obj *otmp, int thrown)
 
 	/* If you're stealthy, you can slit throats with knives */
 	if (otmp && Stealth && skilltype == P_KNIFE)
+	    return;
+
+	/* Weapons and launchers of stealth don't make noise. */
+	if (otmp && oprop_stealth_attack(otmp, ostack, uwep, thrown))
 	    return;
 
 	/* Stealth will reduce the amount of noise made while fighting,
@@ -1511,8 +1518,8 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		    break;
 		    /* Don't return yet; keep hp<1 and tmp=0 for pet msg */
 		}
-		tmp += destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
-		tmp += destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
+		destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE, &tmp);
+		destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE, &tmp);
 		if (resists_fire(mdef)) {
 		    if (!Blind)
 			pline("The fire doesn't heat %s!", mon_nam(mdef));
@@ -1521,7 +1528,7 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		    tmp = 0;
 		}
 		/* only potions damage resistant players in destroy_item */
-		tmp += destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
+		destroy_mitem(mdef, POTION_CLASS, AD_FIRE, &tmp);
 		break;
 	    case AD_COLD:
 		if (negated) {
@@ -1536,7 +1543,7 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		    golemeffects(mdef, AD_COLD, tmp);
 		    tmp = 0;
 		}
-		tmp += destroy_mitem(mdef, POTION_CLASS, AD_COLD);
+		destroy_mitem(mdef, POTION_CLASS, AD_COLD, &tmp);
 		break;
 	    case AD_ELEC:
 		if (negated) {
@@ -1544,7 +1551,7 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		    break;
 		}
 		if (!Blind) pline("%s is zapped!", Monnam(mdef));
-		tmp += destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
+		destroy_mitem(mdef, WAND_CLASS, AD_ELEC, &tmp);
 		if (resists_elec(mdef)) {
 		    if (!Blind)
 			pline("The zap doesn't shock %s!", mon_nam(mdef));
@@ -1553,7 +1560,7 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		    tmp = 0;
 		}
 		/* only rings damage resistant players in destroy_item */
-		tmp += destroy_mitem(mdef, RING_CLASS, AD_ELEC);
+		destroy_mitem(mdef, RING_CLASS, AD_ELEC, &tmp);
 		break;
 	    case AD_ACID:
 		if (resists_acid(mdef)) tmp = 0;

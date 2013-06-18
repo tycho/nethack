@@ -73,10 +73,176 @@ static void on_msg(struct obj *otmp)
  * The Type_off() functions call setworn() themselves.
  */
 
+static void Oprops_on(struct obj *otmp, unsigned int mask)
+{
+	long props = otmp->oprops;
+
+	if (props & ITEM_FIRE)
+	    EFire_resistance |= mask;
+
+	if (props & ITEM_FROST)
+	    ECold_resistance |= mask;
+
+	if (props & ITEM_DRLI)
+	    EDrain_resistance |= mask;
+
+	if (props & ITEM_SPEED) {
+	    boolean old = !!EFast;
+	    EFast |= mask;
+	    if (!(HFast & TIMEOUT) && !old) {
+		otmp->oprops_known |= ITEM_SPEED;
+		pline("You feel yourself speed up%s.",
+		      (old || HFast) ? " a bit more" : "");
+	    }
+	}
+
+	if (props & ITEM_REFLECTION)
+	    EReflecting |= mask;
+
+	if (props & ITEM_OILSKIN) {
+	    pline("%s very tightly.", Tobjnam(otmp, "fit"));
+	    otmp->oprops_known |= ITEM_OILSKIN;
+	}
+
+	if (props & ITEM_POWER)
+	    otmp->oprops_known |= ITEM_POWER;
+
+	if (props & (ITEM_DEXTERITY|ITEM_BRILLIANCE))
+	    adj_abon(otmp, otmp->spe);
+
+	if (props & ITEM_ESP) {
+	    ETelepat |= mask;
+	    see_monsters();
+	}
+
+	if (props & ITEM_DISPLACEMENT) {
+	    EDisplaced |= mask;
+	    otmp->oprops_known |= ITEM_DISPLACEMENT;
+	}
+
+	if (props & ITEM_SEARCHING)
+	    ESearching |= mask;
+
+	if (props & ITEM_WARNING) {
+	    EWarning |= mask;
+	    see_monsters();
+	}
+
+	if (props & ITEM_STEALTH) {
+	    if (!EStealth && !HStealth && !BStealth) {
+		pline("You are moving very quietly.");
+		otmp->oprops_known |= ITEM_STEALTH;
+	    }
+	    EStealth |= mask;
+	}
+
+	if (props & ITEM_FUMBLING) {
+	    if (!EFumbling && !(HFumbling & ~TIMEOUT))
+		incr_itimeout(&HFumbling, rnd(20));
+	    EFumbling |= mask;
+	}
+
+	if (props & ITEM_CLAIRVOYANCE)
+	    EClairvoyant |= mask;
+
+	if (props & ITEM_HUNGER)
+	    EHunger |= mask;
+
+	if (props & ITEM_AGGRAVATE)
+	    EAggravate_monster |= mask;
+}
+
+void Oprops_off(struct obj *otmp, unsigned int mask)
+{
+	long props;
+
+	/* If this is the case, the matching Oprops_on() was never called
+	 * to begin with, so there's nothing to do here. */
+	if (cancelled_don)
+	    return;
+
+	props = otmp->oprops;
+
+	if (props & ITEM_FIRE)
+	    EFire_resistance &= ~mask;
+
+	if (props & ITEM_FROST)
+	    ECold_resistance &= ~mask;
+
+	if (props & ITEM_DRLI)
+	    EDrain_resistance &= ~mask;
+
+	if (props & ITEM_SPEED) {
+	    EFast &= ~mask;
+	    if (!Very_fast) {
+		otmp->oprops_known |= ITEM_SPEED;
+		pline("You feel yourself slow down%s.",
+		      (Fast) ? " a bit" : "");
+	    }
+	}
+
+	if (props & ITEM_REFLECTION)
+	    EReflecting &= ~mask;
+
+	if (props & ITEM_OILSKIN)
+	    otmp->oprops_known |= ITEM_OILSKIN;
+
+	if (props & ITEM_POWER)
+	    otmp->oprops_known |= ITEM_POWER;
+
+	if (props & (ITEM_DEXTERITY|ITEM_BRILLIANCE)) {
+	    if (!cancelled_don)
+		adj_abon(otmp, -otmp->spe);
+	}
+
+	if (props & ITEM_ESP) {
+	    ETelepat &= ~mask;
+	    see_monsters();
+	}
+
+	if (props & ITEM_DISPLACEMENT) {
+	    EDisplaced &= ~mask;
+	    otmp->oprops_known |= ITEM_DISPLACEMENT;
+	}
+
+	if (props & ITEM_SEARCHING)
+	    ESearching &= ~mask;
+
+	if (props & ITEM_WARNING) {
+	    EWarning &= ~mask;
+	    see_monsters();
+	}
+
+	if (props & ITEM_STEALTH) {
+	    EStealth &= ~mask;
+	    if (!EStealth && !HStealth && !BStealth) {
+		pline("You sure are noisy.");
+		otmp->oprops_known |= ITEM_STEALTH;
+	    }
+	}
+
+	if (props & ITEM_FUMBLING) {
+	    EFumbling &= ~mask;
+	    if (!EFumbling && !(HFumbling & ~TIMEOUT))
+		HFumbling = EFumbling = 0;
+	}
+
+	if (props & ITEM_CLAIRVOYANCE)
+	    EClairvoyant &= ~mask;
+
+	if (props & ITEM_HUNGER)
+	    EHunger &= ~mask;
+
+	if (props & ITEM_AGGRAVATE)
+	    EAggravate_monster &= ~mask;
+}
+
 static int Boots_on(void)
 {
     long oldprop =
 	u.uprops[objects[uarmf->otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
+
+    Oprops_on(uarmf, WORN_BOOTS);
 
     switch(uarmf->otyp) {
 	case LOW_BOOTS:
@@ -133,6 +299,8 @@ int Boots_off(void)
 {
     int otyp = uarmf->otyp;
     long oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
+
+    Oprops_off(uarmf, WORN_BOOTS);
 
     takeoff_mask &= ~W_ARMF;
 	/* For levitation, float_down() returns if Levitation, so we
@@ -194,6 +362,8 @@ static int Cloak_on(void)
     long oldprop =
 	u.uprops[objects[uarmc->otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
 
+    Oprops_on(uarmc, WORN_CLOAK);
+
     switch(uarmc->otyp) {
 	case ELVEN_CLOAK:
 	case CLOAK_OF_PROTECTION:
@@ -246,6 +416,8 @@ int Cloak_off(void)
     int otyp = uarmc->otyp;
     long oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
 
+    Oprops_off(uarmc, WORN_CLOAK);
+
     takeoff_mask &= ~W_ARMC;
 	/* For mummy wrapping, taking it off first resets `Invisible'. */
     setworn(NULL, W_ARMC);
@@ -288,6 +460,8 @@ int Cloak_off(void)
 
 static int Helmet_on(void)
 {
+    Oprops_on(uarmh, WORN_HELMET);
+
     switch(uarmh->otyp) {
 	case FEDORA:
 	case HELMET:
@@ -349,6 +523,8 @@ static int Helmet_on(void)
 
 int Helmet_off(void)
 {
+    Oprops_off(uarmh, WORN_HELMET);
+
     takeoff_mask &= ~W_ARMH;
 
     switch(uarmh->otyp) {
@@ -394,6 +570,8 @@ static int Gloves_on(void)
     long oldprop =
 	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
 
+    Oprops_on(uarmg, WORN_GLOVES);
+
     switch(uarmg->otyp) {
 	case LEATHER_GLOVES:
 		break;
@@ -421,6 +599,8 @@ int Gloves_off(void)
 {
     long oldprop =
 	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
+
+    Oprops_off(uarmg, WORN_GLOVES);
 
     takeoff_mask &= ~W_ARMG;
 
@@ -474,6 +654,8 @@ int Gloves_off(void)
 
 static int Shield_on(void)
 {
+    Oprops_on(uarms, WORN_SHIELD);
+
     if (uarms && !is_racial_armor(uarms))
 	u.uconduct.unracearmor++;
 
@@ -482,6 +664,8 @@ static int Shield_on(void)
 
 int Shield_off(void)
 {
+    Oprops_off(uarms, WORN_SHIELD);
+
     takeoff_mask &= ~W_ARMS;
 
     setworn(NULL, W_ARMS);
@@ -490,6 +674,8 @@ int Shield_off(void)
 
 static int Shirt_on(void)
 {
+    Oprops_on(uarmu, WORN_SHIRT);
+
     if (uarmu && !is_racial_armor(uarmu))
 	u.uconduct.unracearmor++;
 
@@ -498,6 +684,8 @@ static int Shirt_on(void)
 
 int Shirt_off(void)
 {
+    Oprops_off(uarmu, WORN_SHIRT);
+
     takeoff_mask &= ~W_ARMU;
 
     setworn(NULL, W_ARMU);
@@ -510,6 +698,8 @@ int Shirt_off(void)
  */
 static int Armor_on(void)
 {
+    Oprops_on(uarm, W_ARM);
+
     if (uarm && Is_gold_dragon_armor(uarm->otyp)) {
 	begin_burn(level, uarm, FALSE);
 	if (!Blind)
@@ -561,6 +751,8 @@ static void Armor_off_sub(void)
 
 int Armor_off(void)
 {
+    Oprops_off(uarm, W_ARM);
+
     if (uarm && Is_gold_dragon_armor(uarm->otyp)) {
 	end_burn(uarm, FALSE);
 	if (!Blind)
@@ -578,6 +770,8 @@ int Armor_off(void)
  */
 int Armor_gone(void)
 {
+    Oprops_off(uarm, W_ARM);
+
     if (uarm && Is_gold_dragon_armor(uarm->otyp))
 	end_burn(uarm, FALSE);
     Armor_off_sub();
@@ -589,6 +783,8 @@ int Armor_gone(void)
 
 static void Amulet_on(void)
 {
+    Oprops_on(uamul, W_AMUL);
+
     switch(uamul->otyp) {
 	case AMULET_OF_ESP:
 	case AMULET_OF_LIFE_SAVING:
@@ -642,6 +838,8 @@ static void Amulet_on(void)
 
 void Amulet_off(void)
 {
+    Oprops_off(uamul, W_AMUL);
+
     takeoff_mask &= ~W_AMUL;
 
     switch(uamul->otyp) {
@@ -692,6 +890,8 @@ void Ring_on(struct obj *obj)
 {
     long oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
     int old_attrib, which;
+
+    Oprops_on(obj, obj->owornmask & W_RING);
 
     if (obj == uwep) setuwep(NULL);
     if (obj == uswapwep) setuswapwep(NULL);
@@ -816,6 +1016,8 @@ static void Ring_off_or_gone(struct obj *obj, boolean gone)
 {
     long mask = (obj->owornmask & W_RING);
     int old_attrib, which;
+
+    Oprops_off(obj, mask);
 
     takeoff_mask &= ~mask;
     if (!(u.uprops[objects[obj->otyp].oc_oprop].extrinsic & mask))
@@ -1012,35 +1214,80 @@ void set_wear(void)
 }
 
 /* check whether the target object is currently being put on (or taken off) */
-boolean donning(struct obj *otmp)	/* also checks for doffing */
+boolean donning(const struct obj *otmp)	/* also checks for doffing */
 {
- /* long what = (occupation == take_off) ? taking_off : 0L; */
-    long what = taking_off;	/* if nonzero, occupation is implied */
-    boolean result = FALSE;
+	return (donning_on(otmp) || donning_off(otmp));
+}
 
-    if (otmp == uarm)
-	result = (afternmv == Armor_on || afternmv == Armor_off ||
-		  what == WORN_ARMOR);
-    else if (otmp == uarmu)
-	result = (afternmv == Shirt_on || afternmv == Shirt_off ||
-		  what == WORN_SHIRT);
-    else if (otmp == uarmc)
-	result = (afternmv == Cloak_on || afternmv == Cloak_off ||
-		  what == WORN_CLOAK);
-    else if (otmp == uarmf)
-	result = (afternmv == Boots_on || afternmv == Boots_off ||
-		  what == WORN_BOOTS);
-    else if (otmp == uarmh)
-	result = (afternmv == Helmet_on || afternmv == Helmet_off ||
-		  what == WORN_HELMET);
-    else if (otmp == uarmg)
-	result = (afternmv == Gloves_on || afternmv == Gloves_off ||
-		  what == WORN_GLOVES);
-    else if (otmp == uarms)
-	result = (afternmv == Shield_on || afternmv == Shield_off ||
-		  what == WORN_SHIELD);
+boolean donning_on(const struct obj *otmp)
+{
+	/*
+	 * Caveat: This returns FALSE if armor that was being put on is
+	 *         cancelled with cancel_don() but has not yet been dealt
+	 *         with by the corresponding Foo_off().
+	 *
+	 * cancel_don() unsets afternmv, but the matching uarm* global isn't
+	 * unset until its corresponding Foo_off() is called.
+	 */
+	if (otmp == uarm) return (afternmv == Armor_on);
+	if (otmp == uarmu) return (afternmv == Shirt_on);
+	if (otmp == uarmc) return (afternmv == Cloak_on);
+	if (otmp == uarmf) return (afternmv == Boots_on);
+	if (otmp == uarmh) return (afternmv == Helmet_on);
+	if (otmp == uarmg) return (afternmv == Gloves_on);
+	if (otmp == uarms) return (afternmv == Shield_on);
+	return FALSE;
+}
 
-    return result;
+boolean donning_off(const struct obj *otmp)
+{
+	/* if taking_off is non-zero, occupation is implied */
+	if (otmp == uarm)
+	    return (afternmv == Armor_off || taking_off == WORN_ARMOR);
+	if (otmp == uarmu)
+	    return (afternmv == Shirt_off || taking_off == WORN_SHIRT);
+	if (otmp == uarmc)
+	    return (afternmv == Cloak_off || taking_off == WORN_CLOAK);
+	if (otmp == uarmf)
+	    return (afternmv == Boots_off || taking_off == WORN_BOOTS);
+	if (otmp == uarmh)
+	    return (afternmv == Helmet_off || taking_off == WORN_HELMET);
+	if (otmp == uarmg)
+	    return (afternmv == Gloves_off || taking_off == WORN_GLOVES);
+	if (otmp == uarms)
+	    return (afternmv == Shield_off || taking_off == WORN_SHIELD);
+	return FALSE;
+}
+
+/*
+ * Check if an armor, amulet or ring is *really* worn.
+ *
+ * Checking the uarm* globals isn't enough: dowear() calls setworn() to
+ * immediately set them, but the armor effects (should) only kick in
+ * once the matching Foo_on() function is called, so armor shouldn't be
+ * considered "worn" until then.
+ */
+boolean equip_is_worn(const struct obj *otmp)
+{
+	boolean worn = FALSE;
+
+	if (otmp == uarm) worn = TRUE;
+	if (otmp == uarmu) worn = TRUE;
+	if (otmp == uarmc) worn = TRUE;
+	if (otmp == uarmf) worn = TRUE;
+	if (otmp == uarmh) worn = TRUE;
+	if (otmp == uarmg) worn = TRUE;
+	if (otmp == uarms) worn = TRUE;
+
+	if (otmp == uamul) worn = TRUE;
+	if (otmp == uleft) worn = TRUE;
+	if (otmp == uright) worn = TRUE;
+
+	/*
+	 * Beware: Gives a false positive between cancel_don() and Foo_off().
+	 * See caveat in donning_on() for details.
+	 */
+	return !!(worn && !donning_on(otmp));
 }
 
 void cancel_don(void)
@@ -1069,7 +1316,7 @@ int dotakeoff(struct obj *otmp)
 	if (otmp && !validate_object(otmp, clothes, "take off"))
 		return 0;
 	else if (!otmp)
-		otmp = getobj(clothes_and_accessories, "take off");
+		otmp = getobj(clothes_and_accessories, "take off", NULL);
 	if (!otmp) return 0;
         if (otmp->oclass != ARMOR_CLASS) return doremring(otmp);
 	if (!(otmp->owornmask & W_ARMOR)) {
@@ -1103,7 +1350,7 @@ int doremring(struct obj *otmp)
 	if (otmp && !validate_object(otmp, clothes_and_accessories, "remove"))
 		return 0;
 	else if (!otmp)
-		otmp = getobj(clothes_and_accessories, "remove");
+		otmp = getobj(clothes_and_accessories, "remove", NULL);
 	if (!otmp) return 0;
         if (otmp->oclass == ARMOR_CLASS) return dotakeoff(otmp);
 	if (!(otmp->owornmask & (W_RING | W_AMUL | W_TOOL))) {
@@ -1193,6 +1440,8 @@ int armoroff(struct obj *otmp)
 			Cloak_off();
 		else if (is_shield(otmp))
 			Shield_off();
+		else if (is_shirt(otmp))
+			Shirt_off();
 		else setworn(NULL, otmp->owornmask & W_ARMOR);
 		off_msg(otmp);
 	}
@@ -1352,7 +1601,7 @@ int dowear(struct obj *otmp)
 	if (otmp && !validate_object(otmp, clothes_and_accessories, "wear"))
 		return 0;
 	else if (!otmp)
-		otmp = getobj(clothes_and_accessories, "wear");
+		otmp = getobj(clothes_and_accessories, "wear", NULL);
 	if (!otmp) return 0;
         if (otmp->oclass != ARMOR_CLASS) return doputon(otmp);
 
@@ -1413,7 +1662,7 @@ int doputon(struct obj *otmp)
 	if (otmp && !validate_object(otmp, clothes_and_accessories, "put on"))
 		return 0;
 	else if (!otmp)
-		otmp = getobj(clothes_and_accessories, "put on");
+		otmp = getobj(clothes_and_accessories, "put on", NULL);
 	if (!otmp) return 0;
         if (otmp->oclass == ARMOR_CLASS) return dowear(otmp);
 
@@ -2049,16 +2298,29 @@ int destroy_arm(struct obj *atmp)
 
 void adj_abon(struct obj *otmp, schar delta)
 {
-	if (uarmg && uarmg == otmp && otmp->otyp == GAUNTLETS_OF_DEXTERITY) {
+	boolean isnormal;
+
+	if (!otmp) return;
+
+	isnormal = (uarmg == otmp && otmp->otyp == GAUNTLETS_OF_DEXTERITY);
+	if (isnormal || (otmp->oprops & ITEM_DEXTERITY)) {
 		if (delta) {
-			makeknown(uarmg->otyp);
+			if (isnormal)
+				makeknown(otmp->otyp);
+			if (otmp->oprops & ITEM_DEXTERITY)
+				otmp->oprops_known |= ITEM_DEXTERITY;
 			ABON(A_DEX) += (delta);
 		}
 		iflags.botl = 1;
 	}
-	if (uarmh && uarmh == otmp && otmp->otyp == HELM_OF_BRILLIANCE) {
+
+	isnormal = (uarmh == otmp && otmp->otyp == HELM_OF_BRILLIANCE);
+	if (isnormal || (otmp->oprops & ITEM_BRILLIANCE)) {
 		if (delta) {
-			makeknown(uarmh->otyp);
+			if (isnormal)
+				makeknown(otmp->otyp);
+			if (otmp->oprops & ITEM_BRILLIANCE)
+				otmp->oprops_known |= ITEM_BRILLIANCE;
 			ABON(A_INT) += (delta);
 			ABON(A_WIS) += (delta);
 		}

@@ -50,6 +50,9 @@ struct obj {
 	char	invlet;		/* designation in inventory */
 	char	oartifact;	/* artifact array index */
 
+	long	oprops;		/* object properties; *band's "ego" items */
+	long	oprops_known;	/* known object properties */
+
 	xchar where;		/* where the object thinks it is */
 	xchar timed;		/* # of fuses (timers) attached to this obj */
 
@@ -321,5 +324,32 @@ struct obj {
 /* Flags for get_obj_location(). */
 #define CONTAINED_TOO	0x1
 #define BURIED_TOO	0x2
+
+/* Object properties. */
+#define ITEM_FIRE		0x00000001L /* fire damage or resistance */
+#define ITEM_FROST		0x00000002L /* frost damage or resistance */
+#define ITEM_DRLI		0x00000004L /* drains life or resists it */
+#define ITEM_VORPAL		0x00000008L /* capable of beheading or bisecting */
+#define ITEM_REFLECTION		0x00000010L /* reflects */
+#define ITEM_SPEED		0x00000020L /* grants speed */
+#define ITEM_OILSKIN		0x00000040L /* permanently greased */
+#define ITEM_POWER		0x00000080L /* grants a strength bonus */
+#define ITEM_DEXTERITY		0x00000100L /* grants a dexterity bonus */
+#define ITEM_BRILLIANCE		0x00000200L /* grants an int/wiz bonus */
+#define ITEM_ESP		0x00000400L /* grants extrinsic telepathy  */
+#define ITEM_DISPLACEMENT	0x00000800L /* grants displacement */
+#define ITEM_SEARCHING		0x00001000L /* grants searching  */
+#define ITEM_WARNING		0x00002000L /* grants warning  */
+#define ITEM_STEALTH		0x00004000L /* grants stealth  */
+#define ITEM_FUMBLING		0x00008000L /* fumbling */
+#define ITEM_CLAIRVOYANCE	0x00010000L /* clairvoyance */
+#define ITEM_DETONATIONS	0x00020000L /* projectile weapon goes boom  */
+#define ITEM_HUNGER		0x00040000L /* consumes extra hunger */
+#define ITEM_AGGRAVATE		0x00080000L /* aggravates monsters */
+
+#define ITEM_MAGICAL		0x80000000L /* known to have magical properties */
+
+#define ITEM_PROP_MASK		0x000FFFFFL /* all current properties */
+#define MAX_ITEM_PROPS		20
 
 #endif /* OBJ_H */

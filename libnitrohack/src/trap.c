@@ -635,7 +635,8 @@ void dotrap(struct trap *trap, unsigned trflags)
 		otmp->opoisoned = 0;
 
 		if (u.usteed && !rn2(2) && steedintrap(trap, otmp)) /* nothing */;
-		else if (thitu(8, dmgval(otmp, &youmonst), otmp, "arrow")) {
+		else if (thitu(8, dmgval(NULL, otmp, TRUE, &youmonst),
+			       otmp, NULL, NULL, "arrow")) {
 		    obfree(otmp, NULL);
 		} else {
 		    place_object(otmp, level, u.ux, u.uy);
@@ -659,7 +660,8 @@ void dotrap(struct trap *trap, unsigned trflags)
 		otmp->owt = weight(otmp);
 		if (!rn2(6)) otmp->opoisoned = 1;
 		if (u.usteed && !rn2(2) && steedintrap(trap, otmp)) /* nothing */;
-		else if (thitu(7, dmgval(otmp, &youmonst), otmp, "little dart")) {
+		else if (thitu(7, dmgval(NULL, otmp, TRUE, &youmonst),
+			       otmp, NULL, NULL, "little dart")) {
 		    if (otmp->opoisoned)
 			poisoned("dart", A_CON, "little dart", -10);
 		    obfree(otmp, NULL);
@@ -1268,7 +1270,7 @@ int launch_obj(short otyp, int x1, int y1, int x2, int y2, int style)
 	struct monst *mtmp;
 	struct obj *otmp, *otmp2;
 	int dx, dy;
-	struct obj *singleobj;
+	struct obj *singleobj, *ostack;
 	boolean used_up = FALSE;
 	boolean otherside = FALSE;
 	int dist;
@@ -1291,10 +1293,12 @@ int launch_obj(short otyp, int x1, int y1, int x2, int y2, int style)
 	}
 
 	if (otmp->quan == 1L) {
+	    ostack = NULL;
 	    obj_extract_self(otmp);
 	    singleobj = otmp;
 	    otmp = NULL;
 	} else {
+	    ostack = otmp;
 	    singleobj = splitobj(otmp, 1L);
 	    obj_extract_self(singleobj);
 	}
@@ -1364,7 +1368,7 @@ int launch_obj(short otyp, int x1, int y1, int x2, int y2, int style)
 				break;
 			    }
 			}
-			if (ohitmon(mtmp,singleobj,
+			if (ohitmon(NULL, mtmp, singleobj, ostack,
 					(style==ROLL) ? -1 : dist, FALSE)) {
 				used_up = TRUE;
 				break;
@@ -1372,9 +1376,10 @@ int launch_obj(short otyp, int x1, int y1, int x2, int y2, int style)
 		} else if (bhitpos.x == u.ux && bhitpos.y == u.uy) {
 			if (multi) nomul(0, NULL);
 			if (thitu(9 + singleobj->spe,
-				  dmgval(singleobj, &youmonst),
-				  singleobj, NULL))
+				  dmgval(NULL, singleobj, TRUE, &youmonst),
+				  singleobj, NULL, NULL, NULL)) {
 			    stop_occupation();
+			}
 		}
 		if (style == ROLL) {
 		    if (down_gate(bhitpos.x, bhitpos.y) != -1) {
@@ -1880,9 +1885,9 @@ mfiretrap:
 				mtmp->mhpmax -= rn2(num + 1);
 			}
 			if (burnarmor(mtmp) || rn2(3)) {
-			    destroy_mitem(mtmp, SCROLL_CLASS, AD_FIRE);
-			    destroy_mitem(mtmp, SPBOOK_CLASS, AD_FIRE);
-			    destroy_mitem(mtmp, POTION_CLASS, AD_FIRE);
+			    destroy_mitem(mtmp, SCROLL_CLASS, AD_FIRE, NULL);
+			    destroy_mitem(mtmp, SPBOOK_CLASS, AD_FIRE, NULL);
+			    destroy_mitem(mtmp, POTION_CLASS, AD_FIRE, NULL);
 			}
 			if (burn_floor_paper(mtmp->mx, mtmp->my, see_it, FALSE) &&
 				!see_it && distu(mtmp->mx, mtmp->my) <= 3*3)
@@ -2707,7 +2712,9 @@ boolean water_damage(struct obj *obj, boolean force, boolean here)
 		} else if (obj->greased) {
 			if (force || !rn2(2)) obj->greased = 0;
 		} else if (Is_container(obj) && !Is_box(obj) &&
-			(obj->otyp != OILSKIN_SACK || (obj->cursed && !rn2(3)))) {
+			   (!(obj->otyp == OILSKIN_SACK &&
+			      (obj->oprops & ITEM_OILSKIN)) ||
+			    (obj->cursed && !rn2(3)))) {
 			water_damage(obj->cobj, force, FALSE);
 		} else if (!force && (Luck + 5) > rn2(20)) {
 			/*  chance per item of sustaining damage:
@@ -2742,8 +2749,9 @@ boolean water_damage(struct obj *obj, boolean force, boolean here)
 			/* all metal stuff and armor except (body armor
 			   protected by oilskin cloak) */
 			if (obj->oclass != ARMOR_CLASS || obj != uarm ||
-			   !uarmc || uarmc->otyp != OILSKIN_CLOAK ||
-			   (uarmc->cursed && !rn2(3)))
+			    !uarmc || !(uarmc->otyp == OILSKIN_CLOAK ||
+					(uarmc->oprops & ITEM_OILSKIN)) ||
+			    (uarmc->cursed && !rn2(3)))
 				obj->oeroded++;
 		}
 		obj_destroyed = FALSE;
@@ -3196,7 +3204,7 @@ static int disarm_squeaky_board(struct trap *ttmp, schar dx, schar dy)
 	boolean bad_tool;
 	int fails;
 
-	obj = getobj(oil, "untrap with");
+	obj = getobj(oil, "untrap with", NULL);
 	if (!obj) return 0;
 
 	bad_tool = (obj->cursed ||
@@ -3845,7 +3853,8 @@ static boolean thitm(int tlev, struct monst *mon, struct obj *obj,
 			pline("%s is hit by %s!", Monnam(mon), doname(obj));
 		if (d_override) dam = d_override;
 		else if (obj) {
-			dam = dmgval(obj, mon);
+			/* For now all traps that send obj fire or drop it. */
+			dam = dmgval(NULL, obj, TRUE, mon);
 			if (dam < 1) dam = 1;
 		}
 
@@ -3934,7 +3943,7 @@ boolean lava_effects(void)
 		    else if (obj == uarms) Shield_off();
 		    else if (obj == uarmg) Gloves_off();
 		    else if (obj == uarmf) Boots_off();
-		    else if (obj == uarmu) setnotworn(obj);
+		    else if (obj == uarmu) Shirt_off();
 		    else if (obj == uleft) Ring_gone(obj);
 		    else if (obj == uright) Ring_gone(obj);
 		    else if (obj == ublindf) Blindf_off(obj);

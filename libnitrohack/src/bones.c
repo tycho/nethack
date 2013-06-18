@@ -86,6 +86,7 @@ static void resetobjs(struct obj *ochain, boolean restore)
 
 			if (objects[otmp->otyp].oc_uses_known) otmp->known = 0;
 			otmp->dknown = otmp->bknown = 0;
+			otmp->oprops_known = 0L;
 			otmp->rknown = 0;
 			otmp->invlet = 0;
 			otmp->no_charge = 0;

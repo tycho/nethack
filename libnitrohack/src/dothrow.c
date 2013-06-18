@@ -14,7 +14,7 @@ static int throw_gold(struct obj *, schar, schar, schar);
 static void check_shop_obj(struct obj *,xchar,xchar,boolean);
 static void breakobj(struct obj *,xchar,xchar,boolean,boolean);
 static void breakmsg(struct obj *,boolean);
-static boolean toss_up(struct obj *, boolean);
+static boolean toss_up(struct obj *, struct obj *, boolean);
 static boolean throwing_weapon(struct obj *);
 static void sho_obj_return_to_u(struct obj *obj, schar, schar);
 static boolean mhurtle_step(void *,int,int);
@@ -34,7 +34,7 @@ extern boolean notonhead;	/* for long worms */
 /* Throw the selected object, asking for direction */
 static int throw_obj(struct obj *obj, int shotlimit, boolean cancel_unquivers)
 {
-	struct obj *otmp;
+	struct obj *otmp, *ostack;
 	int multishot = 1;
 	schar skill;
 	long wep_mask;
@@ -156,14 +156,16 @@ static int throw_obj(struct obj *obj, int shotlimit, boolean cancel_unquivers)
 	    twoweap = u.twoweap;
 	    /* split this object off from its slot if necessary */
 	    if (obj->quan > 1L) {
+		ostack = obj;
 		otmp = splitobj(obj, 1L);
 	    } else {
+		ostack = NULL;
 		otmp = obj;
 		if (otmp->owornmask)
 		    remove_worn_item(otmp, FALSE);
 	    }
 	    freeinv(otmp);
-	    throwit(otmp, wep_mask, twoweap, dx, dy, dz);
+	    throwit(otmp, ostack, wep_mask, twoweap, dx, dy, dz);
 	}
 	m_shot.n = m_shot.i = 0;
 	m_shot.o = STRANGE_OBJECT;
@@ -199,7 +201,7 @@ int dothrow(struct obj *obj)
 	if (obj && !validate_object(obj, uslinging() ? bullets : toss_objs, "throw"))
 	    return 0;
 	else if (!obj)
-	    obj = getobj(uslinging() ? bullets : toss_objs, "throw");
+	    obj = getobj(uslinging() ? bullets : toss_objs, "throw", NULL);
 	/* it is also possible to throw food */
 	/* (or jewels, or iron balls... ) */
 
@@ -327,7 +329,7 @@ int dofire(void)
 /*
  * Object hits floor at hero's feet.  Called from drop() and throwit().
  */
-void hitfloor(struct obj *obj)
+void hitfloor(struct obj *obj, struct obj *ostack, boolean thrown)
 {
 	if (IS_SOFT(level->locations[u.ux][u.uy].typ) || u.uinwater) {
 		dropy(obj);
@@ -338,6 +340,9 @@ void hitfloor(struct obj *obj)
 	else
 		pline("%s hit%s the %s.", Doname2(obj),
 		      (obj->quan == 1L) ? "s" : "", surface(u.ux,u.uy));
+
+	if (detonate_obj(obj, ostack, uwep, u.ux, u.uy, thrown))
+	    return;
 
 	if (hero_breaks(obj, u.ux, u.uy, TRUE)) return;
 	if (ship_object(obj, u.ux, u.uy, FALSE)) return;
@@ -695,7 +700,7 @@ static void check_shop_obj(struct obj *obj, xchar x, xchar y, boolean broken)
  *
  * Returns FALSE if the object is gone.
  */
-static boolean toss_up(struct obj *obj, boolean hitsroof)
+static boolean toss_up(struct obj *obj, struct obj *ostack, boolean hitsroof)
 {
     const char *almost;
     /* note: obj->quan == 1 */
@@ -757,12 +762,7 @@ static boolean toss_up(struct obj *obj, boolean hitsroof)
 	return FALSE;
     } else {		/* neither potion nor other breaking object */
 	boolean less_damage = uarmh && is_metallic(uarmh), artimsg = FALSE;
-	int dmg = dmgval(obj, &youmonst);
-
-	if (obj->oartifact)
-	    /* need a fake die roll here; rn1(18,2) avoids 1 and 20 */
-	    artimsg = artifact_hit(NULL, &youmonst,
-				   obj, &dmg, rn1(18,2));
+	int dmg = dmgval(NULL, obj, TRUE, &youmonst);
 
 	if (!dmg) {	/* probably wasn't a weapon; base damage on weight */
 	    dmg = (int) obj->owt / 100;
@@ -773,6 +773,11 @@ static boolean toss_up(struct obj *obj, boolean hitsroof)
 		dmg = 0;
 	}
 	if (dmg > 1 && less_damage) dmg = 1;
+
+	/* apply special attack effects after helmet protection, not before */
+	/* need a fake die roll here; rn1(18,2) avoids 1 and 20 */
+	artimsg = artifact_hit(NULL, &youmonst, obj, ostack, TRUE, &dmg, rn1(18,2));
+
 	if (dmg > 0) dmg += u.udaminc;
 	if (dmg < 0) dmg = 0;	/* beware negative rings of increase damage */
 	if (Half_physical_damage) dmg = (dmg + 1) / 2;
@@ -796,7 +801,7 @@ static boolean toss_up(struct obj *obj, boolean hitsroof)
 		return obj ? TRUE : FALSE;
 	    }
 	}
-	hitfloor(obj);
+	hitfloor(obj, ostack, TRUE);
 	losehp(dmg, "falling object", KILLED_BY_AN);
     }
     return TRUE;
@@ -832,6 +837,7 @@ static void sho_obj_return_to_u(struct obj *obj, schar dx, schar dy)
 }
 
 void throwit(struct obj *obj,
+	     struct obj *ostack,
 	     long wep_mask,  /* used to re-equip returning boomerang */
 	     boolean twoweap, /* used to restore twoweapon mode if wielded weapon returns */
 	     schar dx, schar dy, schar dz)
@@ -901,9 +907,9 @@ void throwit(struct obj *obj,
 		u.twoweap = twoweap;
 	    } else if (dz < 0 && !Is_airlevel(&u.uz) &&
 		    !Underwater && !Is_waterlevel(&u.uz)) {
-		toss_up(obj, rn2(5));
+		toss_up(obj, ostack, rn2(5));
 	    } else {
-		hitfloor(obj);
+		hitfloor(obj, ostack, TRUE);
 	    }
 	    thrownobj = NULL;
 	    return;
@@ -986,7 +992,7 @@ void throwit(struct obj *obj,
 		}
 		snuff_candle(obj);
 		notonhead = (bhitpos.x != mon->mx || bhitpos.y != mon->my);
-		obj_gone = thitmonst(mon, obj);
+		obj_gone = thitmonst(mon, obj, ostack);
 		/* Monster may have been tamed; this frees old mon */
 		mon = m_at(level, bhitpos.x, bhitpos.y);
 
@@ -1031,8 +1037,8 @@ void throwit(struct obj *obj,
 					"%s back toward you, hitting your %s!",
 				  Tobjnam(obj, Blind ? "hit" : "fly"),
 				  body_part(ARM));
-			    artifact_hit(NULL,
-						&youmonst, obj, &dmg, 0);
+			    artifact_hit(NULL, &youmonst, obj, ostack, TRUE,
+					 &dmg, 0);
 			    losehp(dmg, xname(obj),
 				obj_is_pname(obj) ? KILLED_BY : KILLED_BY_AN);
 			}
@@ -1058,6 +1064,8 @@ void throwit(struct obj *obj,
 		}
 		if (flooreffects(obj,bhitpos.x,bhitpos.y,"fall")) return;
 		obj_no_longer_held(obj);
+		if (detonate_obj(obj, ostack, uwep, bhitpos.x, bhitpos.y, TRUE))
+		    return;
 		if (mon && mon->isshk && is_pick(obj)) {
 		    if (cansee(bhitpos.x, bhitpos.y))
 			pline("%s snatches up %s.",
@@ -1159,7 +1167,7 @@ static void tmiss(struct obj *obj, struct monst *mon)
  * Return 1 if obj has disappeared or otherwise been taken care of,
  * 0 if caller must take care of it.
  */
-int thitmonst(struct monst *mon, struct obj *obj)
+int thitmonst(struct monst *mon, struct obj *obj, struct obj *ostack)
 {
 	int	tmp; /* Base chance to hit */
 	int	disttmp; /* distance modifier */
@@ -1301,10 +1309,12 @@ int thitmonst(struct monst *mon, struct obj *obj)
 
 	    if (tmp >= rnd(20)) {
 		int broken = FALSE;
-		if (hmon(mon,obj,1)) {	/* mon still alive */
+		if (hmon(mon, obj, ostack, TRUE)) {	/* mon still alive */
 		    cutworm(mon, bhitpos.x, bhitpos.y, obj);
 		}
 		exercise(A_DEX, TRUE);
+		if (detonate_obj(obj, ostack, uwep, bhitpos.x, bhitpos.y, TRUE))
+		    return 1;
 		/* projectiles other than magic stones
 		   sometimes disappear when thrown */
 		if (objects[otyp].oc_skill < P_NONE &&
@@ -1340,7 +1350,7 @@ int thitmonst(struct monst *mon, struct obj *obj)
 		int was_swallowed = guaranteed_hit;
 
 		exercise(A_DEX, TRUE);
-		if (!hmon(mon,obj,1)) {		/* mon killed */
+		if (!hmon(mon, obj, ostack, TRUE)) {	/* mon killed */
 		    if (was_swallowed && !u.uswallow && obj == uball)
 			return 1;	/* already did placebc() */
 		}
@@ -1359,7 +1369,7 @@ int thitmonst(struct monst *mon, struct obj *obj)
 	    exercise(A_STR, TRUE);
 	    if (tmp >= rnd(20)) {
 		exercise(A_DEX, TRUE);
-		hmon(mon,obj,1);
+		hmon(mon, obj, ostack, TRUE);
 		if (obj_disint) {
 		    if (*u.ushops)
 			check_shop_obj(obj, bhitpos.x,bhitpos.y, TRUE);
@@ -1373,7 +1383,7 @@ int thitmonst(struct monst *mon, struct obj *obj)
 	} else if ((otyp == EGG || otyp == CREAM_PIE ||
 		    otyp == BLINDING_VENOM || otyp == ACID_VENOM) &&
 		(guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
-	    hmon(mon, obj, 1);
+	    hmon(mon, obj, ostack, TRUE);
 	    return 1;	/* hmon used it up */
 
 	} else if (obj->oclass == POTION_CLASS &&

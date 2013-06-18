@@ -581,7 +581,18 @@ schar acurr(int x)
 
 	if (x == A_STR) {
 		tmp = (tmp >= 125) ? 125 : ((tmp <= 3) ? 3 : tmp);
-		if (uarmg && uarmg->otyp == GAUNTLETS_OF_POWER) return 125;
+		if ((uarmu && (uarmu->oprops & ITEM_POWER)) ||
+		    (uarm && (uarm->oprops & ITEM_POWER)) ||
+		    (uarmc && (uarmc->oprops & ITEM_POWER)) ||
+		    (uarmg && ((uarmg->oprops & ITEM_POWER) ||
+			       uarmg->otyp == GAUNTLETS_OF_POWER)) ||
+		    (uarms && (uarms->oprops & ITEM_POWER)) ||
+		    (uarmh && (uarmh->oprops & ITEM_POWER)) ||
+		    (uarmf && (uarmf->oprops & ITEM_POWER)) ||
+		    (uleft && (uleft->oprops & ITEM_POWER)) ||
+		    (uright && (uright->oprops & ITEM_POWER)) ||
+		    (uamul && (uamul->oprops & ITEM_POWER)))
+		    return 125;
 		else if (uwep && uwep->oartifact == ART_GIANTSLAYER)
 		    return (schar)(tmp < 118 ? 118 : tmp);
 		else return (schar)tmp;
@@ -655,8 +666,14 @@ void calc_attr_bonus(void)
 {
 	int i, spe;
 	struct obj *abon_items[] = { /* item slots that might affect abon */
+		uarm /* body armor */,
+		uarmu /* shirt */,
+		uarmc /* cloak */,
 		uarmh /* helmet */,
+		uarms /* shield */,
 		uarmg /* gloves */,
+		uarmf /* boots */,
+		uamul /* amulet */,
 		uright/* right ring */,
 		uleft /* left ring */,
 	};
@@ -664,7 +681,7 @@ void calc_attr_bonus(void)
 	memset(u.abon.a, 0, sizeof(u.abon.a));
 	
 	for (i = 0; i < SIZE(abon_items); i++) {
-		if (!abon_items[i])
+		if (!abon_items[i] || !equip_is_worn(abon_items[i]))
 		    continue;
 		
 		spe = abon_items[i]->spe;
@@ -705,6 +722,15 @@ void calc_attr_bonus(void)
 			case CORNUTHAUM:
 			    ABON(A_CHA) += (Role_if(PM_WIZARD) ? 1 : -1);
 			    break;
+		}
+
+		if (abon_items[i]->oprops & ITEM_DEXTERITY) {
+		    ABON(A_DEX) += spe;
+		}
+
+		if (abon_items[i]->oprops & ITEM_BRILLIANCE) {
+		    ABON(A_INT) += spe;
+		    ABON(A_WIS) += spe;
 		}
 	}
 }

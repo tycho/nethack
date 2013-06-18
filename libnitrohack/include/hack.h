@@ -213,6 +213,24 @@ extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define EXPL_FROSTY	6
 #define EXPL_MAX	7
 
+/* Zap types and macros, mostly for zap.c. */
+/* Ensure that flash_types[] in zap.c matches these! */
+#define ZT_MAGIC_MISSILE	(AD_MAGM-1)
+#define ZT_FIRE			(AD_FIRE-1)
+#define ZT_COLD			(AD_COLD-1)
+#define ZT_SLEEP		(AD_SLEE-1)
+#define ZT_DEATH		(AD_DISN-1)	/* or disintegration */
+#define ZT_LIGHTNING		(AD_ELEC-1)
+#define ZT_POISON_GAS		(AD_DRST-1)
+#define ZT_ACID			(AD_ACID-1)
+/* 8 and 9 are currently unassigned */
+
+#define ZT_WAND(x)		(x)
+#define ZT_SPELL(x)		(10+(x))
+#define ZT_BREATH(x)		(20+(x))
+
+#define is_hero_spell(type)	((type) >= 10 && (type) < 20)
+
 /* Macros for messages referring to hands, eyes, feet, etc... */
 #define ARM 0
 #define EYE 1

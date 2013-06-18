@@ -84,7 +84,7 @@ int dowrite(struct obj *pen)
 	}
 
 	/* get paper to write on */
-	paper = getobj(write_on,"write on");
+	paper = getobj(write_on, "write on", NULL);
 	if (!paper)
 		return 0;
 	typeword = (paper->oclass == SPBOOK_CLASS) ? "spellbook" : "scroll";

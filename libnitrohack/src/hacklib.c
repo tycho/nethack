@@ -31,6 +31,7 @@ NitroHack, except that rounddiv may call panic().
 	char *		sitoa		(int)
 	int		sgn		(int)
 	int		rounddiv	(long, int)
+	long		longbits	(long)
 	int		distmin		(int, int, int, int)
 	int		dist2		(int, int, int, int)
 	boolean		online2		(int, int)
@@ -224,6 +225,20 @@ int rounddiv(long x, int y)	/* calculate x/y, rounding as appropriate */
     if (2*m >= y) r++;
 
     return divsgn * r;
+}
+
+
+/* Count the number of bits in a long (sideways addition) */
+long longbits(long l)
+{
+    /* http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel */
+    long l2;
+    l2 = (l  & 0x55555555L) + ((l  & 0xAAAAAAAAL) >>  1);
+    l  = (l2 & 0x33333333L) + ((l2 & 0xCCCCCCCCL) >>  2);
+    l2 = (l  & 0x0F0F0F0FL) + ((l  & 0xF0F0F0F0L) >>  4);
+    l  = (l2 & 0x00FF00FFL) + ((l2 & 0xFF00FF00L) >>  8);
+    l2 = (l  & 0x0000FFFFL) + ((l  & 0xFFFF0000L) >> 16);
+    return l2;
 }
 
 

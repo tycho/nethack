@@ -40,7 +40,7 @@ int doread(struct obj *scroll)
 	if (scroll && !validate_object(scroll, readable, "read"))
 	    return 0;
 	else if (!scroll)
-	    scroll = getobj(readable, "read");
+	    scroll = getobj(readable, "read", NULL);
 	if (!scroll) return 0;
 
 	/* outrumor has its own blindness check */
@@ -1303,7 +1303,7 @@ int seffects(struct obj *sobj, boolean *known)
 		}
 		*known = TRUE;
 		pline("This is a charging scroll.");
-		otmp = getobj(all_count, "charge");
+		otmp = getobj(all_count, "charge", NULL);
 		if (!otmp) break;
 		recharge(otmp, sobj->cursed ? -1 : (sobj->blessed ? 1 : 0));
 		break;
@@ -1956,7 +1956,7 @@ void drop_boulder_on_player(boolean confused, boolean helmet_protects,
 		!noncorporeal(youmonst.data) &&
 		!unsolid(youmonst.data)) {
 	    pline("You are hit by %s!", doname(otmp));
-	    dmg = dmgval(otmp, &youmonst) * otmp->quan;
+	    dmg = dmgval(NULL, otmp, TRUE, &youmonst) * otmp->quan;
 	    if (uarmh && helmet_protects) {
 		if (is_metallic(uarmh)) {
 		    pline("Fortunately, you are wearing a hard helmet.");
@@ -2010,7 +2010,7 @@ int drop_boulder_on_monster(int x, int y, boolean confused, boolean by_player)
 			     body_part(HEAD));
 		}
 	    }
-	    mdmg = dmgval(otmp, mtmp) * otmp->quan;
+	    mdmg = dmgval(NULL, otmp, TRUE, mtmp) * otmp->quan;
 	    if (helmet) {
 		if (is_metallic(helmet)) {
 		    if (canspotmon(level, mtmp))

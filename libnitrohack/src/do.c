@@ -7,7 +7,7 @@
 #include "lev.h"
 
 static void dosinkring(struct obj *);
-static int drop(struct obj *);
+static int drop(struct obj *, struct obj *);
 static int wipeoff(void);
 
 static int menu_drop(int);
@@ -20,11 +20,12 @@ static const char drop_types[] =
 /* 'd' command: drop one inventory item */
 int dodrop(struct obj *obj)
 {
+	struct obj *ostack = NULL;
 	int result, i = (invent) ? 0 : (SIZE(drop_types) - 1);
 
 	if (*u.ushops) sellobj_state(SELL_DELIBERATE);
-	if (!obj) obj = getobj(&drop_types[i], "drop");
-	result = drop(obj);
+	if (!obj) obj = getobj(&drop_types[i], "drop", &ostack);
+	result = drop(obj, ostack);
 	if (*u.ushops) sellobj_state(SELL_NORMAL);
 	reset_occupations();
 
@@ -142,7 +143,8 @@ boolean flooreffects(struct obj *obj, int x, int y, const char *verb)
 		    if (mtmp) {
 			if (!passes_walls(mtmp->data) &&
 				!throws_rocks(mtmp->data)) {
-			    if (hmon(mtmp, obj, TRUE) && !is_whirly(mtmp->data))
+			    if (hmon(mtmp, obj, NULL, TRUE) &&
+				!is_whirly(mtmp->data))
 				return FALSE;	/* still alive */
 			}
 			mtmp->mtrapped = 0;
@@ -542,7 +544,7 @@ boolean canletgo(struct obj *obj, const char *word)
 	return TRUE;
 }
 
-static int drop(struct obj *obj)
+static int drop(struct obj *obj, struct obj *ostack)
 {
 	if (!obj) return 0;
 	if (!canletgo(obj,"drop"))
@@ -582,11 +584,11 @@ static int drop(struct obj *obj)
 	    }
 	    if (!can_reach_floor()) {
 		if (flags.verbose) pline("You drop %s.", doname(obj));
-		
+
 		/* Ensure update when we drop gold objects */
 		if (obj->oclass == COIN_CLASS) iflags.botl = 1;
 		freeinv(obj);
-		hitfloor(obj);
+		hitfloor(obj, ostack, FALSE);
 		return 1;
 	    }
 	    if (!IS_ALTAR(level->locations[u.ux][u.uy].typ) && flags.verbose)
@@ -744,7 +746,7 @@ static int menu_drop(int retry)
 	    otmp2 = otmp->nobj;
 	    if (all_categories || allow_category(otmp)) {
 		matched = TRUE;
-		n_dropped += drop(otmp);
+		n_dropped += drop(otmp, NULL);
 	    }
 	}
 	if (!matched)
@@ -767,10 +769,12 @@ static int menu_drop(int retry)
 		    } else if (otmp->otyp == LOADSTONE && otmp->cursed) {
 			/* same kludge as getobj(), for canletgo()'s use */
 			otmp->corpsenm = (int) cnt;	/* don't split */
-		    } else
+		    } else {
+			otmp2 = otmp;	/* otmp's stack */
 			otmp = splitobj(otmp, cnt);
+		    }
 		}
-		n_dropped += drop(otmp);
+		n_dropped += drop(otmp, otmp2);
 	    }
 	    free(obj_pick_list);
 	}

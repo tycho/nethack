@@ -1107,7 +1107,7 @@ int dorub(struct obj *obj)
 	if (obj && !validate_object(obj, cuddly, "rub"))
 	    return 0;
 	else if (!obj)
-	    obj = getobj(cuddly, "rub");
+	    obj = getobj(cuddly, "rub", NULL);
 
         if (!obj) return 0;
 
@@ -1705,7 +1705,7 @@ static void use_grease(struct obj *obj)
 			dropx(obj);
 			return;
 		}
-		otmp = getobj(lubricables, "grease");
+		otmp = getobj(lubricables, "grease", NULL);
 		if (!otmp) return;
 		if ((otmp->owornmask & WORN_ARMOR) && uarmc) {
 			strcpy(buf, xname(uarmc));
@@ -1775,7 +1775,7 @@ static void use_stone(struct obj *tstone)
     choices = (tstone->otyp == TOUCHSTONE && tstone->dknown &&
 		objects[TOUCHSTONE].oc_name_known) ? justgems : allowall;
     sprintf(stonebuf, "rub on the stone%s", plur(tstone->quan));
-    if ((obj = getobj(choices, stonebuf)) == 0)
+    if ((obj = getobj(choices, stonebuf, NULL)) == 0)
 	return;
 
     if (obj == tstone && obj->quan == 1) {
@@ -2303,7 +2303,7 @@ static int use_pole (struct obj *obj)
 
 	    bhitpos = cc;
 	    check_caitiff(mtmp);
-	    thitmonst(mtmp, uwep);
+	    thitmonst(mtmp, uwep, NULL);
 	    /* check the monster's HP because thitmonst() doesn't return
 	     * an indication of whether it hit.  Not perfect (what if it's a
 	     * non-silver weapon on a shade?)
@@ -2441,7 +2441,7 @@ static int use_grapple (struct obj *obj)
 		return 1;
 	    } else if ((!bigmonst(mtmp->data) && !strongmonst(mtmp->data)) ||
 		       rn2(4)) {
-		thitmonst(mtmp, uwep);
+		thitmonst(mtmp, uwep, NULL);
 		return 1;
 	    }
 	    /* FALL THROUGH */
@@ -2662,7 +2662,7 @@ int doapply(struct obj *obj)
 	if (obj && !validate_object(obj, class_list, "use or apply"))
 	    return 0;
 	else if (!obj)
-	    obj = getobj(class_list, "use or apply");
+	    obj = getobj(class_list, "use or apply", NULL);
 	if (!obj) return 0;
 
 	if (obj == &zeroobj) {

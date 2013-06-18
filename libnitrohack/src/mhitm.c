@@ -835,12 +835,11 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 			if (otmp->otyp == CORPSE &&
 				touch_petrifies(&mons[otmp->corpsenm]))
 			    goto do_stone;
-			tmp += dmgval(otmp, mdef);
-			if (otmp->oartifact) {
-			    artifact_hit(magr,mdef, otmp, &tmp, dieroll);
-			    if (mdef->mhp <= 0)
-				return (MM_DEF_DIED |
-					(grow_up(magr,mdef) ? 0 : MM_AGR_DIED));
+			tmp += dmgval(magr, otmp, FALSE, mdef);
+			artifact_hit(magr, mdef, otmp, NULL, FALSE, &tmp, dieroll);
+			if (mdef->mhp <= 0) {
+			    return (MM_DEF_DIED |
+				    (grow_up(magr,mdef) ? 0 : MM_AGR_DIED));
 			}
 			if (tmp)
 				mrustm(magr, mdef, otmp);
@@ -873,8 +872,8 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 			return (MM_DEF_DIED | (grow_up(magr,mdef) ?
 							0 : MM_AGR_DIED));
 		}
-		tmp += destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
-		tmp += destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
+		destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE, &tmp);
+		destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE, &tmp);
 		if (resists_fire(mdef)) {
 		    if (vis)
 			pline("The fire doesn't seem to burn %s!",
@@ -884,7 +883,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		    tmp = 0;
 		}
 		/* only potions damage resistant players in destroy_item */
-		tmp += destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
+		destroy_mitem(mdef, POTION_CLASS, AD_FIRE, &tmp);
 		break;
 	    case AD_COLD:
 		if (cancelled) {
@@ -900,7 +899,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		    golemeffects(mdef, AD_COLD, tmp);
 		    tmp = 0;
 		}
-		tmp += destroy_mitem(mdef, POTION_CLASS, AD_COLD);
+		destroy_mitem(mdef, POTION_CLASS, AD_COLD, &tmp);
 		break;
 	    case AD_ELEC:
 		if (cancelled) {
@@ -908,7 +907,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		    break;
 		}
 		if (vis) pline("%s gets zapped!", Monnam(mdef));
-		tmp += destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
+		destroy_mitem(mdef, WAND_CLASS, AD_ELEC, &tmp);
 		if (resists_elec(mdef)) {
 		    if (vis) pline("The zap doesn't shock %s!", mon_nam(mdef));
 		    shieldeff(mdef->mx, mdef->my);
@@ -916,7 +915,7 @@ static int mdamagem(struct monst *magr, struct monst *mdef, const struct attack 
 		    tmp = 0;
 		}
 		/* only rings damage resistant players in destroy_item */
-		tmp += destroy_mitem(mdef, RING_CLASS, AD_ELEC);
+		destroy_mitem(mdef, RING_CLASS, AD_ELEC, &tmp);
 		break;
 	    case AD_ACID:
 		if (magr->mcan) {

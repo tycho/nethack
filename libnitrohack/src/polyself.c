@@ -785,7 +785,7 @@ int dospit(void)
 	otmp = mksobj(level, u.umonnum==PM_COBRA ? BLINDING_VENOM : ACID_VENOM,
 			TRUE, FALSE);
 	otmp->spe = 1; /* to indicate it's yours */
-	throwit(otmp, 0L, FALSE, dx, dy, dz);
+	throwit(otmp, NULL, 0L, FALSE, dx, dy, dz);
 	return 1;
 }
 
@@ -1019,12 +1019,12 @@ int dogaze(void)
 			    pline("The fire doesn't burn %s!", mon_nam(mtmp));
 			    dmg = 0;
 			}
-			if ((int) u.ulevel > rn2(20))
-			    destroy_mitem(mtmp, SCROLL_CLASS, AD_FIRE);
-			if ((int) u.ulevel > rn2(20))
-			    destroy_mitem(mtmp, POTION_CLASS, AD_FIRE);
-			if ((int) u.ulevel > rn2(25))
-			    destroy_mitem(mtmp, SPBOOK_CLASS, AD_FIRE);
+			if (u.ulevel > rn2(20))
+			    destroy_mitem(mtmp, SCROLL_CLASS, AD_FIRE, NULL);
+			if (u.ulevel > rn2(20))
+			    destroy_mitem(mtmp, POTION_CLASS, AD_FIRE, NULL);
+			if (u.ulevel > rn2(25))
+			    destroy_mitem(mtmp, SPBOOK_CLASS, AD_FIRE, NULL);
 			if (dmg && !DEADMONSTER(mtmp)) mtmp->mhp -= dmg;
 			if (mtmp->mhp <= 0) killed(mtmp);
 		    }

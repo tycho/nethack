@@ -1143,7 +1143,7 @@ int dosacrifice(struct obj *otmp)
 	if (otmp && !validate_object(otmp, sacrifice_types, "sacrifice"))
 	    return 0;
 	else if (!otmp)
-	    otmp = getobj(sacrifice_types, "sacrifice");
+	    otmp = getobj(sacrifice_types, "sacrifice", NULL);
 	if (!otmp) return 0;
     } else {
 	if (otmp && otmp->otyp != CORPSE) {
@@ -1505,24 +1505,32 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 	    /* you were already in pretty good standing */
 	    /* The player can gain an artifact */
 	    /* The chance goes down as the number of artifacts goes up */
-	    if (u.ulevel > 2 && u.uluck >= 0 &&
-		!rn2(10 + (2 * u.ugifts * nartifacts))) {
-		otmp = mk_artifact(level, NULL, a_align(u.ux,u.uy));
+	    if (u.ulevel > 2 && u.uluck >= 0) {
+		otmp = NULL;
+		if (!rn2(10 + (2 * u.ugifts * nartifacts)))
+		    otmp = mk_artifact(level, NULL, a_align(u.ux,u.uy));
+		if (!otmp && !rn2(10 + (2 * u.ugifts)))
+		    otmp = create_oprop(level, NULL, FALSE);
 		if (otmp) {
 		    if (otmp->spe < 0) otmp->spe = 0;
 		    if (otmp->cursed) uncurse(otmp);
 		    otmp->oerodeproof = TRUE;
+		    if (otmp->oprops)
+			otmp->oprops_known = ITEM_PROP_MASK;
 		    dropy(otmp);
 		    at_your_feet("An object");
 		    godvoice(u.ualign.type, "Use my gift wisely!");
 		    historic_event(FALSE, "received %s from %s.",
-				   artiname(otmp->oartifact), u_gname());
+				   otmp->oartifact ? artiname(otmp->oartifact) :
+						     doname(otmp),
+				   u_gname());
 		    u.ugifts++;
 		    u.ublesscnt = rnz(300 + (50 * nartifacts));
 		    exercise(A_WIS, TRUE);
 		    /* make sure we can use this weapon */
 		    unrestrict_weapon_skill(weapon_type(otmp));
-		    discover_artifact(otmp->oartifact);
+		    if (otmp->oartifact)
+			discover_artifact(otmp->oartifact);
 		    return 1;
 		}
 	    }

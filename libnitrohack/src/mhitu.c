@@ -745,7 +745,8 @@ static boolean u_slip_free(struct monst *mtmp, const struct attack *mattk)
 
 	/* if your cloak/armor is greased, monster slips off; this
 	   protection might fail (33% chance) when the armor is cursed */
-	if (obj && (obj->greased || obj->otyp == OILSKIN_CLOAK) &&
+	if (obj && (obj->greased || obj->otyp == OILSKIN_CLOAK ||
+		    (obj->oprops & ITEM_OILSKIN)) &&
 		(!obj->cursed || rn2(3))) {
 	    pline("%s %s your %s %s!",
 		  Monnam(mtmp),
@@ -894,14 +895,14 @@ static int hitmu(struct monst *mtmp, const struct attack  *mattk)
 			    if (!Stoned)
 				goto do_stone;
 			}
-			dmg += dmgval(otmp, &youmonst);
+			dmg += dmgval(mtmp, otmp, FALSE, &youmonst);
 			if (objects[otmp->otyp].oc_material == SILVER &&
 			    hates_silver(youmonst.data))
 			    pline("The silver sears your flesh!");
 
 			if (dmg <= 0) dmg = 1;
-			if (!(otmp->oartifact &&
-				artifact_hit(mtmp, &youmonst, otmp, &dmg,dieroll)))
+			if (!artifact_hit(mtmp, &youmonst, otmp, NULL, FALSE,
+					  &dmg, dieroll))
 			     hitmsg(mtmp, mattk);
 			if (!dmg) break;
 			if (u.mh > 1 && u.mh > ((u.uac>0) ? dmg : dmg+u.uac) &&

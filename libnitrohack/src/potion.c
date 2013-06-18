@@ -334,7 +334,7 @@ int dodrink(struct obj *potion)
 	if (potion && !validate_object(potion, drink_choices, "drink"))
 		return 0;
 	else if (!potion)
-		potion = getobj(drink_choices, "drink");
+		potion = getobj(drink_choices, "drink", NULL);
 	if (!potion) return 0;
 
 	/* Quaff from fountains and sinks with "q," */
@@ -1666,7 +1666,7 @@ int dodip(struct obj *potion)
 	if (potion && !validate_object(potion, beverages, "dip into"))
 		return 0;
 	
-	obj = getobj(allowall, "dip");
+	obj = getobj(allowall, "dip", NULL);
 	if (!obj) return 0;
 
 	if (!potion) {
@@ -1709,7 +1709,7 @@ int dodip(struct obj *potion)
 				  the(xname(obj)),
 				  the(simple_typename(obj->otyp)),
 				  "this item"));
-		potion = getobj(beverages, qbuf);
+		potion = getobj(beverages, qbuf, NULL);
 	}
 
 	if (!potion) return 0;

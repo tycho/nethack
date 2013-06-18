@@ -218,8 +218,12 @@ struct monst *mk_mplayer(const struct permonst *ptr,
 		otmp->spe = (special ? rn1(5,4) : rn2(4));
 		if (!rn2(3)) otmp->oerodeproof = 1;
 		else if (!rn2(2)) otmp->greased = 1;
-		if (special && rn2(2))
-		    otmp = mk_artifact(lev, otmp, A_NONE);
+		if (special) {
+		    if (!rn2(5))
+			otmp = mk_artifact(lev, otmp, A_NONE);
+		    else
+			otmp = create_oprop(lev, otmp, FALSE);
+		}
 		/* mplayers knew better than to overenchant Magicbane */
 		if (otmp->oartifact == ART_MAGICBANE)
 		    otmp->spe = rnd(4);

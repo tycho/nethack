@@ -167,15 +167,27 @@ int hitval(struct obj *otmp, struct monst *mon)
 
 /*
  *	dmgval returns an integer representing the damage bonuses
- *	of "otmp" against the monster.
+ *	of "otmp" against the defending monster.
  */
-int dmgval(struct obj *otmp, struct monst *mon)
+int dmgval(struct monst *magr, struct obj *otmp, boolean thrown,
+	   struct monst *mdef)
 {
 	int tmp = 0, otyp = otmp->otyp;
-	const struct permonst *ptr = mon->data;
+	const struct permonst *ptr = mdef->data;
 	boolean Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
+	struct obj *olaunch;
 
 	if (otyp == CREAM_PIE) return 0;
+
+	if (magr == &youmonst)
+	    olaunch = uwep;
+	else if (magr)
+	    olaunch = MON_WEP(magr);
+	else
+	    olaunch = NULL;
+	if (olaunch && (!is_launcher(olaunch) ||
+			!ammo_and_launcher(otmp, olaunch)))
+	    olaunch = NULL;
 
 	if (bigmonst(ptr)) {
 	    if (objects[otyp].oc_wldam)
@@ -269,7 +281,7 @@ int dmgval(struct obj *otmp, struct monst *mon)
 
 	    /* if the weapon is going to get a double damage bonus, adjust
 	       this bonus so that effectively it's added after the doubling */
-	    if (bonus > 1 && otmp->oartifact && spec_dbon(otmp, mon, 25) >= 25)
+	    if (bonus > 1 && spec_dbon(otmp, olaunch, thrown, mdef, 25) >= 25)
 		bonus = (bonus + 1) / 2;
 
 	    tmp += bonus;

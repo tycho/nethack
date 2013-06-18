@@ -12,6 +12,7 @@
  */
 
 extern boolean notonhead;	/* for long worms */
+extern struct obj *thrownobj;	/* from dothrow.c to clear for detonations */
 
 #define get_artifact(o) \
 		(((o)&&(o)->oartifact) ? &artilist[(int) (o)->oartifact] : 0)
@@ -34,6 +35,20 @@ static long spec_m2(struct obj *);
 
 /* coordinate effects from spec_dbon() with messages in artifact_hit() */
 static int spec_dbon_applies = 0;
+/*
+ * Which damage types/effects was the monster actually affected by in spec_dbon()
+ * and spec_applies()?  Used by cases in artifact_hit() and friends that need
+ * more detail than what spec_dbon_applies provides.
+ *
+ * Add more, set them in spec_dbon()/spec_applies() if needed in artifact_hit().
+ */
+static boolean spec_applies_ad_fire,
+	       spec_applies_ad_cold,
+	       spec_applies_ad_elec,
+	       spec_applies_ad_magm,
+	       spec_applies_ad_stun,
+	       spec_applies_ad_drli,
+	       spec_applies_spfx_behead;
 
 /* flags including which artifacts have already been created */
 static boolean artiexist[1+NROFARTIFACTS+1];
@@ -41,7 +56,8 @@ static boolean artiexist[1+NROFARTIFACTS+1];
 static xchar artidisco[NROFARTIFACTS];
 
 static void hack_artifacts(void);
-static boolean attacks(int,struct obj *);
+static void strip_oprops(struct obj *);
+static boolean attacks(int, struct obj *, struct obj *, boolean);
 
 
 void init_artilist(void)
@@ -126,6 +142,12 @@ struct obj *mk_artifact(
 	boolean unique = !by_align && otmp && objects[o_typ].oc_unique;
 	short eligible[NROFARTIFACTS];
 
+	/* Don't artifactize already special weapons */
+	if (otmp && otmp->oartifact) return otmp;
+
+	/* Strip properties: they're mutually exclusive with artifacts. */
+	if (otmp) strip_oprops(otmp);
+
 	/* gather eligible artifacts */
 	for (n = 0, a = artilist+1, m = 1; a->otyp; a++, m++)
 	    if ((!by_align ? a->otyp == o_typ :
@@ -150,10 +172,386 @@ make_artif: if (by_align) otmp = mksobj(lev, (int)a->otyp, TRUE, FALSE);
 	    otmp->oartifact = m;
 	    artiexist[m] = TRUE;
 	} else {
-	    /* nothing appropriate could be found; return the original object */
-	    if (by_align) otmp = 0;	/* (there was no original object) */
+	    /* spruce up the object if there's no matching artifact for it */
+	    otmp = create_oprop(level, otmp, FALSE);
 	}
 	return otmp;
+}
+
+/* Given a skill, find a suitable weapon for the current race and role. */
+/* Returns the object type or 0 if nothing is found. */
+static int suitable_obj_for_skill(int skill)
+{
+	switch (skill) {
+	case P_DAGGER:
+	    if (Race_if(PM_ELF)) return ELVEN_DAGGER;
+	    if (Race_if(PM_ORC)) return ORCISH_DAGGER;
+	    if (Role_if(PM_WIZARD)) return ATHAME;
+	    break;
+	case P_KNIFE:
+	    if (Role_if(PM_HEALER)) return SCALPEL;
+	    break;
+	case P_SHORT_SWORD:
+	    if (Race_if(PM_ELF)) return ELVEN_SHORT_SWORD;
+	    if (Race_if(PM_ORC)) return ORCISH_SHORT_SWORD;
+	    if (Race_if(PM_DWARF)) return DWARVISH_SHORT_SWORD;
+	    if (Role_if(PM_SAMURAI)) return SHORT_SWORD; /* wakizashi */
+	    break;
+	case P_BROAD_SWORD:
+	    if (Race_if(PM_ELF)) return ELVEN_BROADSWORD;
+	    break;
+	case P_LONG_SWORD:
+	    if (Role_if(PM_SAMURAI)) return KATANA;
+	    break;
+	case P_TWO_HANDED_SWORD:
+	    if (Role_if(PM_SAMURAI)) return TSURUGI;
+	    break;
+	case P_BOW:
+	    if (Race_if(PM_ELF)) return rn2(2) ? ELVEN_BOW : ELVEN_ARROW;
+	    if (Race_if(PM_ORC)) return rn2(2) ? ORCISH_BOW : ORCISH_ARROW;
+	    if (Role_if(PM_SAMURAI)) return rn2(2) ? YUMI : YA;
+	    break;
+	default:
+	    break;
+	}
+
+	return 0;
+}
+
+/* Apply restrictions to special properties to an object. */
+long restrict_oprops(struct obj *otmp, long objprops)
+{
+	enum ro_objtypes {
+	    RO_OTHER = -1,
+	    RO_WEP_BLADE, RO_WEP_LAUNCH, RO_WEP_PROJ, RO_WEP_OTHER,
+	    RO_ARM_HGF, RO_ARM_OTHER, RO_AMULET, RO_RING,
+	    RO_MAX
+	} ot;
+	static const struct {
+	    long oprop;
+	    boolean objtypes[RO_MAX];
+	} otyp_oprops[] = {
+	    /* most objects */
+	    {ITEM_FIRE,		{1, 1, 1, 1,	1, 1, 1, 1}},
+	    {ITEM_FROST,	{1, 1, 1, 1,	1, 1, 1, 1}},
+	    {ITEM_DRLI,		{1, 1, 1, 1,	1, 1, 1, 1}},
+	    {ITEM_REFLECTION,	{1, 1, 0, 1,	0, 1, 1, 1}},
+	    {ITEM_ESP,		{1, 1, 0, 1,	1, 1, 1, 1}},
+	    {ITEM_SEARCHING,	{1, 1, 0, 1,	1, 1, 1, 1}},
+	    {ITEM_WARNING,	{1, 1, 0, 1,	1, 1, 1, 1}},
+	    {ITEM_STEALTH,	{1, 1, 1, 1,	1, 1, 1, 1}},
+	    {ITEM_FUMBLING,	{1, 1, 0, 1,	1, 1, 1, 1}},
+	    {ITEM_HUNGER,	{1, 1, 0, 1,	1, 1, 1, 1}},
+	    {ITEM_AGGRAVATE,	{1, 1, 0, 1,	1, 1, 1, 1}},
+	    /* weapons only */
+	    {ITEM_VORPAL,	{1, 0, 0, 0,	0, 0, 0, 0}},
+	    {ITEM_DETONATIONS,	{0, 1, 1, 0,	0, 0, 0, 0}},
+	    /* worn armor, amulets and rings only */
+	    {ITEM_SPEED,	{0, 0, 0, 0,	1, 1, 1, 1}},
+	    {ITEM_OILSKIN,	{0, 0, 0, 0,	1, 1, 1, 1}},
+	    {ITEM_POWER,	{0, 0, 0, 0,	1, 1, 1, 1}},
+	    {ITEM_DEXTERITY,	{0, 0, 0, 0,	1, 1, 0, 1}},
+	    {ITEM_BRILLIANCE,	{0, 0, 0, 0,	1, 1, 0, 1}},
+	    {ITEM_DISPLACEMENT,	{0, 0, 0, 0,	1, 1, 1, 1}},
+	    {ITEM_CLAIRVOYANCE,	{0, 0, 0, 0,	1, 1, 1, 1}},
+	};
+
+	short otyp = otmp->otyp;
+	int i;
+
+	/* classify object */
+	if (otmp->oclass == WEAPON_CLASS || is_weptool(otmp)) {
+	    if (is_blade(otmp))
+		ot = RO_WEP_BLADE;
+	    else if (is_launcher(otmp))
+		ot = RO_WEP_LAUNCH;
+	    else if (is_ammo(otmp) || is_missile(otmp))
+		ot = RO_WEP_PROJ;
+	    else
+		ot = RO_WEP_OTHER;
+	} else if (otmp->oclass == ARMOR_CLASS) {
+	    if (is_helmet(otmp) || is_gloves(otmp) || is_boots(otmp))
+		ot = RO_ARM_HGF;
+	    else
+		ot = RO_ARM_OTHER;
+	} else if (otmp->oclass == AMULET_CLASS) {
+	    ot = RO_AMULET;
+	} else if (otmp->oclass == RING_CLASS) {
+	    ot = RO_RING;
+	} else {
+	    ot = RO_OTHER;
+	}
+
+	/* no properties for objects outside of the above for now */
+	if (ot == RO_OTHER) return 0L;
+
+	/* apply object type restrictions */
+	for (i = 0; i < SIZE(otyp_oprops); i++) {
+	    if (!otyp_oprops[i].objtypes[ot])
+		objprops &= ~(otyp_oprops[i].oprop);
+	}
+
+	/* no oilskin for non-cloth objects */
+	if (objects[otyp].oc_material != CLOTH)
+	    objprops &= ~ITEM_OILSKIN;
+
+	/* dexterity and brilliance need enchantment to have an effect */
+	if (!objects[otyp].oc_charged)
+	    objprops &= ~(ITEM_DEXTERITY|ITEM_BRILLIANCE);
+
+	/* avoid doubling-up with the object's base abilities */
+	switch (objects[otyp].oc_oprop) {
+	case FIRE_RES: objprops &= ~ITEM_FIRE; break;
+	case COLD_RES: objprops &= ~ITEM_FROST; break;
+	case DRAIN_RES: objprops &= ~ITEM_DRLI; break;
+	/* nothing for ITEM_VORPAL */
+	case REFLECTING: objprops &= ~ITEM_REFLECTION; break;
+	case FAST: objprops &= ~ITEM_SPEED; break;
+	/* ITEM_OILSKIN handled below */
+	/* ITEM_POWER handled below */
+	/* ITEM_DEXTERITY handled below */
+	/* ITEM_BRILLIANCE handled below */
+	case TELEPAT: objprops &= ~ITEM_ESP; break;
+	case DISPLACED: objprops &= ~ITEM_DISPLACEMENT; break;
+	case SEARCHING: objprops &= ~ITEM_SEARCHING; break;
+	case WARNING: objprops &= ~ITEM_WARNING; break;
+	case STEALTH: objprops &= ~ITEM_STEALTH; break;
+	case FUMBLING: objprops &= ~ITEM_FUMBLING; break;
+	case CLAIRVOYANT: objprops &= ~ITEM_CLAIRVOYANCE; break;
+	/* nothing for ITEM_DETONATIONS */
+	case HUNGER: objprops &= ~ITEM_HUNGER; break;
+	case AGGRAVATE_MONSTER: objprops &= ~ITEM_AGGRAVATE; break;
+	}
+
+	if (otyp == OILSKIN_CLOAK || otyp == OILSKIN_SACK)
+	    objprops &= ~ITEM_OILSKIN;
+	if (otyp == GAUNTLETS_OF_POWER)
+	    objprops &= ~ITEM_POWER;
+	if (otyp == GAUNTLETS_OF_DEXTERITY)
+	    objprops &= ~ITEM_DEXTERITY;
+	if (otyp == HELM_OF_BRILLIANCE)
+	    objprops &= ~ITEM_BRILLIANCE;
+
+	return objprops;
+}
+
+/*
+ * Create an item with special properties, or grant the item those properties.
+ */
+struct obj *create_oprop(struct level *lev, struct obj *otmp,
+			 boolean allow_detrimental)
+{
+	if (!otmp) {
+	    int type = 0;
+	    int skill = P_NONE;
+	    int candidates[128];
+	    int ccount;
+	    int threshold = P_EXPERT;
+	    int i;
+
+	    /* This probably is only ever done for weapons, y'know?
+	     * Find an appropriate type of weapon */
+	    while (threshold > P_UNSKILLED) {
+		ccount = 0;
+		for (i = P_FIRST_WEAPON; i < P_LAST_WEAPON; i++) {
+		    if (P_MAX_SKILL(i) >= max(threshold, P_BASIC) &&
+			P_SKILL(i) >= threshold)
+			candidates[ccount++] = i;
+		    if (ccount >= 128) break;
+		}
+		if (ccount == 0) {
+		    threshold--;
+		    continue;
+		}
+		skill = candidates[rn2(ccount)];
+		if ((type = suitable_obj_for_skill(skill)))
+		    break;
+
+		ccount = 0;
+		for (i = ARROW; i <= CROSSBOW; i++) {
+		    if (abs(objects[i].oc_skill) == skill)
+			candidates[ccount++] = i;
+		    if (ccount == 128) break;
+		}
+		if (!ccount) {
+		    impossible("found no weapons for skill %d?", skill);
+		    threshold--;
+		    continue;
+		}
+		type = candidates[rn2(ccount)];
+		break;
+	    }
+
+	    /* Now make one, if we can */
+	    if (type != 0)
+		otmp = mksobj(lev, type, TRUE, FALSE);
+	    else
+		otmp = mkobj(lev, WEAPON_CLASS, FALSE);
+	}
+
+	/* Regardless if it's special or not, fix it up as necessary */
+	if (!allow_detrimental) {
+	    if (otmp->cursed) uncurse(otmp);
+	    else bless(otmp);
+
+	    if (otmp->oclass == WEAPON_CLASS ||
+		otmp->oclass == ARMOR_CLASS ||
+		(otmp->oclass == RING_CLASS && objects[otmp->otyp].oc_charged)) {
+		if (otmp->spe < 0) otmp->spe = 0;
+		else if (otmp->spe == 0) otmp->spe = rn1(2, 1);
+	    }
+	}
+
+	/* Don't spruce up artifacts */
+	if (otmp->oartifact) return otmp;
+	else if (objects[otmp->otyp].oc_unique) return otmp;
+
+	if (otmp->oclass != WEAPON_CLASS && !is_weptool(otmp) &&
+	    otmp->oclass != AMULET_CLASS &&
+	    otmp->oclass != RING_CLASS &&
+	    otmp->oclass != ARMOR_CLASS)
+	    return otmp;
+
+	while (!otmp->oprops || !rn2(250)) {
+	    int j = 1 << rn2(MAX_ITEM_PROPS); /* pick an item property */
+
+	    if (otmp->oprops & j) continue;
+
+	    /* don't randomly put insta-death weapons in monsters' hands */
+	    if (j & ITEM_VORPAL) continue;
+
+	    if ((j & (ITEM_FUMBLING|ITEM_HUNGER|ITEM_AGGRAVATE)) &&
+		!allow_detrimental)
+		continue;
+
+	    j = restrict_oprops(otmp, j);
+	    otmp->oprops |= j;
+	}
+
+	if ((otmp->oprops & (ITEM_FUMBLING|ITEM_HUNGER|ITEM_AGGRAVATE)) &&
+	    allow_detrimental && rn2(10)) {
+	    curse(otmp);
+	}
+
+	return otmp;
+}
+
+/*
+ * Strip any object properties on a potentially hero-wielded/worn object.
+ * Will NOT unset property effects on monster-equipped objects.
+ */
+static void strip_oprops(struct obj *otmp)
+{
+	if (!otmp || !otmp->oprops)
+	    return;
+
+	if (otmp == uwep || otmp == uswapwep) {
+	    set_artifact_intrinsic(otmp, FALSE, otmp->owornmask);
+	} else {
+	    unsigned int which = 0;
+	    if (otmp == uarm) which = W_ARM;
+	    if (otmp == uarmu) which = W_ARMU;
+	    if (otmp == uarmc) which = W_ARMC;
+	    if (otmp == uarmh) which = W_ARMH;
+	    if (otmp == uarms) which = W_ARMS;
+	    if (otmp == uarmg) which = W_ARMG;
+	    if (otmp == uarmf) which = W_ARMF;
+	    if (otmp == uamul) which = W_AMUL;
+	    if (otmp == uleft) which = W_RINGL;
+	    if (otmp == uright) which = W_RINGR;
+	    if (which != 0) Oprops_off(otmp, which);
+	}
+
+	otmp->oprops = otmp->oprops_known = 0L;
+}
+
+/*
+ * Set property the player knows on object/stack/launcher from an attack.
+ */
+static void oprop_id(long oprop, struct obj *otmp, struct obj *ostack,
+		     struct obj *olaunch)
+{
+	if ((otmp->oprops & oprop)) {
+	    otmp->oprops_known |= oprop;
+	    if (ostack)
+		ostack->oprops_known |= oprop;
+	} else if (ammo_and_launcher(otmp, olaunch) &&
+		   (olaunch->oprops & oprop)) {
+	    olaunch->oprops_known |= oprop;
+	}
+}
+
+/*
+ * Decide if an attack property applies for an object/launcher.
+ */
+static boolean oprop_attack(long oprop, const struct obj *otmp,
+			    const struct obj *olaunch, boolean thrown)
+{
+	if (thrown) {
+	    if (ammo_and_launcher(otmp, olaunch)) {
+		return (otmp->oprops & oprop) || (olaunch->oprops & oprop);
+	    } else {
+		/* any weapon except for thrown launchers */
+		return (otmp->oclass == WEAPON_CLASS || is_weptool(otmp)) &&
+		       !is_launcher(otmp) && (otmp->oprops & oprop);
+	    }
+	} else {
+	    /* wielded melee hit: weapons, but not missiles/ammo/launchers */
+	    return (otmp->oclass == WEAPON_CLASS || is_weptool(otmp)) &&
+		   !is_missile(otmp) && !is_ammo(otmp) && !is_launcher(otmp) &&
+		   (otmp->oprops & oprop);
+	}
+}
+
+/*
+ * Will attacking with this object/launcher be silent?
+ */
+boolean oprop_stealth_attack(const struct obj *otmp,
+			     const struct obj *ostack,
+			     const struct obj *olaunch,
+			     boolean thrown)
+{
+	return oprop_attack(ITEM_STEALTH, otmp, olaunch, thrown);
+}
+
+/*
+ * Explode a projectile if the detonation property applies.
+ * The explosion and scattering occur at bhitpos.
+ * Returns TRUE if the projectile was destroyed; it is freed here.
+ */
+boolean detonate_obj(struct obj *otmp, struct obj *ostack, struct obj *olaunch,
+		     int x, int y, boolean thrown)
+{
+	boolean is_artifact;
+	int dmg;
+
+	/* Don't destroy vital objects, but allow artifacts,
+	 * e.g. the Heart of Ahriman fired from a sling of detonation . */
+	is_artifact = !!otmp->oartifact;
+	if (obj_resists(otmp, 0, 100) && !is_artifact)
+	    return FALSE;
+
+	if (!oprop_attack(ITEM_DETONATIONS, otmp, olaunch, thrown) &&
+	    /* ammo and missiles may detonate even if dropped */
+	    !((otmp->oprops & ITEM_DETONATIONS) &&
+	      (is_ammo(otmp) || is_missile(otmp))))
+	    return FALSE;
+
+	pline("The %s explodes!", xname(otmp));
+	oprop_id(ITEM_DETONATIONS, otmp, ostack, olaunch);
+
+	if (!is_artifact) {
+	    thrownobj = NULL;
+	    obfree(otmp, NULL);
+	    otmp = NULL;
+	}
+
+	/* otmp->ox and otmp->oy may not be set correctly, or even at all! */
+	dmg = dice(4, 4);
+	explode(x, y, ZT_SPELL(ZT_FIRE), dmg, WEAPON_CLASS, EXPL_FIERY);
+	scatter(x, y, dmg, VIS_EFFECTS|MAY_HIT|MAY_DESTROY|MAY_FRACTURE, NULL);
+
+	return !is_artifact;
 }
 
 /*
@@ -202,6 +600,8 @@ void artifact_exists(struct obj *otmp, const char *name, boolean mod)
 	    for (a = artilist+1; a->otyp; a++)
 		if (a->otyp == otmp->otyp && !strcmp(a->name, name)) {
 		    int m = a - artilist;
+		    if (mod) /* artifacts can't have properties */
+			strip_oprops(otmp);
 		    otmp->oartifact = (char)(mod ? m : 0);
 		    otmp->age = 0;
 		    if (otmp->otyp == RIN_INCREASE_DAMAGE)
@@ -281,12 +681,28 @@ boolean restrict_name(struct obj *otmp, const char *name, boolean restrict_typ)
 	return FALSE;
 }
 
-static boolean attacks(int adtyp, struct obj *otmp)
+static boolean attacks(int adtyp, struct obj *otmp, struct obj *olaunch,
+		       boolean thrown)
 {
 	const struct artifact *weap;
 
 	if ((weap = get_artifact(otmp)) != 0)
 		return (boolean)(weap->attk.adtyp == adtyp);
+
+	if (!weap && (otmp->oprops ||
+		      (ammo_and_launcher(otmp, olaunch) &&
+		       olaunch->oprops))) {
+	    if (adtyp == AD_FIRE &&
+		oprop_attack(ITEM_FIRE, otmp, olaunch, thrown))
+		return TRUE;
+	    if (adtyp == AD_COLD &&
+		oprop_attack(ITEM_FROST, otmp, olaunch, thrown))
+		return TRUE;
+	    if (adtyp == AD_DRLI &&
+		oprop_attack(ITEM_DRLI, otmp, olaunch, thrown))
+		return TRUE;
+	}
+
 	return FALSE;
 }
 
@@ -319,11 +735,19 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	const struct artifact *oart = get_artifact(otmp);
 	uchar dtyp;
 	long spfx;
+	boolean spfx_stlth = FALSE;	/* we ran out of SPFX_* bits, so... */
+	boolean spfx_fumbling = FALSE;
+	boolean spfx_hunger = FALSE;
+	boolean spfx_aggravate = FALSE;
 
-	if (!oart) return;
+	if (!oart && !otmp->oprops)
+	    return;
 
 	/* effects from the defn field */
-	dtyp = (wp_mask != W_ART) ? oart->defn.adtyp : oart->cary.adtyp;
+	if (oart)
+	    dtyp = (wp_mask != W_ART) ? oart->defn.adtyp : oart->cary.adtyp;
+	else
+	    dtyp = 0;
 
 	if (dtyp == AD_FIRE)
 	    mask = &EFire_resistance;
@@ -357,7 +781,31 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	}
 
 	/* intrinsics from the spfx field; there could be more than one */
-	spfx = (wp_mask != W_ART) ? oart->spfx : oart->cspfx;
+	spfx = 0;
+	if (oart) {
+	    spfx = (wp_mask != W_ART) ? oart->spfx : oart->cspfx;
+	} else if ((wp_mask == W_WEP ||
+		    (wp_mask == W_SWAPWEP && u.twoweap)) &&
+		   (otmp->oclass == WEAPON_CLASS || is_weptool(otmp)) &&
+		   !is_ammo(otmp) && !is_missile(otmp)) {
+	    if (otmp->oprops & ITEM_REFLECTION)
+		spfx |= SPFX_REFLECT;
+	    if (otmp->oprops & ITEM_ESP)
+		spfx |= SPFX_ESP;
+	    if (otmp->oprops & ITEM_SEARCHING)
+		spfx |= SPFX_SEARCH;
+	    if (otmp->oprops & ITEM_WARNING)
+		spfx |= SPFX_WARN;
+	    if (otmp->oprops & ITEM_STEALTH)
+		spfx_stlth = TRUE;
+	    if (otmp->oprops & ITEM_FUMBLING)
+		spfx_fumbling = TRUE;
+	    if (otmp->oprops & ITEM_HUNGER)
+		spfx_hunger = TRUE;
+	    if (otmp->oprops & ITEM_AGGRAVATE)
+		spfx_aggravate = TRUE;
+	}
+
 	if (spfx && wp_mask == W_ART && !on) {
 	    /* don't change any spfx also conferred by other artifacts */
 	    struct obj* obj;
@@ -386,6 +834,29 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	    else ETelepat &= ~wp_mask;
 	    see_monsters();
 	}
+	if (spfx_stlth) {
+	    if (on) EStealth |= wp_mask;
+	    else EStealth &= ~wp_mask;
+	}
+	if (spfx_fumbling) {
+	    if (on) {
+		if (!EFumbling && !(HFumbling & ~TIMEOUT))
+		    incr_itimeout(&HFumbling, rnd(20));
+		EFumbling |= wp_mask;
+	    } else {
+		EFumbling &= ~wp_mask;
+		if (!EFumbling && ~(HFumbling & ~TIMEOUT))
+		    HFumbling = EFumbling = 0;
+	    }
+	}
+	if (spfx_hunger) {
+	    if (on) EHunger |= wp_mask;
+	    else EHunger &= ~wp_mask;
+	}
+	if (spfx_aggravate) {
+	    if (on) EAggravate_monster |= wp_mask;
+	    else EAggravate_monster &= ~wp_mask;
+	}
 	if (spfx & SPFX_DISPL) {
 	    if (on) EDisplaced |= wp_mask;
 	    else EDisplaced &= ~wp_mask;
@@ -407,11 +878,11 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 			EWarn_of_mon &= ~wp_mask;
 			flags.warntype &= ~spec_m2(otmp);
 		}
-		see_monsters();
 	    } else {
 		if (on) EWarning |= wp_mask;
 		else EWarning &= ~wp_mask;
 	    }
+	    see_monsters();
 	}
 	if (spfx & SPFX_WARN_S) {
 	    if (oart->mtype) {
@@ -420,11 +891,11 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 		} else {
 		    EWarn_of_mon &= ~wp_mask;
 		}
-		see_monsters();
 	    } else {
 		if (on) EWarning |= wp_mask;
 	    	else EWarning &= ~wp_mask;
 	    }
+	    see_monsters();
 	}
 	if (spfx & SPFX_EREGEN) {
 	    if (on) EEnergy_regeneration |= wp_mask;
@@ -444,12 +915,12 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	    else u.xray_range = -1;
 	    vision_full_recalc = 1;
 	}
-	if ((spfx & SPFX_REFLECT) && (wp_mask & W_WEP)) {
+	if ((spfx & SPFX_REFLECT) && (wp_mask & (W_WEP|W_SWAPWEP))) {
 	    if (on) EReflecting |= wp_mask;
 	    else EReflecting &= ~wp_mask;
 	}
 
-	if (wp_mask == W_ART && !on && oart->inv_prop) {
+	if (wp_mask == W_ART && !on && oart && oart->inv_prop) {
 	    /* might have to turn off invoked power too */
 	    if (oart->inv_prop <= LAST_PROP &&
 		(u.uprops[oart->inv_prop].extrinsic & W_ARTI))
@@ -543,6 +1014,10 @@ static int spec_applies(const struct artifact *weap, struct monst *mtmp)
 	if (!(weap->spfx & (SPFX_DBONUS | SPFX_ATTK)))
 	    return weap->attk.adtyp == AD_PHYS;
 
+	/* spec_applies_* variables are only reset when this is called
+	 * from spec_dbon(), so don't trust them to be fresh if you're
+	 * calling this in any other context! */
+
 	yours = (mtmp == &youmonst);
 	ptr = mtmp->data;
 
@@ -568,18 +1043,29 @@ static int spec_applies(const struct artifact *weap, struct monst *mtmp)
 		return FALSE;
 	    switch(weap->attk.adtyp) {
 		case AD_FIRE:
-			return !(yours ? Fire_resistance : resists_fire(mtmp));
+			spec_applies_ad_fire = !(yours ? Fire_resistance :
+							 resists_fire(mtmp));
+			return spec_applies_ad_fire;
 		case AD_COLD:
-			return !(yours ? Cold_resistance : resists_cold(mtmp));
+			spec_applies_ad_cold = !(yours ? Cold_resistance :
+							 resists_cold(mtmp));
+			return spec_applies_ad_cold;
 		case AD_ELEC:
 			return !(yours ? Shock_resistance : resists_elec(mtmp));
 		case AD_MAGM:
+			spec_applies_ad_magm = !(yours ? Antimagic :
+							 (rn2(100) < ptr->mr));
+			return spec_applies_ad_magm;
 		case AD_STUN:
-			return !(yours ? Antimagic : (rn2(100) < ptr->mr));
+			spec_applies_ad_stun = !(yours ? Antimagic :
+							 (rn2(100) < ptr->mr));
+			return spec_applies_ad_stun;
 		case AD_DRST:
 			return !(yours ? Poison_resistance : resists_poison(mtmp));
 		case AD_DRLI:
-			return !(yours ? Drain_resistance : resists_drli(mtmp));
+			spec_applies_ad_drli = !(yours ? Drain_resistance :
+							 resists_drli(mtmp));
+			return spec_applies_ad_drli;
 		case AD_STON:
 			return !(yours ? Stone_resistance : resists_ston(mtmp));
 		default:	warning("Weird weapon special attack.");
@@ -611,9 +1097,64 @@ int spec_abon(struct obj *otmp, struct monst *mon)
 }
 
 /* special damage bonus */
-int spec_dbon(struct obj *otmp, struct monst *mon, int tmp)
+int spec_dbon(struct obj *otmp, struct obj *olaunch, boolean thrown,
+	      struct monst *mon, int tmp)
 {
 	const struct artifact *weap = get_artifact(otmp);
+	boolean yours = (mon == &youmonst);
+
+	spec_dbon_applies = FALSE;
+
+	spec_applies_ad_fire = FALSE;
+	spec_applies_ad_cold = FALSE;
+	spec_applies_ad_elec = FALSE;
+	spec_applies_ad_magm = FALSE;
+	spec_applies_ad_stun = FALSE;
+	spec_applies_ad_drli = FALSE;
+	spec_applies_spfx_behead = FALSE;
+
+	if (!weap) {
+	    /* Object must have properties, which might stack. */
+	    int propdmg = 0;
+	    struct obj *defwep = (yours ? uwep : MON_WEP(mon));
+
+	    if ((attacks(AD_FIRE, otmp, olaunch, thrown) &&
+		!(yours ? Fire_resistance : resists_fire(mon)) &&
+		!(defwep && defwep->oartifact && defends(AD_FIRE, defwep)))) {
+		spec_dbon_applies = TRUE;
+		spec_applies_ad_fire = TRUE;
+		propdmg += rnd(6);
+	    }
+
+	    if ((attacks(AD_COLD, otmp, olaunch, thrown) &&
+		!(yours ? Cold_resistance : resists_cold(mon)) &&
+		!(defwep && defwep->oartifact && defends(AD_COLD, defwep)))) {
+		spec_dbon_applies = TRUE;
+		spec_applies_ad_cold = TRUE;
+		propdmg += rnd(6);
+	    }
+
+	    /* No AD_MAGM/spec_applies_ad_magm (magic missile) property effect. */
+
+	    /* No AD_STUN/spec_applies_ad_stun (stun) property effect. */
+
+	    /* Life-draining is handled specially in artifact_hit(). */
+	    if (attacks(AD_DRLI, otmp, olaunch, thrown) &&
+		!(yours ? Drain_resistance : resists_drli(mon)) &&
+		!(defwep && defwep->oartifact && defends(AD_DRLI, defwep))) {
+		spec_dbon_applies = TRUE;
+		spec_applies_ad_drli = TRUE;
+	    }
+
+	    /* [SPFX_BEHEAD] This *may* apply; only artifact_hit_behead()
+	     * truly decides that. */
+	    if (oprop_attack(ITEM_VORPAL, otmp, olaunch, thrown)) {
+		spec_dbon_applies = TRUE;
+		spec_applies_spfx_behead = TRUE;
+	    }
+
+	    return propdmg;
+	}
 
 	if (!weap || (weap->attk.adtyp == AD_PHYS && /* check for `NO_ATTK' */
 			weap->attk.damn == 0 && weap->attk.damd == 0))
@@ -736,13 +1277,13 @@ static boolean magicbane_hit(
 	scare_dieroll /= (1 << (mb->spe / 3));
     /* if target successfully resisted the artifact damage bonus,
        reduce overall likelihood of the assorted special effects */
-    if (!spec_dbon_applies) dieroll += 1;
+    if (!spec_applies_ad_stun) dieroll += 1;
 
     /* might stun even when attempting a more severe effect, but
        in that case it will only happen if the other effect fails;
        extra damage will apply regardless; 3.4.1: sometimes might
        just probe even when it hasn't been enchanted */
-    do_stun = (max(mb->spe,0) < rn2(spec_dbon_applies ? 11 : 7));
+    do_stun = (max(mb->spe,0) < rn2(spec_applies_ad_stun ? 11 : 7));
 
     /* the special effects also boost physical damage; increments are
        generally cumulative, but since the stun effect is based on a
@@ -888,7 +1429,10 @@ static boolean magicbane_hit(
 
 /* the tsurugi of muramasa or vorpal blade hit someone */
 static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
-			           struct obj *otmp, int *dmgptr, int dieroll)
+			           struct obj *otmp, struct obj *ostack,
+				   struct obj *olaunch,
+				   int *dmgptr, int dieroll,
+				   boolean prior_damage, boolean *instakilled)
 {
     boolean youattack = (magr == &youmonst);
     boolean youdefend = (mdef == &youmonst);
@@ -897,18 +1441,31 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 	|| (youattack && u.uswallow && mdef == u.ustuck && !Blind);
     const char *wepdesc;
     char hittee[BUFSZ];
+    char wepbuf[BUFSZ];
+
+    snprintf(wepbuf, BUFSZ, "%s %s", youattack ? "Your" : "The",
+				     distant_name(otmp, xname));
+    wepdesc = wepbuf;
 
     strcpy(hittee, youdefend ? "you" : mon_nam(mdef));
-    
+
+    *instakilled = FALSE;
+
     /* We really want "on a natural 20" but Nethack does it in reverse from AD&D. */
-    if (otmp->oartifact == ART_TSURUGI_OF_MURAMASA && dieroll == 1) {
-	wepdesc = "The razor-sharp blade";
+    if (bimanual(otmp) && dieroll == 1) {
+	if (otmp->oartifact == ART_TSURUGI_OF_MURAMASA)
+	    wepdesc = "The razor-sharp blade";
+
+	if (!otmp->oartifact)
+	    oprop_id(ITEM_VORPAL, otmp, ostack, olaunch);
+
 	/* not really beheading, but so close, why add another SPFX */
 	if (youattack && u.uswallow && mdef == u.ustuck) {
 	    pline("You slice %s wide open!", mon_nam(mdef));
 	    *dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 	    return TRUE;
 	}
+
 	if (!youdefend) {
 		/* allow normal cutworm() call to add extra damage */
 		if (notonhead)
@@ -926,7 +1483,8 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 		}
 		*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 		pline("%s cuts %s in half!", wepdesc, mon_nam(mdef));
-		otmp->dknown = TRUE;
+		*instakilled = TRUE;
+		if (otmp->oartifact) otmp->dknown = TRUE;
 		return TRUE;
 	} else {
 		if (bigmonst(youmonst.data)) {
@@ -943,10 +1501,12 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 		    */
 		*dmgptr = 2 * (Upolyd ? u.mh : u.uhp) + FATAL_DAMAGE_MODIFIER;
 		pline("%s cuts you in half!", wepdesc);
-		otmp->dknown = TRUE;
+		*instakilled = TRUE;
+		if (otmp->oartifact) otmp->dknown = TRUE;
 		return TRUE;
 	}
-    } else if ((otmp->oartifact == ART_VORPAL_BLADE &&
+
+    } else if ((!bimanual(otmp) &&
 		(dieroll == 1 || mdef->data->mlet == S_JABBERWOCK)) ||
 	       (otmp->oartifact == ART_THIEFBANE && dieroll < 3)) {
 	static const char * const behead_msg[2] = {
@@ -956,9 +1516,21 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 
 	if (youattack && u.uswallow && mdef == u.ustuck)
 		return FALSE;
-	wepdesc = artilist[(int)otmp->oartifact].name;
+
+	if (otmp->oartifact == ART_VORPAL_BLADE ||
+	    otmp->oartifact == ART_THIEFBANE)
+		wepdesc = artilist[(int)otmp->oartifact].name;
+
+	if (!otmp->oartifact)
+		oprop_id(ITEM_VORPAL, otmp, ostack, olaunch);
+
 	if (!youdefend) {
 		if (!has_head(mdef->data) || notonhead || u.uswallow) {
+		    if (prior_damage) {
+			/* Don't nullify prior damage, but don't do
+			 * anything else either. */
+			return FALSE;
+		    } else {
 			if (youattack)
 				pline("Somehow, you miss %s wildly.",
 					mon_nam(mdef));
@@ -967,6 +1539,7 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 					mon_nam(magr));
 			*dmgptr = 0;
 			return (boolean)(youattack || vis);
+		    }
 		}
 		if (noncorporeal(mdef->data) || amorphous(mdef->data)) {
 			pline("%s slices through %s %s.", wepdesc,
@@ -977,14 +1550,21 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 		*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 		pline(behead_msg[rn2(SIZE(behead_msg))],
 			wepdesc, mon_nam(mdef));
-		otmp->dknown = TRUE;
+		*instakilled = TRUE;
+		if (otmp->oartifact) otmp->dknown = TRUE;
 		return TRUE;
 	} else {
 		if (!has_head(youmonst.data)) {
+		    if (prior_damage) {
+			/* Don't nullify prior damage, but don't do
+			 * anything else either. */
+			return FALSE;
+		    } else {
 			pline("Somehow, %s misses you wildly.",
 				magr ? mon_nam(magr) : wepdesc);
 			*dmgptr = 0;
 			return TRUE;
+		    }
 		}
 		if (noncorporeal(youmonst.data) || amorphous(youmonst.data)) {
 			pline("%s slices through your %s.",
@@ -995,7 +1575,8 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 			    + FATAL_DAMAGE_MODIFIER;
 		pline(behead_msg[rn2(SIZE(behead_msg))],
 			wepdesc, "you");
-		otmp->dknown = TRUE;
+		*instakilled = TRUE;
+		if (otmp->oartifact) otmp->dknown = TRUE;
 		/* Should amulets fall off? */
 		return TRUE;
 	}
@@ -1005,24 +1586,28 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
 
 
 static boolean artifact_hit_drainlife(struct monst *magr, struct monst *mdef,
-				      struct obj *otmp, int *dmgptr)
+				      struct obj *otmp, struct obj *ostack,
+				      struct obj *olaunch,
+				      int *dmgptr)
 {
     boolean youattack = (magr == &youmonst);
     boolean youdefend = (mdef == &youmonst);
     boolean vis = (!youattack && magr && cansee(magr->mx, magr->my))
 	|| (!youdefend && cansee(mdef->mx, mdef->my))
 	|| (youattack && u.uswallow && mdef == u.ustuck && !Blind);
-	
+
     if (!youdefend) {
 	    if (vis) {
-		if (otmp->oartifact == ART_STORMBRINGER)
+		if (otmp->oartifact == ART_STORMBRINGER) {
 		    pline("The %s blade draws the life from %s!",
 			    hcolor("black"),
 			    mon_nam(mdef));
-		else
+		} else {
 		    pline("%s draws the life from %s!",
 			    The(distant_name(otmp, xname)),
 			    mon_nam(mdef));
+		    oprop_id(ITEM_DRLI, otmp, ostack, olaunch);
+		}
 	    }
 	    if (mdef->m_lev == 0) {
 		*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
@@ -1038,16 +1623,18 @@ static boolean artifact_hit_drainlife(struct monst *magr, struct monst *mdef,
     } else { /* youdefend */
 	    int oldhpmax = u.uhpmax;
 
-	    if (Blind)
+	    if (Blind) {
 		    pline("You feel an %s drain your life!",
 			otmp->oartifact == ART_STORMBRINGER ?
 			"unholy blade" : "object");
-	    else if (otmp->oartifact == ART_STORMBRINGER)
+	    } else if (otmp->oartifact == ART_STORMBRINGER) {
 		    pline("The %s blade drains your life!",
 			    hcolor("black"));
-	    else
+	    } else {
 		    pline("%s drains your life!",
 			    The(distant_name(otmp, xname)));
+		    oprop_id(ITEM_DRLI, otmp, ostack, olaunch);
+	    }
 	    losexp("life drainage");
 	    if (magr && magr->mhp < magr->mhpmax) {
 		magr->mhp += (oldhpmax - u.uhpmax)/2;
@@ -1071,6 +1658,8 @@ boolean artifact_hit(
     struct monst *magr,
     struct monst *mdef,
     struct obj *otmp,
+    struct obj *ostack,
+    boolean thrown,
     int *dmgptr,
     int dieroll /* needed for Magicbane and vorpal blades */
     )
@@ -1081,7 +1670,34 @@ boolean artifact_hit(
 	    || (!youdefend && cansee(mdef->mx, mdef->my))
 	    || (youattack && u.uswallow && mdef == u.ustuck && !Blind);
 	boolean realizes_damage;
+	boolean msg_printed = FALSE;
+	const char *wepdesc;
 	char hittee[BUFSZ];
+	char wepbuf[BUFSZ];
+	struct obj *olaunch = NULL;
+
+	if (thrown) {
+	    /* Launcher properties stack with fired ammunition,
+	     * so get the launcher here if that's the case. */
+	    if (youattack)
+		olaunch = uwep;
+	    else if (magr)
+		olaunch = MON_WEP(magr);
+
+	    if (olaunch && (!is_launcher(olaunch) ||
+			    !ammo_and_launcher(otmp, olaunch)))
+		olaunch = NULL;
+	}
+
+	/* Exit early if not an artifact or absent of attack properties. */
+	if (!otmp->oartifact &&
+	    !oprop_attack(ITEM_FIRE|ITEM_FROST|ITEM_DRLI|ITEM_VORPAL,
+			  otmp, olaunch, thrown))
+	    return FALSE;
+
+	snprintf(wepbuf, BUFSZ, "%s %s", youattack ? "Your" : "The",
+					 distant_name(otmp, xname));
+	wepdesc = wepbuf;
 
 	strcpy(hittee, youdefend ? "you" : mon_nam(mdef));
 
@@ -1089,7 +1705,7 @@ boolean artifact_hit(
 	 * the exception being for level draining, which is specially
 	 * handled.  Messages are done in this function, however.
 	 */
-	*dmgptr += spec_dbon(otmp, mdef, *dmgptr);
+	*dmgptr += spec_dbon(otmp, olaunch, thrown, mdef, *dmgptr);
 
 	if (youattack && youdefend) {
 	    warning("attacking yourself with weapon?");
@@ -1101,66 +1717,121 @@ boolean artifact_hit(
 			   (youattack && mdef == u.ustuck));
 
 	/* the four basic attacks: fire, cold, shock and missiles */
-	if (attacks(AD_FIRE, otmp)) {
-	    if (realizes_damage)
-		pline("The fiery blade %s %s%c",
-			!spec_dbon_applies ? "hits" :
+	if (attacks(AD_FIRE, otmp, olaunch, thrown)) {
+	    if (realizes_damage && (otmp->oartifact || spec_applies_ad_fire)) {
+		if (otmp->oartifact == ART_FIRE_BRAND)
+		    wepdesc = "The fiery blade";
+		pline("%s %s %s%c",
+			wepdesc,
+			!spec_applies_ad_fire ? "hits" :
 			(mdef->data == &mons[PM_WATER_ELEMENTAL]) ?
 			"vaporizes part of" : "burns",
-			hittee, !spec_dbon_applies ? '.' : '!');
-	    if (!rn2(4)) destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
-	    if (!rn2(4)) destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
-	    if (!rn2(7)) destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
-	    if (youdefend && Slimed) burn_away_slime();
-	    return realizes_damage;
-	}
-	if (attacks(AD_COLD, otmp)) {
-	    if (realizes_damage)
-		pline("The ice-cold blade %s %s%c",
-			!spec_dbon_applies ? "hits" : "freezes",
-			hittee, !spec_dbon_applies ? '.' : '!');
-	    if (!rn2(4)) destroy_mitem(mdef, POTION_CLASS, AD_COLD);
-	    return realizes_damage;
-	}
-	if (attacks(AD_ELEC, otmp)) {
-	    if (realizes_damage)
-		pline("The massive hammer hits%s %s%c",
-			  !spec_dbon_applies ? "" : "!  Lightning strikes",
-			  hittee, !spec_dbon_applies ? '.' : '!');
-	    if (!rn2(5)) destroy_mitem(mdef, RING_CLASS, AD_ELEC);
-	    if (!rn2(5)) destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
-	    return realizes_damage;
-	}
-	if (attacks(AD_MAGM, otmp)) {
-	    if (realizes_damage)
-		pline("The imaginary widget hits%s %s%c",
-			  !spec_dbon_applies ? "" :
-				"!  A hail of magic missiles strikes",
-			  hittee, !spec_dbon_applies ? '.' : '!');
-	    return realizes_damage;
-	}
-	
-	if (attacks(AD_STUN, otmp) && dieroll <= MB_MAX_DIEROLL) {
-	    /* Magicbane's special attacks (possibly modifies hittee[]) */
-	    return magicbane_hit(magr, mdef, otmp, dmgptr, dieroll, vis, hittee);
-	}
-	
-	if (otmp->oartifact != ART_THIEFBANE || !youdefend) {
-	    if (!spec_dbon_applies) {
-		/* since damage bonus didn't apply, nothing more to do;
-		   no further attacks have side-effects on inventory */
-		return FALSE;
+			hittee, !spec_applies_ad_fire ? '.' : '!');
+		msg_printed = TRUE;
+		if (spec_applies_ad_fire)
+		    oprop_id(ITEM_FIRE, otmp, ostack, olaunch);
+	    }
+	    if (!rn2(4)) {
+		if (destroy_mitem(mdef, POTION_CLASS, AD_FIRE, dmgptr)) {
+		    if (realizes_damage)
+			oprop_id(ITEM_FIRE, otmp, ostack, olaunch);
+		}
+	    }
+	    if (!rn2(4)) {
+		if (destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE, dmgptr)) {
+		    if (realizes_damage)
+			oprop_id(ITEM_FIRE, otmp, ostack, olaunch);
+		}
+	    }
+	    if (!rn2(7)) {
+		if (destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE, dmgptr)) {
+		    if (realizes_damage)
+			oprop_id(ITEM_FIRE, otmp, ostack, olaunch);
+		}
+	    }
+	    if (youdefend && Slimed) {
+		burn_away_slime();
+		oprop_id(ITEM_FIRE, otmp, ostack, olaunch);
 	    }
 	}
-	
-	/* Thiefbane, Tsurugi of Muramasa, Vorpal Blade */
-	if (spec_ability(otmp, SPFX_BEHEAD))
-		return artifact_hit_behead(magr, mdef, otmp, dmgptr, dieroll);
-	
-	/* Stormbringer */
-	if (spec_ability(otmp, SPFX_DRLI))
-		return artifact_hit_drainlife(magr, mdef, otmp, dmgptr);
-	
+
+	if (attacks(AD_COLD, otmp, olaunch, thrown)) {
+	    if (realizes_damage && (otmp->oartifact || spec_applies_ad_cold)) {
+		if (otmp->oartifact == ART_FROST_BRAND)
+		    wepdesc = "The ice-cold blade";
+		pline("%s %s %s%c",
+			wepdesc,
+			!spec_applies_ad_cold ? "hits" : "freezes",
+			hittee, !spec_applies_ad_cold ? '.' : '!');
+		msg_printed = TRUE;
+		if (spec_applies_ad_cold)
+		    oprop_id(ITEM_FROST, otmp, ostack, olaunch);
+	    }
+	    if (!rn2(4)) {
+		if (destroy_mitem(mdef, POTION_CLASS, AD_COLD, dmgptr)) {
+		    if (realizes_damage)
+			oprop_id(ITEM_FROST, otmp, ostack, olaunch);
+		}
+	    }
+	}
+
+	if (attacks(AD_ELEC, otmp, olaunch, thrown)) {
+	    if (realizes_damage && (otmp->oartifact || spec_applies_ad_elec)) {
+		pline("The massive hammer hits%s %s%c",
+			  !spec_applies_ad_elec ? "" : "!  Lightning strikes",
+			  hittee, !spec_applies_ad_elec ? '.' : '!');
+		msg_printed = TRUE;
+	    }
+	    if (!rn2(5)) destroy_mitem(mdef, RING_CLASS, AD_ELEC, dmgptr);
+	    if (!rn2(5)) destroy_mitem(mdef, WAND_CLASS, AD_ELEC, dmgptr);
+	}
+
+	if (attacks(AD_MAGM, otmp, olaunch, thrown)) {
+	    if (realizes_damage && (otmp->oartifact || spec_applies_ad_magm)) {
+		pline("The imaginary widget hits%s %s%c",
+			  !spec_applies_ad_magm ? "" :
+				"!  A hail of magic missiles strikes",
+			  hittee, !spec_applies_ad_magm ? '.' : '!');
+		msg_printed = TRUE;
+	    }
+	}
+
+	if (attacks(AD_STUN, otmp, olaunch, thrown) && dieroll <= MB_MAX_DIEROLL) {
+	    /* Magicbane's special attacks (possibly modifies hittee[]) */
+	    msg_printed = magicbane_hit(magr, mdef, otmp, dmgptr, dieroll, vis,
+					hittee) || msg_printed;
+	}
+
+	if (otmp->oartifact != ART_THIEFBANE || !youdefend) {
+	    if (!spec_dbon_applies &&
+		!spec_applies_ad_drli && !spec_applies_spfx_behead) {
+		/* since damage bonus didn't apply, nothing more to do;
+		   no further attacks have side-effects on inventory */
+		return msg_printed;
+	    }
+	}
+
+	/* Stormbringer or thirsty weapon */
+	if (spec_applies_ad_drli &&
+	    (spec_ability(otmp, SPFX_DRLI) ||
+	     oprop_attack(ITEM_DRLI, otmp, olaunch, thrown))) {
+	    msg_printed = artifact_hit_drainlife(magr, mdef, otmp, ostack, olaunch,
+						 dmgptr) || msg_printed;
+	}
+
+	/* Thiefbane, Tsurugi of Muramasa, Vorpal Blade or vorpal weapon */
+	if (spec_applies_spfx_behead &&
+	    (spec_ability(otmp, SPFX_BEHEAD) ||
+	     oprop_attack(ITEM_VORPAL, otmp, olaunch, thrown))) {
+	    boolean beheaded;
+	    msg_printed = artifact_hit_behead(magr, mdef, otmp, ostack, olaunch,
+					      dmgptr, dieroll, msg_printed,
+					      &beheaded) || msg_printed;
+	    /* No further effects if the monster was instakilled. */
+	    if (beheaded)
+		return msg_printed;
+	}
+
 	/* WAC -- 1/6 chance of cancellation with foobane weapons */
 	if (otmp->oartifact == ART_ORCRIST ||
 	    otmp->oartifact == ART_DRAGONBANE ||
@@ -1177,11 +1848,11 @@ boolean artifact_hit(
 			      hittee);
 		    }
 		    cancel_monst(mdef, otmp, youattack, TRUE, magr == mdef);
-		    return TRUE;
+		    msg_printed = TRUE;
 		}
 	}
-	
-	return FALSE;
+
+	return msg_printed;
 }
 
 static const char recharge_type[] = { ALLOW_COUNT, ALL_CLASSES, 0 };
@@ -1193,7 +1864,7 @@ int doinvoke(struct obj *obj)
     if (obj && !validate_object(obj, invoke_types, "invoke, break, or rub"))
 	return 0;
     else if (!obj)
-	obj = getobj(invoke_types, "invoke, break, or rub");
+	obj = getobj(invoke_types, "invoke, break, or rub", NULL);
     if (!obj) return 0;
     
     if (obj->oartifact && !touch_artifact(obj, &youmonst))
@@ -1283,7 +1954,7 @@ static int arti_invoke(struct obj *obj)
 	    break;
 	  }
 	case CHARGE_OBJ: {
-	    struct obj *otmp = getobj(recharge_type, "charge");
+	    struct obj *otmp = getobj(recharge_type, "charge", NULL);
 	    boolean b_effect;
 
 	    if (!otmp) {

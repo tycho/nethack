@@ -773,7 +773,7 @@ static enum obj_use_status object_selection_checks(struct obj *otmp,
  *	&zeroobj		explicitly no object (as in w-).
 !!!! test if gold can be used in unusual ways (eaten etc.)
  */
-struct obj *getobj(const char *let, const char *word)
+struct obj *getobj(const char *let, const char *word, struct obj **ostack)
 {
 	struct obj *otmp;
 	char ilet;
@@ -971,6 +971,7 @@ struct obj *getobj(const char *let, const char *word)
 		} else if (welded(otmp)) {
 		    /* don't split a stack of wielded, cursed weapons */
 		} else {
+		    if (ostack) *ostack = otmp;
 		    otmp = splitobj(otmp, cnt);
 		}
 	    }
@@ -1061,6 +1062,7 @@ void fully_identify_obj(struct obj *otmp)
     makeknown(otmp->otyp);
     if (otmp->oartifact) discover_artifact((xchar)otmp->oartifact);
     otmp->known = otmp->dknown = otmp->bknown = otmp->rknown = 1;
+    otmp->oprops_known = ITEM_PROP_MASK;
     if (otmp->otyp == EGG && otmp->corpsenm != NON_PM)
 	learn_egg_type(otmp->corpsenm);
 }
@@ -1964,6 +1966,12 @@ static boolean mergable(struct obj *otmp, struct obj *obj)
 	/* for the moment, any additional information is incompatible */
 	if (obj->oxlth || otmp->oxlth) return FALSE;
 
+	if (obj->oprops != otmp->oprops) return FALSE;
+
+	if ((obj->oprops & (obj->oprops_known|ITEM_MAGICAL)) !=
+	    (otmp->oprops & (otmp->oprops_known|ITEM_MAGICAL)))
+	    return FALSE;
+
 	if (obj->oartifact != otmp->oartifact) return FALSE;
 
 	if (obj->known == otmp->known ||
@@ -2179,7 +2187,8 @@ int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 	const char *adj_type;
 
 	/* get a pointer to the object the user wants to organize */
-	if (!obj && !(obj = getobj(allowallcnt,"adjust"))) return 0;
+	if (!obj && !(obj = getobj(allowallcnt, "adjust", NULL)))
+	    return 0;
 
 	/* initialize the list with all upper and lower case letters */
 	for (let = 'a', ix = 0;  let <= 'z';) alphabet[ix++] = let++;

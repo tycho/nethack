@@ -804,7 +804,7 @@ int dowhatisinv(struct obj *obj)
 	static const char allowall[] = { ALL_CLASSES, 0 };
 
 	if (!obj)
-	    obj = getobj(allowall, "examine");
+	    obj = getobj(allowall, "examine", NULL);
 	if (!obj || obj == &zeroobj)
 	    return 0;
 

@@ -299,13 +299,13 @@ int do_naming(struct obj *obj)
 		/* cases 1 & 2 duplicated from ddocall() */
 	    case 1:
 		if (!obj)
-		    obj = getobj(allowall, "name");
+		    obj = getobj(allowall, "name", NULL);
 		if (obj)
 		    do_oname(obj);
 		break;
 	    case 2:
 		if (!obj)
-		    obj = getobj(callable, "call");
+		    obj = getobj(callable, "call", NULL);
 		if (obj) {
 		    /* behave as if examining it in inventory;
 		     * this might set dknown if it was picked up

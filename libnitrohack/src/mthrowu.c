@@ -3,7 +3,8 @@
 
 #include "hack.h"
 
-static int drop_throw(struct obj *,boolean,int,int);
+static int drop_throw(struct monst *, struct obj *, struct obj *, boolean,
+		      boolean, int, int);
 
 #define URETREATING(x,y) (distmin(u.ux,u.uy,x,y) > distmin(u.ux0,u.uy0,x,y))
 
@@ -25,13 +26,15 @@ static const char *const breathwep[] = {
 				"strange breath #9"
 };
 
-/* hero is hit by something other than a monster */
-int thitu(int tlev, int dam, struct obj *obj,
+/* hero is hit by a thing or object that is thrown or otherwise in motion */
+int thitu(int tlev, int dam,
+	  struct obj *obj, struct obj *ostack, struct monst *magr,
 	  const char *name)	/* if null, then format `obj' */
 {
 	const char *onm, *knm;
 	boolean is_acid;
 	int kprefix = KILLED_BY_AN;
+	int dieroll;
 	char onmbuf[BUFSZ], knmbuf[BUFSZ];
 
 	if (!name) {
@@ -51,13 +54,17 @@ int thitu(int tlev, int dam, struct obj *obj,
 			    (obj && obj->quan > 1L) ? name : an(name);
 	is_acid = (obj && obj->otyp == ACID_VENOM);
 
-	if (u.uac + tlev <= rnd(20)) {
+	dieroll = rnd(20);
+	if (u.uac + tlev <= dieroll) {
 		if (Blind || !flags.verbose) pline("It misses.");
 		else pline("You are almost hit by %s.", onm);
 		return 0;
 	} else {
-		if (Blind || !flags.verbose) pline("You are hit!");
-		else pline("You are hit by %s%s", onm, exclam(dam));
+		if (!obj || !artifact_hit(magr, &youmonst, obj, ostack, TRUE,
+					  &dam, dieroll)) {
+			if (Blind || !flags.verbose) pline("You are hit!");
+			else pline("You are hit by %s%s", onm, exclam(dam));
+		}
 
 		if (obj && objects[obj->otyp].oc_material == SILVER
 				&& hates_silver(youmonst.data)) {
@@ -81,12 +88,14 @@ int thitu(int tlev, int dam, struct obj *obj,
  * dothrow.c (for consistency). --KAA
  * Returns 0 if object still exists (not destroyed).
  */
-static int drop_throw(struct obj *obj, boolean ohit, int x, int y)
+static int drop_throw(struct monst *magr, struct obj *obj, struct obj *ostack,
+		      boolean thrown, boolean ohit, int x, int y)
 {
 	int retvalu = 1;
 	int create;
 	struct monst *mtmp;
 	struct trap *t;
+	struct obj *monwep = (magr ? MON_WEP(magr) : NULL);
 
 	if (obj->otyp == CREAM_PIE || obj->oclass == VENOM_CLASS ||
 		    (ohit && obj->otyp == EGG))
@@ -104,6 +113,8 @@ static int drop_throw(struct obj *obj, boolean ohit, int x, int y)
 			objgone = ship_object(obj, x, y, FALSE);
 		if (!objgone) {
 			if (!flooreffects(obj,x,y,"fall")) { /* don't double-dip on damage */
+			    if (detonate_obj(obj, ostack, monwep, x, y, thrown))
+				return 1;
 			    place_object(obj, level, x, y);
 			    if (!mtmp && x == u.ux && y == u.uy)
 				mtmp = &youmonst;
@@ -113,15 +124,22 @@ static int drop_throw(struct obj *obj, boolean ohit, int x, int y)
 			    retvalu = 0;
 			}
 		}
-	} else obfree(obj, NULL);
+	} else {
+	    if (detonate_obj(obj, ostack, monwep, x, y, thrown))
+		return 1;
+	    obfree(obj, NULL);
+	}
+
 	return retvalu;
 }
 
 
 /* an object launched by someone/thing other than player attacks a monster;
    return 1 if the object has stopped moving (hit or its range used up) */
-int ohitmon(struct monst *mtmp,	/* accidental target */
+int ohitmon(struct monst *magr,	/* thrower/firer, if any */
+	    struct monst *mtmp,	/* accidental target */
 	    struct obj *otmp,	/* missile; might be destroyed by drop_throw */
+	    struct obj *ostack,	/* stack from which otmp came, if any */
 	    int range,		/* how much farther will object travel if it misses */
 				/* Use -1 to signify to keep going even after hit, */
 				/* unless its gone (used for rolling_boulder_traps) */
@@ -141,7 +159,8 @@ int ohitmon(struct monst *mtmp,	/* accidental target */
 		else if (verbose) pline("It is missed.");
 	    }
 	    if (!range) { /* Last position; object drops */
-		drop_throw(otmp, 0, mtmp->mx, mtmp->my);
+		drop_throw(magr, otmp, ostack, FALSE, FALSE,
+			   mtmp->mx, mtmp->my);
 		return 1;
 	    }
 	} else if (otmp->oclass == POTION_CLASS) {
@@ -151,7 +170,7 @@ int ohitmon(struct monst *mtmp,	/* accidental target */
 	    potionhit(mtmp, otmp, FALSE);
 	    return 1;
 	} else {
-	    damage = dmgval(otmp, mtmp);
+	    damage = dmgval(magr, otmp, TRUE, mtmp);
 	    if (otmp->otyp == ACID_VENOM && resists_acid(mtmp))
 		damage = 0;
 	    if (ismimic) seemimic(mtmp);
@@ -222,7 +241,8 @@ int ohitmon(struct monst *mtmp,	/* accidental target */
 		mtmp->mblinded = tmp;
 	    }
 
-	    objgone = drop_throw(otmp, 1, bhitpos.x, bhitpos.y);
+	    objgone = drop_throw(magr, otmp, ostack, TRUE, TRUE,
+				 bhitpos.x, bhitpos.y);
 	    if (!objgone && range == -1) {  /* special case */
 		    obj_extract_self(otmp); /* free it for motion again */
 		    return 0;
@@ -237,7 +257,7 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 	     int range, struct obj *obj)
 {
 	struct monst *mtmp;
-	struct obj *singleobj;
+	struct obj *singleobj, *ostack;
 	char sym = obj->oclass;
 	int hitu, blindinc = 0;
 
@@ -262,9 +282,11 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 		    MON_NOWEP(mon);
 	    }
 	    obj_extract_self(obj);
+	    ostack = NULL;
 	    singleobj = obj;
 	    obj = NULL;
 	} else {
+	    ostack = obj;
 	    singleobj = splitobj(obj, 1L);
 	    obj_extract_self(singleobj);
 	}
@@ -283,7 +305,8 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 	    dy = rn2(3)-1;
 	    /* check validity of new direction */
 	    if (!dx && !dy) {
-		drop_throw(singleobj, 0, bhitpos.x, bhitpos.y);
+		drop_throw(mon, singleobj, ostack, FALSE, FALSE,
+			   bhitpos.x, bhitpos.y);
 		return;
 	    }
 	}
@@ -297,7 +320,8 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 	    || closed_door(level, bhitpos.x+dx, bhitpos.y+dy)
 	    || (level->locations[bhitpos.x + dx][bhitpos.y + dy].typ == IRONBARS &&
 		hits_bars(&singleobj, bhitpos.x, bhitpos.y, 0, 0))) {
-	    drop_throw(singleobj, 0, bhitpos.x, bhitpos.y);
+	    drop_throw(mon, singleobj, ostack, FALSE, FALSE,
+		       bhitpos.x, bhitpos.y);
 	    return;
 	}
 
@@ -312,7 +336,7 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 		bhitpos.x += dx;
 		bhitpos.y += dy;
 		if ((mtmp = m_at(level, bhitpos.x, bhitpos.y)) != 0) {
-		    if (ohitmon(mtmp, singleobj, range, TRUE))
+		    if (ohitmon(mon, mtmp, singleobj, ostack, range, TRUE))
 			break;
 		} else if (bhitpos.x == u.ux && bhitpos.y == u.uy) {
 		    if (multi) nomul(0, NULL);
@@ -352,10 +376,10 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 			    /* fall through */
 			case CREAM_PIE:
 			case BLINDING_VENOM:
-			    hitu = thitu(8, 0, singleobj, NULL);
+			    hitu = thitu(8, 0, singleobj, ostack, mon, NULL);
 			    break;
 			default:
-			    dam = dmgval(singleobj, &youmonst);
+			    dam = dmgval(mon, singleobj, TRUE, &youmonst);
 			    hitv = 3 - distmin(u.ux,u.uy, mon->mx,mon->my);
 			    if (hitv < -4) hitv = -4;
 			    if (is_elf(mon->data) &&
@@ -369,7 +393,7 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 			    if (bigmonst(youmonst.data)) hitv++;
 			    hitv += 8 + singleobj->spe;
 			    if (dam < 1) dam = 1;
-			    hitu = thitu(hitv, dam, singleobj, NULL);
+			    hitu = thitu(hitv, dam, singleobj, ostack, mon, NULL);
 		    }
 		    if (hitu && singleobj->opoisoned &&
 			is_poisonable(singleobj)) {
@@ -409,7 +433,8 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 		    }
 		    stop_occupation();
 		    if (hitu || !range) {
-			drop_throw(singleobj, hitu, u.ux, u.uy);
+			drop_throw(mon, singleobj, ostack, hitu, hitu,
+				   u.ux, u.uy);
 			break;
 		    }
 		} else if (!range	/* reached end of path */
@@ -424,8 +449,10 @@ void m_throw(struct monst *mon, int x, int y, int dx, int dy,
 			hits_bars(&singleobj, bhitpos.x, bhitpos.y, !rn2(5), 0))
 			/* Thrown objects "sink" */
 			|| IS_SINK(level->locations[bhitpos.x][bhitpos.y].typ)) {
-		    if (singleobj) /* hits_bars might have destroyed it */
-			drop_throw(singleobj, 0, bhitpos.x, bhitpos.y);
+		    if (singleobj) { /* hits_bars might have destroyed it */
+			drop_throw(mon, singleobj, ostack, FALSE, FALSE,
+				   bhitpos.x, bhitpos.y);
+		    }
 		    break;
 		}
 		tmp_at(bhitpos.x, bhitpos.y);
@@ -497,14 +524,14 @@ void thrwmu(struct monst *mtmp)
 		      obj_is_pname(otmp) ? the(onm) : an(onm));
 	    }
 
-	    dam = dmgval(otmp, &youmonst);
+	    dam = dmgval(mtmp, otmp, FALSE, &youmonst);
 	    hitv = 3 - distmin(u.ux,u.uy, mtmp->mx,mtmp->my);
 	    if (hitv < -4) hitv = -4;
 	    if (bigmonst(youmonst.data)) hitv++;
 	    hitv += 8 + otmp->spe;
 	    if (dam < 1) dam = 1;
 
-	    thitu(hitv, dam, otmp, NULL);
+	    thitu(hitv, dam, otmp, NULL, mtmp, NULL);
 	    stop_occupation();
 	    return;
 	}

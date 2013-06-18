@@ -551,7 +551,7 @@ static int doengrave_core(struct obj *otmp, boolean auto_elbereth)
 	    !validate_object(otmp, styluses, "write with"))
 		return 0;
 	else if (!otmp && !auto_elbereth)
-		otmp = getobj(styluses, "write with");
+		otmp = getobj(styluses, "write with", NULL);
 	else if (!otmp)		/* auto-Elbereth with athame if wielded */
 		otmp = uwep && uwep->otyp == ATHAME ? uwep : &zeroobj;
 	if (!otmp) return 0;		/* otmp == zeroobj if fingers */

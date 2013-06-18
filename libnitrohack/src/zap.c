@@ -35,22 +35,6 @@ static int zap_hit_check(int,int);
 static void backfire(struct obj *);
 static int spell_hit_bonus(int);
 
-#define ZT_MAGIC_MISSILE	(AD_MAGM-1)
-#define ZT_FIRE			(AD_FIRE-1)
-#define ZT_COLD			(AD_COLD-1)
-#define ZT_SLEEP		(AD_SLEE-1)
-#define ZT_DEATH		(AD_DISN-1)	/* or disintegration */
-#define ZT_LIGHTNING		(AD_ELEC-1)
-#define ZT_POISON_GAS		(AD_DRST-1)
-#define ZT_ACID			(AD_ACID-1)
-/* 8 and 9 are currently unassigned */
-
-#define ZT_WAND(x)		(x)
-#define ZT_SPELL(x)		(10+(x))
-#define ZT_BREATH(x)		(20+(x))
-
-#define is_hero_spell(type)	((type) >= 10 && (type) < 20)
-
 static const char blinded_by_the_flash[] = "You are blinded by the flash!";
 
 const char * const flash_types[] = {	/* also used in buzzmu(mcastu.c) */
@@ -838,6 +822,19 @@ void cancel_item(struct obj *obj)
 		/* case RIN_PROTECTION:  not needed */
 	}
 
+	if (equip_is_worn(obj) && obj->spe) {
+	    if (obj->oprops & ITEM_DEXTERITY) {
+		ABON(A_DEX) -= obj->spe;
+		iflags.botl = 1;
+	    }
+
+	    if (obj->oprops & ITEM_BRILLIANCE) {
+		ABON(A_INT) -= obj->spe;
+		ABON(A_WIS) -= obj->spe;
+		iflags.botl = 1;
+	    }
+	}
+
 	/* MRKR: Cancelled *DSM reverts to scales.  */
 	/*       Suggested by Daniel Morris in RGRN */
 
@@ -1001,6 +998,17 @@ boolean drain_item(struct obj *obj)
 	case RIN_PROTECTION:
 	    iflags.botl = 1;
 	    break;
+	}
+	if (equip_is_worn(obj)) {
+	    if (obj->oprops & ITEM_DEXTERITY) {
+		ABON(A_DEX)--;
+		iflags.botl = 1;
+	    }
+	    if (obj->oprops & ITEM_BRILLIANCE) {
+		ABON(A_INT)--;
+		ABON(A_WIS)--;
+		iflags.botl = 1;
+	    }
 	}
 	if (carried(obj)) update_inventory();
 	return TRUE;
@@ -1842,7 +1850,7 @@ int dozap(struct obj *obj)
 	if (obj && !validate_object(obj, zap_syms, "zap"))
 		return 0;
 	else if (!obj)
-		obj = getobj(zap_syms, "zap");
+		obj = getobj(zap_syms, "zap", NULL);
 	if (!obj) return 0;
 
 	check_unpaid(obj);
@@ -2891,8 +2899,11 @@ struct monst *boomhit(int dx, int dy)
 		}
 		if (bhitpos.x == u.ux && bhitpos.y == u.uy) { /* ct == 9 */
 			if (Fumbling || rn2(20) >= ACURR(A_DEX)) {
-				/* we hit ourselves */
-				thitu(10, rnd(10), NULL,
+				/* We hit ourselves, but don't credit it like that;
+				 * a boomerang with properties will eventually
+				 * land in artifact_hit(), which can't handle
+				 * self-hits. */
+				thitu(10, rnd(10), NULL, NULL, NULL,
 					"boomerang");
 				break;
 			} else {	/* we catch it */
@@ -2942,9 +2953,9 @@ static int zap_hit_mon(struct monst *mon, int type, int nd,
 		    tmp += spell_damage_bonus();
 		
 		if (burnarmor(mon)) {
-		    if (!rn2(3)) destroy_mitem(mon, POTION_CLASS, AD_FIRE);
-		    if (!rn2(3)) destroy_mitem(mon, SCROLL_CLASS, AD_FIRE);
-		    if (!rn2(5)) destroy_mitem(mon, SPBOOK_CLASS, AD_FIRE);
+		    if (!rn2(3)) destroy_mitem(mon, POTION_CLASS, AD_FIRE, NULL);
+		    if (!rn2(3)) destroy_mitem(mon, SCROLL_CLASS, AD_FIRE, NULL);
+		    if (!rn2(5)) destroy_mitem(mon, SPBOOK_CLASS, AD_FIRE, NULL);
 		}
 		break;
 	case ZT_COLD:
@@ -2957,7 +2968,7 @@ static int zap_hit_mon(struct monst *mon, int type, int nd,
 		if (spellcaster)
 		    tmp += spell_damage_bonus();
 		if (!rn2(3))
-		    destroy_mitem(mon, POTION_CLASS, AD_COLD);
+		    destroy_mitem(mon, POTION_CLASS, AD_COLD, NULL);
 		break;
 	case ZT_SLEEP:
 		tmp = 0;
@@ -3025,9 +3036,8 @@ static int zap_hit_mon(struct monst *mon, int type, int nd,
 				mon->mblinded = 127;
 			else mon->mblinded += rnd_tmp;
 		}
-		if (!rn2(3)) destroy_mitem(mon, WAND_CLASS, AD_ELEC);
-		/* not actually possible yet */
-		if (!rn2(3)) destroy_mitem(mon, RING_CLASS, AD_ELEC);
+		if (!rn2(3)) destroy_mitem(mon, WAND_CLASS, AD_ELEC, NULL);
+		if (!rn2(3)) destroy_mitem(mon, RING_CLASS, AD_ELEC, NULL);
 		break;
 	case ZT_POISON_GAS:
 		if (resists_poison(mon)) {
@@ -3820,13 +3830,14 @@ const char * const destroy_strings[] = {	/* also used in trap.c */
 	"breaks apart and explodes", "break apart and explode", "exploding wand"
 };
 
-void destroy_item(int osym, int dmgtyp)
+boolean destroy_item(int osym, int dmgtyp)
 {
 	struct obj *obj, *obj2;
 	int dmg, xresist, skip;
 	long i, cnt, quan;
 	int dindx;
 	const char *mult;
+	boolean seen_destroy = FALSE;
 
 	for (obj = invent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
@@ -3905,6 +3916,7 @@ void destroy_item(int osym, int dmgtyp)
 		    if (!rn2(3)) cnt++;
 
 		if (!cnt) continue;
+		seen_destroy = TRUE;
 		if (cnt == quan)	mult = "Your";
 		else	mult = (cnt == 1L) ? "One of your" : "Some of your";
 		pline("%s %s %s!", mult, xname(obj),
@@ -3936,20 +3948,21 @@ void destroy_item(int osym, int dmgtyp)
 		}
 	    }
 	}
-	return;
+
+	return seen_destroy;
 }
 
-int destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
+boolean destroy_mitem(struct monst *mtmp, int osym, int dmgtyp, int *dmgptr)
 {
 	struct obj *obj, *obj2;
-	int skip, tmp = 0;
+	int skip;
 	long i, cnt, quan;
 	int dindx;
 	boolean vis;
+	boolean seen_destroy = FALSE;
 
 	if (mtmp == &youmonst) {	/* this simplifies artifact_hit() */
-	    destroy_item(osym, dmgtyp);
-	    return 0;	/* arbitrary; value doesn't matter to artifact_hit() */
+	    return destroy_item(osym, dmgtyp);
 	}
 
 	vis = canseemon(level, mtmp);
@@ -3965,7 +3978,7 @@ int destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
 		    if (osym == POTION_CLASS && obj->otyp != POT_OIL) {
 			quan = obj->quan;
 			dindx = 0;
-			tmp++;
+			if (dmgptr) *dmgptr += 1;
 		    } else skip++;
 		    break;
 		case AD_FIRE:
@@ -3982,15 +3995,15 @@ int destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
 		    switch(osym) {
 			case POTION_CLASS:
 			    dindx = 1;
-			    tmp++;
+			    if (dmgptr) *dmgptr += 1;
 			    break;
 			case SCROLL_CLASS:
 			    dindx = 2;
-			    tmp++;
+			    if (dmgptr) *dmgptr += 1;
 			    break;
 			case SPBOOK_CLASS:
 			    dindx = 3;
-			    tmp++;
+			    if (dmgptr) *dmgptr += 1;
 			    break;
 			default:
 			    skip++;
@@ -4008,7 +4021,7 @@ int destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
 			case WAND_CLASS:
 			    if (obj->otyp == WAN_LIGHTNING) { skip++; break; }
 			    dindx = 5;
-			    tmp++;
+			    if (dmgptr) *dmgptr += 1;
 			    break;
 			default:
 			    skip++;
@@ -4024,14 +4037,18 @@ int destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
 		    if (!rn2(3)) cnt++;
 
 		if (!cnt) continue;
-		if (vis) pline("%s %s %s!",
+		if (vis) {
+		    seen_destroy = TRUE;
+		    pline("%s %s %s!",
 			s_suffix(Monnam(mtmp)), xname(obj),
 			(cnt > 1L) ? destroy_strings[dindx*3 + 1]
 				  : destroy_strings[dindx*3]);
+		}
 		for (i = 0; i < cnt; i++) m_useup(mtmp, obj);
 	    }
 	}
-	return tmp;
+
+	return seen_destroy;
 }
 
 
@@ -4124,7 +4141,8 @@ void makewish(boolean magical)
 	}
 
 	/* Check if wishing for magical objects is allowed. */
-	magical_object = otmp && (otmp->oartifact || objects[otmp->otyp].oc_magic);
+	magical_object = otmp && (otmp->oartifact || otmp->oprops ||
+				  objects[otmp->otyp].oc_magic);
 	if (!magical && magical_object) {
 	    verbalize("I am sorry, but I am unable to provide you with magical items.");
 	    if (otmp->oartifact) artifact_exists(otmp, ONAME(otmp), FALSE);

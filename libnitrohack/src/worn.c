@@ -59,11 +59,11 @@ void setworn_core(struct obj *obj, long mask, boolean conduct)
 		oobj = *(wp->w_obj);
 		if (oobj && !(oobj->owornmask & wp->w_mask))
 			warning("Setworn: mask = %ld.", wp->w_mask);
-		if (oobj) {
+		if (oobj && oobj != obj) {
 		    if (u.twoweap && (oobj->owornmask & (W_WEP|W_SWAPWEP)))
 			u.twoweap = 0;
 		    oobj->owornmask &= ~wp->w_mask;
-		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
+		    if (wp->w_mask & ~W_QUIVER) {
 			/* leave as "x = x <op> y", here and below, for broken
 			 * compilers */
 			p = objects[oobj->otyp].oc_oprop;
@@ -75,7 +75,7 @@ void setworn_core(struct obj *obj, long mask, boolean conduct)
 			    if (p == TELEPAT)
 				u.uprops[CLAIRVOYANT].blocked &= ~wp->w_mask;
 			}
-			if (oobj->oartifact)
+			if (oobj->oartifact || oobj->oprops)
 			    set_artifact_intrinsic(oobj, 0, mask);
 		    }
 		}
@@ -87,7 +87,8 @@ void setworn_core(struct obj *obj, long mask, boolean conduct)
 		     * Allow weapon-tools, too.
 		     * wp_mask should be same as mask at this point.
 		     */
-		    if (wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) {
+		    if ((wp->w_mask & ~(W_SWAPWEP|W_QUIVER)) ||
+			((wp->w_mask & W_SWAPWEP) && u.twoweap)) {
 			if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
 					    mask != W_WEP) {
 			    p = objects[obj->otyp].oc_oprop;
@@ -100,7 +101,7 @@ void setworn_core(struct obj *obj, long mask, boolean conduct)
 				    u.uprops[CLAIRVOYANT].blocked |= wp->w_mask;
 			    }
 			}
-			if (obj->oartifact)
+			if (obj->oartifact || obj->oprops)
 			    set_artifact_intrinsic(obj, 1, mask);
 		    }
 		}
@@ -129,7 +130,7 @@ void setnotworn(struct obj *obj)
 		p = objects[obj->otyp].oc_oprop;
 		u.uprops[p].extrinsic = u.uprops[p].extrinsic & ~wp->w_mask;
 		obj->owornmask &= ~wp->w_mask;
-		if (obj->oartifact)
+		if (obj->oartifact || obj->oprops)
 		    set_artifact_intrinsic(obj, 0, wp->w_mask);
 		if ((p = w_blocks(obj, wp->w_mask)) != 0) {
 		    u.uprops[p].blocked &= ~wp->w_mask;
@@ -211,10 +212,49 @@ void mon_adjust_speed(struct monst *mon,
 
 	/* might discover an object if we see the speed change happen, but
 	   avoid making possibly forgotten book known when casting its spell */
-	if (obj != 0 && obj->dknown &&
-		objects[obj->otyp].oc_class != SPBOOK_CLASS)
-	    makeknown(obj->otyp);
+	if (obj) {
+	    if (obj->oprops & ITEM_SPEED)
+		obj->oprops_known |= ITEM_SPEED;
+	    else if (obj->dknown && objects[obj->otyp].oc_class != SPBOOK_CLASS)
+		makeknown(obj->otyp);
+	}
     }
+}
+
+static boolean obj_has_prop(const struct obj *otmp, int which)
+{
+	boolean is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
+
+	if (objects[otmp->otyp].oc_oprop == which)
+	    return TRUE;
+
+	if (!otmp->oprops)
+	    return FALSE;
+
+	switch (which) {
+	case FIRE_RES:
+	    return !!(!is_weapon && (otmp->oprops & ITEM_FIRE));
+	case COLD_RES:
+	    return !!(!is_weapon && (otmp->oprops & ITEM_FROST));
+	case DRAIN_RES:
+	    return !!(!is_weapon && (otmp->oprops & ITEM_DRLI));
+	case REFLECTING:
+	    return !!(otmp->oprops & ITEM_REFLECTION);
+	case FAST:
+	    return !!(otmp->oprops & ITEM_SPEED);
+	case TELEPAT:
+	    return !!(otmp->oprops & ITEM_ESP);
+	case DISPLACED:
+	    return !!(otmp->oprops & ITEM_DISPLACEMENT);
+	case FUMBLING:
+	    return !!(otmp->oprops & ITEM_FUMBLING);
+	case HUNGER:
+	    return !!(otmp->oprops & ITEM_HUNGER);
+	case AGGRAVATE_MONSTER:
+	    return !!(otmp->oprops & ITEM_AGGRAVATE);
+	}
+
+	return FALSE;
 }
 
 /* armor put on or taken off; might be magical variety */
@@ -225,6 +265,9 @@ void update_mon_intrinsics(struct level *lev, struct monst *mon, struct obj *obj
     uchar mask;
     struct obj *otmp;
     int which = (int) objects[obj->otyp].oc_oprop;
+    long props = obj->oprops;
+    int p = 0;
+    boolean is_weapon = (obj->oclass == WEAPON_CLASS || is_weptool(obj));
 
     unseen = !canseemon(lev, mon);
 
@@ -238,6 +281,8 @@ void update_mon_intrinsics(struct level *lev, struct monst *mon, struct obj *obj
     }
 
     if (!which) goto maybe_blocks;
+
+ new_property:
 
     if (on) {
 	switch (which) {
@@ -307,8 +352,7 @@ void update_mon_intrinsics(struct level *lev, struct monst *mon, struct obj *obj
 	       carrying an object. */
 	    if (!(mon->data->mresists & mask)) {
 		for (otmp = mon->minvent; otmp; otmp = otmp->nobj)
-		    if (otmp->owornmask &&
-			    (int) objects[otmp->otyp].oc_oprop == which)
+		    if (otmp->owornmask && obj_has_prop(otmp, which))
 			break;
 		if (!otmp)
 		    mon->mintrinsics &= ~((unsigned short) mask);
@@ -330,6 +374,38 @@ void update_mon_intrinsics(struct level *lev, struct monst *mon, struct obj *obj
 	break;
      default:
 	break;
+    }
+
+    /* Repeat most of the above (goto new_property) for each property. */
+    while (props) {
+	if (p == 0) p = 1;
+	else p <<= 1;
+
+	if (p > ITEM_PROP_MASK) break;
+	if (!(props & p)) continue;
+
+	props &= ~p;
+
+	switch (p) {
+	case ITEM_FIRE:
+	    if (!is_weapon) which = FIRE_RES;
+	    break;
+	case ITEM_FROST:
+	    if (!is_weapon) which = COLD_RES;
+	    break;
+	case ITEM_DRLI:
+	    if (!is_weapon) which = DRAIN_RES;
+	    break;
+	case ITEM_REFLECTION:	which = REFLECTING; break;
+	case ITEM_SPEED:	which = FAST; break;
+	case ITEM_ESP:		which = TELEPAT; break;
+	case ITEM_DISPLACEMENT:	which = DISPLACED; break;
+	case ITEM_FUMBLING:	which = FUMBLING; break;
+	case ITEM_AGGRAVATE:	which = AGGRAVATE_MONSTER; break;
+	default:		which = 0; break;
+	}
+
+	if (which) goto new_property;
     }
 
 	if (!on && mon == u.usteed && obj->otyp == SADDLE)
@@ -427,7 +503,8 @@ static void m_dowear_type(struct level *lev, struct monst *mon, long flag,
 		case W_AMUL:
 		    if (obj->oclass != AMULET_CLASS ||
 			    (obj->otyp != AMULET_OF_LIFE_SAVING &&
-				obj->otyp != AMULET_OF_REFLECTION))
+				obj->otyp != AMULET_OF_REFLECTION &&
+				!(obj->oprops & ITEM_REFLECTION)))
 			continue;
 		    best = obj;
 		    goto outer_break; /* no such thing as better amulets */
@@ -728,8 +805,15 @@ void mon_break_armor(struct level *lev, struct monst *mon, boolean polyspot)
 static int extra_pref(struct monst *mon, struct obj *obj)
 {
     if (obj) {
-	if (obj->otyp == SPEED_BOOTS && mon->permspeed != MFAST)
+	if (obj_has_prop(obj, FAST) && mon->permspeed != MFAST)
 	    return 20;
+	if (obj_has_prop(obj, REFLECTING))
+	    return 20;
+	if (obj->oprops) {
+	    /* +5 for every good property */
+	    return 5 * longbits(obj->oprops & ITEM_PROP_MASK &
+				~(ITEM_FUMBLING|ITEM_HUNGER|ITEM_AGGRAVATE));
+	}
     }
     return 0;
 }

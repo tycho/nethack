@@ -1798,32 +1798,71 @@ boolean mon_reflects(struct monst *mon, const char *str)
 {
 	struct obj *orefl = which_armor(mon, W_ARMS);
 
-	if (orefl && orefl->otyp == SHIELD_OF_REFLECTION) {
+	if (orefl && (orefl->otyp == SHIELD_OF_REFLECTION ||
+		      (orefl->oprops & ITEM_REFLECTION))) {
 	    if (str) {
 		pline(str, s_suffix(mon_nam(mon)), "shield");
-		makeknown(SHIELD_OF_REFLECTION);
+		if (orefl->otyp == SHIELD_OF_REFLECTION)
+		    makeknown(SHIELD_OF_REFLECTION);
+		if (orefl->oprops & ITEM_REFLECTION)
+		    orefl->oprops_known |= ITEM_REFLECTION;
 	    }
 	    return TRUE;
-	} else if (arti_reflects(MON_WEP(mon))) {
+
+	} else if ((orefl = MON_WEP(mon)) &&
+		   (arti_reflects(orefl) ||
+		    (orefl->oprops & ITEM_REFLECTION))) {
 	    /* due to wielded artifact weapon */
-	    if (str)
+	    if (str) {
 		pline(str, s_suffix(mon_nam(mon)), "weapon");
+		if (orefl->oprops & ITEM_REFLECTION)
+		    orefl->oprops_known |= ITEM_REFLECTION;
+	    }
 	    return TRUE;
+
 	} else if ((orefl = which_armor(mon, W_AMUL)) &&
-				orefl->otyp == AMULET_OF_REFLECTION) {
+		   (orefl->otyp == AMULET_OF_REFLECTION ||
+		    (orefl->oprops & ITEM_REFLECTION))) {
 	    if (str) {
 		pline(str, s_suffix(mon_nam(mon)), "amulet");
-		makeknown(AMULET_OF_REFLECTION);
+		if (orefl->otyp == AMULET_OF_REFLECTION)
+		    makeknown(AMULET_OF_REFLECTION);
+		if (orefl->oprops & ITEM_REFLECTION)
+		    orefl->oprops_known |= ITEM_REFLECTION;
 	    }
 	    return TRUE;
+
+	} else if ((orefl = which_armor(mon, W_ARMC)) &&
+		   (orefl->oprops & ITEM_REFLECTION)) {
+	    if (str) {
+		pline(str, s_suffix(mon_nam(mon)), "cloak");
+		if (orefl->oprops & ITEM_REFLECTION)
+		    orefl->oprops_known |= ITEM_REFLECTION;
+	    }
+	    return TRUE;
+
 	} else if ((orefl = which_armor(mon, W_ARM)) &&
 		   (orefl->otyp == SILVER_DRAGON_SCALES ||
 		    orefl->otyp == SILVER_DRAGON_SCALE_MAIL ||
 		    orefl->otyp == CHROMATIC_DRAGON_SCALES ||
-		    orefl->otyp == CHROMATIC_DRAGON_SCALE_MAIL)) {
-	    if (str)
+		    orefl->otyp == CHROMATIC_DRAGON_SCALE_MAIL ||
+		    (orefl->oprops & ITEM_REFLECTION))) {
+	    if (str) {
 		pline(str, s_suffix(mon_nam(mon)), "armor");
+		if (orefl->oprops & ITEM_REFLECTION)
+		    orefl->oprops_known |= ITEM_REFLECTION;
+	    }
 	    return TRUE;
+
+	} else if ((orefl = which_armor(mon, W_ARMU)) &&
+		   (orefl->oprops & ITEM_REFLECTION)) {
+	    if (str) {
+		pline(str, s_suffix(mon_nam(mon)), "shirt");
+		if (orefl->oprops & ITEM_REFLECTION)
+		    orefl->oprops_known |= ITEM_REFLECTION;
+	    }
+	    return TRUE;
+
 	} else if (mon->data == &mons[PM_SILVER_DRAGON] ||
 		   mon->data == &mons[PM_CHROMATIC_DRAGON] ||
 		   mon->data == &mons[PM_TIAMAT]) {
@@ -1832,6 +1871,7 @@ boolean mon_reflects(struct monst *mon, const char *str)
 		pline(str, s_suffix(mon_nam(mon)), "scales");
 	    return TRUE;
 	}
+
 	return FALSE;
 }
 
@@ -1840,31 +1880,89 @@ boolean ureflects(const char *fmt, const char *str)
 	/* Check from outermost to innermost objects */
 	if (EReflecting & W_ARMS) {
 	    if (fmt && str) {
-	    	pline(fmt, str, "shield");
-	    	makeknown(SHIELD_OF_REFLECTION);
+		pline(fmt, str, "shield");
+		if (uarms && uarms->otyp == SHIELD_OF_REFLECTION)
+		    makeknown(SHIELD_OF_REFLECTION);
+		if (uarms && (uarms->oprops & ITEM_REFLECTION))
+		    uarms->oprops_known |= ITEM_REFLECTION;
 	    }
 	    return TRUE;
+
 	} else if (EReflecting & W_WEP) {
-	    /* Due to wielded artifact weapon */
-	    if (fmt && str)
-	    	pline(fmt, str, "weapon");
+	    /* Due to wielded artifact weapon or weapon of reflection */
+	    if (fmt && str) {
+		pline(fmt, str, "weapon");
+		if (uwep && (uwep->oprops & ITEM_REFLECTION))
+		    uwep->oprops_known |= ITEM_REFLECTION;
+	    }
 	    return TRUE;
+
+	} else if (EReflecting & W_SWAPWEP) {
+	    if (fmt && str) {
+		pline(fmt, str, "off-hand weapon");
+		if (uswapwep && (uswapwep->oprops & ITEM_REFLECTION))
+		    uswapwep->oprops_known |= ITEM_REFLECTION;
+	    }
+	    return TRUE;
+
 	} else if (EReflecting & W_AMUL) {
 	    if (fmt && str) {
-	    	pline(fmt, str, "medallion");
-	    	makeknown(AMULET_OF_REFLECTION);
+		pline(fmt, str, "medallion");
+		if (uamul && uamul->otyp == AMULET_OF_REFLECTION)
+		    makeknown(AMULET_OF_REFLECTION);
+		if (uamul && (uamul->oprops & ITEM_REFLECTION))
+		    uamul->oprops_known |= ITEM_REFLECTION;
 	    }
 	    return TRUE;
-	} else if (EReflecting & W_ARM) {
-	    if (fmt && str)
-	    	pline(fmt, str, "armor");
+
+	} else if (EReflecting & W_RINGL) {
+	    if (fmt && str) {
+		pline(fmt, str, "left ring");
+		if (uleft && (uleft->oprops & ITEM_REFLECTION))
+		    uleft->oprops_known |= ITEM_REFLECTION;
+	    }
 	    return TRUE;
+
+	} else if (EReflecting & W_RINGR) {
+	    if (fmt && str) {
+		pline(fmt, str, "right ring");
+		if (uright && (uright->oprops & ITEM_REFLECTION))
+		    uright->oprops_known |= ITEM_REFLECTION;
+	    }
+	    return TRUE;
+
+	} else if (EReflecting & W_ARMC) {
+	    if (fmt && str) {
+		pline(fmt, str, "cloak");
+		if (uarmc && (uarmc->oprops & ITEM_REFLECTION))
+		    uarmc->oprops_known |= ITEM_REFLECTION;
+	    }
+	    return TRUE;
+
+	/* no reflection property for boots, gloves or helmets */
+	} else if (EReflecting & W_ARM) {
+	    if (fmt && str) {
+		pline(fmt, str, "armor");
+		if (uarm && (uarm->oprops & ITEM_REFLECTION))
+		    uarm->oprops_known |= ITEM_REFLECTION;
+	    }
+	    return TRUE;
+
+	} else if (EReflecting & W_ARMU) {
+	    if (fmt && str) {
+		pline(fmt, str, "shirt");
+		if (uarmu && (uarmu->oprops & ITEM_REFLECTION))
+		    uarmu->oprops_known |= ITEM_REFLECTION;
+	    }
+	    return TRUE;
+
 	} else if (youmonst.data == &mons[PM_SILVER_DRAGON] ||
 		   youmonst.data == &mons[PM_CHROMATIC_DRAGON]) {
 	    if (fmt && str)
-	    	pline(fmt, str, "scales");
+		pline(fmt, str, "scales");
 	    return TRUE;
 	}
+
 	return FALSE;
 }
 

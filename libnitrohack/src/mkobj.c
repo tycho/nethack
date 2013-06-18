@@ -370,6 +370,8 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 
 		if (artif && !rn2(20))
 		    otmp = mk_artifact(lev, otmp, (aligntyp)A_NONE);
+		else if (rn2(100) < level_difficulty(&lev->z) / 2)
+		    otmp = create_oprop(lev, otmp, TRUE);
 		break;
 	case FOOD_CLASS:
 	    otmp->odrained = 0;
@@ -495,6 +497,8 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 					otmp->spe = rn1(5,4);
 					break;
 	    }
+	    if (is_weptool(otmp) && rn2(100) < level_difficulty(&lev->z) / 2)
+		otmp = create_oprop(lev, otmp, TRUE);
 	    break;
 	case AMULET_CLASS:
 		if (otmp->otyp == AMULET_OF_YENDOR) flags.made_amulet = TRUE;
@@ -503,6 +507,8 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 		   otmp->otyp == AMULET_OF_RESTFUL_SLEEP)) {
 			curse(otmp);
 		} else	blessorcurse(otmp, 10);
+		if (!rn2(250) && otmp->otyp != AMULET_OF_YENDOR)
+		    otmp = create_oprop(lev, otmp, TRUE);
 	case VENOM_CLASS:
 	case CHAIN_CLASS:
 	case BALL_CLASS:
@@ -532,6 +538,8 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 		} else	blessorcurse(otmp, 10);
 		if (artif && !rn2(40))
 		    otmp = mk_artifact(lev, otmp, (aligntyp)A_NONE);
+		else if (!rn2(100))
+		    otmp = create_oprop(lev, otmp, TRUE);
 		/* simulate lacquered armor for samurai */
 		if (Role_if (PM_SAMURAI) && otmp->otyp == SPLINT_MAIL &&
 		    (moves <= 1 || In_quest(&u.uz))) {
@@ -567,6 +575,8 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 			  otmp->otyp == RIN_HUNGER || !rn2(9))) {
 			curse(otmp);
 		}
+		if (!rn2(250))
+		    otmp = create_oprop(lev, otmp, TRUE);
 		break;
 	case ROCK_CLASS:
 		switch (otmp->otyp) {
@@ -1419,6 +1429,8 @@ struct obj *restore_obj(struct memfile *mf)
     otmp->oclass = mread8(mf);
     otmp->invlet = mread8(mf);
     otmp->oartifact = mread8(mf);
+    otmp->oprops = mread32(mf);
+    otmp->oprops_known = mread32(mf);
     otmp->where = mread8(mf);
     otmp->timed = mread8(mf);
     otmp->cobj = mread8(mf) ? (void*)1 : NULL; /* set the pointer to 1 if there will be contents */
@@ -1514,6 +1526,8 @@ void save_obj(struct memfile *mf, struct obj *obj)
     mwrite8(mf, obj->oclass);
     mwrite8(mf, obj->invlet);
     mwrite8(mf, obj->oartifact);
+    mwrite32(mf, obj->oprops);
+    mwrite32(mf, obj->oprops_known);
     mwrite8(mf, obj->where);
     mwrite8(mf, obj->timed);
     /* no need to save the value of the cobj pointer, but we will need to know

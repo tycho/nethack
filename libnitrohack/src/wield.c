@@ -223,7 +223,7 @@ int dowield(struct obj *wep)
 	if (wep && wep != &zeroobj && !validate_object(wep, wield_objs, "wield"))
 		return 0;
 	else if (!wep)
-		wep = getobj(wield_objs, "wield");
+		wep = getobj(wield_objs, "wield", NULL);
 	if (!wep)
 		/* Cancelled */
 		return 0;
@@ -317,7 +317,7 @@ int dowieldquiver(struct obj *newquiver)
 		return 0;
 	else if (!newquiver)
 		/* Prompt for a new quiver */
-		newquiver = getobj(quivee_types, "ready");
+		newquiver = getobj(quivee_types, "ready", NULL);
 	if (!newquiver)
 		/* Cancelled */
 		return 0;
@@ -507,8 +507,12 @@ int dotwoweapon(void)
 {
 	/* You can always toggle it off */
 	if (u.twoweap) {
+		struct obj *tmp;
 		pline("You switch to your primary weapon.");
+		tmp = uswapwep;
 		u.twoweap = 0;
+		setuswapwep(NULL);
+		setuswapwep(tmp);
 		update_inventory();
 		return 0;
 	}
@@ -518,6 +522,7 @@ int dotwoweapon(void)
 		/* Success! */
 		pline("You begin two-weapon combat.");
 		u.twoweap = 1;
+		setuswapwep(uswapwep);
 		update_inventory();
 		return rnd(20) > ACURR(A_DEX);
 	}

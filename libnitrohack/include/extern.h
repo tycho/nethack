@@ -50,6 +50,12 @@ extern void save_artifacts(struct memfile *mf);
 extern void restore_artifacts(struct memfile *mf);
 extern const char *artiname(int);
 extern struct obj *mk_artifact(struct level *lev, struct obj *, aligntyp);
+extern long restrict_oprops(struct obj *, long);
+extern struct obj *create_oprop(struct level *lev, struct obj *, boolean);
+extern boolean oprop_stealth_attack(const struct obj *, const struct obj *,
+				    const struct obj *, boolean);
+extern boolean detonate_obj(struct obj *, struct obj *, struct obj *,
+			    int, int, boolean);
 extern const char *artifact_name(const char *,short *);
 extern boolean exist_artifact(int,const char *);
 extern void artifact_exists(struct obj *,const char *, boolean);
@@ -63,11 +69,12 @@ extern boolean protects(int,struct obj *);
 extern void set_artifact_intrinsic(struct obj *, boolean, long);
 extern int touch_artifact(struct obj *,struct monst *);
 extern int spec_abon(struct obj *,struct monst *);
-extern int spec_dbon(struct obj *,struct monst *,int);
+extern int spec_dbon(struct obj *,struct obj *,boolean,struct monst *,int);
 extern void discover_artifact(xchar);
 extern boolean undiscovered_artifact(xchar);
 extern int disp_artifact_discoveries(struct menulist *);
-extern boolean artifact_hit(struct monst *,struct monst *,struct obj *,int *,int);
+extern boolean artifact_hit(struct monst *,struct monst *,
+			    struct obj *,struct obj *,boolean, int *,int);
 extern int doinvoke(struct obj *obj);
 extern void arti_speak(struct obj *);
 extern boolean artifact_light(struct obj *);
@@ -299,8 +306,12 @@ extern char *coyotename(const struct monst *,char *);
 /* ### do_wear.c ### */
 
 extern void off_msg(struct obj *);
+extern void Oprops_off(struct obj *, unsigned int);
 extern void set_wear(void);
-extern boolean donning(struct obj *);
+extern boolean donning(const struct obj *);
+extern boolean donning_on(const struct obj *);
+extern boolean donning_off(const struct obj *);
+extern boolean equip_is_worn(const struct obj *);
 extern void cancel_don(void);
 extern int Armor_off(void);
 extern int Armor_gone(void);
@@ -369,12 +380,13 @@ extern void deliver_object(struct obj *obj, xchar dnum, xchar dlevel, int where)
 
 extern int dothrow(struct obj *obj);
 extern int dofire(void);
-extern void hitfloor(struct obj *);
+extern void hitfloor(struct obj *,struct obj *,boolean);
 extern void hurtle(int,int,int,boolean);
 extern void mhurtle(struct monst *,int,int,int);
-extern void throwit(struct obj *,long,boolean,schar,schar,schar);
+extern void throwit(struct obj *,struct obj *,long,boolean,
+		    schar,schar,schar);
 extern int omon_adj(struct monst *,struct obj *,boolean);
-extern int thitmonst(struct monst *,struct obj *);
+extern int thitmonst(struct monst *,struct obj *,struct obj *);
 extern int hero_breaks(struct obj *,xchar,xchar,boolean);
 extern int breaks(struct obj *,xchar,xchar);
 extern boolean breaktest(struct obj *);
@@ -612,6 +624,7 @@ extern const char *ordin(int);
 extern char *sitoa(int);
 extern int sgn(int);
 extern int rounddiv(long,int);
+extern long longbits(long);
 extern int dist2(int,int,int,int);
 extern int distmin(int,int,int,int);
 extern boolean online2(int,int,int,int);
@@ -670,7 +683,7 @@ extern boolean wearing_armor(void);
 extern boolean is_worn(const struct obj *);
 extern struct obj *gold_at(struct level *lev, int x, int y);
 extern struct obj *mkgoldobj(long);
-extern struct obj *getobj(const char *let, const char *word);
+extern struct obj *getobj(const char *let, const char *word, struct obj **ostack);
 extern boolean validate_object(struct obj *obj, const char *lets, const char *word);
 extern void fully_identify_obj(struct obj *);
 extern void identify_pack(int);
@@ -1097,8 +1110,10 @@ extern void mplayer_talk(struct monst *);
 
 /* ### mthrowu.c ### */
 
-extern int thitu(int,int,struct obj *,const char *);
-extern int ohitmon(struct monst *,struct obj *,int,boolean);
+extern int thitu(int, int, struct obj *, struct obj *, struct monst *,
+		 const char *);
+extern int ohitmon(struct monst *, struct monst *, struct obj *, struct obj *,
+		   int, boolean);
 extern void thrwmu(struct monst *);
 extern int spitmu(struct monst *, const struct attack *);
 extern int breamu(struct monst *, const struct attack *);
@@ -1736,7 +1751,7 @@ extern boolean attack_checks(struct monst *, struct obj *, schar, schar);
 extern void check_caitiff(struct monst *);
 extern schar find_roll_to_hit(struct monst *);
 extern boolean attack(struct monst *, schar, schar);
-extern boolean hmon(struct monst *,struct obj *,int);
+extern boolean hmon(struct monst *, struct obj *, struct obj *, boolean);
 extern int damageum(struct monst *, const struct attack *);
 extern void missum(struct monst *, const struct attack *);
 extern int passive(struct monst *,boolean,int,uchar);
@@ -1778,7 +1793,7 @@ extern void do_clear_area(int,int,int, void (*)(int,int,void *),void *);
 extern boolean can_advance(int, boolean);
 extern boolean can_advance_something(void);
 extern int hitval(struct obj *,struct monst *);
-extern int dmgval(struct obj *,struct monst *);
+extern int dmgval(struct monst *,struct obj *,boolean,struct monst *);
 extern struct obj *select_rwep(struct monst *);
 extern struct obj *select_hwep(struct monst *);
 extern void possibly_unwield(struct monst *,boolean);
@@ -1938,8 +1953,8 @@ extern void melt_ice(xchar,xchar);
 extern int zap_over_floor(xchar,xchar,int,boolean *);
 extern void fracture_rock(struct obj *);
 extern boolean break_statue(struct obj *);
-extern void destroy_item(int,int);
-extern int destroy_mitem(struct monst *,int,int);
+extern boolean destroy_item(int,int);
+extern boolean destroy_mitem(struct monst *,int,int,int *);
 extern int resist(struct monst *,char,int,int);
 extern void makewish(boolean);
 
