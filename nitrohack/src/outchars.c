@@ -51,19 +51,21 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"blcorn",	-1,	{0x2514, 0},	0},	/* └ bottom left */
     {"brcorn",	-1,	{0x2518, 0},	0},	/* ┘ bottom right */
     {"crwall",	-1,	{0x253C, 0},	0},	/* ┼ cross */
-    {"tuwall",	-1,	{0x2534, 0},	0},	/* T up */
+    {"tuwall",	-1,	{0x2534, 0},	0},	/* ┴ up */
     {"tdwall",	-1,	{0x252C, 0},	0},	/* T down */
-    {"tlwall",	-1,	{0x2524, 0},	0},	/* T left */
-    {"trwall",	-1,	{0x251C, 0},	0},	/* T right */
+    {"tlwall",	-1,	{0x2524, 0},	0},	/* ┤ left */
+    {"trwall",	-1,	{0x251C, 0},	0},	/* ├ right */
     {"pool",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"water",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"swamp",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"lava",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
     {"ndoor",	-1,	{0x00B7, 0},	0},	/* · centered dot */
-    {"vodoor",	-1,	{0x2588, 0},	0},	/* █ solid block */
-    {"hodoor",	-1,	{0x2588, 0},	0},	/* █ solid block */
+    {"vodoor",	-1,	{0x25A0, 0},	0},	/* ■ black square */
+    {"hodoor",	-1,	{0x25A0, 0},	0},	/* ■ black square */
     {"bars",	-1,	{0x2261, 0},	0},	/* ≡ equivalence symbol */
-    {"fountain",-1,	{0x2320, 0},	0},	/* ⌠ top half of integral */
+    {"tree",	-1,	{0x00B1, 0},	0},	/* ± plus-minus sign */
+    {"deadtree",-1,	{0x00B1, 0},	0},	/* ± plus-minus sign */
+    {"fountain",-1,	{0x00B6, 0},	0},	/* ¶ pilcrow sign */
     {"room",	-1,	{0x00B7, 0},	0},	/* · centered dot */
     {"darkroom",-1,	{0x00B7, 0},	0},	/* · centered dot */
     {"corr",	-1,	{0x2591, 0},	0},	/* ░ light shading */
@@ -73,32 +75,26 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"upsstair",-1,	{0x00AB, 0},	0},	/* « left-pointing double angle quotation mark */
     {"dnsstair",-1,	{0x00BB, 0},	0},	/* » right-pointing double angle quotation mark */
     {"altar",	-1,	{0x03A9, 0},	0},	/* Ω GREEK CAPITAL LETTER OMEGA */
-    {"grave",	-1,	{0x2020, 0},	0},	/* † DAGGER */
     {"ice",	-1,	{0x00B7, 0},	0},	/* · centered dot */
-    
+
     /* zap */
     {"zap_v",	-1,	{0x2502, 0},	0},	/* │ vertical rule */
     {"zap_h",	-1,	{0x2500, 0},	0},	/* ─ horizontal rule */
-    
-    /* swallow */
-    {"swallow_top_c",-1,{0x2594, 0},	0},	/* ▔ UPPER ONE EIGHTH BLOCK */
-    {"swallow_mid_l",-1,{0x258F, 0},	0},	/* ▏ LEFT ONE EIGHTH BLOCK */
-    {"swallow_mid_r",-1,{0x2595, 0},	0},	/* ▕ RIGHT ONE EIGHTH BLOCK */
-    {"swallow_bot_c",-1,{0x2581, 0},	0},	/* ▁ LOWER ONE EIGHTH BLOCK */
-    
-    /* explosion */
-    {"exp_top_c", -1,	{0x2594, 0},	0},	/* ▔ UPPER ONE EIGHTH BLOCK */
-    {"exp_mid_l", -1,	{0x258F, 0},	0},	/* ▏ LEFT ONE EIGHTH BLOCK */
-    {"exp_mid_r", -1,	{0x2595, 0},	0},	/* ▕ RIGHT ONE EIGHTH BLOCK */
-    {"exp_bot_c", -1,	{0x2581, 0},	0},	/* ▁ LOWER ONE EIGHTH BLOCK */
-    
-    /* traps */
-    {"web",	-1,	{0x00A4, 0},	0},	/* ¤ currency symbol */
 
-#if !defined(WIN32)
-    {"tree",	 -1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
-    {"deadtree", -1,	{0x03a8, 0},	0},	/* Ψ GREEK CAPITAL LETTER PSI */
-#endif
+    /* swallow */
+    {"swallow_top_c",-1,{0x2500, 0},	0},	/* ─ horizontal rule */
+    {"swallow_mid_l",-1,{0x2502, 0},	0},	/* │ vertical rule */
+    {"swallow_mid_r",-1,{0x2502, 0},	0},	/* │ vertical rule */
+    {"swallow_bot_c",-1,{0x2500, 0},	0},	/* ─ horizontal rule */
+
+    /* explosion */
+    {"exp_top_c", -1,	{0x2500, 0},	0},	/* ─ horizontal rule */
+    {"exp_mid_l", -1,	{0x2502, 0},	0},	/* │ vertical rule */
+    {"exp_mid_r", -1,	{0x2502, 0},	0},	/* │ vertical rule */
+    {"exp_bot_c", -1,	{0x2500, 0},	0},	/* ─ horizontal rule */
+
+    /* traps */
+    {"web",	-1,	{0x256C, 0},	0},	/* ╬ double cross */
 };
 
 
