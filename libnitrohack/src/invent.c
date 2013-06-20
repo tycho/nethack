@@ -162,6 +162,9 @@ int merged(struct obj **potmp, struct obj **pobj)
 		    otmp->age = ((otmp->age*otmp->quan) + (obj->age*obj->quan))
 			    / (otmp->quan + obj->quan);
 
+		/* merge known object properties */
+		otmp->oprops_known |= obj->oprops_known;
+
 		otmp->quan += obj->quan;
 		if (otmp->oclass == COIN_CLASS) otmp->owt = weight(otmp);
 		else otmp->owt += obj->owt;
@@ -1967,10 +1970,6 @@ static boolean mergable(struct obj *otmp, struct obj *obj)
 	if (obj->oxlth || otmp->oxlth) return FALSE;
 
 	if (obj->oprops != otmp->oprops) return FALSE;
-
-	if ((obj->oprops & (obj->oprops_known|ITEM_MAGICAL)) !=
-	    (otmp->oprops & (otmp->oprops_known|ITEM_MAGICAL)))
-	    return FALSE;
 
 	if (obj->oartifact != otmp->oartifact) return FALSE;
 
