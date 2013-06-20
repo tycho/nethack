@@ -354,7 +354,7 @@ static struct monst *restmonchn(struct memfile *mf, struct level *lev, boolean g
 
 static struct fruit *loadfruitchn(struct memfile *mf)
 {
-	struct fruit *flist = NULL, *fnext;
+	struct fruit *flist = NULL, *fnext, *fcurr, *fprev;
 	unsigned int count;
 
 	mfmagic_check(mf, FRUITCHAIN_MAGIC);
@@ -366,6 +366,18 @@ static struct fruit *loadfruitchn(struct memfile *mf)
 	    fnext->nextf = flist;
 	    flist = fnext;
 	}
+
+	/* fruit list loaded above is reversed, so put it back in the right order */
+	fcurr = flist;
+	fprev = NULL;
+	while (fcurr) {
+	    fnext = fcurr->nextf;
+	    fcurr->nextf = fprev;
+	    fprev = fcurr;
+	    fcurr = fnext;
+	}
+	flist = fprev;
+
 	return flist;
 }
 
