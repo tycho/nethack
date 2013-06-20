@@ -24,6 +24,8 @@ static void newgame(void);
 static void welcome(boolean);
 static void handle_lava_trap(boolean didmove);
 
+static boolean was_on_elbereth;
+
 
 static void wd_message(void)
 {
@@ -366,6 +368,7 @@ boolean nh_start_game(int fd, const char *name, int irole, int irace, int igend,
     log_newgame(fd, turntime, seed, playmode);
 
     newgame();
+    was_on_elbereth = !sengr_at("Elbereth", u.ux, u.uy); /* force botl update later */
     wd_message();
 
     api_exit();
@@ -464,7 +467,8 @@ enum nh_restore_status nh_restore_game(int fd, struct nh_window_procs *rwinprocs
 
     bot();
     flush_screen();
-    
+    was_on_elbereth = !sengr_at("Elbereth", u.ux, u.uy); /* force botl update later */
+
     welcome(FALSE);
     realtime_messages(TRUE, TRUE);
     update_inventory();
@@ -786,12 +790,21 @@ static void special_vision_handling(void)
 
 static void pre_move_tasks(boolean didmove)
 {
+    boolean is_on_elbereth = sengr_at("Elbereth", u.ux, u.uy);
+
     /* recalc attribute bonuses from items */
     calc_attr_bonus();
     find_ac();
+
     if (!flags.mv || Blind)
 	special_vision_handling();
-    
+
+    /* update "Elbereth" status */
+    if (was_on_elbereth != is_on_elbereth) {
+	was_on_elbereth = is_on_elbereth;
+	iflags.botl = 1;
+    }
+
     if (iflags.botl)
 	bot();
 
