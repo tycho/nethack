@@ -1220,7 +1220,8 @@ void display_self(void)
     
     if (u.usteed && mon_visible(u.usteed)) {
 	dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1,
-		 0, what_mon(obfuscate_monster(u.usteed->mnum)) + 1, MON_RIDDEN, 0);
+		 0, what_mon(obfuscate_monster(monsndx(u.usteed->data))) + 1,
+		 MON_RIDDEN, 0);
     } else if (youmonst.m_ap_type == M_AP_NOTHING) {
 	int monnum = (Upolyd || !iflags.showrace) ? obfuscate_monster(u.umonnum) :
 	             (flags.female && urace.femalenum != NON_PM) ? urace.femalenum :
