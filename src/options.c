@@ -3826,6 +3826,8 @@ const char *mapping;
 				   &iflags.autopickup_exceptions[AP_LEAVE];
 		ape = (struct autopickup_exception *)
 				alloc(sizeof(struct autopickup_exception));
+		ape->pattern = (char *) alloc(textsize+1);
+		Strcpy(ape->pattern, text2);
 		ape->is_regexp = iflags.ape_regex;
 		if (iflags.ape_regex) {
 		    int errnum;
@@ -3842,9 +3844,6 @@ const char *mapping;
 			free(ape);
 			return 0;
 		    }
-		} else {
-		    ape->pattern = (char *) alloc(textsize+1);
-		    Strcpy(ape->pattern, text2);
 		}
 		ape->grab = grab;
 		if (!*apehead) ape->next = (struct autopickup_exception *)0;
@@ -3870,10 +3869,9 @@ struct autopickup_exception *whichape;
 	    ape = ape->next;
 	    if (prev) prev->next = ape;
 	    else iflags.autopickup_exceptions[chain] = ape;
+	    free(freeape->pattern);
 	    if (freeape->is_regexp) {
 		(void) regfree(&freeape->match);
-	    } else {
-		free(freeape->pattern);
 	    }
 	    free(freeape);
 	} else {
@@ -3911,10 +3909,9 @@ free_autopickup_exceptions()
 
 	for (pass = AP_LEAVE; pass <= AP_GRAB; ++pass) {
 		while((ape = iflags.autopickup_exceptions[pass]) != 0) {
+		    free(ape->pattern);
 		    if (ape->is_regexp) {
 			(void) regfree(&ape->match);
-		    } else {
-			free(ape->pattern);
 		    }
 			iflags.autopickup_exceptions[pass] = ape->next;
 			free(ape);
