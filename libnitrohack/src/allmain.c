@@ -1037,11 +1037,11 @@ void stop_occupation(void)
 	    pline("You stop %s.", occtxt);
 	occupation = 0;
 	iflags.botl = 1; /* in case u.uhs changed */
-	nomul(0, NULL);
 	/* fainting stops your occupation, there's no reason to sync.
 	sync_hunger();
 	 */
     }
+    nomul(0, NULL); /* running, travel and autotravel don't count as occupations */
 }
 
 
