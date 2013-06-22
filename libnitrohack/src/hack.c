@@ -1870,16 +1870,19 @@ int domove(schar dx, schar dy, schar dz)
 		level->locations[x][y].seenv &&
 		!(flags.travel && iflags.autoexplore)) {
 
-		boolean warned_move = TRUE;
-		if (is_lava(level, x, y) && iflags.paranoid_lava) {
-		    pline("You stop for the lava!");
-		} else if (is_pool(level, x, y) && !HSwimming &&
-			   iflags.paranoid_water) {
-		    pline("You stop for the water!");
-		} else {
-		    warned_move = FALSE;
+		const char *stop_for = NULL;
+		if (iflags.paranoid_lava &&
+		    is_lava(level, x, y) && !is_lava(level, u.ux, u.uy)) {
+		    stop_for = "lava";
+		} else if (iflags.paranoid_water &&
+			   is_pool(level, x, y) && !is_pool(level, u.ux, u.uy)) {
+		    stop_for = "water";
+		} else if (iflags.paranoid_water &&
+			   is_swamp(level, x, y) && !is_swamp(level, u.ux, u.uy)) {
+		    stop_for = "muddy swamp";
 		}
-		if (warned_move) {
+		if (stop_for) {
+		    pline("You stop for the %s!", stop_for);
 		    if (flags.verbose)
 			pline("(Use m-direction to move there anyway.)");
 		    nomul(0, NULL);
