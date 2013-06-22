@@ -203,6 +203,20 @@ void reset_occupations(void)
 	reset_trapset();
 }
 
+void save_occupations(struct memfile *mf)
+{
+	save_remarm(mf);
+	save_pick(mf);
+	save_trapset(mf);
+}
+
+void restore_occupations(struct memfile *mf)
+{
+	restore_remarm(mf);
+	restore_pick(mf);
+	restore_trapset(mf);
+}
+
 /* If a time is given, use it to timeout this function, otherwise the
  * function times out by its own means.
  */

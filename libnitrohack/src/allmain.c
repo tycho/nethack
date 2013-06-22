@@ -225,13 +225,14 @@ void startup_common(const char *name, int playmode)
     reset_steal();
     reset_dig_status();
     reset_encumber_msg();
-    
+    reset_occupations();
+
     /* create mutable copies of object and artifact liss */
     init_objlist();
     init_artilist();
     reset_rndmonst(NON_PM);
     free_dungeon(); /* clean up stray dungeon data */
-    
+
     program_state.game_running = 0;
     initoptions();
 

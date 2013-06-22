@@ -2173,6 +2173,34 @@ void reset_remarm(void)
 	disrobing = NULL;
 }
 
+void save_remarm(struct memfile *mf)
+{
+	mwrite32(mf, taking_off);
+	mwrite32(mf, takeoff_mask);
+	mwrite8(mf, !disrobing ? 0 :
+		    !strcmp(disrobing, "disrobing") ? 1 :
+		    !strcmp(disrobing, "disarming") ? 2 : -1);
+}
+
+void restore_remarm(struct memfile *mf)
+{
+	taking_off = mread32(mf);
+	takeoff_mask = mread32(mf);
+	switch (mread8(mf)) {
+	case 1:
+	    disrobing = "disrobing";
+	    break;
+	case 2:
+	    disrobing = "disarming";
+	    break;
+	case 0:
+	case -1:
+	default:
+	    disrobing = NULL;
+	    break;
+	}
+}
+
 /* the 'A' command -- remove multiple worn items */
 int doddoremarm(void)
 {

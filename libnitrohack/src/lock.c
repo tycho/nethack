@@ -11,6 +11,7 @@ static struct xlock_s {
 	struct rm  *door;
 	struct obj *box;
 	int picktyp, chance, usedtime;
+	schar door_x, door_y; /* *only* for restoring, never valid otherwise */
 } xlock;
 
 static schar picklock_dx, picklock_dy;
@@ -215,12 +216,71 @@ static int forcelock(void)
 	return (xlock.usedtime = 0);
 }
 
-
 void reset_pick(void)
 {
 	xlock.usedtime = xlock.chance = xlock.picktyp = 0;
 	xlock.door = 0;
 	xlock.box = 0;
+
+	picklock_dx = picklock_dy = 0;
+}
+
+void save_pick(struct memfile *mf)
+{
+	schar door_x = 0;
+	schar door_y = 0;
+	unsigned int box_id = 0;
+
+	/* avoid dereferencing dangling pointers here */
+	if (xlock.usedtime) {
+	    if (xlock.door) {
+		/* make sure the door is on the current level */
+		if (&level->locations[0][0] <= xlock.door &&
+		    xlock.door < &level->locations[COLNO][ROWNO]) {
+		    door_x = (&level->locations[0][0] - xlock.door) % COLNO;
+		    door_y = (&level->locations[0][0] - xlock.door) / COLNO;
+		}
+	    } else {
+		box_id = xlock.box->o_id;
+	    }
+	}
+
+	mwrite32(mf, xlock.picktyp);
+	mwrite32(mf, xlock.chance);
+	mwrite32(mf, xlock.usedtime);
+	mwrite8(mf, door_x);
+	mwrite8(mf, door_y);
+	mwrite32(mf, box_id);
+
+	mwrite8(mf, picklock_dx);
+	mwrite8(mf, picklock_dy);
+}
+
+void restore_pick(struct memfile *mf)
+{
+	unsigned int box_id;
+
+	xlock.picktyp = mread32(mf);
+	xlock.chance = mread32(mf);
+	xlock.usedtime = mread32(mf);
+
+	/* used by restore_pick_fix() to restore xlock.door */
+	xlock.door_x = mread8(mf);
+	xlock.door_y = mread8(mf);
+
+	box_id = mread32(mf);
+	xlock.box = box_id ? find_oid(box_id) : NULL;
+
+	picklock_dx = mread8(mf);
+	picklock_dy = mread8(mf);
+}
+
+/* restore xlock.door pointer from partial data gathered by restore_pick() */
+/* must be called after 'level' has been set, since xlock.door points within it */
+void restore_pick_fix(void)
+{
+	if (xlock.usedtime && !xlock.box)
+	    xlock.door = &level->locations[xlock.door_x][xlock.door_y];
 }
 
 /* pick a lock with a given object */

@@ -1757,6 +1757,28 @@ void reset_trapset(void)
 	trapinfo.force_bungle = 0;
 }
 
+void save_trapset(struct memfile *mf)
+{
+	mwrite32(mf, trapinfo.tobj ? trapinfo.tobj->o_id : 0);
+	mwrite8(mf, trapinfo.tx);
+	mwrite8(mf, trapinfo.ty);
+	mwrite32(mf, trapinfo.time_needed);
+	mwrite8(mf, trapinfo.force_bungle);
+}
+
+void restore_trapset(struct memfile *mf)
+{
+	unsigned int tobj_id;
+
+	tobj_id = mread32(mf);
+	trapinfo.tobj = tobj_id ? find_oid(tobj_id) : NULL;
+
+	trapinfo.tx = mread8(mf);
+	trapinfo.ty = mread8(mf);
+	trapinfo.time_needed = mread32(mf);
+	trapinfo.force_bungle = mread8(mf);
+}
+
 /* touchstones - by Ken Arnold */
 static void use_stone(struct obj *tstone)
 {

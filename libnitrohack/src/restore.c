@@ -513,6 +513,7 @@ static void restgamestate(struct memfile *mf)
 	restore_food(mf);
 	restore_steal(mf);
 	restore_dig_status(mf);
+	restore_occupations(mf);
 	bookid = mread32(mf);
 	if (bookid)
 	    book = find_oid(bookid);
@@ -659,6 +660,7 @@ int dorecover(struct memfile *mf)
 	/* all data has been read, prepare for player */
 	level = levels[ledger_no(&u.uz)];
 
+	restore_pick_fix(); /* set xlock.door from restored game state */
 	max_rank_sz(); /* to recompute mrank_sz (botl.c) */
 	/* take care of iron ball & chain */
 	for (otmp = level->objlist; otmp; otmp = otmp->nobj)
