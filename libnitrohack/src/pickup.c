@@ -1371,7 +1371,7 @@ static boolean mon_beside(int x, int y)
 /* loot a container on the floor or loot saddle from mon. */
 int doloot(void)
 {
-    struct obj *cobj, *nobj;
+    struct obj *cobj, *nobj, *pobj;
     int c = -1;
     int timepassed = 0;
     coord cc;
@@ -1417,6 +1417,26 @@ lootcont:
 
 		if (cobj->olocked) {
 		    pline("Hmmm, it seems to be locked.");
+		    if (flags.autounlock) {
+			pobj = NULL;
+			if (cobj->otyp == IRON_SAFE) {
+			    pobj = carrying(STETHOSCOPE);
+			} else {
+			    pobj = carrying(SKELETON_KEY);
+			    if (!pobj) pobj = carrying(LOCK_PICK);
+			    if (!pobj) pobj = carrying(CREDIT_CARD);
+			}
+			if (pobj) {
+			    if (pick_lock(pobj, cc.x, cc.y, TRUE)) {
+				/* Non-zero return technically only means it
+				 * took time, but it also conveniently means
+				 * that unlocking is beginning to take place,
+				 * so duck out of this container loop in that
+				 * case. */
+				return 1;
+			    }
+			}
+		    }
 		    continue;
 		}
 		if (cobj->otyp == BAG_OF_TRICKS && cobj->spe > 0) {
