@@ -233,7 +233,7 @@ int pick_lock(struct obj *pick, int rx, int ry, boolean explicit)
 	struct rm	*door;
 	struct obj	*otmp;
 	char qbuf[QBUFSZ];
-	schar dx, dy, dz;
+	schar dx, dy, dz = 0;
 
 	picktyp = pick->otyp;
 
