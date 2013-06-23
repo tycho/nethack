@@ -152,13 +152,16 @@ getlock()
 		if(iflags.window_inited) {
 		    c = yn("There is already a game in progress under your name.  Destroy old game?");
 		} else {
+		    int tmpc;
 		    (void) printf("\nThere is already a game in progress under your name.");
 		    (void) printf("  Destroy old game? [yn] ");
 		    (void) fflush(stdout);
 		    c = getchar();
 		    (void) putchar(c);
 		    (void) fflush(stdout);
-		    while (getchar() != '\n') ; /* eat rest of line and newline */
+		    do {
+			tmpc = getchar();
+		    } while (tmpc != '\n' && tmpc != -1); /* eat rest of line and newline */
 		}
 		if(c == 'y' || c == 'Y')
 			if(eraseoldlocks())

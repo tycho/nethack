@@ -171,10 +171,6 @@ char *argv[];
 	 * It seems you really want to play.
 	 */
 	u.uhp = 1;	/* prevent RIP on early quits */
-	(void) signal(SIGHUP, (SIG_RET_TYPE) hangup);
-#ifdef SIGXCPU
-	(void) signal(SIGXCPU, (SIG_RET_TYPE) hangup);
-#endif
 
 	process_options(argc, argv);	/* command line options */
 
@@ -213,6 +209,7 @@ char *argv[];
 		 */
 		(void) signal(SIGQUIT,SIG_IGN);
 		(void) signal(SIGINT,SIG_IGN);
+		(void) signal(SIGHUP,SIG_IGN);
 		if(!locknum)
 			Sprintf(lock, "%d%s", (int)getuid(), plname);
 		getlock();
@@ -222,6 +219,11 @@ char *argv[];
 		getlock();
 	}
 #endif /* WIZARD */
+
+	(void) signal(SIGHUP, (SIG_RET_TYPE) hangup);
+#ifdef SIGXCPU
+	(void) signal(SIGXCPU, (SIG_RET_TYPE) hangup);
+#endif
 
 	dlb_init();	/* must be before newgame() */
 
