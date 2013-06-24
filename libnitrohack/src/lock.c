@@ -11,6 +11,7 @@ static struct xlock_s {
 	struct rm  *door;
 	struct obj *box;
 	int picktyp, chance, usedtime;
+	boolean loot_unlocked;
 	schar door_x, door_y; /* *only* for restoring, never valid otherwise */
 } xlock;
 
@@ -128,8 +129,10 @@ static int picklock(void)
 	    }
 	} else {
 	    xlock.box->olocked = !xlock.box->olocked;
-	    if (xlock.box->otrapped)	
+	    if (xlock.box->otrapped)
 		chest_trap(xlock.box, FINGER, FALSE);
+	    else if (!xlock.box->olocked && xlock.loot_unlocked)
+		use_container(xlock.box, 0);
 	}
 	exercise(A_DEX, TRUE);
 	return (xlock.usedtime = 0);
@@ -219,6 +222,7 @@ static int forcelock(void)
 void reset_pick(void)
 {
 	xlock.usedtime = xlock.chance = xlock.picktyp = 0;
+	xlock.loot_unlocked = FALSE;
 	xlock.door = 0;
 	xlock.box = 0;
 
@@ -248,6 +252,7 @@ void save_pick(struct memfile *mf)
 	mwrite32(mf, xlock.picktyp);
 	mwrite32(mf, xlock.chance);
 	mwrite32(mf, xlock.usedtime);
+	mwrite8(mf, xlock.loot_unlocked);
 	mwrite8(mf, door_x);
 	mwrite8(mf, door_y);
 	mwrite32(mf, box_id);
@@ -263,6 +268,7 @@ void restore_pick(struct memfile *mf)
 	xlock.picktyp = mread32(mf);
 	xlock.chance = mread32(mf);
 	xlock.usedtime = mread32(mf);
+	xlock.loot_unlocked = mread8(mf);
 
 	/* used by restore_pick_fix() to restore xlock.door */
 	xlock.door_x = mread8(mf);
@@ -285,7 +291,8 @@ void restore_pick_fix(void)
 
 /* pick a lock with a given object */
 /* explicit = mention tool being used explicitly */
-int pick_lock(struct obj *pick, int rx, int ry, boolean explicit)
+/* loot_after = #loot after successfully unlocking a box */
+int pick_lock(struct obj *pick, int rx, int ry, boolean explicit, boolean loot_after)
 {
 	/* rx and ry are passed only from the use-stethoscope stuff */
 	int picktyp, c, ch;
@@ -428,6 +435,7 @@ int pick_lock(struct obj *pick, int rx, int ry, boolean explicit)
 		    xlock.picktyp = picktyp;
 		    xlock.box = otmp;
 		    xlock.door = 0;
+		    xlock.loot_unlocked = loot_after;
 		    break;
 		}
 	    if (c != 'y') {
@@ -513,6 +521,7 @@ int pick_lock(struct obj *pick, int rx, int ry, boolean explicit)
 		    }
 		    xlock.door = door;
 		    xlock.box = 0;
+		    xlock.loot_unlocked = FALSE;
 
 		    /* ALI - Artifact doors */
 		    if (artifact_door(level, cc.x, cc.y)) {
@@ -685,7 +694,7 @@ int doopen(int dx, int dy, int dz)
 		    ((otmp = carrying(SKELETON_KEY)) ||
 		     (otmp = carrying(LOCK_PICK)) ||
 		     (otmp = carrying(CREDIT_CARD))))
-		    return pick_lock(otmp, cc.x, cc.y, TRUE);
+		    return pick_lock(otmp, cc.x, cc.y, TRUE, FALSE);
 	    }
 	    return 0;
 	}

@@ -1427,7 +1427,7 @@ lootcont:
 			    if (!pobj) pobj = carrying(CREDIT_CARD);
 			}
 			if (pobj) {
-			    if (pick_lock(pobj, cc.x, cc.y, TRUE)) {
+			    if (pick_lock(pobj, cc.x, cc.y, TRUE, TRUE)) {
 				/* Non-zero return technically only means it
 				 * took time, but it also conveniently means
 				 * that unlocking is beginning to take place,

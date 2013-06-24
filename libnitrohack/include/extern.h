@@ -757,7 +757,7 @@ extern void reset_pick(void);
 extern void save_pick(struct memfile *mf);
 extern void restore_pick(struct memfile *mf);
 extern void restore_pick_fix(void);
-extern int pick_lock(struct obj *,int,int,boolean);
+extern int pick_lock(struct obj *,int,int,boolean,boolean);
 extern int doforce(void);
 extern boolean boxlock(struct obj *,struct obj *);
 extern boolean doorlock(struct obj *,int,int);
