@@ -1536,6 +1536,7 @@ static void print_branch(struct menulist *menu, int dnum, int lower_bound,
 		add_menuitem(menu, lchoices->idx + 1, buf,
 			     lchoices->menuletter, FALSE);
 		if (lchoices->menuletter == 'z') lchoices->menuletter = 'A';
+		else if (lchoices->menuletter == 'Z') lchoices->menuletter = 'a';
 		else lchoices->menuletter++;
 		lchoices->idx++;
 	    } else
@@ -1611,8 +1612,8 @@ schar print_dungeon(boolean bymenu, schar *rlev, xchar *rdgn)
 		lchoices.playerlev[lchoices.idx] = depth(&slev->dlevel);
 		
 		add_menuitem(&menu, lchoices.idx + 1, buf, lchoices.menuletter, FALSE);
-		if (lchoices.menuletter == 'z')
-		    lchoices.menuletter = 'A';
+		if (lchoices.menuletter == 'z') lchoices.menuletter = 'A';
+		else if (lchoices.menuletter == 'Z') lchoices.menuletter = 'a';
 		else lchoices.menuletter++;
 		lchoices.idx++;
 	    } else
