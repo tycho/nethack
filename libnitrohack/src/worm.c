@@ -439,8 +439,8 @@ void detect_wsegs(struct monst *worm, boolean use_detection_glyph)
 
     while (curr != level->wheads[worm->wormno]) {
 	dflag = use_detection_glyph ? MON_DETECTED : 0;
-	dbuf_set(level, curr->wx, curr->wy, S_unexplored, 0, 0, 0, 0, 0, 0,
-		 PM_LONG_WORM_TAIL + 1, dflag, 0);
+	dbuf_set(level, curr->wx, curr->wy, NULL, S_unexplored, 0, 0, 0, 0, 0,
+		 0, PM_LONG_WORM_TAIL + 1, dflag, 0);
 	curr = curr->nseg;
     }
 }

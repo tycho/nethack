@@ -541,7 +541,7 @@ int monster_detect(struct obj *otmp,	/* detecting object (if any) */
 	    if (!mclass || mtmp->data->mlet == mclass ||
 		(mtmp->data == &mons[PM_LONG_WORM] && mclass == S_WORM_TAIL))
 		    if (mtmp->mx > 0) {
-			dbuf_set(level, mtmp->mx, mtmp->my, S_unexplored,
+			dbuf_set(level, mtmp->mx, mtmp->my, NULL, S_unexplored,
 				 0, 0, 0, 0, 0,
 				 0, dbuf_monid(mtmp), 0, 0);
 			/* don't be stingy - display entire worm */

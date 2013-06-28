@@ -1902,7 +1902,7 @@ static void start_engulf(struct monst *mdef)
 		y = mdef->my;
 		map_location(u.ux, u.uy, TRUE);
 
-		dbuf_set(level, x, y, -1, -1, -1, -1, -1, -1,
+		dbuf_set(level, x, y, NULL, -1, -1, -1, -1, -1, -1,
 			 0, dbuf_monid((&youmonst)), 0, 0);
 	}
 	pline("You engulf %s!", mon_nam(mdef));

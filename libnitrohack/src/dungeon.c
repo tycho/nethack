@@ -2104,7 +2104,7 @@ int dooverview(void)
 	/* set the display buffer from the remembered  */
 	for (y = 0; y < ROWNO; y++)
 	    for (x = 0; x < COLNO; x++)
-		dbuf_set(lev, x, y, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0);
+		dbuf_set(lev, x, y, NULL, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0);
 	
 	overview_print_lev(buf, lev);
 	pline("Now viewing %s%s.  Press any key to return.",

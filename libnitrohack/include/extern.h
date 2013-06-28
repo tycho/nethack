@@ -237,6 +237,7 @@ extern int doredraw(void);
 extern int obfuscate_object(int otyp);
 extern int obfuscate_monster(int mndx);
 extern void dbuf_set(const struct level *lev, int x, int y,
+		     const struct rm *loc_override,
 		     int bg, int trap,
 		     int obj, int obj_mn, int obj_stacks, int obj_sokoprize,
 		     int invis, int mon, int monflags,
