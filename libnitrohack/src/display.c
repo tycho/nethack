@@ -1506,12 +1506,57 @@ void dbuf_set(const struct level *lev, int x, int y,
 }
 
 
+int dbuf_get_bg(int x, int y)
+{
+    if (!isok(x, y))
+	return 0;
+
+    return dbuf[y][x].bg;
+}
+
+
+int dbuf_get_trap(int x, int y)
+{
+    if (!isok(x, y))
+	return 0;
+
+    return dbuf[y][x].trap;
+}
+
+
+int dbuf_get_obj(int x, int y)
+{
+    if (!isok(x, y))
+	return 0;
+
+    return dbuf[y][x].obj;
+}
+
+
+short dbuf_get_objflags(int x, int y)
+{
+    if (!isok(x, y))
+	return 0;
+
+    return dbuf[y][x].objflags;
+}
+
+
 int dbuf_get_mon(int x, int y)
 {
     if (!isok(x, y))
 	return 0;
-    
+
     return dbuf[y][x].mon;
+}
+
+
+boolean dbuf_get_invis(int x, int y)
+{
+    if (!isok(x, y))
+	return 0;
+
+    return dbuf[y][x].invis;
 }
 
 

@@ -243,7 +243,12 @@ extern void dbuf_set(const struct level *lev, int x, int y,
 		     int invis, int mon, int monflags,
 		     int effect);
 extern void dbuf_set_effect(int x, int y, int eglyph);
+extern int dbuf_get_bg(int x, int y);
+extern int dbuf_get_trap(int x, int y);
+extern int dbuf_get_obj(int x, int y);
+extern short dbuf_get_objflags(int x, int y);
 extern int dbuf_get_mon(int x, int y);
+extern boolean dbuf_get_invis(int x, int y);
 extern boolean warning_at(int x, int y);
 extern void clear_display_buffer(void);
 extern void cls(void);

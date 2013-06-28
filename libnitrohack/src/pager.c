@@ -10,7 +10,7 @@
 static int append_str(char *buf, const char *new_str, int is_plur);
 static void mon_vision_summary(const struct monst *mtmp, char *outbuf);
 static void describe_bg(int x, int y, int bg, char *buf);
-static int describe_object(int x, int y, int votyp, char *buf);
+static int describe_object(int x, int y, int votyp, boolean vostacks, char *buf);
 static void describe_mon(int x, int y, int monnum, char *buf);
 static void checkfile(const char *inp, struct permonst *, boolean, boolean);
 static int do_look(boolean);
@@ -207,7 +207,7 @@ static void describe_bg(int x, int y, int bg, char *buf)
 }
 
 
-static int describe_object(int x, int y, int votyp, char *buf)
+static int describe_object(int x, int y, int votyp, boolean vostacks, char *buf)
 {
     int num_objs = 0;
     struct obj *otmp;
@@ -251,10 +251,10 @@ static int describe_object(int x, int y, int votyp, char *buf)
 	}
     } else
 	strcpy(buf, distant_name(otmp, xname));
-    
-    if (level->locations[x][y].mem_obj_stacks)
+
+    if (vostacks)
 	strcat(buf, " and more");
-    
+
     if (level->locations[x][y].typ == STONE || level->locations[x][y].typ == SCORR)
 	strcat(buf, " embedded in stone");
     else if (IS_WALL(level->locations[x][y].typ) || level->locations[x][y].typ == SDOOR)
@@ -385,8 +385,11 @@ static void describe_mon(int x, int y, int monnum, char *buf)
 
 void nh_describe_pos(int x, int y, struct nh_desc_buf *bufs)
 {
+    int bgid = dbuf_get_bg(x, y);
+    int trapid = dbuf_get_trap(x, y);
+    int objid = dbuf_get_obj(x, y);
     int monid = dbuf_get_mon(x, y);
-    
+
     bufs->bgdesc[0] = '\0';
     bufs->trapdesc[0] = '\0';
     bufs->objdesc[0] = '\0';
@@ -394,13 +397,13 @@ void nh_describe_pos(int x, int y, struct nh_desc_buf *bufs)
     bufs->invisdesc[0] = '\0';
     bufs->effectdesc[0] = '\0';
     bufs->objcount = -1;
-    
+
     if (!program_state.game_running || !api_entry_checkpoint())
 	return;
-    
-    describe_bg(x, y, level->locations[x][y].mem_bg, bufs->bgdesc);
-    
-    if (level->locations[x][y].mem_trap) {
+
+    describe_bg(x, y, bgid, bufs->bgdesc);
+
+    if (trapid) {
 	/* Avoid "monster trapped in a web on a web" from describe_mon(). */
 	const struct monst *mtmp;
 	const struct trap *t;
@@ -412,22 +415,24 @@ void nh_describe_pos(int x, int y, struct nh_desc_buf *bufs)
 		(t = t_at(level, x, y)) &&		/* trap at location */
 		(t->ttyp == BEAR_TRAP || t->ttyp == PIT ||
 		 t->ttyp == SPIKED_PIT || t->ttyp == WEB)))
-	    strcpy(bufs->trapdesc, trapexplain[level->locations[x][y].mem_trap - 1]);
+	    strcpy(bufs->trapdesc, trapexplain[trapid - 1]);
     }
-    
-    bufs->objcount = describe_object(x, y, level->locations[x][y].mem_obj - 1,
+
+    bufs->objcount = describe_object(x, y, objid - 1,
+				     dbuf_get_objflags(x, y) & DOBJ_STACKS,
 				     bufs->objdesc);
-    
+
     describe_mon(x, y, monid - 1, bufs->mondesc);
-    
-    if (level->locations[x][y].mem_invis)
+
+    if (dbuf_get_invis(x, y))
 	strcpy(bufs->invisdesc, invisexplain);
-    
+
     if (u.uswallow && (x != u.ux || y != u.uy)) {
 	/* all locations when swallowed other than the hero are the monster */
-	sprintf(bufs->effectdesc, "interior of %s", Blind ? "a monster" : a_monnam(u.ustuck));
+	sprintf(bufs->effectdesc, "interior of %s",
+		Blind ? "a monster" : a_monnam(u.ustuck));
     }
-    
+
     api_exit();
 }
 
