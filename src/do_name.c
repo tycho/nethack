@@ -1071,6 +1071,7 @@ static const char * const bogusmons[] = {
         "gazebo",
         "gonzo journalist",
         "gray goo", "magnetic monopole",
+	"ooblecks",
         "heisenbug",
         "lag monster",
         "loan shark",
@@ -1131,7 +1132,7 @@ static const char * const bogusmons[] = {
         "manbearpig",                           /* South Park */
         "ceiling cat", "basement cat",
         "monorail cat",                         /* the Internet is made for cat pix */
-        "rape golem",                           /* schnippi */
+        /*"rape golem",*/                           /* schnippi */
         "tridude",                              /* POWDER */
         "orcus cosmicus",                       /* Radomir Dopieralski */
         "yeek", "quylthulg",
@@ -1151,6 +1152,7 @@ static const char * const bogusmons[] = {
 	"ghoti",
 	"regex engine",
 	"netsplit",
+	"wiki",
 	"peer",
 	"pigasus",
 	"Semigorgon",
