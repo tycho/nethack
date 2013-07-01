@@ -78,7 +78,7 @@ static void split_sidebar(int *invheight, int *flheight)
 void draw_sidebar_divider(void)
 {
     int invheight, flheight, sbwidth;
-    int frame_attr;
+    attr_t frame_attr;
 
     if (!flooritems || !inventory)
 	return;
@@ -87,13 +87,9 @@ void draw_sidebar_divider(void)
     sbwidth = getmaxx(sidebar);
 
     frame_attr = frame_hp_color();
-    if (frame_attr != -1)
-	wattron(sidebar, frame_attr);
-
+    wattron(sidebar, frame_attr);
     mvwhline(sidebar, invheight, 0, ACS_HLINE, sbwidth);
-
-    if (frame_attr != -1)
-	wattroff(sidebar, frame_attr);
+    wattroff(sidebar, frame_attr);
 }
 
 

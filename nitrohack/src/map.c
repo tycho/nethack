@@ -81,7 +81,8 @@ void curses_update_screen(struct nh_dbuf_entry dbuf[ROWNO][COLNO], int ux, int u
 
 void draw_map(int cx, int cy)
 {
-    int x, y, symcount, attr, cursx, cursy;
+    int x, y, symcount, cursx, cursy;
+    attr_t attr;
     unsigned int frame;
     struct curses_symdef syms[4];
     

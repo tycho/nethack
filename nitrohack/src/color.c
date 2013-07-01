@@ -164,10 +164,10 @@ void init_nhcolors(void)
 }
 
 
-int curses_color_attr(int nh_color, int bg_color)
+attr_t curses_color_attr(int nh_color, int bg_color)
 {
     int color = nh_color + 1;
-    int cattr = A_NORMAL;
+    attr_t cattr = A_NORMAL;
 
     if (color_map.fgColors[nh_color] == COLOR_BLACK && settings.darkgray)
 	cattr |= A_BOLD;

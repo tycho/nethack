@@ -158,12 +158,13 @@ void draw_msgwin(void)
 
 static void more(void)
 {
-    int key, attr = A_NORMAL;
+    int key;
     int cursx, cursy;
-    
+    attr_t attr = A_NORMAL;
+
     if (settings.standout)
 	attr = A_STANDOUT;
-    
+
     if (getmaxy(msgwin) == 1) {
 	wmove(msgwin, getmaxy(msgwin)-1, COLNO-8);
 	wattron(msgwin, attr);

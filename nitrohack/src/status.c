@@ -42,7 +42,7 @@ static int status_change_color(int old1, int old2, int new1, int new2)
 }
 
 
-static void status_change_color_on(int *col, int *attr,
+static void status_change_color_on(int *col, attr_t *attr,
 				   int old1, int old2, int new1, int new2)
 {
     *col = status_change_color(old1, old2, new1, new2);
@@ -53,7 +53,7 @@ static void status_change_color_on(int *col, int *attr,
 }
 
 
-static void status_change_color_off(int col, int attr)
+static void status_change_color_off(int col, attr_t attr)
 {
     if (col)
 	wattroff(statuswin, attr);
@@ -62,7 +62,8 @@ static void status_change_color_off(int col, int attr)
 
 static void print_statdiff(const char *prefix, const char *fmt, int oldv, int newv)
 {
-    int col, attr;
+    int col;
+    attr_t attr;
 
     if (prefix && prefix[0])
 	waddstr(statuswin, prefix);
@@ -74,7 +75,8 @@ static void print_statdiff(const char *prefix, const char *fmt, int oldv, int ne
 
 static void print_statdiffr(const char *prefix, const char *fmt, int oldv, int newv)
 {
-    int col, attr;
+    int col;
+    attr_t attr;
 
     if (prefix && prefix[0])
 	waddstr(statuswin, prefix);
@@ -108,7 +110,8 @@ static int percent_color(int val_cur, int val_max)
 
 static void draw_string_bar(const char *str, int val_cur, int val_max)
 {
-    int i, len, fill_len, colorattr;
+    int i, len, fill_len;
+    attr_t colorattr;
 
     /* Allow trailing spaces, but only after the bar. */
     len = strlen(str);
@@ -158,7 +161,8 @@ static void draw_statuses(const struct nh_player_info *pi)
     const int neutral = CLR_BRIGHT_CYAN;
     const int notice = CLR_YELLOW;
     const int alert = CLR_ORANGE;
-    int i, j, len, colorattr;
+    int i, j, len;
+    attr_t colorattr;
 
     for (i = 0; i < pi->nr_items; i++) {
 	const char *st = pi->statusitems[i];
@@ -211,7 +215,8 @@ static void draw_statuses(const struct nh_player_info *pi)
 static void draw_time(const struct nh_player_info *pi)
 {
     const struct nh_player_info *oldpi = &old_player;
-    int movediff, colorattr;
+    int movediff;
+    attr_t colorattr;
     nh_bool colorchange;
 
     if (!settings.time)
@@ -249,7 +254,8 @@ static void draw_time(const struct nh_player_info *pi)
 static void classic_status(struct nh_player_info *pi)
 {
     char buf[COLNO];
-    int stat_ch_col, colorattr;
+    int stat_ch_col;
+    attr_t colorattr;
     const struct nh_player_info *oldpi = &old_player;
 
     /* line 1 */
@@ -329,8 +335,9 @@ static void classic_status(struct nh_player_info *pi)
 static void draw_bar(int barlen, int val_cur, int val_max, const char *prefix)
 {
     char str[COLNO], bar[COLNO];
-    int fill_len = 0, bl, colorattr;
-    
+    int fill_len = 0, bl;
+    attr_t colorattr;
+
     bl = barlen-2;
     if (val_max > 0 && val_cur > 0)
 	fill_len = bl * val_cur / val_max;
@@ -358,7 +365,8 @@ static void status3(struct nh_player_info *pi)
 {
     char buf[COLNO];
     int namelen;
-    int stat_ch_col, colorattr;
+    int stat_ch_col;
+    attr_t colorattr;
     const struct nh_player_info *oldpi = &old_player;
 
     /* line 1 */

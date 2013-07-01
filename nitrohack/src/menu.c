@@ -100,7 +100,8 @@ void draw_menu(struct gamewin *gw)
     struct nh_menuitem *item;
     char caption[BUFSZ];
     char *colstrs[MAXCOLS];
-    int i, j, col, scrlheight, scrlpos, scrltop, attr;
+    int i, j, col, scrlheight, scrlpos, scrltop;
+    attr_t attr;
     char *tab;
     
     wattron(gw->win, FRAME_ATTRS);
@@ -506,11 +507,12 @@ static void layout_objmenu(struct gamewin *gw)
 void draw_objlist(WINDOW *win, int icount, struct nh_objitem *items,
 		  int *selected, int how)
 {
-    int i, maxitem, txtattr, width, pos;
-    
+    int i, maxitem, width, pos;
+    attr_t txtattr;
+
     width = getmaxx(win);
     werase(win);
-    
+
     /* draw menu items */
     maxitem = min(getmaxy(win), icount);
     for (i = 0; i < maxitem; i++) {
@@ -574,8 +576,9 @@ void draw_objlist(WINDOW *win, int icount, struct nh_objitem *items,
 static void draw_objmenu(struct gamewin *gw)
 {
     struct win_objmenu *mdat = (struct win_objmenu*)gw->extra;
-    int i, scrlheight, scrlpos, scrltop, attr;
-    
+    int i, scrlheight, scrlpos, scrltop;
+    attr_t attr;
+
     wattron(gw->win, FRAME_ATTRS);
     box(gw->win, 0 , 0);
     wattroff(gw->win, FRAME_ATTRS);

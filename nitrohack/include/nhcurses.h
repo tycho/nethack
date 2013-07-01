@@ -286,7 +286,7 @@ extern const char *nhlogo_small[12], *nhlogo_large[12];
 
 /* color.c */
 extern void init_nhcolors(void);
-extern int curses_color_attr(int nh_color, int bg_color);
+extern attr_t curses_color_attr(int nh_color, int bg_color);
 extern void set_darkgray(void);
 extern int darken(int nh_color);
 
@@ -370,7 +370,7 @@ extern int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms,
 extern void set_rogue_level(nh_bool enable);
 extern void switch_graphics(enum nh_text_mode mode);
 extern void print_sym(WINDOW *win, struct curses_symdef *sym,
-		      int extra_attrs, int bg_color);
+		      attr_t extra_attrs, int bg_color);
 extern void curses_notify_level_changed(int dmode);
 
 /* playerselect.c */
@@ -408,7 +408,7 @@ extern void show_topten(char *player, int top, int around, nh_bool own);
 /* windows.c */
 extern void init_curses_ui(void);
 extern void exit_curses_ui(void);
-extern int frame_hp_color(void);
+extern attr_t frame_hp_color(void);
 extern void redraw_frame(void);
 extern void create_game_windows(void);
 extern void destroy_game_windows(void);

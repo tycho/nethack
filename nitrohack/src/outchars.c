@@ -663,9 +663,9 @@ void switch_graphics(enum nh_text_mode mode)
 
 
 void print_sym(WINDOW *win, struct curses_symdef *sym,
-	       int extra_attrs, int bg_color)
+	       attr_t extra_attrs, int bg_color)
 {
-    int attr;
+    attr_t attr;
     cchar_t uni_out;
 
     /* nitrohack color index -> curses color */

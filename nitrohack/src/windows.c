@@ -103,21 +103,22 @@ void exit_curses_ui(void)
 }
 
 
-int frame_hp_color(void)
+attr_t frame_hp_color(void)
 {
-    int attr = -1;
+    int color = -1;
+    attr_t attr = A_NORMAL;
 
     if (settings.frame_hp_color && ui_flags.ingame && player.x) {
 	int percent = 100;
 	if (player.hpmax > 0)
 	    percent = 100 * player.hp / player.hpmax;
 
-	if (percent < 25) attr = CLR_RED;
-	else if (percent < 50) attr = CLR_ORANGE;
-	else if (percent < 75) attr = CLR_YELLOW;
+	if (percent < 25) color = CLR_RED;
+	else if (percent < 50) color = CLR_ORANGE;
+	else if (percent < 75) color = CLR_YELLOW;
 
-	if (attr != -1)
-	    attr = curses_color_attr(attr, 0);
+	if (color != -1)
+	    attr = curses_color_attr(color, 0);
     }
 
     return attr;
@@ -126,14 +127,13 @@ int frame_hp_color(void)
 
 static void draw_frame(void)
 {
-    int frame_attr;
+    attr_t frame_attr;
 
     if (!ui_flags.draw_frame)
 	return;
 
     frame_attr = frame_hp_color();
-    if (frame_attr != -1)
-	wattron(basewin, frame_attr);
+    wattron(basewin, frame_attr);
 
     /* vertical lines */
     mvwvline(basewin, 1, 0, ACS_VLINE, ui_flags.viewheight);
@@ -171,8 +171,7 @@ static void draw_frame(void)
 	mvwvline(basewin, 1, COLS - 1, ACS_VLINE, ui_flags.viewheight);
     }
 
-    if (frame_attr != -1)
-	wattroff(basewin, frame_attr);
+    wattroff(basewin, frame_attr);
 }
 
 
