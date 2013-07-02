@@ -144,7 +144,7 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
 	wprintw(statuswin, "%.*s", fill_len, str);
 	wattroff(statuswin, colorattr);
 	/* use black to avoid confusion with being full */
-	colorattr = curses_color_attr(COLOR_BLACK, 0);
+	colorattr = curses_color_attr(CLR_BLACK, 0);
 	wattron(statuswin, colorattr);
 	wprintw(statuswin, "%.*s", len - fill_len, &str[fill_len]);
 	wattroff(statuswin, colorattr);
@@ -226,11 +226,11 @@ static void draw_time(const struct nh_player_info *pi)
     movediff = pi->moves - oldpi->moves;
     if (movediff > 1) {
 	colorattr = curses_color_attr(
-			(movediff >= 100) ? COLOR_RED :
-			(movediff >=  50) ? COLOR_YELLOW :
-			(movediff >=  20) ? COLOR_CYAN :
-			(movediff >=  10) ? COLOR_BLUE :
-					    COLOR_GREEN, 0);
+			(movediff >= 100) ? CLR_RED :
+			(movediff >=  50) ? CLR_YELLOW :
+			(movediff >=  20) ? CLR_CYAN :
+			(movediff >=  10) ? CLR_BLUE :
+					    CLR_GREEN, 0);
 	colorchange = TRUE;
     } else {
 	colorchange = FALSE;
