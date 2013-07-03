@@ -4,7 +4,6 @@
 #include "nhcurses.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 
 #if defined(NETCLIENT)
 # define allow_timetest() (!nhnet_active())

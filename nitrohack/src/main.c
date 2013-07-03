@@ -2,7 +2,6 @@
 /* NitroHack may be freely redistributed.  See license for details. */
 
 #include "nhcurses.h"
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <signal.h>

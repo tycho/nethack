@@ -19,11 +19,18 @@
 #include <netdb.h>
 #include <sys/un.h>
 #else
-#include <Winsock2.h>
-#include <Ws2def.h>
-#include <Ws2tcpip.h>
+# if defined(__MINGW32__)
+#  define _WIN32_WINNT 0x0501 /* required for MinGW to link in getaddrinfo() */
+# endif
+# include <Winsock2.h>
+# if !defined(__MINGW32__)
+#  include <Ws2def.h>
+# endif
+# include <Ws2tcpip.h>
 
-# define snprintf(buf, len, fmt, ...) _snprintf_s(buf, len, len-1, fmt, __VA_ARGS__)
+# if defined(_MSC_VER)
+#  define snprintf(buf, len, fmt, ...) _snprintf_s(buf, len, len-1, fmt, __VA_ARGS__)
+# endif
 # define close closesocket
 #endif
 #include <jansson.h>

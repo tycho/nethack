@@ -15,6 +15,12 @@
 #include <string.h>
 #include <stdio.h>
 
+/* This needs to be included before curses.h with PDCurses.
+ * curses.h for PDCurses pulls in wchar.h in MinGW, declaring
+ * _wunlink() which conflicts with another _wunlink() in io.h
+ * pulled in by fcntl.h if this isn't included first. */
+#include <fcntl.h>
+
 #if !defined(WIN32) /* UNIX + APPLE */
 # include <unistd.h>
 #define FILE_OPEN_MASK 0660
@@ -23,6 +29,7 @@
 # include <windows.h>
 # include <shlobj.h>
 # undef MOUSE_MOVED /* this definition from windows.h conflicts with a definition from curses */
+# define srandom srand
 # define random rand
 
 # if defined (_MSC_VER)

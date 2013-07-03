@@ -7,7 +7,6 @@
 #include "nhcurses.h"
 #include <ctype.h>
 #include <sys/types.h>
-#include <fcntl.h>
 
 
 #define array_size(x) (sizeof(x)/sizeof(x[0]))
@@ -219,9 +218,9 @@ static void read_sym_line(char *line)
     sscanf(bp, "%d", &ovr.color);
     
     while (*bp && !isspace((unsigned char)*bp)) bp++; /* go past the previous value */
-#if defined(__CYGWIN__)
-    /* can't find a format string that makes Cygwin and everything else
-     * happy at the same time :( */
+#if defined(__CYGWIN__) || defined(__MINGW32__)
+    /* can't find a format string that makes Windows ports of GCC
+     * and everything else happy at the same time :( */
     sscanf(bp, "%hx", &ovr.unichar[0]);
 #else
     sscanf(bp, "%x", &ovr.unichar[0]);

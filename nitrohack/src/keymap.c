@@ -3,7 +3,6 @@
 
 #include "nhcurses.h"
 #include <sys/types.h>
-#include <fcntl.h>
 #include <ctype.h>
 
 enum internal_commands {

@@ -292,7 +292,10 @@ static int parse_ip_addr(const char *host, int port, int want_v4,
     struct addrinfo *next;
     struct addrinfo gai_hints;
     memset(&gai_hints, 0, sizeof(gai_hints));
+#if !defined(__MINGW32__)
+    /* require a numeric port (Windows SDK for Vista and later only) */
     gai_hints.ai_flags = AI_NUMERICSERV;
+#endif
     gai_hints.ai_family = want_v4 ? AF_INET : AF_INET6;
     gai_hints.ai_socktype = SOCK_STREAM;
 

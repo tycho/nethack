@@ -2,7 +2,6 @@
 /* NitroHack may be freely redistributed.  See license for details. */
 
 #include "nhcurses.h"
-#include <fcntl.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -29,6 +28,8 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 	case CONFIG_DIR: subdir = L"\\"; break;
 	case SAVE_DIR:   subdir = L"\\save\\"; break;
 	case LOG_DIR:    subdir = L"\\log\\"; break;
+	/* DUMP_DIR is ignored here; dumps go into Documents on Windows */
+	case DUMP_DIR:   subdir = L"\\"; break;
     }
     
     snwprintf(nhPath, MAX_PATH, L"%s\\NitroHack", appPath);
@@ -120,8 +121,11 @@ int commandloop(void)
 
 static void game_ended(int status, fnchar *filename)
 {
-    fnchar fncopy[1024], logname[1024], savedir[BUFSZ], *bp, *fname;
-    
+    fnchar logname[1024], savedir[BUFSZ], *bp;
+#if !defined(WIN32)
+    fnchar fncopy[1024], *fname;
+#endif
+
     if (status != GAME_OVER)
 	return;
     
