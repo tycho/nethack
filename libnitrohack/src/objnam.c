@@ -273,7 +273,7 @@ static void propnames(char *buf, long props, long props_known,
 	/* Decide the properties that are to be appended. */
 	props &= (dump_ID_flag ? ITEM_PROP_MASK : props_known);
 	/* draining weapons are prefixed with "thirsty" elsewhere */
-	if (!weapon) props &= ~ITEM_VORPAL;
+	if (weapon) props &= ~ITEM_DRLI;
 	/* "vorpal" and "oilskin" are prefix-only */
 	props &= ~(ITEM_VORPAL|ITEM_OILSKIN);
 
