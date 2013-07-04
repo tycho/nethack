@@ -66,7 +66,10 @@ debugging symbols (for stack traces under gdb, useful for bug reports):
       - Settings are stored under ~/.config/NitroHack if you want to change
         Unicode glyphs or view dump logs.
 
-To build UnNitroHack with Cygwin for Windows:
+UnNitroHack can be compiled to run natively on Windows using MinGW; see
+doc/build-mingw.md for details.
+
+Alternately, to build UnNitroHack with Cygwin for Windows:
 
     1) Install Cygwin with these packages selected:
       - gcc4 (gcc may also work)
