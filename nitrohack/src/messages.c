@@ -2,12 +2,13 @@
 /* NitroHack may be freely redistributed.  See license for details. */
 
 #include "nhcurses.h"
+#include <ctype.h>
 
 /* save more of long messages than could be displayed in COLNO chars */
 #define MSGLEN 119
 
 struct message {
-    char msg[MSGLEN + 1];
+    char *msg;
     int turn;
 };
 
@@ -23,6 +24,9 @@ static nh_bool stopprint;
 static int prevturn, action, prevaction;
 
 static void newline(void);
+static void wrap_text(int width, const char *input,
+		      int *output_count, char ***output);
+static void free_wrap(char **wrap_output);
 
 
 static void store_message(int turn, const char *msg)
@@ -35,8 +39,9 @@ static void store_message(int turn, const char *msg)
 	histpos = 0;
     
     msghistory[histpos].turn = turn;
-    strncpy(msghistory[histpos].msg, msg, MSGLEN);
-    msghistory[histpos].msg[MSGLEN] = '\0';
+    if (msghistory[histpos].msg)
+	free(msghistory[histpos].msg);
+    msghistory[histpos].msg = strdup(msg);
 }
 
 
@@ -48,7 +53,11 @@ void alloc_hist_array(void)
     msghistory = calloc(settings.msghistory, sizeof(struct message));
     histsize = settings.msghistory;
     histpos = -1; /* histpos is incremented before any message is stored */
-    
+    for (i = 0; i < histsize; i++) {
+	msghistory[i].turn = 0;
+	msghistory[i].msg = NULL;
+    }
+
     if (!oldhistory)
 	return;
     
@@ -59,6 +68,8 @@ void alloc_hist_array(void)
 	
 	if (oldhistory[pos].turn)
 	    store_message(oldhistory[pos].turn, oldhistory[pos].msg);
+	if (oldhistory[pos].msg)
+	    free(oldhistory[pos].msg);
     }
     
     free(oldhistory);
@@ -89,7 +100,10 @@ static void prune_messages(int maxturn)
     removed = 0;
     while (msghistory[histpos].turn >= maxturn && removed < histsize) {
 	msghistory[histpos].turn = 0;
-	msghistory[histpos].msg[0] = '\0';
+	if (msghistory[histpos].msg) {
+	    free(msghistory[histpos].msg);
+	    msghistory[histpos].msg = NULL;
+	}
 	removed++;
 	histpos--;
 	if (histpos < 0)
@@ -106,7 +120,7 @@ static void prune_messages(int maxturn)
 	    pos -= histsize;
 	
 	msg = msghistory[pos].msg;
-	if (!*msg)
+	if (!msg)
 	    continue;
 	if (msghistory[pos].turn > prevturn)
 	    start_of_turn_curline = last_redraw_curline = curline;
@@ -161,6 +175,8 @@ static void more(void)
     int key;
     int cursx, cursy;
     attr_t attr = A_NORMAL;
+
+    draw_msgwin();
 
     if (settings.standout)
 	attr = A_STANDOUT;
@@ -219,16 +235,11 @@ void new_action(void)
 }
 
 
-static void curses_print_message_core(int turn, const char *inmsg, nh_bool canblock)
+static void curses_print_message_core(int turn, const char *msg, nh_bool canblock)
 {
-    char msg[COLNO+1];
-    int maxlen;
+    int hsize, vsize, maxlen;
     nh_bool died;
-    
-    /* guard against malformed input strings */
-    strncpy(msg, inmsg, COLNO);
-    msg[COLNO] = '\0';
-    
+
     if (!msghistory)
 	alloc_hist_array();
 
@@ -246,8 +257,8 @@ static void curses_print_message_core(int turn, const char *inmsg, nh_bool canbl
     prevturn = turn;
     prevaction = action;
 
-    store_message(turn, inmsg);
-    
+    store_message(turn, msg);
+
     if (stopprint)
 	return;
 
@@ -259,9 +270,10 @@ static void curses_print_message_core(int turn, const char *inmsg, nh_bool canbl
      * If the message area is only one line high, space for "--More--" must be
      * reserved at the end of the line, otherwise  --More-- is shown on a new line.
      */
-    maxlen = COLNO - 1;
-    if (getmaxy(msgwin) == 1)
-	maxlen -= 8; /* for "--More--" */
+    getmaxyx(msgwin, vsize, hsize);
+    maxlen = hsize;
+    if (maxlen >= COLNO) maxlen = COLNO - 1;
+    if (vsize == 1) maxlen -= 8; /* for "--More--" */
 
     died = !strncmp(msg, "You die", 7);
     if (strlen(msglines[curline]) + strlen(msg) + 1 < maxlen && !died) {
@@ -269,8 +281,13 @@ static void curses_print_message_core(int turn, const char *inmsg, nh_bool canbl
 	    strcat(msglines[curline], "  ");
 	strcat(msglines[curline], msg);
     } else {
-	if (strlen(msglines[curline]) > 0) {
-	    if (canblock) {
+	int i, output_count;
+	char **output;
+
+	wrap_text(maxlen, msg, &output_count, &output);
+
+	for (i = 0; i < output_count; i++) {
+	    if (strlen(msglines[curline]) > 0) {
 		/*
 		 * If we would scroll a message off the screen that
 		 * the user hasn't had a chance to look at this redraw,
@@ -284,17 +301,18 @@ static void curses_print_message_core(int turn, const char *inmsg, nh_bool canbl
 		 * second, etc.  getmaxy() gives the height of the window
 		 * minus 1, which is why we only subtract 2 not 3.
 		 */
-		if ((curline + MAX_MSGLINES - last_redraw_curline) %
+		if (canblock &&
+		    (curline + MAX_MSGLINES - last_redraw_curline) %
 		    MAX_MSGLINES > getmaxy(msgwin) - 2)
 		    more();
 		else
 		    newline();
-	    } else {
-		newline();
 	    }
+	    if (stopprint) break; /* may get set in more() */
+	    strcpy(msglines[curline], output[i]);
 	}
-	if (!stopprint) /* may get set in more() */
-	    strcpy(msglines[curline], msg);
+
+	free_wrap(output);
     }
 
     draw_msgwin();
@@ -352,9 +370,14 @@ void doprev_message(void)
 void cleanup_messages(void)
 {
     int i;
+
+    for (i = 0; i < histsize; i++) {
+	if (msghistory[i].msg)
+	    free(msghistory[i].msg);
+    }
     free(msghistory);
     prevturn = 0;
-    
+
     /* extra cleanup to prevent old messages from appearing in a new game */
     msghistory = NULL;
     curline = last_redraw_curline = 0;
@@ -364,3 +387,67 @@ void cleanup_messages(void)
 	msglines[i][0] = '\0';
 }
 
+
+/*
+ * Given the string "input", generate a series of strings of the given maximum
+ * width, wrapping lines at spaces in the text.
+ *
+ * The number of lines will be stored into *output_count, and an array of the
+ * output lines will be stored in *output.
+ *
+ * The memory for both the output strings and the output array is obtained via
+ * malloc and should be freed when no longer needed.
+ */
+static void wrap_text(int width, const char *input,
+		      int *output_count, char ***output)
+{
+    const int min_width = 20, max_wrap = 20;
+
+    int len = strlen(input);
+    int input_idx, input_lidx;
+    int idx, outcount;
+
+    *output = malloc(max_wrap * sizeof(char *));
+    for (idx = 0; idx < max_wrap; idx++)
+	(*output)[idx] = NULL;
+
+    input_idx = 0;
+    outcount = 0;
+    do {
+	if (len - input_idx <= width) {
+	    /* enough room for the rest of the input */
+	    (*output)[outcount] = strdup(input + input_idx);
+	    outcount++;
+	    break;
+	}
+
+	/* find nearest space in input to right edge that doesn't exceed width */
+	input_lidx = input_idx + width;
+	while (!isspace((unsigned char)input[input_lidx]) &&
+	       input_lidx - input_idx > min_width)
+	    input_lidx--;
+	/* didn't find a space, so just go with width-worth of characters */
+	if (!isspace((unsigned char)input[input_lidx]))
+	    input_lidx = input_idx + width;
+
+	(*output)[outcount] = strndup(input + input_idx, input_lidx - input_idx);
+	outcount++;
+
+	/* skip extra spaces in break */
+	input_idx = input_lidx;
+	while (isspace((unsigned char)input[input_idx]))
+	    input_idx++;
+    } while (input[input_idx] && outcount < max_wrap);
+
+    *output_count = outcount;
+}
+
+static void free_wrap(char **wrap_output)
+{
+    const int max_wrap = 20;
+    int idx;
+
+    for (idx = 0; idx < max_wrap && wrap_output[idx]; idx++)
+	free(wrap_output[idx]);
+    free(wrap_output);
+}
