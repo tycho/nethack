@@ -390,6 +390,7 @@ extern void deliver_object(struct obj *obj, xchar dnum, xchar dlevel, int where)
 
 /* ### dothrow.c ### */
 
+extern int multishot_max(const struct monst *, const struct obj *);
 extern int dothrow(struct obj *obj);
 extern int dofire(void);
 extern void hitfloor(struct obj *,struct obj *,boolean);
@@ -1821,7 +1822,7 @@ extern void unrestrict_weapon_skill(int);
 extern void use_skill(int,int);
 extern void add_weapon_skill(int);
 extern void lose_weapon_skill(int);
-extern int weapon_type(struct obj *);
+extern int weapon_type(const struct obj *);
 extern int uwep_skill_type(void);
 extern int weapon_hit_bonus(struct obj *);
 extern int weapon_dam_bonus(struct obj *);

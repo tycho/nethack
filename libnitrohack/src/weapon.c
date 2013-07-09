@@ -175,6 +175,7 @@ int dmgval(struct monst *magr, struct obj *otmp, boolean thrown,
 	int tmp = 0, otyp = otmp->otyp;
 	const struct permonst *ptr = mdef->data;
 	boolean Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
+	boolean double_damage;
 	struct obj *olaunch;
 
 	if (otyp == CREAM_PIE) return 0;
@@ -267,6 +268,25 @@ int dmgval(struct monst *magr, struct obj *otmp, boolean thrown,
 	    }
 	}
 
+	double_damage = (spec_dbon(otmp, olaunch, thrown, mdef, 25) >= 25);
+
+	/* Damage multiplier to replace multishot for heavy shot projectiles. */
+	if (thrown && is_heavyshot(otmp, olaunch)) {
+	    int multi_heavy = rnd(multishot_max(magr, otmp));
+
+	    /* Make this cumulative with double damage bonus rather than
+	       stacking them, so double damage is effectively +1 multiplier. */
+	    if (multi_heavy > 1 && double_damage) {
+		/* round up or down randomly, e.g. we want 2 -> 3,
+		   but doubling only permits -> 2 or -> 4. */
+		if (!(multi_heavy & 1) && !rn2(2)) multi_heavy++;
+		multi_heavy++;
+		multi_heavy /= 2;
+	    }
+
+	    tmp *= multi_heavy;
+	}
+
 /*	Put weapon vs. monster type damage bonuses in below:	*/
 	if (Is_weapon || otmp->oclass == GEM_CLASS ||
 		otmp->oclass == BALL_CLASS || otmp->oclass == CHAIN_CLASS) {
@@ -281,7 +301,7 @@ int dmgval(struct monst *magr, struct obj *otmp, boolean thrown,
 
 	    /* if the weapon is going to get a double damage bonus, adjust
 	       this bonus so that effectively it's added after the doubling */
-	    if (bonus > 1 && spec_dbon(otmp, olaunch, thrown, mdef, 25) >= 25)
+	    if (bonus > 1 && double_damage)
 		bonus = (bonus + 1) / 2;
 
 	    tmp += bonus;
@@ -1027,7 +1047,7 @@ void lose_weapon_skill(int n)
     }
 }
 
-int weapon_type(struct obj *obj)
+int weapon_type(const struct obj *obj)
 {
 	/* KMH -- now uses the object table */
 	int type;

@@ -174,6 +174,14 @@ struct obj {
 			 objects[otmp->otyp].oc_skill >= -P_SHURIKEN && \
 			 objects[otmp->otyp].oc_skill <= -P_BOW)
 #define uslinging()	(uwep && objects[uwep->otyp].oc_skill == P_SLING)
+/* multiply inflicted damage when thrown/fired and disable multishot (if any) */
+#define is_heavyshot(otmp,ltmp) \
+			(otmp->oclass == WEAPON_CLASS && \
+			 (!is_ammo(otmp) || ammo_and_launcher(otmp, ltmp)) && \
+			 (is_spear(otmp) || \
+			  objects[otmp->otyp].oc_skill == -P_CROSSBOW || \
+			  objects[otmp->otyp].oc_skill == -P_SHURIKEN || \
+			  objects[otmp->otyp].oc_skill == -P_BOOMERANG))
 
 /* Armor */
 #define is_shield(otmp) (otmp->oclass == ARMOR_CLASS && \

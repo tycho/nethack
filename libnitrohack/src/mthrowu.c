@@ -496,7 +496,6 @@ void thrwmu(struct monst *mtmp)
 {
 	struct obj *otmp, *mwep;
 	xchar x, y;
-	schar skill;
 	int multishot;
 	const char *onm;
 
@@ -548,41 +547,12 @@ void thrwmu(struct monst *mtmp)
 			rn2(BOLT_LIM - distmin(x,y,mtmp->mux,mtmp->muy))))
 	    return;
 
-	skill = objects[otmp->otyp].oc_skill;
 	mwep = MON_WEP(mtmp);		/* wielded weapon */
-
-	/* Multishot calculations */
 	multishot = 1;
-	if ((ammo_and_launcher(otmp, mwep) || skill == P_DAGGER ||
-		skill == -P_DART || skill == -P_SHURIKEN) && !mtmp->mconf) {
-	    /* Assumes lords are skilled, princes are expert */
-	    if (is_prince(mtmp->data)) multishot += 2;
-	    else if (is_lord(mtmp->data)) multishot++;
 
-	    switch (monsndx(mtmp->data)) {
-	    case PM_RANGER:
-		    multishot++;
-		    break;
-	    case PM_ROGUE:
-		    if (skill == P_DAGGER) multishot++;
-		    break;
-	    case PM_NINJA:
-	    case PM_SAMURAI:
-		    if (otmp->otyp == YA && mwep &&
-			mwep->otyp == YUMI) multishot++;
-		    break;
-	    default:
-		break;
-	    }
-	    /* racial bonus */
-	    if ((is_elf(mtmp->data) &&
-		    otmp->otyp == ELVEN_ARROW &&
-		    mwep && mwep->otyp == ELVEN_BOW) ||
-		(is_orc(mtmp->data) &&
-		    otmp->otyp == ORCISH_ARROW &&
-		    mwep && mwep->otyp == ORCISH_BOW))
-		multishot++;
-
+	if (!is_heavyshot(otmp, mwep)) {
+	    /* Multishot calculations */
+	    multishot = multishot_max(mtmp, otmp);
 	    if ((long)multishot > otmp->quan) multishot = (int)otmp->quan;
 	    if (multishot < 1) multishot = 1;
 	    else multishot = rnd(multishot);

@@ -31,12 +31,89 @@ struct obj *thrownobj = 0;	/* tracks an object until it lands */
 extern boolean notonhead;	/* for long worms */
 
 
+/* Calculate the maximum shots of the object that the monster may shoot. */
+int multishot_max(const struct monst *mtmp, const struct obj *otmp)
+{
+	boolean you_shot;
+	schar skill;
+	const struct obj *wwep;
+	int multishot = 1;
+
+	if (!mtmp)
+	    return 1;
+
+	you_shot = (mtmp == &youmonst);
+
+	skill = objects[otmp->otyp].oc_skill;
+	wwep = you_shot ? uwep : MON_WEP(mtmp);
+
+	if ((ammo_and_launcher(otmp, wwep) || is_heavyshot(otmp, wwep) ||
+	     skill == P_DAGGER || skill == -P_DART || skill == -P_SHURIKEN) &&
+	    !(you_shot ? (Confusion || Stunned) :
+			 (mtmp->mconf || mtmp->mstun))) {
+	    short otyp, lotyp;
+	    otyp = otmp->otyp;
+	    lotyp = ammo_and_launcher(otmp, wwep) ? wwep->otyp : 0;
+
+	    /* bonus for skill */
+	    if (you_shot ? (P_SKILL(weapon_type(otmp)) == P_EXPERT) :
+			   is_prince(mtmp->data)) {
+		multishot += 2;
+	    } else if (you_shot ? (P_SKILL(weapon_type(otmp)) == P_SKILLED) :
+				  is_lord(mtmp->data)) {
+		multishot++;
+	    }
+
+	    /* bonus for javelins so they're not just inferior spears */
+	    if (skill == P_JAVELIN && (!you_shot || P_SKILL(P_JAVELIN) >= P_BASIC))
+		multishot++;
+
+	    /* bonus for role */
+	    switch (you_shot ? Role_switch :
+			       monsndx(mtmp->data)) {
+	    case PM_RANGER:
+		multishot++;
+		break;
+	    case PM_ROGUE:
+		if (skill == P_DAGGER)
+		    multishot++;
+		break;
+	    case PM_NINJA: /* for monsters */
+	    case PM_SAMURAI:
+		if (otyp == YA && lotyp == YUMI)
+		    multishot++;
+		break;
+	    default:
+		break;	/* No bonus */
+	    }
+
+	    /* bonus for race */
+	    if (you_shot ? (Race_switch == PM_ELF) :
+			   is_elf(mtmp->data)) {
+		if ((otyp == ELVEN_ARROW && lotyp == ELVEN_BOW) ||
+		    otyp == ELVEN_SPEAR)
+		    multishot++;
+	    } else if (you_shot ? (Race_switch == PM_DWARF) :
+				  is_dwarf(mtmp->data)) {
+		if (otyp == DWARVISH_SPEAR)
+		    multishot++;
+	    } else if (you_shot ? (Race_switch == PM_ORC) :
+				  is_orc(mtmp->data)) {
+		if ((otyp == ORCISH_ARROW && lotyp == ORCISH_BOW) ||
+		    otyp == ORCISH_SPEAR)
+		    multishot++;
+	    }
+	}
+
+	return multishot;
+}
+
+
 /* Throw the selected object, asking for direction */
 static int throw_obj(struct obj *obj, int shotlimit, boolean cancel_unquivers)
 {
 	struct obj *otmp, *ostack;
 	int multishot = 1;
-	schar skill;
 	long wep_mask;
 	boolean twoweap;
 	schar dx, dy, dz;
@@ -93,50 +170,13 @@ static int throw_obj(struct obj *obj, int shotlimit, boolean cancel_unquivers)
 		return 1;
 	}
 
-	/* Multishot calculations
-	 */
-	skill = objects[obj->otyp].oc_skill;
-	if ((ammo_and_launcher(obj, uwep) || skill == P_DAGGER ||
-			skill == -P_DART || skill == -P_SHURIKEN) &&
-		!(Confusion || Stunned)) {
-	    /* Bonus if the player is proficient in this weapon... */
-	    switch (P_SKILL(weapon_type(obj))) {
-	    default:	break; /* No bonus */
-	    case P_SKILLED:	multishot++; break;
-	    case P_EXPERT:	multishot += 2; break;
-	    }
-	    /* ...or is using a special weapon for their role... */
-	    switch (Role_switch) {
-	    case PM_RANGER:
-		multishot++;
-		break;
-	    case PM_ROGUE:
-		if (skill == P_DAGGER) multishot++;
-		break;
-	    case PM_SAMURAI:
-		if (obj->otyp == YA && uwep && uwep->otyp == YUMI) multishot++;
-		break;
-	    default:
-		break;	/* No bonus */
-	    }
-	    /* ...or using their race's special bow */
-	    switch (Race_switch) {
-	    case PM_ELF:
-		if (obj->otyp == ELVEN_ARROW && uwep &&
-				uwep->otyp == ELVEN_BOW) multishot++;
-		break;
-	    case PM_ORC:
-		if (obj->otyp == ORCISH_ARROW && uwep &&
-				uwep->otyp == ORCISH_BOW) multishot++;
-		break;
-	    default:
-		break;	/* No bonus */
-	    }
+	if (!is_heavyshot(obj, uwep)) {
+	    /* Multishot calculations */
+	    multishot = multishot_max(&youmonst, obj);
+	    if ((long)multishot > obj->quan) multishot = (int)obj->quan;
+	    multishot = rnd(multishot);
+	    if (shotlimit > 0 && multishot > shotlimit) multishot = shotlimit;
 	}
-
-	if ((long)multishot > obj->quan) multishot = (int)obj->quan;
-	multishot = rnd(multishot);
-	if (shotlimit > 0 && multishot > shotlimit) multishot = shotlimit;
 
 	m_shot.s = ammo_and_launcher(obj,uwep) ? TRUE : FALSE;
 	/* give a message if shooting more than one, or if player
