@@ -118,7 +118,7 @@ static void apply_colormap(struct ColorMap *map)
      * possible non-default background colors (don't use white, there
      * are terminals that hate it).  So there are 112 pairs required
      * for 16 colors, or 56 required for 8 colors. */
-    for (bg = 0; bg <= BG_COLOR_COUNT; bg++) {
+    for (bg = 0; bg < BG_COLOR_COUNT; bg++) {
 	/* Do not set up background colors if there are not enough
 	 * color pairs. */
 	if (bg == 1 && !BG_COLOR_SUPPORT)
@@ -128,7 +128,7 @@ static void apply_colormap(struct ColorMap *map)
 	 * otherwise use the color from the color map. */
 	bgColor = bg ? map->bgColors[bg] : -1;
 
-	for (fg = 0; fg <= FG_COLOR_COUNT; fg++) {
+	for (fg = 0; fg < FG_COLOR_COUNT; fg++) {
 	    fgColor = map->fgColors[fg];
 
 	    /* Replace black with blue if darkgray is not set. */

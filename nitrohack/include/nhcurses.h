@@ -120,9 +120,9 @@ typedef wchar_t fnchar;
  *
  * We have 6 non-default background colors (don't use white, there are terminals
  * that hate it, combined with FG_COLOR_COUNT possible foregrounds for each. */
-#define BG_COLOR_COUNT 6
+#define BG_COLOR_COUNT 7
 #define FG_COLOR_COUNT (COLORS >= 16 ? 16 : 8) /* 8 is if we're using bold */
-#define BG_COLOR_SUPPORT (COLOR_PAIRS > (BG_COLOR_COUNT + 1) * FG_COLOR_COUNT)
+#define BG_COLOR_SUPPORT (COLOR_PAIRS > BG_COLOR_COUNT * FG_COLOR_COUNT)
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
 
