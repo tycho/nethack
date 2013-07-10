@@ -314,7 +314,7 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 		 sidx < default_drawing->num_bgelements; sidx++)
 		if (key == default_drawing->bgelements[sidx].ch)
 		    matching[sidx] = (char) ++k;
-	    if (k) {
+	    if (k || key == '^') {
 		for (pass = 0; pass <= 1; pass++) {
 		    /* pass 0: just past current pos to lower right;
 			pass 1: upper left corner to current pos */
@@ -325,7 +325,8 @@ int curses_getpos(int *x, int *y, nh_bool force, const char *goal)
 			hi_x = (pass == 1 && ty == hi_y) ? cx : COLNO - 1;
 			for (tx = lo_x; tx <= hi_x; tx++) {
 			    k = display_buffer[ty][tx].bg;
-			    if (k && matching[k]) {
+			    if ((k && matching[k]) ||
+				(key == '^' && display_buffer[ty][tx].trap)) {
 				cx = tx;
 				cy = ty;
 				goto nxtc;
