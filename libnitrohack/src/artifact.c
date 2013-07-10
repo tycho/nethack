@@ -1454,7 +1454,7 @@ static boolean artifact_hit_behead(struct monst *magr, struct monst *mdef,
     *instakilled = FALSE;
 
     /* We really want "on a natural 20" but Nethack does it in reverse from AD&D. */
-    if (bimanual(otmp) && dieroll == 1) {
+    if (bimanual(otmp) && otmp->oartifact != ART_THIEFBANE && dieroll == 1) {
 	if (otmp->oartifact == ART_TSURUGI_OF_MURAMASA)
 	    wepdesc = "The razor-sharp blade";
 
