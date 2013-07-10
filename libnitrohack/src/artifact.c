@@ -1051,7 +1051,9 @@ static int spec_applies(const struct artifact *weap, struct monst *mtmp)
 							 resists_cold(mtmp));
 			return spec_applies_ad_cold;
 		case AD_ELEC:
-			return !(yours ? Shock_resistance : resists_elec(mtmp));
+			spec_applies_ad_elec = !(yours ? Shock_resistance :
+							 resists_elec(mtmp));
+			return spec_applies_ad_elec;
 		case AD_MAGM:
 			spec_applies_ad_magm = !(yours ? Antimagic :
 							 (rn2(100) < ptr->mr));
@@ -1111,7 +1113,7 @@ int spec_dbon(struct obj *otmp, struct obj *olaunch, boolean thrown,
 	spec_applies_ad_magm = FALSE;
 	spec_applies_ad_stun = FALSE;
 	spec_applies_ad_drli = FALSE;
-	spec_applies_spfx_behead = FALSE;
+	spec_applies_spfx_behead = spec_ability(otmp, SPFX_BEHEAD);
 
 	if (!weap) {
 	    /* Object must have properties, which might stack. */
