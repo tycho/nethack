@@ -483,11 +483,18 @@ struct obj *select_hwep(struct monst *mtmp)
 
 	/* prefer artifacts to everything else */
 	for (otmp=mtmp->minvent; otmp; otmp = otmp->nobj) {
-		if (otmp->oclass == WEAPON_CLASS
-			&& otmp->oartifact && touch_artifact(otmp,mtmp)
-			&& ((strong && !wearing_shield)
-			    || !objects[otmp->otyp].oc_bimanual))
-		    return otmp;
+		if (otmp->oclass == WEAPON_CLASS &&
+		    otmp->oartifact && touch_artifact(otmp, mtmp)) {
+
+			/* Black Marketeer can wield Thiefbane
+			 * even with a shield. */
+			if (mtmp->data == &mons[PM_BLACK_MARKETEER])
+				return otmp;
+
+			if ((strong && !wearing_shield) ||
+			    !objects[otmp->otyp].oc_bimanual)
+				return otmp;
+		}
 	}
 
 	if (is_giant(mtmp->data))	/* giants just love to use clubs */

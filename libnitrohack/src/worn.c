@@ -469,7 +469,9 @@ void m_dowear(struct level *lev, struct monst *mon, boolean creation)
 	if (!cantweararm(mon->data) || mon->data->msize == MZ_SMALL)
 	    m_dowear_type(lev, mon, W_ARMC, creation, FALSE);
 	m_dowear_type(lev, mon, W_ARMH, creation, FALSE);
-	if (!MON_WEP(mon) || !bimanual(MON_WEP(mon)))
+	/* Black Marketeer can use a shield even with two-handed Thiefbane. */
+	if (!MON_WEP(mon) || !bimanual(MON_WEP(mon)) ||
+	    mon->data == &mons[PM_BLACK_MARKETEER])
 	    m_dowear_type(lev, mon, W_ARMS, creation, FALSE);
 	m_dowear_type(lev, mon, W_ARMG, creation, FALSE);
 	if (!slithy(mon->data) && mon->data->mlet != S_CENTAUR)

@@ -468,6 +468,10 @@ shk_failed:
 	    mpickobj(shk, otmp);
 	    if (otmp->spe < 5) otmp->spe += rnd(5);
 
+	    otmp = mksobj(lev, SHIELD_OF_REFLECTION, FALSE, FALSE);
+	    mpickobj(shk, otmp);
+	    if (otmp->spe < 5) otmp->spe += rnd(5);
+
 	    otmp = mksobj(lev, GRAY_DRAGON_SCALE_MAIL, FALSE, FALSE);
 	    mpickobj(shk, otmp);
 	    if (otmp->spe < 5) otmp->spe += rnd(5);
@@ -476,14 +480,11 @@ shk_failed:
 	    mpickobj(shk, otmp);
 	    if (otmp->spe < 5) otmp->spe += rnd(5);
 
-	    otmp = mksobj(lev, AMULET_OF_REFLECTION, FALSE, FALSE);
+	    otmp = mksobj(lev, AMULET_OF_LIFE_SAVING, FALSE, FALSE);
 	    mpickobj(shk, otmp);
 
-	    /* wear armor and amulet*/
+	    /* wear armor and amulet */
 	    m_dowear(lev, shk, TRUE);
-
-	    otmp = mksobj(lev, POT_FULL_HEALING, FALSE, FALSE);
-	    mpickobj(shk, otmp);
 
 	    otmp = mksobj(lev, SKELETON_KEY, FALSE, FALSE);
 	    mpickobj(shk, otmp);
