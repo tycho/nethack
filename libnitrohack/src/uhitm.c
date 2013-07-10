@@ -88,7 +88,8 @@ void hurtmarmor(struct monst *mdef, int attk)
 /* FALSE means it's OK to attack */
 boolean attack_checks(struct monst *mtmp,
 		      struct obj *wep,/* uwep for attack(), null for kick_monster() */
-		      schar dx, schar dy)	
+		      schar dx, schar dy,
+		      boolean kicking)
 {
 	char qbuf[QBUFSZ];
 
@@ -191,10 +192,11 @@ boolean attack_checks(struct monst *mtmp,
 		}
 		if (canspotmon(level, mtmp)) {
 			boolean call_off_harm = FALSE;
-			if (flags.safe_peaceful == 'y') {
+			if (flags.safe_peaceful == 'y' && !kicking) {
 				pline("You stop for %s.", mon_nam(mtmp));
 				call_off_harm = TRUE;
-			} else if (flags.safe_peaceful == 'a') {
+			} else if (flags.safe_peaceful == 'a' ||
+				   (flags.safe_peaceful == 'y' && kicking)) {
 				sprintf(qbuf, "Really attack %s?", mon_nam(mtmp));
 				if (paranoid_yn(qbuf, iflags.paranoid_hit) != 'y')
 					call_off_harm = TRUE;
@@ -371,7 +373,7 @@ boolean attack(struct monst *mtmp, schar dx, schar dy)
 	/* possibly set in attack_checks;
 	   examined in known_hitum, called via hitum or hmonas below */
 	override_confirmation = FALSE;
-	if (attack_checks(mtmp, uwep, dx, dy))
+	if (attack_checks(mtmp, uwep, dx, dy, FALSE))
 	    return TRUE;
 
 	if (Upolyd) {

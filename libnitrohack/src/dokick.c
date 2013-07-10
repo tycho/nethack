@@ -118,7 +118,7 @@ static void kick_monster(xchar x, xchar y, schar dx, schar dy)
 
 	bhitpos.x = x;
 	bhitpos.y = y;
-	if (attack_checks(mon, NULL, dx, dy))
+	if (attack_checks(mon, NULL, dx, dy, TRUE))
 	    return;
 	setmangry(mon);
 

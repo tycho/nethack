@@ -1758,7 +1758,8 @@ extern void save_you(struct memfile *mf, struct you *y);
 /* ### uhitm.c ### */
 
 extern void hurtmarmor(struct monst *,int);
-extern boolean attack_checks(struct monst *, struct obj *, schar, schar);
+extern boolean attack_checks(struct monst *, struct obj *, schar, schar,
+			     boolean);
 extern void check_caitiff(struct monst *);
 extern schar find_roll_to_hit(struct monst *);
 extern boolean attack(struct monst *, schar, schar);
