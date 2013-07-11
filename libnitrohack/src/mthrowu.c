@@ -26,6 +26,14 @@ static const char *const breathwep[] = {
 				"strange breath #9"
 };
 
+
+static int ai_use_at_range(int n)
+{
+	if (n <= 0) return 1;
+	return !rn2(n);
+}
+
+
 /* hero is hit by a thing or object that is thrown or otherwise in motion */
 int thitu(int tlev, int dam,
 	  struct obj *obj, struct obj *ostack, struct monst *magr,
@@ -544,7 +552,7 @@ void thrwmu(struct monst *mtmp)
 	 */
 	if (!lined_up(mtmp) ||
 		(URETREATING(x,y) &&
-			rn2(BOLT_LIM - distmin(x,y,mtmp->mux,mtmp->muy))))
+			!ai_use_at_range(BOLT_LIM - distmin(x,y,mtmp->mux,mtmp->muy))))
 	    return;
 
 	mwep = MON_WEP(mtmp);		/* wielded weapon */
@@ -615,7 +623,8 @@ int spitmu(struct monst *mtmp, const struct attack *mattk)
 			otmp = mksobj(level, ACID_VENOM, TRUE, FALSE);
 			break;
 		}
-		if (!rn2(BOLT_LIM-distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy))) {
+		if (ai_use_at_range(BOLT_LIM -
+				    distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy))) {
 		    if (canseemon(level, mtmp))
 			pline("%s spits venom!", Monnam(mtmp));
 		    m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),
