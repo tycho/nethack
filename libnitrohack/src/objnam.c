@@ -1039,7 +1039,6 @@ plus:
 			sprintf(eos(bp), " (%s candle%s%s)",
 				tmpbuf, plur(obj->spe),
 				!obj->lamplit ? " attached" : ", lit");
-			break;
 		} else if (obj->otyp == OIL_LAMP || obj->otyp == MAGIC_LAMP ||
 			obj->otyp == BRASS_LANTERN || Is_candle(obj)) {
 			if (Is_candle(obj) &&
@@ -1047,7 +1046,19 @@ plus:
 				strcat(prefix, "partly used ");
 			if (obj->lamplit)
 				strcat(bp, " (lit)");
-			break;
+		}
+		if (ignitable(obj) && obj->known &&
+		    obj->otyp != MAGIC_LAMP && !artifact_light(obj)) {
+		    long timeout = obj->lamplit ?
+				   report_timer(obj->olev, BURN_OBJECT, obj) :
+				   moves;
+		    /* obj->age is the fuel remaining when the timer runs out,
+		     * so we add it to the remaining timer turns to get
+		     * the full fuel count.
+		     */
+		    sprintf(eos(bp), " (%d:%ld)",
+			    obj->recharged, obj->age + (timeout - moves));
+		    break;
 		}
 		if (objects[obj->otyp].oc_charged)
 		    goto charges;

@@ -664,7 +664,10 @@ static void see_lamp_flicker(struct obj *obj, const char *tailer)
 	    case OBJ_FLOOR:
 		pline("You see %s flicker%s.", an(xname(obj)), tailer);
 		break;
+	    default:
+		return;
 	}
+	obj->known = 1;	/* ID charge count */
 }
 
 /* Print a dimming message for brass lanterns. */
@@ -684,7 +687,10 @@ static void lantern_message(struct obj *obj)
 		pline("%s lantern is getting dim.",
 		    s_suffix(Monnam(obj->ocarry)));
 		break;
+	    default:
+		return;
 	}
+	obj->known = 1;
 }
 
 /*
@@ -783,10 +789,12 @@ void burn_object(void *arg, long timeout)
 				    case OBJ_MINVENT:
 					pline("%s %s seems about to go out.",
 					    whose, xname(obj));
+					obj->known = 1;
 					break;
 				    case OBJ_FLOOR:
 					pline("You see %s about to go out.",
 					    an(xname(obj)));
+					obj->known = 1;
 					break;
 				}
 			    }
@@ -805,6 +813,7 @@ void burn_object(void *arg, long timeout)
 				    else
 					pline("%s %s has gone out.",
 					    whose, xname(obj));
+				    obj->known = 1;
 				    break;
 				case OBJ_FLOOR:
 				    if (obj->otyp == BRASS_LANTERN)
@@ -812,6 +821,7 @@ void burn_object(void *arg, long timeout)
 				    else
 					pline("You see %s go out.",
 					    an(xname(obj)));
+				    obj->known = 1;
 				    break;
 			    }
 			}
@@ -845,12 +855,14 @@ void burn_object(void *arg, long timeout)
 					whose,
 					menorah ? "candelabrum's " : "",
 					many ? "s are" : " is");
+				    obj->known = 1;
 				    break;
 				case OBJ_FLOOR:
 				    pline("You see %scandle%s getting short.",
 					    menorah ? "a candelabrum's " :
 						many ? "some " : "a ",
 					    many ? "s" : "");
+				    obj->known = 1;
 				    break;
 			    }
 			break;
@@ -867,6 +879,7 @@ void burn_object(void *arg, long timeout)
 					    many ? "s'" : "'s",
 					    many ? "s" : "",
 					    many ? "" : "s");
+				    obj->known = 1;
 				    break;
 				case OBJ_FLOOR:
 				    pline("You see %scandle%s flame%s flicker low!",
@@ -874,6 +887,7 @@ void burn_object(void *arg, long timeout)
 						many ? "some " : "a ",
 					    many ? "s'" : "'s",
 					    many ? "s" : "");
+				    obj->known = 1;
 				    break;
 			    }
 			break;
@@ -888,10 +902,12 @@ void burn_object(void *arg, long timeout)
 					pline("%s candelabrum's flame%s.",
 					    whose,
 					    many ? "s die" : " dies");
+					obj->known = 1;
 					break;
 				    case OBJ_FLOOR:
 					pline("You see a candelabrum's flame%s die.",
 						many ? "s" : "");
+					obj->known = 1;
 					break;
 				}
 			    } else {
@@ -902,6 +918,7 @@ void burn_object(void *arg, long timeout)
 					    whose,
 					    xname(obj),
 					    many ? "are" : "is");
+					obj->known = 1;
 					break;
 				    case OBJ_FLOOR:
 					/*
@@ -912,6 +929,7 @@ void burn_object(void *arg, long timeout)
 					    many ? "some " : "",
 					    many ? xname(obj):an(xname(obj)));
 					need_newsym = TRUE;
+					obj->known = 1;
 					break;
 				}
 
@@ -1186,6 +1204,11 @@ void do_storms(void)
  *		timer would have gone off.  If no timer is found, return 0.
  *		If an object, decrement the object's timer count.
  *
+ *	long report_timer(struct level *lev, short func_index, const void *arg)
+ *		Look at a timer specified by the (func_index, arg) pair.  This
+ *		assumes that such a pair is unique.  Return the time the
+ *		timer is scheduled to go off.  If no timer is found, return 0.
+ *
  *	void run_timers(void)
  *		Call timers that have timed out.
  *
@@ -1221,6 +1244,7 @@ static const char *kind_name(short);
 static void print_queue(struct menulist *menu, timer_element *);
 static void insert_timer(struct level *lev, timer_element *gnu);
 static timer_element *remove_timer(timer_element **, short,void *);
+static const timer_element *peek_timer(const timer_element *, short, const void *);
 static void write_timer(struct memfile *mf, timer_element *);
 static boolean mon_is_local(struct monst *);
 static boolean timer_is_local(timer_element *);
@@ -1404,6 +1428,23 @@ long stop_timer(struct level *lev, short func_index, void *arg)
 
 
 /*
+ * Look at the timer list for a timer.  Return the time it was
+ * scheduled to go off, 0 if not found.
+ */
+long report_timer(struct level *lev, short func_index, const void *arg)
+{
+    const timer_element *checking;
+
+    checking = peek_timer(lev->lev_timers, func_index, arg);
+
+    if (checking)
+	return checking->timeout;
+    return 0;
+}
+
+
+
+/*
  * Move all object timers from src to dest, leaving src untimed.
  */
 void obj_move_timers(struct obj *src, struct obj *dest)
@@ -1496,6 +1537,18 @@ static timer_element *remove_timer(timer_element **base, short func_index,
 	else
 	    *base = curr->next;
     }
+
+    return curr;
+}
+
+
+static const timer_element *peek_timer(const timer_element *base,
+				       short func_index, const void *arg)
+{
+    const timer_element *curr;
+
+    for (curr = base; curr; curr = curr->next)
+	if (curr->func_index == func_index && curr->arg == arg) break;
 
     return curr;
 }

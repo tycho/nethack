@@ -416,8 +416,15 @@ boolean is_chargeable(struct obj *obj)
 			(obj->known || objects[obj->otyp].oc_uname));
 	if (is_weptool(obj))	/* specific check before general tools */
 	    return FALSE;
-	if (obj->oclass == TOOL_CLASS)
-	    return (boolean)(objects[obj->otyp].oc_charged);
+	/* Magic lamps can't be recharged, but they should be listed
+	 * to prevent telling them apart from oil lamps with charging.
+	 */
+	if (obj->oclass == TOOL_CLASS) {
+	    return (boolean)(objects[obj->otyp].oc_charged ||
+			     obj->otyp == BRASS_LANTERN ||
+			     obj->otyp == OIL_LAMP ||
+			     obj->otyp == MAGIC_LAMP);
+	}
 	return FALSE; /* why are weapons/armor considered charged anyway? */
 }
 
@@ -432,6 +439,10 @@ void recharge(struct obj *obj, int curse_bless)
 
 	is_cursed = curse_bless < 0;
 	is_blessed = curse_bless > 0;
+
+	/* Scrolls of charging now ID charge count, as well as doing
+	 * the charging, unless cursed. */
+	if (!is_cursed) obj->known = 1;
 
 	if (obj->oclass == WAND_CLASS) {
 	    /* undo any prior cancellation, even when is_cursed */
@@ -510,11 +521,10 @@ void recharge(struct obj *obj, int curse_bless)
 	} else if (obj->oclass == TOOL_CLASS) {
 	    int rechrg = (int)obj->recharged;
 
-	    if (objects[obj->otyp].oc_charged) {
-		/* tools don't have a limit, but the counter used does */
-		if (rechrg < 7)	/* recharge_limit */
-		    obj->recharged++;
-	    }
+	    /* tools don't have a limit, but the counter used does */
+	    if (rechrg < 7)	/* recharge_limit */
+		obj->recharged++;
+
 	    switch(obj->otyp) {
 	    case BELL_OF_OPENING:
 		if (is_cursed) stripspe(obj);

@@ -1775,8 +1775,11 @@ int wrestable(struct obj *wand)
  */
 int zappable(struct obj *wand)
 {
-	if (wand->spe < 0 || (wand->spe == 0 && rn2(121)))
+	if (wand->spe < 0 || (wand->spe == 0 && rn2(121))) {
+		pline("You feel an absence of magical power.");
+		wand->known = 1; /* we know the :0 */
 		return 0;
+	}
 	if (wand->spe == 0)
 		pline("You wrest one last charge from the worn-out wand.");
 	wand->spe--;
@@ -1856,7 +1859,7 @@ int dozap(struct obj *obj)
 	check_unpaid(obj);
 
 	/* zappable addition done by GAN 11/03/86 */
-	if (!zappable(obj)) pline("Nothing happens.");
+	if (!zappable(obj)) { /* zappable prints the message itself */ }
 	/* PM 2008-04-16: 50% chance of blowing up, if zapped 20 times.
 	 * Same probability as in muse.c precheck() for monsters. */
 	else if (obj->cursed && !rn2(30)) {
