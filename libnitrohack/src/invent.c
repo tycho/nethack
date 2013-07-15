@@ -162,7 +162,9 @@ int merged(struct obj **potmp, struct obj **pobj)
 		    otmp->age = ((otmp->age*otmp->quan) + (obj->age*obj->quan))
 			    / (otmp->quan + obj->quan);
 
+		if (obj->known) otmp->known = 1;
 		if (obj->bknown) otmp->bknown = 1;
+		if (obj->rknown) otmp->rknown = 1;
 
 		/* merge known object properties */
 		otmp->oprops_known |= obj->oprops_known;
@@ -1926,8 +1928,8 @@ static boolean mergable(struct obj *otmp, struct obj *obj)
 	    obj->bypass != otmp->bypass)
 	    return FALSE;
 
-	if ((obj->oclass==WEAPON_CLASS || obj->oclass==ARMOR_CLASS) &&
-	    (obj->oerodeproof!=otmp->oerodeproof || obj->rknown!=otmp->rknown))
+	if ((obj->oclass == WEAPON_CLASS || obj->oclass == ARMOR_CLASS) &&
+	    obj->oerodeproof != otmp->oerodeproof)
 	    return FALSE;
 
 	if (obj->oclass == FOOD_CLASS && (obj->oeaten != otmp->oeaten ||
@@ -1974,10 +1976,7 @@ static boolean mergable(struct obj *otmp, struct obj *obj)
 
 	if (obj->oartifact != otmp->oartifact) return FALSE;
 
-	if (obj->known == otmp->known ||
-		!objects[otmp->otyp].oc_uses_known) {
-		return (boolean)(objects[obj->otyp].oc_merge);
-	} else return FALSE;
+	return (boolean)(objects[obj->otyp].oc_merge);
 }
 
 int doprgold(void)
