@@ -1001,18 +1001,31 @@ static boolean dospellmenu(const char *prompt,
 	struct nh_menuitem items[MAXSPELL+1];
 	int selected[MAXSPELL+1];
 
-	sprintf(buf, "Name\tLevel\tCategory\tFail");
+	sprintf(buf, "Name\tLevel\tCategory\tFail\tMemory");
 	set_menuitem(&items[count++], 0, MI_HEADING, buf, 0, FALSE);
 	for (i = 0; i < MAXSPELL && spellid(i) != NO_SPELL; i++) {
-		sprintf(buf, "%s\t%-d%s\t%s\t%-d%%",
+		int spellmem = spellknow(i);
+		const char *spellmemstr =
+			(spellmem > KEEN / 100 * 87) ? "[||||||||]" :
+			(spellmem > KEEN / 100 * 75) ? "[|||||||.]" :
+			(spellmem > KEEN / 100 * 62) ? "[||||||..]" :
+			(spellmem > KEEN / 100 * 50) ? "[|||||...]" :
+			(spellmem > KEEN / 100 * 37) ? "[||||....]" :
+			(spellmem > KEEN / 100 * 25) ? "[|||.....]" :
+			(spellmem > KEEN / 100 * 12) ? "[||......]" :
+			(spellmem > 0		   ) ? "[|.......]" :
+						       "[........]";
+
+		sprintf(buf, "%s\t%-d%s\t%s\t%-d%%\t%s",
 			spellname(i), spellev(i),
 			(spellknow(i) > 1000) ? " " : (spellknow(i) ? "!" : "*"),
 			spelltypemnemonic(spell_skilltype(spellid(i))),
-			100 - percent_success(i));
+			100 - percent_success(i),
+			spellmemstr);
 
 		set_menuitem(&items[count++], i+1, MI_NORMAL, buf, spellet(i),
 			     (i == splaction) ? TRUE : FALSE);
-	      }
+	}
 
 	how = PICK_ONE;
 	if (splaction == SPELLMENU_VIEW && spellid(1) == NO_SPELL)
