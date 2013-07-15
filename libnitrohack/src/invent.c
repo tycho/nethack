@@ -162,6 +162,8 @@ int merged(struct obj **potmp, struct obj **pobj)
 		    otmp->age = ((otmp->age*otmp->quan) + (obj->age*obj->quan))
 			    / (otmp->quan + obj->quan);
 
+		if (obj->bknown) otmp->bknown = 1;
+
 		/* merge known object properties */
 		otmp->oprops_known |= obj->oprops_known;
 
@@ -1910,7 +1912,6 @@ static boolean mergable(struct obj *otmp, struct obj *obj)
 
 	if (obj->unpaid != otmp->unpaid ||
 	    obj->spe != otmp->spe || obj->dknown != otmp->dknown ||
-	    (obj->bknown != otmp->bknown && !Role_if (PM_PRIEST)) ||
 	    obj->cursed != otmp->cursed || obj->blessed != otmp->blessed ||
 	    obj->no_charge != otmp->no_charge ||
 	    obj->obroken != otmp->obroken ||
