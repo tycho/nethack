@@ -622,6 +622,10 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms, int *bg_colo
 	*bg_color = CLR_RED;
     }
 
+    /* monsters override background color, NAO-style */
+    if (dbe->mon || dbe->invis)
+	*bg_color = 0;
+
     return count; /* count <= 4 */
 }
 
