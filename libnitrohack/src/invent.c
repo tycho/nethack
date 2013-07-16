@@ -1961,10 +1961,8 @@ static boolean mergable(struct obj *otmp, struct obj *obj)
 	if (obj->unpaid && !same_price(obj, otmp))
 	    return FALSE;
 
-	/* if they have names, make sure they're the same */
-	if ( (obj->onamelth != otmp->onamelth &&
-		((obj->onamelth && otmp->onamelth) || obj->otyp == CORPSE)
-	     ) ||
+	/* only merge if the objects share the same name */
+	if (obj->onamelth != otmp->onamelth ||
 	    (obj->onamelth && otmp->onamelth &&
 		    strncmp(ONAME(obj), ONAME(otmp), (int)obj->onamelth)))
 		return FALSE;
