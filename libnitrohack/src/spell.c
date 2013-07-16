@@ -679,7 +679,9 @@ int spelleffects(int spell, boolean atme)
 	} else if (check_capacity(
 		"Your concentration falters while carrying so much stuff.")) {
 	    return 1;
-	} else if (!freehand()) {
+	} else if (!freehand() &&
+		   !(uwep && objects[uwep->otyp].oc_skill == P_QUARTERSTAFF)) {
+		/* cursed wielded quarterstaff is exempt from this */
 		pline("Your arms are not free to cast!");
 		return 0;
 	}
