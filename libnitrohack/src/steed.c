@@ -330,8 +330,6 @@ boolean mount_steed(struct monst *mtmp,	/* The animal */
 	    	pline("%s magically floats up!", Monnam(mtmp));
 	    pline("You mount %s.", mon_nam(mtmp));
 	}
-	/* setuwep handles polearms differently when you're mounted */
-	if (uwep && is_pole(uwep)) unweapon = FALSE;
 	u.usteed = mtmp;
 	remove_monster(level, mtmp->mx, mtmp->my);
 	teleds(mtmp->mx, mtmp->my, TRUE);
@@ -602,10 +600,10 @@ void dismount_steed(int reason)
 	    iflags.botl = 1;
 	    encumber_msg();
 	    vision_full_recalc = 1;
-	} else
+	} else {
 	    iflags.botl = 1;
-	/* polearms behave differently when not mounted */
-	if (uwep && is_pole(uwep)) unweapon = TRUE;
+	}
+
 	return;
 }
 

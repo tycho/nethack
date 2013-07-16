@@ -643,8 +643,6 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 			is_launcher(obj) ||
 			/* or strike with a missile in your hand... */
 			(!thrown && (is_missile(obj) || is_ammo(obj))) ||
-			/* or use a pole at short range and not mounted... */
-			(!thrown && !u.usteed && is_pole(obj)) ||
 			/* or throw a missile without the proper bow... */
 			(is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
 			/* then do only 1-2 points of damage */

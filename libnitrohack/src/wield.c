@@ -98,11 +98,11 @@ void setuwep(struct obj *obj)
 	 */
 	if (obj) {
 		unweapon = (obj->oclass == WEAPON_CLASS) ?
-				is_launcher(obj) || is_ammo(obj) ||
-				is_missile(obj) || (is_pole(obj)
-				&& !u.usteed) : !is_weptool(obj);
-	} else
+			   is_launcher(obj) || is_ammo(obj) || is_missile(obj) :
+			   !is_weptool(obj);
+	} else {
 		unweapon = TRUE;	/* for "bare hands" message */
+	}
 	update_inventory();
 }
 
