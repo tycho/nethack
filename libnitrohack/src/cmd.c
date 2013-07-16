@@ -42,7 +42,6 @@ static void mon_invent_chain(struct menulist *, const char *, struct monst *,
 static void mon_chain(struct menulist *, const char *, struct monst *, long *, long *);
 static void contained(struct menulist *, const char *, long *, long *);
 static int wiz_show_stats(void);
-static int enter_explore_mode(void);
 static int doattributes(void);
 static int doconduct(void); /**/
 static boolean minimal_enlightenment(void);
@@ -78,7 +77,6 @@ const struct cmd_desc cmdlist[] = {
 	{"elbereth", "write an Elbereth in the dust", C('e'), 0, FALSE, doelbereth, CMD_ARG_NONE},
 	{"enhance", "advance or check weapons skills", M('e'), 0, TRUE, enhance_weapon_skill, CMD_ARG_NONE | CMD_EXT},
 	{"engrave", "write on the floor", 'E', 0, FALSE, doengrave, CMD_ARG_NONE | CMD_ARG_OBJ | CMD_ZEROOBJ},
-	{"exploremode", "switch to non-scoring explore mode", 0, 0, TRUE, enter_explore_mode, CMD_ARG_NONE | CMD_EXT},
 	{"farlook", "say what is on a distant square", ';', 0, TRUE, doquickwhatis, CMD_ARG_NONE | CMD_NOTIME},
 	{"fight", "attack even if no hostile monster is visible", 'F', 0, FALSE, dofight, CMD_ARG_DIR},
 	{"fire", "throw your quivered item", 'f', 0, FALSE, dofire, CMD_ARG_NONE},
@@ -262,23 +260,6 @@ static int domonability(void)
 	else pline("You don't have a special ability in your normal form!");
 	return 0;
 }
-
-static int enter_explore_mode(void)
-{
-	if (!discover && !wizard) {
-		pline("Beware!  From explore mode there will be no return to normal game.");
-		if (paranoid_yn("Do you want to enter explore mode?",
-				iflags.paranoid_quit) == 'y') {
-			pline("You are now in non-scoring explore mode.");
-			discover = TRUE;
-		}
-		else {
-			pline("Resuming normal game.");
-		}
-	}
-	return 0;
-}
-
 
 /* ^W command - wish for something */
 static int wiz_wish(void)	/* Unlimited wishes for debug mode by Paul Polderman */
