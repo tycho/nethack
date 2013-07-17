@@ -1198,10 +1198,7 @@ MONSTER: ('&',"erinys"), (10,04), hostile
 MONSTER: ('&',"marilith"), (07,09), hostile
 MONSTER: ('&',"nalfeshnee"), (27,08), hostile
 # Moloch's horde
-MONSTER: ('h',"Cthulhu"), (18,09), asleep, hostile {
-  OBJECT: ('"',"Amulet of Yendor")
-  OBJECT: ('!',"full healing")
-}
+MONSTER: ('h',"Cthulhu"), (18,09), asleep, hostile
 MONSTER: ('@',"aligned priest"), (20,03), noalign, hostile
 MONSTER: ('@',"aligned priest"), (15,04), noalign, hostile
 MONSTER: ('@',"aligned priest"), (11,05), noalign, hostile

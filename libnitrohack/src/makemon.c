@@ -616,6 +616,14 @@ static void m_initinv(struct monst *mtmp)
 			mongets(mtmp, SPEAR);
 		}
 		break;
+	    case S_HUMANOID:
+		/* [DS] Cthulhu isn't fully integrated yet, and he won't be
+		 *       until Moloch's Sanctum is rearranged */
+		if (ptr == &mons[PM_CTHULHU]) {
+		    mongets(mtmp, AMULET_OF_YENDOR);
+		    mongets(mtmp, POT_FULL_HEALING);
+		}
+		break;
 	    case S_GNOME:
 		/* Give gnomes candles, but don't light them to avoid
 		   cluttering the player's inventory with candles of
