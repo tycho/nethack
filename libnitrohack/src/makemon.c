@@ -1280,6 +1280,25 @@ void restore_rndmonst_state(struct memfile *mf)
 }
 
 
+/* Returns TRUE if all monsters of a class are generated only specially,
+ * i.e. all of them are tagged as G_NOGEN.
+ */
+boolean monclass_nogen(char monclass)
+{
+	int first, i;
+
+/*	Assumption #1:	monsters of a given class are contiguous in the
+ *			mons[] array.
+ */
+	for (first = LOW_PM; first < SPECIAL_PM; first++)
+	    if (mons[first].mlet == monclass) break;
+	if (first == SPECIAL_PM) return FALSE;
+
+	for (i = first; i < SPECIAL_PM && mons[i].mlet == monclass; i++)
+	    if (!(mons[i].geno & G_NOGEN)) return FALSE;
+	return TRUE;
+}
+
 /*	The routine below is used to make one of the multiple types
  *	of a given monster class.  The spc parameter specifies a
  *	special casing bit mask to allow the normal genesis

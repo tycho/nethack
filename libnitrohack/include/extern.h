@@ -816,6 +816,7 @@ extern const struct permonst *rndmonst(struct level *lev);
 extern void reset_rndmonst(int);
 extern void save_rndmonst_state(struct memfile *mf);
 extern void restore_rndmonst_state(struct memfile *mf);
+extern boolean monclass_nogen(char);
 extern const struct permonst *mkclass(const d_level *dlev, char,int);
 extern int adj_lev(const d_level *dlev, const struct permonst *ptr);
 extern const struct permonst *grow_up(struct monst *,struct monst *);
