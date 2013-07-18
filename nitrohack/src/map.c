@@ -108,9 +108,7 @@ void draw_map(int cx, int cy)
 	    attr = A_NORMAL;
 	    if (((display_buffer[y][x].monflags & MON_TAME) && settings.hilite_pet) ||
 		((display_buffer[y][x].monflags & MON_PEACEFUL) &&
-		 settings.hilite_peaceful) ||
-		((display_buffer[y][x].monflags & MON_DETECTED) &&
-		 settings.use_inverse)) {
+		 settings.hilite_peaceful)) {
 		attr |= A_REVERSE;
 		bg_color = 0;
 	    }

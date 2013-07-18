@@ -172,7 +172,6 @@ struct settings {
     nh_bool  showscore;	/* show score */
     nh_bool  standout;	/* use standout for --More-- */
     nh_bool  time;	/* display elapsed 'time' */
-    nh_bool  use_inverse; /* use inverse video for some things   */
     nh_bool  invweight;	/* show item weight in the inventory */
     nh_bool  blink;	/* show multiple symbols for each location by blinking */
     nh_bool  sidebar;   /* draw the inventory sidebar */

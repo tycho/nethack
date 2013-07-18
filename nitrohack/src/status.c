@@ -132,23 +132,12 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
     colorattr = curses_color_attr(percent_color(val_cur, val_max), 0);
     waddch(statuswin, '[');
     wattron(statuswin, colorattr);
-    if (settings.use_inverse) {
-	/* color the whole string and inverse the bar */
-	wattron(statuswin, A_REVERSE);
-	wprintw(statuswin, "%.*s", fill_len, str);
-	wattroff(statuswin, A_REVERSE);
-	wprintw(statuswin, "%.*s", len - fill_len, &str[fill_len]);
-	wattroff(statuswin, colorattr);
-    } else {
-	/* color the part of the string representing the bar */
-	wprintw(statuswin, "%.*s", fill_len, str);
-	wattroff(statuswin, colorattr);
-	/* use black to avoid confusion with being full */
-	colorattr = curses_color_attr(CLR_BLACK, 0);
-	wattron(statuswin, colorattr);
-	wprintw(statuswin, "%.*s", len - fill_len, &str[fill_len]);
-	wattroff(statuswin, colorattr);
-    }
+    /* color the whole string and inverse the bar */
+    wattron(statuswin, A_REVERSE);
+    wprintw(statuswin, "%.*s", fill_len, str);
+    wattroff(statuswin, A_REVERSE);
+    wprintw(statuswin, "%.*s", len - fill_len, &str[fill_len]);
+    wattroff(statuswin, colorattr);
     waddch(statuswin, ']');
 
     wprintw(statuswin, "%s", &str[len]);

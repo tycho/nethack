@@ -98,7 +98,6 @@ struct nh_option_desc curses_options[] = {
     {"standout", "use standout for --More--", OPTTYPE_BOOL, { VTRUE }},
     {"status3", "3 line status display", OPTTYPE_BOOL, { VTRUE }},
     {"time", "display elapsed game time, in moves", OPTTYPE_BOOL, {VTRUE}},
-    {"use_inverse", "use inverse video for some things", OPTTYPE_BOOL, { VTRUE }},
 #if defined(PDCURSES) && defined(WIN32)
     {"win_width", "window width", OPTTYPE_INT, {(void*)130}},
     {"win_height", "window height", OPTTYPE_INT, {(void*)40}},
@@ -124,7 +123,6 @@ struct nh_boolopt_map boolopt_map[] = {
     {"standout", &settings.standout},
     {"status3", &settings.status3},
     {"time", &settings.time},
-    {"use_inverse", &settings.use_inverse},
     {NULL, NULL}
 };
 
