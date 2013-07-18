@@ -22,9 +22,9 @@ static void observe_quantum_cat(struct obj *);
 static int menu_loot(int, struct obj *, boolean);
 static int in_or_out_menu(const char *,struct obj *, boolean, boolean);
 static int container_at(int, int, boolean);
-static boolean able_to_loot(int, int);
+static boolean able_to_loot(int, int, const char *);
 static boolean mon_beside(int, int);
-static boolean dump_container(struct obj *,boolean);
+static boolean dump_container(struct obj *, boolean, long *);
 static void del_sokoprizes(void);
 
 /* define for query_objlist() and autopickup() */
@@ -1331,7 +1331,7 @@ static int container_at(int x, int y, boolean countem)
 	return container_count;
 }
 
-static boolean able_to_loot(int x, int y)
+static boolean able_to_loot(int x, int y, const char *action)
 {
 	if (!can_reach_floor()) {
 		if (u.usteed && P_SKILL(P_RIDING) < P_BASIC)
@@ -1341,15 +1341,18 @@ static boolean able_to_loot(int x, int y)
 		return FALSE;
 	} else if (is_pool(level, x, y) || is_lava(level, x, y)) {
 		/* at present, can't loot in water even when Underwater */
-		pline("You cannot loot things that are deep in the %s.",
-		    is_lava(level, x, y) ? "lava" : "water");
+		pline("You cannot %s things that are deep in the %s.",
+		      action, is_lava(level, x, y) ? "lava" : "water");
 		return FALSE;
+	} else if (!strcmp(action, "tip")) {
+		/* tipping can be done without limbs or a free hand */
+		return TRUE;
 	} else if (nolimbs(youmonst.data)) {
-		pline("Without limbs, you cannot loot anything.");
+		pline("Without limbs, you cannot %s anything.", action);
 		return FALSE;
 	} else if (!freehand()) {
-		pline("Without a free %s, you cannot loot anything.",
-			body_part(HAND));
+		pline("Without a free %s, you cannot %s anything.",
+		      body_part(HAND), action);
 		return FALSE;
 	}
 	return TRUE;
@@ -1398,7 +1401,7 @@ lootcont:
     if ((container_count = container_at(cc.x, cc.y, TRUE))) {
 	boolean any = FALSE;
 
-	if (!able_to_loot(cc.x, cc.y)) return 0;
+	if (!able_to_loot(cc.x, cc.y, "loot")) return 0;
 	for (cobj = level->objects[cc.x][cc.y]; cobj; cobj = nobj) {
 	    nobj = cobj->nexthere;
 
@@ -1759,7 +1762,7 @@ static int in_container(struct obj *obj)
 		obfree(obj, NULL);
 
 		/* dump it out onto the floor so the scatterage can take effect */
-		if (dump_container(current_container, TRUE))
+		if (dump_container(current_container, TRUE, NULL))
 		    pline("The contents fly everywhere!");
 		scatter(u.ux,u.uy,10,VIS_EFFECTS|MAY_HIT|MAY_DESTROY|MAY_FRACTURE,0);
 
@@ -2165,6 +2168,73 @@ static int in_or_out_menu(const char *prompt, struct obj *obj,
     return n;
 }
 
+static const char tippable_ground[] = { ALLOW_NONE, NONE_ON_COMMA, TOOL_CLASS, 0 };
+static const char *tippable = tippable_ground + 2;
+
+int dotip(struct obj *otmp)
+{
+	struct obj *cotmp, *notmp;
+	static const char tools[] = { TOOL_CLASS, 0 };
+
+	if (check_capacity(NULL))
+	    return 0;
+
+	if (otmp && !validate_object(otmp, tools, "tip")) {
+	    return 0;
+	} else if (!otmp) {
+	    otmp = getobj(!u.uswallow && container_at(u.ux, u.uy, FALSE) ?
+			    tippable_ground : tippable,
+			  "tip", NULL);
+	}
+	if (!otmp)
+	    return 0;
+
+	if (otmp == &zeroobj && !able_to_loot(u.ux, u.uy, "tip"))
+	    return 0;
+	for (cotmp = level->objects[u.ux][u.uy];
+	     otmp == &zeroobj && cotmp;
+	     cotmp = notmp) {
+	    notmp = cotmp->nexthere;
+
+	    if (Is_container(cotmp)) {
+		char qbuf[QBUFSZ];
+		int c;
+		sprintf(qbuf, "There is %s here; tip it?",
+			safe_qbuf("", sizeof("There is  here; tip it?"),
+				  doname(cotmp), an(simple_typename(cotmp->otyp)),
+				  "a container"));
+		c = ynq(qbuf);
+		if (c == 'q') return 0;
+		if (c == 'n') continue;
+		otmp = cotmp;
+	    }
+	}
+	if (otmp == &zeroobj)
+	    return 0;
+
+	if (!Is_container(otmp)) {
+	    pline("That isn't a container!");
+	    return 0;
+	}
+
+	pline("You tip %s over%s", the(xname(otmp)),
+	      (otmp->otyp == BAG_OF_TRICKS ?
+	       (otmp->spe < 1) : (otmp->olocked || !otmp->cobj)) ?
+	      ", but nothing comes out." : ".");
+
+	if (otmp->otyp == BAG_OF_TRICKS) {
+	    while (otmp->spe > 0)
+		bagotricks_monster(otmp, TRUE);
+	} else {
+	    long loss = 0L;
+	    dump_container(otmp, FALSE, &loss);
+	    if (loss > 0L)
+		pline("You owe %ld %s for lost merchandise.", loss, currency(loss));
+	}
+
+	return 1;
+}
+
 /* Dumps out a container, possibly as the prelude/result of an explosion.
  * destroy_after trashes the container afterwards; try not to use it :P
  *
@@ -2172,13 +2242,22 @@ static int in_or_out_menu(const char *prompt, struct obj *obj,
  *
  * Returns TRUE if at least one object was present, FALSE if empty.
  */
-static boolean dump_container(struct obj *container, boolean destroy_after)
+static boolean dump_container(struct obj *container, boolean destroy_after,
+			      long *loss)
 {
 	struct obj *otmp, *otmp2;
 	boolean ret = FALSE;
 
-	/* sanity check */
-	if (!container) return 0;
+	/* sanity checks */
+	if (!container || !Is_container(container))
+	    return 0;
+
+	/* trying to empty a locked container may damage its contents */
+	if (!destroy_after && container->olocked) {
+	    ret = !!container->cobj;
+	    container_impact_dmg(container);
+	    return ret;
+	}
 
 	for (otmp = container->cobj; otmp; otmp = otmp2) {
 	    ret = TRUE;
@@ -2186,17 +2265,28 @@ static boolean dump_container(struct obj *container, boolean destroy_after)
 	    obj_extract_self(otmp);
 	    container->owt = weight(container);
 
+	    /* same chance to lose items as looting a cursed bag of holding */
+	    if (!destroy_after &&
+		Is_mbag(container) && container->cursed && !rn2(13)) {
+		long cost = mbag_item_gone(carried(container), otmp);
+		if (loss) *loss += cost;
+		continue;
+	    }
+
 	    /* we need to start the timer on these */
 	    if (container->otyp == ICE_BOX && !age_is_relative(otmp)) {
 		otmp->age = moves - otmp->age;
 		if (otmp->otyp == CORPSE)
 		    start_corpse_timeout(otmp);
 	    }
-	    place_object(otmp, otmp->olev, u.ux, u.uy);
 
-	    /* update character's gold piece count immediately */
-	    if (otmp->otyp == GOLD_PIECE)
-		bot();
+	    if (destroy_after) {
+		/* pile the item for potential scattering */
+		place_object(otmp, otmp->olev, u.ux, u.uy);
+	    } else {
+		/* let the items hit the floor */
+		drop_tipped(otmp, carried(container));
+	    }
 	}
 
 	if (destroy_after) {

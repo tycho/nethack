@@ -471,6 +471,7 @@ static void show_quickref(void)
 	{0, MI_TEXT, ""},
 	{0, MI_TEXT, "#loot       open container on floor"},
 	{0, MI_TEXT, "#force      force open container with wielded weapon"},
+	{0, MI_TEXT, "#tip        empty a container of its contents"},
 	{0, MI_TEXT, "#untrap     find and disarm traps (e.g. container or door)"},
 	{0, MI_TEXT, ""},
 	{0, MI_TEXT, "#pray       pray for divine help (near-death or troubled)"},

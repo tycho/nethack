@@ -1745,6 +1745,25 @@ assign_sym:
 }
 
 /* release a monster from a bag of tricks */
+void bagotricks_monster(struct obj *bag, boolean use_charge)
+{
+	int cnt = 1;
+	boolean gotone = FALSE;
+
+	if (use_charge)
+	    consume_obj_charge(bag, TRUE);
+
+	if (!rn2(23))
+	    cnt += rn1(7, 1);
+	while (cnt-- > 0) {
+	    if (makemon(NULL, level, u.ux, u.uy, NO_MM_FLAGS))
+		gotone = TRUE;
+	}
+	if (gotone)
+	    makeknown(BAG_OF_TRICKS);
+}
+
+/* apply a bag of tricks */
 int bagotricks(struct obj *bag)
 {
 	if (!bag || bag->otyp != BAG_OF_TRICKS) {
@@ -1753,7 +1772,6 @@ int bagotricks(struct obj *bag)
 	    pline("Nothing happens.");
 	    return use_container(bag, 1);
 	} else {
-	    boolean gotone = FALSE;
 	    int cnt;
 	    struct monst *mtmp;
 	    struct obj *otmp;
@@ -1865,15 +1883,8 @@ int bagotricks(struct obj *bag)
 		    }
 		    break;
 		default:
-		    cnt = 1;
-		    gotone = FALSE;
-		    if (!rn2(23)) cnt += rn1(7, 1);
-		    while (cnt-- > 0) {
-			if (makemon(NULL, level, u.ux, u.uy, NO_MM_FLAGS))
-			    gotone = TRUE;
-		    }
+		    bagotricks_monster(bag, FALSE);
 	    }
-	    if (gotone) makeknown(BAG_OF_TRICKS);
 	}
 
 	return 1;

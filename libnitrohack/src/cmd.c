@@ -124,6 +124,7 @@ const struct cmd_desc cmdlist[] = {
 	{"takeoff", "take off an item you are wearing", 'T', 0, FALSE, dotakeoff, CMD_ARG_NONE | CMD_ARG_OBJ},
 	{"teleport", "use intrinsic or magical teleportation ability", C('t'), 0, TRUE, dotele, CMD_ARG_NONE},
 	{"throw", "throw an item", 't', 0, FALSE, dothrow, CMD_ARG_NONE | CMD_ARG_OBJ},
+	{"tip", "empty a container of its contents", 0, 0, FALSE, dotip, CMD_ARG_NONE | CMD_ARG_OBJ | CMD_EXT},
 	{"togglepickup", "toggle the autopickup option", '@', 0, TRUE, dotogglepickup, CMD_ARG_NONE},
 	{"travel", "walk until a given square is reached", '_', 0, TRUE, dotravel, CMD_ARG_NONE | CMD_ARG_POS},
 	{"turn", "turn undead", M('t'), 0, TRUE, doturn, CMD_ARG_NONE | CMD_EXT},
@@ -1491,7 +1492,7 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 		SET_OBJ_CMD2('t', "throw", "throw");
 	}
 	
-	/* unequip armor */
+	/* unequip armor or tip container */
 	if (obj->oclass == ARMOR_CLASS && (obj->owornmask & W_ARMOR))
 	    SET_OBJ_CMD2('T', "takeoff", "take off");
 	else if (obj->oclass == RING_CLASS && (obj->owornmask & W_RING))
@@ -1500,6 +1501,8 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	    SET_OBJ_CMD2('T', "remove", "take off");
 	else if (obj->oclass == TOOL_CLASS && (obj->owornmask & W_TOOL))
 	    SET_OBJ_CMD2('T', "remove", "take off");
+	else if (Is_container(obj))
+	    SET_OBJ_CMD2('T', "tip", "tip (empty contents)");
 	
 	/* invoke */
 	if ((obj->otyp == FAKE_AMULET_OF_YENDOR && !obj->known) ||

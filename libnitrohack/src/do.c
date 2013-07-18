@@ -351,8 +351,13 @@ static void dosinkring(struct obj *obj)  /* obj is a ring being dropped over a k
 {
 	struct obj *otmp,*otmp2;
 	boolean ideed = TRUE;
+	boolean ring_in_inv = carried(obj);
 
-	pline("You drop %s down the drain.", doname(obj));
+	if (ring_in_inv)
+	    pline("You drop %s down the drain.", doname(obj));
+	else
+	    pline("%s falls down the drain.", upstart(doname(obj)));
+
 	obj->in_use = TRUE;	/* block free identification via interrupt */
 	switch(obj->otyp) {	/* effects that can be noticed without eyes */
 	    case RIN_SEARCHING:
@@ -501,8 +506,12 @@ giveback:
 		pline("The sink backs up, leaving %s.", doname(obj));
 		obj->in_use = FALSE;
 		dropx(obj);
-	} else
+	} else {
+	    if (ring_in_inv)
 		useup(obj);
+	    else
+		obfree(obj, NULL);
+	}
 }
 
 
@@ -602,9 +611,13 @@ static int drop(struct obj *obj, struct obj *ostack)
 /* eg ship_object() and dropy() -> sellobj() both produce output */
 void dropx(struct obj *obj)
 {
-        /* Ensure update when we drop gold objects */
-        if (obj->oclass == COIN_CLASS) iflags.botl = 1;
-        freeinv(obj);
+	/* Tipped objects aren't considered carried, even if
+	 * their container is, so don't freeinv() it. */
+	if (carried(obj)) {
+	    /* Ensure update when we drop gold objects */
+	    if (obj->oclass == COIN_CLASS) iflags.botl = 1;
+	    freeinv(obj);
+	}
 	if (!u.uswallow) {
 	    if (ship_object(obj, u.ux, u.uy, FALSE)) return;
 	    if (IS_ALTAR(level->locations[u.ux][u.uy].typ))
@@ -668,6 +681,27 @@ void dropy(struct obj *obj)
 		map_object(obj, 0);
 	    newsym(u.ux, u.uy);	/* remap location under self */
 	}
+}
+
+/* Drop items tipped from a container.
+   Assumes the container is at the same place and level as the hero.
+   The container may or may not be carried by the hero. */
+void drop_tipped(struct obj *otmp, boolean container_carried)
+{
+	/* drop() logic without assuming otmp is in open inventory */
+	if (!u.uswallow) {
+	    schar loctyp = level->locations[u.ux][u.uy].typ;
+	    if ((otmp->oclass == RING_CLASS || otmp->otyp == MEAT_RING) &&
+		IS_SINK(loctyp)) {
+		dosinkring(otmp);
+		return;
+	    }
+	    if (container_carried && !can_reach_floor()) {
+		hitfloor(otmp, NULL, FALSE);
+		return;
+	    }
+	}
+	dropx(otmp);
 }
 
 /* things that must change when not held; recurse into containers.

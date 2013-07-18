@@ -728,6 +728,8 @@ static enum obj_use_status object_selection_checks(struct obj *otmp,
 	    || (!strncmp(word, "rub on the stone", 16) &&
 		otmp->oclass == GEM_CLASS &&	/* using known touchstone */
 		otmp->dknown && objects[otyp].oc_name_known)
+	    || (!strcmp(word, "tip") &&
+		!Is_container(otmp))
 	    || ((!strcmp(word, "use or apply") ||
 		    !strcmp(word, "untrap with")) &&
 		    /* Picks, axes, pole-weapons, bullwhips */
