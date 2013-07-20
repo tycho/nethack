@@ -1111,6 +1111,8 @@ static const char * const bogusmons[] = {
 	"guillemet",
 	"solidus",
 	"obelus",
+	"miniature blimp",
+	"lungfish",
 
         "apostrophe golem", "Bob the angry flower",
         "bonsai-kitten", "Boxxy", "lonelygirl15",
