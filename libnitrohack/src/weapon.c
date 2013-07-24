@@ -273,18 +273,22 @@ int dmgval(struct monst *magr, struct obj *otmp, boolean thrown,
 	/* Damage multiplier to replace multishot for heavy shot projectiles. */
 	if (thrown && is_heavyshot(otmp, olaunch)) {
 	    int multi_heavy = rnd(multishot_max(magr, otmp));
+	    boolean odd_adjusted_multi = FALSE;
+	    int old_tmp = tmp;
 
 	    /* Make this cumulative with double damage bonus rather than
 	       stacking them, so double damage is effectively +1 multiplier. */
 	    if (multi_heavy > 1 && double_damage) {
-		/* round up or down randomly, e.g. we want 2 -> 3,
-		   but doubling only permits -> 2 or -> 4. */
-		if (!(multi_heavy & 1) && !rn2(2)) multi_heavy++;
-		multi_heavy++;
-		multi_heavy /= 2;
+		odd_adjusted_multi = !!((multi_heavy + 1) & 1);
+		multi_heavy = (multi_heavy + 1) / 2;
 	    }
 
 	    tmp *= multi_heavy;
+
+	    /* if the multiplier got rounded for double damage adjustment,
+	       add the extra half now */
+	    if (odd_adjusted_multi && double_damage)
+		tmp += (old_tmp + 1) / 2;
 	}
 
 /*	Put weapon vs. monster type damage bonuses in below:	*/
