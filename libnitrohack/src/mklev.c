@@ -378,11 +378,14 @@ static void makerooms(struct level *lev)
 {
 	boolean tried_vault = FALSE;
 	boolean do_splitrm = !rn2(10);
+	boolean did_splitrm = FALSE;
 
 	/* make rooms until satisfied */
 	/* rnd_rect() will returns 0 if no more rects are available... */
 	while (lev->nroom < MAXNROFROOMS && rnd_rect()) {
-		if (lev->nroom >= (MAXNROFROOMS/6) && rn2(2) && !tried_vault) {
+		/* don't double-count split room halves when limiting room count */
+		if (lev->nroom - (did_splitrm ? 1 : 0) >= MAXNROFROOMS / 6 &&
+		    rn2(2) && !tried_vault) {
 			tried_vault = TRUE;
 			if (create_vault(lev)) {
 				vault_x = lev->rooms[lev->nroom].lx;
@@ -390,9 +393,12 @@ static void makerooms(struct level *lev)
 				lev->rooms[lev->nroom].hx = -1;
 			}
 		} else {
-		    if (do_splitrm && mk_split_room(lev)) {
-			do_splitrm = FALSE;
-			continue;
+		    if (do_splitrm && lev->nroom + 1 < MAXNROFROOMS) {
+			if (mk_split_room(lev)) {
+			    do_splitrm = FALSE;
+			    did_splitrm = TRUE;
+			    continue;
+			}
 		    }
 		    if (!create_room(lev, -1, -1, -1, -1, -1, -1, OROOM, -1))
 			return;
