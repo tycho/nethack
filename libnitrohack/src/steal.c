@@ -400,7 +400,7 @@ void stealamulet(struct monst *mtmp)
     if (u.uhave.amulet) {
 	real = AMULET_OF_YENDOR;
 	fake = FAKE_AMULET_OF_YENDOR;
-    } else if (u.uhave.questart) {
+    } else if (u.uhave.questart && mtmp->mnum == quest_info(MS_NEMESIS)) {
 	for (otmp = invent; otmp; otmp = otmp->nobj)
 	    if (is_quest_artifact(otmp)) break;
 	if (!otmp) return;	/* should we panic instead? */
