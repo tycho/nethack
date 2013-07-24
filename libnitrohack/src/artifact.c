@@ -769,7 +769,8 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	    for (obj = invent; obj; obj = obj->nobj)
 		if (obj != otmp && obj->oartifact) {
 		    const struct artifact *art = get_artifact(obj);
-		    if (art->cary.adtyp == dtyp) {
+		    if (art->cary.adtyp == dtyp ||
+			(dtyp == AD_MAGM && is_quest_artifact(obj))) {
 			mask = NULL;
 			break;
 		    }
@@ -778,6 +779,23 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	if (mask) {
 	    if (on) *mask |= wp_mask;
 	    else *mask &= ~wp_mask;
+	}
+
+	/* quest artifact grants magic resistance when carried by their role */
+	if (is_quest_artifact(otmp) && wp_mask == W_ART) {
+	    if (on) {
+		EAntimagic |= W_ART;
+	    } else {
+		/* don't take away magic resistance if another artifact grants it */
+		struct obj *obj;
+		for (obj = invent; obj; obj = obj->nobj) {
+		    if (obj != otmp && obj->oartifact) {
+			const struct artifact *art = get_artifact(obj);
+			if (art->cary.adtyp == AD_MAGM) break;
+		    }
+		}
+		if (!obj) EAntimagic &= ~W_ART;
+	    }
 	}
 
 	/* intrinsics from the spfx field; there could be more than one */
