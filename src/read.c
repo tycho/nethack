@@ -143,6 +143,20 @@ doread()
     "I couldn't afford this T-shirt so I stole it!",
     "End Mercantile Opacity Discrimination Now: Let Invisible Customers Shop!",
     "Elvira's House O'Succubi, granting the gift of immorality!",
+    "Mind Flayers Suck",
+    "I'm not wearing any pants",
+    "Newt Fodder",
+    "My Dog ate Og",
+    "End Lich Prejudice Now!",
+    "Down With The Living!",
+    "Pudding Farmer",
+    "Dudley",
+    "I pray to Our Lady of Perpetual Mood Swings",
+    "Soooo, When's the Wizard Getting Back to You About That Brain?",
+    "Vegetarian",
+    "I plan to go to Astral",
+    "If They Don't Have Fruit Juice in Heaven, I Ain't Going",
+    "Living Dead",
 	    };
 	    char buf[BUFSZ];
 	    int erosion;
