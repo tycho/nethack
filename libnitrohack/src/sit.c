@@ -249,8 +249,8 @@ int dosit(void)
 		    case 12:
 			pline("You are granted an insight!");
 			if (invent) {
-			    /* rn2(5) agrees w/seffects() */
-			    identify_pack(rn2(5));
+			    /* rn1(4, 3) agrees w/seffects() */
+			    identify_pack(rn1(4, 3));
 			}
 			break;
 		    case 13:
