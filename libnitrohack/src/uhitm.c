@@ -230,8 +230,10 @@ schar find_roll_to_hit(struct monst *mtmp)
 	schar tmp;
 	int tmp2, wepskill, twowepskill, useskill;
 
-	tmp = 1 + Luck + abon() + find_mac(mtmp) + u.uhitinc +
+	tmp = 1 + abon() + find_mac(mtmp) + u.uhitinc +
 		maybe_polyd(youmonst.data->mlevel, u.ulevel);
+
+	if (Luck) tmp += sgn(Luck) * rnd(abs(Luck));
 
 	check_caitiff(mtmp);
 
