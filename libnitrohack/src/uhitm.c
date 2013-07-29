@@ -760,6 +760,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 			setuwep(NULL);
 		    freeinv(obj);
 		    potionhit(mon, obj, TRUE);
+		    obj = NULL;
 		    if (mon->mhp <= 0) return FALSE;	/* killed */
 		    hittxt = TRUE;
 		    /* in case potion effect causes transformation */
@@ -932,8 +933,15 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 				    pline("Your venom burns %s!", mon_nam(mon));
 				    tmp = dmgval(&youmonst, obj, thrown, mon);
 			    }
-			    if (thrown) obfree(obj, NULL);
-			    else useup(obj);
+			    if (thrown) {
+				obfree(obj, NULL);
+				obj = NULL;
+			    } else if (obj->quan > 1L) {
+				useup(obj);
+			    } else { /* obj->quan == 1L */
+				useupall(obj);
+				obj = NULL;
+			    }
 			    hittxt = TRUE;
 			    get_dmg_bonus = FALSE;
 			    break;
@@ -1179,6 +1187,40 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 			if (!mon->mstun && mon->mcanmove && !mon->msleeping &&
 				canseemon(level, mon))
 			    pline("%s appears confused.", Monnam(mon));
+		}
+	}
+
+	/* successful weapon hits have a skill-based chance to learn enchantment */
+	if (valid_weapon_attack && obj) {
+		int learn_known, learn_klaunch;
+
+		/* assume that !thrown implies wielded */
+		wtype = thrown ? weapon_type(is_ammo(obj) ? uwep : obj) :
+				 uwep_skill_type();
+		learn_known = learn_klaunch =
+			P_SKILL(wtype) >= P_EXPERT ? 50 :
+			P_SKILL(wtype) == P_SKILLED ? 100 :
+			P_SKILL(wtype) == P_BASIC ? 200 : 1000;
+
+		/* races are familiar with weapons of their kind */
+		if (is_racial_weapon(obj)) learn_known /= 2;
+		if (uwep && is_racial_weapon(uwep)) learn_klaunch /= 2;
+
+		if (thrown && ammo_and_launcher(obj, uwep) &&
+		    !uwep->known && !rn2(learn_klaunch)) {
+		    uwep->known = 1;
+		    prinv(NULL, uwep, 0L);
+		}
+
+		if (!obj->known && !rn2(learn_known)) {
+		    obj->known = 1;
+		    if (carried(obj)) prinv(NULL, obj, 0L);
+		    /* ostack should always be what obj was split from and
+		     * therefore have the same known, but just in case... */
+		    if (ostack && !ostack->known) {
+			ostack->known = 1;
+			if (carried(ostack)) prinv(NULL, ostack, 0L);
+		    }
 		}
 	}
 

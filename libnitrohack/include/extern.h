@@ -729,6 +729,7 @@ extern void carry_obj_effects(struct obj *);
 extern const char *currency(long);
 extern void silly_thing(const char *,struct obj *);
 extern boolean is_racial_armor(const struct obj *);
+extern boolean is_racial_weapon(const struct obj *);
 
 /* ### light.c ### */
 

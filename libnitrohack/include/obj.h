@@ -269,21 +269,22 @@ struct obj {
 #define is_elven_obj(otmp)	(is_elven_armor(otmp) || is_elven_weapon(otmp))
 
 /* Orcish gear */
-#define is_orcish_obj(otmp)	(is_orcish_armor(otmp)\
-				|| (otmp)->otyp == ORCISH_ARROW\
+#define is_orcish_weapon(otmp)	((otmp)->otyp == ORCISH_ARROW\
 				|| (otmp)->otyp == ORCISH_SPEAR\
 				|| (otmp)->otyp == ORCISH_DAGGER\
 				|| (otmp)->otyp == ORCISH_SHORT_SWORD\
 				|| (otmp)->otyp == ORCISH_BOW)
+#define is_orcish_obj(otmp)	(is_orcish_armor(otmp) || is_orcish_weapon(otmp))
 
 /* Dwarvish gear */
-#define is_dwarvish_obj(otmp)	(is_dwarvish_armor(otmp)\
-				|| (otmp)->otyp == DWARVISH_SPEAR\
+#define is_dwarvish_weapon(otmp) ((otmp)->otyp == DWARVISH_SPEAR\
 				|| (otmp)->otyp == DWARVISH_SHORT_SWORD\
 				|| (otmp)->otyp == DWARVISH_MATTOCK)
+#define is_dwarvish_obj(otmp)	(is_dwarvish_armor(otmp) || is_dwarvish_weapon(otmp))
 
 /* Gnomish gear */
-#define is_gnomish_obj(otmp)	(is_gnomish_armor(otmp))
+#define is_gnomish_weapon(otmp)	(FALSE)
+#define is_gnomish_obj(otmp)	(is_gnomish_armor(otmp) || is_gnomish_weapon(otmp))
 
 /* Light sources */
 #define Is_candle(otmp) (otmp->otyp == TALLOW_CANDLE || \
