@@ -15,7 +15,6 @@ static void check_shop_obj(struct obj *,xchar,xchar,boolean);
 static void breakobj(struct obj *,xchar,xchar,boolean,boolean);
 static void breakmsg(struct obj *,boolean);
 static boolean toss_up(struct obj *, struct obj *, boolean);
-static boolean throwing_weapon(struct obj *);
 static void sho_obj_return_to_u(struct obj *obj, schar, schar);
 static boolean mhurtle_step(void *,int,int);
 
@@ -848,7 +847,7 @@ static boolean toss_up(struct obj *obj, struct obj *ostack, boolean hitsroof)
 }
 
 /* return true for weapon meant to be thrown; excludes ammo */
-static boolean throwing_weapon(struct obj *obj)
+boolean throwing_weapon(const struct obj *obj)
 {
 	return (is_missile(obj) || is_spear(obj) ||
 		/* daggers and knife (excludes scalpel) */
