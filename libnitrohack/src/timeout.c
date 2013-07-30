@@ -717,6 +717,8 @@ void burn_object(void *arg, long timeout)
 
 		if (menorah) {
 		    obj->spe = 0;	/* no more candles */
+		    obj->owt = weight(obj);
+		    if (carried(obj)) encumber_msg();
 		} else if (Is_candle(obj) || obj->otyp == POT_OIL) {
 		    /* get rid of candles and burning oil potions */
 		    obj_extract_self(obj);
@@ -946,6 +948,8 @@ void burn_object(void *arg, long timeout)
 
 			if (menorah) {
 			    obj->spe = 0;
+			    obj->owt = weight(obj); /* no more candles */
+			    if (carried(obj)) encumber_msg();
 			} else {
 			    obj_extract_self(obj);
 			    obfree(obj, NULL);

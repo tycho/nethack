@@ -923,6 +923,8 @@ static int use_candle(struct obj **optr)
 		if (obj->lamplit) end_burn(obj, TRUE);
 		/* candles are now gone */
 		useupall(obj);
+		otmp->owt = weight(otmp);
+		/* no encumber_msg: weight on player didn't change */
 	}
 	return 1;
 }
