@@ -2183,11 +2183,19 @@ int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 	char let;
 	char alphabet[52+1], buf[52+1];
 	char qbuf[QBUFSZ];
-	char allowallcnt[3] = {ALLOW_COUNT, ALL_CLASSES, 0};
 	const char *adj_type;
 
+	/* all but coins */
+	static const char organizablecnt[] = {
+	    ALLOW_COUNT,
+	    WEAPON_CLASS, ARMOR_CLASS, RING_CLASS, AMULET_CLASS, TOOL_CLASS,
+	    FOOD_CLASS, POTION_CLASS, SCROLL_CLASS, SPBOOK_CLASS, WAND_CLASS,
+	    GEM_CLASS, ROCK_CLASS, BALL_CLASS, CHAIN_CLASS, VENOM_CLASS,
+	    0
+	};
+
 	/* get a pointer to the object the user wants to organize */
-	if (!obj && !(obj = getobj(allowallcnt, "adjust", NULL)))
+	if (!obj && !(obj = getobj(organizablecnt, "adjust", NULL)))
 	    return 0;
 
 	/* initialize the list with all upper and lower case letters */
