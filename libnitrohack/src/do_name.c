@@ -89,6 +89,15 @@ int do_mname(void)
 	return 0;
 }
 
+
+/* all but coins */
+static const char nameable[] = {
+	WEAPON_CLASS, ARMOR_CLASS, RING_CLASS, AMULET_CLASS, TOOL_CLASS,
+	FOOD_CLASS, POTION_CLASS, SCROLL_CLASS, SPBOOK_CLASS, WAND_CLASS,
+	GEM_CLASS, ROCK_CLASS, BALL_CLASS, CHAIN_CLASS, VENOM_CLASS,
+	0
+};
+
 /*
  * This routine changes the address of obj. Be careful not to call it
  * when there might be pointers around in unknown places. For now: only
@@ -100,6 +109,9 @@ static void do_oname(struct obj *obj)
 	char *otypname;
 	const char *aname;
 	short objtyp;
+
+	if (!obj) obj = getobj(nameable, "name", NULL);
+	if (!obj) return;
 
 	otypname = simple_typename(obj->otyp);
 	sprintf(qbuf, "What do you want to name %s %s?",
@@ -248,12 +260,29 @@ struct obj *oname(struct obj *obj, const char *name)
 
 static const char callable[] = {
 	SCROLL_CLASS, POTION_CLASS, WAND_CLASS, RING_CLASS, AMULET_CLASS,
-	GEM_CLASS, SPBOOK_CLASS, ARMOR_CLASS, TOOL_CLASS, 0 };
+	GEM_CLASS, SPBOOK_CLASS, ARMOR_CLASS, TOOL_CLASS, 0
+};
+
+static void do_tname(struct obj *obj)
+{
+	if (!obj) obj = getobj(callable, "call", NULL);
+	if (!obj) return;
+
+	/* behave as if examining it in inventory;
+	 * this might set dknown if it was picked up
+	 * while blind and the hero can now see */
+	examine_object(obj);
+
+	if (!obj->dknown) {
+	    pline("You would never recognize another one.");
+	    return;
+	}
+	docall(obj);
+}
 
 int do_naming(struct obj *obj)
 {
 	int n, selected[1];
-	static const char allowall[] = {ALL_CLASSES, 0};
 	struct menulist menu;
 	char title[QBUFSZ];
 
@@ -295,29 +324,11 @@ int do_naming(struct obj *obj)
 	    case 0:
 		do_mname();
 		break;
-		
-		/* cases 1 & 2 duplicated from ddocall() */
 	    case 1:
-		if (!obj)
-		    obj = getobj(allowall, "name", NULL);
-		if (obj)
-		    do_oname(obj);
+		do_oname(obj);
 		break;
 	    case 2:
-		if (!obj)
-		    obj = getobj(callable, "call", NULL);
-		if (obj) {
-		    /* behave as if examining it in inventory;
-		     * this might set dknown if it was picked up
-		     * while blind and the hero can now see */
-		    xname(obj);
-
-		    if (!obj->dknown) {
-			pline("You would never recognize another one.");
-			return 0;
-		    }
-		    docall(obj);
-		}
+		do_tname(obj);
 		break;
 	    case 3:
 		donamelevel();
