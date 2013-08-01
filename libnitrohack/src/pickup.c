@@ -397,17 +397,86 @@ static int autopick(struct obj *olist,	/* the object list */
 }
 
 
+/* Should the weight of this object be shown? */
+static boolean obj_weight_known(const struct obj *otmp)
+{
+	char oclass;
+	short otyp;
+
+	/* currently in inventory */
+	if (carried(otmp))
+	    return TRUE;
+	if (otmp->where == OBJ_CONTAINED && carried(otmp->ocontainer))
+	    return TRUE;
+
+	/* was once carried in inventory */
+	if (otmp->invlet)
+	    return TRUE;
+
+	/* the logic below is based on information in shuffle_all()
+	 * and obfuscate_object() */
+
+	oclass = otmp->oclass;
+	otyp = otmp->otyp;
+
+	/* object classes with unambiguous weights */
+	if (oclass == WEAPON_CLASS || oclass == RING_CLASS ||
+	    oclass == AMULET_CLASS || oclass == FOOD_CLASS ||
+	    oclass == POTION_CLASS || oclass == SCROLL_CLASS ||
+	    oclass == SPBOOK_CLASS || oclass == WAND_CLASS ||
+	    oclass == COIN_CLASS   || oclass == BALL_CLASS ||
+	    oclass == CHAIN_CLASS  || oclass == VENOM_CLASS)
+	    return TRUE;
+
+	/* armors that aren't shuffled or are shuffled with the same weight */
+	if (oclass == ARMOR_CLASS) {
+	    if (!(otyp >= HELMET && otyp <= HELM_OF_TELEPATHY) &&
+		!(otyp >= LEATHER_GLOVES && otyp <= GAUNTLETS_OF_DEXTERITY) &&
+		/* CLOAK_OF_PROTECTION to CLOAK_OF_DISPLACEMENT share weights */
+		!(otyp >= SPEED_BOOTS && otyp <= LEVITATION_BOOTS))
+		return TRUE;
+	}
+
+	/* almost all tools have a known weight, even shuffled ones */
+	if (oclass == TOOL_CLASS) {
+	    /* don't divulge container contents */
+	    if (!Is_container(otmp))
+		return TRUE;
+	}
+
+	/* colored gems and rocks */
+	if (oclass == GEM_CLASS) {
+	    if (!is_graystone(otmp))
+		return TRUE;
+	}
+
+	/* boulders */
+	if (oclass == ROCK_CLASS) {
+	    /* don't divulge container contents */
+	    if (otyp != STATUE)
+		return TRUE;
+	}
+
+	/* type-identified objects */
+	if (objects[otyp].oc_name_known) {
+	    /* don't divulge container contents */
+	    if (!Is_container(otmp) && otyp != STATUE)
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role role,
 		 int idx, int id, char *caption, struct obj *obj, boolean use_invlet)
 {
 	struct nh_objitem *it;
-	struct objclass *ocl;
-	
+
 	if (idx >= *nr_items) {
 	    *nr_items = *nr_items * 2;
 	    *items = realloc(*items, *nr_items * sizeof(struct nh_objitem));
 	}
-	
+
 	it = &((*items)[idx]);
 	memset(it, 0, sizeof(struct nh_objitem));
 	it->id = id;
@@ -417,9 +486,7 @@ void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role
 	
 	if (role == MI_NORMAL && obj) {
 	    boolean dump_ID_flag = program_state.gameover;
-	    
-	    ocl = &objects[obj->otyp];
-	    
+
 	    it->count = obj->quan;
 	    it->accel = use_invlet ? obj->invlet : 0;
 	    it->group_accel = def_oc_syms[(int)obj->oclass];
@@ -432,10 +499,9 @@ void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role
 
 	    /* don't unconditionally reveal weight, otherwise lodestones on the
 	     * floor could be identified by their weight in the pickup dialog */
-	    if (obj->where == OBJ_INVENT || ocl->oc_name_known || obj->invlet ||
-		(obj->where == OBJ_CONTAINED && obj->ocontainer->where == OBJ_INVENT))
+	    if (obj_weight_known(obj))
 		it->weight = obj->owt;
-	
+
 	    if (!obj->bknown && !dump_ID_flag)
 		it->buc = B_UNKNOWN;
 	    else if (obj->blessed)
