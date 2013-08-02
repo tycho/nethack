@@ -1560,6 +1560,11 @@ gotit:
 		    if (mon) {
 			add_to_minv(mon, goldob);
 			pline("The exchequer accepts your contribution.");
+			if (!rn2(50)) {
+			    level->locations[u.ux][u.uy].typ = ROOM;
+			    pline("The throne vanishes in a puff of logic.");
+			    newsym(u.ux,u.uy);
+			}
 		    } else {
 			dropy(goldob);
 		    }
@@ -1568,6 +1573,7 @@ gotit:
 		dropy(goldob);
 		pline("Ok, now there is loot here.");
 	    }
+	    timepassed = 1;
 	}
     } else if (IS_GRAVE(level->locations[cc.x][cc.y].typ)) {
 	pline("You need to dig up the grave to effectively loot it...");
@@ -1579,7 +1585,7 @@ gotit:
 	schar dz;
 	if (!get_adjacent_loc("Loot in what direction?", "Invalid loot location",
 			u.ux, u.uy, &cc, &dz))
-	    return 0;
+	    return timepassed;
 	if (cc.x == u.ux && cc.y == u.uy) {
 	    underfoot = TRUE;
 	    if (container_at(cc.x, cc.y, FALSE))
