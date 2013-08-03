@@ -725,7 +725,7 @@ void use_crystal_ball(struct obj *obj)
     }
     oops = (rnd(obj->blessed ? 13 : 20) > ACURR(A_INT) || obj->cursed);
     if (oops && (obj->spe > 0)) {
-	switch (rnd(obj->oartifact ? 4 : 5)) {
+	switch (rnd((obj->oartifact || obj->blessed || ACURR(A_INT) >= 18) ? 4 : 5)) {
 	case 1 : pline("%s too much to comprehend!", Tobjnam(obj, "are"));
 	    break;
 	case 2 : pline("%s you!", Tobjnam(obj, "confuse"));
