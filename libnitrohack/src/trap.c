@@ -2725,8 +2725,17 @@ boolean water_damage(struct obj *obj, boolean force, boolean here)
 			 */
 			continue;
 		} else if (obj->oclass == SCROLL_CLASS) {
-			obj->otyp = SCR_BLANK_PAPER;
-			obj->spe = 0;
+			if (!rn2(2)) {
+				obj->otyp = SCR_BLANK_PAPER;
+				obj->spe = 0;
+			} else {
+				pline(obj->quan == 1 ?
+				      "A scroll disintegrates." :
+				      "Some scrolls disintegrate.");
+				delobj(obj);
+				obj_destroyed = (obj == obj_original);
+				continue;
+			}
 		} else if (obj->oclass == SPBOOK_CLASS) {
 			if (obj->otyp == SPE_BOOK_OF_THE_DEAD)
 				pline("Steam rises from %s.", the(xname(obj)));
