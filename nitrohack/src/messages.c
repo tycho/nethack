@@ -24,9 +24,6 @@ static nh_bool stopprint;
 static int prevturn, action, prevaction;
 
 static void newline(void);
-static void wrap_text(int width, const char *input,
-		      int *output_count, char ***output);
-static void free_wrap(char **wrap_output);
 
 
 static void store_message(int turn, const char *msg)
@@ -452,8 +449,7 @@ void cleanup_messages(void)
  * The memory for both the output strings and the output array is obtained via
  * malloc and should be freed when no longer needed.
  */
-static void wrap_text(int width, const char *input,
-		      int *output_count, char ***output)
+void wrap_text(int width, const char *input, int *output_count, char ***output)
 {
     const int min_width = 20, max_wrap = 20;
 
@@ -496,7 +492,7 @@ static void wrap_text(int width, const char *input,
     *output_count = outcount;
 }
 
-static void free_wrap(char **wrap_output)
+void free_wrap(char **wrap_output)
 {
     const int max_wrap = 20;
     int idx;

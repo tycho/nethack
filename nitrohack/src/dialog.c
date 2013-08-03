@@ -79,6 +79,8 @@ char curses_yn_function(const char *query, const char *resp, char def)
     WINDOW *win;
     char prompt[QBUFSZ];
     char *rb, respbuf[QBUFSZ];
+    char **output;
+    int i, output_count;
 
     strcpy(respbuf, resp);
     /* any acceptable responses that follow <esc> aren't displayed */
@@ -87,16 +89,20 @@ char curses_yn_function(const char *query, const char *resp, char def)
     sprintf(prompt, "%s [%s] ", query, respbuf);
     if (def)
 	sprintf(prompt + strlen(prompt), "(%c) ", def);
-    
-    height = 3;
+
+    wrap_text(COLNO - 5, prompt, &output_count, &output);
     width = strlen(prompt) + 5;
+    if (width > COLNO) width = COLNO;
+    height = output_count + 2;
     win = newdialog(height, width);
-    mvwprintw(win, 1, 2, prompt);
+    for (i = 0; i < output_count; i++)
+	mvwprintw(win, i + 1, 2, output[i]);
     wrefresh(win);
-    
+    free_wrap(output);
+
     do {
 	key = tolower(nh_wgetch(win));
-	
+
 	if (key == '\033') {
 	    if (strchr(resp, 'q'))
 		key = 'q';
@@ -109,12 +115,12 @@ char curses_yn_function(const char *query, const char *resp, char def)
 	    key = def;
 	    break;
 	}
-	
+
 	if (!strchr(resp, key))
 	    key = 0;
 	
     } while (!key);
-    
+
     delwin(win);
     redraw_game_windows();
     return key;
