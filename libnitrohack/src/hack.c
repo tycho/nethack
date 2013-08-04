@@ -2456,6 +2456,7 @@ void check_special_room(boolean newlev)
 		case GARDEN:
 		    if (Blind) pline("The air here smells nice and fresh!");
 		    else pline("You enter a beautiful garden.");
+		    rt = 0;
 		    break;
 		case SWAMP:
 		    pline("It %s rather %s down here.",

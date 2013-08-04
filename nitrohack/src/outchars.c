@@ -489,6 +489,12 @@ static void recolor_bg(const struct nh_dbuf_entry *dbe, struct curses_symdef *sy
 	else if (id == darkroom_id)
 	    sym->color = CLR_BROWN;
 	break;
+    case NH_DF_BGHINT_GARDEN:
+	if ((id >= vwall_id && id <= trwall_id) || id == room_id || id == ndoor_id)
+	    sym->color = CLR_BRIGHT_GREEN;
+	else if (id == darkroom_id)
+	    sym->color = CLR_GREEN;
+	break;
     case NH_DF_BGHINT_WIZTOWER:
 	if (id >= vwall_id && id <= trwall_id)
 	    sym->color = CLR_BRIGHT_MAGENTA;

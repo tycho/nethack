@@ -532,8 +532,9 @@ struct nh_dbuf_entry {
 
 #define NH_DF_BGHINT_MASK (63 << 7) /* 6 bits */
 #define NH_DF_BGHINT_BEEHIVE (1 << 7)
-#define NH_DF_BGHINT_MINEROOM (2 << 7)
-#define NH_DF_BGHINT_WIZTOWER (3 << 7)
+#define NH_DF_BGHINT_GARDEN (2 << 7)
+#define NH_DF_BGHINT_MINEROOM (3 << 7)
+#define NH_DF_BGHINT_WIZTOWER (4 << 7)
 
 
 struct nh_symdef {
