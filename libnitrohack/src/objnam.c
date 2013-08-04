@@ -1101,7 +1101,7 @@ ring:
 		break;
 	case FOOD_CLASS:
 		/* eat.c: edibility_prompts() */
-		if (dump_ID_flag && obj->otyp == CORPSE &&
+		if (obj->otyp == CORPSE &&
 		    obj->corpsenm != PM_ACID_BLOB &&
 		    obj->corpsenm != PM_LIZARD &&
 		    obj->corpsenm != PM_LICHEN) {
@@ -1109,8 +1109,8 @@ ring:
 			long bucmod = obj->cursed ? 2 : obj->blessed ? -2 : 0;
 			long mayberot = age / 10L + bucmod;
 			long surerot = age / 29L + bucmod;
-			if (surerot > 5L) strcat(prefix, "[very rotten] ");
-			else if (mayberot > 5L) strcat(prefix, "[rotten] ");
+			if (surerot > 5L) strcat(prefix, "very rotten ");
+			else if (mayberot > 5L) strcat(prefix, "rotten ");
 		}
 		if (obj->otyp == CORPSE && obj->odrained) {
 		    if (wizard && obj->oeaten < drainlevel(obj))
