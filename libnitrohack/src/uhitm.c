@@ -2531,7 +2531,8 @@ int passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
 			else {
 			    pline("You are frozen by %s gaze!",
 				  s_suffix(mon_nam(mon)));
-			    nomul((ACURR(A_WIS) > 12 || rn2(4)) ? -tmp : -127, "frozen by a monster's gaze");
+			    nomul(-min(tmp, 10 * max(1, (20 - ACURR(A_WIS)))),
+				  "frozen by a monster's gaze");
 			}
 		    } else {
 			pline("%s cannot defend itself.",

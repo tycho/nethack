@@ -2540,7 +2540,6 @@ static int passiveum(const struct permonst *olduasmon, struct monst *mtmp,
 	    case AD_PLYS: /* Floating eye */
 		if (tmp > 127) tmp = 127;
 		if (u.umonnum == PM_FLOATING_EYE) {
-		    if (!rn2(4)) tmp = 127;
 		    if (mtmp->mcansee && haseyes(mtmp->data) && rn2(3) &&
 				(perceives(mtmp->data) || !Invis)) {
 			if (Blind)

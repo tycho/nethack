@@ -1490,7 +1490,6 @@ static int passivemm(struct monst *magr, struct monst *mdef,
 	    case AD_PLYS: /* Floating eye */
 		if (tmp > 127) tmp = 127;
 		if (mddat == &mons[PM_FLOATING_EYE]) {
-		    if (!rn2(4)) tmp = 127;
 		    if (magr->mcansee && haseyes(madat) && mdef->mcansee &&
 			(perceives(madat) || !mdef->minvis)) {
 			sprintf(buf, "%s gaze is reflected by %%s %%s.",
