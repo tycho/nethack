@@ -156,7 +156,7 @@ static const struct nh_option_desc const_options[] = {
     {"paranoid_chat",	"always ask for direction when chatting",	OPTTYPE_BOOL, { VFALSE }},
     {"paranoid_hit",	"ask for 'yes' instead of 'y' when hitting peaceful monsters",	OPTTYPE_BOOL, { VTRUE }},
     {"paranoid_lava",	"require m-direction to move into lava",	OPTTYPE_BOOL, { VTRUE }},
-    {"paranoid_loot",	"always ask to loot even when standing over only one container",	OPTTYPE_BOOL, { VFALSE }},
+    {"paranoid_loot",	"always choose containers from a menu when looting",	OPTTYPE_BOOL, { VFALSE }},
     {"paranoid_quit",	"ask for 'yes' instead of 'y' when quitting or entering explore mode",	OPTTYPE_BOOL, { VTRUE }},
     {"paranoid_trap",	"ask before walking into known traps",	OPTTYPE_BOOL, { VTRUE }},
     {"paranoid_water",	"require m-direction to move into water",	OPTTYPE_BOOL, { VTRUE }},
