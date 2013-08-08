@@ -2263,7 +2263,6 @@ static const char *tippable = tippable_ground + 2;
 
 int dotip(struct obj *otmp)
 {
-	struct obj *cotmp, *notmp;
 	static const char tools[] = { TOOL_CLASS, 0 };
 
 	if (check_capacity(NULL))
@@ -2279,28 +2278,22 @@ int dotip(struct obj *otmp)
 	if (!otmp)
 	    return 0;
 
-	if (otmp == &zeroobj && !able_to_loot(u.ux, u.uy, "tip"))
-	    return 0;
-	for (cotmp = level->objects[u.ux][u.uy];
-	     otmp == &zeroobj && cotmp;
-	     cotmp = notmp) {
-	    notmp = cotmp->nexthere;
-
-	    if (Is_container(cotmp)) {
-		char qbuf[QBUFSZ];
-		int c;
-		sprintf(qbuf, "There is %s here; tip it?",
-			safe_qbuf("", sizeof("There is  here; tip it?"),
-				  doname(cotmp), an(simple_typename(cotmp->otyp)),
-				  "a container"));
-		c = ynq(qbuf);
-		if (c == 'q') return 0;
-		if (c == 'n') continue;
-		otmp = cotmp;
+	if (otmp == &zeroobj) {
+	    struct object_pick *tiplist;
+	    int n;
+	    if (!able_to_loot(u.ux, u.uy, "tip"))
+		return 0;
+	    n = query_objlist("Tip which container?", level->objects[u.ux][u.uy],
+			      BY_NEXTHERE|
+				(iflags.paranoid_loot ? 0 : AUTOSELECT_SINGLE),
+			      &tiplist, PICK_ONE, Is_container_func);
+	    if (n) {
+		otmp = tiplist[0].obj;
+		free(tiplist);
+	    } else {
+		return 0;
 	    }
 	}
-	if (otmp == &zeroobj)
-	    return 0;
 
 	if (!Is_container(otmp)) {
 	    pline("That isn't a container!");
