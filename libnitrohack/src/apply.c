@@ -1315,7 +1315,7 @@ int jump(
 	}
 }
 
-boolean tinnable(struct obj *corpse)
+boolean tinnable(const struct obj *corpse)
 {
 	if (corpse->otyp != CORPSE) return 0;
 	if (corpse->oeaten) return 0;
@@ -1335,7 +1335,7 @@ static int use_tinning_kit(struct obj *obj)
 		pline("You seem to be out of tins.");
 		return 1;
 	}
-	if (!(corpse = floorfood("tin", 2))) return 0;
+	if (!(corpse = floorfood("tin"))) return 0;
 	if (corpse->otyp == CORPSE && (corpse->oeaten || corpse->odrained)) {
 		pline("You cannot tin something which is partly eaten.");
 		return 0;

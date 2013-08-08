@@ -36,7 +36,7 @@ extern boolean snuff_candle(struct obj *);
 extern boolean snuff_lit(struct obj *);
 extern boolean catch_lit(struct obj *);
 extern void fix_attributes_and_properties(struct obj *, int);
-extern boolean tinnable(struct obj *);
+extern boolean tinnable(const struct obj *);
 extern void reset_trapset(void);
 extern void save_trapset(struct memfile *mf);
 extern void restore_trapset(struct memfile *mf);
@@ -467,7 +467,7 @@ extern const char *get_generic_level_description(const struct level *lev);
 
 /* ### eat.c ### */
 
-extern boolean is_edible(struct obj *);
+extern boolean is_edible(const struct obj *);
 extern void init_uhunger(void);
 extern int Hear_again(void);
 extern void reset_eat(void);
@@ -478,7 +478,7 @@ extern void lesshungry(int);
 extern boolean is_fainted(void);
 extern void reset_faint(void);
 extern void newuhs(boolean);
-extern struct obj *floorfood(const char *,int);
+extern struct obj *floorfood(const char *);
 extern void vomit(void);
 extern int eaten_stat(int,struct obj *);
 extern void food_disappears(struct obj *);

@@ -79,7 +79,7 @@ const char *const hu_stat[] = {
  * Decide whether a particular object can be eaten by the possibly
  * polymorphed character.  Not used for monster checks.
  */
-boolean is_edible(struct obj *obj)
+boolean is_edible(const struct obj *obj)
 {
 	/* protect invocation tools but not Rider corpses (handled elsewhere)*/
      /* if (obj->oclass != FOOD_CLASS && obj_resists(obj, 0, 0)) */
@@ -1838,7 +1838,7 @@ int doeat(struct obj *otmp)	/* generic "eat" command funtion (see cmd.c) */
 	if (otmp && !validate_object(otmp, allobj, "eat"))
 		return 0;
 	else if (!otmp)
-		otmp = floorfood("eat", 0);
+		otmp = floorfood("eat");
 	if (!otmp) return 0;
 	if (check_capacity(NULL)) return 0;
 
@@ -2355,21 +2355,39 @@ void newuhs(boolean incr)
 	}
 }
 
+static boolean can_sacrifice(const struct obj *otmp)
+{
+	return (otmp->otyp == CORPSE ||
+		otmp->otyp == AMULET_OF_YENDOR ||
+		otmp->otyp == FAKE_AMULET_OF_YENDOR);
+}
+
+static boolean other_floorfood(const struct obj *otmp)
+{
+	return otmp->oclass == FOOD_CLASS;
+}
 
 /* Returns an object representing food.  Object may be either on floor or
  * in inventory.
  */
-struct obj *floorfood(/* get food from floor or pack */
-	const char *verb,
-	int corpsecheck) /* 0, no check, 1, corpses, 2, tinnable corpses */
+struct obj *floorfood(const char *verb)
 {
 	struct obj *otmp;
 	char qbuf[QBUFSZ];
 	char c;
 	boolean feeding = (!strcmp(verb, "eat"));
 	boolean sacrificing = (!strcmp(verb, "sacrifice"));
+	boolean tinning = (!strcmp(verb, "tin"));
 	boolean can_floorfood = FALSE;
 	boolean checking_can_floorfood = TRUE;
+	boolean (*floorfood_check)(const struct obj *);
+
+	if (!verb || !*verb)
+	    impossible("floorfood: no verb given");
+
+	floorfood_check = (sacrificing ? can_sacrifice :
+			   tinning ? tinnable :
+			   feeding ? is_edible : other_floorfood);
 
 	/* if we can't touch floor objects then use invent food only */
 	if (!can_reach_floor() ||
@@ -2385,11 +2403,10 @@ struct obj *floorfood(/* get food from floor or pack */
 	 * 1) Check if anything on the floor can be chosen and make it available
 	 *    from the object picking prompt.
 	 * 2) If the floor was chosen (,) from that prompt, go through again,
-	 *    this time asking for each specific floor option.
+	 *    this time asking for the specific floor option.
 	 */
 
 	if (feeding && metallivorous(youmonst.data)) {
-	    struct obj *gold;
 	    struct trap *ttmp = t_at(level, u.ux, u.uy);
 
 	    if (ttmp && ttmp->tseen && ttmp->ttyp == BEAR_TRAP) {
@@ -2411,67 +2428,28 @@ struct obj *floorfood(/* get food from floor or pack */
 		    }
 		}
 	    }
-
-	    if (youmonst.data != &mons[PM_RUST_MONSTER] &&
-		(gold = gold_at(level, u.ux, u.uy)) != 0) {
-		if (checking_can_floorfood) {
-		    can_floorfood = TRUE;
-		} else {
-		    if (gold->quan == 1L)
-			sprintf(qbuf, "There is 1 gold piece here; eat it?");
-		    else
-			sprintf(qbuf, "There are %d gold pieces here; eat them?",
-				gold->quan);
-		    if ((c = yn_function(qbuf, ynqchars, 'n')) == 'y') {
-			return gold;
-		    } else if (c == 'q') {
-			return NULL;
-		    }
-		}
-	    }
 	}
 
-	if (sacrificing) {
+	if (checking_can_floorfood) {
 	    for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
-		if (otmp->otyp == AMULET_OF_YENDOR ||
-		    otmp->otyp == FAKE_AMULET_OF_YENDOR) {
-		    if (checking_can_floorfood) {
-			can_floorfood = TRUE;
-			break;
-		    } else {
-			sprintf(qbuf, "There %s %s here; %s %s?",
-				otense(otmp, "are"),
-				doname(otmp), verb,
-				"it");
-			if ((c = yn_function(qbuf,ynqchars,'n')) == 'y')
-			    return otmp;
-			else if(c == 'q')
-			    return NULL;
-		    }
-		}
-	    }
-	}
-
-	/* Is there some food (probably a heavy corpse) here on the ground? */
-	for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
-	    if (corpsecheck ?
-		    (otmp->otyp == CORPSE && (corpsecheck == 1 || tinnable(otmp))) :
-		feeding ?
-		    (otmp->oclass != COIN_CLASS && is_edible(otmp)) :
-		    otmp->oclass == FOOD_CLASS) {
-		if (checking_can_floorfood) {
+		if ((*floorfood_check)(otmp)) {
 		    can_floorfood = TRUE;
 		    break;
-		} else {
-		    sprintf(qbuf, "There %s %s here; %s %s?",
-			otense(otmp, "are"),
-			doname(otmp), verb,
-			(otmp->quan == 1L) ? "it" : "one");
-		    if ((c = yn_function(qbuf,ynqchars,'n')) == 'y')
-			return otmp;
-		    else if (c == 'q')
-			return NULL;
 		}
+	    }
+	} else {
+	    struct object_pick *floorfood_list;
+	    char qbuf[QBUFSZ];
+	    int n;
+	    sprintf(qbuf, "%c%s what?", highc(*verb), verb + 1);
+	    n = query_objlist(qbuf, level->objects[u.ux][u.uy],
+			      BY_NEXTHERE|INVORDER_SORT, &floorfood_list,
+			      PICK_ONE, floorfood_check);
+	    if (n) {
+		otmp = floorfood_list[0].obj;
+		free(floorfood_list);
+	    } else {
+		otmp = NULL;
 	    }
 	}
 
@@ -2492,13 +2470,10 @@ struct obj *floorfood(/* get food from floor or pack */
 		goto eat_floorfood;
 	    }
 	}
-	if (corpsecheck && otmp) {
-	    if ((otmp->otyp != AMULET_OF_YENDOR &&
-		 otmp->otyp != FAKE_AMULET_OF_YENDOR) &&
-		(otmp->otyp != CORPSE || (corpsecheck == 2 && !tinnable(otmp)))) {
-		pline("You can't %s that!", verb);
-		return NULL;
-	    }
+
+	if (otmp && !(*floorfood_check)(otmp)) {
+	    pline("You can't %s that!", verb);
+	    return NULL;
 	}
 	return otmp;
 }

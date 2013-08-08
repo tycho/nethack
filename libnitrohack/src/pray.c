@@ -1151,7 +1151,7 @@ int dosacrifice(struct obj *otmp)
 	    return 0;
 	}
 	else if (!otmp)
-	    otmp = floorfood("sacrifice", 1);
+	    otmp = floorfood("sacrifice");
 	if (!otmp) return 0;
     }
     /*
