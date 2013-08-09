@@ -4177,7 +4177,6 @@ void makewish(boolean magical)
 					     Is_airlevel(&u.uz) || u.uinwater ?
 						   "slip" : "drop")),
 				       NULL);
-	    u.ublesscnt += rn1(100,50);  /* the gods take notice */
 	}
 }
 
