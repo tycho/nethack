@@ -1104,6 +1104,7 @@ static void menu_identify(int id_limit)
 	    for (i = 0; i < n; i++, id_limit--)
 		identify(pick_list[i].obj);
 	    free(pick_list);
+	    if (id_limit) win_pause_output(P_MESSAGE); /* --More-- */
 	} else {
 	    if (n < 0) pline("That was all.");
 	    id_limit = 0; /* Stop now */
