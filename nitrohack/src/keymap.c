@@ -241,7 +241,15 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
 		if (!cmd) /* command was fully handled internally */
 		    continue;
 	    }
-	    
+
+	    if (cmd == find_command("redraw")) {
+		/* This needs special handling locally in addition to sending
+		 * it to the server. */
+		clear();
+		rebuild_ui();
+		doupdate();
+	    }
+
 	    /* if the command requres an arg AND the arg isn't set yet (by handle_internal_cmd) */
 	    if (!(cmd->flags & CMD_ARG_NONE) && cmd->flags & CMD_ARG_DIR &&
 		arg->argtype != CMD_ARG_DIR) {
