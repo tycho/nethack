@@ -3,17 +3,28 @@
 
 #include "hack.h"
 
-extern const char *const hu_stat[];	/* defined in eat.c */
+/*
+ * Hunger texts used on bottom line.
+ * Keep this matched up with hunger states in hack.h!
+ */
+static const char *const hu_stat[] = {
+	"Satiated",
+	NULL,
+	"Hungry",
+	"Weak",
+	"Fainting",
+	"Fainted",
+	"Starved"
+};
 
-const char * const enc_stat[] = {
-	"",
+static const char *const enc_stat[] = {
+	NULL,
 	"Burdened",
 	"Stressed",
 	"Strained",
 	"Overtaxed",
 	"Overloaded"
 };
-
 
 
 static int mrank_sz = 0; /* loaded by max_rank_sz (from u_init) */
@@ -230,7 +241,7 @@ static void make_player_info(struct nh_player_info *pi)
 	pi->can_enhance = advskills > 0;
 	
 	/* add status items for various problems */
-	if (strcmp(hu_stat[u.uhs], "        ")) /* 1 */
+	if (hu_stat[u.uhs]) /* 1 */
 	    strncpy(pi->statusitems[pi->nr_items++], hu_stat[u.uhs], ITEMLEN);
 	
 	if (Confusion) /* 2 */
@@ -251,7 +262,7 @@ static void make_player_info(struct nh_player_info *pi)
 	if (Slimed) /* 8 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Slime", ITEMLEN);
 	cap = near_capacity();
-	if (cap > UNENCUMBERED) /* 9 */
+	if (enc_stat[cap]) /* 9 */
 	    strncpy(pi->statusitems[pi->nr_items++], enc_stat[cap], ITEMLEN);
 	if (Levitation) /* 10 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Lev", ITEMLEN);

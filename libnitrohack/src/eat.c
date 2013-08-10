@@ -60,20 +60,6 @@ static boolean force_save_hs = FALSE;
 static unsigned newuhs_save_hs;
 static boolean newuhs_saved_hs = FALSE;
 
-/*
- * Hunger texts used on bottom line (each 8 chars long)
- * Keep this matched up with hunger states in hack.h!
- */
-const char *const hu_stat[] = {
-	"Satiated",
-	"        ",
-	"Hungry  ",
-	"Weak    ",
-	"Fainting",
-	"Fainted ",
-	"Starved "
-};
-
 
 /*
  * Decide whether a particular object can be eaten by the possibly

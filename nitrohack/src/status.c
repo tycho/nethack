@@ -159,11 +159,11 @@ static void draw_statuses(const struct nh_player_info *pi)
 	colorattr = curses_color_attr(
 			/* These are padded, unlike the others. */
 			!strcmp(st, "Satiated") ? notice :
-			!strncmp(st, "Hungry", 6) ? notice :
-			!strncmp(st, "Weak", 4) ? alert :
+			!strcmp(st, "Hungry") ? notice :
+			!strcmp(st, "Weak") ? alert :
 			!strcmp(st, "Fainting") ? alert :
-			!strncmp(st, "Fainted", 7) ? alert :
-			!strncmp(st, "Starved", 7) ? alert :
+			!strcmp(st, "Fainted") ? alert :
+			!strcmp(st, "Starved") ? alert :
 
 			!strcmp(st, "Conf") ? notice :
 			!strcmp(st, "FoodPois") ? alert :
