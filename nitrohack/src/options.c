@@ -43,6 +43,15 @@ static void show_msgtype_menu(struct nh_option_desc *opt);
 
 #define listlen(list) (sizeof(list)/sizeof(list[0]))
 
+static struct nh_listitem dungeon_name_list[] = {
+    {DGN_NAME_AUTO, "auto"},
+    {DGN_NAME_DLVL, "dungeon level"},
+    {DGN_NAME_SHORT, "short dungeon name"},
+    {DGN_NAME_FULL, "full dungeon name"},
+};
+static struct nh_enum_option dungeon_name_spec =
+{dungeon_name_list, listlen(dungeon_name_list)};
+
 static struct nh_listitem menu_headings_list[] = {
     {A_NORMAL, "none"},
     {A_REVERSE, "inverse"},
@@ -74,8 +83,10 @@ static const char *const bucnames[] = {"unknown", "blessed", "uncursed", "cursed
 struct nh_option_desc curses_options[] = {
     {"name", "name for new characters (blank = ask)", OPTTYPE_STRING, {NULL}},
     {"blink", "show multiple symbols for each location by switching between them", OPTTYPE_BOOL, { FALSE }},
+    {"classic_status", "use classic NetHack layout for status lines", OPTTYPE_BOOL, { FALSE }},
     {"darkgray", "try to show 'black' as dark gray instead of dark blue", OPTTYPE_BOOL, {FALSE}},
     {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL, { VTRUE }},
+    {"dungeon_name", "how to show dungeon name and/or depth", OPTTYPE_ENUM, {(void*)DGN_NAME_AUTO}},
     {"extmenu", "use a menu for selecting extended commands (#)", OPTTYPE_BOOL, {FALSE}},
     {"frame", "draw a frame around the window sections", OPTTYPE_BOOL, { VTRUE }},
     {"frame_hp_color", "recolor frame according to HP", OPTTYPE_BOOL, { VTRUE }},
@@ -107,6 +118,7 @@ struct nh_option_desc curses_options[] = {
 
 struct nh_boolopt_map boolopt_map[] = {
     {"blink", &settings.blink},
+    {"classic_status", &settings.classic_status},
     {"darkgray", &settings.darkgray},
     {"darkroom", &settings.darkroom},
     {"extmenu", &settings.extmenu},
@@ -129,7 +141,8 @@ struct nh_boolopt_map boolopt_map[] = {
 
 static nh_bool option_change_callback(struct nh_option_desc *option)
 {
-    if (!strcmp(option->name, "frame") ||
+    if (!strcmp(option->name, "classic_status") ||
+	!strcmp(option->name, "frame") ||
 	!strcmp(option->name, "frame_hp_color") ||
 	!strcmp(option->name, "status3") ||
 	!strcmp(option->name, "sidebar")) {
@@ -150,6 +163,10 @@ static nh_bool option_change_callback(struct nh_option_desc *option)
     else if (!strcmp(option->name, "darkgray")) {
 	set_darkgray();
 	draw_map(player.x, player.y);
+    }
+    else if (!strcmp(option->name, "dungeon_name")) {
+	settings.dungeon_name = option->value.e;
+	rebuild_ui();
     }
     else if (!strcmp(option->name, "menu_headings")) {
 	settings.menu_headings = option->value.e;
@@ -220,6 +237,7 @@ void init_options(void)
     int i;
 
     find_option("name")->s.maxlen = PL_NSIZ;
+    find_option("dungeon_name")->e = dungeon_name_spec;
     find_option("menu_headings")->e = menu_headings_spec;
     find_option("msgheight")->i.min = 1;
     find_option("msgheight")->i.max = 40;

@@ -127,6 +127,15 @@ typedef wchar_t fnchar;
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
 
 
+/* dungeon name option values */
+enum dgn_name_value {
+    DGN_NAME_AUTO = -1,
+    DGN_NAME_DLVL = 0,
+    DGN_NAME_SHORT,
+    DGN_NAME_FULL
+};
+
+
 enum game_dirs {
     CONFIG_DIR,
     SAVE_DIR,
@@ -177,7 +186,9 @@ struct settings {
     nh_bool  sidebar;   /* draw the inventory sidebar */
     nh_bool  frame;     /* draw a frame around the window sections */
     nh_bool  frame_hp_color; /* recolor frame according to HP */
+    nh_bool  classic_status; /* use classic NetHack layout for status lines */
     nh_bool  status3;	/* draw 3 line status */
+    enum dgn_name_value dungeon_name; /* how to show dungeon name and/or depth */
 };
 
 

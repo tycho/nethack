@@ -27,7 +27,7 @@ void update_old_status(void)
 }
 
 
-static int status_change_color(int old1, int old2, int new1, int new2)
+static int status_change_color(long old1, long old2, long new1, long new2)
 {
     if (new1 > old1)
 	return CLR_GREEN;
@@ -43,7 +43,7 @@ static int status_change_color(int old1, int old2, int new1, int new2)
 
 
 static void status_change_color_on(int *col, attr_t *attr,
-				   int old1, int old2, int new1, int new2)
+				   long old1, long old2, long new1, long new2)
 {
     *col = status_change_color(old1, old2, new1, new2);
     if (*col) {
@@ -60,7 +60,8 @@ static void status_change_color_off(int col, attr_t attr)
 }
 
 
-static void print_statdiff(const char *prefix, const char *fmt, int oldv, int newv)
+static void print_statdiff(const char *prefix, const char *fmt,
+			   long oldv, long newv)
 {
     int col;
     attr_t attr;
@@ -73,7 +74,8 @@ static void print_statdiff(const char *prefix, const char *fmt, int oldv, int ne
 }
 
 
-static void print_statdiffr(const char *prefix, const char *fmt, int oldv, int newv)
+static void print_statdiffr(const char *prefix, const char *fmt,
+			    long oldv, long newv)
 {
     int col;
     attr_t attr;
@@ -86,34 +88,39 @@ static void print_statdiffr(const char *prefix, const char *fmt, int oldv, int n
 }
 
 
-static int percent_color(int val_cur, int val_max)
+/*
+ * Rules: HP     Pw
+ * max    white  white
+ * >2/3   green  green
+ * >1/3   brown  cyan
+ * >1/7   orange magenta
+ * <=1/7  red    blue
+ */
+static int percent_color(int val_cur, int val_max, nh_bool ishp)
 {
-    int percent, color;
+    int color;
 
-    if (val_max <= 0 || val_cur <= 0)
-	percent = 0;
-    else
-	percent = 100 * val_cur / val_max;
-
-    if (percent < 25)
-	color = CLR_RED;
-    else if (percent < 50)
-	color = CLR_BROWN; /* inverted this looks orange */
-    else if (percent < 95)
+    if (val_cur == val_max)
+	color = CLR_GRAY;
+    else if (val_cur * 3 > val_max * 2)
 	color = CLR_GREEN;
+    else if (val_cur * 3 > val_max * 1)
+	color = ishp ? CLR_BROWN : CLR_CYAN;
+    else if (val_cur * 7 > val_max * 1)
+	color = ishp ? CLR_ORANGE : CLR_MAGENTA;
     else
-	color = CLR_GRAY; /* inverted this is white, with better text contrast */
+	color = ishp ? CLR_RED : CLR_BLUE;
 
     return color;
 }
 
 
-static void draw_string_bar(const char *str, int val_cur, int val_max)
+static void draw_name_hp_bar(const char *str, int val_cur, int val_max)
 {
     int i, len, fill_len;
     attr_t colorattr;
 
-    /* Allow trailing spaces, but only after the bar. */
+    /* trim spaces to right */
     len = strlen(str);
     for (i = len - 1; i >= 0; i--) {
 	if (str[i] == ' ')
@@ -129,7 +136,7 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
     if (fill_len > len)
 	fill_len = len;
 
-    colorattr = curses_color_attr(percent_color(val_cur, val_max), 0);
+    colorattr = curses_color_attr(percent_color(val_cur, val_max, TRUE), 0);
     waddch(statuswin, '[');
     wattron(statuswin, colorattr);
     /* color the whole string and inverse the bar */
@@ -139,63 +146,98 @@ static void draw_string_bar(const char *str, int val_cur, int val_max)
     wprintw(statuswin, "%.*s", len - fill_len, &str[fill_len]);
     wattroff(statuswin, colorattr);
     waddch(statuswin, ']');
-
-    wprintw(statuswin, "%s", &str[len]);
 }
 
 
-static void draw_statuses(const struct nh_player_info *pi)
+static void draw_dungeon_name(const struct nh_player_info *pi,
+			      enum dgn_name_value default_verbose)
 {
-    const int benefit = CLR_BRIGHT_GREEN;
-    const int neutral = CLR_BRIGHT_CYAN;
-    const int notice = CLR_YELLOW;
-    const int alert = CLR_ORANGE;
-    int i, j, len;
-    attr_t colorattr;
+    if (settings.dungeon_name == DGN_NAME_DLVL ||
+	(settings.dungeon_name == DGN_NAME_AUTO &&
+	 default_verbose == DGN_NAME_DLVL)) {
+	waddstr(statuswin, pi->levdesc_dlvl);
 
+    } else if (settings.dungeon_name == DGN_NAME_SHORT ||
+	       (settings.dungeon_name == DGN_NAME_AUTO &&
+		default_verbose == DGN_NAME_SHORT)) {
+	waddstr(statuswin, pi->levdesc_short);
+
+    } else if (settings.dungeon_name == DGN_NAME_FULL ||
+	       (settings.dungeon_name == DGN_NAME_AUTO &&
+		default_verbose == DGN_NAME_FULL)) {
+	waddstr(statuswin, pi->levdesc_full);
+
+    } else {
+	waddstr(statuswin, "????");
+    }
+}
+
+
+static const struct {
+    const char *name;
+    int color;
+} statuscolors[] = {
+    /* encumberance */
+    { "Burdened", CLR_YELLOW },
+    { "Stressed", CLR_YELLOW },
+    { "Strained", CLR_YELLOW },
+    { "Overtaxed", CLR_YELLOW },
+    { "Overloaded", CLR_YELLOW },
+    /* hunger */
+    { "Satiated", CLR_YELLOW },
+    { "Hungry", CLR_YELLOW },
+    { "Weak", CLR_ORANGE },
+    { "Fainting", CLR_ORANGE },
+    { "Fainted", CLR_ORANGE },
+    { "Starved", CLR_ORANGE },
+    /* misc */
+    { "Unarmed", CLR_YELLOW },
+    { "Lev", CLR_BRIGHT_CYAN },
+    { "Fly", CLR_BRIGHT_GREEN },
+    { "Elbereth", CLR_BRIGHT_GREEN },
+    /* trapped */
+    { "Trap", CLR_YELLOW },
+    { "Held", CLR_YELLOW },
+    { "Pit", CLR_YELLOW },
+    { "Bear", CLR_YELLOW },
+    { "Web", CLR_YELLOW },
+    { "Infloor", CLR_YELLOW },
+    { "Lava", CLR_ORANGE },
+    /* misc bad */
+    { "Greasy", CLR_YELLOW },
+    { "Blind", CLR_YELLOW },
+    { "Conf", CLR_YELLOW },
+    { "Lame", CLR_YELLOW },
+    { "Stun", CLR_YELLOW },
+    { "Hallu", CLR_YELLOW },
+    /* misc fatal */
+    { "FoodPois", CLR_ORANGE },
+    { "Ill", CLR_ORANGE },
+    { "Strangle", CLR_ORANGE },
+    { "Slime", CLR_ORANGE },
+    { "Petrify", CLR_ORANGE },
+    { NULL, 0 }
+};
+
+static void draw_statuses(const struct nh_player_info *pi, nh_bool threeline)
+{
+    int i, j, k;
+
+    j = getmaxx(statuswin) + 1;
     for (i = 0; i < pi->nr_items; i++) {
-	const char *st = pi->statusitems[i];
-
-	colorattr = curses_color_attr(
-			/* These are padded, unlike the others. */
-			!strcmp(st, "Satiated") ? notice :
-			!strcmp(st, "Hungry") ? notice :
-			!strcmp(st, "Weak") ? alert :
-			!strcmp(st, "Fainting") ? alert :
-			!strcmp(st, "Fainted") ? alert :
-			!strcmp(st, "Starved") ? alert :
-
-			!strcmp(st, "Conf") ? notice :
-			!strcmp(st, "FoodPois") ? alert :
-			!strcmp(st, "Ill") ? alert :
-			!strcmp(st, "Blind") ? notice :
-			!strcmp(st, "Stun") ? notice :
-			!strcmp(st, "Hallu") ? notice :
-			!strcmp(st, "Slime") ? alert :
-
-			!strcmp(st, "Burdened") ? notice :
-			!strcmp(st, "Stressed") ? notice :
-			!strcmp(st, "Strained") ? notice :
-			!strcmp(st, "Overtaxed") ? notice :
-			!strcmp(st, "Overloaded") ? notice :
-
-			!strcmp(st, "Lev") ? neutral :
-			!strcmp(st, "Unarmed") ? notice :
-			!strcmp(st, "Trap") ? notice :
-			!strcmp(st, "Elbereth") ? benefit :
-			notice, 0);
-
-	/* Strip trailing spaces. */
-	len = strlen(st);
-	for (j = len - 1; j >= 0; j--) {
-	    if (st[j] == ' ')
-		len = j;
-	    else
+	attr_t colorattr;
+	int color = CLR_WHITE;
+	j -= strlen(pi->statusitems[i]) + 1;
+	for (k = 0; statuscolors[k].name; k++) {
+	    if (!strcmp(pi->statusitems[i], statuscolors[k].name)) {
+		color = statuscolors[k].color;
 		break;
+	    }
 	}
-
+	colorattr = curses_color_attr(color, 0);
+	wmove(statuswin, (threeline ? 2 : 1), j);
 	wattron(statuswin, colorattr);
-	wprintw(statuswin, " %.*s", len, st);
+	wprintw(statuswin, "%s", pi->statusitems[i]);
 	wattroff(statuswin, colorattr);
     }
 }
@@ -240,7 +282,7 @@ static void draw_time(const struct nh_player_info *pi)
  * -- or somewhat over 130 characters
  */
 
-static void classic_status(struct nh_player_info *pi)
+static void classic_status(struct nh_player_info *pi, nh_bool threeline)
 {
     char buf[COLNO];
     int stat_ch_col;
@@ -252,8 +294,9 @@ static void classic_status(struct nh_player_info *pi)
 	    pi->max_rank_sz + 8 - (int)strlen(pi->plname), pi->rank);
     buf[0] = toupper((unsigned char)buf[0]);
     wmove(statuswin, 0, 0);
-    draw_string_bar(buf, pi->hp, pi->hpmax);
+    draw_name_hp_bar(buf, pi->hp, pi->hpmax);
 
+    waddstr(statuswin, " ");
     status_change_color_on(&stat_ch_col, &colorattr,
 			   oldpi->st, oldpi->st_extra,
 			   pi->st, pi->st_extra);
@@ -273,8 +316,8 @@ static void classic_status(struct nh_player_info *pi)
     print_statdiff(" ", "Wi:%-1d", oldpi->wi, pi->wi);
     print_statdiff(" ", "Ch:%-1d", oldpi->ch, pi->ch);
 
-    wprintw(statuswin, (pi->align == A_CHAOTIC) ? "  Chaotic" :
-		    (pi->align == A_NEUTRAL) ? "  Neutral" : "  Lawful");
+    wprintw(statuswin, (pi->align == A_CHAOTIC) ? " Chaotic" :
+		       (pi->align == A_NEUTRAL) ? " Neutral" : " Lawful");
 
     if (settings.showscore)
 	print_statdiff(" ", "S:%ld", oldpi->score, pi->score);
@@ -282,7 +325,8 @@ static void classic_status(struct nh_player_info *pi)
     wclrtoeol(statuswin);
 
     /* line 2 */
-    mvwaddstr(statuswin, 1, 0, pi->level_desc);
+    wmove(statuswin, 1, 0);
+    draw_dungeon_name(pi, DGN_NAME_DLVL);
 
     waddstr(statuswin, " ");
     status_change_color_on(&stat_ch_col, &colorattr, oldpi->gold, 0, pi->gold, 0);
@@ -290,13 +334,15 @@ static void classic_status(struct nh_player_info *pi)
     status_change_color_off(stat_ch_col, colorattr);
 
     waddstr(statuswin, " HP:");
-    colorattr = curses_color_attr(percent_color(pi->hp, pi->hpmax), 0);
+    if (pi->hp * 7 < pi->hpmax) wattron(statuswin, A_REVERSE);
+    colorattr = curses_color_attr(percent_color(pi->hp, pi->hpmax, TRUE), 0);
     wattron(statuswin, colorattr);
     wprintw(statuswin, "%d(%d)", pi->hp, pi->hpmax);
     wattroff(statuswin, colorattr);
+    if (pi->hp * 7 < pi->hpmax) wattroff(statuswin, A_REVERSE);
 
     waddstr(statuswin, " Pw:");
-    colorattr = curses_color_attr(percent_color(pi->en, pi->enmax), 0);
+    colorattr = curses_color_attr(percent_color(pi->en, pi->enmax, FALSE), 0);
     wattron(statuswin, colorattr);
     wprintw(statuswin, "%d(%d)", pi->en, pi->enmax);
     wattroff(statuswin, colorattr);
@@ -315,125 +361,187 @@ static void classic_status(struct nh_player_info *pi)
     waddstr(statuswin, " ");
     draw_time(pi);
 
-    draw_statuses(pi);
-
     wclrtoeol(statuswin);
+
+    if (threeline) {
+	wmove(statuswin, 2, 0);
+	wclrtoeol(statuswin);
+    }
+
+    draw_statuses(pi, threeline);
+
 }
 
 
-static void draw_bar(int barlen, int val_cur, int val_max, const char *prefix)
+static void draw_bar(int barlen, int val_cur, int val_max, nh_bool ishp)
 {
-    char str[COLNO], bar[COLNO];
+    char str[COLNO];
     int fill_len = 0, bl;
     attr_t colorattr;
 
-    bl = barlen-2;
+    bl = barlen - 2;
     if (val_max > 0 && val_cur > 0)
 	fill_len = bl * val_cur / val_max;
-    if (fill_len > bl)
-	fill_len = bl;
 
-    colorattr = curses_color_attr(percent_color(val_cur, val_max), 0);
+    sprintf(str, "%*d / %-*d", (bl - 3) / 2, val_cur, (bl - 2) / 2, val_max);
 
-    sprintf(str, "%s%d(%d)", prefix, val_cur, val_max);
-    sprintf(bar, "%-*s", bl, str);
+    colorattr = curses_color_attr(percent_color(val_cur, val_max, ishp), 0);
+    wattron(statuswin, colorattr);
+    wprintw(statuswin, ishp ? "HP:" : "Pw:");
+    wattroff(statuswin, colorattr);
+
     waddch(statuswin, '[');
     wattron(statuswin, colorattr);
-    
     wattron(statuswin, A_REVERSE);
-    wprintw(statuswin, "%.*s", fill_len, bar);
+    wprintw(statuswin, "%.*s", fill_len, str);
     wattroff(statuswin, A_REVERSE);
-    wprintw(statuswin, "%s", &bar[fill_len]);
-    
+    wprintw(statuswin, "%s", &str[fill_len]);
     wattroff(statuswin, colorattr);
     waddch(statuswin, ']');
 }
 
 
-static void status3(struct nh_player_info *pi)
+/*
+
+The status bar looks like this:
+
+Two-line:
+         1         2         3         4         5         6         7         8
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+HP:[    15 / 16    ] AC:-128 Xp:30 Astral Plane  Twelveletter, Student of Stones
+Pw:[     5 / 5     ] $4294967295 S:4294967295 T:4294967295     Burdened Starving
+
+Three-line:
+         1         2         3         4         5         6         7         8
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+Twelveletter the Chaotic Gnomish Student of Stones          St:18/01 Dx:18 Co:18
+HP:[    15 / 16    ] AC:-128 Xp:30(10000000) Astral Plane   In:18    Wi:18 Ch:18
+Pw:[     5 / 5     ] $4294967295 S:4294967295 T:4294967295     Burdened Starving
+
+*/
+
+static void draw_status_lines(struct nh_player_info *pi, nh_bool threeline)
 {
     char buf[COLNO];
-    int namelen;
     int stat_ch_col;
     attr_t colorattr;
     const struct nh_player_info *oldpi = &old_player;
 
-    /* line 1 */
-    namelen = strlen(pi->plname) < 13 ? strlen(pi->plname) : 13;
-    sprintf(buf, "%.13s the %-*s  ", pi->plname,
-	    pi->max_rank_sz + 13 - namelen, pi->rank);
-    buf[0] = toupper((unsigned char)buf[0]);
-    mvwaddstr(statuswin, 0, 0, buf);
+    /*
+     * second-last line
+     */
+    wmove(statuswin, (threeline ? 1 : 0), 0);
+    draw_bar(15, pi->hp, pi->hpmax, TRUE);
+    print_statdiffr(" ", "AC:%d", oldpi->ac, pi->ac);
 
-    print_statdiff(NULL, "Con:%2d", oldpi->co, pi->co);
-
-    waddstr(statuswin, " ");
-    status_change_color_on(&stat_ch_col, &colorattr,
-			   oldpi->st, oldpi->st_extra,
-			   pi->st, pi->st_extra);
-    waddstr(statuswin, "Str:");
-    if (pi->st == 18 && pi->st_extra) {
-	if (pi->st_extra < 100)
-	    wprintw(statuswin, "18/%02d", pi->st_extra);
-	else
-	    wprintw(statuswin,"18/**");
-    } else
-	wprintw(statuswin, "%2d", pi->st);
-    status_change_color_off(stat_ch_col, colorattr);
-
-    waddstr(statuswin, "  ");
-    waddstr(statuswin, pi->level_desc);
-
-    waddstr(statuswin, "  ");
-    draw_time(pi);
-
-    wprintw(statuswin, (pi->align == A_CHAOTIC) ? "  Chaotic" :
-		    (pi->align == A_NEUTRAL) ? "  Neutral" : "  Lawful");
-    wclrtoeol(statuswin);
-
-    /* line 2 */
-    wmove(statuswin, 1, 0);
-    draw_bar(18 + pi->max_rank_sz, pi->hp, pi->hpmax, "HP:");
-
-    print_statdiff("  ", "Int:%2d", oldpi->in, pi->in);
-    print_statdiff(" ", "Wis:%2d", oldpi->wi, pi->wi);
-
-    waddstr(statuswin, "  ");
-    status_change_color_on(&stat_ch_col, &colorattr, oldpi->gold, 0, pi->gold, 0);
-    wprintw(statuswin, "%c:%-2ld", pi->coinsym, pi->gold);
-    status_change_color_off(stat_ch_col, colorattr);
-
-    print_statdiffr("  ", "AC:%-2d", oldpi->ac, pi->ac);
-    waddstr(statuswin, "  ");
-
-    if (pi->monnum != pi->cur_monnum) {
-	print_statdiff(NULL, "HD:%d", oldpi->level, pi->level);
-    } else if (settings.showexp) {
-	print_statdiff(NULL, "Xp:%u", oldpi->level, pi->level);
-	if (pi->xp < 1000000)
-	    print_statdiff("/", "%-1ld", oldpi->xp, pi->xp);
-	else
-	    print_statdiff("/", "%-1ldk", oldpi->xp / 1000, pi->xp / 1000);
-    } else {
-	print_statdiff(NULL, "Exp:%u", oldpi->level, pi->level);
+    /* experience level and points */
+    if (pi->monnum == pi->cur_monnum)
+	print_statdiff(" ", "Xp:%d", oldpi->level, pi->level);
+    else
+	print_statdiff(" ", "HD:%d", oldpi->level, pi->level);
+    if (threeline && settings.showexp && pi->monnum == pi->cur_monnum) {
+	waddstr(statuswin, "(");
+	status_change_color_on(&stat_ch_col, &colorattr,
+			       oldpi->level, oldpi->xp,
+			       pi->level, pi->xp);
+	wprintw(statuswin, "%ld", pi->xp_next - pi->xp);
+	status_change_color_off(stat_ch_col, colorattr);
+	waddstr(statuswin, ")");
     }
 
-    if (settings.showscore)
-	print_statdiff("  ", "S:%ld", oldpi->score, pi->score);
-
-    wclrtoeol(statuswin);
-
-    /* line 3 */
-    wmove(statuswin, 2, 0);
-    draw_bar(18 + pi->max_rank_sz, pi->en, pi->enmax, "Pw:");
-
-    print_statdiff("  ", "Dex:%2d", oldpi->dx, pi->dx);
-    print_statdiff(" ", "Cha:%2d", oldpi->ch, pi->ch);
+    /* dungeon level */
     waddstr(statuswin, " ");
-
-    draw_statuses(pi);
-
+    draw_dungeon_name(pi, (threeline ? DGN_NAME_FULL : DGN_NAME_SHORT));
     wclrtoeol(statuswin);
+
+    /*
+     * last line
+     */
+    wmove(statuswin, (threeline ? 2 : 1), 0);
+    draw_bar(15, pi->en, pi->enmax, FALSE);
+
+    /* gold */
+    waddstr(statuswin, " ");
+    status_change_color_on(&stat_ch_col, &colorattr, oldpi->gold, 0, pi->gold, 0);
+    wprintw(statuswin, "%c%ld", pi->coinsym, pi->gold);
+    status_change_color_off(stat_ch_col, colorattr);
+
+    /* score and turns */
+    if (settings.showscore)
+	print_statdiff(" ", "S:%ld", oldpi->score, pi->score);
+    if (settings.time) {
+	waddstr(statuswin, " ");
+	draw_time(pi);
+    }
+    wclrtoeol(statuswin);
+
+    /*
+     * statuses (bottom right)
+     */
+    draw_statuses(pi, threeline);
+
+    /*
+     * name
+     */
+    if (threeline) {
+	/* top left */
+	sprintf(buf, "%.12s the %s %s%s%s", pi->plname,
+		(pi->align == A_CHAOTIC) ? "Chaotic" :
+		(pi->align == A_NEUTRAL) ? "Neutral" : "Lawful",
+		(pi->monnum == pi->cur_monnum) ? pi->race_adj : "",
+		(pi->monnum == pi->cur_monnum) ? " " : "",
+		pi->rank);
+	wmove(statuswin, 0, 0);
+    } else {
+	/* top right */
+	sprintf(buf, "%.12s, %s", pi->plname, pi->rank);
+	wmove(statuswin, 0, getmaxx(statuswin) - strlen(buf));
+    }
+    wprintw(statuswin, "%s", buf);
+    wclrtoeol(statuswin);
+
+    /*
+     * attributes (in threeline mode) "In:18 Wi:18 Ch:18" = 17 chars
+     */
+    if (threeline) {
+	/*
+	 * first line
+	 */
+	/* strength */
+	status_change_color_on(&stat_ch_col, &colorattr,
+			       oldpi->st, oldpi->st_extra,
+			       pi->st, pi->st_extra);
+	if (pi->st == 18 && pi->st_extra) {
+	    wmove(statuswin, 0, getmaxx(statuswin) - 20);
+	    if (pi->st_extra == 100)
+		waddstr(statuswin, "St:18/**");
+	    else
+		wprintw(statuswin, "St:18/%02d", pi->st_extra);
+	} else {
+	    wmove(statuswin, 0, getmaxx(statuswin) - 17);
+	    wprintw(statuswin, "St:%-2d", pi->st);
+	}
+	status_change_color_off(stat_ch_col, colorattr);
+
+	/* dexterity and constitution */
+	print_statdiff(" ", "Dx:%-2d", oldpi->dx, pi->dx);
+	print_statdiff(" ", "Co:%-2d", oldpi->co, pi->co);
+
+	/*
+	 * second line
+	 */
+	/* intelligence (align with strength) */
+	if (pi->st == 18 && pi->st_extra)
+	    wmove(statuswin, 1, getmaxx(statuswin) - 20);
+	else
+	    wmove(statuswin, 1, getmaxx(statuswin) - 17);
+	print_statdiff(NULL, "In:%-2d", oldpi->in, pi->in);
+
+	/* wisdom and charisma */
+	wmove(statuswin, 1, getmaxx(statuswin) - 11);
+	print_statdiff(NULL, "Wi:%-2d", oldpi->wi, pi->wi);
+	print_statdiff(" ", "Ch:%-2d", oldpi->ch, pi->ch);
+    }
 }
 
 
@@ -463,10 +571,10 @@ void curses_update_status(struct nh_player_info *pi)
     if (player.x == 0)
 	return; /* called before the game is running */
 
-    if (ui_flags.status3)
-	status3(&player);
+    if (settings.classic_status)
+	classic_status(&player, ui_flags.status3);
     else
-	classic_status(&player);
+	draw_status_lines(&player, ui_flags.status3);
 
     /* prevent the cursor from flickering in the status line */
     wmove(mapwin, player.y, player.x - 1);

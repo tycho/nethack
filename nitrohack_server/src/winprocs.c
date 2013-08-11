@@ -215,12 +215,17 @@ static void srv_update_status(struct nh_player_info *pi)
     if (all) {
 	json_object_set_new(jobj, "plname", json_string(pi->plname));
 	json_object_set_new(jobj, "coinsym", json_integer(pi->coinsym));
+	json_object_set_new(jobj, "race_adj", json_string(pi->race_adj));
 	json_object_set_new(jobj, "max_rank_sz", json_integer(pi->max_rank_sz));
     }
     if (all || strcmp(pi->rank, oi->rank))
 	json_object_set_new(jobj, "rank", json_string(pi->rank));
-    if (all || strcmp(pi->level_desc, oi->level_desc))
-	json_object_set_new(jobj, "level_desc", json_string(pi->level_desc));
+    if (all || strcmp(pi->levdesc_dlvl, oi->levdesc_dlvl))
+	json_object_set_new(jobj, "levdesc_dlvl", json_string(pi->levdesc_dlvl));
+    if (all || strcmp(pi->levdesc_short, oi->levdesc_short))
+	json_object_set_new(jobj, "levdesc_short", json_string(pi->levdesc_short));
+    if (all || strcmp(pi->levdesc_full, oi->levdesc_full))
+	json_object_set_new(jobj, "levdesc_full", json_string(pi->levdesc_full));
     if (all || pi->x != oi->x)
 	json_object_set_new(jobj, "x", json_integer(pi->x));
     if (all || pi->y != oi->y)
@@ -231,6 +236,8 @@ static void srv_update_status(struct nh_player_info *pi)
 	json_object_set_new(jobj, "score", json_integer(pi->score));
     if (all || pi->xp != oi->xp)
 	json_object_set_new(jobj, "xp", json_integer(pi->xp));
+    if (all || pi->xp_next != oi->xp_next)
+	json_object_set_new(jobj, "xp_next", json_integer(pi->xp_next));
     if (all || pi->gold != oi->gold)
 	json_object_set_new(jobj, "gold", json_integer(pi->gold));
     if (all || pi->moves != oi->moves)

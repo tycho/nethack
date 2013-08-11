@@ -187,10 +187,16 @@ static json_t *cmd_update_status(json_t *params, int display_only)
     
     if ( (p = json_object_get(params, "plname")) )
 	strncpy(player.plname, json_string_value(p), PL_NSIZ-1);
+    if ( (p = json_object_get(params, "race_adj")) )
+	strncpy(player.race_adj, json_string_value(p), PLRBUFSZ-1);
     if ( (p = json_object_get(params, "rank")) )
 	strncpy(player.rank, json_string_value(p), PL_NSIZ-1);
-    if ( (p = json_object_get(params, "level_desc")) )
-	strncpy(player.level_desc, json_string_value(p), COLNO-1);
+    if ( (p = json_object_get(params, "levdesc_dlvl")) )
+	strncpy(player.levdesc_dlvl, json_string_value(p), COLNO-1);
+    if ( (p = json_object_get(params, "levdesc_short")) )
+	strncpy(player.levdesc_short, json_string_value(p), COLNO-1);
+    if ( (p = json_object_get(params, "levdesc_full")) )
+	strncpy(player.levdesc_full, json_string_value(p), COLNO-1);
     if ( (p = json_object_get(params, "x")) )
 	player.x = json_integer_value(p);
     if ( (p = json_object_get(params, "y")) )
@@ -201,6 +207,8 @@ static json_t *cmd_update_status(json_t *params, int display_only)
 	player.score = json_integer_value(p);
     if ( (p = json_object_get(params, "xp")) )
 	player.xp = json_integer_value(p);
+    if ( (p = json_object_get(params, "xp_next")) )
+	player.xp_next = json_integer_value(p);
     if ( (p = json_object_get(params, "gold")) )
 	player.gold = json_integer_value(p);
     if ( (p = json_object_get(params, "moves")) )

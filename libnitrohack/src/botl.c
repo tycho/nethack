@@ -32,7 +32,7 @@ static int mrank_sz = 0; /* loaded by max_rank_sz (from u_init) */
 static const char *rank(void);
 static int xlev_to_rank(int);
 static long botl_score(void);
-static int describe_level(char *);
+static void describe_level(char *, int);
 
 
 /* convert experience level (1..30) to rank index (0..8) */
@@ -123,24 +123,53 @@ static long botl_score(void)
 
 
 /* provide the name of the current level for display by various ports */
-static int describe_level(char *buf)
+/*
+ * 'v'erbosity:
+ * - 0 = Dlvl or only important level names (NetHack)
+ * - 1 = short dungeon name (AceHack and NetHack4)
+ * - 2 = full dungeon name (UnNetHack show_dgn_name option)
+ */
+static void describe_level(char *buf, int v)
 {
-	int ret = 1;
+	if (Is_knox(&u.uz)) {
+	    sprintf(buf, "%s", dungeons[u.uz.dnum].dname);
+	} else if (Is_blackmarket(&u.uz)) {
+	    if (v == 1) sprintf(buf, "BlackMrkt:%d", depth(&u.uz));
+	    else sprintf(buf, "Black Market");
+	} else if (In_quest(&u.uz)) {
+	    sprintf(buf, "Home%c%d", (v == 0 ? ' ' : ':'), dunlev(&u.uz));
+	} else if (In_endgame(&u.uz)) {
+	    sprintf(buf, Is_astralevel(&u.uz) ? "Astral Plane" : "End Game");
 
-	/* TODO:	Add in dungeon name */
-	if (Is_knox(&u.uz))
-		sprintf(buf, "%s", dungeons[u.uz.dnum].dname);
-	else if (In_quest(&u.uz))
-		sprintf(buf, "Home %d", dunlev(&u.uz));
-	else if (In_endgame(&u.uz))
-		sprintf(buf,
-			Is_astralevel(&u.uz) ? "Astral Plane" : "End Game");
-	else {
-		/* ports with more room may expand this one */
+	} else if (Is_minetown_level(&u.uz)) {
+	    sprintf(buf, (v == 1 ? "%s%d" : "%s%-2d"), "Mine Town:", depth(&u.uz));
+	} else if (In_mines(&u.uz) && v == 1) {
+	    sprintf(buf, "Mines:%d", depth(&u.uz));
+	} else if (In_sokoban(&u.uz) && v == 1) {
+	    sprintf(buf, "Sokoban:%d", depth(&u.uz));
+	} else if (Is_town_level(&u.uz)) {
+	    sprintf(buf, "Town:%d", depth(&u.uz));
+
+	} else if (Is_valley(&u.uz) && v > 0) {
+	    sprintf(buf, "Valley:%d", depth(&u.uz));
+	} else if (In_V_tower(&u.uz) && v == 1) {
+	    sprintf(buf, "Vlad:%d", depth(&u.uz));
+	} else if (In_dragon(&u.uz) && v == 1) {
+	    sprintf(buf, "Dragon:%d", depth(&u.uz));
+	} else if (In_hell(&u.uz) && v == 1) {
+	    sprintf(buf, "Gehennom:%d", depth(&u.uz));
+
+	} else {
+	    if (v == 1) {
+		sprintf(buf, "Dungeons:%d", depth(&u.uz));
+	    } else if (v == 2) {
+		const char *dgn_name = dungeons[u.uz.dnum].dname;
+		if (!strncmpi(dgn_name, "The ", 4)) dgn_name += 4;
+		sprintf(buf, "%s:%-2d", dgn_name, depth(&u.uz));
+	    } else {
 		sprintf(buf, "Dlvl:%-2d", depth(&u.uz));
-		ret = 0;
+	    }
 	}
-	return ret;
 }
 
 
@@ -164,7 +193,10 @@ static void make_player_info(struct nh_player_info *pi)
 	pi->x = u.ux;
 	pi->y = u.uy;
 	pi->z = u.uz.dlevel;
-	
+
+	strncpy(pi->race_adj, urace.adj, sizeof(pi->race_adj));
+	upstart(pi->race_adj);
+
 	if (Upolyd) {
 		char mbot[BUFSZ];
 		int k = 0;
@@ -213,8 +245,11 @@ static void make_player_info(struct nh_player_info *pi)
 	
 	pi->gold = money_cnt(invent);
 	pi->coinsym = def_oc_syms[COIN_CLASS];
-	describe_level(pi->level_desc);
-	
+
+	describe_level(pi->levdesc_dlvl, 0);
+	describe_level(pi->levdesc_short, 1);
+	describe_level(pi->levdesc_full, 2);
+
 	pi->monnum = u.umonster;
 	pi->cur_monnum = u.umonnum;
 	
@@ -224,6 +259,7 @@ static void make_player_info(struct nh_player_info *pi)
 	else
 	    pi->level = u.ulevel;
 	pi->xp = u.uexp;
+	pi->xp_next = newuexp(pi->level);
 
 	/* weight and inventory slot count */
 	pi->wt = weight_cap() + inv_weight();

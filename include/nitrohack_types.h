@@ -406,10 +406,13 @@ struct nh_objresult {
 struct nh_player_info {
     char plname[PL_NSIZ];
     int x, y, z;
+    char race_adj[PLRBUFSZ];
     char rank[PL_NSIZ];
-    char level_desc[COLNO];
+    char levdesc_dlvl[COLNO];
+    char levdesc_short[COLNO];
+    char levdesc_full[COLNO];
     char statusitems[16][ITEMLEN];
-    int score, xp, gold, moves;
+    int score, xp, xp_next, gold, moves;
     int wt, wtcap, invslots;
     int max_rank_sz;
     int st, st_extra, dx, co, in, wi, ch;

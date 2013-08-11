@@ -112,7 +112,7 @@ static void ccmd_start_game(json_t *params)
 	gameid = db_add_new_game(user_info.uid, basename, rolename,
 				 ri->racenames[race], ri->gendnames[gend],
 				 ri->alignnames[align], mode, name,
-				 player_info.level_desc);
+				 player_info.levdesc_dlvl);
 	log_msg("%s has started a new game (%d) as %s",
 		user_info.username, gameid, name);
 	j_msg = json_pack("{si,si}", "return", ret, "gameid", gameid);
@@ -164,7 +164,7 @@ static void ccmd_restore_game(json_t *params)
     if (status == GAME_RESTORED) {
 	gameid = gid;
 	gamefd = fd;
-	db_update_game(gameid, player_info.moves, player_info.z, player_info.level_desc);
+	db_update_game(gameid, player_info.moves, player_info.z, player_info.levdesc_dlvl);
 	log_msg("%s has restored game %d", user_info.username, gameid);
     }
 }
@@ -179,7 +179,7 @@ static void ccmd_exit_game(json_t *params)
     
     status = nh_exit_game(etype);
     if (status) {
-	db_update_game(gameid, player_info.moves, player_info.z, player_info.level_desc);
+	db_update_game(gameid, player_info.moves, player_info.z, player_info.levdesc_dlvl);
 	log_msg("%s has closed game %d", user_info.username, gameid);
 	gameid = 0;
 	close(gamefd);
@@ -240,7 +240,7 @@ static void ccmd_game_command(json_t *params)
     }
     
     client_msg("game_command", json_pack("{si}", "return", result));
-    db_update_game(gameid, player_info.moves, player_info.z, player_info.level_desc);
+    db_update_game(gameid, player_info.moves, player_info.z, player_info.levdesc_dlvl);
     
     /* move the finished game to its final resting place */
     if (result == GAME_OVER) {
