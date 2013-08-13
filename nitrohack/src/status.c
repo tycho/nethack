@@ -196,10 +196,10 @@ static const struct {
     { "Fly", CLR_BRIGHT_GREEN },
     { "Elbereth", CLR_BRIGHT_GREEN },
     /* trapped */
-    { "Trap", CLR_YELLOW },
+    { "Swamp", CLR_YELLOW },
     { "Held", CLR_YELLOW },
     { "Pit", CLR_YELLOW },
-    { "Bear", CLR_YELLOW },
+    { "Beartrap", CLR_YELLOW },
     { "Web", CLR_YELLOW },
     { "Infloor", CLR_YELLOW },
     { "Lava", CLR_ORANGE },
