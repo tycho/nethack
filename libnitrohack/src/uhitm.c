@@ -1198,9 +1198,9 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 		wtype = thrown ? weapon_type(is_ammo(obj) ? uwep : obj) :
 				 uwep_skill_type();
 		learn_known = learn_klaunch =
-			P_SKILL(wtype) >= P_EXPERT ? 50 :
-			P_SKILL(wtype) == P_SKILLED ? 100 :
-			P_SKILL(wtype) == P_BASIC ? 200 : 1000;
+			P_SKILL(wtype) >= P_EXPERT ? 20 :
+			P_SKILL(wtype) == P_SKILLED ? 50 :
+			P_SKILL(wtype) == P_BASIC ? 100 : 200;
 
 		/* races are familiar with weapons of their kind */
 		if (is_racial_weapon(obj)) learn_known /= 2;
