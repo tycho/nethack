@@ -308,8 +308,8 @@ static void make_player_info(struct nh_player_info *pi)
 	    strncpy(pi->statusitems[pi->nr_items++], "Trap", ITEMLEN);
 	if (!Blind && sengr_at("Elbereth", u.ux, u.uy)) /* 13 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Elbereth", ITEMLEN);
-	/* maximum == 16 (nh_player_info.statusitems size in nitrohack_types.h) */
-	
+	/* maximum == STATUSITEMS_MAX (24) */
+
 	api_exit();
 }
 
