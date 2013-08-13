@@ -300,22 +300,34 @@ static void make_player_info(struct nh_player_info *pi)
 	}
 	if (Blind) /* 5 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Blind", ITEMLEN);
-	if (Stunned) /* 6 */
+	if (Glib) /* 6 */
+	    strncpy(pi->statusitems[pi->nr_items++], "Greasy", ITEMLEN);
+	if (Wounded_legs) /* 7 */
+	    strncpy(pi->statusitems[pi->nr_items++], "Lame", ITEMLEN);
+	if (Stunned) /* 8 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Stun", ITEMLEN);
-	if (Hallucination) /* 7 */
+	if (Hallucination) /* 9 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Hallu", ITEMLEN);
-	if (Slimed) /* 8 */
+	if (Strangled) /* 10 */
+	    strncpy(pi->statusitems[pi->nr_items++], "Strangle", ITEMLEN);
+	if (Slimed) /* 11 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Slime", ITEMLEN);
+	if (Stoned) /* 12 */
+	    strncpy(pi->statusitems[pi->nr_items++], "Petrify", ITEMLEN);
+	if (u.ustuck && !u.uswallow && !sticks(youmonst.data)) /* 13 */
+	    strncpy(pi->statusitems[pi->nr_items++], "Held", ITEMLEN);
 	cap = near_capacity();
-	if (enc_stat[cap]) /* 9 */
+	if (enc_stat[cap]) /* 14 */
 	    strncpy(pi->statusitems[pi->nr_items++], enc_stat[cap], ITEMLEN);
-	if (Levitation) /* 10 */
+	if (Levitation) /* 15 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Lev", ITEMLEN);
-	if (unweapon) /* 11 */
+	else if (Flying)
+	    strncpy(pi->statusitems[pi->nr_items++], "Fly", ITEMLEN);
+	if (unweapon) /* 16 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Unarmed", ITEMLEN);
-	if (u.utrap) /* 12 */
+	if (u.utrap) /* 17 */
 	    strncpy(pi->statusitems[pi->nr_items++], trap_stat[u.utraptype], ITEMLEN);
-	if (!Blind && sengr_at("Elbereth", u.ux, u.uy)) /* 13 */
+	if (!Blind && sengr_at("Elbereth", u.ux, u.uy)) /* 18 */
 	    strncpy(pi->statusitems[pi->nr_items++], "Elbereth", ITEMLEN);
 	/* maximum == STATUSITEMS_MAX (24) */
 
