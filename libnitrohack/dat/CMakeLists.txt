@@ -1,159 +1,150 @@
 # dat/CMakeLists.txt: generate game data files
+include (CMakeParseArguments)
 
-set (LEVEL_DESCRIPTIONS
-    ${LNH_DAT}/advcal.des
-    ${LNH_DAT}/Arch.des
-    ${LNH_DAT}/Barb.des
-    ${LNH_DAT}/bigroom.des
-    ${LNH_DAT}/blkmar.des
-    ${LNH_DAT}/castle.des
-    ${LNH_DAT}/Caveman.des
-    ${LNH_DAT}/Convict.des
-    ${LNH_DAT}/dragons.des
-    ${LNH_DAT}/endgame.des
-    ${LNH_DAT}/gehennom.des
-    ${LNH_DAT}/Healer.des
-    ${LNH_DAT}/heck.des
-    ${LNH_DAT}/Knight.des
-    ${LNH_DAT}/knox.des
-    ${LNH_DAT}/medusa.des
-    ${LNH_DAT}/mines.des
-    ${LNH_DAT}/nymph.des
-    ${LNH_DAT}/Monk.des
-    ${LNH_DAT}/oracle.des
-    ${LNH_DAT}/Priest.des
-    ${LNH_DAT}/Ranger.des
-    ${LNH_DAT}/Rogue.des
-    ${LNH_DAT}/Samurai.des
-    ${LNH_DAT}/sokoban.des
-    ${LNH_DAT}/Tourist.des
-    ${LNH_DAT}/tower.des
-    ${LNH_DAT}/town.des
-    ${LNH_DAT}/Valkyrie.des
-    ${LNH_DAT}/Wizard.des
-    ${LNH_DAT}/yendor.des 
-    )
-
-# the compiled levels that will be added to nhdat
-set (COMPILED_LEVELS
-    advcal.lev
-    air.lev      Arc-fila.lev Arc-filb.lev Arc-goal.lev
-    Arc-loca.lev Arc-strt.lev asmod-1.lev  asmod-2.lev
-    astral.lev   baalz-1.lev  baalz-2.lev
-    Bar-fila.lev Bar-filb.lev Bar-goal.lev
-    Bar-loca.lev Bar-strt.lev blkmar.lev
-    bigrm-1.lev  bigrm-2.lev  bigrm-3.lev  bigrm-4.lev
-    bigrm-5.lev  bigrm-6.lev  bigrm-7.lev  bigrm-8.lev
-    bigrm-9.lev  bigrm-10.lev bigrm-11.lev
-    castle-1.lev castle-2.lev castle-3.lev
-    Cav-fila.lev Cav-filb.lev Cav-goal.lev Cav-loca.lev
-    Cav-strt.lev
-    Con-fila.lev Con-filb.lev Con-goal.lev Con-loca.lev
-    Con-strt.lev
-    drgnA.lev    drgnB.lev    drgnC.lev    drgnD.lev
-    earth.lev    fakewiz1.lev fakewiz2.lev
-    fire.lev     Hea-fila.lev Hea-filb.lev Hea-goal.lev
-    Hea-loca.lev Hea-strt.lev
-    heck-a-1.lev heck-a-2.lev heck-a-3.lev heck-a-4.lev
-    heck-a-5.lev heck-a-6.lev heck-a-7.lev
-    heck-b-1.lev heck-b-2.lev heck-b-3.lev heck-b-4.lev
-    heck-b-5.lev heck-b-6.lev heck-b-7.lev
-    heck-c-1.lev heck-c-2.lev heck-c-3.lev heck-c-4.lev
-    heck-c-5.lev heck-c-6.lev heck-c-7.lev heck-c-8.lev
-    heck-d-1.lev heck-d-2.lev heck-d-3.lev heck-d-4.lev
-    heck-d-5.lev heck-d-6.lev heck-d-7.lev heck-d-8.lev
-    heck-d-9.lev
-    heck-e-1.lev heck-e-2.lev heck-e-3.lev heck-e-4.lev
-    heck-e-5.lev heck-e-6.lev heck-e-7.lev heck-e-8.lev
-    heck-e-9.lev
-    hellfill.lev
-    juiblex.lev  Kni-fila.lev
-    Kni-filb.lev Kni-goal.lev Kni-loca.lev Kni-strt.lev
-    knox-1.lev   knox-2.lev   knox-3.lev
-    medusa-1.lev medusa-2.lev medusa-3.lev medusa-4.lev
-    minefill.lev
-    minend-1.lev minend-2.lev minend-3.lev minetn-1.lev
-    minetn-2.lev minetn-3.lev minetn-4.lev minetn-5.lev
-    minetn-6.lev minetn-7.lev minetn-8.lev
-    Mon-fila.lev Mon-filb.lev
-    Mon-goal.lev Mon-loca.lev Mon-strt.lev
-    nymph.lev    oracle.lev   orcus-1.lev  orcus-2.lev
-    Pri-fila.lev Pri-filb.lev Pri-goal.lev
-    Pri-loca.lev Pri-strt.lev Ran-fila.lev Ran-filb.lev
-    Ran-goal.lev Ran-loca.lev Ran-strt.lev Rog-fila.lev
-    Rog-filb.lev Rog-goal.lev Rog-loca.lev Rog-strt.lev
-    Sam-fila.lev Sam-filb.lev Sam-goal.lev Sam-loca.lev
-    Sam-strt.lev sanctum.lev
-    soko1-1.lev  soko1-2.lev  soko1-3.lev  soko1-4.lev
-    soko1-5.lev  soko1-6.lev
-    soko2-1.lev  soko2-2.lev  soko2-3.lev  soko2-4.lev
-    soko2-5.lev  soko2-6.lev  soko2-7.lev  soko2-8.lev
-    soko2-9.lev  soko2-10.lev soko2-11.lev
-    soko3-1.lev  soko3-2.lev  soko3-3.lev  soko3-4.lev
-    soko3-5.lev  soko3-6.lev  soko3-7.lev  soko3-8.lev
-    soko3-9.lev  soko3-10.lev soko3-11.lev soko3-12.lev
-    soko3-13.lev soko3-14.lev soko3-15.lev soko3-16.lev
-    soko3-17.lev soko3-18.lev
-    Tou-fila.lev Tou-filb.lev
-    Tou-goal.lev Tou-loca.lev Tou-strt.lev tower1.lev
-    tower2.lev   tower3.lev
-    town-1.lev   town-2.lev   townfill.lev
-    Val-fila.lev Val-filb.lev
-    Val-goal.lev valley-1.lev valley-2.lev
-    Val-loca.lev Val-strt.lev
-    water.lev    wizard1.lev  wizard2.lev  wizard3.lev
-    Wiz-fila.lev Wiz-filb.lev Wiz-goal.lev Wiz-loca.lev
-    Wiz-strt.lev
-    )
-
-set (NHDAT_SRC dungeon quest.dat rumors oracles ${COMPILED_LEVELS} history data)
-
-configure_file(${LNH_DAT}/history history COPYONLY)
-
-get_property(MAKEDEFS_BIN TARGET makedefs PROPERTY LOCATION)
-get_property(DGN_COMP_BIN TARGET dgn_comp PROPERTY LOCATION)
-get_property(LEV_COMP_BIN TARGET lev_comp PROPERTY LOCATION)
-get_property(DLB_BIN TARGET dlb PROPERTY LOCATION)
-
+configure_file (history history COPYONLY)
 
 # makedefs -d
 add_custom_command (OUTPUT data
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -d ${LNH_DAT}/data.base data
-                    DEPENDS makedefs)
-# makedefs -e 
+                    MAIN_DEPENDENCY data.base)
+# makedefs -e
 add_custom_command (OUTPUT dungeon.pdf
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -e ${LNH_DAT}/dungeon.def dungeon.pdf
-                    DEPENDS makedefs)
+                    MAIN_DEPENDENCY dungeon.def)
 # makedefs -q
 add_custom_command (OUTPUT quest.dat
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -q ${LNH_DAT}/quest.txt quest.dat
-                    DEPENDS makedefs)
+                    MAIN_DEPENDENCY quest.txt)
 # makedefs -r
 add_custom_command (OUTPUT rumors
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -r ${LNH_DAT}/rumors.tru
                             ${LNH_DAT}/rumors.fal rumors
-                    DEPENDS makedefs)
+                    DEPENDS rumors.tru rumors.fal)
 # makedefs -h
 add_custom_command (OUTPUT oracles
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -h ${LNH_DAT}/oracles.txt oracles
-                    DEPENDS makedefs)
+                    MAIN_DEPENDENCY oracles.txt)
 
 add_custom_command (OUTPUT dungeon
-                    COMMAND ${DGN_COMP_BIN}
-                    ARGS ${LNH_DAT_GEN}/dungeon.pdf
-                    DEPENDS dungeon.pdf)
+                    COMMAND dgn_comp
+                    ARGS dungeon.pdf
+                    MAIN_DEPENDENCY dungeon.pdf)
+
+# Level files
+macro (level_file)
+    cmake_parse_arguments (LEVEL_FILE "" "INPUT" "OUTPUTS" ${ARGN})
+    set (REAL_OUTPUTS)
+    foreach (OUTPUT ${LEVEL_FILE_OUTPUTS})
+        set (REAL_OUTPUTS ${REAL_OUTPUTS} ${OUTPUT}.lev)
+    endforeach (OUTPUT)
+    set (COMPILED_LEVELS ${COMPILED_LEVELS} ${REAL_OUTPUTS})
+    add_custom_command (OUTPUT ${REAL_OUTPUTS}
+                        COMMAND lev_comp
+                        ARGS -v ${LNH_DAT}/${LEVEL_FILE_INPUT}
+                        MAIN_DEPENDENCY ${LEVEL_FILE_INPUT})
+endmacro (level_file)
+
+macro (quest_file BASE INPUT)
+    level_file (INPUT ${INPUT}
+                OUTPUTS
+                ${BASE}-strt ${BASE}-fila ${BASE}-loca ${BASE}-filb
+                ${BASE}-goal)
+endmacro (quest_file)
+
+# Dungeons of Doom
+level_file (INPUT oracle.des OUTPUTS oracle)
+level_file (INPUT bigroom.des
+            OUTPUTS
+            bigrm-1 bigrm-2  bigrm-3 bigrm-4 bigrm-5 bigrm-6 bigrm-7 bigrm-8
+            bigrm-9 bigrm-10 bigrm-11)
+level_file (INPUT medusa.des OUTPUTS medusa-1 medusa-2 medusa-3 medusa-4)
+level_file (INPUT castle.des OUTPUTS castle-1 castle-2 castle-3)
+
+# Advent Calendar
+level_file (INPUT advcal.des OUTPUTS advcal)
+
+# Gnomish Mines
+level_file (INPUT mines.des
+            OUTPUTS
+            minefill minend-1 minend-2 minend-3
+            minetn-1 minetn-2 minetn-3 minetn-4 minetn-5 minetn-6 minetn-7
+            minetn-8)
+
+# Sokoban
+level_file (INPUT sokoban.des
+            OUTPUTS
+            soko1-1  soko1-2  soko1-3  soko1-4  soko1-5  soko1-6
+            soko2-1  soko2-2  soko2-3  soko2-4  soko2-5  soko2-6  soko2-7
+            soko2-8  soko2-9  soko2-10 soko2-11
+            soko3-1  soko3-2  soko3-3  soko3-4  soko3-5  soko3-6  soko3-7
+            soko3-8  soko3-9  soko3-10 soko3-11 soko3-12 soko3-13 soko3-14
+            soko3-15 soko3-16 soko3-17 soko3-18)
+
+# Town
+level_file (INPUT town.des OUTPUTS town-1 town-2 townfill)
+
+# Nymph
+level_file (INPUT nymph.des OUTPUTS nymph)
+
+# Quests
+quest_file (Arc Arch.des)
+quest_file (Bar Barb.des)
+quest_file (Cav Caveman.des)
+quest_file (Con Convict.des)
+quest_file (Hea Healer.des)
+quest_file (Kni Knight.des)
+quest_file (Mon Monk.des)
+quest_file (Pri Priest.des)
+quest_file (Ran Ranger.des)
+quest_file (Rog Rogue.des)
+quest_file (Sam Samurai.des)
+quest_file (Tou Tourist.des)
+quest_file (Val Valkyrie.des)
+quest_file (Wiz Wizard.des)
+
+# Knox
+level_file (INPUT knox.des OUTPUTS knox-1 knox-2 knox-3)
+
+# Black Market
+level_file (INPUT blkmar.des OUTPUTS blkmar)
+
+# Gehennom
+level_file (INPUT gehennom.des
+            OUTPUTS
+            asmod-1 asmod-2 baalz-1 baalz-2 hellfill juiblex orcus-1 orcus-2
+            sanctum valley-1 valley-2)
+level_file (INPUT heck.des
+            OUTPUTS
+            heck-a-1 heck-a-2 heck-a-3 heck-a-4 heck-a-5 heck-a-6 heck-a-7
+            heck-b-1 heck-b-2 heck-b-3 heck-b-4 heck-b-5 heck-b-6 heck-b-7
+            heck-c-1 heck-c-2 heck-c-3 heck-c-4 heck-c-5 heck-c-6 heck-c-7
+            heck-c-8
+            heck-d-1 heck-d-2 heck-d-3 heck-d-4 heck-d-5 heck-d-6 heck-d-7
+            heck-d-8 heck-d-9
+            heck-e-1 heck-e-2 heck-e-3 heck-e-4 heck-e-5 heck-e-6 heck-e-7
+            heck-e-8 heck-e-9)
+level_file (INPUT yendor.des OUTPUTS fakewiz1 fakewiz2 wizard1 wizard2 wizard3)
+
+# Vlad's Tower
+level_file (INPUT tower.des OUTPUTS tower1 tower2 tower3)
+
+# Dragon Caves
+level_file (INPUT dragons.des OUTPUTS drgnA drgnB drgnC drgnD)
+
+# End Game
+level_file (INPUT endgame.des OUTPUTS earth air fire water astral)
+
+set (NHDAT_SRC dungeon quest.dat rumors oracles ${COMPILED_LEVELS} history data)
 
 add_custom_command (OUTPUT nhdat
-                    COMMAND ${LEV_COMP_BIN}
-                    ARGS -v ${LEVEL_DESCRIPTIONS}
-                    COMMAND ${DLB_BIN}
+                    COMMAND dlb
                     ARGS cf nhdat ${NHDAT_SRC}
-                    DEPENDS lev_comp dungeon quest.dat rumors oracles data ${LEVEL_DESCRIPTIONS})
+                    DEPENDS ${NHDAT_SRC})
 
 # pseudo-target: depend on all other generated data
 add_custom_target (nitrohack_data_files ALL
