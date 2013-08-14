@@ -1089,12 +1089,19 @@ void obj_ice_effects(int x, int y, boolean do_buried)
 long peek_at_iced_corpse_age(const struct obj *otmp)
 {
     long age, retval = otmp->age;
-    
-    if (otmp->otyp == CORPSE && ON_ICE(otmp)) {
-	/* Adjust the age; must be same as obj_timer_checks() for off ice*/
-	age = moves - otmp->age;
-	retval = otmp->age + (age / ROT_ICE_ADJUSTMENT);
+
+    if (otmp->otyp == CORPSE) {
+	if (ON_ICE(otmp)) {
+	    /* Adjust the age; must be same as obj_timer_checks() for off ice*/
+	    age = moves - otmp->age;
+	    retval = otmp->age + (age / ROT_ICE_ADJUSTMENT);
+	} else if (otmp->where == OBJ_CONTAINED && otmp->ocontainer &&
+		   otmp->ocontainer->otyp == ICE_BOX) {
+	    /* Corpses last in ice boxes indefinitely. */
+	    retval = moves - otmp->age;
+	}
     }
+
     return retval;
 }
 
