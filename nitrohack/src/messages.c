@@ -464,6 +464,9 @@ void wrap_text(int width, const char *input, int *output_count, char ***output)
     input_idx = 0;
     outcount = 0;
     do {
+	size_t outsize;
+	char *outbuf;
+
 	if (len - input_idx <= width) {
 	    /* enough room for the rest of the input */
 	    (*output)[outcount] = strdup(input + input_idx);
@@ -480,7 +483,11 @@ void wrap_text(int width, const char *input, int *output_count, char ***output)
 	if (!isspace((unsigned char)input[input_lidx]))
 	    input_lidx = input_idx + width;
 
-	(*output)[outcount] = strndup(input + input_idx, input_lidx - input_idx);
+	outsize = input_lidx - input_idx;
+	outbuf = malloc(outsize + 1);
+	strncpy(outbuf, input + input_idx, outsize);
+	outbuf[outsize] = '\0';
+	(*output)[outcount] = outbuf;
 	outcount++;
 
 	/* skip extra spaces in break */
