@@ -227,6 +227,8 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
 	
 	if (key == '\033') /* filter out ESC */
 	    continue;
+	if (key < 0 || key >= KEY_MAX)
+	    continue;
 	
 	new_action(); /* use a new message line for this action */
 	*count = multi;
@@ -255,6 +257,8 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
 		arg->argtype != CMD_ARG_DIR) {
 		key2 = get_map_key(TRUE);
 		if (key2 == '\033') /* cancel silently */
+		    continue;
+		if (key2 < 0 || key2 >= KEY_MAX)
 		    continue;
 		
 		cmd2 = keymap[key2];
@@ -295,7 +299,7 @@ enum nh_direction key_to_dir(int key)
 {
     struct nh_cmd_desc *cmd;
 
-    if (key <= 0)
+    if (key <= 0 || key >= KEY_MAX)
 	return DIR_NONE;
 
     cmd = keymap[key];
@@ -389,7 +393,10 @@ static void show_whatdoes(void)
 {
     char buf[BUFSZ];
     int key = curses_msgwin("What command?");
-    
+
+    if (key < 0 || key >= KEY_MAX)
+	return;
+
     if (!keymap[key])
 	snprintf(buf, BUFSZ, "'%s' is not bound to any command.", curses_keyname(key));
     else
@@ -875,7 +882,7 @@ static void command_settings_menu(struct nh_cmd_desc *cmd)
 	else if (selection[0] == -1) { /* add a key */
 	    sprintf(buf, "Press the key you want to use for \"%s\"", cmd->name);
 	    i = curses_msgwin(buf);
-	    if (i == KEY_ESC)
+	    if (i == KEY_ESC || i < 0 || i >= KEY_MAX)
 		continue;
 	    if (keymap[i]) {
 		sprintf(buf, "That key is already in use by \"%s\"! Replace?", keymap[i]->name);
