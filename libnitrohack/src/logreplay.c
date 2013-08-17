@@ -162,7 +162,7 @@ static int sscan_llx(const char *s, unsigned long long *ll)
     int x, lead_n;
     int acc = 0;
     sscanf(s, " %n", &lead_n);
-    while (sscanf(s + lead_n + n, "%c", &c)) {
+    while (sscanf(s + lead_n + n, "%c", &c) == 1) {
 	if (c >= '0' && c <= '9') x = c - '0';
 	else if (c >= 'a' && c <= 'f') x = c - 'a' + 10;
 	else break;
@@ -829,8 +829,8 @@ static void replay_read_command(char *cmdtok, char **cmd, int *count,
     if (!cmdtok)
 	return;
 
-    sscanf(cmdtok, ">%n", &n);
-    if (!n) parse_error("Error: Incorrect command spec\n");
+    if (sscanf(cmdtok, ">%n", &n) == EOF || !n)
+	parse_error("Error: Incorrect command spec\n");
     n2 = sscan_llx(cmdtok + n, &turntime);
     if (!n2) parse_error("Error: Incorrect command spec\n");
     n += n2;
