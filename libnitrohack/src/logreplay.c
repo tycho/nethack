@@ -151,6 +151,37 @@ static void base64_decode(const char *in, char *out)
 }
 
 
+/* Read an unsigned long long from a string.
+ * Returns number of characters read (0 on failure). */
+static int sscan_llx(const char *s, unsigned long long *ll)
+{
+    int n = 0;
+#ifdef WIN32
+    /* MSVCRT doesn't have the %llx conversion specifier. */
+    char c;
+    int x, lead_n;
+    int acc = 0;
+    sscanf(s, " %n", &lead_n);
+    while (sscanf(s + lead_n + n, "%c", &c)) {
+	if (c >= '0' && c <= '9') x = c - '0';
+	else if (c >= 'a' && c <= 'f') x = c - 'a' + 10;
+	else break;
+	acc <<= 4;
+	acc |= x;
+	n++;
+    }
+    if (n) {
+	*ll = acc;
+	n += lead_n;
+    }
+#else
+    if (sscanf(s, "%llx%n", ll, &n) < 1)
+	return 0;
+#endif
+    return n;
+}
+
+
 void replay_set_logfile(int logfd)
 {
     if (!program_state.restoring && logfile)
@@ -676,7 +707,7 @@ void replay_read_newgame(unsigned long long *init, int *playmode, char *namebuf,
 	raw_printf("Warning: Version mismatch; expected %d.%d, got %d.%d\n",
 		   VERSION_MAJOR, VERSION_MINOR, ver1, ver2);
 
-    sscanf(next_log_token(), "%llx", init);
+    sscan_llx(next_log_token(), init);
     sscanf(next_log_token(), "%x", &seed);
     *playmode = atoi(next_log_token());
     base64_decode(next_log_token(), namebuf);
@@ -793,14 +824,19 @@ static boolean replay_parse_arg(char *argstr, struct nh_cmd_arg *arg)
 static void replay_read_command(char *cmdtok, char **cmd, int *count,
 				    struct nh_cmd_arg *arg)
 {
-    int cmdidx, n;
+    int cmdidx, n, n2;
+
     if (!cmdtok)
 	return;
-    
-    n = sscanf(cmdtok, ">%llx:%x:%d", &turntime, &cmdidx, count);
-    if (n != 3 || cmdidx > cmdcount)
+
+    sscanf(cmdtok, ">%n", &n);
+    if (!n) parse_error("Error: Incorrect command spec\n");
+    n2 = sscan_llx(cmdtok + n, &turntime);
+    if (!n2) parse_error("Error: Incorrect command spec\n");
+    n += n2;
+    if (sscanf(cmdtok + n, ":%x:%d", &cmdidx, count) < 2 || cmdidx > cmdcount)
 	parse_error("Error: Incorrect command spec\n");
-    
+
     *cmd = commands[cmdidx];
     
     if (!replay_parse_arg(next_log_token(), arg))
@@ -1377,7 +1413,7 @@ enum nh_log_status nh_get_savegame_status(int fd, struct nh_game_info *gi)
 {
     char header[128], status[8], encplname[PL_NSIZ * 2];
     char role[PLRBUFSZ], race[PLRBUFSZ], gend[PLRBUFSZ], algn[PLRBUFSZ];
-    int n, v1, v2, v3;
+    int n, n2, v1, v2, v3;
     unsigned int savepos, endpos, seed, playmode;
     struct memfile mf;
     enum nh_log_status ret;
@@ -1385,16 +1421,22 @@ enum nh_log_status nh_get_savegame_status(int fd, struct nh_game_info *gi)
     struct you sg_you;
     struct flag sg_flags;
     long sg_moves;
-    long long starttime;
-    
+    unsigned long long starttime;
+
     lseek(fd, 0, SEEK_SET);
     if (read(fd, header, 127) <= 0) return LS_INVALID;
     header[127] = '\0';
-    n = sscanf(header, "NHGAME %4s %x %*8s %d.%d.%d\n%llx %x %x %s %s %s %s %s",
-	       status, &savepos, &v1, &v2, &v3, &starttime, &seed, &playmode, encplname,
-	       role, race, gend, algn);
-    if (n != 13) return LS_INVALID;
-    
+
+    if (sscanf(header, "NHGAME %4s %x %*8s %d.%d.%d\n%n",
+	       status, &savepos, &v1, &v2, &v3, &n) < 5)
+	return LS_INVALID;
+    n2 = sscan_llx(header + n, &starttime);
+    if (!n2) return LS_INVALID;
+    n += n2;
+    if (sscanf(header + n, "%x %x %s %s %s %s %s",
+	       &seed, &playmode, encplname, role, race, gend, algn) < 7)
+	return LS_INVALID;
+
     endpos = lseek(fd, 0, SEEK_END);
     if (!strcmp(status, "done"))
 	ret = LS_DONE;
