@@ -289,7 +289,6 @@ static int parse_ip_addr(const char *host, int port, int want_v4,
     int res;
     char portstr[16];
     struct addrinfo *gai_res = NULL;
-    struct addrinfo *next;
     struct addrinfo gai_hints;
     memset(&gai_hints, 0, sizeof(gai_hints));
 #if !defined(__MINGW32__)
@@ -311,7 +310,7 @@ static int parse_ip_addr(const char *host, int port, int want_v4,
     
 #ifndef WIN32 /* it seems the result structures should not be free'd on Windows */
     do {
-	next = gai_res->ai_next;
+	struct addrinfo *next = gai_res->ai_next;
 	free(gai_res);
 	gai_res = next;
     } while (gai_res);
@@ -348,12 +347,13 @@ static int connect_server(const char *host, int port, int want_v4, char *errmsg,
 static int do_connect(const char *host, int port, const char *user, const char *pass,
 		      const char *email, int reg_user, int connid)
 {
-    int fd = -1, authresult, copylen;
+    int fd = -1, authresult;
     char ipv6_error[120], ipv4_error[120], errmsg[256];
     json_t *jmsg, *jarr;
     
 #ifdef UNIX
     /* try to connect to a local unix socket */
+    int copylen;
     struct sockaddr_un sun;
     sun.sun_family = AF_UNIX;
     
