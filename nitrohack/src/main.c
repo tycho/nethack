@@ -45,7 +45,7 @@ struct nh_menuitem mainmenu_items[] = {
 };
 
 
-const char *nhlogo_small[12] = { /* this _beautiful_ logo was created by exporting an
+const char *nhlogo_small[] = { /* this _beautiful_ logo was created by exporting an
                             160x24 image from gimp using aalib */
 "_aa/    aa/ ]QQ                         _aa     aa/                   ]QQ       ",
 "]QQQ.   QQf ]QQ  ]QQ                    ]QQ     QQf                   ]QQ       ",
@@ -61,7 +61,7 @@ const char *nhlogo_small[12] = { /* this _beautiful_ logo was created by exporti
 "]QQ    $QQf ]QQ   ?QQQf QQf    -9$QWV\"  ]QQ     QQf )$Q@!]QQ   \"9QWD^ ]QQ  -$QQc"
 };
 
-const char *nhlogo_large[12] = {
+const char *nhlogo_large[] = {
 "_aaa    aaa    QQQ                                 aaa     aaa                         QQQ       ",
 "]QQQc   QQQ    QQQ    QQQ                          QQQ     QQQ                         QQQ       ",
 "]QQQQ   QQQ           QQQ                          QQQ     QQQ                         QQQ       ",
@@ -217,11 +217,13 @@ static void mainmenu(void)
     sprintf(verstr, "Version %d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
     
     while (n >= 0) {
-	if (COLS >= 100)
+	if (COLS > strlen(nhlogo_large[0])) {
 	    nhlogo = nhlogo_large;
-	else
+	    logoheight = ARRAY_SIZE(nhlogo_large);
+	} else {
 	    nhlogo = nhlogo_small;
-	logoheight = sizeof(nhlogo_small) / sizeof(nhlogo_small[0]);
+	    logoheight = ARRAY_SIZE(nhlogo_small);
+	}
 	wclear(basewin);
 	wattron(basewin, A_BOLD | COLOR_PAIR(4));
 	for (i = 0; i < logoheight; i++) {
