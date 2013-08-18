@@ -28,8 +28,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 	case CONFIG_DIR: subdir = L"\\"; break;
 	case SAVE_DIR:   subdir = L"\\save\\"; break;
 	case LOG_DIR:    subdir = L"\\log\\"; break;
-	/* DUMP_DIR is ignored here; dumps go into Documents on Windows */
-	case DUMP_DIR:   subdir = L"\\"; break;
+	case DUMP_DIR:   subdir = L"\\dumps\\"; break;
     }
     
     snwprintf(nhPath, MAX_PATH, L"%s\\NitroHack", appPath);

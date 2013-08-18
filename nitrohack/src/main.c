@@ -115,11 +115,13 @@ static char** init_game_paths(const char *argv0)
 {
 #ifdef WIN32
     char dirbuf[1024], docpath[MAX_PATH], *pos;
+    wchar_t w_dump_dir[MAX_PATH];
 #endif
     char **pathlist = malloc(sizeof(char*) * PREFIX_COUNT);
     char *dir = NULL;
     int i;
-    
+    nh_bool free_dump = FALSE;
+
 #if defined(UNIX)
     if (getgid() == getegid()) {
 	dir = getenv("NITROHACKDIR");
@@ -134,8 +136,10 @@ static char** init_game_paths(const char *argv0)
     for (i = 0; i < PREFIX_COUNT; i++)
 	pathlist[i] = dir;
     pathlist[DUMPPREFIX] = malloc(BUFSZ);
+    free_dump = TRUE;
     if (!get_gamedir(DUMP_DIR, pathlist[DUMPPREFIX])) {
 	free(pathlist[DUMPPREFIX]);
+	free_dump = FALSE;
 	pathlist[DUMPPREFIX] = getenv("HOME");
 	if (!pathlist[DUMPPREFIX])
 	    pathlist[DUMPPREFIX] = "./";
@@ -159,11 +163,30 @@ static char** init_game_paths(const char *argv0)
     
     for (i = 0; i < PREFIX_COUNT; i++)
 	pathlist[i] = dir;
-    /* get the actual, localized path to the Documents folder */
-    if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, docpath)))
-	pathlist[DUMPPREFIX] = docpath;
-    else
-	pathlist[DUMPPREFIX] = ".\\";
+
+    if (get_gamedir(DUMP_DIR, w_dump_dir)) {
+	int dump_sz = WideCharToMultiByte(CP_ACP, 0, w_dump_dir, -1,
+					  NULL, 0, NULL, NULL);
+	if (!dump_sz)
+	    goto dump_fallback;
+	if (!(pathlist[DUMPPREFIX] = malloc(dump_sz)))
+	    goto dump_fallback;
+	free_dump = TRUE;
+	if (!WideCharToMultiByte(CP_ACP, 0, w_dump_dir, -1,
+				 pathlist[DUMPPREFIX], dump_sz, NULL, NULL)) {
+	    free(pathlist[DUMPPREFIX]);
+	    free_dump = FALSE;
+	    goto dump_fallback;
+	}
+	pathlist[DUMPPREFIX][dump_sz - 1] = 0;
+    } else {
+ dump_fallback:
+	/* get the actual, localized path to the Documents folder */
+	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, docpath)))
+	    pathlist[DUMPPREFIX] = docpath;
+	else
+	    pathlist[DUMPPREFIX] = ".\\";
+    }
 
 #else
     /* Avoid a trap for people trying to port this. */
@@ -175,6 +198,8 @@ static char** init_game_paths(const char *argv0)
 	char *tmp = pathlist[i];
 	pathlist[i] = malloc(strlen(tmp) + 2);
 	strcpy(pathlist[i], tmp);
+	if (i == DUMPPREFIX && free_dump)
+	    free(tmp);
 	append_slash(pathlist[i]);
     }
     

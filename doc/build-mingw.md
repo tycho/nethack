@@ -113,7 +113,7 @@ Open the command prompt to compile the game:
 
 After a few minutes, you can find the game at C:\MinGW\NitroHack-unnethack\install.
 
-Nearly all of the game's options are set and saved in-game, but if you want to customize characters used on the map or see save files you can find them at your user's AppData folder under Roaming\NitroHack.  Dump logs for finished characters can be found in your user's Documents folder.
+Nearly all of the game's options are set and saved in-game, but if you want to customize characters used on the map, see save files or view dump logs of finished games you can find them all in your user's AppData folder under Roaming\NitroHack.
 
 If you want to create a ZIP of the game, you only need these files (i.e. ignore the *.dll.a files):
 
