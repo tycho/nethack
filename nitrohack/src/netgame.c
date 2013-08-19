@@ -470,11 +470,13 @@ static void netgame_mainmenu(struct server_info *server)
 	    nhnet_server_ver.minor, nhnet_server_ver.patchlevel);
     
     while (n > 0) {
-	if (COLS >= 100)
+	if (COLS > strlen(nhlogo_large[0])) {
 	    nhlogo = nhlogo_large;
-	else
+	    logoheight = ARRAY_SIZE(nhlogo_large);
+	} else {
 	    nhlogo = nhlogo_small;
-	logoheight = sizeof(nhlogo_small) / sizeof(nhlogo_small[0]);
+	    logoheight = ARRAY_SIZE(nhlogo_small);
+	}
 	wclear(basewin);
 	wattron(basewin, A_BOLD | COLOR_PAIR(4));
 	for (i = 0; i < logoheight; i++) {
