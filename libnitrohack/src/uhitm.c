@@ -233,8 +233,6 @@ schar find_roll_to_hit(struct monst *mtmp)
 	tmp = 1 + abon() + find_mac(mtmp) + u.uhitinc +
 		maybe_polyd(youmonst.data->mlevel, u.ulevel);
 
-	if (Luck) tmp += sgn(Luck) * rnd(abs(Luck));
-
 	check_caitiff(mtmp);
 
 /*	attacking peaceful creatures is bad for the samurai's giri */
@@ -274,7 +272,7 @@ schar find_roll_to_hit(struct monst *mtmp)
 	if (Role_if(PM_MONK) && !Upolyd) {
 	    if (uarm) {
 		pline("Your armor is rather cumbersome...");
-		tmp -= urole.spelarmr;
+		tmp -= urole.spelarmr / 2;
 	    } else if (!uwep && !uarms) {
 		tmp += (u.ulevel / 3) + 2;
 	    }
