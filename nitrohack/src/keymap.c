@@ -469,7 +469,7 @@ static void show_quickref(void)
 	{0, MI_TEXT, "a           apply (use) tool"},
 	{0, MI_TEXT, "e           eat food or corpse"},
 	{0, MI_TEXT, "E           engrave (write) on floor (E- for fingers)"},
-	{0, MI_TEXT, "Ctrl-E      engrave \"Elbereth\""},
+	{0, MI_TEXT, "Ctrl-E      engrave \"Elbereth\" (scares monsters)"},
 	{0, MI_TEXT, "q           quaff (drink) potion"},
 	{0, MI_TEXT, "r           read scroll or spellbook"},
 	{0, MI_TEXT, "V           invoke artifact power or break wand"},
