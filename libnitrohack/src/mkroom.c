@@ -308,8 +308,9 @@ void fill_zoo(struct level *lev, struct mkroom *sroom)
 			(type == LEPREHALL) ? &mons[PM_LEPRECHAUN] :
 			(type == COCKNEST) ? &mons[PM_COCKATRICE] :
 			(type == ARMORY) ?
-			    (rn2(3) ? mkclass(&lev->z, S_RUSTMONST, 0) :
-			     &mons[PM_BROWN_PUDDING]) :
+			    (!rn2(5) ? &mons[PM_DISENCHANTER] :
+			     !rn2(2) ? &mons[PM_RUST_MONSTER] :
+				       &mons[PM_BROWN_PUDDING]) :
 			(type == ANTHOLE) ? antholemon(&lev->z) :
 			NULL,
 			lev, sx, sy, NO_MM_FLAGS);
