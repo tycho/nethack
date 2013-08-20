@@ -1288,6 +1288,7 @@ int seffects(struct obj *sobj, boolean *known)
 			pline("You identify this as an identify scroll.");
 		else
 			pline("This is an identify scroll.");
+		win_pause_output(P_MESSAGE);	/* --More-- */
 		/* identify 3 to 6 items regardless of BUC status */
 		cval = rn1(4, 3);
 		if (!objects[sobj->otyp].oc_name_known) more_experienced(0, 0, 10);
