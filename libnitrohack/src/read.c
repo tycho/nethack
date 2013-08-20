@@ -931,7 +931,7 @@ int seffects(struct obj *sobj, boolean *known)
 			}
 			break;
 		}
-		/* elven armor vibrates warningly when enchanted beyond a limit */
+		/* sometimes armor can be enchanted to a higher limit than usual */
 		special_armor = is_elven_armor(otmp) ||
 			(Role_if (PM_WIZARD) && otmp->otyp == CORNUTHAUM);
 		if (sobj->cursed)
@@ -1000,8 +1000,8 @@ int seffects(struct obj *sobj, boolean *known)
 			*known = otmp->known;
 		}
 
-		if ((otmp->spe > (special_armor ? 5 : 3)) &&
-		    (special_armor || !rn2(7)))
+		/* armor vibrates warningly when enchanted beyond a limit */
+		if (otmp->spe > (special_armor ? 5 : 3))
 			pline("Your %s suddenly %s %s.",
 				xname(otmp), otense(otmp, "vibrate"),
 				Blind ? "again" : "unexpectedly");

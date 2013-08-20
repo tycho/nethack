@@ -735,9 +735,8 @@ int chwepon(struct obj *otmp, int amount)
 	}
 
 	/* an elven magic clue, cookie@keebler */
-	/* elven weapons vibrate warningly when enchanted beyond a limit */
-	if ((uwep->spe > 5)
-		&& (is_elven_weapon(uwep) || uwep->oartifact || !rn2(7)))
+	/* weapons vibrate warningly when enchanted beyond a limit */
+	if (uwep->spe > 5)
 	    pline("Your %s unexpectedly.",
 		aobjnam(uwep, "suddenly vibrate"));
 
