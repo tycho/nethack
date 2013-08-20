@@ -484,7 +484,7 @@ static void show_quickref(void)
 	{0, MI_TEXT, "p           pay for items (in shop)"},
 	{0, MI_TEXT, "Z           cast magic spell"},
 	{0, MI_TEXT, ""},
-	{0, MI_TEXT, "#loot       open container on floor"},
+	{0, MI_TEXT, "#loot/a,    open container on floor"},
 	{0, MI_TEXT, "#force      force open container with wielded weapon"},
 	{0, MI_TEXT, "#tip        empty a container of its contents"},
 	{0, MI_TEXT, "#untrap     find and disarm traps (e.g. container or door)"},
