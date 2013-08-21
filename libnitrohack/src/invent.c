@@ -2244,11 +2244,27 @@ int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 	 */
 	extract_nobj(obj, &invent);
 
-	for (otmp = invent; otmp && otmp->invlet != let;)
-		otmp = otmp->nobj;
-	if (!otmp)
+	if (let == obj->invlet) {
+		otmp = obj;
+	} else {
+		for (otmp = invent; otmp && otmp->invlet != let;)
+			otmp = otmp->nobj;
+	}
+
+	if (!otmp) {
 		adj_type = "Moving:";
-	else if (merged(&otmp,&obj)) {
+	} else if (otmp == obj) {
+		adj_type = "Merging:";
+		for (otmp = invent; otmp;) {
+			if (merged(&otmp, &obj)) {
+				obj = otmp;
+				otmp = otmp->nobj;
+				extract_nobj(obj, &invent);
+			} else {
+				otmp = otmp->nobj;
+			}
+		}
+	} else if (merged(&otmp,&obj)) {
 		adj_type = "Merging:";
 		obj = otmp;
 		extract_nobj(obj, &invent);
