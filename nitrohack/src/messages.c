@@ -128,9 +128,15 @@ static void prune_messages(int maxturn)
 		strcat(msglines[curline], "  ");
 	    strcat(msglines[curline], msg);
 	} else {
-	    if (strlen(msglines[curline]) > 0)
-		newline();
-	    strcpy(msglines[curline], msg);
+	    int j, output_count;
+	    char **output;
+	    wrap_text(COLNO, msg, &output_count, &output);
+	    for (j = 0; j < output_count; j++) {
+		if (strlen(msglines[curline]) > 0)
+		    newline();
+		strcpy(msglines[curline], output[j]);
+	    }
+	    free_wrap(output);
 	}
     }
 }
@@ -152,7 +158,7 @@ void draw_msgwin(void)
 	wmove(msgwin, i, 0);
 	waddstr(msgwin, msglines[pos]);
 	/* Only clear the remainder of the line if the cursor did not wrap. */
-	if (getcurx(msgwin))
+	if (getcurx(msgwin) || !*msglines[pos])
 	    wclrtoeol(msgwin);
     }
 
@@ -273,7 +279,7 @@ static void curses_print_message_core(int turn, const char *msg, nh_bool canbloc
     if (vsize == 1) maxlen -= 8; /* for "--More--" */
 
     died = !strncmp(msg, "You die", 7);
-    if (strlen(msglines[curline]) + strlen(msg) + 1 < maxlen && !died) {
+    if (strlen(msglines[curline]) + strlen(msg) + 2 < maxlen && !died) {
 	if (msglines[curline][0])
 	    strcat(msglines[curline], "  ");
 	strcat(msglines[curline], msg);
