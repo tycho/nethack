@@ -334,7 +334,7 @@ void replay(void)
 	    
 	    describe_game(buf, status, &gi);
 	    add_menu_item(items, size, icount,
-			    (status == LS_IN_PROGRESS) ? 0 : icount + 1,
+			    (status == LS_IN_PROGRESS) ? 0 : i + 1,
 			    buf, 0, FALSE);
 	}
 
