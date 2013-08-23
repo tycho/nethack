@@ -297,7 +297,6 @@ extern struct nh_player_info player;
 extern int initrole, initrace, initgend, initalign;
 extern nh_bool random_player;
 extern struct nh_cmd_desc *keymap[KEY_MAX];
-extern const char *nhlogo_small[12], *nhlogo_large[12];
 
 /*----------------------------------------------------------------------------*/
 
@@ -338,6 +337,9 @@ extern void load_keymap(void);
 extern void free_keymap(void);
 extern void show_keymap_menu(nh_bool readonly);
 extern enum nh_direction key_to_dir(int key);
+
+/* main.c */
+extern const char **get_logo(nh_bool large);
 
 /* map.c */
 extern int get_map_key(int place_cursor);

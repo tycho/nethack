@@ -450,7 +450,7 @@ static void netgame_mainmenu(struct server_info *server)
 {
     int menuresult[1];
     char buf[BUFSZ];
-    int n = 1, logoheight, i;
+    int n = 1, logowidth, logoheight, i;
     const char **nhlogo;
     char verstr[32], server_verstr[32];
 
@@ -470,17 +470,18 @@ static void netgame_mainmenu(struct server_info *server)
 	    nhnet_server_ver.minor, nhnet_server_ver.patchlevel);
     
     while (n > 0) {
-	if (COLS > strlen(nhlogo_large[0])) {
-	    nhlogo = nhlogo_large;
-	    logoheight = ARRAY_SIZE(nhlogo_large);
-	} else {
-	    nhlogo = nhlogo_small;
-	    logoheight = ARRAY_SIZE(nhlogo_small);
+	nhlogo = get_logo(TRUE);
+	logowidth = strlen(nhlogo[0]);
+	if (COLS < logowidth) {
+	    nhlogo = get_logo(FALSE);
+	    logowidth = strlen(nhlogo[0]);
 	}
+	for (logoheight = 0; nhlogo[logoheight]; logoheight++)
+	    /* empty */;
 	wclear(basewin);
 	wattron(basewin, A_BOLD | COLOR_PAIR(4));
 	for (i = 0; i < logoheight; i++) {
-	    wmove(basewin, i, (COLS - strlen(nhlogo[0])) / 2);
+	    wmove(basewin, i, (COLS - logowidth) / 2);
 	    waddstr(basewin, nhlogo[i]);
 	}
 	wattroff(basewin, A_BOLD | COLOR_PAIR(4));
