@@ -1,5 +1,5 @@
 /* Copyright (c) Daniel Thaler, 2011 */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #include "nhcurses.h"
 
@@ -146,7 +146,7 @@ static void apply_colormap(struct ColorMap *map)
 
 
 /*
- * Initialize curses colors to colors used by NitroHack
+ * Initialize curses colors to colors used by the game
  * (from Karl Garrison's curses UI for Nethack 3.4.3)
  */
 void init_nhcolors(void)

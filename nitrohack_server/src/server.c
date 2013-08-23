@@ -1,27 +1,27 @@
 /* Copyright (c) Daniel Thaler, 2011. */
-/* The NitroHack server may be freely redistributed under the terms of either:
+/* The DynaHack server may be freely redistributed under the terms of either:
  *  - the NetHack license
  *  - the GNU General Public license v2 or later
  */
 
 /*
- * NitroHack server core.
- * 
+ * DynaHack server core.
+ *
  * The code is designed to meet the following goals/constraints:
- *  - Each NitroHack game MUST run in it's own process. The game is the
+ *  - Each DynaHack game MUST run in it's own process. The game is the
  *    anti-thesis of thread-safe. Writing a threaded server would require major
  *    work on the game code.
- * 
+ *
  *  - Clients should be able to disconnect from the server between commands.
  *    This is required to more easily support web clients. In that scenario
  *    Some javascript in a browser issues an XMLHttpRequest to a web-server,
  *    where a script performs the trivial transformation from request parameters
- *    to a JSON string which it sends on (via localhost) to the NitroHack server.
+ *    to a JSON string which it sends on (via localhost) to the DynaHack server.
  *    The NH server responds with some more JSON which represents game state.
  *    Since the request is now complete from their point of view, neither the
  *    web server nor the web client should be required to maintain a connection
  *    to the NH server.
- * 
+ *
  * In order to allow a client to reconnect to its running game, there are 2
  * alternatives:
  *   (1) performing each client connection over a new server socket on a
@@ -30,7 +30,7 @@
  *       the listening socket to a client process which handles the game state.
  * Option (1) has been tried in FTP; this design is widely considered to be a
  * bad idea.
- * 
+ *
  * The design of the NH server was based on alternative (2):
  * The server listens for incoming connections.
  * When a connection is made, the client is allowed to send enough data to

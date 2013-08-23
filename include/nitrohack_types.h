@@ -77,11 +77,11 @@
 #define DOBJ_STACKS	(1 << 0)
 #define DOBJ_SOKOPRIZE	(1 << 1)
 
-/* 
+/*
  * level display modes
- * These defines are used by notify_levelchange() to inform the window port 
+ * These defines are used by notify_levelchange() to inform the window port
  * about some characteristic of the new level that might be worth displaying
- * in some nonstandard way (eg the rogue level in tty nitrohack, or alternate
+ * in some nonstandard way (eg the rogue level in curses, or alternate
  * tiles for mines/hell in tiles versions)
  */
 #define LDM_DEFAULT	0
@@ -269,7 +269,7 @@ enum nh_restore_status {
 
 enum nh_log_status {
     LS_CRASHED = -2,	/* the game crashed (or was "kill -9"ed) */
-    LS_INVALID = -1,	/* not a nitrohack log/savegame */
+    LS_INVALID = -1,	/* not a valid log/savegame */
     LS_SAVED,		/* an ordinary save */
     LS_DONE, 		/* quit, died, ascended, etc */
     LS_IN_PROGRESS	/* this game is active in a different process */

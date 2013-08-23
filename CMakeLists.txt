@@ -1,7 +1,5 @@
-# CMakeLists.txt for NitroHack 4.0.0
-
 cmake_minimum_required (VERSION 2.8.4)
-project (NitroHack C)
+project (DynaHack C)
 
 if (WIN32)
     set(INSTALL_BASE "$ENV{USERPROFILE}")
@@ -9,24 +7,24 @@ else ()
     set(INSTALL_BASE "$ENV{HOME}")
 endif ()
 
-# default installation paths in $HOME/unnitrohack
+# default installation paths in $HOME/dynahack
 if (NOT BINDIR)
-    set (BINDIR "${INSTALL_BASE}/unnitrohack/unnitrohack-data"
+    set (BINDIR "${INSTALL_BASE}/dynahack/dynahack-data"
          CACHE PATH "binary location" )
 endif()
 
 if (NOT LIBDIR)
-    set (LIBDIR "${INSTALL_BASE}/unnitrohack/unnitrohack-data"
+    set (LIBDIR "${INSTALL_BASE}/dynahack/dynahack-data"
          CACHE PATH "library location" )
 endif()
 
 if (NOT DATADIR)
-    set (DATADIR "${INSTALL_BASE}/unnitrohack/unnitrohack-data"
+    set (DATADIR "${INSTALL_BASE}/dynahack/dynahack-data"
          CACHE PATH "data location" )
 endif()
 
 if (NOT SHELLDIR)
-    set (SHELLDIR "${INSTALL_BASE}/unnitrohack"
+    set (SHELLDIR "${INSTALL_BASE}/dynahack"
          CACHE PATH "launch script location" )
 endif()
 
@@ -43,11 +41,11 @@ else ()
     set (LIB_TYPE STATIC)
 endif ()
 
-# NitroHack server currently uses several Linux-specific apis.
+# DynaHack server currently uses several Linux-specific apis.
 # Generalizing the code to the point where it will work on other systems
 # is not impossible, but the work has not been done.
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set (ENABLE_SERVER FALSE CACHE BOOL "Build the NitroHack network server")
+    set (ENABLE_SERVER FALSE CACHE BOOL "Build the DynaHack network server")
 else ()
     set (ENABLE_SERVER FALSE)
 endif ()
@@ -61,15 +59,15 @@ if (CMAKE_COMPILER_IS_GNUCC)
     endif ()
 endif ()
 
-# nitrohack core
+# dynahack core
 add_subdirectory (libnitrohack)
 
-# nitrohack network client
+# dynahack network client
 if (ENABLE_NETCLIENT)
     add_subdirectory (libnitrohack_client)
 endif ()
 
-# nitrohack text ui
+# dynahack text ui
 add_subdirectory (nitrohack)
 
 if (ENABLE_SERVER)

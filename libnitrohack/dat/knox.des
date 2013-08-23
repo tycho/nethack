@@ -1,7 +1,7 @@
 #	Copyright (c) 1989 by Jean-Christophe Collet
 #	Copyright (c) 1992 by Izchak Miller
 #	Copyright (c) 2008 by Patric Mueller
-# NitroHack may be freely redistributed.  See license for details.
+# DynaHack may be freely redistributed.  See license for details.
 #
 LEVEL: "knox-1"
 FLAGS: noteleport, mazelevel, sky

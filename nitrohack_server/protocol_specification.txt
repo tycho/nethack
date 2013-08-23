@@ -1,5 +1,5 @@
-NitroHack Network Protocol v1
-=============================
+DynaHack Network Protocol v1
+============================
 
 0) Basics
 ---------

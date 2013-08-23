@@ -1,4 +1,4 @@
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 /* this header defines the interface between libnitrohack and window ports
  * it should never include any private headers, as those are not on the
@@ -7,10 +7,10 @@
 #ifndef NITROHACK_H
 #define NITROHACK_H
 
-/* NitroHack 4.0.4 */
-#define VERSION_MAJOR	4
-#define VERSION_MINOR	0
-#define PATCHLEVEL	4
+/* DynaHack 0.5.0 */
+#define VERSION_MAJOR	0
+#define VERSION_MINOR	5
+#define PATCHLEVEL	0
 
 #include "nitrohack_types.h"
 

@@ -1,5 +1,5 @@
 /* Copyright (c) Mike Stephenson, Izchak Miller  1991.		  */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #ifndef ALIGN_H
 #define ALIGN_H

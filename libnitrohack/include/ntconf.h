@@ -1,5 +1,5 @@
-/* Copyright (c) NitroHack PC Development Team 1993, 1994.  */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* Copyright (c) NetHack PC Development Team 1993, 1994.  */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #ifndef NTCONF_H
 #define NTCONF_H

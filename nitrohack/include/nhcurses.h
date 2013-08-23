@@ -1,5 +1,5 @@
 /* Copyright (c) Daniel Thaler, 2011				  */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #ifndef NHCURSES_H
 #define NHCURSES_H
@@ -106,8 +106,8 @@ typedef wchar_t fnchar;
 # define min(x,y) ((x) < (y) ? (x) : (y))
 #endif
 
-#ifndef NITROHACKDIR
-#define NITROHACKDIR "/usr/share/NitroHack/"
+#ifndef DYNAHACKDIR
+#define DYNAHACKDIR "/usr/share/DynaHack/"
 #endif
 
 #define KEY_ESC 27

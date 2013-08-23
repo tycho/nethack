@@ -1,5 +1,5 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 /* various code that was replicated in *main.c */
 
@@ -1127,7 +1127,7 @@ static void newgame(void)
 }
 
 
-/* show "welcome [back] to NitroHack" message at program startup */
+/* show "welcome [back] to DynaHack" message at program startup */
 static void welcome(
     boolean new_game)	/* false => restoring an old game */
 {
@@ -1150,8 +1150,8 @@ static void welcome(
 	     currentgend != u.initgend))
 	sprintf(eos(buf), " %s", genders[currentgend].adj);
 
-    pline(new_game ? "%s %s, welcome to NitroHack!  You are a%s %s %s."
-		   : "%s %s, the%s %s %s, welcome back to NitroHack!",
+    pline(new_game ? "%s %s, welcome to DynaHack!  You are a%s %s %s."
+		   : "%s %s, the%s %s %s, welcome back to DynaHack!",
 	  Hello(NULL), plname, buf, urace.adj,
 	  (currentgend && urole.name.f) ? urole.name.f : urole.name.m);
 

@@ -35,7 +35,7 @@
 #endif
 
 #if !defined(DEFAULT_WORK_DIR)
-# define DEFAULT_WORK_DIR "/var/lib/NitroHack/"
+# define DEFAULT_WORK_DIR "/var/lib/DynaHack/"
 #endif
 
 #if !defined(DEFAULT_CLIENT_TIMEOUT)

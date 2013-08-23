@@ -1,5 +1,5 @@
 /*	Copyright (C) 1990 by Ken Arromdee			   */
-/* NitroHack may be freely redistributed.  See license for details.  */
+/* DynaHack may be freely redistributed.  See license for details.  */
 
 /*
  * Monster item usage routines.

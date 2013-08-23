@@ -1,4 +1,4 @@
-# network client library for nitrohack
+# network client library
 
 if (WIN32 OR CYGWIN)
     if (CYGWIN)
@@ -17,13 +17,13 @@ set (LIBNITROHACK_CLIENT_SRC
     src/clientapi.c
     src/connection.c
     src/netcmd.c
-    ${NitroHack_SOURCE_DIR}/libnitrohack/src/xmalloc.c
+    ${DynaHack_SOURCE_DIR}/libnitrohack/src/xmalloc.c
     )
 
-include_directories (${NitroHack_SOURCE_DIR}/include
+include_directories (${DynaHack_SOURCE_DIR}/include
                      include)
 
-link_directories (${NitroHack_BINARY_DIR}/libnitrohack/src)
+link_directories (${DynaHack_BINARY_DIR}/libnitrohack/src)
 add_library(libnitrohack_client ${LIB_TYPE} ${LIBNITROHACK_CLIENT_SRC})
 set_target_properties(libnitrohack_client PROPERTIES OUTPUT_NAME nitrohack_client)
 

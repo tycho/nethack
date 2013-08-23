@@ -1,5 +1,5 @@
 /* Copyright (c) Daniel Thaler, 2011 */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #include "nhcurses.h"
 #include <ctype.h>
@@ -1223,7 +1223,7 @@ static void get_config_name(fnchar *buf, nh_bool ui)
     char *envval;
     if (!ui) {
 	/* check for env override first */
-	envval = getenv("NITROHACKOPTIONS");
+	envval = getenv("DYNAHACKOPTIONS");
 	if (envval) {
 	    strncpy(buf, envval, BUFSZ);
 	    return;
@@ -1235,7 +1235,7 @@ static void get_config_name(fnchar *buf, nh_bool ui)
     if (!get_gamedir(CONFIG_DIR, buf))
 	return;
 
-    fnncat(buf, ui ? FN("curses.conf") : FN("NitroHack.conf"), BUFSZ);
+    fnncat(buf, ui ? FN("curses.conf") : FN("DynaHack.conf"), BUFSZ);
 }
 
 

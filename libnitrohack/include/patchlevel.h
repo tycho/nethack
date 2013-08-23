@@ -1,5 +1,5 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 /*
  * Incrementing EDITLEVEL can be used to force invalidation of old bones
@@ -8,13 +8,13 @@
 #define EDITLEVEL	0
 
 #define COPYRIGHT_BANNER_A \
-"NitroHack, Copyright 1985-2012"
+"DynaHack Copyright 2012-2013 Tung Nguyen"
 
 #define COPYRIGHT_BANNER_B \
-"         By Stichting Mathematisch Centrum and M. Stephenson."
+"NitroHack Copyright 2011-2012 Daniel Thaler"
 
 #define COPYRIGHT_BANNER_C \
-"         See license for details."
+"NetHack Copyright 1985-2003 Stichting Mathematisch Centrum and M. Stephenson"
 
 /*
  * If two or more successive releases have compatible data files, define
@@ -25,7 +25,7 @@
  * PP = patch level, ee = edit level, L = literal suffix "L",
  * with all four numbers specified as two hexadecimal digits.
  */
-#define VERSION_COMPATIBILITY 0x04000100L	/* 4.0.0-0 */
+#define VERSION_COMPATIBILITY 0x00050000L	/* 0.5.0-0 */
 
 
 /*patchlevel.h*/

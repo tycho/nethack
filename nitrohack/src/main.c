@@ -1,5 +1,5 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #include "nhcurses.h"
 #include <sys/stat.h>
@@ -45,35 +45,26 @@ struct nh_menuitem mainmenu_items[] = {
 };
 
 
-const char *nhlogo_small[] = { /* this _beautiful_ logo was created by exporting an
-                            160x24 image from gimp using aalib */
-"_aa/    aa/ ]QQ                         _aa     aa/                   ]QQ       ",
-"]QQQ.   QQf ]QQ  ]QQ                    ]QQ     QQf                   ]QQ       ",
-"]QQQL   QQf      ]QQ                    ]QQ     QQf                   ]QQ       ",
-"]QQQQ,  QQf _aa ajQQaaa aa/ sa/ .saa,.  ]QQ     QQf ._aaa,.     _aa,. ]QQ   aaa,",
-"]QQ4WL  QQf ]QQ QQQQQQQ QQLmQWfjWQWWQm, ]QQ     QQf QQQQWQQ,  _mQQQQm ]QQ .yQW( ",
-"]QQ-QQ, QQf ]QQ ?4QQ??? QQQ@?9mWWD?9WQm ]QQQQQQQQQf @T??TQWk  mQQT?9Q ]QQ.yQW(  ",
-"]QQ ]Qk QQf ]QQ  ]QQ    QQ@   dQE   )WQ(]QQQQQQQQQf  _aaajQQ )QQ(   - ]QQmQW'   ",
-"]QQ  QQ/QQf ]QQ  ]QQ    QQf   QQf    QQ[]QQ     QQf yQQWWQQQ ]QQ      ]QQQQ[    ",
-"]QQ  ]QkQQf ]QQ  ]QQ    QQf   QQL   .QQ[]QQ     QQf]QQ^  jQQ ]QQ,     ]QQ$QQc   ",
-"]QQ   $QQQf ]QQ  ]QQ,   QQf   4QQ, .jQQ`]QQ     QQf]WQ,._QWQ -QQg, _j ]QQ-$QQc  ",
-"]QQ   )QQQf ]QQ  )QQQQf QQf   -QWQQQQQf ]QQ     QQf-QQQQQ$QQ  3WQQQQQ ]QQ -$QQc ",
-"]QQ    $QQf ]QQ   ?QQQf QQf    -9$QWV\"  ]QQ     QQf )$Q@!]QQ   \"9QWD^ ]QQ  -$QQc"
+static const char *nhlogo_small[] = {
+" ____                        _    _               _    ",
+"|  _ \\                      | |  | |             | | __",
+"| | \\ | _   _  _____  _____ | |__| | _____  ____ | |/ /",
+"| | | || | | ||  _  \\/  _  ||  __  |/  _  |/  __||   / ",
+"| |_/ || |_| || | | || (_| || |  | || (_| || (__ | | \\ ",
+"|____/ \\____ ||_| |_|\\_____||_|  |_|\\_____|\\____||_|\\_\\",
+"       |_____/                         -- Ascend or Die",
+NULL
 };
 
-const char *nhlogo_large[] = {
-"_aaa    aaa    QQQ                                 aaa     aaa                         QQQ       ",
-"]QQQc   QQQ    QQQ    QQQ                          QQQ     QQQ                         QQQ       ",
-"]QQQQ   QQQ           QQQ                          QQQ     QQQ                         QQQ       ",
-"]QQQQc  QQQ    QQQ  QQQQQQQQ  QQQ_yQQ  .wmQQg,     QQQ     QQQ   _ymQQmw.     _yQQmw   QQQ  jWQf ",
-"]QQPQQ  QQQ    QQQ  QQQQQQQQ  QQQmQQQ .mQWQQWQc    QQQ     QQQ   ]QQQQQWm    jQQQQQQ   QQQ <QWf  ",
-"]QQf4Q[ QQQ    QQQ    QQQ     QQQP` ' jQQF \"QWQ,   QQQQQQQQQQQ   \"~  -4QQ(  .QWQ( -4   QQQ<QQF   ",
-"]QQf+QQ QQQ    QQQ    QQQ     QQQ'    QQQ`  jQQ[   QQQQQQQQQQQ    _aaajQQf  ]QQF       QQQQWF    ",
-"]QQf 4Q[QQQ    QQQ    QQQ     QQQ     QWQ   ]QQ[   QQQ     QQQ   yQQWQQQQf  ]QQf       QQQQQc    ",
-"]QQf )QQQQQ    QQQ    QQQ     QQQ     WQQ.  jQQ[   QQQ     QQQ  ]QQP  jQQf  ]QQL       QQQ4QQ/   ",
-"]QQf  4QQQQ    QQQ    QQQ     QQQ     3WQL _QQQ`   QQQ     QQQ  ]QQk _mQQf  -QQQc .j   QQQ-$QQ,  ",
-"]QQf  +QQQQ    QQQ    QQQQQ   QQQ     -$QQQQQQ[    QQQ     QQQ  +WQQQQWQQf   ]QQWQQQ   QQQ -QWQ, ",
-"]QQf   4QQQ    QQQ    ?$QQQ   QQQ      -9$QWV\"     QQQ     QQQ   )$W@!]QQf    \"9WQ@T   QQQ  -QQm,"
+static const char *nhlogo_large[] = {
+" ____                        _    _               _    ",
+"|  _ \\                      | |  | |             | | __",
+"| | \\ | _   _  _____  _____ | |__| | _____  ____ | |/ /",
+"| | | || | | ||  _  \\/  _  ||  __  |/  _  |/  __||   / ",
+"| |_/ || |_| || | | || (_| || |  | || (_| || (__ | | \\ ",
+"|____/ \\____ ||_| |_|\\_____||_|  |_|\\_____|\\____||_|\\_\\",
+"       |_____/                         -- Ascend or Die",
+NULL
 };
 
 const char **get_logo(nh_bool large)
@@ -131,14 +122,14 @@ static char** init_game_paths(const char *argv0)
 
 #if defined(UNIX)
     if (getgid() == getegid()) {
-	dir = getenv("NITROHACKDIR");
+	dir = getenv("DYNAHACKDIR");
 	if (!dir)
 	    dir = getenv("HACKDIR");
     } else
 	dir = NULL;
     
     if (!dir)
-	dir = NITROHACKDIR;
+	dir = DYNAHACKDIR;
     
     for (i = 0; i < PREFIX_COUNT; i++)
 	pathlist[i] = dir;
@@ -153,7 +144,7 @@ static char** init_game_paths(const char *argv0)
     }
     
 #elif defined(WIN32)
-    dir = getenv("NITROHACKDIR");
+    dir = getenv("DYNAHACKDIR");
     if (!dir) {
 	strncpy(dirbuf, argv0, 1023);
 	pos = strrchr(dirbuf, '\\');
@@ -197,7 +188,7 @@ static char** init_game_paths(const char *argv0)
 
 #else
     /* Avoid a trap for people trying to port this. */
-#error You must run NitroHack under Win32 or Linux.
+#error You must run DynaHack under Win32 or Linux.
 #endif
     
     /* alloc memory for the paths and append slashes as required */
@@ -242,7 +233,7 @@ static void mainmenu(void)
 	mvwaddstr(basewin, LINES-3, 0, copybanner[0]);
 	mvwaddstr(basewin, LINES-2, 0, copybanner[1]);
 	mvwaddstr(basewin, LINES-1, 0, copybanner[2]);
-	mvwaddstr(basewin, LINES-1, COLS - strlen(verstr), verstr);
+	mvwaddstr(basewin, LINES-2, COLS - strlen(verstr), verstr);
 	wrefresh(basewin);
 
 	n = curses_display_menu_core(mainmenu_items, ARRAY_SIZE(mainmenu_items),

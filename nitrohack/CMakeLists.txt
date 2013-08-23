@@ -1,4 +1,4 @@
-# build the curses window port for libnitrohack
+# build the curses window port of the game
 
 
 if (NOT WIN32)
@@ -51,18 +51,18 @@ if (WIN32)
     set (NH_CURSES_SRC ${NH_CURSES_SRC} rc/nh_ico.rc)
 endif ()
 
-include_directories (${NitroHack_SOURCE_DIR}/include
+include_directories (${DynaHack_SOURCE_DIR}/include
                      include)
 
-add_definitions(-DNITROHACKDIR="${DATADIR}")
+add_definitions(-DDYNAHACKDIR="${DATADIR}")
 if (ENABLE_NETCLIENT)
     add_definitions(-DNETCLIENT)
 endif ()
 
-link_directories (${NitroHack_BINARY_DIR}/libnitrohack/src)
-link_directories (${NitroHack_BINARY_DIR}/libnitrohack_client)
+link_directories (${DynaHack_BINARY_DIR}/libnitrohack/src)
+link_directories (${DynaHack_BINARY_DIR}/libnitrohack_client)
 add_executable (nitrohack_curses ${NH_CURSES_SRC} )
-set_target_properties(nitrohack_curses PROPERTIES OUTPUT_NAME unnitrohack)
+set_target_properties(nitrohack_curses PROPERTIES OUTPUT_NAME dynahack)
 target_link_libraries(nitrohack_curses nitrohack)
 if (ALL_STATIC)
     # kludge like the one below for jansson and libnitrohack_client.
@@ -99,15 +99,15 @@ endif ()
 add_dependencies (nitrohack_curses libnitrohack)
 
 if (UNIX)
-    add_custom_command(OUTPUT unnitrohack.sh
+    add_custom_command(OUTPUT dynahack.sh
                        COMMAND printf "%s\\n%s\\n" "#!/bin/sh"
-                               "LD_LIBRARY_PATH=${LIBDIR} ${BINDIR}/unnitrohack $@"
-                               >> unnitrohack.sh
+                               "LD_LIBRARY_PATH=${LIBDIR} ${BINDIR}/dynahack $@"
+                               >> dynahack.sh
                        VERBATIM)
     add_custom_target(nitrohack_curses_shell_script ALL
-                      DEPENDS unnitrohack.sh)
-    install(PROGRAMS ${NitroHack_BINARY_DIR}/nitrohack/unnitrohack.sh
-            DESTINATION ${SHELLDIR} RENAME unnitrohack)
+                      DEPENDS dynahack.sh)
+    install(PROGRAMS ${DynaHack_BINARY_DIR}/nitrohack/dynahack.sh
+            DESTINATION ${SHELLDIR} RENAME dynahack)
 endif()
 
 install(TARGETS nitrohack_curses

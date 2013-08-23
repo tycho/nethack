@@ -24,8 +24,8 @@
 # Disable daemon mode (default: false)
 # nodaemon=false
 
-# Work directory (default: /var/lib/NitroHack/)
-# workdir=/var/lib/NitroHack/
+# Work directory (default: /var/lib/DynaHack/)
+# workdir=/var/lib/DynaHack/
 
 # Client timeout value in seconds (default: 900 seconds, or 15 minutes)
 # client_timeout=900
@@ -38,10 +38,10 @@
 # dbport=5432
 
 # Database username
-# dbuser=nitrohack
+# dbuser=dynahack
 
 # Database password
 # dbpass=R0dn3y
 
 # Database name
-# dbname=nitrohack_server
+# dbname=dynahack_server

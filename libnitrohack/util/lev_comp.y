@@ -1,6 +1,6 @@
 %{
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 /*
  * This file contains the Level Compiler code
@@ -11,7 +11,7 @@
 #include "sp_lev.h"
 
 #define ERR		(-1)
-/* many types of things are put in chars for transference to NitroHack.
+/* many types of things are put in chars for transference to DynaHack.
  * since some systems will use signed chars, limit everybody to the
  * same number for portability.
  */

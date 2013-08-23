@@ -1,7 +1,7 @@
 #	Copyright (c) 1991 by M. Stephenson
-# NitroHack may be freely redistributed.  See license for details.
+# DynaHack may be freely redistributed.  See license for details.
 #
-#	The quest text file for NitroHack 3.4
+#	The quest text file for the game
 #
 #	These are the "standard" message numbers from qtext.h.  All class
 #	dialogue must have at least these entries.
@@ -3844,7 +3844,7 @@ the sake of us all:  Go bravely with %d!
 %Cm - 00201
 Tutorial: Welcome
 
-Welcome to NitroHack!  These tutorial messages will help you learn how
+Welcome to DynaHack!  These tutorial messages will help you learn how
 to play the game.  To view any of these messages again, enter the help
 menu by pressing the ? key.
 
@@ -4061,7 +4061,7 @@ blistering heat.
 WALKING INTO LAVA CAN BE INSTANTLY FATAL!  The game will NOT confirm
 your decision to walk into lava!
 
-NitroHack is turn-based, so if you can't avoid the lava, walk slowly
+DynaHack is turn-based, so if you can't avoid the lava, walk slowly
 and carefully around it.  Many a player has lost a promising character
 to a lava mistake!
 %E
@@ -4292,7 +4292,7 @@ traps, move quickly through diagonal corridors and saves turns.
 If you lack a number pad, see help (press the ? key and choose
 tutorial messages) for Diagonal Movement (alternate).
 %E
-# These two are now the same, since NitroHack unifies numpad and
+# These two are now the same, since DynaHack unifies numpad and
 # vi-keys repeat to just entering the count without a prefix.
 %Cm - 00265
 Tutorial: Repeating Commands (alternate)
@@ -4530,7 +4530,7 @@ the Amulet.
 %Cm - 00283
 Tutorial: Saving and Quitting
 
-Unlike many other games, death is final in NitroHack.  You cannot
+Unlike many other games, death is final in DynaHack.  You cannot
 create a save file that can be restored more than once.
 
 However, if you need a break, press S to save and exit for now.  When
@@ -5331,7 +5331,7 @@ Items in your inventory will be marked as blessed or cursed if you
 know for sure.  Most objects will be uncursed if you know it, which
 may also be marked depending on the show_uncursed option.
 %E
-# NitroHack excludes mail (SCR_MAIL) for now.
+# DynaHack lacks mail (SCR_MAIL) for now.
 %Cm - 00339
 Tutorial: MAIL
 
@@ -5341,7 +5341,7 @@ reading the scroll will allow you to check what the message was.  The
 form of the message will depend on where and how you're playing; if
 you're on your own computer, then the scroll will normally be a
 response to the receipt of email, in which case you can read the
-scroll to read the email; but when playing on a public NitroHack
+scroll to read the email; but when playing on a public DynaHack
 server, the mail will probably be related to your game, sent by
 someone watching.  In this case, you can effectively send a reply by
 pressing #, then space, then typing in your message and leaving it on

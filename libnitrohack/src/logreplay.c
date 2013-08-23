@@ -1,5 +1,5 @@
 /* Copyright (c) Daniel Thaler, 2011.                             */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "dlb.h"
@@ -188,7 +188,7 @@ void replay_set_logfile(int logfd)
 	log_finish(LS_IN_PROGRESS);
     
     if (!lock_fd(logfd, 1)) {
-	raw_printf("The game log is locked by another NitroHack process. Aborting.");
+	raw_printf("The game log is locked by another DynaHack process. Aborting.");
 	terminate();
     }
     logfile = logfd;
@@ -690,7 +690,7 @@ void replay_read_newgame(unsigned long long *init, int *playmode, char *namebuf,
     
     header = next_log_token();
     if (!header || strcmp(header, "NHGAME"))
-	parse_error("This file does not look like a NitroHack logfile.");
+	parse_error("This file does not look like a valid logfile.");
     /* now header is not read any more */
 
     next_log_token(); /* marker */

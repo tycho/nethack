@@ -1,5 +1,5 @@
 /* Copyright (c) 1996 by Jean-Christophe Collet	 */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "lev.h"

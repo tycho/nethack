@@ -1,4 +1,4 @@
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #ifndef RND_H
 #define RND_H

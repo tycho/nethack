@@ -32,9 +32,9 @@ add_custom_command (OUTPUT ${LNH_SRC_GEN}/monstr.c
                     DEPENDS makedefs)
 
 include_directories (
-    ${NitroHack_SOURCE_DIR}/libnitrohack/include
-    ${NitroHack_SOURCE_DIR}/include
-    ${NitroHack_BINARY_DIR}/libnitrohack/include )
+    ${DynaHack_SOURCE_DIR}/libnitrohack/include
+    ${DynaHack_SOURCE_DIR}/include
+    ${DynaHack_BINARY_DIR}/libnitrohack/include )
 
 add_library(libnitrohack ${LIB_TYPE} ${LIBNITROHACK_SRC} ${LIBNITROHACK_GENERATED_SRC})
 set_target_properties(libnitrohack PROPERTIES OUTPUT_NAME nitrohack )

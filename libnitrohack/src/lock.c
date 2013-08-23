@@ -1,5 +1,5 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
@@ -836,8 +836,8 @@ int doclose(int dx, int dy, int dz)
 		 * Exception: if we remember an invisible monster on the
 		 * door square, but in this case, we want to set the
 		 * memory of a door there anyway because we know there's a
-		 * door there because we just closed it, and in NitroHack
-		 * this doesn't clash with keeping the I there.
+		 * door there because we just closed it, and with layered
+		 * memory this doesn't clash with keeping the I there.
 		 */
 		map_background(cc.x, cc.y, TRUE);
 		if (Blind)

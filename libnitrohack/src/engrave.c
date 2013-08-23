@@ -1,5 +1,5 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "lev.h"
@@ -66,7 +66,7 @@ static const char *const random_mesg[] = {
 	"What's the sitch?", /* Kim Possible */
 	"So not the drama.", /* Kim Possible */
 	"Sudden decompression sucks!", /* Space Quest 3 death message */
-	"Thanks for playing NitroHack.  As usual, you've been a real pantload!", /* Space Quest 4 death message, paraphrased */
+	"Thanks for playing DynaHack.  As usual, you've been a real pantload!", /* Space Quest 4 death message, paraphrased */
 	"Colorless green ideas sleep furiously.", /* Noam Chomsky */
 	"Time flies like an arrow.",
 	"All Your Base Are Belong To Us!", /* Zero Wing */

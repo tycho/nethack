@@ -1,7 +1,7 @@
-How to compile UnNitroHack on Windows with MinGW
-================================================
+How to compile DynaHack on Windows with MinGW
+=============================================
 
-The following steps will build a native Windows version of UnNitroHack with no dependencies.
+The following steps will build a native Windows version of DynaHack with no dependencies.
 
 
 1. Install MinGW
@@ -113,11 +113,11 @@ Open the command prompt to compile the game:
 
 After a few minutes, you can find the game at C:\MinGW\NitroHack-unnethack\install.
 
-Nearly all of the game's options are set and saved in-game, but if you want to customize characters used on the map, see save files or view dump logs of finished games you can find them all in your user's AppData folder under Roaming\NitroHack.
+Nearly all of the game's options are set and saved in-game, but if you want to customize characters used on the map, see save files or view dump logs of finished games you can find them all in your user's AppData folder under Roaming\DynaHack.
 
 If you want to create a ZIP of the game, you only need these files (i.e. ignore the *.dll.a files):
 
- * unnitrohack.exe
+ * dynahack.exe
  * nhdat
  * license
  * libnitrohack.dll

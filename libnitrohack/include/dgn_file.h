@@ -1,5 +1,5 @@
 /* Copyright (c) 1989 by M. Stephenson				  */
-/* NitroHack may be freely redistributed.  See license for details. */
+/* DynaHack may be freely redistributed.  See license for details. */
 
 #ifndef DGN_FILE_H
 #define DGN_FILE_H

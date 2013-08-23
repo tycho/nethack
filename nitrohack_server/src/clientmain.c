@@ -1,5 +1,5 @@
 /* Copyright (c) Daniel Thaler, 2011. */
-/* The NitroHack server may be freely redistributed under the terms of either:
+/* The DynaHack server may be freely redistributed under the terms of either:
  *  - the NetHack license
  *  - the GNU General Public license v2 or later
  */
@@ -25,13 +25,13 @@ static char** init_game_paths(void)
     int i, len;
     
     if (getgid() == getegid()) {
-	dir = getenv("NITROHACKDIR");
+	dir = getenv("DYNAHACKDIR");
 	if (!dir)
 	    dir = getenv("HACKDIR");
     }
     
     if (!dir)
-	dir = NITROHACKDIR;
+	dir = DYNAHACKDIR;
     
     for (i = 0; i < PREFIX_COUNT; i++)
 	pathlist[i] = dir;
@@ -240,8 +240,8 @@ static void client_main_loop(void)
  * The server process has accepted a connection and authenticated it. Data from
  * the client will arrive here via infd and data that should be sent back goes
  * through outfd.
- * An instance of NitroHack will run in this process under the control of the
- * remote player. 
+ * An instance of DynaHack will run in this process under the control of the
+ * remote player.
  */
 void client_main(int userid, int _infd, int _outfd)
 {
