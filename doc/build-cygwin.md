@@ -42,7 +42,7 @@ Open the Cygwin terminal to compile and install Jansson:
 In the Cygwin terminal:
 
     cd ~
-    git clone -b unnethack https://github.com/tung/NitroHack.git dynahack
+    git clone -b unnethack https://github.com/tung/DynaHack.git dynahack
 
 At this point compiling the game for Cygwin is similar to compiling it for Linux.  All of the remaining commands should be entered in the Cygwin terminal.
 

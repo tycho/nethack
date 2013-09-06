@@ -82,12 +82,12 @@ Open the command prompt to install the game's dependencies:
 
     mingw-get install msys-flex-bin msys-bison-bin mingw32-libz
 
-Click "Download ZIP" at https://github.com/tung/NitroHack and extract it to C:\MinGW.
+Click "Download ZIP" at https://github.com/tung/DynaHack and extract it to C:\MinGW.
 
 Open CMake again, this time to configure the build of the game:
 
- 1. Click "Browse Source..." and set it to C:/MinGW/NitroHack-unnethack.
- 2. Click "Browse Build..." and set it to C:/MinGW/NitroHack-unnethack/build (make a new folder).
+ 1. Click "Browse Source..." and set it to C:/MinGW/DynaHack-unnethack.
+ 2. Click "Browse Build..." and set it to C:/MinGW/DynaHack-unnethack/build (make a new folder).
  3. Click "Configure", choose "MinGW Makefiles" and "Use default native compilers".
  4. Set BISON_EXECUTABLE to C:/MinGW/msys/1.0/bin/bison.exe.
  5. Set FLEX_EXECUTABLE to C:/MinGW/msys/1.0/bin/flex.exe.
@@ -96,7 +96,7 @@ Open CMake again, this time to configure the build of the game:
  8. Set PDCURSES_INC_DIR to C:/MinGW/pdcurs34.
  9. Set PDCURSES_LIB_DIR to C:/MinGW/pdcurs34/win32.
 
-Set the install path for the game to C:/MinGW/NitroHack-unnethack/install (make a new folder) for the following settings:
+Set the install path for the game to C:/MinGW/DynaHack-unnethack/install (make a new folder) for the following settings:
 
  * BINDIR
  * CMAKE_INSTALL_PREFIX
@@ -108,10 +108,10 @@ Click "Configure", then "Generate" and close CMake.
 
 Open the command prompt to compile the game:
 
-    cd C:\MinGW\NitroHack-unnethack\build
+    cd C:\MinGW\DynaHack-unnethack\build
     mingw32-make install
 
-After a few minutes, you can find the game at C:\MinGW\NitroHack-unnethack\install.
+After a few minutes, you can find the game at C:\MinGW\DynaHack-unnethack\install.
 
 Nearly all of the game's options are set and saved in-game, but if you want to customize characters used on the map, see save files or view dump logs of finished games you can find them all in your user's AppData folder under Roaming\DynaHack.
 

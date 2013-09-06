@@ -25,7 +25,7 @@ Until that bug is merged upstream, you'll need to install the patched version:
 -------------------------------
 
     cd ~
-    git clone -b unnethack git://github.com/tung/NitroHack.git dynahack
+    git clone -b unnethack git://github.com/tung/DynaHack.git dynahack
     cd dynahack
 
 
@@ -34,7 +34,7 @@ Until that bug is merged upstream, you'll need to install the patched version:
 
 Set the installation location:
 
-    export NH_INSTALL_DIR=$HOME/unnitrohack
+    export NH_INSTALL_DIR=$HOME/dynahack
     mkdir build
     cd build
     cmake -DUSE_OSX_HOMEBREW_CURSES=TRUE \

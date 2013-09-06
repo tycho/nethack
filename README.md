@@ -255,6 +255,6 @@ save file if possible.
 
 Bug reports can be submitted to the GitHub project page at:
 
-    https://github.com/tung/NitroHack
+    https://github.com/tung/DynaHack
 
 Or they can be emailed to tungtn3+dynahack@gmail.com.
