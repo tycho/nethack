@@ -132,6 +132,50 @@ static struct nh_autopickup_rule def_ap_ruleset[] = {
 };
 static const struct nh_autopickup_rules def_autopickup = {def_ap_ruleset, SIZE(def_ap_ruleset)};
 
+static struct nh_msgtype_rule def_mt_ruleset[] = {
+	{"Nothing happens.", MSGTYPE_MORE},
+	{"You feel a sad feeling for a moment*", MSGTYPE_MORE},
+	{"You feel more confident in your * skills.", MSGTYPE_MORE},
+
+	/* hunger, easy to miss otherwise */
+	{"You are beginning to feel hungry.", MSGTYPE_MORE},
+	{"You are beginning to feel weak.", MSGTYPE_MORE},
+	{"You feel hungry.", MSGTYPE_MORE},
+	{"You feel weak.", MSGTYPE_MORE},
+	{"* needs food, badly!", MSGTYPE_MORE},
+	{"You faint from lack of food.", MSGTYPE_MORE},
+
+	/* delayed instadeaths, credits to stth */
+	/* drowners */
+	{"* swings itself around you!", MSGTYPE_MORE},
+	{"* grabs you!", MSGTYPE_MORE},
+	/* slime */
+	{"You don't feel very well", MSGTYPE_MORE},
+	{"You are turning a little *", MSGTYPE_MORE},
+	{"Your limbs are getting oozy.", MSGTYPE_MORE},
+	{"Your skin begins to peel away.", MSGTYPE_MORE},
+	{"You are turning into *", MSGTYPE_MORE},
+	/* petrification */
+	{"You are slowing down.", MSGTYPE_MORE},
+	{"Your limbs are stiffening.", MSGTYPE_MORE},
+	/* strangulation */
+	{"It constricts your throat!", MSGTYPE_MORE},
+	{"You find it hard to breathe.", MSGTYPE_MORE},
+	{"You're gasping for air.", MSGTYPE_MORE},
+	{"You can no longer breathe.", MSGTYPE_MORE},
+	{"You're turning *", MSGTYPE_MORE},
+	/* strangulation v2 */
+	{"Your * is becoming constricted.", MSGTYPE_MORE},
+	{"Your blood is having trouble reaching your brain.", MSGTYPE_MORE},
+	{"The pressure on your * increases.", MSGTYPE_MORE},
+	{"Your consciousness is fading.", MSGTYPE_MORE},
+	/* sickness */
+	{"You feel deathly sick.", MSGTYPE_MORE},
+	{"You feel much worse.", MSGTYPE_MORE},
+	{"You feel even worse.", MSGTYPE_MORE},
+};
+static const struct nh_msgtype_rules def_msgtype = {def_mt_ruleset, SIZE(def_mt_ruleset)};
+
 
 #define VTRUE (void*)TRUE
 #define VFALSE (void*)FALSE
@@ -151,7 +195,7 @@ static const struct nh_option_desc const_options[] = {
     {"lit_corridor",	"show a dark corridor as lit if in sight",	OPTTYPE_BOOL, { VTRUE }},
     {"menumatch",	"how to filter types and traits during object selection", OPTTYPE_ENUM, {(void*)OBJMATCH_TIGHT}},
     {"menustyle",	"user interface for object selection", OPTTYPE_ENUM, {(void*)MENU_FULL}},
-    {"msgtype",		"--More--, hide or hide repeated messages by pattern", OPTTYPE_MSGTYPE, {0}},
+    {"msgtype",		"--More--, hide or hide repeated messages by pattern", OPTTYPE_MSGTYPE, {(void*)&def_msgtype}},
     {"packorder",	"the inventory order of the items in your pack", OPTTYPE_STRING, {"$\")[%?+!=/(*`0_"}},
     {"paranoid_chat",	"always ask for direction when chatting",	OPTTYPE_BOOL, { VFALSE }},
     {"paranoid_hit",	"ask for 'yes' instead of 'y' when hitting peaceful monsters",	OPTTYPE_BOOL, { VTRUE }},
