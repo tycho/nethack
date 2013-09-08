@@ -98,17 +98,19 @@ void draw_map(int cx, int cy)
     for (y = 0; y < ROWNO; y++) {
 	for (x = 1; x < COLNO; x++) {
 	    int bg_color = 0;
+	    struct nh_dbuf_entry *dbe = &display_buffer[y][x];
 
 	    /* set the position for each character to prevent incorrect
 	     * positioning due to charset issues (IBM chars on a unicode term
 	     * or vice versa) */
 	    wmove(mapwin, y, x-1);
 
-	    symcount = mapglyph(&display_buffer[y][x], syms, &bg_color);
+	    symcount = mapglyph(dbe, syms, &bg_color);
 	    attr = A_NORMAL;
-	    if (((display_buffer[y][x].monflags & MON_TAME) && settings.hilite_pet) ||
-		((display_buffer[y][x].monflags & MON_PEACEFUL) &&
-		 settings.hilite_peaceful)) {
+	    if ((settings.hilite_pet && (dbe->monflags & MON_TAME)) ||
+		(settings.hilite_peaceful && (dbe->monflags & MON_PEACEFUL)) ||
+		/* reverse object piles, but don't override stair background */
+		(bg_color == 0 && dbe->obj && (dbe->objflags & DOBJ_STACKS))) {
 		attr |= A_REVERSE;
 		bg_color = 0;
 	    }

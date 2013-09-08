@@ -592,9 +592,6 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms, int *bg_colo
 	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))
 	    darken_symdef(&syms[count]);
 
-	if (dbe->objflags & DOBJ_STACKS)
-	    *bg_color = CLR_BLUE;
-
 	count++;
     }
     
