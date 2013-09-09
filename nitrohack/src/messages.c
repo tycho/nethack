@@ -12,8 +12,6 @@ struct message {
     int turn;
 };
 
-#define MAX_MSGLINES 40
-
 static struct message *msghistory;
 static int histsize, histpos;
 static char msglines[MAX_MSGLINES][COLNO+1];

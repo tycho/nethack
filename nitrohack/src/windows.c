@@ -209,33 +209,45 @@ void redraw_frame(void)
 
 static void layout_game_windows(void)
 {
-    int statusheight;
+    int statusheight, msgheight;
     ui_flags.draw_frame = ui_flags.draw_sidebar = FALSE;
     statusheight = settings.status3 ? 3 : 2;
-    
+    const int frame_hlines = 4;
+
     /* 3 variable elements contribute to height: 
      *  - message area (most important)
      *  - better status
      *  - horizontal frame lines (least important)
      */
-    
-    /* space for the frame? */
-    if (settings.frame && COLS >= COLNO + 2 &&
-	LINES >= ROWNO + 4 /* horiz lines */ + settings.msgheight + statusheight)
-	ui_flags.draw_frame = TRUE;
-    
+    if (settings.msgheight == 0) {
+	/* auto msgheight */
+	if (settings.frame && COLS >= COLNO + 2 &&
+	    LINES >= ROWNO + frame_hlines + 1 /* min msgheight */ + statusheight)
+	    ui_flags.draw_frame = TRUE;
+	msgheight = LINES - (ROWNO + statusheight);
+	if (ui_flags.draw_frame) msgheight -= frame_hlines;
+	if (msgheight < 1) msgheight = 1;
+	if (msgheight > MAX_MSGLINES) msgheight = MAX_MSGLINES;
+    } else {
+	/* explicit msgheight */
+	msgheight = settings.msgheight;
+	if (settings.frame && COLS >= COLNO + 2 &&
+	    LINES >= ROWNO + frame_hlines + msgheight + statusheight)
+	    ui_flags.draw_frame = TRUE;
+    }
+
     if (settings.sidebar && COLS >= COLNO + 20)
 	ui_flags.draw_sidebar = TRUE;
     
     /* create subwindows */
     if (ui_flags.draw_frame) {
-	ui_flags.msgheight = settings.msgheight;
+	ui_flags.msgheight = msgheight;
 	ui_flags.status3 = settings.status3;
 	ui_flags.viewheight = ui_flags.msgheight + ROWNO + statusheight + 2;
     } else {
 	int spare_lines = LINES - ROWNO - 2;
 	spare_lines = spare_lines >= 1 ? spare_lines : 1;
-	ui_flags.msgheight = min(settings.msgheight, spare_lines);
+	ui_flags.msgheight = min(msgheight, spare_lines);
 	if (ui_flags.msgheight < spare_lines)
 	    ui_flags.status3 = settings.status3;
 	else {

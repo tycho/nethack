@@ -97,7 +97,7 @@ struct nh_option_desc curses_options[] = {
     {"keymap", "alter the key to command mapping", OPTTYPE_KEYMAP, {0}},
     {"mapcolors", "use thematic colors for special map regions", OPTTYPE_BOOL, { VTRUE }},
     {"menu_headings", "display style for menu headings", OPTTYPE_ENUM, {(void*)A_REVERSE}},
-    {"msgheight", "message window height", OPTTYPE_INT, {(void*)8}},
+    {"msgheight", "message window height (0 = auto)", OPTTYPE_INT, {0}},
     {"msghistory", "number of messages saved for prevmsg", OPTTYPE_INT, {(void*)256}},
     {"optstyle", "option menu display style", OPTTYPE_ENUM, {(void*)OPTSTYLE_FULL}},
     {"scores_own", "show all your own scores in the list", OPTTYPE_BOOL, { FALSE }},
@@ -239,8 +239,8 @@ void init_options(void)
     find_option("name")->s.maxlen = PL_NSIZ;
     find_option("dungeon_name")->e = dungeon_name_spec;
     find_option("menu_headings")->e = menu_headings_spec;
-    find_option("msgheight")->i.min = 1;
-    find_option("msgheight")->i.max = 40;
+    find_option("msgheight")->i.min = 0;
+    find_option("msgheight")->i.max = MAX_MSGLINES;
     find_option("msghistory")->i.min = 20;   /* arbitrary min/max values */
     find_option("msghistory")->i.max = 20000;
     find_option("graphics")->e = graphics_spec;

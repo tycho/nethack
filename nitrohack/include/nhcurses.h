@@ -113,6 +113,8 @@ typedef wchar_t fnchar;
 #define KEY_ESC 27
 #define KEY_BACKDEL 127
 
+#define MAX_MSGLINES 40
+
 /* attributes for dialog frames */
 #define FRAME_ATTRS  (COLOR_PAIR(6)) /* magenta frames for better visibility */
 
