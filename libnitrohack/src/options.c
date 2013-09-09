@@ -186,7 +186,7 @@ static const struct nh_option_desc const_options[] = {
     {"autopickup_rules", "rules to decide what to autopickup if autopickup is on", OPTTYPE_AUTOPICKUP_RULES, {(void*)&def_autopickup}},
     {"autoquiver",	"when firing with an empty quiver, select something suitable",	OPTTYPE_BOOL, { VFALSE }},
     {"autounlock",	"ask to apply unlocking tool when trying to open a locked door", OPTTYPE_BOOL, { VTRUE }},
-    {"delay_msg",	"minimum turns to show message of turns spent (0 to disable)", OPTTYPE_INT, {(void*)3}},
+    {"delay_msg",	"show message of turns spent for multi-turn actions", OPTTYPE_BOOL, { VTRUE }},
     {"disclose",	"whether to disclose information at end of game", OPTTYPE_ENUM, {(void*)DISCLOSE_PROMPT_DEFAULT_YES}},
     {"fruit",		"the name of a fruit you enjoy eating", OPTTYPE_STRING, {"slime mold"}},
     {"hp_notify",	"show a message when HP changes", OPTTYPE_BOOL, { VTRUE }},
@@ -261,6 +261,7 @@ static const struct nh_boolopt_map boolopt_map[] = {
 	{"autopickup", &flags.pickup},
 	{"autoquiver", &flags.autoquiver},
 	{"autounlock", &flags.autounlock},
+	{"delay_msg", &iflags.delay_msg},
 	{"female", &flags.female},
 	{"hp_notify", &iflags.hp_notify},
 	{"legacy", &flags.legacy},
@@ -397,8 +398,6 @@ void init_opt_struct(void)
 	build_race_spec();
 	
 	/* initialize option definitions */
-	find_option(options, "delay_msg")->i.min = 0;
-	find_option(options, "delay_msg")->i.max = 9999;
 	find_option(options, "disclose")->e = disclose_spec;
 	find_option(options, "fruit")->s.maxlen = PL_FSIZ;
 	find_option(options, "hp_notify_format")->s.maxlen = 80; /* min term width */
@@ -748,10 +747,6 @@ static boolean set_option(const char *name, union nh_optvalue value, boolean iss
 	}
 	else if (is_ui)
 	    return ui_option_callback(option);
-	/* regular non-boolean options */
-	else if (!strcmp("delay_msg", option->name)) {
-		iflags.delay_msg = option->value.i;
-	}
 	else if (!strcmp("disclose", option->name)) {
 		flags.end_disclose = option->value.e;
 	}
