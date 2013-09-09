@@ -91,7 +91,7 @@ struct nh_option_desc curses_options[] = {
     {"frame", "draw a frame around the window sections", OPTTYPE_BOOL, { VTRUE }},
     {"frame_hp_color", "recolor frame according to HP", OPTTYPE_BOOL, { VTRUE }},
     {"graphics", "enhanced line drawing style", OPTTYPE_ENUM, {(void*)UNICODE_GRAPHICS}},
-    {"hilite_peaceful", "highlight peaceful monsters", OPTTYPE_BOOL, { FALSE }},
+    {"hilite_peaceful", "highlight peaceful monsters", OPTTYPE_BOOL, { VTRUE }},
     {"hilite_pet", "highlight your pet", OPTTYPE_BOOL, { VTRUE }},
     {"invweight", "show item weights in the inventory", OPTTYPE_BOOL, { VTRUE }},
     {"keymap", "alter the key to command mapping", OPTTYPE_KEYMAP, {0}},
