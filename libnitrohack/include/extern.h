@@ -672,6 +672,7 @@ extern const char *hist_lev_name(const d_level *l, boolean in_or_on);
 extern void assigninvlet(struct obj *);
 extern struct obj *merge_choice(struct obj *,struct obj *);
 extern int merged(struct obj **,struct obj **);
+extern int dip_diluted_same_potions(struct obj **, struct obj **);
 extern void addinv_core1(struct obj *);
 extern void addinv_core2(struct obj *);
 extern struct obj *addinv(struct obj *);

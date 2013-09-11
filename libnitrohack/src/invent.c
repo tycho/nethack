@@ -143,12 +143,12 @@ struct obj *merge_choice(struct obj *objlist, struct obj *obj)
 	return objlist;
 }
 
-/* merge obj with otmp and delete obj if types agree */
-int merged(struct obj **potmp, struct obj **pobj)
+/* combine obj with otmp and delete obj */
+static void combine_objs(struct obj **potmp, struct obj **pobj)
 {
 	struct obj *otmp = *potmp, *obj = *pobj;
 
-	if (mergable(otmp, obj)) {
+	if (TRUE) {
 		/* Approximate age: we do it this way because if we were to
 		 * do it "accurately" (merge only when ages are identical)
 		 * we'd wind up never merging any corpses.
@@ -205,9 +205,51 @@ int merged(struct obj **potmp, struct obj **pobj)
 		}
 
 		obfree(obj,otmp);	/* free(obj), bill->otmp */
-		return 1;
 	}
-	return 0;
+}
+
+/* merge obj with otmp and delete obj if types agree */
+int merged(struct obj **potmp, struct obj **pobj)
+{
+	if (!mergable(*potmp, *pobj)) return 0;
+	combine_objs(potmp, pobj);
+	return 1;
+}
+
+/* merge diluted and undiluted potions when dipping and of the same type */
+int dip_diluted_same_potions(struct obj **ppot1, struct obj **ppot2)
+{
+	struct obj *pot1 = *ppot1;
+	struct obj *pot2 = *ppot2;
+	boolean pot2_blessed, pot2_cursed;
+	boolean set_bknown, set_dknown;
+
+	if (pot1->oclass != POTION_CLASS || pot1->otyp != pot2->otyp ||
+	    pot1->odiluted == pot2->odiluted)
+	    return 0;
+
+	pot2_blessed = pot2->blessed;
+	pot2_cursed = pot2->cursed;
+	set_bknown = !!(pot1->bknown && pot2->bknown);
+	set_dknown = !!(pot1->dknown && pot2->dknown);
+
+	combine_objs(ppot1, ppot2);
+
+	pot1->odiluted = 1;
+	if (pot2_blessed) {
+	    if (pot1->cursed) uncurse(pot1);
+	    else if (!pot1->blessed) bless(pot1);
+	} else if (pot2_cursed) {
+	    if (pot1->blessed) unbless(pot1);
+	    else if (!pot1->cursed) curse(pot1);
+	}
+	pot1->bknown = set_bknown;
+	pot1->dknown = set_dknown;
+
+	/* Don't leak info: give same message as alchemy in dip(). */
+	if (!set_dknown) pline("The potions mix...");
+
+	return 1;
 }
 
 /*
