@@ -1849,8 +1849,12 @@ boolean mon_reflects(struct monst *mon, const char *str)
 		    (orefl->oprops & ITEM_REFLECTION))) {
 	    if (str) {
 		pline(str, s_suffix(mon_nam(mon)), "armor");
-		if (orefl->oprops & ITEM_REFLECTION)
+		if (orefl->oprops & ITEM_REFLECTION) {
 		    orefl->oprops_known |= ITEM_REFLECTION;
+		} else if (orefl->otyp == SILVER_DRAGON_SCALES ||
+			   orefl->otyp == SILVER_DRAGON_SCALE_MAIL) {
+		    makeknown(orefl->otyp);
+		}
 	    }
 	    return TRUE;
 
@@ -1943,8 +1947,14 @@ boolean ureflects(const char *fmt, const char *str)
 	} else if (EReflecting & W_ARM) {
 	    if (fmt && str) {
 		pline(fmt, str, "armor");
-		if (uarm && (uarm->oprops & ITEM_REFLECTION))
-		    uarm->oprops_known |= ITEM_REFLECTION;
+		if (uarm) {
+		    if (uarm->oprops & ITEM_REFLECTION) {
+			uarm->oprops_known |= ITEM_REFLECTION;
+		    } else if (uarm->otyp == SILVER_DRAGON_SCALES ||
+			       uarm->otyp == SILVER_DRAGON_SCALE_MAIL) {
+			makeknown(uarm->otyp);
+		    }
+		}
 	    }
 	    return TRUE;
 
