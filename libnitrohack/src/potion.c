@@ -1895,6 +1895,9 @@ poof:
 		}
 
 		useup(potion);
+		/* Down with the Alchemy Tax! */
+		obj->quan++;
+		obj->owt = weight(obj);
 		return 1;
 	} else if (dip_diluted_same_potions(&potion, &obj)) {
 		potion->in_use = FALSE;
