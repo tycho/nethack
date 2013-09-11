@@ -910,7 +910,7 @@ int seffects(struct obj *sobj, boolean *known)
 		if (confused) {
 			otmp->oerodeproof = !(sobj->cursed);
 			if (Blind) {
-			    otmp->rknown = FALSE;
+			    otmp->rknown = sobj->bknown;
 			    pline("Your %s %s warm for a moment.",
 				xname(otmp), otense(otmp, "feel"));
 			} else {
@@ -1202,7 +1202,7 @@ int seffects(struct obj *sobj, boolean *known)
 		/* oclass check added 10/25/86 GAN */
 			uwep->oerodeproof = !(sobj->cursed);
 			if (Blind) {
-			    uwep->rknown = FALSE;
+			    uwep->rknown = sobj->bknown;
 			    pline("Your weapon feels warm for a moment.");
 			} else {
 			    uwep->rknown = TRUE;
