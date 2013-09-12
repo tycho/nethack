@@ -137,13 +137,28 @@ char curses_query_key(const char *query, int *count)
 
     height = 3;
     width = strlen(query) + 4;
+    if (count && width < 21) /* "Count: 2147483647" + borders */
+	width = 21;
     win = newdialog(height, width);
-    mvwprintw(win, 1, 2, query);
-    wrefresh(win);
 
-    key = nh_wgetch(win);
-    while ((isdigit(key) || key == KEY_BACKSPACE || key == KEY_BACKDEL) &&
-	   count != NULL) {
+    while (1) {
+	if (count) {
+	    wattron(win, FRAME_ATTRS);
+	    box(win, 0, 0);
+	    wattroff(win, FRAME_ATTRS);
+	    if (hascount)
+		mvwprintw(win, getmaxy(win) - 1, 2, "Count: %d", cnt);
+	}
+	mvwaddstr(win, 1, 2, query);
+	wrefresh(win);
+
+	key = nh_wgetch(win);
+
+	if (!count)
+	    break;
+	if (!isdigit(key) && key != KEY_BACKSPACE && key != KEY_BACKDEL)
+	    break;
+
 	if (isdigit(key)) {
 	    hascount = TRUE;
 	    /* prevent int overflow */
@@ -156,7 +171,6 @@ char curses_query_key(const char *query, int *count)
 	    hascount = (cnt > 0);
 	    cnt /= 10;
 	}
-	key = nh_wgetch(win);
     }
 
     if (count != NULL) {
