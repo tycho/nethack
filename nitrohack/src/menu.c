@@ -852,6 +852,7 @@ int curses_display_objects(struct nh_objitem *items, int icount,
 		break;
 		
 	    /* edit selection count */
+	    case KEY_BACKSPACE:
 	    case KEY_BACKDEL:
 		mdat->selcount /= 10;
 		if (mdat->selcount == 0)

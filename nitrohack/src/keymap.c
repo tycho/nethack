@@ -213,18 +213,29 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
 	arg->argtype = CMD_ARG_NONE;
 	
 	key = get_map_key(TRUE);
-	while ((key >= '0' && key <= '9') || (multi > 0 && key == KEY_BACKDEL)) {
-	    if (key == KEY_BACKDEL)
-		multi /= 10;
-	    else {
+	while ((key >= '0' && key <= '9') ||
+	       (multi > 0 && (key == KEY_BACKSPACE || key == KEY_BACKDEL))) {
+	    if (key == KEY_BACKSPACE || key == KEY_BACKDEL) {
+		/* backspace alters count unless bound to a command */
+		if (!keymap[key] || (keymap[key]->flags & (CMD_UI|UICMD_NOTHING)) ==
+				    (CMD_UI|UICMD_NOTHING)) {
+		    multi /= 10;
+		} else {
+		    break;
+		}
+	    } else {
 		multi = 10 * multi + key - '0';
 		if (multi > 0xffff)
 		    multi /= 10;
 	    }
-	    sprintf(line, "Count: %d", multi);
-	    key = curses_msgwin(line);
-	};
-	
+	    if (multi) {
+		sprintf(line, "Count: %d", multi);
+		key = curses_msgwin(line);
+	    } else {
+		key = get_map_key(TRUE);
+	    }
+	}
+
 	if (key == '\033') /* filter out ESC */
 	    continue;
 	if (key < 0 || key >= KEY_MAX)

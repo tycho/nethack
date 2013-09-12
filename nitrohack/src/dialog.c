@@ -133,26 +133,32 @@ char curses_query_key(const char *query, int *count)
     WINDOW *win;
     int cnt = 0;
     nh_bool hascount = FALSE;
-    
+
     height = 3;
     width = strlen(query) + 4;
     win = newdialog(height, width);
     mvwprintw(win, 1, 2, query);
     wrefresh(win);
-    
+
     key = nh_wgetch(win);
-    while ((isdigit(key) || key == KEY_BACKSPACE) && count != NULL) {
-	cnt = 10*cnt + (key - '0');
+    while ((isdigit(key) || key == KEY_BACKSPACE || key == KEY_BACKDEL) &&
+	   count != NULL) {
+	if (isdigit(key)) {
+	    hascount = TRUE;
+	    cnt = 10 * cnt + (key - '0');
+	} else {
+	    hascount = (cnt > 0);
+	    cnt /= 10;
+	}
 	key = nh_wgetch(win);
-	hascount = TRUE;
     }
-    
+
     if (count != NULL) {
-	if (!hascount && !cnt)
+	if (!hascount && cnt <= 0)
 	    cnt = -1; /* signal to caller that no count was given */
 	*count = cnt;
     }
-    
+
     delwin(win);
     redraw_game_windows();
     return key;

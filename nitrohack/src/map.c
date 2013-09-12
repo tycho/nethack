@@ -42,15 +42,15 @@ static int get_milliseconds(void)
 int get_map_key(int place_cursor)
 {
     int key = ERR;
-    
+
     if (settings.blink)
 	wtimeout(mapwin, 666); /* wait 2/3 of a second before switching */
-    
+
     if (player.x && place_cursor) { /* x == 0 is not a valid coordinate */
 	wmove(mapwin, player.y, player.x - 1);
 	curs_set(1);
     }
-    
+
     while (1) {
 	key = nh_wgetch(mapwin);
 	draw_map(player.x, player.y);
@@ -58,9 +58,9 @@ int get_map_key(int place_cursor)
 	if (key != ERR)
 	    break;
 	
-    };
+    }
     wtimeout(mapwin, -1);
-    
+
     return key;
 }
 
