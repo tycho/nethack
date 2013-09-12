@@ -2221,8 +2221,8 @@ void free_invbuf(void)
 
 int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 {
-	struct obj *otmp;
-	int ix, cur;
+	struct obj *otmp, *ostack = NULL;
+	int ix, cur, cnt2;
 	char let;
 	char alphabet[52+1], buf[52+1];
 	char qbuf[QBUFSZ];
@@ -2238,7 +2238,7 @@ int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 	};
 
 	/* get a pointer to the object the user wants to organize */
-	if (!obj && !(obj = getobj(organizablecnt, "adjust", NULL)))
+	if (!obj && !(obj = getobj(organizablecnt, "adjust", &ostack)))
 	    return 0;
 
 	/* initialize the list with all upper and lower case letters */
@@ -2267,8 +2267,8 @@ int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 	/* get new letter to use as inventory letter */
 	for (;;) {
 		sprintf(qbuf, "Adjust letter to what [%s]?",buf);
-		let = query_key(qbuf, NULL);
-		if (strchr(quitchars,let)) {
+		let = query_key(qbuf, &cnt2);
+		if (strchr(quitchars, let) || cnt2 == 0) {
 			pline("Never mind.");
 			goto cleansplit;
 		}
@@ -2276,6 +2276,25 @@ int doorganize(struct obj *obj)	/* inventory organizer by Del Lamb */
 			pline("Select an inventory slot letter.");
 		else
 			break;
+	}
+
+	/* change object stack size if requested in new letter prompt */
+	if (cnt2 != -1) {
+		if (cnt2 > obj->quan && ostack) {
+			/* take some more */
+			if (cnt2 - obj->quan < ostack->quan)
+				otmp = splitobj(ostack, cnt2 - obj->quan);
+			else
+				otmp = ostack;
+			if (!merged(&obj, &otmp))
+				impossible("doorganize: same objs won't merge");
+		} else if (cnt2 < obj->quan) {
+			/* split some out */
+			otmp = splitobj(obj, obj->quan - cnt2);
+			/* put some back if they came from a stack */
+			if (ostack && !merged(&ostack, &otmp))
+				impossible("doorganize: same objs won't merge");
+		} /* cnt2 == 0 handled above */
 	}
 
 	/* change the inventory and print the resulting item */
