@@ -3,6 +3,7 @@
 
 #include "nhcurses.h"
 #include <ctype.h>
+#include <limits.h>
 
 
 static enum nh_direction last_dir;
@@ -145,7 +146,12 @@ char curses_query_key(const char *query, int *count)
 	   count != NULL) {
 	if (isdigit(key)) {
 	    hascount = TRUE;
-	    cnt = 10 * cnt + (key - '0');
+	    /* prevent int overflow */
+	    if (cnt < INT_MAX / 10 || (cnt == INT_MAX / 10 &&
+				       (key - '0') <= INT_MAX % 10))
+		cnt = 10 * cnt + (key - '0');
+	    else
+		cnt = INT_MAX;
 	} else {
 	    hascount = (cnt > 0);
 	    cnt /= 10;
