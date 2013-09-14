@@ -1769,7 +1769,6 @@ int bagotricks(struct obj *bag)
 	if (!bag || bag->otyp != BAG_OF_TRICKS) {
 	    warning("bad bag o' tricks");
 	} else if (bag->spe < 1) {
-	    pline("Nothing happens.");
 	    return use_container(bag, 1);
 	} else {
 	    int cnt;
