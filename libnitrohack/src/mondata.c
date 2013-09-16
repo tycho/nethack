@@ -259,6 +259,45 @@ boolean sticks(const struct permonst *ptr)
 		attacktype(ptr,AT_HUGS)));
 }
 
+/* creature ignores Elbereth engravings and scare monster scrolls on the ground */
+boolean ignores_scary(const struct permonst *ptr)
+{
+	if (ptr->msound == MS_NEMESIS)
+	    return TRUE;
+
+	if (ptr->mlet == S_HUMAN)
+	    return TRUE;
+
+	if (ptr == &mons[PM_ANGEL] ||
+	    ptr == &mons[PM_CTHULHU] ||
+	    ptr == &mons[PM_VLAD_THE_IMPALER])
+	    return TRUE;
+
+	if ((ptr->geno & G_UNIQ) && is_demon(ptr))
+	    return TRUE;
+
+	if (is_rider(ptr))
+	    return TRUE;
+
+	return FALSE;
+}
+
+/* creature is a randomized dragon whose scales/scale mail
+ * have not been formally identified before */
+boolean is_unknown_dragon(const struct permonst *ptr)
+{
+	int mntmp = monsndx(ptr);
+
+	if (!((mntmp >= PM_GRAY_DRAGON && mntmp <= PM_YELLOW_DRAGON) ||
+	      (mntmp >= PM_BABY_GRAY_DRAGON && mntmp <= PM_BABY_YELLOW_DRAGON)))
+	    return FALSE;
+
+	if (mntmp >= PM_BABY_GRAY_DRAGON && mntmp <= PM_BABY_YELLOW_DRAGON)
+	    ptr = ptr - PM_BABY_GRAY_DRAGON + PM_GRAY_DRAGON;
+
+	return !objects[Dragon_to_scales(ptr)].oc_name_known;
+}
+
 /* number of horns this type of monster has on its head */
 int num_horns(const struct permonst *ptr)
 {

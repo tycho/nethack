@@ -657,6 +657,8 @@ extern boolean pirateday(void);
 extern int night(void);
 extern int midnight(void);
 extern unsigned int get_seedval(void);
+extern void wrap_text(int,const char *,int *,char ***);
+extern void free_wrap(char **);
 
 /* ### history.c ### */
 
@@ -1087,6 +1089,8 @@ extern boolean can_track(const struct permonst *);
 extern boolean breakarm(const struct permonst *);
 extern boolean sliparm(const struct permonst *);
 extern boolean sticks(const struct permonst *);
+extern boolean ignores_scary(const struct permonst *);
+extern boolean is_unknown_dragon(const struct permonst *);
 extern int num_horns(const struct permonst *);
 extern boolean dmgtype(const struct permonst *,int);
 extern int max_passive_dmg(struct monst *,struct monst *);

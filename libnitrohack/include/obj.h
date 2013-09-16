@@ -256,7 +256,7 @@ struct obj {
 				       - GRAY_DRAGON_SCALES]
 #define Dragon_mail_to_pm(obj)	&mons[PM_GRAY_DRAGON + (obj)->otyp \
 				      - GRAY_DRAGON_SCALE_MAIL]
-#define Dragon_to_scales(pm)	(GRAY_DRAGON_SCALES + (pm - mons))
+#define Dragon_to_scales(pm)	(GRAY_DRAGON_SCALES + ((pm) - &mons[PM_GRAY_DRAGON]))
 
 /* http://nethackwiki.com/wiki/Unofficial_conduct#Racial */
 /* Elven gear */

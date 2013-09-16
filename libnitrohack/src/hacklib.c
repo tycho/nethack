@@ -4,6 +4,7 @@
 
 /* We could include only config.h, except for the overlay definitions... */
 #include "hack.h"
+#include <ctype.h>
 #if defined(UNIX)
 #include <sys/time.h>
 #endif
@@ -54,6 +55,8 @@
 	boolean		pirateday	(void)
 	int		night		(void)
 	int		midnight	(void)
+	void		wrap_text	(int, const char *, int *, char ***)
+	void		free_wrap	(char **)
 =*/
 
 
@@ -501,6 +504,79 @@ unsigned int get_seedval(void)
 #else
     return 0;
 #endif
+}
+
+/*
+ * Word wrapping code copied from the Curses UI for this game.
+ *
+ * Given the string "input", generate a series of strings of the given maximum
+ * width, wrapping lines at spaces in the text.
+ *
+ * The number of lines will be stored into *output_count, and an array of the
+ * output lines will be stored in *output.
+ *
+ * The memory for both the output strings and the output array is obtained via
+ * malloc and should be freed when no longer needed.
+ */
+void wrap_text(int width, const char *input, int *output_count, char ***output)
+{
+    const int min_width = 20, max_wrap = 20;
+
+    int len = strlen(input);
+    int input_idx, input_lidx;
+    int idx, outcount;
+
+    *output = malloc(max_wrap * sizeof(char *));
+    for (idx = 0; idx < max_wrap; idx++)
+	(*output)[idx] = NULL;
+
+    input_idx = 0;
+    outcount = 0;
+    do {
+	size_t outsize;
+	char *outbuf;
+
+	if (len - input_idx <= width) {
+	    /* enough room for the rest of the input */
+	    (*output)[outcount] = strdup(input + input_idx);
+	    outcount++;
+	    break;
+	}
+
+	/* find nearest space in input to right edge that doesn't exceed width */
+	input_lidx = input_idx + width;
+	while (!isspace((unsigned char)input[input_lidx]) &&
+	       input_lidx - input_idx > min_width)
+	    input_lidx--;
+	/* didn't find a space, so just go with width-worth of characters */
+	if (!isspace((unsigned char)input[input_lidx]))
+	    input_lidx = input_idx + width;
+
+	outsize = input_lidx - input_idx;
+	outbuf = malloc(outsize + 1);
+	strncpy(outbuf, input + input_idx, outsize);
+	outbuf[outsize] = '\0';
+	(*output)[outcount] = outbuf;
+	outcount++;
+
+	/* skip extra spaces in break */
+	input_idx = input_lidx;
+	while (isspace((unsigned char)input[input_idx]))
+	    input_idx++;
+    } while (input[input_idx] && outcount < max_wrap);
+
+    *output_count = outcount;
+}
+
+/* Frees the output of wrap_text(). */
+void free_wrap(char **wrap_output)
+{
+    const int max_wrap = 20;
+    int idx;
+
+    for (idx = 0; idx < max_wrap && wrap_output[idx]; idx++)
+	free(wrap_output[idx]);
+    free(wrap_output);
 }
 
 /*hacklib.c*/

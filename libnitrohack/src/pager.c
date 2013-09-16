@@ -7,6 +7,8 @@
 #include "hack.h"
 #include "dlb.h"
 
+extern const int monstr[];
+
 static int append_str(char *buf, const char *new_str, int is_plur);
 static void mon_vision_summary(const struct monst *mtmp, char *outbuf);
 static void describe_bg(int x, int y, int bg, char *buf);
@@ -14,6 +16,9 @@ static int describe_object(int x, int y, int votyp, char *buf);
 static void describe_mon(int x, int y, int monnum, char *buf);
 static void checkfile(const char *inp, struct permonst *, boolean, boolean);
 static int do_look(boolean);
+
+/* same max width as data.base text */
+#define MONDESC_MAX_WIDTH 72
 
 /* The explanations below are also used when the user gives a string
  * for blessed genocide, so no text should wholly contain any later
@@ -431,6 +436,450 @@ void nh_describe_pos(int x, int y, struct nh_desc_buf *bufs)
     api_exit();
 }
 
+
+static void add_menutext_wrapped(struct menulist *menu, int width, const char *text)
+{
+    char **output;
+    int i, output_count;
+
+    wrap_text(width, text, &output_count, &output);
+    for (i = 0; i < output_count; i++)
+	add_menutext(menu, output[i]);
+    free_wrap(output);
+}
+
+
+static int appendc(char *buf, boolean cond, char *text, int num)
+{
+    if (!cond) return num;
+    sprintf(eos(buf), "%s%s", (num ? ", " : ""), text);
+    return num + 1;
+}
+
+
+static int appendp(char *buf, boolean cond, char *text, int num)
+{
+    if (!cond) return num;
+    sprintf(eos(buf), "%s%s", (num ? ".  " : ""), text);
+    return num + 1;
+}
+
+
+static void mondesc_speed(struct menulist *menu, int speed)
+{
+    char buf[BUFSZ];
+    sprintf(buf, "Speed %d (", speed);
+    strcat(buf, speed >= 36 ? "extremely fast" :
+		speed >= 20 ? "very fast" :
+		speed >  12 ? "fast" :
+		speed == 12 ? "normal speed" :
+		speed >=  9 ? "slow" :
+		speed >=  3 ? "very slow" :
+		speed >=  1 ? "extremely slow" :
+			      "sessile");
+    strcat(buf, ").");
+    add_menutext(menu, buf);
+}
+
+
+static void mondesc_generation(struct menulist *menu, unsigned short geno)
+{
+    char buf[BUFSZ] = "";
+    int num = 0;
+
+    if (geno & G_NOGEN) {
+	num = appendc(buf, !!(geno & G_NOGEN), "Specially generated", num);
+    } else {
+	strcpy(buf, "Normally appears ");
+	num = appendc(buf, !(geno & G_NOHELL) && !(geno & G_HELL),
+		      "everywhere", num);
+	num = appendc(buf, !!(geno & G_NOHELL), "outside of Gehennom", num);
+	num = appendc(buf, !!(geno & G_HELL), "in Gehennom", num);
+    }
+
+    num = appendc(buf, !!(geno & G_UNIQ), "unique", num);
+    if (geno & (G_SGROUP|G_LGROUP)) {
+	num = 0;
+	num = appendc(buf, !!(geno & G_SGROUP), " in groups", num);
+	num = appendc(buf, !!(geno & G_LGROUP), " in large groups", num);
+    }
+
+    if (!(geno & G_NOGEN)) {
+	if (num) strcat(buf, ", ");
+	switch (geno & G_FREQ) {
+	case 1: strcat(buf, "very rare"); break;
+	case 2: strcat(buf, "quite rare"); break;
+	case 3: strcat(buf, "rare"); break;
+	case 4: strcat(buf, "uncommon"); break;
+	case 5: strcat(buf, "common"); break;
+	case 6: strcat(buf, "very common"); break;
+	case 7: strcat(buf, "prolific"); break;
+	default: sprintf(eos(buf), " frequency %d", geno & G_FREQ);
+	}
+    }
+
+    strcat(buf, ".");
+
+    add_menutext_wrapped(menu, MONDESC_MAX_WIDTH, buf);
+}
+
+
+static int mondesc_resist_flags_to_str(char *buf, uchar flags)
+{
+    int num = 0;
+    num = appendc(buf, !!(flags & MR_FIRE), "fire", num);
+    num = appendc(buf, !!(flags & MR_COLD), "cold", num);
+    num = appendc(buf, !!(flags & MR_SLEEP), "sleep", num);
+    num = appendc(buf, !!(flags & MR_DISINT), "disintegration", num);
+    num = appendc(buf, !!(flags & MR_ELEC), "shock", num);
+    num = appendc(buf, !!(flags & MR_POISON), "poison", num);
+    num = appendc(buf, !!(flags & MR_ACID), "acid", num);
+    num = appendc(buf, !!(flags & MR_STONE), "petrification", num);
+    return num;
+}
+
+
+static void mondesc_resistances(struct menulist *menu, const struct permonst *pm)
+{
+    char buf[BUFSZ];
+
+    if (is_unknown_dragon(pm)) {
+	add_menutext(menu, "Resistances unknown.");
+	add_menutext(menu, "Corpse conveys unknown resistances.");
+	return;
+    }
+
+    strcpy(buf, "Resists ");
+    if (mondesc_resist_flags_to_str(buf, pm->mresists)) {
+	strcat(buf, ".");
+	add_menutext_wrapped(menu, MONDESC_MAX_WIDTH, buf);
+    } else {
+	add_menutext(menu, "Has no resistances.");
+    }
+
+    if (pm->geno & G_NOCORPSE) {
+	add_menutext(menu, "Leaves no corpse.");
+    } else {
+	strcpy(buf, "Corpse conveys ");
+	if (mondesc_resist_flags_to_str(buf, pm->mconveys)) {
+	    strcat(buf, " resistance.");
+	    add_menutext_wrapped(menu, MONDESC_MAX_WIDTH, buf);
+	} else {
+	    add_menutext(menu, "Corpse conveys no resistances.");
+	}
+    }
+}
+
+
+static void mondesc_flags(struct menulist *menu, const struct permonst *pm)
+{
+    char buf[BUFSZ] = "";
+    char size[BUFSZ] = "";
+    char adjbuf[BUFSZ] = "";
+    char specialadj[BUFSZ] = "";
+    char noun[BUFSZ] = "";
+    int num;
+    int adjnum;
+    int nounnum;
+
+    strcpy(size, pm->msize == MZ_TINY ? "tiny" :
+		 pm->msize == MZ_SMALL ? "small" :
+		 pm->msize == MZ_LARGE ? "large" :
+		 pm->msize == MZ_HUGE ? "huge" :
+		 pm->msize == MZ_GIGANTIC ? "gigantic" : "");
+    if (!*size) {
+	/* monster may be of a non-standard size */
+	if (verysmall(pm)) strcpy(size, "small");
+	else if (hugemonst(pm)) strcpy(size, "huge");
+	else if (bigmonst(pm)) strcpy(size, "big");
+    }
+
+    adjnum = 0;
+    adjnum = appendc(adjbuf, !(pm->geno & G_GENO), "ungenocidable", adjnum);
+    adjnum = appendc(adjbuf, breathless(pm), "breathless", adjnum);
+    adjnum = appendc(adjbuf, amphibious(pm), "amphibious", adjnum);
+    adjnum = appendc(adjbuf, passes_walls(pm), "phasing", adjnum);
+    adjnum = appendc(adjbuf, amorphous(pm), "amorphous", adjnum);
+    adjnum = appendc(adjbuf, noncorporeal(pm), "noncorporeal", adjnum);
+    adjnum = appendc(adjbuf, unsolid(pm), "unsolid", adjnum);
+    adjnum = appendc(adjbuf, acidic(pm), "acidic", adjnum);
+    if (!is_unknown_dragon(pm)) /* don't reveal poison dragons */
+	adjnum = appendc(adjbuf, poisonous(pm), "poisonous", adjnum);
+    adjnum = appendc(adjbuf, regenerates(pm), "regenerating", adjnum);
+    adjnum = appendc(adjbuf, can_teleport(pm), "teleporting", adjnum);
+    adjnum = appendc(adjbuf, is_reviver(pm), "reviving", adjnum);
+    adjnum = appendc(adjbuf, pm_invisible(pm), "invisible", adjnum);
+    adjnum = appendc(adjbuf, nonliving(pm) && !is_undead(pm),
+		     "nonliving", adjnum);
+
+    appendc(specialadj, is_undead(pm), "undead", 0);
+
+    nounnum = 0;
+    nounnum = appendc(noun, is_hider(pm), "hider", nounnum);
+    nounnum = appendc(noun, is_swimmer(pm), "swimmer", nounnum);
+    nounnum = appendc(noun, is_flyer(pm), "flyer", nounnum);
+    nounnum = appendc(noun, is_floater(pm), "floater", nounnum);
+    nounnum = appendc(noun, is_clinger(pm), "clinger", nounnum);
+    if (tunnels(pm)) {
+	nounnum = appendc(noun, TRUE, (needspick(pm) ? "miner" : "digger"),
+			  nounnum);
+    }
+
+    /* <size><adjectives><special adjectives><noun> */
+    if (*size) {
+	if (adjnum <= 1 && (*specialadj || *noun)) {
+	    /* huge undead */
+	    /* small noncorporeal miner */
+	    strcat(buf, size);
+	    strcat(buf, " ");
+	} else if (adjnum >= 1) {
+	    /* small, genocideable, amphibious swimmer */
+	    /* big, poisonous, invisible miner */
+	    /* big, poisonous, invisible hider, swimmer, flyer */
+	    /* huge */
+	    /* small, noncorporeal */
+	    /* big, poisonous, invisible */
+	    strcat(buf, size);
+	    strcat(buf, ", ");
+	} else if (adjnum == 0) {
+	    /* small swimmer */
+	    /* big miner */
+	    /* big swimmer, flyer */
+	    /* huge */
+	    /* small undead digger */
+	    strcat(buf, size);
+	    strcat(buf, " ");
+	} else {
+	    impossible("mondesc_flags(): impossible adjnum (%d)", adjnum);
+	}
+    }
+    if (*adjbuf) {
+	strcat(buf, adjbuf);
+	strcat(buf, " ");
+    }
+    if (*specialadj) {
+	strcat(buf, specialadj);
+	strcat(buf, " ");
+    }
+    if (*noun) {
+	strcat(buf, noun);
+	strcat(buf, " ");
+    }
+
+    if (*buf) {
+	upstart(buf);
+	*(eos(buf) - 1) = '.'; /* replaces last space */
+	strcat(buf, "  ");
+    }
+
+    num = 0;
+    num = appendp(buf, perceives(pm), "Sees invisible", num);
+    num = appendp(buf, control_teleport(pm), "Has teleport control", num);
+    num = appendp(buf, your_race(pm), "Is the same race as you", num);
+    num = appendp(buf, touch_petrifies(pm), "Petrifies by touch", num);
+    num = appendp(buf, touch_disintegrates(pm), "Disintegrates by touch", num);
+    if (!(pm->geno & G_NOCORPSE)) {
+	if (vegan(pm))
+	    num = appendp(buf, TRUE, "May be eaten by vegans", num);
+	else if (vegetarian(pm))
+	    num = appendp(buf, TRUE, "May be eaten by vegetarians", num);
+    }
+    /*
+     * Unfortunately, keepdogs() is quite mysterious:
+     * - Cthulhu and Orcus never follow (M2_STALK and STRAT_WAITFORU)
+     * - Vlad follows (also M2_STALK and STRAT_WAITFORU)
+     */
+    /*
+    num = appendp(buf, !!(pm->mflags2 & M2_STALK),
+		  "Follows you across levels", num);
+    */
+    if (polyok(pm))
+	num = appendp(buf, TRUE, "Is a valid polymorph form", num);
+    else
+	num = appendp(buf, TRUE, "Is not a valid polymorph form", num);
+    num = appendp(buf, ignores_scary(pm),
+		  "Ignores Elbereth engravings and dropped scare monster scrolls",
+		  num);
+
+    if (*buf) {
+	strcat(buf, ".");
+	add_menutext_wrapped(menu, MONDESC_MAX_WIDTH, buf);
+    }
+}
+
+
+static const char *mondesc_attack_type(uchar atype)
+{
+    const char *str = "???";
+
+    switch (atype) {
+    case AT_NONE: str = "Passive"; break;
+    case AT_CLAW: str = "Claw"; break;
+    case AT_BITE: str = "Bite"; break;
+    case AT_KICK: str = "Kick"; break;
+    case AT_BUTT: str = "Butt"; break;
+    case AT_TUCH: str = "Touch"; break;
+    case AT_STNG: str = "Sting"; break;
+    case AT_HUGS: str = "Hug"; break;
+    case AT_SPIT: str = "Spit"; break;
+    case AT_ENGL: str = "Engulf"; break;
+    case AT_BREA: str = "Breath"; break;
+    case AT_EXPL: str = "Explode"; break;
+    case AT_BOOM: str = "Explodes when killed"; break;
+    case AT_GAZE: str = "Gaze"; break;
+    case AT_TENT: str = "Tentacle"; break;
+
+    case AT_WEAP: str = "Weapon"; break;
+    case AT_MAGC: str = "Spell-casting"; break;
+
+    default:
+	impossible("mondesc_attack_type(): invalid attack type (%d)", atype);
+    }
+
+    return str;
+}
+
+
+static const char *mondesc_damage_type(uchar dtype)
+{
+    const char *str = "???";
+
+    switch (dtype) {
+    case AD_PHYS: str = ""; break; /* physical */
+    case AD_MAGM: str = "magic missile"; break;
+    case AD_FIRE: str = "fire"; break;
+    case AD_COLD: str = "cold"; break;
+    case AD_SLEE: str = "sleep"; break;
+    case AD_DISN: str = "disintegration"; break;
+    case AD_ELEC: str = "shock"; break;
+    case AD_DRST: str = "poison"; break;
+    case AD_ACID: str = "acid"; break;
+    case AD_SPC1: str = "buzz1"; break;
+    case AD_SPC2: str = "buzz2"; break;
+    case AD_BLND: str = "blind"; break;
+    case AD_STUN: str = "stun"; break;
+    case AD_SLOW: str = "slow"; break;
+    case AD_PLYS: str = "paralysis"; break;
+    case AD_DRLI: str = "drain life"; break;
+    case AD_DREN: str = "drain energy"; break;
+    case AD_LEGS: str = "wound legs"; break;
+    case AD_STON: str = "petrification"; break;
+    case AD_STCK: str = "sticky"; break;
+    case AD_SGLD: str = "steal gold"; break;
+    case AD_SITM: str = "steal item"; break;
+    case AD_SEDU: str = "seduce (steal items)"; break;
+    case AD_TLPT: str = "teleport"; break;
+    case AD_RUST: str = "erosion"; break;
+    case AD_CONF: str = "confusion"; break;
+    case AD_DGST: str = "digest"; break;
+    case AD_HEAL: str = "heal"; break;
+    case AD_WRAP: str = "drowning"; break;
+    case AD_WERE: str = "lycanthropy"; break;
+    case AD_DRDX: str = "poison (dexterity)"; break;
+    case AD_DRCO: str = "poison (constitution)"; break;
+    case AD_DRIN: str = "drain intelligence"; break;
+    case AD_DISE: str = "disease"; break;
+    case AD_DCAY: str = "decays organic items"; break;
+    case AD_SSEX: str = "seduce"; break;
+    case AD_HALU: str = "hallucinate"; break;
+    case AD_DETH: str = "death"; break;
+    case AD_PEST: str = "plus disease"; break;
+    case AD_FAMN: str = "plus hunger"; break;
+    case AD_SLIM: str = "sliming"; break;
+    case AD_ENCH: str = "disenchant"; break;
+    case AD_CORR: str = "corrosion"; break;
+    case AD_HEAD: str = "beheading"; break;
+
+    case AD_CLRC: str = "(clerical)"; break;
+    case AD_SPEL: str = ""; break; /* (magical) */
+    case AD_RBRE: str = "random"; break;
+
+    case AD_SAMU: str = "artifact stealing"; break;
+    case AD_CURS: str = "steal intrinsic"; break;
+    default:
+	impossible("mondesc_damage_type(): invalid damage type (%d)", dtype);
+    }
+
+    return str;
+}
+
+
+static const char *mondesc_one_attack(const struct attack *mattk,
+				      const struct permonst *pm)
+{
+    static char buf[BUFSZ];
+
+    buf[0] = '\0';
+
+    if (!mattk->damn && !mattk->damd && !mattk->aatyp && !mattk->adtyp)
+	return buf;
+
+    strcpy(buf, mondesc_attack_type(mattk->aatyp));
+    if (mattk->damn || mattk->damd) {
+	strcat(buf, " ");
+	if (mattk->damn)
+	    sprintf(eos(buf), "%d", mattk->damn);
+	else
+	    strcat(buf, "(level+1)");
+	sprintf(eos(buf), "d%d", mattk->damd);
+    }
+
+    /* hide breaths of unknown dragons */
+    if (mattk->aatyp == AT_BREA && is_unknown_dragon(pm)) {
+	strcat(buf, " unknown");
+    } else {
+	const char *dtmp = mondesc_damage_type(mattk->adtyp);
+	if (*dtmp) {
+	    strcat(buf, " ");
+	    strcat(buf, dtmp);
+	}
+    }
+
+    return buf;
+}
+
+
+static void mondesc_attacks(struct menulist *menu, const struct permonst *pm)
+{
+    char buf[BUFSZ] = "";
+    const char *tmp;
+    int sum[NATTK];
+    struct attack mattk, alt_attk;
+    int i;
+
+    strcpy(buf, "Attacks: ");
+    for (i = 0; i < NATTK; i++) {
+	sum[i] = 1; /* show "stun" for e.g. Demogorgon */
+	mattk = *getmattk(pm, i, sum, &alt_attk);
+	tmp = mondesc_one_attack(&mattk, pm);
+	if (!*tmp) {
+	    if (!i) strcat(buf, "none");
+	    break;
+	}
+	if (i) strcat(buf, ", ");
+	strcat(buf, tmp);
+    }
+    strcat(buf, ".");
+
+    add_menutext_wrapped(menu, MONDESC_MAX_WIDTH, buf);
+}
+
+
+static void mondesc_all(struct menulist *menu, const struct permonst *pm)
+{
+    char buf[BUFSZ];
+
+    sprintf(buf, "Difficulty %d, AC %d, magic resistance %d.",
+	    monstr[monsndx(pm)], pm->ac, pm->mr);
+    add_menutext(menu, buf);
+    mondesc_speed(menu, pm->mmove);
+    mondesc_generation(menu, pm->geno);
+    mondesc_resistances(menu, pm);
+    mondesc_flags(menu, pm);
+    mondesc_attacks(menu, pm);
+}
+
+
 /*
  * Look in the "data" file for more info.  Called if the user typed in the
  * whole name (user_typed_name == TRUE), or we've found a possible match
@@ -445,6 +894,9 @@ static void checkfile(const char *inp, struct permonst *pm, boolean user_typed_n
     long txt_offset;
     int chk_skip;
     boolean found_in_file = FALSE, skipping_entry = FALSE;
+    int mntmp;
+    char mnname[BUFSZ];
+    struct menulist menu;
 
     fp = dlb_fopen(DATAFILE, "r");
     if (!fp) {
@@ -547,6 +999,18 @@ static void checkfile(const char *inp, struct permonst *pm, boolean user_typed_n
 	}
     }
 
+    init_menulist(&menu);
+
+    mntmp = name_to_mon(dbase_str);
+    if (mntmp >= LOW_PM) {
+	strcpy(mnname, mons_mname(&mons[mntmp]));
+	lcase(mnname);
+	if (!strcmp(dbase_str, mnname)) {
+	    dbase_str = strcpy(newstr, mons_mname(&mons[mntmp]));
+	    mondesc_all(&menu, &mons[mntmp]);
+	}
+    }
+
     if (found_in_file) {
 	long entry_offset;
 	int  entry_count;
@@ -560,20 +1024,23 @@ static void checkfile(const char *inp, struct permonst *pm, boolean user_typed_n
 	
 	if (sscanf(buf, "%ld,%d\n", &entry_offset, &entry_count) < 2) {
 bad_data_file:	impossible("'data' file in wrong format");
+		free(menu.items);
 		dlb_fclose(fp);
 		return;
 	}
 
 	if (user_typed_name || without_asking || yn("More info?") == 'y') {
-	    struct menulist menu;
 
 	    if (dlb_fseek(fp, txt_offset + entry_offset, SEEK_SET) < 0) {
 		pline("? Seek error on 'data' file!");
+		free(menu.items);
 		dlb_fclose(fp);
 		return;
 	    }
-	    
-	    init_menulist(&menu);
+
+	    if (menu.icount)
+		add_menutext(&menu, "");
+
 	    for (i = 0; i < entry_count; i++) {
 		if (!dlb_fgets(buf, BUFSZ, fp))
 		    goto bad_data_file;
@@ -583,12 +1050,14 @@ bad_data_file:	impossible("'data' file in wrong format");
 		    tabexpand(buf+1);
 		add_menutext(&menu, buf+1);
 	    }
-	    
-	    display_menu(menu.items, menu.icount, upstart(dbase_str), FALSE, NULL);
-	    free(menu.items);
 	}
-    } else if (user_typed_name)
+    } else if (user_typed_name && !menu.icount) {
 	pline("I don't have any information on those things.");
+    }
+
+    if (menu.icount)
+	display_menu(menu.items, menu.icount, upstart(dbase_str), FALSE, NULL);
+    free(menu.items);
 
     dlb_fclose(fp);
 }

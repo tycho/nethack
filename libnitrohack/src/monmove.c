@@ -108,15 +108,13 @@ int dochugw(struct monst *mtmp)
 
 boolean onscary(int x, int y, struct monst *mtmp)
 {
-	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
-	    mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN ||
-	    is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
-	    mtmp->data == &mons[PM_CTHULHU] ||
-	    /* Vlad ignores Elbereth/scare monster/garlic */
-	    mtmp->data == &mons[PM_VLAD_THE_IMPALER] ||
-	    mtmp->mnum == quest_info(MS_NEMESIS) ||
-	    (mtmp->data->geno & G_UNIQ && is_demon(mtmp->data)) ||
-	    is_rider(mtmp->data))
+	if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || is_lminion(mtmp))
+		return FALSE;
+
+	if (!mtmp->mcansee || mtmp->mpeaceful)
+		return FALSE;
+
+	if (ignores_scary(mtmp->data))
 		return FALSE;
 
 	return (boolean)(sobj_at(SCR_SCARE_MONSTER, level, x, y)
