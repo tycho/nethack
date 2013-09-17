@@ -1873,8 +1873,8 @@ static void mk_knox_portal(struct level *lev, xchar x, xchar y)
 	    source = &br->end1;
 	}
 
-	/* Already set or 2/3 chance of deferring until a later level. */
-	if (source->dnum < n_dgns || (rn2(3) && !wizard)) return;
+	/* Already set. */
+	if (source->dnum < n_dgns) return;
 
 	if (! (lev->z.dnum == oracle_level.dnum	    /* in main dungeon */
 		&& !at_dgn_entrance(&lev->z, "The Quest") /* but not Quest's entry */
