@@ -109,8 +109,10 @@ void draw_map(int cx, int cy)
 	    attr = A_NORMAL;
 	    if ((settings.hilite_pet && (dbe->monflags & MON_TAME)) ||
 		(settings.hilite_peaceful && (dbe->monflags & MON_PEACEFUL)) ||
-		/* reverse object piles, but don't override stair background */
-		(bg_color == 0 && dbe->obj && (dbe->objflags & DOBJ_STACKS))) {
+		/* reverse object piles, but don't override stair background
+		 * or monsters on top */
+		(bg_color == 0 && !dbe->mon && !dbe->invis &&
+		 dbe->obj && (dbe->objflags & DOBJ_STACKS))) {
 		attr |= A_REVERSE;
 		bg_color = 0;
 	    }
