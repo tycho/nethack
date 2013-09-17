@@ -331,10 +331,50 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 }
 
 
+/* Identify the type of a randomized dragon by e.g. probing. */
+void discover_randomized_dragon(const struct permonst *pm, const char *msgfmt)
+{
+	int mntmp;
+	boolean is_baby_dragon;
+
+	mntmp = monsndx(pm);
+	is_baby_dragon = FALSE;
+	if (mntmp >= PM_BABY_GRAY_DRAGON && mntmp <= PM_BABY_YELLOW_DRAGON) {
+	    is_baby_dragon = TRUE;
+	    mntmp = mntmp - PM_BABY_GRAY_DRAGON + PM_GRAY_DRAGON;
+	}
+	if (mntmp >= PM_GRAY_DRAGON && mntmp <= PM_YELLOW_DRAGON) {
+	    int otyp = Dragon_to_scales(&mons[mntmp]);
+	    if (!objects[otyp].oc_name_known) {
+		/* discover the identity of the probed (baby) dragon */
+		char *scales_name, *scales_name_end;
+		char maybe_baby[BUFSZ];
+
+		makeknown(otyp);
+
+		/* take only the "foo dragon" part of "foo dragon scales" */
+		scales_name = simple_typename(otyp);
+		if ((scales_name_end = strstr(scales_name, " scales")))
+		    *scales_name_end = '\0';
+
+		maybe_baby[0] = '\0';
+		if (is_baby_dragon)
+		    strcpy(maybe_baby, "baby ");
+		strcat(maybe_baby, scales_name);
+
+		if (!msgfmt)
+		    msgfmt = "You discover that this is %s.";
+		pline(msgfmt, an(maybe_baby));
+	    }
+	}
+}
+
+
 void probe_monster(struct monst *mtmp)
 {
 	struct obj *otmp;
 
+	discover_randomized_dragon(mtmp->data, NULL);
 	mstatusline(mtmp);
 	if (notonhead) return;	/* don't show minvent for long worm tail */
 
@@ -2132,6 +2172,10 @@ int zapyourself(struct obj *obj, boolean ordinary)
 		case SPE_WIZARD_LOCK:
 		    break;
 		case WAN_PROBING:
+		    if (Upolyd) {
+			discover_randomized_dragon(youmonst.data,
+				"You discover that you are %s.");
+		    }
 		    for (obj = invent; obj; obj = obj->nobj)
 			obj->dknown = 1;
 		    /* note: `obj' reused; doesn't point at wand anymore */

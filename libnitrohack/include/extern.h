@@ -1944,6 +1944,7 @@ extern void xmalloc_cleanup(void);
 /* ### zap.c ### */
 
 extern int bhitm(struct monst *,struct obj *);
+extern void discover_randomized_dragon(const struct permonst *,const char *);
 extern void probe_monster(struct monst *);
 extern boolean get_obj_location(const struct obj *,xchar *,xchar *,int);
 extern boolean get_mon_location(struct monst *,xchar *,xchar *,int);

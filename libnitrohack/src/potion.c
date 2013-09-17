@@ -516,6 +516,10 @@ int peffects(struct obj *otmp)
 				adjattrib(A_WIS, 1, FALSE);
 			}
 			pline("You feel self-knowledgeable...");
+			if (Upolyd) {
+			    discover_randomized_dragon(youmonst.data,
+				    "You discover that you are %s.");
+			}
 			win_pause_output(P_MESSAGE);
 			enlightenment(0);
 			pline("The feeling subsides.");
