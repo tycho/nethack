@@ -940,7 +940,8 @@ static void checkfile(const char *inp, struct permonst *pm, boolean user_typed_n
 	/* adjust the input to remove " [seen" and "named " and convert to lower case */
 	char *alt = 0;	/* alternate description */
 
-	if ((ep = strstri(dbase_str, " [seen")) != 0)
+	if ((ep = strstri(dbase_str, " [seen")) != 0 ||
+	    (ep = strstri(dbase_str, " and more")) != 0)
 	    *ep = '\0';
 
 	if ((ep = strstri(dbase_str, " named ")) != 0)
@@ -1145,6 +1146,8 @@ static int do_look(boolean quick)
     boolean from_screen;	/* question from the screen */
     struct nh_desc_buf descbuf;
     struct obj *otmp;
+    struct menulist menu;
+    int n, selected[1];
 
     if (quick) {
 	from_screen = TRUE;	/* yes, we want to use the cursor */
@@ -1203,48 +1206,79 @@ static int do_look(boolean quick)
 	otmp = vobj_at(cc.x, cc.y);
 	if (otmp && is_plural(otmp))
 	    objplur = 1;
-	
+
+	init_menulist(&menu);
 	out_str[0] = '\0';
-	if (append_str(out_str, descbuf.effectdesc, 0))
+	if (append_str(out_str, descbuf.effectdesc, 0)) {
+	    add_menuitem(&menu, 'e', descbuf.effectdesc, 0, FALSE);
 	    if (++found == 1)
 		strcpy (firstmatch, descbuf.effectdesc);
-	
-	if (append_str(out_str, descbuf.invisdesc, 0))
+	}
+	if (append_str(out_str, descbuf.invisdesc, 0)) {
+	    add_menuitem(&menu, 'i', descbuf.invisdesc, 0, FALSE);
 	    if (++found == 1)
 		strcpy (firstmatch, descbuf.invisdesc);
-	
-	if (append_str(out_str, descbuf.mondesc, 0))
+	}
+	if (append_str(out_str, descbuf.mondesc, 0)) {
+	    add_menuitem(&menu, 'm', descbuf.mondesc, 0, FALSE);
 	    if (++found == 1)
 		strcpy (firstmatch, descbuf.mondesc);
-	
-	if (append_str(out_str, descbuf.objdesc, objplur))
+	}
+	if (append_str(out_str, descbuf.objdesc, objplur)) {
+	    add_menuitem(&menu, 'o', descbuf.objdesc, 0, FALSE);
 	    if (++found == 1)
 		strcpy (firstmatch, descbuf.objdesc);
-	
-	if (append_str(out_str, descbuf.trapdesc, 0))
+	}
+	if (append_str(out_str, descbuf.trapdesc, 0)) {
+	    add_menuitem(&menu, 't', descbuf.trapdesc, 0, FALSE);
 	    if (++found == 1)
 		strcpy (firstmatch, descbuf.trapdesc);
-	
-	if (append_str(out_str, descbuf.bgdesc, 0))
+	}
+	if (append_str(out_str, descbuf.bgdesc, 0)) {
 	    if (!found) {
+		add_menuitem(&menu, 'b', descbuf.bgdesc, 0, FALSE);
 		found++; /* only increment found if nothing else was seen,
 		so that checkfile can be called below */
 		strcpy (firstmatch, descbuf.bgdesc);
 	    }
-	
+	}
 
 	/* Finally, print out our explanation. */
 	if (found) {
 	    out_str[0] = highc(out_str[0]);
 	    pline("%s.", out_str);
 	    /* check the data file for information about this thing */
-	    if (found == 1 && ans != LOOK_QUICK && ans != LOOK_ONCE &&
+	    if (found > 0 && ans != LOOK_QUICK && ans != LOOK_ONCE &&
 			(ans == LOOK_VERBOSE || !quick)) {
-		checkfile(firstmatch, NULL, FALSE, ans == LOOK_VERBOSE);
+		if (found > 1) {
+		    n = display_menu(menu.items, menu.icount, "More info?",
+				     PICK_ONE, selected);
+		    if (n == 1) {
+			switch (selected[0]) {
+			case 'e': strcpy(firstmatch, descbuf.effectdesc); break;
+			case 'i': strcpy(firstmatch, descbuf.invisdesc); break;
+			case 'm': strcpy(firstmatch, descbuf.mondesc); break;
+			case 'o': strcpy(firstmatch, descbuf.objdesc); break;
+			case 't': strcpy(firstmatch, descbuf.trapdesc); break;
+			case 'b': strcpy(firstmatch, descbuf.bgdesc); break;
+			}
+		    }
+		} else {
+		    n = 1;
+		}
+		if (n == 1) {
+		    /* Fake user_typed_name here when choosing from a menu above
+		     * so players get feedback for missing database entries. */
+		    checkfile(firstmatch, NULL, found > 1,
+			      (ans == LOOK_VERBOSE || found > 1));
+		}
 	    }
 	} else {
 	    pline("I've never heard of such things.");
 	}
+
+	if (menu.icount)
+	    free(menu.items);
 
 	if (quick) check_tutorial_farlook(cc.x, cc.y);
     } while (!quick && ans != LOOK_ONCE);
