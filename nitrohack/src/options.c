@@ -82,7 +82,6 @@ static const char *const bucnames[] = {"unknown", "blessed", "uncursed", "cursed
 
 struct nh_option_desc curses_options[] = {
     {"name", "name for new characters (blank = ask)", OPTTYPE_STRING, {NULL}},
-    {"blink", "show multiple symbols for each location by switching between them", OPTTYPE_BOOL, { FALSE }},
     {"classic_status", "use classic NetHack layout for status lines", OPTTYPE_BOOL, { FALSE }},
     {"darkgray", "try to show 'black' as dark gray instead of dark blue", OPTTYPE_BOOL, {FALSE}},
     {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL, { VTRUE }},
@@ -117,7 +116,6 @@ struct nh_option_desc curses_options[] = {
 };
 
 struct nh_boolopt_map boolopt_map[] = {
-    {"blink", &settings.blink},
     {"classic_status", &settings.classic_status},
     {"darkgray", &settings.darkgray},
     {"darkroom", &settings.darkroom},

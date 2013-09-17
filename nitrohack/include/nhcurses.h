@@ -184,7 +184,6 @@ struct settings {
     nh_bool  standout;	/* use standout for --More-- */
     nh_bool  time;	/* display elapsed 'time' */
     nh_bool  invweight;	/* show item weight in the inventory */
-    nh_bool  blink;	/* show multiple symbols for each location by blinking */
     nh_bool  sidebar;   /* draw the inventory sidebar */
     nh_bool  frame;     /* draw a frame around the window sections */
     nh_bool  frame_hp_color; /* recolor frame according to HP */

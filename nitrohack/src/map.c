@@ -4,14 +4,6 @@
 #include "nhcurses.h"
 #include <ctype.h>
 
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <sys/time.h>
-#endif
-
-#define sgn(x) ((x) >= 0 ? 1 : -1)
-
 struct coord {
     int x, y;
 };
@@ -20,31 +12,10 @@ static struct nh_dbuf_entry (*display_buffer)[COLNO] = NULL;
 static const int xdir[DIR_SELF+1] = { -1,-1, 0, 1, 1, 1, 0,-1, 0, 0 };
 static const int ydir[DIR_SELF+1] = {  0,-1,-1,-1, 0, 1, 1, 1, 0, 0 };
 
-/* GetTickCount() returns milliseconds since the system was started, with a
- * resolution of around 15ms. gettimeofday() returns a value since the start of
- * the epoch.
- * The difference doesn't matter here, since the value is only used to control
- * blinking.
- */
-#ifdef WIN32
-# define get_milliseconds GetTickCount
-#else
-static int get_milliseconds(void)
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-}
-#endif
-
-
 
 int get_map_key(int place_cursor)
 {
     int key = ERR;
-
-    if (settings.blink)
-	wtimeout(mapwin, 666); /* wait 2/3 of a second before switching */
 
     if (player.x && place_cursor) { /* x == 0 is not a valid coordinate */
 	wmove(mapwin, player.y, player.x - 1);
@@ -85,16 +56,14 @@ void draw_map(int cx, int cy)
     attr_t attr;
     unsigned int frame;
     struct curses_symdef syms[4];
-    
+
     if (!display_buffer || !mapwin)
 	return;
-    
+
     getyx(mapwin, cursy, cursx);
-   
+
     frame = 0;
-    if (settings.blink)
-	frame = get_milliseconds() / 666;
-       
+
     for (y = 0; y < ROWNO; y++) {
 	for (x = 1; x < COLNO; x++) {
 	    int bg_color = 0;
@@ -120,7 +89,7 @@ void draw_map(int cx, int cy)
 	    print_sym(mapwin, &syms[frame % symcount], attr, bg_color);
 	}
     }
-    
+
     wmove(mapwin, cursy, cursx);
     wnoutrefresh(mapwin);
 }
