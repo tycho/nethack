@@ -15,8 +15,7 @@ Interface changes
 DynaHack adopts NitroHack's interface, allowing it to make better use of larger
 terminal sizes, showing a multi-line message box and inventory sidebar.  Windows
 players will want to change the win_width and win_height options (resizing works
-automatically on Linux).  The msgheight option also changes the maximum height
-of the message box.
+automatically on Linux and OS X).
 
 Options in DynaHack are set in-game, unlike NetHack which uses a config file.
 There are no means to import config files; instead, play some test games and
@@ -156,8 +155,8 @@ have to defend themselves against:
 
 DynaHack also reduces the spoiler advantage that long-time NetHack players have
 over novices by providing a newer and more informative database of item
-descriptions from NetHack4.  It is still incomplete and in time will also
-include monster info.
+descriptions from NetHack4 and detailed monster descriptions from UnNetHackPlus
+(press '/' and target a monster with ';' or enter its name).
 
 
 More variety
