@@ -83,7 +83,14 @@ static const char *const bucnames[] = {"unknown", "blessed", "uncursed", "cursed
 struct nh_option_desc curses_options[] = {
     {"name", "name for new characters (blank = ask)", OPTTYPE_STRING, {NULL}},
     {"classic_status", "use classic NetHack layout for status lines", OPTTYPE_BOOL, { FALSE }},
-    {"darkgray", "try to show 'black' as dark gray instead of dark blue", OPTTYPE_BOOL, {FALSE}},
+    {"darkgray", "try to show 'black' as dark gray instead of dark blue", OPTTYPE_BOOL,
+#if defined(__linux__)
+	{ VTRUE }
+#else
+	/* Windows and default OS X terminal config have problems with darkgray */
+	{ FALSE }
+#endif
+    },
     {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL, { VTRUE }},
     {"dungeon_name", "how to show dungeon name and/or depth", OPTTYPE_ENUM, {(void*)DGN_NAME_AUTO}},
     {"extmenu", "use a menu for selecting extended commands (#)", OPTTYPE_BOOL, {FALSE}},
