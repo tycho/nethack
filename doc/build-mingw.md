@@ -115,10 +115,15 @@ After a few minutes, you can find the game at C:\MinGW\DynaHack-unnethack\instal
 
 Nearly all of the game's options are set and saved in-game, but if you want to customize characters used on the map, see save files or view dump logs of finished games you can find them all in your user's AppData folder under Roaming\DynaHack.
 
-If you want to create a ZIP of the game, you only need these files (i.e. ignore the *.dll.a files):
+If you want to create a ZIP of the game, you need these files (ignore the *.dll.a files):
 
  * dynahack.exe
  * nhdat
  * license
  * libnitrohack.dll
  * libnitrohack_client.dll
+
+You'll also need to include these DLLs, which you can find in C:\MinGW\bin:
+
+ * libgcc_s_dw2-1.dll
+ * libz-1.dll
