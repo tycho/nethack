@@ -91,7 +91,14 @@ struct nh_option_desc curses_options[] = {
 	{ FALSE }
 #endif
     },
-    {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL, { VTRUE }},
+    {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL,
+#if defined(__linux__)
+	{ VTRUE }
+#else
+	/* darkroom tends to look awful without working darkgray */
+	{ FALSE }
+#endif
+    },
     {"dungeon_name", "how to show dungeon name and/or depth", OPTTYPE_ENUM, {(void*)DGN_NAME_AUTO}},
     {"extmenu", "use a menu for selecting extended commands (#)", OPTTYPE_BOOL, {FALSE}},
     {"frame", "draw a frame around the window sections", OPTTYPE_BOOL, { VTRUE }},
