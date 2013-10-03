@@ -57,6 +57,7 @@
 	int		midnight	(void)
 	void		wrap_text	(int, const char *, int *, char ***)
 	void		free_wrap	(char **)
+	boolean		write_full	(int, const void *, size_t)
 =*/
 
 
@@ -577,6 +578,27 @@ void free_wrap(char **wrap_output)
     for (idx = 0; idx < max_wrap && wrap_output[idx]; idx++)
 	free(wrap_output[idx]);
     free(wrap_output);
+}
+
+/*
+ * Like write(), but tries to write the whole buffer.
+ * Returns TRUE if the buffer was fully written.
+ */
+boolean write_full(int fd, const void *buf, size_t count)
+{
+	ssize_t ret, left;
+	const char *buf2 = buf;
+
+	left = count;
+	while (left > 0) {
+	    ret = write(fd, buf2, left);
+	    if (ret == -1)
+		return FALSE;
+	    buf2 += ret;
+	    left -= ret;
+	}
+
+	return TRUE;
 }
 
 /*hacklib.c*/

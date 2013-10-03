@@ -425,6 +425,7 @@ void log_objmenu(int n, struct nh_objresult *pick_list)
 static void log_binary(const char *buf, int buflen, char prefix[3])
 {
     char *b64buf;
+    size_t b64buflen;
 
     if (logfile == -1 || iflags.disable_log)
 	return;
@@ -434,7 +435,9 @@ static void log_binary(const char *buf, int buflen, char prefix[3])
 
     /* don't use lprintf, b64buf might be too big for the buffer used by lprintf */
     write(logfile, prefix, 3);
-    write(logfile, b64buf, strlen(b64buf));
+    b64buflen = strlen(b64buf);
+    if (!write_full(logfile, b64buf, b64buflen))
+	panic("log_binary: writing %u bytes to log failed.", b64buflen);
 
     free(b64buf);
 }

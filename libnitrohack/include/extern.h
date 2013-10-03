@@ -659,6 +659,7 @@ extern int midnight(void);
 extern unsigned int get_seedval(void);
 extern void wrap_text(int,const char *,int *,char ***);
 extern void free_wrap(char **);
+extern boolean write_full(int,const void *,size_t);
 
 /* ### history.c ### */
 
