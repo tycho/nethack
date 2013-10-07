@@ -83,14 +83,14 @@ static int lprintf(const char *fmt, ...)
     va_list vargs;
     char outbuf[4096];
     int size;
-    
-    va_start(vargs, fmt);    
+
+    va_start(vargs, fmt);
     size = vsnprintf(outbuf, sizeof(outbuf), fmt, vargs);
     va_end(vargs);
-    
+
     if (write(logfile, outbuf, size) != size)
-	panic("writing %d bytes to the log failed.");
-	
+	panic("writing %d bytes to the log failed.", size);
+
     return size;
 }
 
@@ -131,7 +131,8 @@ void log_option(struct nh_option_desc *opt)
 	    encbuf2 = malloc(base64size(strlen(str)));
 	    base64_encode(str, encbuf2);
 	    /* write directly, large numbers of rules might overflow outbuf in lprintf */
-	    write(logfile, encbuf2, strlen(encbuf2));
+	    if (!write_full(logfile, encbuf2, strlen(encbuf2)))
+		panic("log_option: failed to write autopickup_rules");
 	    free(encbuf2);
 	    free(str);
 	    break;
@@ -142,7 +143,8 @@ void log_option(struct nh_option_desc *opt)
 	    encbuf2 = malloc(base64size(strlen(str)));
 	    base64_encode(str, encbuf2);
 	    /* write directly, large numbers of rules may overflow outbuf in lprintf */
-	    write(logfile, encbuf2, strlen(encbuf2));
+	    if (!write_full(logfile, encbuf2, strlen(encbuf2)))
+		panic("log_option: failed to write msgtype_rules");
 	    free(encbuf2);
 	    free(str);
 	    break;
@@ -434,7 +436,8 @@ static void log_binary(const char *buf, int buflen, char prefix[3])
     base64_encode_binary((const unsigned char*)buf, b64buf, buflen);
 
     /* don't use lprintf, b64buf might be too big for the buffer used by lprintf */
-    write(logfile, prefix, 3);
+    if (!write_full(logfile, prefix, 3))
+	panic("log_binary: writing \"%s\" prefix failed.", prefix);
     b64buflen = strlen(b64buf);
     if (!write_full(logfile, b64buf, b64buflen))
 	panic("log_binary: writing %u bytes to log failed.", b64buflen);
