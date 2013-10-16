@@ -2426,7 +2426,7 @@ void sellobj(struct obj *obj, xchar x, xchar y)
 
 		if (container) {
 			dropped_container(obj, shkp, FALSE);
-			if (!obj->unpaid && !saleitem)
+			if (!obj->unpaid)
 			    obj->no_charge = 1;
 			if (obj->unpaid || count_unpaid(obj->cobj))
 			    subfrombill(obj, shkp);
@@ -2487,7 +2487,7 @@ void sellobj(struct obj *obj, xchar x, xchar y)
 		    if (!isgold) {
 			if (container)
 			    dropped_container(obj, shkp, FALSE);
-			if (!obj->unpaid && !saleitem) obj->no_charge = 1;
+			if (!obj->unpaid) obj->no_charge = 1;
 			subfrombill(obj, shkp);
 		    }
 		    return;
