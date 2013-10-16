@@ -408,6 +408,7 @@ struct mkroom	*sroom;
 	ESHK(shk)->visitct = 0;
 	ESHK(shk)->following = 0;
 	ESHK(shk)->billct = 0;
+	ESHK(shk)->bill_p = &ESHK(shk)->bill[0];
 #ifndef GOLDOBJ
 	shk->mgold = 1000L + 30L*(long)rnd(100);	/* initial capital */
 #else
