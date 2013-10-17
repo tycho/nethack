@@ -2419,7 +2419,7 @@ void sellobj(struct obj *obj, xchar x, xchar y)
 	offer = ltmp + cltmp;
 
 	/* get one case out of the way: nothing to sell, and no gold */
-	if (!isgold &&
+	if (!(isgold || cgold) &&
 	   ((offer + gltmp) == 0L || sell_how == SELL_DONTSELL)) {
 		boolean unpaid = (obj->unpaid ||
 				  (container && count_unpaid(obj->cobj)));
@@ -2482,8 +2482,9 @@ void sellobj(struct obj *obj, xchar x, xchar y)
 		    pline("%ld %s %s added to your credit.",
 				delta, currency(delta), delta > 1L ? "are" : "is");
 		}
-		if (offer) goto move_on;
-		else {
+		if (offer && sell_how != SELL_DONTSELL) {
+		    goto move_on;
+		} else {
 		    if (!isgold) {
 			if (container)
 			    dropped_container(obj, shkp, FALSE);
