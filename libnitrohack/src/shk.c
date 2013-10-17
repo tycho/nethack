@@ -57,7 +57,6 @@ static void sub_one_frombill(struct obj *, struct monst *);
 static void add_one_tobill(struct obj *, boolean);
 static void dropped_container(struct obj *, struct monst *,boolean);
 static void add_to_billobjs(struct obj *);
-static void bill_box_content(struct obj *, boolean, boolean,struct monst *);
 static boolean rob_shop(struct monst *);
 static struct obj *find_oid_lev(struct level *lev, unsigned id);
 /*
@@ -2006,8 +2005,7 @@ static void add_to_billobjs(struct obj *obj)
 }
 
 /* recursive billing of objects within containers. */
-static void bill_box_content(struct obj *obj, boolean ininv, boolean dummy,
-			     struct monst *shkp)
+void bill_box_content(struct obj *obj, boolean dummy)
 {
 	struct obj *otmp;
 
@@ -2018,7 +2016,7 @@ static void bill_box_content(struct obj *obj, boolean ininv, boolean dummy,
 		if (!otmp->no_charge)
 		    add_one_tobill(otmp, dummy);
 		if (Has_contents(otmp))
-		    bill_box_content(otmp, ininv, dummy, shkp);
+		    bill_box_content(otmp, dummy);
 	}
 
 }
@@ -2125,7 +2123,7 @@ void addtobill(struct obj *obj, boolean ininv, boolean dummy, boolean silent)
 	    }
 
 	    if (ltmp) add_one_tobill(obj, dummy);
-	    if (cltmp) bill_box_content(obj, ininv, dummy, shkp);
+	    if (cltmp) bill_box_content(obj, dummy);
 	    picked_container(obj); /* reset contained obj->no_charge */
 
 	    ltmp += cltmp;

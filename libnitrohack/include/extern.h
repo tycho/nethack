@@ -1523,6 +1523,7 @@ extern long contained_cost(const struct obj *,struct monst *,long,boolean, boole
 extern long contained_gold(struct obj *);
 extern void picked_container(struct obj *);
 extern long unpaid_cost(const struct obj *);
+extern void bill_box_content(struct obj *,boolean);
 extern void addtobill(struct obj *,boolean,boolean,boolean);
 extern void splitbill(struct obj *,struct obj *);
 extern void subfrombill(struct obj *,struct monst *);

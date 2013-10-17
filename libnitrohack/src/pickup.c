@@ -2307,7 +2307,9 @@ int dotip(struct obj *otmp)
 		bagotricks_monster(otmp, TRUE);
 	} else {
 	    long loss = 0L;
+	    sellobj_state(SELL_DELIBERATE);
 	    dump_container(otmp, FALSE, &loss);
+	    sellobj_state(SELL_NORMAL);
 	    if (loss > 0L)
 		pline("You owe %ld %s for lost merchandise.", loss, currency(loss));
 	}
@@ -2337,6 +2339,29 @@ static boolean dump_container(struct obj *container, boolean destroy_after,
 	    ret = !!container->cobj;
 	    container_impact_dmg(container);
 	    return ret;
+	}
+
+	/* make sure floor container contents are billed properly when tipping */
+	/* assumption 1: !destroy_after == #tip command */
+	/* assumption 2: #tip always occurs at the hero's location */
+	if (!destroy_after) {
+	    struct monst *shkp;
+
+	    /* logic courtesy of pick_obj() */
+	    if (container->where == OBJ_FLOOR &&
+		!u.uswallow &&
+		costly_spot(container->ox, container->oy) &&
+		/* logic courtesy of addtobill() */
+		*u.ushops &&
+		(shkp = shop_keeper(level, *u.ushops)) &&
+		inhishop(shkp)) {
+
+		/* logic courtesy of addtobill() */
+		long gltmp = contained_gold(container);
+		if (gltmp) costly_gold(container->ox, container->oy, gltmp);
+		bill_box_content(container, FALSE);
+		picked_container(container);
+	    }
 	}
 
 	for (otmp = container->cobj; otmp; otmp = otmp2) {
