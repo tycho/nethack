@@ -2345,6 +2345,12 @@ static boolean dump_container(struct obj *container, boolean destroy_after,
 	    return ret;
 	}
 
+	/* tipping a quantum mechanic's box observes the cat within */
+	if (!destroy_after && container->otyp != BAG_OF_TRICKS &&
+	    container->spe == 1) {
+	    observe_quantum_cat(container);
+	}
+
 	/* make sure floor container contents are billed properly when tipping */
 	/* assumption 1: !destroy_after == #tip command */
 	/* assumption 2: #tip always occurs at the hero's location */
