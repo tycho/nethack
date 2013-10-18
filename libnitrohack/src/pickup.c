@@ -2301,12 +2301,12 @@ int dotip(struct obj *otmp)
 	    chest_trap(otmp, HAND, FALSE);
 	}
 
-	pline("You tip %s over%s", the(xname(otmp)),
-	      (otmp->otyp == BAG_OF_TRICKS ?
-	       (otmp->spe < 1) : (otmp->olocked || !otmp->cobj)) ?
-	      ", but nothing comes out." : ".");
+	pline("You tip %s over%s.", the(xname(otmp)),
+	      ((otmp->otyp == BAG_OF_TRICKS && otmp->spe > 0) ||
+	       (!otmp->olocked && otmp->cobj)) ?
+	      "" : ", but nothing comes out");
 
-	if (otmp->otyp == BAG_OF_TRICKS) {
+	if (otmp->otyp == BAG_OF_TRICKS && otmp->spe > 0) {
 	    while (otmp->spe > 0)
 		bagotricks_monster(otmp, TRUE);
 	} else {
