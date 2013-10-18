@@ -702,6 +702,7 @@ void drop_tipped(struct obj *otmp, boolean container_carried)
 	    }
 	}
 	dropx(otmp);
+	otmp->was_dropped = 1;
 }
 
 /* things that must change when not held; recurse into containers.
