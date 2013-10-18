@@ -2297,6 +2297,10 @@ int dotip(struct obj *otmp)
 	    return 0;
 	}
 
+	if (otmp->otrapped) {
+	    chest_trap(otmp, HAND, FALSE);
+	}
+
 	pline("You tip %s over%s", the(xname(otmp)),
 	      (otmp->otyp == BAG_OF_TRICKS ?
 	       (otmp->spe < 1) : (otmp->olocked || !otmp->cobj)) ?
