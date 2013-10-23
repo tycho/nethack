@@ -174,6 +174,7 @@ struct settings {
     int      win_height;/* window height, PDCurses on WIN32 only */
     int      win_width; /* window height, PDCurses on WIN32 only */
     nh_bool  darkgray;  /* use bolded black instead of dark blue for CLR_BLACK */
+    nh_bool  darkmsg;	/* show past messages in a darker color */
     nh_bool  darkroom;	/* show spaces out-of-sight in darker colors */
     nh_bool  extmenu;	/* extended commands use menu interface */
     nh_bool  hilite_peaceful; /* hilight peaceful monsters */

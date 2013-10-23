@@ -91,6 +91,14 @@ struct nh_option_desc curses_options[] = {
 	{ FALSE }
 #endif
     },
+    {"darkmsg", "show past messages in a darker color", OPTTYPE_BOOL,
+#if defined(__linux__)
+	{ VTRUE }
+#else
+	/* default dark blue on Windows is far too dark to be legible */
+	{ FALSE }
+#endif
+    },
     {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL,
 #if defined(__linux__)
 	{ VTRUE }
@@ -132,6 +140,7 @@ struct nh_option_desc curses_options[] = {
 struct nh_boolopt_map boolopt_map[] = {
     {"classic_status", &settings.classic_status},
     {"darkgray", &settings.darkgray},
+    {"darkmsg", &settings.darkmsg},
     {"darkroom", &settings.darkroom},
     {"extmenu", &settings.extmenu},
     {"frame", &settings.frame},
@@ -154,6 +163,7 @@ struct nh_boolopt_map boolopt_map[] = {
 static nh_bool option_change_callback(struct nh_option_desc *option)
 {
     if (!strcmp(option->name, "classic_status") ||
+	!strcmp(option->name, "darkmsg") ||
 	!strcmp(option->name, "frame") ||
 	!strcmp(option->name, "frame_hp_color") ||
 	!strcmp(option->name, "status3") ||
