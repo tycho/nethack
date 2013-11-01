@@ -567,26 +567,40 @@ static char *tabexpand(char *sbuf)
 
 void curses_display_buffer(const char *inbuf, nh_bool trymove)
 {
-    char *line, *buf;
+    char *line, *line_end, *buf;
     char linebuf[BUFSZ];
     int icount, size;
     struct nh_menuitem *items;
-    
+
     buf = strdup(inbuf);
     icount = 0;
     size = 10;
     items = malloc(size * sizeof(struct nh_menuitem));
 
-    line = strtok(buf, "\n");
-    do {
+    line = buf;
+    while (*line) {
+	line_end = strchr(line, '\n');
+	if (line_end) {
+	    /* deal with the CR that Windows adds to the LF */
+	    if (line_end > line && *(line_end - 1) == '\r')
+		*(line_end - 1) = '\0';
+	    *line_end = '\0';
+	}
+
 	strncpy(linebuf, line, BUFSZ);
+	linebuf[BUFSZ - 1] = '\0';
 	if (strchr(linebuf, '\t') != 0)
 	    tabexpand(linebuf);
 	add_menu_txt(items, size, icount, linebuf, MI_TEXT);
-	
-	line = strtok(NULL, "\n");
-    } while (line);
-    
+
+	if (line_end) {
+	    line = line_end + 1;
+	} else {
+	    /* null terminator guaranteed if earlier strdup() succeeded */
+	    line = strchr(line, '\0');
+	}
+    }
+
     curses_display_menu(items, icount, NULL, PICK_NONE, NULL);
     free(items);
     free(buf);
