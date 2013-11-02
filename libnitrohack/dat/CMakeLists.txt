@@ -7,46 +7,52 @@ configure_file (history history COPYONLY)
 add_custom_command (OUTPUT data
                     COMMAND makedefs
                     ARGS -d ${LNH_DAT}/data.base data
-                    MAIN_DEPENDENCY data.base)
+                    MAIN_DEPENDENCY data.base
+                    DEPENDS makedefs)
 # makedefs -e
 add_custom_command (OUTPUT dungeon.pdf
                     COMMAND makedefs
                     ARGS -e ${LNH_DAT}/dungeon.def dungeon.pdf
-                    MAIN_DEPENDENCY dungeon.def)
+                    MAIN_DEPENDENCY dungeon.def
+                    DEPENDS makedefs)
 # makedefs -q
 add_custom_command (OUTPUT quest.dat
                     COMMAND makedefs
                     ARGS -q ${LNH_DAT}/quest.txt quest.dat
-                    MAIN_DEPENDENCY quest.txt)
+                    MAIN_DEPENDENCY quest.txt
+                    DEPENDS makedefs)
 # makedefs -r
 add_custom_command (OUTPUT rumors
                     COMMAND makedefs
                     ARGS -r ${LNH_DAT}/rumors.tru
                             ${LNH_DAT}/rumors.fal rumors
-                    DEPENDS rumors.tru rumors.fal)
+                    DEPENDS makedefs rumors.tru rumors.fal)
 # makedefs -h
 add_custom_command (OUTPUT oracles
                     COMMAND makedefs
                     ARGS -h ${LNH_DAT}/oracles.txt oracles
-                    MAIN_DEPENDENCY oracles.txt)
+                    MAIN_DEPENDENCY oracles.txt
+                    DEPENDS makedefs)
 
 add_custom_command (OUTPUT dungeon
                     COMMAND dgn_comp
                     ARGS dungeon.pdf
-                    MAIN_DEPENDENCY dungeon.pdf)
+                    MAIN_DEPENDENCY dungeon.pdf
+                    DEPENDS dgn_comp)
 
 # Level files
 macro (level_file)
     cmake_parse_arguments (LEVEL_FILE "" "INPUT" "OUTPUTS" ${ARGN})
     set (REAL_OUTPUTS)
     foreach (OUTPUT ${LEVEL_FILE_OUTPUTS})
-        set (REAL_OUTPUTS ${REAL_OUTPUTS} ${OUTPUT}.lev)
+        list (APPEND REAL_OUTPUTS ${OUTPUT}.lev)
     endforeach (OUTPUT)
-    set (COMPILED_LEVELS ${COMPILED_LEVELS} ${REAL_OUTPUTS})
+    list (APPEND COMPILED_LEVELS ${REAL_OUTPUTS})
     add_custom_command (OUTPUT ${REAL_OUTPUTS}
                         COMMAND lev_comp
                         ARGS -v ${LNH_DAT}/${LEVEL_FILE_INPUT}
-                        MAIN_DEPENDENCY ${LEVEL_FILE_INPUT})
+                        MAIN_DEPENDENCY ${LEVEL_FILE_INPUT}
+                        DEPENDS lev_comp)
 endmacro (level_file)
 
 macro (quest_file BASE INPUT)
@@ -144,7 +150,7 @@ set (NHDAT_SRC dungeon quest.dat rumors oracles ${COMPILED_LEVELS} history data)
 add_custom_command (OUTPUT nhdat
                     COMMAND dlb
                     ARGS cf nhdat ${NHDAT_SRC}
-                    DEPENDS ${NHDAT_SRC})
+                    DEPENDS dlb ${NHDAT_SRC})
 
 # pseudo-target: depend on all other generated data
 add_custom_target (nitrohack_data_files ALL
