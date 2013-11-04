@@ -422,7 +422,7 @@ int curses_ext_cmd()
 	    prompt_width = strlen(cur_choice);
         matches = 0;
 
-        if (letter == DOESCAPE)
+        if (letter == DOESCAPE || letter == ERR)
         {
             ret = -1;
             break;
@@ -1195,6 +1195,11 @@ static int menu_get_selections(WINDOW *win, nhmenu *menu, int how)
     while (!dismiss)
     {
         curletter = getch();
+
+	if (curletter == ERR) {
+	    num_selected = -1;
+	    dismiss = TRUE;
+	}
         
         if (curletter == DOESCAPE)
         {
