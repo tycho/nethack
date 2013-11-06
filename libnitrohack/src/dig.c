@@ -1054,10 +1054,14 @@ boolean mdig_tunnel(struct monst *mtmp)
 	    }
 	    newsym(mtmp->mx, mtmp->my);
 	    return FALSE;
-	} else if (!IS_ROCK(here->typ) && !IS_TREE(level, here->typ)) /* no dig */
+	} else if (!IS_ROCK(here->typ) &&
+		   !IS_TREE(level, here->typ) &&
+		   here->typ != IRONBARS) {
+	    /* no dig */
 	    return FALSE;
+	}
 
-	/* Only rock, trees, and walls fall through to this point. */
+	/* Only rock, trees, walls and iron bars fall through to this point. */
 	if ((here->wall_info & W_NONDIGGABLE) != 0) {
 	    impossible("mdig_tunnel:  %s at (%d,%d) is undiggable",
 		       (IS_WALL(here->typ) ? "wall" : "stone"),
@@ -1084,6 +1088,8 @@ boolean mdig_tunnel(struct monst *mtmp)
 	    here->typ = ROOM;
 	    if (pile && pile < 5)
 		rnd_treefruit_at(mtmp->mx, mtmp->my);
+	} else if (here->typ == IRONBARS) {
+	    dissolve_bars(mtmp->mx, mtmp->my);
 	} else {
 	    here->typ = CORR;
 	    if (pile && pile < 5)

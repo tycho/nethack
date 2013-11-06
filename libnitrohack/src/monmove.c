@@ -877,7 +877,7 @@ not_special:
 	/* unicorn may not be able to avoid hero on a noteleport level */
 	if (is_unicorn(ptr) && !level->flags.noteleport) flag |= NOTONL;
 	if (passes_walls(ptr)) flag |= (ALLOW_WALL | ALLOW_ROCK);
-	if (passes_bars(ptr)) flag |= ALLOW_BARS;
+	if (passes_bars(ptr) || metallivorous(ptr)) flag |= ALLOW_BARS;
 	if (can_tunnel) flag |= ALLOW_DIG;
 	if (is_human(ptr) || ptr == &mons[PM_MINOTAUR]) flag |= ALLOW_SSM;
 	if (is_undead(ptr) && ptr->mlet != S_GHOST) flag |= NOGARLIC;
@@ -1108,17 +1108,30 @@ postmov:
 			if (*in_rooms(level, mtmp->mx, mtmp->my, SHOPBASE))
 			    add_damage(mtmp->mx, mtmp->my, 0L);
 		    }
-		} else if (level->locations[mtmp->mx][mtmp->my].typ == IRONBARS) {
-			if (flags.verbose && canseemon(level, mtmp))
-			    Norep("%s %s %s the iron bars.", Monnam(mtmp),
-				  /* pluralization fakes verb conjugation */
-				  makeplural(locomotion(ptr, "pass")),
-				  passes_walls(ptr) ? "through" : "between");
 		}
 
-		/* possibly dig */
-		if (can_tunnel && mdig_tunnel(mtmp))
-			return 2;  /* mon died (position already updated) */
+		/* possibly eat through iron bars */
+		if (level->locations[mtmp->mx][mtmp->my].typ == IRONBARS) {
+		    if (dmgtype(ptr, AD_DISN)) {
+			if (canseeit)
+			    pline("%s dissolves the iron bars.", Monnam(mtmp));
+			dissolve_bars(mtmp->mx, mtmp->my);
+		    } else if (metallivorous(ptr)) {
+			if (mdig_tunnel(mtmp))
+			    return 2;
+			if (canseeit)
+			    pline("%s chews through the iron bars.", Monnam(mtmp));
+			else
+			    You_hear("a crunching noise.");
+		    } else if (flags.verbose && canseemon(level, mtmp)) {
+			Norep("%s %s %s the iron bars.", Monnam(mtmp),
+			      /* pluralization fakes verb conjugation */
+			      makeplural(locomotion(ptr, "pass")),
+			      passes_walls(ptr) ? "through" : "between");
+		    }
+		} else if (can_tunnel && mdig_tunnel(mtmp)) { /* possibly dig */
+		    return 2;  /* mon died (position already updated) */
+		}
 
 		/* set also in domove(), hack.c */
 		if (u.uswallow && mtmp == u.ustuck &&

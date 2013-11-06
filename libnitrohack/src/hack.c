@@ -584,8 +584,8 @@ nopushmsg:
 /*
  *  still_chewing()
  *
- *  Chew on a wall, door, or boulder.  Returns TRUE if still eating, FALSE
- *  when done.
+ *  Chew on a wall, door, boulder or iron bars.
+ *  Returns TRUE if still eating, FALSE when done.
  */
 static int still_chewing(xchar x, xchar y)
 {
@@ -612,11 +612,12 @@ static int still_chewing(xchar x, xchar y)
 	/* solid rock takes more work & time to dig through */
 	digging.effort = (IS_ROCK(loc->typ) && !IS_TREES(level, loc->typ) ?
 			  30 : 60) + u.udaminc;
-	pline("You start chewing %s %s.",
-	      (boulder || IS_TREES(level, loc->typ)) ? "on a" : "a hole in the",
-	      boulder ? "boulder" :
-	      IS_TREES(level, loc->typ) ? "tree" :
-	      IS_ROCK(loc->typ) ? "rock" : "door");
+	pline("You start chewing %s.",
+	      boulder ? "on a boulder" :
+	      loc->typ == IRONBARS ? "on the iron bars" :
+	      IS_TREES(level, loc->typ) ? "on a tree" :
+	      IS_ROCK(loc->typ) ? "a hole in the rock" :
+	      "a hole in the door");
 	watch_dig(NULL, x, y, FALSE);
 	return 1;
     } else if ((digging.effort += (30 + u.udaminc)) <= 100)  {
@@ -624,6 +625,7 @@ static int still_chewing(xchar x, xchar y)
 	    pline("You %s chewing on the %s.",
 		digging.chew ? "continue" : "begin",
 		boulder ? "boulder" :
+		loc->typ == IRONBARS ? "bars" :
 		IS_TREES(level, loc->typ) ? "tree" :
 		IS_ROCK(loc->typ) ? "rock" : "door");
 	digging.chew = TRUE;
@@ -670,6 +672,9 @@ static int still_chewing(xchar x, xchar y)
     } else if (IS_TREE(level, loc->typ)) {
 	digtxt = "You chew through the tree.";
 	loc->typ = ROOM;
+    } else if (loc->typ == IRONBARS) {
+	digtxt = "You chew through the iron bars.";
+	dissolve_bars(x, y);
     } else if (loc->typ == SDOOR) {
 	if (loc->doormask & D_TRAPPED) {
 	    loc->doormask = D_NODOOR;
@@ -824,7 +829,10 @@ boolean test_move(int ux, int uy, int dx, int dy, int dz, int mode)
 	if (Passes_walls && may_passwall(level, x,y)) {
 	    ;	/* do nothing */
 	} else if (tmpr->typ == IRONBARS) {
-	    if (!(Passes_walls || passes_bars(youmonst.data)))
+	    /* Eat the bars if you can. */
+	    if ((mode == DO_MOVE && !flags.nopick &&
+		 metallivorous(youmonst.data) && still_chewing(x, y)) ||
+		!(Passes_walls || passes_bars(youmonst.data)))
 		return FALSE;
 	} else if (tunnels(youmonst.data) && !needspick(youmonst.data)) {
 	    /* Eat the rock. */

@@ -791,8 +791,7 @@ void hit_bars(struct obj **obj_p, int objx, int objy, int barsx, int barsy,
 		} else {
 		    You_hear(Hallucination ? "angry snakes!" : "a hissing noise.");
 		}
-		level->locations[barsx][barsy].typ = ROOM;
-		newsym(barsx, barsy);
+		dissolve_bars(barsx, barsy);
 	    }
 	} else if (obj_type == BOULDER || obj_type == HEAVY_IRON_BALL) {
 	    pline("Whang!");
@@ -803,6 +802,16 @@ void hit_bars(struct obj **obj_p, int objx, int objy, int barsx, int barsy,
 	} else {
 	    pline("Clonk!");
 	}
+}
+
+void dissolve_bars(int x, int y)
+{
+	if (!isok(x, y)) return;
+	if (Is_special(&level->z) || *in_rooms(level, x, y, 0))
+	    level->locations[x][y].typ = ROOM;
+	else
+	    level->locations[x][y].typ = CORR;
+	newsym(x, y);
 }
 
 /*mthrowu.c*/
