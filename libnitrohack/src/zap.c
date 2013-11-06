@@ -3729,6 +3729,14 @@ int zap_over_floor(xchar x, xchar y, int type, boolean *shopdamage)
 		    }
 		}
 		obj_ice_effects(x,y,TRUE);
+	} else if (abstype == ZT_ACID && loc->typ == IRONBARS && !rn2(5)) {
+		if (cansee(x, y)) {
+		    pline("The iron bars are dissolved!");
+		} else {
+		    You_hear(Hallucination ? "angry snakes!" : "a hissing noise.");
+		}
+		loc->typ = ROOM;
+		newsym(x, y);
 	}
 	if (closed_door(level, x, y)) {
 		int new_doormask = -1;
