@@ -1144,7 +1144,8 @@ extern boolean lined_up(struct monst *);
 extern struct obj *m_carrying(struct monst *,int);
 extern void m_useup(struct monst *,struct obj *);
 extern void m_throw(struct monst *,int,int,int,int,int,struct obj *);
-extern boolean hits_bars(struct obj **,int,int,int,int);
+extern boolean hits_bars(struct obj **,int,int,int,int,int,int);
+extern void hit_bars(struct obj **,int,int,int,int,boolean,boolean);
 
 /* ### mtrand.c ### */
 

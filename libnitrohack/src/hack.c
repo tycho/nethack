@@ -1788,6 +1788,21 @@ int domove(schar dx, schar dy, schar dz)
 	    }
 	}
 
+	/* force-fighting iron bars with a wielded potion of acid dissolves them */
+	if (flags.forcefight && tmpr->typ == IRONBARS && uwep) {
+	    struct obj *otmp = uwep;
+	    if (breaktest(otmp)) {
+		if (otmp->quan > 1L) {
+		    otmp = splitobj(otmp, 1L);
+		} else {
+		    setuwep(NULL);
+		}
+		freeinv(otmp);
+	    }
+	    hit_bars(&otmp, u.ux, u.uy, x, y, TRUE, TRUE);
+	    return 1;
+	}
+
 	/* specifying 'F' with no monster wastes a turn */
 	if (flags.forcefight ||
 	    /* remembered an 'I' && didn't use a move command */
