@@ -792,6 +792,8 @@ void hit_bars(struct obj **obj_p, int objx, int objy, int barsx, int barsy,
 		    You_hear(Hallucination ? "angry snakes!" : "a hissing noise.");
 		}
 		dissolve_bars(barsx, barsy);
+		if (your_fault && In_sokoban(&u.uz))
+		    sokoban_trickster();
 	    }
 	} else if (obj_type == BOULDER || obj_type == HEAVY_IRON_BALL) {
 	    pline("Whang!");

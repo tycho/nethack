@@ -675,6 +675,8 @@ static int still_chewing(xchar x, xchar y)
     } else if (loc->typ == IRONBARS) {
 	digtxt = "You chew through the iron bars.";
 	dissolve_bars(x, y);
+	if (In_sokoban(&u.uz))
+	    sokoban_trickster();
     } else if (loc->typ == SDOOR) {
 	if (loc->doormask & D_TRAPPED) {
 	    loc->doormask = D_NODOOR;

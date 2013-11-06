@@ -3736,6 +3736,8 @@ int zap_over_floor(xchar x, xchar y, int type, boolean *shopdamage)
 		    You_hear(Hallucination ? "angry snakes!" : "a hissing noise.");
 		}
 		dissolve_bars(x, y);
+		if (In_sokoban(&u.uz))
+		    sokoban_trickster();
 	}
 	if (closed_door(level, x, y)) {
 		int new_doormask = -1;
