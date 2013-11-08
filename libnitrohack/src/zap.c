@@ -64,7 +64,7 @@ const char * const flash_types[] = {	/* also used in buzzmu(mcastu.c) */
 	"blast of fire",
 	"blast of frost",
 	"blast of sleep gas",
-	"blast of disintegration",
+	"bolt of disintegration", /* reflectable, unlike other breaths */
 	"blast of lightning",
 	"blast of poison gas",
 	"blast of acid",
@@ -3319,6 +3319,8 @@ void buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy)
     const char *fltxt;
     struct obj *otmp;
     int spell_type;
+    boolean is_breath = (type >= 20 && type <= 29) ||
+			(type >= -29 && type <= -20);
 
     /* if its a Hero Spell then get its SPE_TYPE */
     spell_type = is_hero_spell(type) ? SPE_MAGIC_MISSILE + abstype : 0;
@@ -3376,7 +3378,9 @@ void buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy)
 	    if (type >= 0) mon->mstrategy &= ~STRAT_WAITMASK;
 buzzmonst:
 	    if (zap_hit_check(find_mac(mon), spell_type)) {
-		if (mon_reflects(mon, NULL)) {
+		/* breaths (except disintegration) are not blocked by reflection */
+		if ((!is_breath || abs(type) == ZT_BREATH(ZT_DEATH)) &&
+		    mon_reflects(mon, NULL)) {
 		    if (cansee(mon->mx,mon->my)) {
 			hit(fltxt, mon, exclam(0));
 			shieldeff(mon->mx, mon->my);
@@ -3406,7 +3410,7 @@ buzzmonst:
 			    hit(fltxt, mon, ".");
 			    pline("%s absorbs the deadly %s!", Monnam(mon),
 				  type == ZT_BREATH(ZT_DEATH) ?
-					"blast" : "ray");
+					"bolt" : "ray");
 			    pline("It seems even stronger than before.");
 			}
 			break; /* Out of while loop */
@@ -3474,13 +3478,17 @@ buzzmonst:
 	    }
 	} else if (sx == u.ux && sy == u.uy && range >= 0) {
 	    nomul(0, NULL);
-	    if (u.usteed && !rn2(3) && !mon_reflects(u.usteed, NULL)) {
+	    /* breaths (except disintegration) are not blocked by reflection */
+	    if (u.usteed && !rn2(3) &&
+		!((!is_breath || abs(type) == ZT_BREATH(ZT_DEATH)) &&
+		  mon_reflects(u.usteed, NULL))) {
 		    mon = u.usteed;
 		    goto buzzmonst;
 	    } else if (zap_hit_check((int) u.uac, 0)) {
 		range -= 2;
 		pline("%s hits you!", The(fltxt));
-		if (Reflecting) {
+		/* breaths (except disintegration) are not blocked by reflection */
+		if ((!is_breath || abs(type) == ZT_BREATH(ZT_DEATH)) && Reflecting) {
 		    if (!Blind) {
 		    	ureflects("But %s reflects from your %s!", "it");
 		    } else
