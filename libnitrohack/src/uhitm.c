@@ -573,7 +573,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 		tmp = rnd(4);	/* bonus for martial arts */
 	    else
 		tmp = rnd(2);
-	    valid_weapon_attack = (tmp > 1);
+	    valid_weapon_attack = (tmp > 0);
 	    /* blessed gloves give bonuses when fighting 'bare-handed' */
 	    if (uarmg && uarmg->blessed && (is_undead(mdat) || is_demon(mdat)))
 		tmp += rnd(4);
@@ -679,8 +679,8 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 		    } else {
 			tmp = dmgval(&youmonst, obj, thrown, mon);
 			/* a minimal hit doesn't exercise proficiency */
-			valid_weapon_attack = (tmp > 1);
-			if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
+			valid_weapon_attack = (tmp > 0);
+			if (tmp <= 1 || mon == u.ustuck || u.twoweap) {
 			    ;	/* no special bonuses */
 			} else if (mon->mflee && Role_if (PM_ROGUE) && !Upolyd) {
 			    pline("You strike %s from behind!", mon_nam(mon));
