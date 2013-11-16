@@ -979,13 +979,23 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 
 	if (valid_weapon_attack) {
 	    struct obj *wep;
+	    int training;
 
 	    /* to be valid a projectile must have had the correct projector */
 	    wep = PROJECTILE(obj) ? uwep : obj;
 	    tmp += weapon_dam_bonus(wep);
 	    /* [this assumes that `!thrown' implies wielded...] */
 	    wtype = thrown ? weapon_type(wep) : uwep_skill_type();
-	    use_skill(wtype, 1);
+
+	    /* Heavyshot tends to apply to lesser-used weapon skills,
+	     * so train them more on average than multishot weapons.
+	     */
+	    if (thrown && is_heavyshot(obj, uwep))
+		training = multishot_max(&youmonst, obj);
+	    else
+		training = 1;
+
+	    use_skill(wtype, training);
 	}
 
 	if (ispoisoned) {
