@@ -105,7 +105,12 @@ int hitval(struct obj *otmp, struct monst *mon)
 {
 	int	tmp = 0;
 	const struct permonst *ptr = mon->data;
-	boolean Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
+	boolean Is_weapon = FALSE;
+
+	/* not using a weapon; no special bonuses */
+	if (!otmp) return 0;
+
+	Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
 
 	if (Is_weapon)
 		tmp += otmp->spe;
