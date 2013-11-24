@@ -604,11 +604,14 @@ int peffects(struct obj *otmp)
 		}
 		break;
 	case POT_SLEEPING:
-		if (Sleep_resistance || Free_action)
+		if (FSleep_resistance) {
 		    pline("You yawn.");
-		else {
+		} else {
+		    int duration = rn1(10, 25 - 12 * bcsign(otmp));
+		    if (PSleep_resistance)
+			duration = (duration + 1) / 2;
 		    pline("You suddenly fall asleep!");
-		    fall_asleep(-rn1(10, 25 - 12*bcsign(otmp)), TRUE);
+		    fall_asleep(-duration, TRUE);
 		}
 		break;
 	case POT_MONSTER_DETECTION:
@@ -657,7 +660,7 @@ int peffects(struct obj *otmp)
 			losehp(1, "mildly contaminated potion", KILLED_BY_AN);
 		    }
 		} else {
-		    if (Poison_resistance)
+		    if (FPoison_resistance)
 			pline(
 			  "(But in fact it was biologically contaminated %s.)",
 			      fruitname(TRUE));
@@ -669,16 +672,17 @@ int peffects(struct obj *otmp)
 			if (!Fixed_abil) {
 			    poisontell(typ);
 			    adjattrib(typ,
-			    		Poison_resistance ? -1 : -rn1(4,3),
-			    		TRUE);
+				      Poison_resistance ? -1 : -rn1(4,3),
+				      TRUE);
 			}
-			if (!Poison_resistance) {
-			    if (otmp->fromsink)
-				losehp(rnd(10)+5*!!(otmp->cursed),
-				       "contaminated tap water", KILLED_BY);
-			    else
-				losehp(rnd(10)+5*!!(otmp->cursed),
-				       "contaminated potion", KILLED_BY_AN);
+			if (!FPoison_resistance) {
+			    int contam_dmg = rnd(10) + 5 * !!otmp->cursed;
+			    if (PPoison_resistance)
+				contam_dmg = (contam_dmg + 1) / 2;
+			    losehp(contam_dmg,
+				   otmp->fromsink ? "contaminated tap water" :
+						    "contaminated potion",
+				   KILLED_BY);
 			}
 			exercise(A_CON, FALSE);
 		    }
@@ -863,7 +867,8 @@ int peffects(struct obj *otmp)
 				good_for_you = TRUE;
 			    } else {
 				pline("You burn your %s.", body_part(FACE));
-				losehp(dice(Fire_resistance ? 1 : 3, 4),
+				losehp(dice(FFire_resistance ? 1 : 3,
+					    PFire_resistance ? 2 : 4),
 				       "burning potion of oil", KILLED_BY_AN);
 			    }
 			} else if (otmp->cursed)
@@ -1318,9 +1323,10 @@ void potionbreathe(struct obj *obj)
 		break;
 	case POT_SLEEPING:
 		kn++;
-		if (!Free_action && !Sleep_resistance) {
+		if (!FSleep_resistance) {
 		    pline("You feel rather tired.");
-		    nomul(-rnd(5), "sleeping off a magical draught");
+		    nomul(-rnd(PSleep_resistance ? 2 : 5),
+			  "sleeping off a magical draught");
 		    nomovemsg = "You can move again.";
 		    exercise(A_DEX, FALSE);
 		} else pline("You yawn.");

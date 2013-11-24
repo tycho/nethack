@@ -92,28 +92,30 @@ void explode(int x, int y,
 
 		if (i+x-1 == u.ux && j+y-1 == u.uy) {
 		    switch(adtyp) {
-			case AD_PHYS:                        
+			case AD_PHYS:
 				explmask[i][j] = 0;
 				break;
 			case AD_MAGM:
 				explmask[i][j] = !!Antimagic;
 				break;
 			case AD_FIRE:
-				explmask[i][j] = !!Fire_resistance;
+				explmask[i][j] = !!FFire_resistance;
 				break;
 			case AD_COLD:
-				explmask[i][j] = !!Cold_resistance;
+				explmask[i][j] = !!FCold_resistance;
 				break;
 			case AD_DISN:
 				explmask[i][j] = (olet == WAND_CLASS) ?
-						!!(nonliving(youmonst.data) || is_demon(youmonst.data)) :
-						!!Disint_resistance;
+					!!(nonliving(youmonst.data) ||
+					   is_demon(youmonst.data)) :
+					!!(FDisint_resistance ||
+					   (PDisint_resistance && rn2(10)));
 				break;
 			case AD_ELEC:
-				explmask[i][j] = !!Shock_resistance;
+				explmask[i][j] = !!FShock_resistance;
 				break;
 			case AD_DRST:
-				explmask[i][j] = !!Poison_resistance;
+				explmask[i][j] = !!FPoison_resistance;
 				break;
 			case AD_ACID:
 				explmask[i][j] = !!Acid_resistance;
@@ -130,7 +132,7 @@ void explode(int x, int y,
 		if (mtmp) {
 		    if (mtmp->mhp < 1) explmask[i][j] = 2;
 		    else switch(adtyp) {
-			case AD_PHYS:                        
+			case AD_PHYS:
 				break;
 			case AD_MAGM:
 				explmask[i][j] |= resists_magm(mtmp);
@@ -299,64 +301,71 @@ void explode(int x, int y,
 
 	/* Do your injury last */
 	if (uhurt) {
+		int kf;
+
 		if ((type >= 0 || adtyp == AD_PHYS) &&	/* gas spores */
 				flags.verbose && olet != SCROLL_CLASS)
 			pline("You are caught in the %s!", str);
-		/* do property damage first, in case we end up leaving bones */
-		if (adtyp == AD_FIRE) burn_away_slime();
-		if (Invulnerable) {
-		    damu = 0;
-		    pline("You are unharmed!");
-		} else if (Half_physical_damage && adtyp == AD_PHYS)
-		    damu = (damu+1) / 2;
-		if (adtyp == AD_FIRE) burnarmor(&youmonst);
-		destroy_item(SCROLL_CLASS, (int) adtyp);
-		destroy_item(SPBOOK_CLASS, (int) adtyp);
-		destroy_item(POTION_CLASS, (int) adtyp);
-		destroy_item(RING_CLASS, (int) adtyp);
-		destroy_item(WAND_CLASS, (int) adtyp);
 
-		ugolemeffects((int) adtyp, damu);
-		if (uhurt == 2) {
-		    if (Upolyd)
-		    	u.mh  -= damu;
-		    else
-			u.uhp -= damu;
-		    iflags.botl = 1;
+		if (adtyp == AD_FIRE && olet == WEAPON_CLASS) {
+		    /* projectile of detonation */
+		    kf = KILLED_BY_AN;
+		    strcpy(killer_buf, "exploding projectile");
+		} else if (olet == MON_EXPLODE) {
+		    /* killer handled by caller */
+		    if (str != killer_buf && !generic)
+			strcpy(killer_buf, str);
+		    kf = KILLED_BY_AN;
+		} else if (type >= 0 && olet != SCROLL_CLASS) {
+		    kf = NO_KILLER_PREFIX;
+		    sprintf(killer_buf, "caught %sself in %s own %s",
+			    uhim(), uhis(), str);
+		} else if (!strncmpi(str,"tower of flame", 8) ||
+			   !strncmpi(str,"fireball", 8)) {
+		    kf = KILLED_BY_AN;
+		    strcpy(killer_buf, str);
+		} else {
+		    kf = KILLED_BY;
+		    strcpy(killer_buf, str);
 		}
 
-		if (u.uhp <= 0 || (Upolyd && u.mh <= 0)) {
-		    if (Upolyd) {
+		exercise(A_STR, FALSE);
+
+		if (adtyp == AD_FIRE) {
+		    fire_damageu(damu, NULL, killer_buf, kf, 25, TRUE, FALSE);
+		} else if (adtyp == AD_COLD) {
+		    cold_damageu(damu, NULL, killer_buf, kf, 25);
+		} else if (adtyp == AD_ELEC) {
+		    elec_damageu(damu, NULL, killer_buf, kf, 25, TRUE);
+		} else if (adtyp == AD_MAGM) {
+		    mana_damageu(damu, NULL, killer_buf, kf, FALSE);
+		} else {
+		    if (Invulnerable) {
+			damu = 0;
+			pline("You are unharmed!");
+		    } else if ((Half_physical_damage && adtyp == AD_PHYS) ||
+			       (PPoison_resistance && adtyp == AD_DRST)) {
+			damu = (damu + 1) / 2;
+		    }
+
+		    ugolemeffects(adtyp, damu);
+		    if (uhurt == 2) {
+			if (Upolyd)
+			    u.mh -= damu;
+			else
+			    u.uhp -= damu;
+			iflags.botl = 1;
+		    }
+		    if (Upolyd && u.mh <= 0) {
 			rehumanize();
-		    } else {
-			if (adtyp == AD_FIRE && olet == WEAPON_CLASS) {
-			    /* projectile of detonation */
-			    killer_format = KILLED_BY_AN;
-			    strcpy(killer_buf, "exploding projectile");
-			} else if (olet == MON_EXPLODE) {
-			    /* killer handled by caller */
-			    if (str != killer_buf && !generic)
-				strcpy(killer_buf, str);
-			    killer_format = KILLED_BY_AN;
-			} else if (type >= 0 && olet != SCROLL_CLASS) {
-			    killer_format = NO_KILLER_PREFIX;
-			    sprintf(killer_buf, "caught %sself in %s own %s",
-				    uhim(), uhis(), str);
-			} else if (!strncmpi(str,"tower of flame", 8) ||
-				   !strncmpi(str,"fireball", 8)) {
-			    killer_format = KILLED_BY_AN;
-			    strcpy(killer_buf, str);
-			} else {
-			    killer_format = KILLED_BY;
-			    strcpy(killer_buf, str);
-			}
+		    } else if (u.uhp <= 0) {
+			killer_format = kf;
 			killer = killer_buf;
 			/* Known BUG: BURNING suppresses corpse in bones data,
 			   but done does not handle killer reason correctly */
 			done((adtyp == AD_FIRE) ? BURNING : DIED);
 		    }
 		}
-		exercise(A_STR, FALSE);
 	}
 
 	if (shopdamage) {

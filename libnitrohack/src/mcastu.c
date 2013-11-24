@@ -256,29 +256,19 @@ int castmu(struct monst *mtmp,
 	switch (mattk->adtyp) {
 
 	    case AD_FIRE:
-		pline("You're enveloped in flames.");
-		if (Fire_resistance) {
-			shieldeff(u.ux, u.uy);
-			pline("But you resist the effects.");
-			dmg = 0;
-		}
-		burn_away_slime();
+		pline("You're enveloped in flames!");
+		fire_damageu(dmg, mtmp, NULL, 0, mtmp->m_lev, TRUE, TRUE);
+		dmg = 0;
 		break;
 	    case AD_COLD:
-		pline("You're covered in frost.");
-		if (Cold_resistance) {
-			shieldeff(u.ux, u.uy);
-			pline("But you resist the effects.");
-			dmg = 0;
-		}
+		pline("You're covered in frost!");
+		cold_damageu(dmg, mtmp, NULL, 0, mtmp->m_lev);
+		dmg = 0;
 		break;
 	    case AD_MAGM:
 		pline("You are hit by a shower of missiles!");
-		if (Antimagic) {
-			shieldeff(u.ux, u.uy);
-			pline("The missiles bounce off!");
-			dmg = 0;
-		} else dmg = dice((int)mtmp->m_lev/2 + 1,6);
+		mana_damageu(dmg, mtmp, NULL, 0, TRUE);
+		dmg = 0;
 		break;
 	    case AD_SPEL:	/* wizard spell */
 	    case AD_CLRC:       /* clerical spell */
@@ -479,37 +469,19 @@ static void cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
 	break;
     case CLC_FIRE_PILLAR:
 	pline("A pillar of fire strikes all around you!");
-	if (Fire_resistance) {
-	    shieldeff(u.ux, u.uy);
-	    dmg = 0;
-	} else
-	    dmg = dice(8, 6);
-	if (Half_spell_damage) dmg = (dmg + 1) / 2;
-	burn_away_slime();
-	burnarmor(&youmonst);
-	destroy_item(SCROLL_CLASS, AD_FIRE);
-	destroy_item(POTION_CLASS, AD_FIRE);
-	destroy_item(SPBOOK_CLASS, AD_FIRE);
+	fire_damageu(dice(Half_spell_damage ? 4 : 8, 6), mtmp, NULL, 0,
+		     20, TRUE, TRUE);
 	burn_floor_paper(u.ux, u.uy, TRUE, FALSE);
+	dmg = 0;
 	break;
     case CLC_LIGHTNING:
-    {
-	boolean reflects;
-
 	pline("A bolt of lightning strikes down at you from above!");
-	reflects = ureflects("It bounces off your %s%s.", "");
-	if (reflects || Shock_resistance) {
-	    shieldeff(u.ux, u.uy);
-	    dmg = 0;
-	    if (reflects)
-		break;
-	} else
-	    dmg = dice(8, 6);
-	if (Half_spell_damage) dmg = (dmg + 1) / 2;
-	destroy_item(WAND_CLASS, AD_ELEC);
-	destroy_item(RING_CLASS, AD_ELEC);
+	if (!ureflects("It bounces off your %s%s.", "")) {
+	    elec_damageu(dice(Half_spell_damage ? 4 : 8, 6),
+			 mtmp, NULL, 0, 20, TRUE);
+	}
+	dmg = 0;
 	break;
-    }
     case CLC_CURSE_ITEMS:
 	pline("You feel as if you need some help.");
 	rndcurse();

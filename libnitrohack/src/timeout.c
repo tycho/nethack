@@ -314,11 +314,11 @@ void nh_timeout(void)
 			stop_occupation();
 			break;
 		case SLEEPING:
-			if (unconscious() || Sleep_resistance)
+			if (unconscious() || FSleep_resistance) {
 				HSleeping += rnd(100);
-			else if (Sleeping) {
+			} else if (Sleeping) {
 				pline("You fall asleep.");
-				sleeptime = rnd(20);
+				sleeptime = rnd(PSleep_resistance ? 10 : 20);
 				fall_asleep(-sleeptime, TRUE);
 				HSleeping += sleeptime + rnd(100);
 			}

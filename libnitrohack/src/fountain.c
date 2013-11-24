@@ -239,7 +239,7 @@ void drinkfountain(void)
 		case 21: /* Poisonous */
 
 			pline("The water is contaminated!");
-			if (Poison_resistance) {
+			if (FPoison_resistance) {
 			   pline(
 			      "Perhaps it is runoff from the nearby %s farm.",
 				 fruitname(FALSE));
@@ -247,8 +247,10 @@ void drinkfountain(void)
 				KILLED_BY_AN);
 			   break;
 			}
-			losestr(rn1(4,3));
-			losehp(rnd(10),"contaminated water", KILLED_BY);
+			if (!PPoison_resistance)
+			    losestr(rn1(4, 3));
+			losehp(rnd(PPoison_resistance ? 5 : 10),
+			       "contaminated water", KILLED_BY);
 			exercise(A_CON, FALSE);
 			break;
 
@@ -492,9 +494,12 @@ void drinksink(void)
 		case 1: pline("You take a sip of very warm water.");
 			break;
 		case 2: pline("You take a sip of scalding hot water.");
-			if (Fire_resistance)
+			if (FFire_resistance) {
 				pline("It seems quite tasty.");
-			else losehp(rnd(6), "sipping boiling water", KILLED_BY);
+			} else {
+				losehp(rnd(PFire_resistance ? 3 : 6),
+				       "sipping boiling water", KILLED_BY);
+			}
 			break;
 		case 3: if (mvitals[PM_SEWER_RAT].mvflags & G_GONE)
 				pline("The sink seems quite dirty.");

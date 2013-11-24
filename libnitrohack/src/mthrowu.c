@@ -668,8 +668,8 @@ int breamu(struct monst *mtmp, const struct attack *mattk)
 		     */
 		    if (!rn2(3))
 			mtmp->mspec_used = 10+rn2(20);
-		    if (typ == AD_SLEE && !Sleep_resistance)
-			mtmp->mspec_used += rnd(20);
+		    if (typ == AD_SLEE && !FSleep_resistance)
+			mtmp->mspec_used += rnd(PSleep_resistance ? 10 : 20);
 		} else warning("Breath weapon %d used", typ-1);
 	    }
 	}

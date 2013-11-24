@@ -138,13 +138,13 @@ int dosit(void)
 		return 1;
 	    }
 	    pline("The lava burns you!");
-	    losehp(dice((Fire_resistance ? 2 : 10), 10),
-		   "sitting on lava", KILLED_BY);
+	    fire_damageu(dice(10, 10), NULL, "sitting on lava", KILLED_BY,
+			 20, FALSE, TRUE);
 
 	} else if (is_ice(level, u.ux, u.uy)) {
 
 	    pline(sit_message, defexplain[S_ice]);
-	    if (!Cold_resistance) pline("The ice feels cold.");
+	    if (!FCold_resistance) pline("The ice feels cold.");
 
 	} else if (typ == DRAWBRIDGE_DOWN) {
 
@@ -167,9 +167,8 @@ int dosit(void)
 		    case 3:
 			pline("A%s electric shock shoots through your body!",
 			      (Shock_resistance) ? "n" : " massive");
-			losehp(Shock_resistance ? rnd(6) : rnd(30),
-			       "electric chair", KILLED_BY_AN);
-			exercise(A_CON, FALSE);
+			elec_damageu(rnd(30), NULL, "electric chair", KILLED_BY_AN,
+				     5, FALSE);
 			break;
 		    case 4:
 			pline("You feel much, much better!");
@@ -373,66 +372,66 @@ void rndcurse(void)
 	}
 }
 
-/* remove a random INTRINSIC ability */
+/* remove a random intrinsic (corpse/crowning-acquired) ability */
 void attrcurse(void)
 {
 	switch(rnd(11)) {
-	case 1 : if (HFire_resistance & INTRINSIC) {
-			HFire_resistance &= ~INTRINSIC;
+	case 1 : if (HFire_resistance & FROMOUTSIDE) {
+			HFire_resistance &= ~FROMOUTSIDE;
 			pline("You feel warmer.");
 			break;
 		}
-	case 2 : if (HTeleportation & INTRINSIC) {
-			HTeleportation &= ~INTRINSIC;
+	case 2 : if (HTeleportation & FROMOUTSIDE) {
+			HTeleportation &= ~FROMOUTSIDE;
 			pline("You feel less jumpy.");
 			break;
 		}
-	case 3 : if (HPoison_resistance & INTRINSIC) {
-			HPoison_resistance &= ~INTRINSIC;
+	case 3 : if (HPoison_resistance & FROMOUTSIDE) {
+			HPoison_resistance &= ~FROMOUTSIDE;
 			pline("You feel a little sick!");
 			break;
 		}
-	case 4 : if (HTelepat & INTRINSIC) {
-			HTelepat &= ~INTRINSIC;
+	case 4 : if (HTelepat & FROMOUTSIDE) {
+			HTelepat &= ~FROMOUTSIDE;
 			if (Blind && !Blind_telepat)
 			    see_monsters();	/* Can't sense mons anymore! */
 			pline("Your senses fail!");
 			break;
 		}
-	case 5 : if (HCold_resistance & INTRINSIC) {
-			HCold_resistance &= ~INTRINSIC;
+	case 5 : if (HCold_resistance & FROMOUTSIDE) {
+			HCold_resistance &= ~FROMOUTSIDE;
 			pline("You feel cooler.");
 			break;
 		}
-	case 6 : if (HInvis & INTRINSIC) {
-			HInvis &= ~INTRINSIC;
+	case 6 : if (HInvis & FROMOUTSIDE) {
+			HInvis &= ~FROMOUTSIDE;
 			pline("You feel paranoid.");
 			break;
 		}
-	case 7 : if (HSee_invisible & INTRINSIC) {
-			HSee_invisible &= ~INTRINSIC;
+	case 7 : if (HSee_invisible & FROMOUTSIDE) {
+			HSee_invisible &= ~FROMOUTSIDE;
 			pline("You %s!", Hallucination ? "tawt you taw a puttie tat"
 						: "thought you saw something");
 			break;
 		}
-	case 8 : if (HFast & INTRINSIC) {
-			HFast &= ~INTRINSIC;
+	case 8 : if (HFast & FROMOUTSIDE) {
+			HFast &= ~FROMOUTSIDE;
 			pline("You feel slower.");
 			break;
 		}
-	case 9 : if (HStealth & INTRINSIC) {
-			HStealth &= ~INTRINSIC;
+	case 9 : if (HStealth & FROMOUTSIDE) {
+			HStealth &= ~FROMOUTSIDE;
 			pline("You feel clumsy.");
 			break;
 		}
-	case 10: if (HProtection & INTRINSIC) {
-			HProtection &= ~INTRINSIC;
+	case 10: if (HProtection & FROMOUTSIDE) {
+			HProtection &= ~FROMOUTSIDE;
 			pline("You feel vulnerable.");
 			u.ublessed = 0;
 			break;
 		}
-	case 11: if (HAggravate_monster & INTRINSIC) {
-			HAggravate_monster &= ~INTRINSIC;
+	case 11: if (HAggravate_monster & FROMOUTSIDE) {
+			HAggravate_monster &= ~FROMOUTSIDE;
 			pline("You feel less attractive.");
 			break;
 		}

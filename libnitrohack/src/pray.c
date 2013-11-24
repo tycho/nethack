@@ -457,11 +457,28 @@ static void god_zaps_you(aligntyp resp_god)
 		    pline("For some reason you're unaffected.");
 		else
 		    ureflects("%s reflects from your %s.", "It");
-	    } else if (Shock_resistance) {
-		shieldeff(u.ux, u.uy);
-		pline("It seems not to affect you.");
-	    } else
-		fry_by_god(resp_god);
+	    } else {
+		destroy_item(WAND_CLASS, AD_ELEC);
+		destroy_item(RING_CLASS, AD_ELEC);
+		if (!Shock_resistance) {
+		    fry_by_god(resp_god);
+		} else {
+		    shieldeff(u.ux, u.uy);
+		    if (PShock_resistance) {
+			char buf[BUFSZ];
+			sprintf(buf, "the wrath of %s", align_gname(resp_god));
+			losehp(((Upolyd ? u.mhmax : u.uhpmax) + 1) / 2,
+			       buf, KILLED_BY);
+		    } else {
+			pline("You are unaffected.");
+		    }
+		    if (!resists_blnd(&youmonst)) {
+			pline("You are blinded by the flash!");
+			make_blinded(rnd(100), FALSE);
+			if (!Blind) pline("Your vision quickly clears.");
+		    }
+		}
+	    }
 	}
 
 	pline("%s is not deterred...", align_gname(resp_god));
@@ -489,11 +506,11 @@ static void god_zaps_you(aligntyp resp_god)
 	    		!(EDisint_resistance & W_ARM) && !uarmc)
 		destroy_arm(uarm);
 	    if (uarmu && !uarm && !uarmc) destroy_arm(uarmu);
-	    if (!Disint_resistance)
-		fry_by_god(resp_god);
-	    else {
+	    if (FDisint_resistance || (PDisint_resistance && rn2(10))) {
 		pline("You bask in its black glow for a minute...");
 		godvoice(resp_god, "I believe it not!");
+	    } else {
+		fry_by_god(resp_god);
 	    }
 	    if (Is_astralevel(&u.uz) || Is_sanctum(&u.uz)) {
 		/* one more try for high altars */

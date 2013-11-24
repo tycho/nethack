@@ -1061,15 +1061,15 @@ static int spec_applies(const struct artifact *weap, struct monst *mtmp)
 		return FALSE;
 	    switch(weap->attk.adtyp) {
 		case AD_FIRE:
-			spec_applies_ad_fire = !(yours ? Fire_resistance :
+			spec_applies_ad_fire = !(yours ? FFire_resistance :
 							 resists_fire(mtmp));
 			return spec_applies_ad_fire;
 		case AD_COLD:
-			spec_applies_ad_cold = !(yours ? Cold_resistance :
+			spec_applies_ad_cold = !(yours ? FCold_resistance :
 							 resists_cold(mtmp));
 			return spec_applies_ad_cold;
 		case AD_ELEC:
-			spec_applies_ad_elec = !(yours ? Shock_resistance :
+			spec_applies_ad_elec = !(yours ? FShock_resistance :
 							 resists_elec(mtmp));
 			return spec_applies_ad_elec;
 		case AD_MAGM:
@@ -1081,7 +1081,7 @@ static int spec_applies(const struct artifact *weap, struct monst *mtmp)
 							 (rn2(100) < ptr->mr));
 			return spec_applies_ad_stun;
 		case AD_DRST:
-			return !(yours ? Poison_resistance : resists_poison(mtmp));
+			return !(yours ? FPoison_resistance : resists_poison(mtmp));
 		case AD_DRLI:
 			spec_applies_ad_drli = !(yours ? Drain_resistance :
 							 resists_drli(mtmp));
@@ -1139,19 +1139,19 @@ int spec_dbon(struct obj *otmp, struct obj *olaunch, boolean thrown,
 	    struct obj *defwep = (yours ? uwep : MON_WEP(mon));
 
 	    if ((attacks(AD_FIRE, otmp, olaunch, thrown) &&
-		!(yours ? Fire_resistance : resists_fire(mon)) &&
+		!(yours ? FFire_resistance : resists_fire(mon)) &&
 		!(defwep && defwep->oartifact && defends(AD_FIRE, defwep)))) {
 		spec_dbon_applies = TRUE;
 		spec_applies_ad_fire = TRUE;
-		propdmg += rnd(6);
+		propdmg += rnd((yours && PFire_resistance) ? 3 : 6);
 	    }
 
 	    if ((attacks(AD_COLD, otmp, olaunch, thrown) &&
-		!(yours ? Cold_resistance : resists_cold(mon)) &&
+		!(yours ? FCold_resistance : resists_cold(mon)) &&
 		!(defwep && defwep->oartifact && defends(AD_COLD, defwep)))) {
 		spec_dbon_applies = TRUE;
 		spec_applies_ad_cold = TRUE;
-		propdmg += rnd(6);
+		propdmg += rnd((yours && PCold_resistance) ? 3 : 6);
 	    }
 
 	    /* No AD_MAGM/spec_applies_ad_magm (magic missile) property effect. */
@@ -1182,8 +1182,20 @@ int spec_dbon(struct obj *otmp, struct obj *olaunch, boolean thrown,
 	else
 	    spec_dbon_applies = spec_applies(weap, mon);
 
-	if (spec_dbon_applies)
-	    return weap->attk.damd ? rnd((int)weap->attk.damd) : max(tmp,1);
+	if (spec_dbon_applies) {
+	    int dmg_bonus = weap->attk.damd ? rnd(weap->attk.damd) : max(tmp, 1);
+	    /* halve artifact bonus damage for partial resistances */
+	    if (yours && (weap->spfx & SPFX_ATTK)) {
+		uchar adtyp = weap->attk.adtyp;
+		if ((adtyp == AD_FIRE && PFire_resistance) ||
+		    (adtyp == AD_COLD && PCold_resistance) ||
+		    (adtyp == AD_ELEC && PShock_resistance) ||
+		    (adtyp == AD_DRST && PPoison_resistance)) {
+		    dmg_bonus = (dmg_bonus + 1) / 2;
+		}
+	    }
+	    return dmg_bonus;
+	}
 	return 0;
 }
 

@@ -1990,7 +1990,8 @@ static int gulpum(struct monst *mdef, const struct attack *mattk)
 		snuff_lit(otmp);
 
 	    if ((!touch_petrifies(mdef->data) || Stone_resistance) &&
-		(!touch_disintegrates(mdef->data) || Disint_resistance)) {
+		(!touch_disintegrates(mdef->data) ||
+		 FDisint_resistance || (PDisint_resistance && rn2(10)))) {
 		static char msgbuf[BUFSZ];
 		start_engulf(mdef);
 		switch(mattk->adtyp) {
@@ -2556,11 +2557,14 @@ int passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
 		break;
 	      case AD_COLD:		/* brown mold or blue jelly */
 		if (monnear(mon, u.ux, u.uy)) {
-		    if (Cold_resistance) {
+		    if (FCold_resistance) {
 			shieldeff(u.ux, u.uy);
 			pline("You feel a mild chill.");
 			ugolemeffects(AD_COLD, tmp);
 			break;
+		    } else if (PCold_resistance) {
+			shieldeff(u.ux, u.uy);
+			tmp = (tmp + 1) / 2;
 		    }
 		    pline("You are suddenly very cold!");
 		    mdamageu(mon, tmp);
@@ -2578,22 +2582,28 @@ int passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
 		break;
 	      case AD_FIRE:
 		if (monnear(mon, u.ux, u.uy)) {
-		    if (Fire_resistance) {
+		    if (FFire_resistance) {
 			shieldeff(u.ux, u.uy);
 			pline("You feel mildly warm.");
 			ugolemeffects(AD_FIRE, tmp);
 			break;
+		    } else if (PFire_resistance) {
+			shieldeff(u.ux, u.uy);
+			tmp = (tmp + 1) / 2;
 		    }
 		    pline("You are suddenly very hot!");
 		    mdamageu(mon, tmp);
 		}
 		break;
 	      case AD_ELEC:
-		if (Shock_resistance) {
+		if (FShock_resistance) {
 		    shieldeff(u.ux, u.uy);
 		    pline("You feel a mild tingle.");
 		    ugolemeffects(AD_ELEC, tmp);
 		    break;
+		} else if (PShock_resistance) {
+		    shieldeff(u.ux, u.uy);
+		    tmp = (tmp + 1) / 2;
 		}
 		pline("You are jolted with electricity!");
 		mdamageu(mon, tmp);

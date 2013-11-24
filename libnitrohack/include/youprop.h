@@ -14,6 +14,8 @@
  * Reorganized and rewritten for >32-bit properties.
  * HXxx refers to intrinsic bitfields while in human form.
  * EXxx refers to extrinsic bitfields from worn objects.
+ * PXxx refers to human form intrinsics granting partial resistance.
+ * FXxx refers to other resist sources, granting immunity (full resistance).
  * BXxx refers to the cause of the property being blocked.
  * Xxx refers to any source, including polymorph forms.
  */
@@ -23,36 +25,64 @@
 
 
 /*** Resistances to troubles ***/
+#define Free_action		u.uprops[FREE_ACTION].extrinsic /* [Tom] */
+
 /* With intrinsics and extrinsics */
 #define HFire_resistance	u.uprops[FIRE_RES].intrinsic
 #define EFire_resistance	u.uprops[FIRE_RES].extrinsic
+#define PFire_resistance	((HFire_resistance & FROMOUTSIDE) && \
+				 !(HFire_resistance & ~FROMOUTSIDE) && \
+				 !EFire_resistance && !resists_fire(&youmonst))
 #define Fire_resistance		(HFire_resistance || EFire_resistance || \
 				 resists_fire(&youmonst))
+#define FFire_resistance	(Fire_resistance && !PFire_resistance)
 
 #define HCold_resistance	u.uprops[COLD_RES].intrinsic
 #define ECold_resistance	u.uprops[COLD_RES].extrinsic
+#define PCold_resistance	((HCold_resistance & FROMOUTSIDE) && \
+				 !(HCold_resistance & ~FROMOUTSIDE) && \
+				 !ECold_resistance && !resists_cold(&youmonst))
 #define Cold_resistance		(HCold_resistance || ECold_resistance || \
 				 resists_cold(&youmonst))
+#define FCold_resistance	(Cold_resistance && !PCold_resistance)
 
+/* free action provides sleep immunity too */
 #define HSleep_resistance	u.uprops[SLEEP_RES].intrinsic
 #define ESleep_resistance	u.uprops[SLEEP_RES].extrinsic
+#define PSleep_resistance	((HSleep_resistance & FROMOUTSIDE) && \
+				 !(HSleep_resistance & ~FROMOUTSIDE) && \
+				 !ESleep_resistance && !resists_sleep(&youmonst) && \
+				 !Free_action)
 #define Sleep_resistance	(HSleep_resistance || ESleep_resistance || \
-				 resists_sleep(&youmonst))
+				 resists_sleep(&youmonst) || Free_action)
+#define FSleep_resistance	(Sleep_resistance && !PSleep_resistance)
 
 #define HDisint_resistance	u.uprops[DISINT_RES].intrinsic
 #define EDisint_resistance	u.uprops[DISINT_RES].extrinsic
+#define PDisint_resistance	((HDisint_resistance & FROMOUTSIDE) && \
+				 !(HDisint_resistance & ~FROMOUTSIDE) && \
+				 !EDisint_resistance && !resists_disint(&youmonst))
 #define Disint_resistance	(HDisint_resistance || EDisint_resistance || \
 				 resists_disint(&youmonst))
+#define FDisint_resistance	(Disint_resistance && !PDisint_resistance)
 
 #define HShock_resistance	u.uprops[SHOCK_RES].intrinsic
 #define EShock_resistance	u.uprops[SHOCK_RES].extrinsic
+#define PShock_resistance	((HShock_resistance & FROMOUTSIDE) && \
+				 !(HShock_resistance & ~FROMOUTSIDE) && \
+				 !EShock_resistance && !resists_elec(&youmonst))
 #define Shock_resistance	(HShock_resistance || EShock_resistance || \
 				 resists_elec(&youmonst))
+#define FShock_resistance	(Shock_resistance && !PShock_resistance)
 
 #define HPoison_resistance	u.uprops[POISON_RES].intrinsic
 #define EPoison_resistance	u.uprops[POISON_RES].extrinsic
+#define PPoison_resistance	((HPoison_resistance & FROMOUTSIDE) && \
+				 !(HPoison_resistance & ~FROMOUTSIDE) && \
+				 !EPoison_resistance && !resists_poison(&youmonst))
 #define Poison_resistance	(HPoison_resistance || EPoison_resistance || \
 				 resists_poison(&youmonst))
+#define FPoison_resistance	(Poison_resistance && !PPoison_resistance)
 
 #define HDrain_resistance	u.uprops[DRAIN_RES].intrinsic
 #define EDrain_resistance	u.uprops[DRAIN_RES].extrinsic
@@ -325,8 +355,6 @@
 #define Reflecting		(EReflecting || \
 				 youmonst.data == &mons[PM_CHROMATIC_DRAGON] || \
 				 youmonst.data == &mons[PM_SILVER_DRAGON])
-
-#define Free_action		u.uprops[FREE_ACTION].extrinsic /* [Tom] */
 
 #define Fixed_abil		u.uprops[FIXED_ABIL].extrinsic	/* KMH */
 

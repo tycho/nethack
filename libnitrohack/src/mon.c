@@ -1959,7 +1959,7 @@ void poisoned(const char *string, int typ, const char *pname, int fatal)
 			string, plural ? "were" : "was");
 	}
 
-	if (Poison_resistance) {
+	if (FPoison_resistance) {
 		if (!strcmp(string, "blast")) shieldeff(u.ux, u.uy);
 		pline("The poison doesn't seem to affect you.");
 		return;
@@ -1977,20 +1977,21 @@ void poisoned(const char *string, int typ, const char *pname, int fatal)
 
 	how = strstri(pname, "poison") ? DIED : POISONING;
 	i = rn2(fatal + 20*thrown_weapon);
-	if (i == 0 && typ != A_CHA) {
+	if (i == 0 && typ != A_CHA && !Poison_resistance) {
 		/* used to be instantly fatal; now just gongs your maxhp for (4d6)/2
 		 * ...which is probably pretty close to fatal anyway for low-levels */
 		pline("The poison was extremely toxic!");
 		i = dice(4,6);
 		u.uhpmax -= i / 2;
 		losehp_how(i, pname, kprefix, how);
-	} else if (i <= 5) {
+	} else if (i <= 5 && !Poison_resistance) {
 		/* Check that a stat change was made */
 		if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3,3), 1))
 		    pline("You%s!", poiseff[typ]);
 	} else {
 		i = thrown_weapon ? rnd(6) : rn1(10,6);
-		if (Half_physical_damage) i = (i+1) / 2;
+		if (PPoison_resistance)
+		    i = (i + 1) / 2;
 		losehp(i, pname, kprefix);
 	}
 	if (u.uhp < 1) {

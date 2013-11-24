@@ -582,6 +582,7 @@ static const char
 #define you_are(menu,attr)	enl_msg(menu,You_,are,were,attr)
 #define you_have(menu,attr)	enl_msg(menu,You_,have,had,attr)
 #define you_can(menu,attr)	enl_msg(menu,You_,can,could,attr)
+#define you_resist(menu,attr)	enl_msg(menu,"You resist"," ","ed ",attr)
 #define you_have_been(menu,goodthing) enl_msg(menu,You_,have_been,were,goodthing)
 #define you_have_never(menu,badthing) enl_msg(menu,You_,have_never,never,badthing)
 #define you_have_X(menu,something)	enl_msg(menu,You_,have,(const char *)"", something)
@@ -672,24 +673,37 @@ void enlightenment(int final)
 	}
 
 	/*** Resistances to troubles ***/
-	if (Fire_resistance) you_are(&menu, "fire resistant");
-	if (Cold_resistance) you_are(&menu, "cold resistant");
-	if (Sleep_resistance) you_are(&menu, "sleep resistant");
-	if (Disint_resistance) you_are(&menu, "disintegration-resistant");
-	if (Shock_resistance) you_are(&menu, "shock resistant");
-	if (Poison_resistance) you_are(&menu, "poison resistant");
-	if (Drain_resistance) you_are(&menu, "level-drain resistant");
+	if (PFire_resistance) you_resist(&menu, "fire");
+	else if (FFire_resistance) you_are(&menu, "immune to fire");
+
+	if (PCold_resistance) you_resist(&menu, "cold");
+	else if (FCold_resistance) you_are(&menu, "immune to cold");
+
+	if (PSleep_resistance) you_resist(&menu, "sleep");
+	else if (FSleep_resistance) you_are(&menu, "immune to sleep");
+
+	if (PDisint_resistance) you_resist(&menu, "disintegration");
+	else if (FDisint_resistance) you_are(&menu, "immune to disintegration");
+
+	if (PShock_resistance) you_resist(&menu, "electricity");
+	else if (FShock_resistance) you_are(&menu, "immune to electricity");
+
+	if (PPoison_resistance) you_resist(&menu, "poison");
+	else if (FPoison_resistance) you_are(&menu, "immune to poison");
+
+	if (Drain_resistance) you_are(&menu, "immune to level-drain");
+	if (Halluc_resistance) you_resist(&menu, "hallucinations");
 	if (Sick_resistance) you_are(&menu, "immune to sickness");
 	if (Antimagic) you_are(&menu, "magic-protected");
-	if (Acid_resistance) you_are(&menu, "acid resistant");
+	if (Acid_resistance) you_are(&menu, "immune to acid");
 	if (Stone_resistance)
-		you_are(&menu, "petrification resistant");
+		you_are(&menu, "immune to petrification");
+	if (Half_physical_damage) you_resist(&menu, "physical damage");
+	if (Half_spell_damage) you_resist(&menu, "spell damage");
 	if (Invulnerable) you_are(&menu, "invulnerable");
 	if (u.uedibility) you_can(&menu, "recognize detrimental food");
 
 	/*** Troubles ***/
-	if (Halluc_resistance)
-		enl_msg(&menu, "You resist", "", "ed", " hallucinations");
 	if (final) {
 		if (Hallucination) you_are(&menu, "hallucinating");
 		if (Stunned) you_are(&menu, "stunned");
@@ -933,26 +947,53 @@ static void unspoilered_intrinsics(void)
 	n = menu.icount;
 
 	/* Resistances */
-	if (HFire_resistance) add_menutext(&menu, "You are fire resistant.");
-	if (HCold_resistance) add_menutext(&menu, "You are cold resistant.");
-	if (HSleep_resistance) add_menutext(&menu, "You are sleep resistant.");
-	if (HDisint_resistance) add_menutext(&menu, "You are disintegration-resistant.");
-	if (HShock_resistance) add_menutext(&menu, "You are shock resistant.");
-	if (HPoison_resistance) add_menutext(&menu, "You are poison resistant.");
-	if (HDrain_resistance) add_menutext(&menu, "You are level-drain resistant.");
+	if (HFire_resistance & ~FROMOUTSIDE)
+	    add_menutext(&menu, "You are immune to fire.");
+	else if (HFire_resistance & FROMOUTSIDE)
+	    add_menutext(&menu, "You resist fire.");
+
+	if (HCold_resistance & ~FROMOUTSIDE)
+	    add_menutext(&menu, "You are immune to cold.");
+	else if (HCold_resistance & FROMOUTSIDE)
+	    add_menutext(&menu, "You resist cold.");
+
+	if (HSleep_resistance & ~FROMOUTSIDE)
+	    add_menutext(&menu, "You are immune to sleep.");
+	else if (HSleep_resistance & FROMOUTSIDE)
+	    add_menutext(&menu, "You resist sleep.");
+
+	if (HDisint_resistance & ~FROMOUTSIDE)
+	    add_menutext(&menu, "You are immune to disintegration.");
+	else if (HDisint_resistance & FROMOUTSIDE)
+	    add_menutext(&menu, "You resist disintegration.");
+
+	if (HShock_resistance & ~FROMOUTSIDE)
+	    add_menutext(&menu, "You are immune to electricity.");
+	else if (HShock_resistance & FROMOUTSIDE)
+	    add_menutext(&menu, "You resist electricity.");
+
+	if (HPoison_resistance & ~FROMOUTSIDE)
+	    add_menutext(&menu, "You are immune to poison.");
+	else if (HPoison_resistance & FROMOUTSIDE)
+	    add_menutext(&menu, "You resist poison.");
+
+	if (HDrain_resistance) add_menutext(&menu, "You are immune to level-drain.");
 	if (HSick_resistance) add_menutext(&menu, "You are immune to sickness.");
+
 	/* Senses */
 	if (HSee_invisible) add_menutext(&menu, "You see invisible.");
 	if (HTelepat) add_menutext(&menu, "You are telepathic.");
 	if (HWarning) add_menutext(&menu, "You are warned.");
 	if (HSearching) add_menutext(&menu, "You have automatic searching.");
 	if (HInfravision) add_menutext(&menu, "You have infravision.");
+
 	/* Appearance, behaviour */
 	if (HInvis && Invisible) add_menutext(&menu, "You are invisible.");
 	if (HInvis && !Invisible) add_menutext(&menu, "You are invisible to others.");
 	if (HStealth) add_menutext(&menu, "You are stealthy.");
 	if (HAggravate_monster) add_menutext(&menu, "You aggravte monsters.");
 	if (HConflict) add_menutext(&menu, "You cause conflict.");
+
 	/* Movement */
 	if (HJumping) add_menutext(&menu, "You can jump.");
 	if (HTeleportation) add_menutext(&menu, "You can teleport.");

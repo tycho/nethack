@@ -1618,7 +1618,8 @@ int domove(schar dx, schar dy, schar dz)
 			    || is_floater(youmonst.data) || is_clinger(youmonst.data)
 			    || is_whirly(youmonst.data))
 			on_ice = FALSE;
-		    else if (!rn2(Cold_resistance ? 3 : 2)) {
+		    else if (!rn2(FCold_resistance ? 4 :
+				  PCold_resistance ? 3 : 2)) {
 			HFumbling |= FROMOUTSIDE;
 			HFumbling &= ~TIMEOUT;
 			HFumbling += 1;  /* slip on next move */

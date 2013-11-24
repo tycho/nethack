@@ -1846,7 +1846,8 @@ static int in_container(struct obj *obj)
 		    pline("The contents fly everywhere!");
 		scatter(u.ux,u.uy,10,VIS_EFFECTS|MAY_HIT|MAY_DESTROY|MAY_FRACTURE,0);
 
-		losehp(dice(6,6), "magical explosion", KILLED_BY_AN);
+		mana_damageu(dice(6, 6), NULL, "magical explosion",
+			     KILLED_BY_AN, FALSE);
 		current_container = NULL;	/* baggone = TRUE; */
 
 		/* stop multi-looting; other containers may not be here anymore

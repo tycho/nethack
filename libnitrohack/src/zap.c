@@ -1963,22 +1963,9 @@ int zapyourself(struct obj *obj, boolean ordinary)
 
 		case WAN_LIGHTNING:
 		    makeknown(WAN_LIGHTNING);
-		    if (!Shock_resistance) {
-			pline("You shock yourself!");
-			damage = dice(12,6);
-			exercise(A_CON, FALSE);
-		    } else {
-			shieldeff(u.ux, u.uy);
-			pline("You zap yourself, but seem unharmed.");
-			ugolemeffects(AD_ELEC, dice(12,6));
-		    }
-		    destroy_item(WAND_CLASS, AD_ELEC);
-		    destroy_item(RING_CLASS, AD_ELEC);
-		    if (!resists_blnd(&youmonst)) {
-			    pline(blinded_by_the_flash);
-			    make_blinded((long)rnd(100),FALSE);
-			    if (!Blind) pline("Your vision quickly clears.");
-		    }
+		    pline("You shock yourself!");
+		    sprintf(buf, "show %sself with a bolt of lightning", uhim());
+		    elec_damageu(dice(12, 6), NULL, buf, NO_KILLER_PREFIX, 20, TRUE);
 		    break;
 
 		case SPE_FIREBALL:
@@ -1988,46 +1975,28 @@ int zapyourself(struct obj *obj, boolean ordinary)
 		case WAN_FIRE:
 		    makeknown(WAN_FIRE);
 		case FIRE_HORN:
-		    if (Fire_resistance) {
-			shieldeff(u.ux, u.uy);
-			pline("You feel rather warm.");
-			ugolemeffects(AD_FIRE, dice(12,6));
-		    } else {
-			pline("You've set yourself afire!");
-			damage = dice(12,6);
-		    }
-		    burn_away_slime();
-		    burnarmor(&youmonst);
-		    destroy_item(SCROLL_CLASS, AD_FIRE);
-		    destroy_item(POTION_CLASS, AD_FIRE);
-		    destroy_item(SPBOOK_CLASS, AD_FIRE);
+		    pline("You've set yourself afire!");
+		    sprintf(buf, "shot %sself with a bolt of fire", uhim());
+		    fire_damageu(dice(12, 6), NULL, buf, NO_KILLER_PREFIX,
+				 20, TRUE, FALSE);
 		    break;
 
 		case WAN_COLD:
 		    makeknown(WAN_COLD);
 		case SPE_CONE_OF_COLD:
 		case FROST_HORN:
-		    if (Cold_resistance) {
-			shieldeff(u.ux, u.uy);
-			pline("You feel a little chill.");
-			ugolemeffects(AD_COLD, dice(12,6));
-		    } else {
-			pline("You imitate a popsicle!");
-			damage = dice(12,6);
-		    }
-		    destroy_item(POTION_CLASS, AD_COLD);
+		    pline("You imitate a popsicle!");
+		    sprintf(buf, "shot %sself with a %s of cold", uhim(),
+			    obj->otyp == SPE_CONE_OF_COLD ? "cone" : "bolt");
+		    cold_damageu(dice(12, 6), NULL, buf, NO_KILLER_PREFIX, 20);
 		    break;
 
 		case WAN_MAGIC_MISSILE:
 		    makeknown(WAN_MAGIC_MISSILE);
 		case SPE_MAGIC_MISSILE:
-		    if (Antimagic) {
-			shieldeff(u.ux, u.uy);
-			pline("The missiles bounce!");
-		    } else {
-			damage = dice(4,6);
-			pline("Idiot!  You've shot yourself!");
-		    }
+		    pline("You've shot yourself!");
+		    sprintf(buf, "shot %sself with a magic missile", uhim());
+		    mana_damageu(dice(4, 6), NULL, buf, NO_KILLER_PREFIX, TRUE);
 		    break;
 
 		case WAN_POLYMORPH:
@@ -2090,12 +2059,12 @@ int zapyourself(struct obj *obj, boolean ordinary)
 		case WAN_SLEEP:
 		    makeknown(WAN_SLEEP);
 		case SPE_SLEEP:
-		    if (Sleep_resistance) {
+		    if (FSleep_resistance) {
 			shieldeff(u.ux, u.uy);
 			pline("You don't feel sleepy!");
 		    } else {
 			pline("The sleep ray hits you!");
-			fall_asleep(-rnd(50), TRUE);
+			fall_asleep(-rnd(PSleep_resistance ? 25 : 50), TRUE);
 		    }
 		    break;
 
@@ -3122,50 +3091,27 @@ static void zap_hit_u(int type, int nd, const char *fltxt, xchar sx, xchar sy)
 
 	switch (abs(type) % 10) {
 	case ZT_MAGIC_MISSILE:
-	    if (Antimagic) {
-		shieldeff(sx, sy);
-		pline("The missiles bounce off!");
-	    } else {
-		dam = dice(nd,6);
-		exercise(A_STR, FALSE);
-	    }
+	    mana_damageu(dice(nd, 6), NULL, fltxt, KILLED_BY_AN, TRUE);
 	    break;
 	case ZT_FIRE:
-	    if (Fire_resistance) {
-		shieldeff(sx, sy);
-		pline("You don't feel hot!");
-		ugolemeffects(AD_FIRE, dice(nd, 6));
-	    } else {
-		dam = dice(nd, 6);
-	    }
-	    burn_away_slime();
-	    if (burnarmor(&youmonst)) {	/* "body hit" */
-		if (!rn2(3)) destroy_item(POTION_CLASS, AD_FIRE);
-		if (!rn2(3)) destroy_item(SCROLL_CLASS, AD_FIRE);
-		if (!rn2(5)) destroy_item(SPBOOK_CLASS, AD_FIRE);
-	    }
+	    fire_damageu(dice(nd, 6), NULL, fltxt, KILLED_BY_AN, 7, TRUE, FALSE);
 	    break;
 	case ZT_COLD:
-	    if (Cold_resistance) {
-		shieldeff(sx, sy);
-		pline("You don't feel cold.");
-		ugolemeffects(AD_COLD, dice(nd, 6));
-	    } else {
-		dam = dice(nd, 6);
-	    }
-	    if (!rn2(3)) destroy_item(POTION_CLASS, AD_COLD);
+	    cold_damageu(dice(nd, 6), NULL, fltxt, KILLED_BY_AN, 7);
 	    break;
 	case ZT_SLEEP:
-	    if (Sleep_resistance) {
+	    if (FSleep_resistance) {
 		shieldeff(u.ux, u.uy);
 		pline("You don't feel sleepy.");
 	    } else {
-		fall_asleep(-dice(nd,25), TRUE); /* sleep ray */
+		if (PSleep_resistance)
+		    shieldeff(u.ux, u.uy);
+		fall_asleep(-dice(nd, PSleep_resistance ? 12 : 25), TRUE);
 	    }
 	    break;
 	case ZT_DEATH:
 	    if (abs(type) == ZT_BREATH(ZT_DEATH)) {
-		if (Disint_resistance) {
+		if (FDisint_resistance || (PDisint_resistance && rn2(10))) {
 		    pline("You are not disintegrated.");
 		    break;
 		} else if (uarms) {
@@ -3198,16 +3144,7 @@ static void zap_hit_u(int type, int nd, const char *fltxt, xchar sx, xchar sy)
 	    done((type == -ZT_BREATH(ZT_DEATH)) ? DISINTEGRATED : DIED);
 	    return; /* lifesaved */
 	case ZT_LIGHTNING:
-	    if (Shock_resistance) {
-		shieldeff(sx, sy);
-		pline("You aren't affected.");
-		ugolemeffects(AD_ELEC, dice(nd, 6));
-	    } else {
-		dam = dice(nd, 6);
-		exercise(A_CON, FALSE);
-	    }
-	    if (!rn2(3)) destroy_item(WAND_CLASS, AD_ELEC);
-	    if (!rn2(3)) destroy_item(RING_CLASS, AD_ELEC);
+	    elec_damageu(dice(nd, 6), NULL, fltxt, KILLED_BY_AN, 7, TRUE);
 	    break;
 	case ZT_POISON_GAS:
 	    poisoned("blast", A_DEX, "poisoned blast", 15);
@@ -3922,7 +3859,7 @@ boolean destroy_item(int osym, int dmgtyp)
 		    } else skip++;
 		    break;
 		case AD_FIRE:
-		    xresist = (Fire_resistance && obj->oclass != POTION_CLASS);
+		    xresist = (FFire_resistance && obj->oclass != POTION_CLASS);
 
 		    if (obj->otyp == SCR_FIRE || obj->otyp == SPE_FIREBALL)
 			skip++;
@@ -3950,9 +3887,13 @@ boolean destroy_item(int osym, int dmgtyp)
 			    skip++;
 			    break;
 		    }
+		    /* Partial fire resistance only helps if full fire immunity
+		     * would have helped otherwise. */
+		    if (!skip && PFire_resistance && obj->oclass != POTION_CLASS)
+			dmg = (dmg + 1) / 2;
 		    break;
 		case AD_ELEC:
-		    xresist = (Shock_resistance && obj->oclass != RING_CLASS);
+		    xresist = (FShock_resistance && obj->oclass != RING_CLASS);
 		    quan = obj->quan;
 		    switch(osym) {
 			case RING_CLASS:
@@ -3970,6 +3911,10 @@ boolean destroy_item(int osym, int dmgtyp)
 			    skip++;
 			    break;
 		    }
+		    /* Partial shock resistance only helps if full shock resistance
+		     * would have helped otherwise. */
+		    if (!skip && PShock_resistance && obj->oclass != RING_CLASS)
+			dmg = (dmg + 1) / 2;
 		    break;
 		default:
 		    skip++;

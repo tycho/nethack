@@ -95,10 +95,9 @@ boolean boulder_hits_pool(struct obj *otmp, int rx, int ry, boolean pushing)
 		    pline("You find yourself on dry land again!");
 		} else if (lava && distu(rx,ry) <= 2) {
 		    pline("You are hit by molten lava%c",
-			Fire_resistance ? '.' : '!');
-			burn_away_slime();
-		    losehp(dice((Fire_resistance ? 1 : 3), 6),
-			   "molten lava", KILLED_BY);
+			  FFire_resistance ? '.' : '!');
+		    fire_damageu(dice(3, 6), NULL, "molten lava", KILLED_BY,
+				 0, FALSE, TRUE);
 		} else if (!fills_up && flags.verbose &&
 			   (pushing ? !Blind : cansee(rx,ry)))
 		    pline("It sinks without a trace!");

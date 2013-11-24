@@ -649,7 +649,8 @@ int mattacku(struct monst *mtmp)
 	    if (iflags.botl) bot();
 	/* give player a chance of waking up before dying -kaa */
 	    if (sum[i] == 1) {	    /* successful attack */
-		if (u.usleep && u.usleep < moves && !rn2(10)) {
+		if (u.usleep && u.usleep < moves &&
+		    (FSleep_resistance || !rn2(PSleep_resistance ? 5 : 10))) {
 		    multi = -1;
 		    nomovemsg = "The combat suddenly awakens you.";
 		}
@@ -822,6 +823,8 @@ static int hitmu(struct monst *mtmp, const struct attack  *mattk)
 	const struct permonst *olduasmon = youmonst.data;
 	int res;
 	struct attack noseduce;
+	boolean elemental_damage = FALSE;
+	boolean force_passive = FALSE;
 	
 	if (!flags.seduce_enabled && mattk->adtyp == AD_SSEX) {
 	    noseduce = *mattk;
@@ -935,56 +938,37 @@ static int hitmu(struct monst *mtmp, const struct attack  *mattk)
 		hitmsg(mtmp, mattk);
 		if (uncancelled) {
 		    pline("You're %s!", on_fire(youmonst.data, mattk));
-		    if (youmonst.data == &mons[PM_STRAW_GOLEM] ||
-		        youmonst.data == &mons[PM_PAPER_GOLEM]) {
-			    pline("You roast!");
-			    /* KMH -- this is okay with unchanging */
-			    rehumanize();
-			    break;
-		    } else if (Fire_resistance) {
-			pline("The fire doesn't feel hot!");
-			dmg = 0;
-		    }
-		    if ((int) mtmp->m_lev > rn2(20))
-			destroy_item(SCROLL_CLASS, AD_FIRE);
-		    if ((int) mtmp->m_lev > rn2(20))
-			destroy_item(POTION_CLASS, AD_FIRE);
-		    if ((int) mtmp->m_lev > rn2(25))
-			destroy_item(SPBOOK_CLASS, AD_FIRE);
-		    burn_away_slime();
-		} else dmg = 0;
+		    fire_damageu(dmg, mtmp, NULL, 0, mtmp->m_lev, TRUE, FALSE);
+		    elemental_damage = TRUE;	/* for completeness */
+		    force_passive = TRUE;
+		}
+		dmg = 0;
 		break;
 	    case AD_COLD:
 		hitmsg(mtmp, mattk);
 		if (uncancelled) {
 		    pline("You're covered in frost!");
-		    if (Cold_resistance) {
-			pline("The frost doesn't seem cold!");
-			dmg = 0;
-		    }
-		    if ((int) mtmp->m_lev > rn2(20))
-			destroy_item(POTION_CLASS, AD_COLD);
-		} else dmg = 0;
+		    cold_damageu(dmg, mtmp, NULL, 0, mtmp->m_lev);
+		    elemental_damage = TRUE;	/* for completeness */
+		    force_passive = TRUE;
+		}
+		dmg = 0;
 		break;
 	    case AD_ELEC:
 		hitmsg(mtmp, mattk);
 		if (uncancelled) {
 		    pline("You get zapped!");
-		    if (Shock_resistance) {
-			pline("The zap doesn't shock you!");
-			dmg = 0;
-		    }
-		    if ((int) mtmp->m_lev > rn2(20))
-			destroy_item(WAND_CLASS, AD_ELEC);
-		    if ((int) mtmp->m_lev > rn2(20))
-			destroy_item(RING_CLASS, AD_ELEC);
-		} else dmg = 0;
+		    elec_damageu(dmg, mtmp, NULL, 0, mtmp->m_lev, FALSE);
+		    elemental_damage = TRUE;	/* for completeness */
+		    force_passive = TRUE;
+		}
+		dmg = 0;
 		break;
 	    case AD_SLEE:
 		hitmsg(mtmp, mattk);
 		if (uncancelled && multi >= 0 && !rn2(5)) {
-		    if (Sleep_resistance) break;
-		    fall_asleep(-rnd(10), TRUE);
+		    if (FSleep_resistance) break;
+		    fall_asleep(-rnd(PSleep_resistance ? 5 : 10), TRUE);
 		    if (Blind) pline("You are put to sleep!");
 		    else pline("You are put to sleep by %s!", mon_nam(mtmp));
 		}
@@ -1426,15 +1410,18 @@ dopois:
 		break;
 	    case AD_ACID:
 		hitmsg(mtmp, mattk);
-		if (!mtmp->mcan && !rn2(3))
+		if (!mtmp->mcan && !rn2(3)) {
 		    if (Acid_resistance) {
 			pline("You're covered in acid, but it seems harmless.");
 			dmg = 0;
 		    } else {
 			pline("You're covered in acid!	It burns!");
 			exercise(A_STR, FALSE);
+			elemental_damage = TRUE;
 		    }
-		else		dmg = 0;
+		} else {
+		    dmg = 0;
+		}
 		break;
 	    case AD_SLOW:
 		hitmsg(mtmp, mattk);
@@ -1534,7 +1521,8 @@ dopois:
 		if (!mtmp->mcan && mtmp->mhp > 6) {
 		    int mass = 0, touched = 0;
 		    struct obj *destroyme = NULL;
-		    if (Disint_resistance) break;
+		    if (FDisint_resistance || (PDisint_resistance && rn2(10)))
+			break;
 		    if (uarms) {
 			if (!oresist_disintegration(uarms))
 			    destroyme = uarms;
@@ -1620,13 +1608,13 @@ dopois:
 /*	Negative armor class reduces damage done instead of fully protecting
  *	against hits.
  */
-	if (dmg && u.uac < 0) {
+	if (dmg && u.uac < 0 && !elemental_damage) {
 		dmg -= rnd(-u.uac);
 		if (dmg < 1) dmg = 1;
 	}
 
 	if (dmg) {
-	    if (Half_physical_damage
+	    if ((Half_physical_damage && !elemental_damage)
 					/* Mitre of Holiness */
 		|| (Role_if (PM_PRIEST) && uarmh && is_quest_artifact(uarmh) &&
 		    (is_undead(mtmp->data) || is_demon(mtmp->data))))
@@ -1668,7 +1656,7 @@ dopois:
 	    mdamageu(mtmp, dmg);
 	}
 
-	if (dmg)
+	if (dmg || force_passive)
 	    res = passiveum(olduasmon, mtmp, mattk);
 	else
 	    res = 1;
@@ -1685,6 +1673,7 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 	int	tim_tmp;
 	struct obj *otmp2;
 	int	i;
+	boolean elemental_damage = FALSE;
 
 	if (!u.uswallow) {	/* swallows you */
 		if (youmonst.data->msize >= MZ_HUGE) return 0;
@@ -1790,6 +1779,7 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		      if (Hallucination) pline("Ouch!  You've been slimed!");
 		      else pline("You are covered in slime!  It burns!");
 		      exercise(A_STR, FALSE);
+		      elemental_damage = TRUE;
 		    }
 		    break;
 		case AD_BLND:
@@ -1807,34 +1797,28 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		case AD_ELEC:
 		    if (!mtmp->mcan && rn2(2)) {
 			pline("The air around you crackles with electricity.");
-			if (Shock_resistance) {
-				shieldeff(u.ux, u.uy);
-				pline("You seem unhurt.");
-				ugolemeffects(AD_ELEC,tmp);
-				tmp = 0;
-			}
-		    } else tmp = 0;
+			elec_damageu(tmp, mtmp, NULL, 0, mtmp->m_lev, FALSE);
+			elemental_damage = TRUE;	/* for completeness */
+		    }
+		    tmp = 0;
 		    break;
 		case AD_COLD:
 		    if (!mtmp->mcan && rn2(2)) {
-			if (Cold_resistance) {
-				shieldeff(u.ux, u.uy);
-				pline("You feel mildly chilly.");
-				ugolemeffects(AD_COLD,tmp);
-				tmp = 0;
-			} else pline("You are freezing to death!");
-		    } else tmp = 0;
+			if (!FCold_resistance)
+			    pline("You are freezing to death!");
+			cold_damageu(tmp, mtmp, NULL, 0, mtmp->m_lev);
+			elemental_damage = TRUE;	/* for completeness */
+		    }
+		    tmp = 0;
 		    break;
 		case AD_FIRE:
 		    if (!mtmp->mcan && rn2(2)) {
-			if (Fire_resistance) {
-				shieldeff(u.ux, u.uy);
-				pline("You feel mildly hot.");
-				ugolemeffects(AD_FIRE,tmp);
-				tmp = 0;
-			} else pline("You are burning to a crisp!");
-			burn_away_slime();
-		    } else tmp = 0;
+			if (!FFire_resistance)
+			    pline("You are burning to a crisp!");
+			fire_damageu(tmp, mtmp, NULL, 0, mtmp->m_lev, FALSE, FALSE);
+			elemental_damage = TRUE;	/* for completeness */
+		    }
+		    tmp = 0;
 		    break;
 		case AD_DISE:
 		    if (!diseasemu(mtmp->data)) tmp = 0;
@@ -1842,7 +1826,7 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		case AD_DISN:
 		    if (!mtmp->mcan && rn2(2) && u.uswldtim < 2) {
 			tmp = 0;
-			if (Disint_resistance) {
+			if (FDisint_resistance || (PDisint_resistance && rn2(10))) {
 			    shieldeff(u.ux, u.uy);
 			    pline("You feel a mild tickle.");
 			    tmp = 0;
@@ -1873,7 +1857,8 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		    break;
 	}
 
-	if (Half_physical_damage) tmp = (tmp+1) / 2;
+	if (Half_physical_damage && !elemental_damage)
+	    tmp = (tmp + 1) / 2;
 
 	mdamageu(mtmp, tmp);
 	if (tmp) stop_occupation();
@@ -1910,13 +1895,16 @@ static int explmu(struct monst *mtmp, const struct attack *mattk, boolean ufound
 
 	switch (mattk->adtyp) {
 	    case AD_COLD:
-		not_affected |= Cold_resistance;
+		not_affected |= FCold_resistance;
+		if (PCold_resistance) tmp = (tmp + 1) / 2;
 		goto common;
 	    case AD_FIRE:
-		not_affected |= Fire_resistance;
+		not_affected |= FFire_resistance;
+		if (PFire_resistance) tmp = (tmp + 1) / 2;
 		goto common;
 	    case AD_ELEC:
-		not_affected |= Shock_resistance;
+		not_affected |= FShock_resistance;
+		if (PShock_resistance) tmp = (tmp + 1) / 2;
 common:
 
 		if (!not_affected) {
@@ -1927,7 +1915,6 @@ common:
 		        if (flags.verbose) pline("You get blasted!");
 		    }
 		    if (mattk->adtyp == AD_FIRE) burn_away_slime();
-		    if (Half_physical_damage) tmp = (tmp+1) / 2;
 		    mdamageu(mtmp, tmp);
 		}
 		break;
@@ -2074,31 +2061,19 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		if (!mtmp->mcan && canseemon(level, mtmp) &&
 			couldsee(mtmp->mx, mtmp->my) &&
 			mtmp->mcansee && !mtmp->mspec_used && rn2(5)) {
-		    int dmg = dice(2,6);
-
 		    pline("%s attacks you with a fiery gaze!", Monnam(mtmp));
+		    fire_damageu(dice(2, 6), mtmp, NULL, 0,
+				 mtmp->m_lev, TRUE, FALSE);
 		    stop_occupation();
-		    if (Fire_resistance) {
-			pline("The fire doesn't feel hot!");
-			dmg = 0;
-		    }
-		    burn_away_slime();
-		    if ((int) mtmp->m_lev > rn2(20))
-			destroy_item(SCROLL_CLASS, AD_FIRE);
-		    if ((int) mtmp->m_lev > rn2(20))
-			destroy_item(POTION_CLASS, AD_FIRE);
-		    if ((int) mtmp->m_lev > rn2(25))
-			destroy_item(SPBOOK_CLASS, AD_FIRE);
-		    if (dmg) mdamageu(mtmp, dmg);
 		}
 		break;
 #ifdef PM_BEHOLDER /* work in progress */
 	    case AD_SLEE:
 		if (!mtmp->mcan && canseemon(mtmp) &&
 		   couldsee(mtmp->mx, mtmp->my) && mtmp->mcansee &&
-		   multi >= 0 && !rn2(5) && !Sleep_resistance) {
+		   multi >= 0 && !rn2(5) && !FSleep_resistance) {
 
-		    fall_asleep(-rnd(10), TRUE);
+		    fall_asleep(-rnd(PSleep_resistance ? 5 : 10), TRUE);
 		    pline("%s gaze makes you very sleepy...",
 			  s_suffix(Monnam(mtmp)));
 		}
@@ -2129,6 +2104,189 @@ void mdamageu(struct monst *mtmp, int n)
 	} else {
 		u.uhp -= n;
 		if (u.uhp < 1) done_in_by(mtmp);
+	}
+}
+
+
+/*
+ * destroy == odds of destroying items
+ * fire == TRUE for fire, FALSE for lava/engulfing
+ * hurt_maxhp == damage reduces max HP as well
+ */
+void fire_damageu(int n, struct monst *mtmp, const char *k_name, int k_format,
+		  int destroy, boolean fire, boolean hurt_maxhp)
+{
+	if (Invulnerable) {
+	    pline("You are unharmed!");
+	    n = 0;
+	} else {
+	    /* certain golems take a lot of damage from the heat */
+	    if (fire && Upolyd) {
+		int alt;
+		switch (u.umonnum) {
+		case PM_PAPER_GOLEM:	alt = u.mhmax; break;
+		case PM_STRAW_GOLEM:	alt = u.mhmax / 2; break;
+		case PM_WOOD_GOLEM:	alt = u.mhmax / 4; break;
+		case PM_LEATHER_GOLEM:	alt = u.mhmax / 8; break;
+		default:		alt = 0; break;
+		}
+		if (alt) {
+		    pline("You roast!");
+		    if (alt > n) n = alt;
+		}
+	    }
+
+	    if (Fire_resistance) {
+		shieldeff(u.ux, u.uy);
+		if (FFire_resistance) {
+		    if (fire)
+			pline("The fire doesn't feel hot!");
+		    else
+			pline("You feel mildly hot.");
+		    ugolemeffects(AD_FIRE, n);
+		    n = 0;
+		} else if (PFire_resistance) {
+		    n = (n + 1) / 2;
+		}
+	    } else if (hurt_maxhp) {
+		if (Upolyd) {
+		    if (u.mhmax > mons[u.umonnum].mlevel) {
+			u.mhmax -= rn2(min(u.mhmax, n + 1));
+			if (u.mh > u.mhmax) u.mh = u.mhmax;
+			iflags.botl = 1;
+		    }
+		} else if (u.uhpmax > u.ulevel) {
+		    u.uhpmax -= rn2(min(u.uhpmax, n + 1));
+		    if (u.uhp > u.uhpmax) u.uhp = u.uhpmax;
+		    iflags.botl = 1;
+		}
+	    }
+	}
+
+	burn_away_slime();
+	if (destroy > rn2(20)) destroy_item(SCROLL_CLASS, AD_FIRE);
+	if (destroy > rn2(20)) destroy_item(POTION_CLASS, AD_FIRE);
+	if (destroy > rn2(25)) destroy_item(SPBOOK_CLASS, AD_FIRE);
+	if (destroy > rn2(20)) burnarmor(&youmonst);
+
+	if (n) {
+	    if (mtmp)
+		mdamageu(mtmp, n);
+	    else
+		losehp(n, k_name, k_format);
+	}
+}
+
+
+/*
+ * destroy == odds of destroying items
+ */
+void cold_damageu(int n, struct monst *mtmp, const char *k_name, int k_format,
+		  int destroy)
+{
+	if (Invulnerable) {
+	    pline("You are unharmed!");
+	    n = 0;
+	} else {
+	    if (Cold_resistance) {
+		shieldeff(u.ux, u.uy);
+		if (FCold_resistance) {
+		    pline("The frost doesn't feel cold!");
+		    ugolemeffects(AD_COLD, n);
+		    n = 0;
+		} else if (PCold_resistance) {
+		    n = (n + 1) / 2;
+		}
+	    }
+	}
+
+	if (destroy > rn2(20))
+	    destroy_item(POTION_CLASS, AD_COLD);
+
+	if (n) {
+	    if (mtmp)
+		mdamageu(mtmp, n);
+	    else
+		losehp(n, k_name, k_format);
+	}
+}
+
+
+/*
+ * destroy == odds of destroying items
+ * flash == emit a blinding flash
+ */
+void elec_damageu(int n, struct monst *mtmp, const char *k_name, int k_format,
+		  int destroy, boolean flash)
+{
+	if (Invulnerable) {
+	    pline("You are unharmed!");
+	    n = 0;
+	} else {
+	    if (Shock_resistance) {
+		shieldeff(u.ux, u.uy);
+		if (FShock_resistance) {
+		    pline("You are unharmed!");
+		    ugolemeffects(AD_ELEC, n);
+		    n = 0;
+		} else if (PShock_resistance) {
+		    n = (n + 1) / 2;
+		}
+	    } else {
+		exercise(A_CON, FALSE);
+	    }
+	}
+
+	if (destroy > rn2(20)) destroy_item(WAND_CLASS, AD_ELEC);
+	if (destroy > rn2(20)) destroy_item(RING_CLASS, AD_ELEC);
+
+	if (n) {
+	    if (mtmp)
+		mdamageu(mtmp, n);
+	    else
+		losehp(n, k_name, k_format);
+	}
+
+	if (flash && !resists_blnd(&youmonst)) {
+	    pline("You are blinded by the flash!");
+	    make_blinded(rnd(100), FALSE);
+	    if (!Blind) pline("Your vision quickly clears.");
+	}
+}
+
+
+/*
+ * missile == TRUE for magic missiles
+ */
+void mana_damageu(int n, struct monst *mtmp, const char *k_name, int k_format,
+		  boolean missile)
+{
+	if (Invulnerable) {
+	    pline("You are unharmed!");
+	    n = 0;
+	} else {
+	    if (Antimagic) {
+		if (missile)
+		    pline("The missiles bounce off!");
+		else
+		    pline("You are unharmed!");
+		ugolemeffects(AD_MAGM, n);
+		n = 0;
+	    }
+	}
+
+	if (n) {
+	    if (mtmp) {
+		mdamageu(mtmp, n);
+	    } else {
+		losehp(n, k_name, k_format);
+		if (!missile) {
+		    pline("Your body absorbs some of the magical energy!");
+		    u.uen = (u.uenmax += rnd(n));
+		} else {
+		    exercise(A_STR, FALSE);
+		}
+	    }
 	}
 }
 

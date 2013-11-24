@@ -889,6 +889,10 @@ extern int mattacku(struct monst *);
 extern int magic_negation(struct monst *);
 extern int gazemu(struct monst *, const struct attack *);
 extern void mdamageu(struct monst *,int);
+extern void fire_damageu(int,struct monst *,const char *,int,int,boolean,boolean);
+extern void cold_damageu(int,struct monst *,const char *,int,int);
+extern void elec_damageu(int,struct monst *,const char *,int,int,boolean);
+extern void mana_damageu(int,struct monst *,const char *,int,boolean);
 extern int could_seduce(struct monst *,struct monst *, const struct attack *);
 extern int doseduce(struct monst *);
 

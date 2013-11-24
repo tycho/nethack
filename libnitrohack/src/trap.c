@@ -759,12 +759,12 @@ void dotrap(struct trap *trap, unsigned trflags)
 
 	    case SLP_GAS_TRAP:
 		seetrap(trap);
-		if (Sleep_resistance || breathless(youmonst.data)) {
+		if (FSleep_resistance || breathless(youmonst.data)) {
 		    pline("You are enveloped in a cloud of gas!");
 		    break;
 		}
 		pline("A cloud of gas puts you to sleep!");
-		fall_asleep(-rnd(25), TRUE);
+		fall_asleep(-rnd(PSleep_resistance ? 12 : 25), TRUE);
 		steedintrap(trap, NULL);
 		break;
 
@@ -1025,9 +1025,8 @@ glovecheck:		rust_dmg(uarmg, "gauntlets", 1, TRUE, &youmonst);
 		    deltrap(level, trap);
 		    newsym(u.ux,u.uy);	/* update position */
 		    pline("You are caught in a magical explosion!");
-		    losehp(rnd(10), "magical explosion", KILLED_BY_AN);
-		    pline("Your body absorbs some of the magical energy!");
-		    u.uen = (u.uenmax += 2);
+		    mana_damageu(rnd(10), NULL, "magical explosion", KILLED_BY_AN,
+				 FALSE);
 		} else domagictrap();
 		steedintrap(trap, NULL);
 		break;
@@ -2180,7 +2179,7 @@ void minstapetrify(struct monst *mon, boolean byplayer)
 int instadisintegrate(const char *str)
 {
 	int result;
-	if (Disint_resistance || !rn2(10))
+	if (FDisint_resistance || (PDisint_resistance && rn2(10)) || !rn2(10))
 	    return 0;
 	pline("You disintegrate!");
 	result = youmonst.data->cwt;
@@ -2450,7 +2449,6 @@ int float_down(long hmask, long emask)     /* might cancel timeout */
 static void dofiretrap(struct obj *box)
 {
 	boolean see_it = !Blind;
-	int num, alt;
 
 /* Bug: for box case, the equivalent of burn_floor_paper() ought
  * to be done upon its contents.
@@ -2459,44 +2457,14 @@ static void dofiretrap(struct obj *box)
 	if ((box && !carried(box)) ? is_pool(level, box->ox, box->oy) : Underwater) {
 	    pline("A cascade of steamy bubbles erupts from %s!",
 		    the(box ? xname(box) : surface(u.ux,u.uy)));
-	    if (Fire_resistance) pline("You are uninjured.");
-	    else losehp(rnd(3), "boiling water", KILLED_BY);
+	    if (!Fire_resistance)
+		losehp(rnd(3), "boiling water", KILLED_BY);
 	    return;
 	}
 	pline("A %s %s from %s!", tower_of_flame,
 	      box ? "bursts" : "erupts",
 	      the(box ? xname(box) : surface(u.ux,u.uy)));
-	if (Fire_resistance) {
-	    shieldeff(u.ux, u.uy);
-	    num = rn2(2);
-	} else if (Upolyd) {
-	    num = dice(2,4);
-	    switch (u.umonnum) {
-	    case PM_PAPER_GOLEM:   alt = u.mhmax; break;
-	    case PM_STRAW_GOLEM:   alt = u.mhmax / 2; break;
-	    case PM_WOOD_GOLEM:    alt = u.mhmax / 4; break;
-	    case PM_LEATHER_GOLEM: alt = u.mhmax / 8; break;
-	    default: alt = 0; break;
-	    }
-	    if (alt > num) num = alt;
-	    if (u.mhmax > mons[u.umonnum].mlevel)
-		u.mhmax -= rn2(min(u.mhmax,num + 1)), iflags.botl = 1;
-	} else {
-	    num = dice(2,4);
-	    if (u.uhpmax > u.ulevel)
-		u.uhpmax -= rn2(min(u.uhpmax,num + 1)), iflags.botl = 1;
-	}
-	if (!num)
-	    pline("You are uninjured.");
-	else
-	    losehp(num, tower_of_flame, KILLED_BY_AN);
-	burn_away_slime();
-
-	if (burnarmor(&youmonst) || rn2(3)) {
-	    destroy_item(SCROLL_CLASS, AD_FIRE);
-	    destroy_item(SPBOOK_CLASS, AD_FIRE);
-	    destroy_item(POTION_CLASS, AD_FIRE);
-	}
+	fire_damageu(dice(2, 4), NULL, tower_of_flame, KILLED_BY_AN, 20, TRUE, TRUE);
 	if (!box && burn_floor_paper(u.ux, u.uy, see_it, TRUE) && !see_it)
 	    pline("You smell paper burning.");
 	if (is_ice(level, u.ux, u.uy))
@@ -3718,12 +3686,16 @@ boolean chest_trap(struct obj *obj, int bodypart, boolean disarm)
 			int dmg;
 
 			pline("You are jolted by a surge of electricity!");
-			if (Shock_resistance)  {
+			if (FShock_resistance)  {
 			    shieldeff(u.ux, u.uy);
 			    pline("You don't seem to be affected.");
 			    dmg = 0;
-			} else
+			} else if (PShock_resistance) {
+			    shieldeff(u.ux, u.uy);
+			    dmg = dice(2, 4);
+			} else {
 			    dmg = dice(4, 4);
+			}
 			destroy_item(RING_CLASS, AD_ELEC);
 			destroy_item(WAND_CLASS, AD_ELEC);
 			if (dmg) losehp(dmg, "electric shock", KILLED_BY_AN);
@@ -3915,16 +3887,17 @@ boolean lava_effects(void)
     burn_away_slime();
     if (likes_lava(youmonst.data)) return FALSE;
 
-    if (!Fire_resistance) {
-	if (Wwalking) {
-	    dmg = dice(6,6);
+    if (!FFire_resistance) {
+	if (Wwalking || PFire_resistance) {
+	    dmg = dice(6, PFire_resistance ? 3 : 6);
 	    pline("The lava here burns you!");
 	    if (dmg < u.uhp) {
 		losehp(dmg, lava_killer, KILLED_BY);
-		goto burn_stuff;
+		goto sink_in;
 	    }
-	} else
+	} else {
 	    pline("You fall into the lava!");
+	}
 
 	usurvive = Lifesaved || discover;
 	if (wizard)
@@ -3979,16 +3952,17 @@ boolean lava_effects(void)
 	return TRUE;
     }
 
+ sink_in:
     if (!Wwalking) {
 	u.utrap = rn1(4, 4) + (rn1(4, 12) << 8);
 	u.utraptype = TT_LAVA;
-	pline("You sink into the lava, but it only burns slightly!");
+	pline("You sink into the lava%s!",
+	      FFire_resistance ? ", but it only burns slightly" : "");
 	if (u.uhp > 1)
 	    losehp(1, lava_killer, KILLED_BY);
     }
     /* just want to burn boots, not all armor; destroy_item doesn't work on
        armor anyway */
-burn_stuff:
     if (uarmf && !uarmf->oerodeproof && is_organic(uarmf)) {
 	/* save uarmf value because Boots_off() sets uarmf to null */
 	obj = uarmf;

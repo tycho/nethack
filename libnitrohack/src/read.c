@@ -1405,7 +1405,7 @@ int seffects(struct obj *sobj, boolean *known)
 		useup(sobj);
 		makeknown(SCR_FIRE);
 		if (confused) {
-		    if (Fire_resistance) {
+		    if (FFire_resistance) {
 			shieldeff(u.ux, u.uy);
 			if (!Blind)
 			    pline("Oh, look, what a pretty fire in your %s.",

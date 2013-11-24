@@ -132,19 +132,16 @@ static boolean cursed_book(struct obj *bp)
 		/* temp disable in_use; death should not destroy the book */
 		bp->in_use = FALSE;
 		losestr(Poison_resistance ? rn1(2,1) : rn1(4,3));
-		losehp(rnd(Poison_resistance ? 6 : 10),
+		losehp(rnd(FPoison_resistance ? 6 :
+			   PPoison_resistance ? 8 : 10),
 		       "contact-poisoned spellbook", KILLED_BY_AN);
 		bp->in_use = TRUE;
 		break;
 	case 6:
-		if (Antimagic) {
-		    shieldeff(u.ux, u.uy);
-		    pline("The book %s, but you are unharmed!", explodes);
-		} else {
-		    pline("As you read the book, it %s in your %s!",
-			  explodes, body_part(FACE));
-		    losehp(2*rnd(10)+5, "exploding rune", KILLED_BY_AN);
-		}
+		pline("As you read the book, it %s in your %s!",
+		      explodes, body_part(FACE));
+		mana_damageu(2 * rnd(10) + 5, NULL,
+			     "exploding rune", KILLED_BY_AN, FALSE);
 		return TRUE;
 	default:
 		rndcurse();
