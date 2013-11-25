@@ -3259,6 +3259,8 @@ void buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy)
     int spell_type;
     boolean is_breath = (type >= 20 && type <= 29) ||
 			(type >= -29 && type <= -20);
+    /* show breath glyphs for non-reflectable breaths (any but disintegration) */
+    boolean show_breath_glyph = is_breath && abs(type) != ZT_BREATH(ZT_DEATH);
 
     /* if its a Hero Spell then get its SPE_TYPE */
     spell_type = is_hero_spell(type) ? SPE_MAGIC_MISSILE + abstype : 0;
@@ -3284,7 +3286,7 @@ void buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy)
     if (dx == 0 && dy == 0) range = 1;
     save_bhitpos = bhitpos;
 
-    tmp_at(DISP_BEAM, zapdir_to_effect(dx, dy, abstype));
+    tmp_at(DISP_BEAM, zapdir_to_effect(dx, dy, abstype, show_breath_glyph));
     while (range-- > 0) {
 	lsx = sx; sx += dx;
 	lsy = sy; sy += dy;
@@ -3495,7 +3497,8 @@ buzzmonst:
 		case 1: dy = -dy; break;
 		case 2: dx = -dx; break;
 		}
-		tmp_at(DISP_CHANGE, zapdir_to_effect(dx,dy,abstype));
+		tmp_at(DISP_CHANGE, zapdir_to_effect(dx, dy, abstype,
+						     show_breath_glyph));
 	    }
 	}
     }

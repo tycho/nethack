@@ -420,7 +420,7 @@ static struct nh_symdef *read_symdef_array(json_t *jarr)
 struct nh_drawing_info *nhnet_get_drawing_info(void)
 {
     json_t *jmsg, *jbg, *jtraps, *jobjs, *jmons, *jwarn, *jexpt, *jzapt, *jzaps,
-	*jeff, *jexps, *jswal, *jinvis;
+	*jbrths, *jeff, *jexps, *jswal, *jinvis;
     struct nh_drawing_info *di;
     
     if (!nhnet_active())
@@ -451,6 +451,7 @@ struct nh_drawing_info *nhnet_get_drawing_info(void)
 		    "effects", &jeff,
 		    "explsyms", &jexps,
 		    "zapsyms", &jzaps,
+		    "breathsyms", &jbrths,
 		    "swallowsyms", &jswal,
 		    "invis", &jinvis) == -1 ||
 		    !json_is_array(jbg)   || !json_is_array(jobjs) ||
@@ -471,6 +472,7 @@ struct nh_drawing_info *nhnet_get_drawing_info(void)
 	di->effects	= read_symdef_array(jeff);
 	di->explsyms	= read_symdef_array(jexps);
 	di->zapsyms	= read_symdef_array(jzaps);
+	di->breathsyms	= read_symdef_array(jbrths);
 	di->swallowsyms	= read_symdef_array(jswal);
 	di->invis	= read_symdef_array(jinvis);
     }

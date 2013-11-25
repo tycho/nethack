@@ -1710,7 +1710,7 @@ static int swallow_to_effect(int mnum, int loc)
  *	\  S_lslant	( 1, 1) or (-1,-1) -> dx = 2
  *	/  S_rslant	(-1, 1) or ( 1,-1) -> dx = 3
  */
-int zapdir_to_effect(int dx, int dy, int beam_type)
+int zapdir_to_effect(int dx, int dy, int beam_type, boolean breath)
 {
     if (beam_type >= NUM_ZAP) {
 	warning("zapdir_to_effect:  illegal beam type");
@@ -1718,7 +1718,7 @@ int zapdir_to_effect(int dx, int dy, int beam_type)
     }
     dx = (dx == dy) ? 2 : (dx && dy) ? 3 : dx ? 1 : 0;
 
-    return (((E_ZAP << 16) | (beam_type << 2) | dx)) + 1;
+    return ((((breath ? E_BREATH : E_ZAP) << 16) | (beam_type << 2) | dx)) + 1;
 }
 
 

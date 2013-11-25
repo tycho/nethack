@@ -223,6 +223,7 @@ struct curses_drawing_info {
     struct curses_symdef *expltypes;
     struct curses_symdef *zapsyms; /* default zap symbols; no color info */
     struct curses_symdef *zaptypes; /* zap beam types + colors. no symbols */
+    struct curses_symdef *breathsyms; /* like zapsyms; uses zaptypes for colors */
     struct curses_symdef *effects; /* shield, boomerang, digbeam, flashbeam, gascloud */
     struct curses_symdef *swallowsyms; /* no color info: use the color of the swallower */
     int num_bgelements;

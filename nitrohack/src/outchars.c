@@ -136,6 +136,7 @@ static void apply_override(struct curses_drawing_info *di,
 	ok |= apply_override_list(di->explsyms, NUMEXPCHARS, &ovr[i], cust);
 	ok |= apply_override_list(di->zaptypes, di->num_zaptypes, &ovr[i], cust);
 	ok |= apply_override_list(di->zapsyms, NUMZAPCHARS, &ovr[i], cust);
+	ok |= apply_override_list(di->breathsyms, NUMBREATHCHARS, &ovr[i], cust);
 	ok |= apply_override_list(di->swallowsyms, NUMSWALLOWCHARS, &ovr[i], cust);
 	
 	if (!ok)
@@ -188,6 +189,7 @@ static struct curses_drawing_info *load_nh_drawing_info(const struct nh_drawing_
     copy->explsyms = load_nh_symarray(orig->explsyms, NUMEXPCHARS);
     copy->zaptypes = load_nh_symarray(orig->zaptypes, orig->num_zaptypes);
     copy->zapsyms = load_nh_symarray(orig->zapsyms, NUMZAPCHARS);
+    copy->breathsyms = load_nh_symarray(orig->breathsyms, NUMBREATHCHARS);
     copy->swallowsyms = load_nh_symarray(orig->swallowsyms, NUMSWALLOWCHARS);
     
     return copy;
@@ -307,6 +309,7 @@ static void write_unisym_config(void)
     write_symlist(fd, unicode_drawing->explsyms, NUMEXPCHARS);
     write_symlist(fd, unicode_drawing->zaptypes, unicode_drawing->num_zaptypes);
     write_symlist(fd, unicode_drawing->zapsyms, NUMZAPCHARS);
+    write_symlist(fd, unicode_drawing->breathsyms, NUMBREATHCHARS);
     write_symlist(fd, unicode_drawing->swallowsyms, NUMSWALLOWCHARS);
     
     close(fd);
@@ -404,6 +407,7 @@ static void free_drawing_info(struct curses_drawing_info *di)
     free_symarray(di->explsyms, NUMEXPCHARS);
     free_symarray(di->zaptypes, di->num_zaptypes);
     free_symarray(di->zapsyms, NUMZAPCHARS);
+    free_symarray(di->breathsyms, NUMBREATHCHARS);
     free_symarray(di->swallowsyms, NUMSWALLOWCHARS);
     
     free(di);
@@ -539,23 +543,28 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms, int *bg_colo
 
     if (dbe->effect) {
 	id = NH_EFFECT_ID(dbe->effect);
-	
+
 	switch (NH_EFFECT_TYPE(dbe->effect)) {
 	    case E_EXPLOSION:
 		syms[0] = cur_drawing->explsyms[id % NUMEXPCHARS];
 		syms[0].color = cur_drawing->expltypes[id / NUMEXPCHARS].color;
 		break;
-		
+
 	    case E_SWALLOW:
 		syms[0] = cur_drawing->swallowsyms[id & 0x7];
 		syms[0].color = cur_drawing->monsters[id >> 3].color;
 		break;
-		
+
 	    case E_ZAP:
 		syms[0] = cur_drawing->zapsyms[id & 0x3];
 		syms[0].color = cur_drawing->zaptypes[id >> 2].color;
 		break;
-		
+
+	    case E_BREATH:
+		syms[0] = cur_drawing->breathsyms[id & 0x3];
+		syms[0].color = cur_drawing->zaptypes[id >> 2].color;
+		break;
+
 	    case E_MISC:
 		syms[0] = cur_drawing->effects[id];
 		syms[0].color = cur_drawing->effects[id].color;

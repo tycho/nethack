@@ -228,11 +228,18 @@ static const struct nh_symdef expltypes[] = {
 	{0, "frosty",	CLR_WHITE}
 };
 
-static const struct nh_symdef zapsyms[NUM_ZAP] = {
+static const struct nh_symdef zapsyms[NUMZAPCHARS] = {
 	{'|', "zap_v",	HI_ZAP},
 	{'-', "zap_h",	HI_ZAP},
 	{'\\',"zap_ld",	HI_ZAP},
 	{'/', "zap_rd",	HI_ZAP}
+};
+
+static const struct nh_symdef breathsyms[NUMBREATHCHARS] = {
+	{'*', "breath_v",	HI_ZAP},
+	{'*', "breath_h",	HI_ZAP},
+	{'*', "breath_ld",	HI_ZAP},
+	{'*', "breath_rd",	HI_ZAP}
 };
 
 /*
@@ -389,6 +396,7 @@ struct nh_drawing_info *nh_get_drawing_info(void)
     di->num_zaptypes = SIZE(zaptypes);
     di->zaptypes = (struct nh_symdef *)zaptypes;
     di->zapsyms = (struct nh_symdef *)zapsyms;
+    di->breathsyms = (struct nh_symdef *)breathsyms;
     
     di->num_effects = SIZE(effectsyms);
     di->effects = (struct nh_symdef *)effectsyms;

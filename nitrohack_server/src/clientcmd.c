@@ -443,6 +443,7 @@ static void ccmd_get_drawing_info(json_t *params)
     json_object_set_new(jobj, "effects", json_symarray(di->effects, di->num_effects));
     json_object_set_new(jobj, "explsyms", json_symarray(di->explsyms, NUMEXPCHARS));
     json_object_set_new(jobj, "zapsyms", json_symarray(di->zapsyms, NUMZAPCHARS));
+    json_object_set_new(jobj, "breathsyms", json_symarray(di->breathsyms, NUMBREATHCHARS));
     json_object_set_new(jobj, "swallowsyms", json_symarray(di->swallowsyms, NUMSWALLOWCHARS));
     json_object_set_new(jobj, "invis", json_symarray(di->invis, 1));
     

@@ -245,6 +245,7 @@ enum nh_effect_types {
     E_EXPLOSION,
     E_SWALLOW,
     E_ZAP,
+    E_BREATH, /* non-reflectable breath */
     E_MISC
 };
 
@@ -569,6 +570,7 @@ struct nh_drawing_info {
     struct nh_symdef *expltypes;
     struct nh_symdef *zapsyms; /* default zap symbols; no color info */
     struct nh_symdef *zaptypes; /* zap beam types + colors. no symbols */
+    struct nh_symdef *breathsyms; /* like zapsyms; uses zaptypes for colors */
     struct nh_symdef *effects; /* shield, boomerang, digbeam, flashbeam, gascloud */
     struct nh_symdef *swallowsyms; /* no color info: use the color of the swallower */
     int num_bgelements;
@@ -589,6 +591,7 @@ struct nh_drawing_info {
 
 #define NUMEXPCHARS 9 /* explosions fill a 3x3 grid */
 #define NUMZAPCHARS 4 /* beam directions: vert., horiz., left diag., right diag */
+#define NUMBREATHCHARS NUMZAPCHARS
 #define NUMSWALLOWCHARS 8 /* like explosions, but without the center */
 
 
