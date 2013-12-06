@@ -250,11 +250,17 @@ int dmgval(struct monst *magr, struct obj *otmp, boolean thrown,
 		case ACID_VENOM:	tmp += rnd(6); break;
 	    }
 	}
+
 	if (Is_weapon) {
 		tmp += otmp->spe;
-		/* negative enchantment mustn't produce negative damage */
-		if (tmp < 0) tmp = 0;
 	}
+	if (thrown && olaunch && ammo_and_launcher(otmp, olaunch) &&
+	    objects[olaunch->otyp].oc_skill == P_SLING) {
+		/* sling enchantment affects firing damage */
+		tmp += olaunch->spe;
+	}
+	/* negative enchantments mustn't produce negative damage */
+	if (tmp < 0) tmp = 0;
 
 	if (objects[otyp].oc_material <= LEATHER && thick_skinned(ptr))
 		/* thick skinned/scaled creatures don't feel it */
