@@ -2127,7 +2127,10 @@ struct obj *obj;
 boolean by_you;
 boolean stoning;
 {
-    int nutrit = (obj->otyp == CORPSE) ? dog_nutrition(mon, obj) : 0;
+    /* Save otyp and corpsenm for use after m_useup */
+    short obj_otyp = obj->otyp;
+    int obj_corpsenm = obj->corpsenm;
+    int nutrit = (obj_otyp == CORPSE) ? dog_nutrition(mon, obj) : 0;
     /* also sets meating */
 
     /* give a "<mon> is slowing down" message and also remove
@@ -2145,7 +2148,7 @@ boolean stoning;
     } else if (flags.soundok)
 	You_hear("%s.", (obj->otyp == POT_ACID) ? "drinking" : "chewing");
     m_useup(mon, obj);
-    if (((obj->otyp == POT_ACID) || acidic(&mons[obj->corpsenm])) &&
+    if (((obj_otyp == POT_ACID) || acidic(&mons[obj_corpsenm])) &&
 		    !resists_acid(mon)) {
 	mon->mhp -= rnd(15);
 	pline("%s has a very bad case of stomach acid.",
@@ -2164,7 +2167,7 @@ boolean stoning;
 	else
 	    pline("%s seems limber!", Monnam(mon));
     }
-    if (obj->otyp == CORPSE && obj->corpsenm == PM_LIZARD && mon->mconf) {
+    if (obj_otyp == CORPSE && obj_corpsenm == PM_LIZARD && mon->mconf) {
 	mon->mconf = 0;
 	if (canseemon(mon))
 	    pline("%s seems steadier now.", Monnam(mon));
