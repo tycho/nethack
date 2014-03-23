@@ -209,7 +209,7 @@ unsigned *ospecial;
 	    special |= MG_RIDDEN;
     } else if ((offset = (glyph - GLYPH_BODY_OFF)) >= 0) {	/* a corpse */
 	if (On_stairs(x,y) && levl[x][y].seenv) special |= MG_STAIRS;
-	ch = get_monsym(offset);
+	ch = get_objsym(CORPSE);
 #ifdef ROGUE_COLOR
 	if (HAS_ROGUE_IBM_GRAPHICS && iflags.use_color)
 	    color = CLR_RED;
