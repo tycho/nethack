@@ -308,6 +308,11 @@ struct realtime_data realtime_data = { 0, 0, 0 };
 
 struct _plinemsg *pline_msg = NULL;
 
+/* FIXME: These should be integrated into objclass and permonst structs,
+   but that invalidates saves */
+glyph_t objclass_unicode_codepoint[NUM_OBJECTS] = DUMMY;
+glyph_t permonst_unicode_codepoint[NUMMONS] = DUMMY;
+
 
 /* dummy routine used to force linkage */
 void

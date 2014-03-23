@@ -1325,14 +1325,14 @@ struct WinDesc *cw;
 #ifndef WIN32CON
 		    if (curr->glyph != NO_GLYPH && iflags.use_menu_glyphs) {
 			int glyph_color = NO_COLOR;
-			int character;
+			glyph_t character;
 			unsigned special; /* unused */
 			/* map glyph to character and color */
 			mapglyph(curr->glyph, &character, &glyph_color, &special, 0, 0);
 
 			print_vt_code(AVTC_GLYPH_START, glyph2tile[curr->glyph]);
 			if (glyph_color != NO_COLOR) term_start_color(glyph_color);
-			putchar(character);
+			pututf8char(character);
 			if (glyph_color != NO_COLOR) term_end_color();
 			print_vt_code(AVTC_GLYPH_END, -1);
 			putchar(' ');
@@ -1357,7 +1357,7 @@ struct WinDesc *cw;
 			  *cp && (int) ttyDisplay->curx < (int) ttyDisplay->cols;
 			  cp++, n++, ttyDisplay->curx++)
 #endif
-			(void) putchar(*cp);
+		    (void) pututf8char((unsigned char) *cp);
 #ifdef MENU_COLOR
 		   if (iflags.use_menu_color && menucolr) {
 		       if (color != NO_COLOR) term_end_color();
@@ -1598,7 +1598,7 @@ struct WinDesc *cw;
 		    *cp && (int) ttyDisplay->curx < (int) ttyDisplay->cols;
 		    cp++, ttyDisplay->curx++)
 #endif
-		(void) putchar(*cp);
+	    (void) pututf8char(*cp);
 	    term_end_attr(attr);
 	}
     }
@@ -1853,7 +1853,15 @@ tty_putsym(window, x, y, ch)
     case NHW_MAP:
     case NHW_BASE:
 	tty_curs(window, x, y);
+#ifdef UTF8_GLYPHS
+	if (iflags.UTF8graphics) {
+		pututf8char((unsigned char)ch);
+	} else {
+		(void) putchar(ch);
+	}
+#else
 	(void) putchar(ch);
+#endif
 	ttyDisplay->curx++;
 	cw->curx++;
 	break;
@@ -1977,7 +1985,11 @@ tty_putstr(window, attr, str)
 		cw->cury++;
 		tty_curs(window, cw->curx+1, cw->cury);
 	    }
-	    (void) putchar(*str);
+	    if (iflags.UTF8graphics) {
+		    pututf8char(*str);
+	    } else {
+		    (void) putchar(*str);
+	    }
 	    str++;
 	    ttyDisplay->curx++;
 	}
@@ -2554,7 +2566,7 @@ tty_print_glyph(window, x, y, glyph)
     xchar x, y;
     int glyph;
 {
-    int ch;
+    glyph_t ch;
     boolean reverse_on = FALSE;
     int	    color;
     unsigned special;
@@ -2613,7 +2625,15 @@ tty_print_glyph(window, x, y, glyph)
       xputg(glyph,ch,special);
     else
 #endif
+#ifdef UTF8_GLYPHS
+	if (iflags.UTF8graphics) {
+		pututf8char(get_unicode_codepoint(ch));
+	} else {
+		g_putch(ch);	/* print the character */
+	}
+#else
 	g_putch(ch);		/* print the character */
+#endif
 
     if (reverse_on) {
     	term_end_attr(ATR_INVERSE);
