@@ -1487,7 +1487,7 @@ char *option_value;	/**< Output string buffer for option value */
 /** Parse a string as Unicode codepoint and return the numerical codepoint.
  * Valid codepoints are decimal numbers or U+FFFF and 0xFFFF for hexadecimal
  * values. */
-static int
+int
 parse_codepoint(codepoint)
 char *codepoint;
 {
