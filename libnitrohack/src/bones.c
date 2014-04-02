@@ -266,7 +266,10 @@ make_bones:
 	for (f=ffruit; f; f=f->nextf) f->fid = -f->fid;
 
 	/* check iron balls separately--maybe they're not carrying it */
-	if (uball) uball->owornmask = uchain->owornmask = 0;
+	if (uball) {
+		uball->owornmask &= ~W_BALL;
+		uchain->owornmask &= ~W_CHAIN;
+	}
 
 	/* extinguish armor */
 	if (uarm && Is_gold_dragon_armor(uarm->otyp))
