@@ -124,16 +124,6 @@ level_file (INPUT gehennom.des
             OUTPUTS
             asmod-1 asmod-2 baalz-1 baalz-2 hellfill juiblex orcus-1 orcus-2
             sanctum valley-1 valley-2)
-level_file (INPUT heck.des
-            OUTPUTS
-            heck-a-1 heck-a-2 heck-a-3 heck-a-4 heck-a-5 heck-a-6 heck-a-7
-            heck-b-1 heck-b-2 heck-b-3 heck-b-4 heck-b-5 heck-b-6 heck-b-7
-            heck-c-1 heck-c-2 heck-c-3 heck-c-4 heck-c-5 heck-c-6 heck-c-7
-            heck-c-8
-            heck-d-1 heck-d-2 heck-d-3 heck-d-4 heck-d-5 heck-d-6 heck-d-7
-            heck-d-8 heck-d-9
-            heck-e-1 heck-e-2 heck-e-3 heck-e-4 heck-e-5 heck-e-6 heck-e-7
-            heck-e-8 heck-e-9)
 level_file (INPUT yendor.des OUTPUTS fakewiz1 fakewiz2 wizard1 wizard2 wizard3)
 
 # Vlad's Tower
