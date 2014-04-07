@@ -1,6 +1,48 @@
 #	Copyright (c) 1989 by Jean-Christophe Collet
 #	Copyright (c) 1992 by M. Stephenson and Izchak Miller
 # DynaHack may be freely redistributed.  See license for details.
+
+# Give tower exteriors loot, monsters and traps.
+FUNCTION populate_exterior()
+{
+  # objects
+  $object = OBJECT: { '(', '/', '=', '+', ')', '[', '?', '*', '%' }
+  SHUFFLE: $object
+  OBJECT: $object[0], random
+  OBJECT: $object[0], random
+  OBJECT: $object[1], random
+  OBJECT: $object[2], random
+  OBJECT: $object[3], random
+  OBJECT: $object[4], random
+  OBJECT: random, random
+  OBJECT: random, random
+  # monsters
+  $monster = MONSTER: { 'V','D',' ','&','Z' }
+  SHUFFLE: $monster
+  LOOP [2] {
+    MONSTER: $monster[0], random, hostile
+    MONSTER: $monster[1], random, hostile
+  }
+  MONSTER: $monster[2], random, hostile
+  MONSTER: $monster[3], random, hostile
+  MONSTER: random, random, hostile
+  MONSTER: 'H', random, hostile
+  IF [50%] {
+    MONSTER: 'L', random, hostile
+  } ELSE {
+    MONSTER: random, random, hostile
+  }
+  IF [66%] {
+    MONSTER: 'J', random, hostile
+  } ELSE {
+    MONSTER: random, random, hostile
+  }
+  # traps
+  LOOP [12] {
+    TRAP: random, random
+  }
+}
+
 #
 # The top (real) wizard level.
 # Keeping the Moat for old-time's sake
@@ -10,60 +52,61 @@ LEVEL: "wizard1"
 # Vlad's Tower appearing in the Wizard's Tower, due to a bug
 # in level flipping.
 FLAGS: noteleport, hardfloor, mazelevel, noflip
-INIT_MAP: mazegrid, '-'
+INIT_MAP: mines, '.', ' ', true, true, unlit, true, 'L'
 GEOMETRY: center, center
 MAP
-----------------------------.
-|.......|..|.........|.....|.
-|.......S..|.}}}}}}}.|.....|.
-|..--S--|..|.}}---}}.|---S-|.
-|..|....|..|.}--.--}.|..|..|.
-|..|....|..|.}|...|}.|..|..|.
-|..--------|.}--.--}.|..|..|.
-|..|.......|.}}---}}.|..|..|.
-|..S.......|.}}}}}}}.|..|..|.
-|..|.......|.........|..|..|.
-|..|.......|-----------S-S-|.
-|..|.......S...............|.
-----------------------------.
+..............................
+.----------------------------.
+.|.......|..|.........|.....|.
+.|.......S..|.}}}}}}}.|.....|.
+.|..--S--|..|.}}---}}.|---S-|.
+.|..|....|..|.}--.--}.|..|..|.
+.|..|....|..|.}|...|}.|..|..|.
+.|..--------|.}--.--}.|..|..|.
+.|..|.......|.}}---}}.|..|..|.
+.|..S.......|.}}}}}}}.|..|..|.
+.|..|.......|.........|..|..|.
+.|..|.......|-----------S-S-|.
+.|..|.......S...............|.
+.----------------------------.
+..............................
 ENDMAP
-STAIR:levregion(01,00,79,20),(0,0,28,12),up
-STAIR:levregion(01,00,79,20),(0,0,28,12),down
-BRANCH:levregion(01,00,79,20),(0,0,28,12)
-TELEPORT_REGION:levregion(01,00,79,20),(0,0,27,12)
+STAIR:levregion(01,00,79,20),(1,1,29,13),up
+STAIR:levregion(01,00,79,20),(1,1,29,13),down
+BRANCH:levregion(01,00,79,20),(1,1,29,13)
+TELEPORT_REGION:levregion(01,00,79,20),(1,1,28,13)
 # Make it a morgue for rm id in mkmaze.c
 # for the purpose of random sdoor placement
-REGION:(12,01,20,09),unlit,"morgue",unfilled
-MAZEWALK:(28,05),east
-LADDER:(06,05),down
+REGION:(13,02,21,10),unlit,"morgue",unfilled
+LADDER:(07,06),down
 # Non diggable walls
 # Walls inside the moat stay diggable
-NON_DIGGABLE:(00,00,11,12)
-NON_DIGGABLE:(11,00,21,00)
-NON_DIGGABLE:(11,10,27,12)
-NON_DIGGABLE:(21,00,27,10)
+NON_DIGGABLE:(01,01,12,13)
+NON_DIGGABLE:(12,01,22,01)
+NON_DIGGABLE:(12,11,28,13)
+NON_DIGGABLE:(22,01,28,11)
 # Non passable walls
-NON_PASSWALL:(00,00,11,12)
-NON_PASSWALL:(11,00,21,00)
-NON_PASSWALL:(11,10,27,12)
-NON_PASSWALL:(21,00,27,10)
+NON_PASSWALL:(01,01,12,13)
+NON_PASSWALL:(12,01,22,01)
+NON_PASSWALL:(12,11,28,13)
+NON_PASSWALL:(22,01,28,11)
 # The wizard and his guards
-MONSTER: ('@',"Wizard of Yendor"), (16,05), asleep
-MONSTER: ('d',"hell hound"), (15,05)
-MONSTER: ('V',"vampire lord"), (17,05)
+MONSTER: ('@',"Wizard of Yendor"), (17,06), asleep
+MONSTER: ('d',"hell hound"), (16,06)
+MONSTER: ('V',"vampire lord"), (18,06)
 # The local treasure
-OBJECT: ('+',"Book of the Dead"), (16,05)
+OBJECT: ('+',"Book of the Dead"), (17,06)
 # Surrounding terror
-MONSTER: (';',"kraken"), (14,02)
-MONSTER: (';',"giant eel"), (17,02)
-MONSTER: (';',"kraken"), (13,04)
-MONSTER: (';',"giant eel"), (13,06)
-MONSTER: (';',"kraken"), (19,04)
-MONSTER: (';',"giant eel"), (19,06)
-MONSTER: (';',"kraken"), (15,08)
-MONSTER: (';',"giant eel"), (17,08)
-MONSTER: (';',"piranha"), (15,02)
-MONSTER: (';',"piranha"), (19,08)
+MONSTER: (';',"kraken"), (15,03)
+MONSTER: (';',"giant eel"), (18,03)
+MONSTER: (';',"kraken"), (14,05)
+MONSTER: (';',"giant eel"), (14,07)
+MONSTER: (';',"kraken"), (20,05)
+MONSTER: (';',"giant eel"), (20,07)
+MONSTER: (';',"kraken"), (16,09)
+MONSTER: (';',"giant eel"), (18,09)
+MONSTER: (';',"piranha"), (16,03)
+MONSTER: (';',"piranha"), (20,09)
 # Random monsters
 MONSTER: 'D', random
 MONSTER: 'H', random
@@ -71,10 +114,10 @@ LOOP [4] {
   MONSTER: '&', random
 }
 # And to make things a little harder.
-TRAP:"board",(16,04)
-TRAP:"board",(16,06)
-TRAP:"board",(15,05)
 TRAP:"board",(17,05)
+TRAP:"board",(17,07)
+TRAP:"board",(16,06)
+TRAP:"board",(18,06)
 # Random traps.
 TRAP:"spiked pit",random
 TRAP:"sleep gas",random
@@ -89,45 +132,48 @@ LOOP [2] {
 LOOP [3] {
   OBJECT: '+', random
 }
-
+# Random loot, monsters and traps for tower exterior.
+NOMAP
+populate_exterior()
 
 # The middle wizard level.
 LEVEL: "wizard2"
 FLAGS: noteleport, hardfloor, mazelevel, noflip
-INIT_MAP: mazegrid, '-'
+INIT_MAP: mines, '.', ' ', true, true, unlit, true, 'L'
 GEOMETRY: center, center
 MAP
-----------------------------.
-|.....|.S....|.............|.
-|.....|.-------S--------S--|.
-|.....|.|.........|........|.
-|..-S--S|.........|........|.
-|..|....|.........|------S-|.
-|..|....|.........|.....|..|.
-|-S-----|.........|.....|..|.
-|.......|.........|S--S--..|.
-|.......|.........|.|......|.
-|-----S----S-------.|......|.
-|............|....S.|......|.
-----------------------------.
+..............................
+.----------------------------.
+.|.....|.S....|.............|.
+.|.....|.-------S--------S--|.
+.|.....|.|.........|........|.
+.|..-S--S|.........|........|.
+.|..|....|.........|------S-|.
+.|..|....|.........|.....|..|.
+.|-S-----|.........|.....|..|.
+.|.......|.........|S--S--..|.
+.|.......|.........|.|......|.
+.|-----S----S-------.|......|.
+.|............|....S.|......|.
+.----------------------------.
+..............................
 ENDMAP
-STAIR:levregion(01,00,79,20),(0,0,28,12),up
-STAIR:levregion(01,00,79,20),(0,0,28,12),down
-BRANCH:levregion(01,00,79,20),(0,0,28,12)
-TELEPORT_REGION:levregion(01,00,79,20),(0,0,27,12)
-REGION:(09,03,17,09),unlit,"zoo"
-DOOR:closed,(15,02)
-DOOR:closed,(11,10)
-MAZEWALK:(28,05),east
-LADDER:(12,01),up
-LADDER:(14,11),down
+STAIR:levregion(01,00,79,20),(1,1,29,13),up
+STAIR:levregion(01,00,79,20),(1,1,29,13),down
+BRANCH:levregion(01,00,79,20),(1,1,29,13)
+TELEPORT_REGION:levregion(01,00,79,20),(1,1,28,13)
+REGION:(10,04,18,10),unlit,"zoo"
+DOOR:closed,(16,03)
+DOOR:closed,(12,11)
+LADDER:(13,02),up
+LADDER:(15,12),down
 # Non diggable walls everywhere
-NON_DIGGABLE:(00,00,27,12)
+NON_DIGGABLE:(01,01,28,13)
 #
-NON_PASSWALL:(00,00,06,12)
-NON_PASSWALL:(06,00,27,02)
-NON_PASSWALL:(16,02,27,12)
-NON_PASSWALL:(06,12,16,12)
+NON_PASSWALL:(01,01,07,13)
+NON_PASSWALL:(07,01,28,03)
+NON_PASSWALL:(17,03,28,13)
+NON_PASSWALL:(07,13,17,13)
 # Random traps.
 TRAP:"spiked pit",random
 TRAP:"sleep gas",random
@@ -140,76 +186,79 @@ LOOP [2] {
 }
 OBJECT: '+', random
 # treasures
-OBJECT: '"', (04,06)
-
+OBJECT: '"', (05,07)
+# Random loot, monsters and traps for tower exterior.
+NOMAP
+populate_exterior()
 
 # The bottom wizard level.
 # Memorialize the fakewiz setup.
 LEVEL: "wizard3"
 FLAGS: noteleport, hardfloor, mazelevel, noflip
-INIT_MAP: mazegrid, '-'
+INIT_MAP: mines, '.', ' ', true, true, unlit, true, 'L'
 GEOMETRY: center, center
 MAP
-----------------------------.
-|..|............S..........|.
-|..|..------------------S--|.
-|..|..|.........|..........|.
-|..S..|.}}}}}}}.|..........|.
-|..|..|.}}---}}.|-S--------|.
-|..|..|.}--.--}.|..|.......|.
-|..|..|.}|...|}.|..|.......|.
-|..---|.}--.--}.|..|.......|.
-|.....|.}}---}}.|..|.......|.
-|.....S.}}}}}}}.|..|.......|.
-|.....|.........|..|.......|.
-----------------------------.
+..............................
+.----------------------------.
+.|..|............S..........|.
+.|..|..------------------S--|.
+.|..|..|.........|..........|.
+.|..S..|.}}}}}}}.|..........|.
+.|..|..|.}}---}}.|-S--------|.
+.|..|..|.}--.--}.|..|.......|.
+.|..|..|.}|...|}.|..|.......|.
+.|..---|.}--.--}.|..|.......|.
+.|.....|.}}---}}.|..|.......|.
+.|.....S.}}}}}}}.|..|.......|.
+.|.....|.........|..|.......|.
+.----------------------------.
+..............................
 ENDMAP
-STAIR:levregion(01,00,79,20),(0,0,28,12),up
-STAIR:levregion(01,00,79,20),(0,0,28,12),down
-BRANCH:levregion(01,00,79,20),(0,0,28,12)
-TELEPORT_REGION:levregion(01,00,79,20),(0,0,27,12)
-PORTAL:(25,11,25,11),(0,0,0,0),"fakewiz1"
-MAZEWALK:(28,09),east
-REGION:(07,03,15,11),unlit,"morgue",unfilled
-REGION:(17,06,18,11),unlit,"beehive"
+STAIR:levregion(01,00,79,20),(1,1,29,13),up
+STAIR:levregion(01,00,79,20),(1,1,29,13),down
+BRANCH:levregion(01,00,79,20),(1,1,29,13)
+TELEPORT_REGION:levregion(01,00,79,20),(1,1,28,13)
+PORTAL:(26,12,26,12),(0,0,0,0),"fakewiz1"
+REGION:(08,04,16,12),unlit,"morgue",unfilled
+REGION:(18,07,19,12),unlit,"beehive"
 # make the entry chamber a real room; it affects monster arrival;
 # `unfilled' is a kludge to force an ordinary room to remain a room
-REGION: (20,06,26,11), unlit, "ordinary", unfilled {
+REGION: (21,07,27,12), unlit, "ordinary", unfilled {
   ROOMDOOR: true, locked, north|west, random
 }
-DOOR: closed, (18,05)
-LADDER: (11,07), up
+DOOR: closed, (19,06)
+LADDER: (12,08), up
 # Non diggable walls
 # Walls inside the moat stay diggable
-NON_DIGGABLE:(00,00,06,12)
-NON_DIGGABLE:(06,00,27,02)
-NON_DIGGABLE:(16,02,27,12)
-NON_DIGGABLE:(06,12,16,12)
+NON_DIGGABLE:(01,01,07,13)
+NON_DIGGABLE:(07,01,28,03)
+NON_DIGGABLE:(17,03,28,13)
+NON_DIGGABLE:(07,13,17,13)
 #
-NON_PASSWALL:(00,00,06,12)
-NON_PASSWALL:(06,00,27,02)
-NON_PASSWALL:(16,02,27,12)
-NON_PASSWALL:(06,12,16,12)
+NON_PASSWALL:(01,01,07,13)
+NON_PASSWALL:(07,01,28,03)
+NON_PASSWALL:(17,03,28,13)
+NON_PASSWALL:(07,13,17,13)
 #
-MONSTER: 'L', (10,07)
-MONSTER: ('V',"vampire lord"), (12,07)
+MONSTER: 'L', (11,08)
+MONSTER: ('V',"vampire lord"), (13,08)
 # Some surrounding horrors
-MONSTER: (';',"kraken"), (08,05)
-MONSTER: (';',"giant eel"), (08,08)
-MONSTER: (';',"kraken"), (14,05)
-MONSTER: (';',"giant eel"), (14,08)
+MONSTER: (';',"kraken"), (09,06)
+MONSTER: (';',"giant eel"), (09,09)
+MONSTER: (';',"kraken"), (15,06)
+MONSTER: (';',"giant eel"), (15,09)
 # Other monsters
 MONSTER: 'L', random
 MONSTER: 'D', random
-MONSTER: 'D', (26,09)
+MONSTER: 'D', (27,10)
 LOOP [3] {
   MONSTER:'&', random
 }
 # And to make things a little harder.
-TRAP: "board", (10,07)
-TRAP: "board", (12,07)
-TRAP: "board", (11,06)
 TRAP: "board", (11,08)
+TRAP: "board", (13,08)
+TRAP: "board", (12,07)
+TRAP: "board", (12,09)
 # Some loot
 OBJECT: ')', random
 OBJECT: '!', random
@@ -217,15 +266,18 @@ OBJECT: '?', random
 OBJECT: '?', random
 OBJECT: '(', random
 # treasures
-OBJECT: '"', (11,07)
+OBJECT: '"', (12,08)
+# Random loot, monsters and traps for tower exterior.
+NOMAP
+populate_exterior()
 
 
 # The former decoy wizard levels.
 # There are two of these, and we need to
 # distinguish between them for the portal.
 LEVEL: "fakewiz1"
-FLAGS: mazelevel
-INIT_MAP: mazegrid, '-'
+FLAGS: mazelevel, noflip
+INIT_MAP: mines, '.', ' ', true, true, unlit, true, 'L'
 GEOMETRY: center, center
 MAP
 .........
@@ -236,13 +288,13 @@ MAP
 .}--.--}.
 .}}---}}.
 .}}}}}}}.
+.........
 ENDMAP
 STAIR:levregion(01,00,79,20),(0,0,8,7),up
 STAIR:levregion(01,00,79,20),(0,0,8,7),down
 BRANCH:levregion(01,00,79,20),(0,0,8,7)
 TELEPORT_REGION:levregion(01,00,79,20),(2,2,6,6)
 PORTAL:(4,4,4,4),(0,0,0,0),"wizard3"
-MAZEWALK:(08,05),east
 REGION:(04,03,06,06),unlit,"ordinary",unfilled,true
 MONSTER: 'L', (04,04)
 MONSTER: ('V',"vampire lord"), (03,04)
@@ -252,11 +304,14 @@ TRAP: "board",(04,03)
 TRAP: "board",(04,05)
 TRAP: "board",(03,04)
 TRAP: "board",(05,04)
+# Random loot, monsters and traps for tower exterior.
+NOMAP
+populate_exterior()
 
-
+# Decoy tower.
 LEVEL: "fakewiz2"
-FLAGS: mazelevel
-INIT_MAP: mazegrid, '-'
+FLAGS: mazelevel, noflip
+INIT_MAP: mines, '.', ' ', true, true, unlit, true, 'L'
 GEOMETRY: center, center
 MAP
 .........
@@ -267,12 +322,12 @@ MAP
 .}--.--}.
 .}}---}}.
 .}}}}}}}.
+.........
 ENDMAP
 STAIR:levregion(01,00,79,20),(0,0,8,7),up
 STAIR:levregion(01,00,79,20),(0,0,8,7),down
 BRANCH:levregion(01,00,79,20),(0,0,8,7)
 TELEPORT_REGION:levregion(01,00,79,20),(2,2,6,6)
-MAZEWALK:(08,05),east
 REGION:(04,03,06,06),unlit,"ordinary",unfilled,true
 MONSTER: 'L', (04,04)
 MONSTER: ('V',"vampire lord"), (03,04)
@@ -284,3 +339,6 @@ TRAP: "board",(03,04)
 TRAP: "board",(05,04)
 # treasures
 OBJECT: '"', (04,04)
+# Random loot, monsters and traps for tower exterior.
+NOMAP
+populate_exterior()
