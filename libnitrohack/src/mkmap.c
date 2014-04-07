@@ -338,6 +338,25 @@ joinm:
 	}
 	croom2++; /* always increment the next room */
     }
+
+    /*
+     * Clean up the temporary rooms so that lingering room data
+     * won't confuse generation of things that check it, like
+     * random branch placement.
+     *
+     * Oh, and remove_rooms() won't work here.
+     */
+    for (croom = &lev->rooms[0]; croom < &lev->rooms[lev->nroom]; croom++) {
+	for (sx = croom->lx; sx <= croom->hx; sx++) {
+	    for (sy = croom->ly; sy <= croom->hy; sy++) {
+		lev->locations[sx][sy].roomno = NO_ROOM;
+	    }
+	}
+    }
+    memset(lev->rooms, 0, sizeof(lev->rooms));
+    lev->rooms[0].hx = -1;
+    lev->subrooms[0].hx = -1;
+    lev->nroom = 0;
 }
 
 static void finish_map(struct level *lev, schar fg_typ, schar bg_typ, boolean lit, boolean walled)
