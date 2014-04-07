@@ -122,7 +122,7 @@ level_file (INPUT blkmar.des OUTPUTS blkmar)
 # Gehennom
 level_file (INPUT gehennom.des
             OUTPUTS
-            asmod-1 asmod-2 baalz-1 baalz-2 hellfill juiblex orcus-1 orcus-2
+            asmod baalz hellfill juiblex orcus
             sanctum valley-1 valley-2)
 level_file (INPUT yendor.des OUTPUTS fakewiz1 fakewiz2 wizard1 wizard2 wizard3)
 
