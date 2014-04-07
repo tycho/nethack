@@ -1849,7 +1849,7 @@ spill_detail	: SPILL_ID ':' coord_or_var ',' terrain_type ',' DIRECTION ',' INTE
 			    lc_error("SPILL: Invalid map character!");
 
 			c = $9;
-			if (c < 1)
+			if (c < 0)
 			    lc_error("SPILL: Invalid count '%li'!", c);
 
 			add_opvars(splev, "iiiio",

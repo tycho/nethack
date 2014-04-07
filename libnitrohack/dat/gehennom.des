@@ -1247,6 +1247,36 @@ FLAGS: mazelevel, noflip
 INIT_MAP: mines, '.', ' ', true, true, unlit, true, 'L'
 TELEPORT_REGION: levregion(11,01,59,19), levregion(01,01,02,02)
 NOMAP
+# show some lava using gaps in the walls
+LOOP [10] {
+  SPILL: random, 'L', north, 0
+  SPILL: random, 'L', south, 0
+  SPILL: random, 'L', east, 0
+  SPILL: random, 'L', west, 0
+}
+# chance of lava spillage, or maybe lava river?
+IF [50%] {
+  IF [60%] {
+    SPILL: random, 'L', north, 5
+  }
+  IF [60%] {
+    SPILL: random, 'L', south, 5
+  }
+  IF [60%] {
+    SPILL: random, 'L', east, 5
+  }
+  IF [60%] {
+    SPILL: random, 'L', west, 5
+  }
+} ELSE {
+  IF [20%] {
+    IF [50%] {
+      TERRAIN: grow(north|west, randline (30,00)-(50,19), 10), 'L'
+    } ELSE {
+      TERRAIN: grow(north|west, randline (50,00)-(30,19), 10), 'L'
+    }
+  }
+}
 #
 #  always put stairs relatively far apart
 #
@@ -1304,27 +1334,6 @@ IF [66%] {
   MONSTER: 'J', random, hostile
 } ELSE {
   MONSTER: random, random, hostile
-}
-# chance of lava spillage, or maybe lava river?
-IF [50%] {
-  IF [60%] {
-    SPILL: random, 'L', north, 20
-  }
-  IF [60%] {
-    SPILL: random, 'L', south, 20
-  }
-  IF [60%] {
-    SPILL: random, 'L', east, 20
-  }
-  IF [60%] {
-    SPILL: random, 'L', west, 20
-  }
-} ELSE {
-  IF [50%] {
-    TERRAIN: grow(north|west, randline (30,00)-(50,19), 10), 'L'
-  } ELSE {
-    TERRAIN: grow(north|west, randline (50,00)-(30,19), 10), 'L'
-  }
 }
 #
 LOOP [12] {
