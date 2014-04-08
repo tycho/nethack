@@ -359,11 +359,14 @@ void fixup_special(struct level *lev)
 	case LR_UPSTAIR:
 	case LR_DOWNSTAIR:
 	place_it:
-	    place_lregion(lev, r->inarea.x1, r->inarea.y1,
-			  r->inarea.x2, r->inarea.y2,
-			  r->delarea.x1, r->delarea.y1,
-			  r->delarea.x2, r->delarea.y2,
-			  r->rtype, &lvl);
+	    /* don't put downstairs on the vibrating square level */
+	    if (r->rtype != LR_DOWNSTAIR || !Invocation_lev(&lev->z)) {
+		place_lregion(lev, r->inarea.x1, r->inarea.y1,
+			      r->inarea.x2, r->inarea.y2,
+			      r->delarea.x1, r->delarea.y1,
+			      r->delarea.x2, r->delarea.y2,
+			      r->rtype, &lvl);
+	    }
 	    break;
 
 	case LR_TELE:
@@ -581,6 +584,48 @@ void fill_advent_calendar(struct level *lev, boolean init)
 }
 
 
+static void place_vibrating_square(struct level *lev)
+{
+	/*
+	 * Pick a position where the stairs down to Moloch's Sanctum
+	 * level will ultimately be created.  At that time, an area
+	 * will be altered:  walls removed, moat and traps generated,
+	 * boulders destroyed.  The position picked here must ensure
+	 * that that invocation area won't extend off the map.
+	 *
+	 * We actually allow up to 2 squares around the usual edge of
+	 * the area to get truncated; see mkinvokearea(mklev.c).
+	 */
+	const int x_maze_min = 2;
+	const int y_maze_min = 2;
+	const int INVPOS_X_MARGIN = 6 - 2;
+	const int INVPOS_Y_MARGIN = 5 - 2;
+	const int INVPOS_DISTANCE = 11;
+
+	int x_range = x_maze_max - x_maze_min - 2*INVPOS_X_MARGIN - 1,
+	    y_range = y_maze_max - y_maze_min - 2*INVPOS_Y_MARGIN - 1;
+	int x, y;
+
+	inv_pos.x = inv_pos.y = 0; /*{occupied() => invocation_pos()}*/
+	do {
+	    x = rn1(x_range, x_maze_min + INVPOS_X_MARGIN + 1);
+	    y = rn1(y_range, y_maze_min + INVPOS_Y_MARGIN + 1);
+	    /* we don't want it to be too near the stairs, nor
+	       to be on a spot that's already in use (wall|trap) */
+	} while (x == lev->upstair.sx || y == lev->upstair.sy ||	/*(direct line)*/
+		 abs(x - lev->upstair.sx) == abs(y - lev->upstair.sy) ||
+		 distmin(x, y, lev->upstair.sx, lev->upstair.sy) <= INVPOS_DISTANCE ||
+		 !SPACE_POS(lev->locations[x][y].typ) || occupied(lev, x, y));
+	inv_pos.x = x;
+	inv_pos.y = y;
+	maketrap(lev, inv_pos.x, inv_pos.y, VIBRATING_SQUARE);
+
+	/* "'X' never, ever marks the spot." */
+	if (Role_if(PM_ARCHEOLOGIST))
+	    make_engr_at(lev, inv_pos.x, inv_pos.y, "X", 0L, DUST);
+}
+
+
 void makemaz(struct level *lev, const char *s)
 {
 	int x,y;
@@ -632,6 +677,8 @@ void makemaz(struct level *lev, const char *s)
 	if (*protofile) {
 	    strcat(protofile, LEV_EXT);
 	    if (load_special(lev, protofile)) {
+		/* choose "vibrating square" location */
+		place_vibrating_square(lev);
 		/* some levels can end up with monsters
 		   on dead mon list, including light source monsters */
 		dmonsfree(lev);
@@ -658,46 +705,7 @@ void makemaz(struct level *lev, const char *s)
 	    mazexy(lev, &mm);
 	    mkstairs(lev, mm.x, mm.y, 0, NULL);	/* down */
 	} else {	/* choose "vibrating square" location */
-#define x_maze_min 2
-#define y_maze_min 2
-	    /*
-	     * Pick a position where the stairs down to Moloch's Sanctum
-	     * level will ultimately be created.  At that time, an area
-	     * will be altered:  walls removed, moat and traps generated,
-	     * boulders destroyed.  The position picked here must ensure
-	     * that that invocation area won't extend off the map.
-	     *
-	     * We actually allow up to 2 squares around the usual edge of
-	     * the area to get truncated; see mkinvokearea(mklev.c).
-	     */
-#define INVPOS_X_MARGIN (6 - 2)
-#define INVPOS_Y_MARGIN (5 - 2)
-#define INVPOS_DISTANCE 11
-	    int x_range = x_maze_max - x_maze_min - 2*INVPOS_X_MARGIN - 1,
-		y_range = y_maze_max - y_maze_min - 2*INVPOS_Y_MARGIN - 1;
-
-	    inv_pos.x = inv_pos.y = 0; /*{occupied() => invocation_pos()}*/
-	    do {
-		x = rn1(x_range, x_maze_min + INVPOS_X_MARGIN + 1);
-		y = rn1(y_range, y_maze_min + INVPOS_Y_MARGIN + 1);
-		/* we don't want it to be too near the stairs, nor
-		   to be on a spot that's already in use (wall|trap) */
-	    } while (x == lev->upstair.sx || y == lev->upstair.sy ||	/*(direct line)*/
-		     abs(x - lev->upstair.sx) == abs(y - lev->upstair.sy) ||
-		     distmin(x, y, lev->upstair.sx, lev->upstair.sy) <= INVPOS_DISTANCE ||
-		     !SPACE_POS(lev->locations[x][y].typ) || occupied(lev, x, y));
-	    inv_pos.x = x;
-	    inv_pos.y = y;
-	    maketrap(lev, inv_pos.x, inv_pos.y, VIBRATING_SQUARE);
-
-	    /* "'X' never, ever marks the spot." */
-	    if (Role_if(PM_ARCHEOLOGIST))
-		make_engr_at(lev, inv_pos.x, inv_pos.y, "X", 0L, DUST);
-#undef INVPOS_X_MARGIN
-#undef INVPOS_Y_MARGIN
-#undef INVPOS_DISTANCE
-#undef x_maze_min
-#undef y_maze_min
+	    place_vibrating_square(lev);
 	}
 
 	/* place branch stair or portal */

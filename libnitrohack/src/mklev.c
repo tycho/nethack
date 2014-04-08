@@ -921,13 +921,7 @@ static void makelevel(struct level *lev)
 	    } else if (In_hell(&lev->z) ||
 		  (rn2(5) && lev->z.dnum == medusa_level.dnum
 			  && depth(&lev->z) > depth(&medusa_level))) {
-		    /* The vibrating square code is hardcoded into mkmaze --
-		     * rather than fiddle around trying to port it to a 'generalist'
-		     * sort of level, just go ahead and let the VS level be a maze */
-		    if (!Invocation_lev(&lev->z))
-			makemaz(lev, "hellfill");
-		    else
-			makemaz(lev, "");
+		    makemaz(lev, "hellfill");
 		    return;
 	    }
 	}
@@ -1813,7 +1807,7 @@ static void mkinvpos(xchar x, xchar y, int dist)
     /* fake out saved state */
     loc->seenv = 0;
     loc->doormask = 0;
-    if (dist < 6) loc->lit = TRUE;
+    loc->lit = (dist < 6) ? TRUE : FALSE;
     loc->waslit = TRUE;
     loc->horizontal = FALSE;
     clear_memory_glyph(x, y, S_unexplored);
