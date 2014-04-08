@@ -1503,7 +1503,7 @@ void dbuf_set(const struct level *lev, int x, int y,
 	dbe->dgnflags |= NH_DF_BGHINT_GARDEN;
     else if (Is_minetown_level(&lev->z) && *in_rooms(lev, x, y, 0))
 	dbe->dgnflags |= NH_DF_BGHINT_MINEROOM;
-    else if (In_W_tower(x, y, &lev->z))
+    else if (In_W_tower(lev, x, y))
 	dbe->dgnflags |= NH_DF_BGHINT_WIZTOWER;
 }
 

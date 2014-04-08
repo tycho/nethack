@@ -1008,7 +1008,7 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	xchar new_ledger;
 	boolean up = (depth(newlevel) < depth(&u.uz)),
 		newdungeon = (u.uz.dnum != newlevel->dnum),
-		was_in_W_tower = In_W_tower(u.ux, u.uy, &u.uz),
+		was_in_W_tower = In_W_tower(level, u.ux, u.uy),
 		familiar = FALSE;
 	boolean new = FALSE;	/* made a new level? */
 	struct monst *mtmp, *mtmp2;

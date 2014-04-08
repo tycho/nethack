@@ -1097,7 +1097,7 @@ boolean rloc(struct level *lev,
 	}
 
 	if (mtmp->iswiz && mtmp->mx) {	/* Wizard, not just arriving */
-	    if (!In_W_tower(u.ux, u.uy, &u.uz))
+	    if (!In_W_tower(lev, u.ux, u.uy))
 		x = lev->upstair.sx,  y = lev->upstair.sy;
 	    else if (!lev->dnladder.sx)	/* bottom level of tower */
 		x = lev->upladder.sx,  y = lev->upladder.sy;

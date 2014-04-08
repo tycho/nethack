@@ -283,7 +283,7 @@ int tactics(struct monst *mtmp)
 		/* if wounded, hole up on or near the stairs (to block them) */
 		/* unless, of course, there are no stairs (e.g. endlevel) */
 		mtmp->mavenge = 1; /* covetous monsters attack while fleeing */
-		if (In_W_tower(mtmp->mx, mtmp->my, &u.uz) ||
+		if (In_W_tower(level, mtmp->mx, mtmp->my) ||
 			(mtmp->iswiz && !level->upstair.sx && !mon_has_amulet(mtmp))) {
 		    if (!rn2(3 + mtmp->mhp/10)) rloc(level, mtmp, FALSE);
 		} else if (level->upstair.sx &&

@@ -754,7 +754,7 @@ int peffects(struct obj *otmp)
 			unkn++;
 			/* they went up a level */
 			if ((ledger_no(&u.uz) == 1 && u.uhave.amulet) ||
-				Can_rise_up(u.ux, u.uy, &u.uz)) {
+				Can_rise_up(level, u.ux, u.uy)) {
 			    const char *riseup ="You rise up, through the %s!";
 			    if (ledger_no(&u.uz) == 1) {
 				s_level *first_plane = get_first_elemental_plane();

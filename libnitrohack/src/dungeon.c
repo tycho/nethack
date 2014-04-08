@@ -1213,16 +1213,16 @@ boolean can_fall_thru(const struct level *lev)
  * level that has a stairwell style branch to the next higher dungeon.
  * Checks for amulets and such must be done elsewhere.
  */
-boolean Can_rise_up(int x, int y, const d_level *lev)
+boolean Can_rise_up(const struct level *lev, int x, int y)
 {
     /* can't rise up from inside the top of the Wizard's tower */
     /* KMH -- or in sokoban */
-    if (In_endgame(lev) || In_sokoban(lev) ||
-			(Is_wiz1_level(lev) && In_W_tower(x, y, lev)))
+    if (In_endgame(&lev->z) || In_sokoban(&lev->z) ||
+			(Is_wiz1_level(&lev->z) && In_W_tower(lev, x, y)))
 	return FALSE;
-    return (boolean)(lev->dlevel > 1 ||
-		(dungeons[lev->dnum].entry_lev == 1 && ledger_no(lev) != 1 &&
-		 level->sstairs.sx && level->sstairs.up));
+    return (boolean)(lev->z.dlevel > 1 ||
+		(dungeons[lev->z.dnum].entry_lev == 1 && ledger_no(&lev->z) != 1 &&
+		 lev->sstairs.sx && lev->sstairs.up));
 }
 
 /*
@@ -1346,17 +1346,17 @@ boolean On_W_tower_level(const d_level *lev) /* is `lev' a level containing the 
 }
 
 /* is <x,y> of `lev' inside the Wizard's tower? */
-boolean In_W_tower(int x, int y, const d_level *lev)
+boolean In_W_tower(const struct level *lev, int x, int y)
 {
-	if (!On_W_tower_level(lev)) return FALSE;
+	if (!On_W_tower_level(&lev->z)) return FALSE;
 	/*
 	 * Both of the exclusion regions for arriving via level teleport
 	 * (from above or below) define the tower's boundary.
 	 *	assert( updest.nIJ == dndest.nIJ for I={l|h},J={x|y} );
 	 */
-	if (level->dndest.nlx > 0)
-	    return (boolean)within_bounded_area(x, y, level->dndest.nlx, level->dndest.nly,
-						level->dndest.nhx, level->dndest.nhy);
+	if (lev->dndest.nlx > 0)
+	    return (boolean)within_bounded_area(x, y, lev->dndest.nlx, lev->dndest.nly,
+						lev->dndest.nhx, lev->dndest.nhy);
 	else
 	    impossible("No boundary for Wizard's Tower?");
 	return FALSE;

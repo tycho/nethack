@@ -616,7 +616,7 @@ void migrate_to_level(
 	/* overload mtmp->[mx,my], mtmp->[mux,muy], and mtmp->mtrack[] as */
 	/* destination codes (setup flag bits before altering mx or my) */
 	xyflags = (depth(&new_lev) < depth(&u.uz));	/* 1 => up */
-	if (In_W_tower(mtmp->mx, mtmp->my, &u.uz)) xyflags |= 2;
+	if (In_W_tower(level, mtmp->mx, mtmp->my)) xyflags |= 2;
 	mtmp->wormno = num_segs;
 	mtmp->mlstmv = moves;
 	mtmp->mtrack[1].x = cc ? cc->x : mtmp->mx;

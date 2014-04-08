@@ -1489,7 +1489,7 @@ int use_misc(struct monst *mtmp, struct musable *m)
 	case MUSE_POT_GAIN_LEVEL:
 		mquaffmsg(mtmp, otmp);
 		if (otmp->cursed) {
-		    if (Can_rise_up(mtmp->mx, mtmp->my, &u.uz)) {
+		    if (Can_rise_up(level, mtmp->mx, mtmp->my)) {
 			int tolev = depth(&u.uz)-1;
 			d_level tolevel;
 
