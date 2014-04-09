@@ -495,7 +495,8 @@ void add_objitem(struct nh_objitem **items, int *nr_items, enum nh_menuitem_role
 	    it->omonnum = (obj->otyp == CORPSE || obj->otyp == STATUE ||
 			   obj->otyp == FIGURINE) ?
 			  obfuscate_monster(obj->corpsenm) + 1 : 0;
-	    it->worn = !!(obj->owornmask & ~(u.twoweap ? 0 : W_SWAPWEP));
+	    it->worn = (!!(obj->owornmask & ~(u.twoweap ? 0 : W_SWAPWEP)) ||
+			obj->lamplit);
 
 	    /* don't unconditionally reveal weight, otherwise lodestones on the
 	     * floor could be identified by their weight in the pickup dialog */
