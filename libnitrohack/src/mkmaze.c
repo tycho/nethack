@@ -677,8 +677,10 @@ void makemaz(struct level *lev, const char *s)
 	if (*protofile) {
 	    strcat(protofile, LEV_EXT);
 	    if (load_special(lev, protofile)) {
-		/* choose "vibrating square" location */
-		place_vibrating_square(lev);
+		if (Invocation_lev(&lev->z)) {
+		    /* choose "vibrating square" location */
+		    place_vibrating_square(lev);
+		}
 		/* some levels can end up with monsters
 		   on dead mon list, including light source monsters */
 		dmonsfree(lev);
