@@ -168,7 +168,7 @@ int dosit(void)
 			pline("A%s electric shock shoots through your body!",
 			      (Shock_resistance) ? "n" : " massive");
 			elec_damageu(rnd(30), NULL, "electric chair", KILLED_BY_AN,
-				     5, FALSE);
+				     0, FALSE);
 			break;
 		    case 4:
 			pline("You feel much, much better!");

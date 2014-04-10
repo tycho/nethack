@@ -1797,7 +1797,7 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		case AD_ELEC:
 		    if (!mtmp->mcan && rn2(2)) {
 			pline("The air around you crackles with electricity.");
-			elec_damageu(tmp, mtmp, NULL, 0, mtmp->m_lev, FALSE);
+			elec_damageu(tmp, mtmp, NULL, 0, 0, FALSE);
 			elemental_damage = TRUE;	/* for completeness */
 		    }
 		    tmp = 0;
@@ -1806,7 +1806,7 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		    if (!mtmp->mcan && rn2(2)) {
 			if (!FCold_resistance)
 			    pline("You are freezing to death!");
-			cold_damageu(tmp, mtmp, NULL, 0, mtmp->m_lev);
+			cold_damageu(tmp, mtmp, NULL, 0, 0);
 			elemental_damage = TRUE;	/* for completeness */
 		    }
 		    tmp = 0;
@@ -1815,7 +1815,7 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 		    if (!mtmp->mcan && rn2(2)) {
 			if (!FFire_resistance)
 			    pline("You are burning to a crisp!");
-			fire_damageu(tmp, mtmp, NULL, 0, mtmp->m_lev, FALSE, FALSE);
+			fire_damageu(tmp, mtmp, NULL, 0, 0, FALSE, FALSE);
 			elemental_damage = TRUE;	/* for completeness */
 		    }
 		    tmp = 0;
