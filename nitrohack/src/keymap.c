@@ -11,6 +11,7 @@ enum internal_commands {
     UICMD_EXTCMD,
     UICMD_HELP,
     UICMD_REDO,
+    UICMD_REPEATPREFIX,
     UICMD_PREVMSG,
     UICMD_WHATDOES,
     UICMD_NOTHING
@@ -61,6 +62,7 @@ struct nh_cmd_desc builtin_commands[] = {
     {"options",	   "show option settings, possibly change them", 'O', 0, CMD_UI | UICMD_OPTIONS},
     {"prevmsg",	   "list previously displayed messages", Ctrl('p'), 0, CMD_UI | UICMD_PREVMSG},
     {"redo",	   "redo the previous command", '\001', 0, CMD_UI | UICMD_REDO},
+    {"repeat_prefix", "show command repeat count prompt", 0, 0, CMD_UI | UICMD_REPEATPREFIX},
     {"whatdoes",   "describe what a key does", '&', 0, CMD_UI | UICMD_WHATDOES},
     {"(nothing)",  "bind keys to this command to suppress \"Bad command\".", 0, 0, CMD_UI | UICMD_NOTHING},
 };
@@ -155,37 +157,41 @@ void handle_internal_cmd(struct nh_cmd_desc **cmd, struct nh_cmd_arg *arg, int *
 	    else if((*cmd)->flags & DIRCMD_CTRL)
 		*cmd = find_command("go2");
 	    break;
-	    
+
 	case UICMD_OPTIONS:
 	    display_options(FALSE);
 	    *cmd = NULL;
 	    break;
-	
+
 	case UICMD_EXTCMD:
 	    *cmd = doextcmd();
 	    break;
-	    
+
 	case UICMD_HELP:
 	    arg->argtype = CMD_ARG_NONE;
 	    *cmd = show_help();
 	    break;
-	    
+
 	case UICMD_REDO:
 	    *cmd = prev_cmd;
 	    *arg = prev_arg;
 	    *count = prev_count;
 	    break;
-	    
+
+	case UICMD_REPEATPREFIX:
+	    *cmd = NULL;
+	    break;
+
 	case UICMD_PREVMSG:
 	    doprev_message();
 	    *cmd = NULL;
 	    break;
-	    
+
 	case UICMD_WHATDOES:
 	    show_whatdoes();
 	    *cmd = NULL;
 	    break;
-	    
+
 	case UICMD_NOTHING:
 	    *cmd = NULL;
 	    break;
@@ -198,7 +204,7 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
     int key, key2, multi;
     char line[BUFSZ];
     struct nh_cmd_desc *cmd, *cmd2;
-    
+
     /* inventory item actions may set the next command */
     if (have_next_command) {
 	have_next_command = FALSE;
@@ -206,41 +212,58 @@ const char *get_command(int *count, struct nh_cmd_arg *arg)
 	*arg = next_command_arg;
 	return next_command_name;
     }
-    
+
     do {
-	multi = 0;
+	multi = -1;
 	cmd = NULL;
 	arg->argtype = CMD_ARG_NONE;
-	
+
 	key = get_map_key(TRUE);
-	while ((key >= '0' && key <= '9') ||
-	       (multi > 0 && (key == KEY_BACKSPACE || key == KEY_BACKDEL))) {
+	if (key < 0 || key >= KEY_MAX)
+	    continue;
+
+	while ((multi == -1 && keymap[key] &&
+		(keymap[key]->flags & (CMD_UI|UICMD_REPEATPREFIX)) == (CMD_UI|UICMD_REPEATPREFIX)) ||
+	       ((multi >= 0 || settings.repeat_num_auto) && (key >= '0' && key <= '9')) ||
+	       (multi >= 0 && (key == KEY_BACKSPACE || key == KEY_BACKDEL))) {
+
+	    if (multi == -1)
+		multi = 0;
+
 	    if (key == KEY_BACKSPACE || key == KEY_BACKDEL) {
 		/* backspace alters count unless bound to a command */
 		if (!keymap[key] || (keymap[key]->flags & (CMD_UI|UICMD_NOTHING)) ==
 				    (CMD_UI|UICMD_NOTHING)) {
-		    multi /= 10;
+		    if (multi > 0)
+			multi /= 10;
+		    else
+			multi = -1;
 		} else {
 		    break;
 		}
-	    } else {
+	    } else if (key >= '0' && key <= '9') {
 		multi = 10 * multi + key - '0';
 		if (multi > 0xffff)
 		    multi /= 10;
 	    }
-	    if (multi) {
-		sprintf(line, "Count: %d", multi);
-		key = curses_msgwin(line);
-	    } else {
-		key = get_map_key(TRUE);
-	    }
+
+	    do {
+		if (multi >= 0) {
+		    sprintf(line, "Count: %d", multi);
+		    key = curses_msgwin(line);
+		} else {
+		    key = get_map_key(TRUE);
+		}
+	    } while (key < 0 || key >= KEY_MAX);
 	}
+	if (multi < 0)
+	    multi = 0;
 
 	if (key == '\033') /* filter out ESC */
 	    continue;
 	if (key < 0 || key >= KEY_MAX)
 	    continue;
-	
+
 	new_action(); /* use a new message line for this action */
 	*count = multi;
 	cmd = keymap[key];
