@@ -6,6 +6,8 @@
 
 void net_rungame(nh_bool tutorial)
 {
+    char chardesc[QBUFSZ];
+    char nameprompt[QBUFSZ];
     char plname[BUFSZ];
     int role = initrole, race = initrace, gend = initgend, align = initalign;
     int ret;
@@ -18,9 +20,11 @@ void net_rungame(nh_bool tutorial)
      * it here just prevents wizmode player from being asked for a name. */
     if (ui_flags.playmode == MODE_WIZARD)
 	strcpy(plname, "wizard");
-    
+
+    nh_root_plselection_prompt(chardesc, QBUFSZ - 1, role, race, gend, align);
+    snprintf(nameprompt, QBUFSZ, "You are a %s.  What is your name?", chardesc);
     while (!plname[0])
-	curses_getline("what is your name?", plname);
+	curses_getline(nameprompt, plname);
     if (plname[0] == '\033') /* canceled */
 	return;
     
