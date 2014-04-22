@@ -899,6 +899,9 @@ LOOP [5] {
   OBJECT: ('`',"boulder"), random
 }
 # other loot
+LOOP [1d7] {
+  OBJECT: '$', random
+}
 OBJECT: '(', random
 OBJECT: '/', random
 OBJECT: '=', random
@@ -993,6 +996,9 @@ LOOP [5] {
   MONSTER: 'i', random
 }
 # a bit of loot
+LOOP [1d7] {
+  OBJECT: '$', random
+}
 OBJECT: '(', random
 OBJECT: '/', random
 OBJECT: '=', random
@@ -1075,6 +1081,9 @@ LOOP [5] {
   MONSTER: ('W',"wraith"), random
 }
 # a bit of loot
+LOOP [1d7] {
+  OBJECT: '$', random
+}
 OBJECT: '(', random
 OBJECT: '/', random
 OBJECT: '=', random
@@ -1169,6 +1178,9 @@ LOOP [5] {
   MONSTER: (';',"shark"), random
 }
 # a bit of loot
+LOOP [1d7] {
+  OBJECT: '$', random
+}
 OBJECT: '(', random
 OBJECT: '/', random
 OBJECT: '=', random
@@ -1400,6 +1412,9 @@ OBJECT: $object[3], random
 OBJECT: $object[4], random
 OBJECT: random, random
 OBJECT: random, random
+LOOP [1d7] {
+  OBJECT: '$', random
+}
 #
 $monster = MONSTER: { 'V','D',' ','&','Z' }
 SHUFFLE: $monster
