@@ -162,12 +162,16 @@ int demon_talk(struct monst *mtmp)
 	/* This isn't _that_ much better than the old way, but it removes
 	 * the trivial case of people being able to bribe demons with
 	 * 10 gold pieces to bypass him.  You can still carry lots of gold,
-	 * of course, but at least now you have to lug it with you. */
+	 * of course, but at least now you have to lug it with you.
+	 *
+	 * A minimum of 2000 to 6000 gold is required for safe passage
+	 * (2000 to 3000 for characters whose alignment matches the demon's). */
 	do {
-	    cash = rnd(15000) + 5000;
+	    cash = money_cnt(invent);
+	    if (cash < 6000) cash = 6000;
 	    demand = (cash * (rnd(80) + 20 * Athome)) /
 		(100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
-	} while (demand < 3000);
+	} while (demand < 2000);
 
 	if (money_cnt(invent) == 0) {		/* you have no gold */
 	    mtmp->mpeaceful = 0;
@@ -186,7 +190,8 @@ int demon_talk(struct monst *mtmp)
 	    if ((offer = bribe(mtmp)) >= demand) {
 		pline("%s vanishes, laughing about cowardly mortals.",
 		      Amonnam(mtmp));
-	    } else if (offer > 0L && (long)rnd(40) > (demand - offer)) {
+	    } else if (offer > 0L && offer * 100 >= demand * rn1(21,80)) {
+		/* chance to succeed with offer within 80% of demand */
 		pline("%s scowls at you menacingly, then vanishes.",
 		      Amonnam(mtmp));
 	    } else {
