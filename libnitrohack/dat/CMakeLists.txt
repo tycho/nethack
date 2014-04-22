@@ -122,8 +122,8 @@ level_file (INPUT blkmar.des OUTPUTS blkmar)
 # Gehennom
 level_file (INPUT gehennom.des
             OUTPUTS
-            asmod baalz hellfill juiblex orcus
-            sanctum valley-1 valley-2)
+            asmod baalz demogor dis geryon hellfill juiblex orcus
+            sanctum valley-1 valley-2 yeenoghu)
 level_file (INPUT yendor.des OUTPUTS fakewiz1 fakewiz2 wizard1 wizard2 wizard3)
 
 # Vlad's Tower

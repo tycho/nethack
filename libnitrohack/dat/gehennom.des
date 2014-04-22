@@ -821,6 +821,375 @@ LOOP [2] {
 MONSTER[50%]: 'P', random
 
 #
+# Yeenoghu's realm (GruntHack)
+#
+LEVEL: "yeenoghu"
+FLAGS: noteleport
+INIT_MAP: mines, '.', 'L', false, true, lit, false
+GEOMETRY: right, center
+MAP
+LLL.LL.....LLLLLLLLLLL
+L---------------.LL.LL
+.|..|...|..|...|...LLL
+.-S----+--+-+--|..L.LL
+.|..+..........|...LLL
+.|..|..........|..L.LL
+.----+------S---..L.LL
+.+.......|.....|....LL
+.+.......|..\..|..LL.L
+.+.......|.....|....LL
+.----+------S---...LLL
+.|..|..........|..L.LL
+.|..+..........|...L.L
+.-S----+--+-+---...LLL
+.|..|...|..|...|..L.LL
+L---------------...LLL
+LL.L.....L.L..LLLLLLLL
+ENDMAP
+MON_GENERATION: 80%, (1,'&'), (1,'i'), (1,'T'), (1,'G'), (1,'d'), (1,'@')
+STAIR: levregion(01,01,19,19), levregion(01,01,01,01), up
+BRANCH: levregion(01,01,19,19), levregion(01,01,01,01)
+STAIR: (14,08), down
+DOOR: locked, (07,03)
+DOOR: locked, (10,03)
+DOOR: locked, (12,03)
+DOOR: locked, (04,04)
+DOOR: locked, (05,06)
+DOOR: locked, (01,07)
+DOOR: locked, (01,08)
+DOOR: locked, (01,09)
+DOOR: locked, (05,10)
+DOOR: locked, (04,12)
+DOOR: locked, (07,13)
+DOOR: locked, (10,13)
+DOOR: locked, (12,13)
+REGION: (00,00,21,16), lit, "ordinary"
+REGION: (10,07,14,09), lit, "throne", unfilled
+NON_DIGGABLE: (01,01,15,15)
+# the owner of the mansion
+MONSTER: ('&',"Yeenoghu"), (12,08)
+# the throne room loot
+OBJECT: ('(',"chest"), (13,08)
+# his minions
+MONSTER: ('d',"hell hound"), (11,08)
+MONSTER: ('d',"hell hound"), (13,08)
+MONSTER: ('T',"Olog-hai"), (11,07)
+MONSTER: ('T',"Olog-hai"), (11,09)
+MONSTER: ('T',"Olog-hai"), (13,07)
+MONSTER: ('T',"Olog-hai"), (13,09)
+MONSTER: 'G', (10,08)
+MONSTER: 'G', (14,12)
+
+NOMAP
+# his slaves
+LOOP [10] {
+  MONSTER: '@', random
+}
+# other denizens
+LOOP [5] {
+  MONSTER: '&', random
+  MONSTER: 'i', random
+  MONSTER: 'i', random
+  MONSTER: 'T', random
+  MONSTER: 'd', random
+  MONSTER: 'G', random
+}
+# some wasteland-ish stuff
+LOOP [5] {
+  OBJECT: ('`',"boulder"), random
+}
+# other loot
+OBJECT: '(', random
+OBJECT: '/', random
+OBJECT: '=', random
+LOOP [2] {
+  OBJECT: '[', random
+  OBJECT: ')', random
+  OBJECT: '?', random
+  OBJECT: '!', random
+}
+LOOP [8] {
+  OBJECT: '*', random
+}
+# traps
+LOOP [10] {
+  TRAP: "fire", random
+}
+LOOP [3] {
+  TRAP: "magic", random
+}
+LOOP [5] {
+  TRAP: random, random
+}
+
+#
+# the isle of Erytheia, Geryon's domain (GruntHack)
+#
+LEVEL: "geryon"
+FLAGS: noteleport
+INIT_MAP: mines, '.', '}', false, true, lit, false
+GEOMETRY: right, center
+MAP
+}}}}}}}}}}}}........T............................}}}}}}}}}}}
+}}}....}}}............................................}}}}}}
+}........}}}}...........FFFFFFFFFF........................}}
+............}}..........F........F......T...................
+...........T.}}.........F........F..........................
+..............}}........F........F...........----------.....
+...............}}}......F........F...........|...|....|.....
+.................}}}}...FFFF++FFFF...........|...|....|.....
+....................}........................|...|....|.....
+....T...............}}.......................+...|....|....T
+.....................}}.}}}}}}}}}}}..........--+----+--.....
+......................}#}.........}}}}.......|........|.....
+.................T...................}}}}}}}}|........|.....
+.........................}}}}}..}}}}}}.......----------.....
+...................}}}}}}}...}#}}......T....................
+............T..}}}}}}.......................................
+}}}}..........}}.......................................}}}}}
+}}}}}}}}..}}}}}...............T.......................}}}}}}
+}}}}}}}}}}}}.......................................}}}}}}}}}
+}}}}}}}}}}}}}}}}}....T...................}}}}}}}}}}}}}}}}}}}
+ENDMAP
+DOOR: closed, (28,07)
+DOOR: closed, (29,07)
+DOOR: locked, (45,09)
+DOOR: closed, (47,10)
+DOOR: closed, (52,10)
+STAIR: levregion(01,01,20,19), (00,00,59,19), up
+STAIR: (50,07), down
+REGION: (00,00,59,19), lit, "ordinary"
+REGION: (46,06,53,12), unlit, "ordinary"
+NON_DIGGABLE: (45,05,54,13)
+# the fellow in residence
+MONSTER: ('&',"Geryon"), (51,08)
+# his herd
+MONSTER: 'q', (25,03)
+MONSTER: 'q', (27,03)
+MONSTER: 'q', (29,03)
+MONSTER: 'q', (31,03)
+MONSTER: 'q', (26,04)
+MONSTER: 'q', (28,04)
+MONSTER: 'q', (30,04)
+MONSTER: 'q', (32,04)
+MONSTER: 'q', (25,05)
+MONSTER: 'q', (27,05)
+MONSTER: 'q', (29,05)
+MONSTER: 'q', (31,05)
+MONSTER: 'q', (26,06)
+MONSTER: 'q', (28,06)
+MONSTER: 'q', (30,06)
+MONSTER: 'q', (32,06)
+# its guard
+MONSTER: ('d',"hell hound"), (28,08)
+# the eponymous residents
+LOOP [10] {
+  MONSTER: 'n', random
+}
+# some other denizens
+LOOP [5] {
+  MONSTER: '&', random
+  MONSTER: 'i', random
+  MONSTER: 'i', random
+}
+# a bit of loot
+OBJECT: '(', random
+OBJECT: '/', random
+OBJECT: '=', random
+LOOP [2] {
+  OBJECT: '[', random
+  OBJECT: ')', random
+  OBJECT: '?', random
+  OBJECT: '!', random
+}
+LOOP [8] {
+  OBJECT: '*', random
+}
+# traps!
+LOOP [10] {
+  TRAP: "fire", random
+}
+LOOP [3] {
+  TRAP: "magic", random
+}
+LOOP [5] {
+  TRAP: random, random
+}
+
+#
+# the city of Dis (GruntHack)
+#
+LEVEL: "dis"
+FLAGS: noteleport, shortsighted
+INIT_MAP: mines, '.', 'L', false, true, unlit, false
+GEOMETRY: center, center
+MAP
+xxxxxx...........................xxxxxx
+xxx....LLLLLLLLLLLLLLLLLLLLLLLLL....xxx
+x...LLLLLL-------------------LLLLLL...x
+..LLLLL----.................----LLLLL..
+.LLL----.....-------------.....----LLL.
+.LL--.....----...........----.....--LL.
+.L||....---....----S----....---....||L.
+.L|....--....---.......---....--....|L.
+.L|...||...---..I-----I..---...||...|L.
+.L|...|....|...I|-...-|I...|....|...|L.
+.L|...S....|...IS.....SI...|....S...|L.
+.L|...|....|...I|-...-|I...|....|...|L.
+.L|...||...---..I-----I..---...||...|L.
+.L|....--....---.......---....--....|L.
+.L||....---....----S----....---....||L.
+.LL--.....----...........----.....--LL.
+.LLL----.....-------------.....----LLL.
+..LLLLL----.................----LLLLL..
+x...LLLLLL-------------------LLLLLL...x
+xxx....LLLLLLLLLLLLLLLLLLLLLLLLL....xxx
+xxxxxx...........................xxxxxx
+ENDMAP
+DRAWBRIDGE: (19,01), south, closed
+DRAWBRIDGE: (19,19), north, closed
+STAIR: levregion(01,01,79,20), levregion(21,1,59,20), up
+STAIR: (19,10), down
+NON_DIGGABLE: (02,02,36,18)
+MON_GENERATION: 80%, (1,'&'), (1,'i'), (1,'M'), (1,'Z'), (1,'V'), (1,'W')
+# the guy in charge
+MONSTER: ('&',"Dispater"), (19,10)
+# his minions
+MONSTER: ('\'',"iron golem"), (19,09)
+MONSTER: ('&',"pit fiend"), (19,11)
+MONSTER: ('&',"bone devil"), (18,10)
+MONSTER: ('&',"bone devil"), (20,10)
+# their subordinates
+LOOP [10] {
+  MONSTER: '&', random
+}
+LOOP [15] {
+  MONSTER: 'i', random
+}
+# the damned
+LOOP [5] {
+  MONSTER: 'Z', random
+  MONSTER: 'Z', random
+  MONSTER: 'M', random
+  MONSTER: 'V', random
+  MONSTER: ('W',"wraith"), random
+}
+# a bit of loot
+OBJECT: '(', random
+OBJECT: '/', random
+OBJECT: '=', random
+LOOP [2] {
+  OBJECT: '[', random
+  OBJECT: ')', random
+  OBJECT: '?', random
+  OBJECT: '!', random
+}
+LOOP [8] {
+  OBJECT: '*', random
+}
+# traps!
+LOOP [10] {
+  TRAP: "fire", random
+}
+LOOP [3] {
+  TRAP: "magic", random
+}
+LOOP [5] {
+  TRAP: random, random
+}
+
+#
+# Demogorgon's towers (GruntHack)
+#
+LEVEL: "demogor"
+FLAGS: noteleport, shortsighted
+INIT_MAP: mines, '.', '}', true, true, lit, false
+GEOMETRY: center, center
+MAP
+}}.}}}}..}}.}}.}}.}}}}}}}}}}}}}}}}}}}}}}}}}.}.}..}}..}}..}..
+}..}.}...}...}..}.}}}.}}}}}}}}}}}}}.}}}.}}.}...}..}.}}..}..}
+..---------------}}}}}}.}}}.}}}}}}}}}}}}}.}---------------}.
+}}|.............|..}}}}}}}}}}}}}}}}}}}}}.}}|....|.|...|..|.}
+..|S-----------.|.}.}}}}}}..}}}.}}}}}}}}}..|.--.S.|.|.S..|..
+}.|.|...|...|.|.|}}}}.}}}}}}}}}.}}}.}}}...}|.----.|.----S|.}
+.}|...|...|...|.|....}}}}}}}}}}}}}}}}}}}}..|....|...|....|..
+}.----------S--S-}}.}}}}}}}}}}}}}}}}}}}}}}.----S-------S--}.
+..|..|--...|.|..|}}}}}}...}}}}}}}..}}}}}}}}|..|.|...--...|.}
+..|....S...|.|..|}#####...#######...######}|..|.|...S....|.}
+}.|..|--...|.|..|}}}}}}...}}}}}}}}..}}}}}}}|..|.|...--...|..
+.}--S-------S----}}}}}}}}}}}}}}}}}}}}}}}}}}-S--S----------}.
+}.|....|...|....|}.}}}}}}}}}}}}}.}}}}}}}...|.|...|...|...|.}
+}}|S----.|.----.|.}}.}}}..}}}}}}}}}.}}}.}}.|.|.|...|...|.|..
+..|..S.|.|.S.--.|.}.}}}}}}}}..}}}}}}}}}}}}}|.-----------S|}.
+..|..|...|.|....|}.}}}}}}}}}}}}}.}}}}}}}}}}|.............|}}
+}.---------------.}}}....}}}}}}}}}}}}}}}}..---------------..
+...}.}...}...}..}.}}}}}.}}}}}}}}}}}}}.}}}}.}...}..}.}...}..}
+}}}..}}...}.}}.}.}}}}}}}}}}}}}}}}}}}}.}}}}}}}}..}}.}..}}}.}}
+ENDMAP
+# who's in residence?
+MON_GENERATION: 80%, (1,'&'), (1,'i'), (1,';')
+# from above, land in the left tower; from below, land in the right tower
+TELEPORT_REGION: (43,02,57,16), (0,0,0,0), up
+TELEPORT_REGION: (02,02,16,16), (0,0,0,0), down
+REGION: (00,00,59,18), lit, "ordinary"
+REGION: (02,02,16,16), unlit, "ordinary"
+REGION: (43,02,57,16), unlit, "ordinary"
+# can't dig in the towers
+NON_DIGGABLE: (02,02,16,16)
+NON_DIGGABLE: (43,02,58,16)
+# bridge between the two towers
+DRAWBRIDGE: (17,09), west, closed
+DRAWBRIDGE: (42,09), east, closed
+# stairs in the two towers
+STAIR: (09,09), up
+STAIR: (50,09), down
+# the fellow in residence
+MONSTER: ('&',"Demogorgon"), (50,09)
+# some tough guards
+MONSTER: ('&',"nalfeshnee"), (49,08)
+MONSTER: ('&',"balrog"), (51,08)
+MONSTER: ('&',"nalfeshnee"), (49,10)
+MONSTER: ('&',"balrog"), (51,10)
+MONSTER: ('&',"pit fiend"), (50,08)
+MONSTER: ('&',"pit fiend"), (49,09)
+MONSTER: ('&',"pit fiend"), (50,10)
+# and some other denizens
+LOOP [8] {
+  MONSTER: '&', random
+}
+LOOP [16] {
+  MONSTER: 'i', random
+}
+LOOP [5] {
+  MONSTER: (';',"kraken"), random
+  MONSTER: (';',"giant eel"), random
+  MONSTER: (';',"giant eel"), random
+  MONSTER: (';',"electric eel"), random
+  MONSTER: (';',"shark"), random
+  MONSTER: (';',"shark"), random
+}
+# a bit of loot
+OBJECT: '(', random
+OBJECT: '/', random
+OBJECT: '=', random
+LOOP [2] {
+  OBJECT: '[', random
+  OBJECT: ')', random
+  OBJECT: '?', random
+  OBJECT: '!', random
+}
+LOOP [8] {
+  OBJECT: '*', random
+}
+# some traps
+LOOP [8] {
+  TRAP: "fire", random
+}
+LOOP [5] {
+  TRAP: "magic", random
+}
+
+#
 # The Sanctum Level
 #
 LEVEL: "sanctum"
