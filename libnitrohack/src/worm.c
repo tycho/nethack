@@ -744,7 +744,7 @@ void flip_worm_segs_horizontal(struct level *lev, const struct monst *worm, int 
     struct wseg *curr = lev->wtails[worm->wormno];
 
     while (curr) {
-	curr->wx = x - curr->wx;
+	curr->wx = x - curr->wx + 1;
 	curr = curr->nseg;
     }
 }

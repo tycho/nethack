@@ -449,10 +449,10 @@ static void flip_level(struct level *lev, int flp)
 	    lev->dnladder.sy = y2 - lev->dnladder.sy;
 	}
 	if (flp & 2) {
-	    lev->upstair.sx = x2 - lev->upstair.sx;
-	    lev->dnstair.sx = x2 - lev->dnstair.sx;
-	    lev->upladder.sx = x2 - lev->upladder.sx;
-	    lev->dnladder.sx = x2 - lev->dnladder.sx;
+	    lev->upstair.sx = x2 - lev->upstair.sx + 1;
+	    lev->dnstair.sx = x2 - lev->dnstair.sx + 1;
+	    lev->upladder.sx = x2 - lev->upladder.sx + 1;
+	    lev->dnladder.sx = x2 - lev->dnladder.sx + 1;
 	}
 
 	/* traps */
@@ -465,10 +465,10 @@ static void flip_level(struct level *lev, int flp)
 		}
 	    }
 	    if (flp & 2) {
-		ttmp->tx = x2 - ttmp->tx;
+		ttmp->tx = x2 - ttmp->tx + 1;
 		if (ttmp->ttyp == ROLLING_BOULDER_TRAP) {
-		    ttmp->launch.x = x2 - ttmp->launch.x;
-		    ttmp->launch2.x = x2 - ttmp->launch2.x;
+		    ttmp->launch.x = x2 - ttmp->launch.x + 1;
+		    ttmp->launch2.x = x2 - ttmp->launch2.x + 1;
 		}
 	    }
 	}
@@ -478,14 +478,14 @@ static void flip_level(struct level *lev, int flp)
 	    if (flp & 1)
 		otmp->oy = y2 - otmp->oy;
 	    if (flp & 2)
-		otmp->ox = x2 - otmp->ox;
+		otmp->ox = x2 - otmp->ox + 1;
 	}
 
 	for (otmp = lev->buriedobjlist; otmp; otmp = otmp->nobj) {
 	    if (flp & 1)
 		otmp->oy = y2 - otmp->oy;
 	    if (flp & 2)
-		otmp->ox = x2 - otmp->ox;
+		otmp->ox = x2 - otmp->ox + 1;
 	}
 
 	/* monsters */
@@ -502,12 +502,12 @@ static void flip_level(struct level *lev, int flp)
 		}
 	    }
 	    if (flp & 2) {
-		mtmp->mx = x2 - mtmp->mx;
+		mtmp->mx = x2 - mtmp->mx + 1;
 		if (mtmp->ispriest) {
-		    EPRI(mtmp)->shrpos.x = x2 - EPRI(mtmp)->shrpos.x;
+		    EPRI(mtmp)->shrpos.x = x2 - EPRI(mtmp)->shrpos.x + 1;
 		} else if (mtmp->isshk) {
-		    ESHK(mtmp)->shk.x = x2 - ESHK(mtmp)->shk.x;
-		    ESHK(mtmp)->shd.x = x2 - ESHK(mtmp)->shd.x;
+		    ESHK(mtmp)->shk.x = x2 - ESHK(mtmp)->shk.x + 1;
+		    ESHK(mtmp)->shd.x = x2 - ESHK(mtmp)->shd.x + 1;
 		} else if (mtmp->wormno) {
 		    flip_worm_segs_horizontal(lev, mtmp, x2);
 		}
@@ -519,7 +519,7 @@ static void flip_level(struct level *lev, int flp)
 	    if (flp & 1)
 		etmp->engr_y = y2 - etmp->engr_y;
 	    if (flp & 2)
-		etmp->engr_x = x2 - etmp->engr_x;
+		etmp->engr_x = x2 - etmp->engr_x + 1;
 	}
 
 	/* regions */
@@ -542,16 +542,16 @@ static void flip_level(struct level *lev, int flp)
 		}
 	    }
 	    if (flp & 2) {
-		lregions[i].inarea.x1 = x2 - lregions[i].inarea.x1;
-		lregions[i].inarea.x2 = x2 - lregions[i].inarea.x2;
+		lregions[i].inarea.x1 = x2 - lregions[i].inarea.x1 + 1;
+		lregions[i].inarea.x2 = x2 - lregions[i].inarea.x2 + 1;
 		if (lregions[i].inarea.x1 > lregions[i].inarea.x2) {
 		    int tmp = lregions[i].inarea.x1;
 		    lregions[i].inarea.x1 = lregions[i].inarea.x2;
 		    lregions[i].inarea.x2 = tmp;
 		}
 
-		lregions[i].delarea.x1 = x2 - lregions[i].delarea.x1;
-		lregions[i].delarea.x2 = x2 - lregions[i].delarea.x2;
+		lregions[i].delarea.x1 = x2 - lregions[i].delarea.x1 + 1;
+		lregions[i].delarea.x2 = x2 - lregions[i].delarea.x2 + 1;
 		if (lregions[i].delarea.x1 > lregions[i].delarea.x2) {
 		    int tmp = lregions[i].delarea.x1;
 		    lregions[i].delarea.x1 = lregions[i].delarea.x2;
@@ -574,8 +574,8 @@ static void flip_level(struct level *lev, int flp)
 		}
 	    }
 	    if (flp & 2) {
-		sroom->lx = x2 - sroom->lx;
-		sroom->hx = x2 - sroom->hx;
+		sroom->lx = x2 - sroom->lx + 1;
+		sroom->hx = x2 - sroom->hx + 1;
 		if (sroom->lx > sroom->hx) {
 		    int tmp = sroom->lx;
 		    sroom->lx = sroom->hx;
@@ -596,8 +596,8 @@ static void flip_level(struct level *lev, int flp)
 			}
 		    }
 		    if (flp & 2) {
-			rroom->lx = x2 - rroom->lx;
-			rroom->hx = x2 - rroom->hx;
+			rroom->lx = x2 - rroom->lx + 1;
+			rroom->hx = x2 - rroom->hx + 1;
 			if (rroom->lx > rroom->hx) {
 			    int tmp = rroom->lx;
 			    rroom->lx = rroom->hx;
@@ -613,12 +613,12 @@ static void flip_level(struct level *lev, int flp)
 	    if (flp & 1)
 		lev->doors[i].y = y2 - lev->doors[i].y;
 	    if (flp & 2)
-		lev->doors[i].x = x2 - lev->doors[i].x;
+		lev->doors[i].x = x2 - lev->doors[i].x + 1;
 	}
 
 	/* the map */
 	if (flp & 1) {
-	    for (x = 0; x <= x2; x++) {
+	    for (x = 1; x <= x2; x++) {
 		for (y = 0; y <= (y2 / 2); y++) {
 		    flip_drawbridge_vertical(&lev->locations[x][y]);
 		    flip_drawbridge_vertical(&lev->locations[x][y2-y]);
@@ -638,22 +638,22 @@ static void flip_level(struct level *lev, int flp)
 	    }
 	}
 	if (flp & 2) {
-	    for (x = 0; x <= (x2 / 2); x++) {
+	    for (x = 1; x <= (x2 / 2); x++) {
 		for (y = 0; y <= y2; y++) {
 		    flip_drawbridge_horizontal(&lev->locations[x][y]);
-		    flip_drawbridge_horizontal(&lev->locations[x2-x][y]);
+		    flip_drawbridge_horizontal(&lev->locations[x2-x+1][y]);
 
 		    trm = lev->locations[x][y];
-		    lev->locations[x][y] = lev->locations[x2-x][y];
-		    lev->locations[x2-x][y] = trm;
+		    lev->locations[x][y] = lev->locations[x2-x+1][y];
+		    lev->locations[x2-x+1][y] = trm;
 
 		    otmp = lev->objects[x][y];
-		    lev->objects[x][y] = lev->objects[x2-x][y];
-		    lev->objects[x2-x][y] = otmp;
+		    lev->objects[x][y] = lev->objects[x2-x+1][y];
+		    lev->objects[x2-x+1][y] = otmp;
 
 		    mtmp = lev->monsters[x][y];
-		    lev->monsters[x][y] = lev->monsters[x2-x][y];
-		    lev->monsters[x2-x][y] = mtmp;
+		    lev->monsters[x][y] = lev->monsters[x2-x+1][y];
+		    lev->monsters[x2-x+1][y] = mtmp;
 		}
 	    }
 	}
