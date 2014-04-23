@@ -35,7 +35,6 @@ static void place_random_engravings(struct level *lev);
 #define create_vault(lev)	create_room(lev, -1, -1, 2, 2, -1, -1, VAULT, TRUE)
 #define do_vault()	(vault_x != -1)
 static xchar		vault_x, vault_y;
-boolean goldseen;
 static boolean made_branch;	/* used only during level creation */
 
 static void finddpos(struct level *lev, coord *cc, xchar xl, xchar yl, xchar xh, xchar yh)
@@ -1051,12 +1050,11 @@ skip0:
 			maketrap(lev, x, y, WEB);
 		}
 		/* put traps and mimics inside */
-		goldseen = FALSE;
 		x = 8 - (level_difficulty(&lev->z)/6);
 		if (x <= 1) x = 2;
 		while (!rn2(x))
 		    mktrap(lev, 0, 0, croom, NULL);
-		if (!goldseen && !rn2(3)) {
+		if (!rn2(3)) {
 		    x = somex(croom);
 		    y = somey(croom);
 		    mkgold(0L, lev, x, y);
