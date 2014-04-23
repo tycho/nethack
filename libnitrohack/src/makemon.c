@@ -1927,7 +1927,7 @@ int max_monster_difficulty(const d_level *dlev)
 	} else if (in_mklev) {
 	    /* Strength of initial inhabitants no longer
 	     * depends on player level. */
-	    return zlevel;
+	    return (zlevel > 10) ? ((zlevel - 10) / 2 + 10) : zlevel;
 	} else {
 	    return (zlevel + u.ulevel) / 2;
 	}
