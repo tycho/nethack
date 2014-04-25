@@ -320,6 +320,7 @@ static void use_whistle(struct obj *obj)
 {
 	pline(whistle_str, obj->cursed ? "shrill" : "high");
 	wake_nearby();
+	if (obj->otyp == TIN_WHISTLE) makeknown(obj->otyp);
 }
 
 static void use_magic_whistle(struct obj *obj)
@@ -346,8 +347,8 @@ static void use_magic_whistle(struct obj *obj)
 			if (mintrap(mtmp) == 2) change_luck(-1);
 		    }
 		}
-		if (pet_cnt > 0) makeknown(obj->otyp);
 	}
+	makeknown(obj->otyp);
 }
 
 boolean um_dist(xchar x, xchar y, xchar n)
