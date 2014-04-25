@@ -594,8 +594,14 @@ int tele(const char *msg)
 	safe_teleds(FALSE);
 	if (u.ux != cc.x || u.uy != cc.y) {
 	    if (msg == NULL) {
-		if (flags.verbose)
-		    pline("Your surroundings suddenly seem different.");
+		if (flags.verbose) {
+		    if (Blind) {
+			pline("The %s under you seems different from before.",
+			      surface(cc.x, cc.y));
+		    } else {
+			pline("Your surroundings suddenly seem different.");
+		    }
+		}
 	    } else if (msg[0] != '\0') {
 		pline(msg);
 	    }
