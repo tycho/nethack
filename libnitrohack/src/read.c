@@ -982,6 +982,7 @@ int seffects(struct obj *sobj, boolean *known)
 			}
 			otmp->known = 1;
 			setworn(otmp, W_ARM);
+			*known = TRUE;
 			break;
 		}
 		pline("Your %s %s%s%s%s for a %s.",
