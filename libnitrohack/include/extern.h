@@ -1656,7 +1656,7 @@ extern int epathto(coord *cc, int nc, struct level *lev, xchar xx, xchar yy,
 extern void teleds(int,int,boolean);
 extern boolean safe_teleds(boolean);
 extern boolean teleport_pet(struct monst *,boolean);
-extern void tele(void);
+extern int tele(void);
 extern int dotele(void);
 extern void level_tele(void);
 extern void domagicportal(struct trap *);

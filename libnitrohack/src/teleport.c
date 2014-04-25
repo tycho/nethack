@@ -536,7 +536,7 @@ boolean teleport_pet(struct monst *mtmp, boolean force_it)
 	return TRUE;
 }
 
-void tele(void)
+int tele(void)
 {
 	coord cc;
 
@@ -544,7 +544,7 @@ void tele(void)
 	if (level->flags.noteleport) {
 		if (!wizard) {
 		    pline("A mysterious force prevents you from teleporting!");
-		    return;
+		    return 1;
 		}
 	}
 
@@ -555,7 +555,7 @@ void tele(void)
 	     (u.usteed && mon_has_amulet(u.usteed))) &&
 	    !wizard) {
 	    pline("You feel disoriented for a moment.");
-	    return;
+	    return 1;
 	}
 	if ((Teleport_control && !Stunned) || wizard) {
 	    if (unconscious()) {
@@ -568,8 +568,8 @@ void tele(void)
 				u.usteed ? buf : "");
 		    cc.x = u.ux;
 		    cc.y = u.uy;
-		    if (getpos(&cc, TRUE, "the desired position") < 0)
-			return;	/* abort */
+		    if (getpos(&cc, FALSE, "the desired position") < 0)
+			return 0;	/* abort */
 		    /* possible extensions: introduce a small error if
 		       magic power is low; allow transfer to solid rock */
 		    if (teleok(cc.x, cc.y, FALSE) ||
@@ -578,13 +578,14 @@ void tele(void)
 			    "Force teleport? (monster blocking)" :
 			    "Force teleport?") == 'y')) {
 			teleds(cc.x, cc.y, FALSE);
-			return;
+			return 1;
 		    }
 		    pline("Sorry...");
 		}
 	}
 
 	safe_teleds(FALSE);
+	return 1;
 }
 
 int dotele(void)
@@ -671,7 +672,7 @@ int dotele(void)
 
 	if (next_to_u()) {
 		if (trap && trap->once) vault_tele();
-		else tele();
+		else if (!tele()) return 0;
 		next_to_u();
 	} else {
 		pline("You shudder for a moment.");
