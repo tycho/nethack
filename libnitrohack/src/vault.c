@@ -160,7 +160,7 @@ void invault(void)
 incr_radius: ;
 	}
 	impossible("Not a single corridor on this level??");
-	tele();
+	tele(NULL);
 	return;
 fnd:
 	gx = x; gy = y;

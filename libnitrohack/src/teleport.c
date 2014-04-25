@@ -507,7 +507,7 @@ static void vault_tele(void)
 		teleds(c.x,c.y,FALSE);
 		return;
 	}
-	tele();
+	tele(NULL);
 }
 
 boolean teleport_pet(struct monst *mtmp, boolean force_it)
@@ -536,7 +536,12 @@ boolean teleport_pet(struct monst *mtmp, boolean force_it)
 	return TRUE;
 }
 
-int tele(void)
+/*
+ * msg == NULL -> show default post-teleport message
+ * msg == "" -> don't show a post-teleport message
+ * msg == "custom message" -> show "custom message" post-teleport
+ */
+int tele(const char *msg)
 {
 	coord cc;
 
@@ -584,7 +589,17 @@ int tele(void)
 		}
 	}
 
+	cc.x = u.ux;
+	cc.y = u.uy;
 	safe_teleds(FALSE);
+	if (u.ux != cc.x || u.uy != cc.y) {
+	    if (msg == NULL) {
+		if (flags.verbose)
+		    pline("Your surroundings suddenly seem different.");
+	    } else if (msg[0] != '\0') {
+		pline(msg);
+	    }
+	}
 	return 1;
 }
 
@@ -672,7 +687,7 @@ int dotele(void)
 
 	if (next_to_u()) {
 		if (trap && trap->once) vault_tele();
-		else if (!tele()) return 0;
+		else if (!tele(NULL)) return 0;
 		next_to_u();
 	} else {
 		pline("You shudder for a moment.");
@@ -968,7 +983,7 @@ void tele_trap(struct trap *trap)
 		newsym(u.ux,u.uy);	/* get rid of trap symbol */
 		vault_tele();
 	} else
-		tele();
+		tele(NULL);
 }
 
 void level_tele_trap(struct trap *trap)
@@ -1093,7 +1108,7 @@ boolean rloc(struct level *lev,
 	int x, y, trycount;
 
 	if (mtmp == u.usteed) {
-	    tele();
+	    tele(NULL);
 	    return TRUE;
 	}
 

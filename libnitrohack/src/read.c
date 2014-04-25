@@ -1256,7 +1256,7 @@ int seffects(struct obj *sobj, boolean *known)
 				if (yn("Do you wish to teleport?")=='n')
 					break;
 			}
-			tele();
+			tele(NULL);
 			if (Teleport_control || !couldsee(u.ux0, u.uy0) ||
 			   (distu(u.ux0, u.uy0) >= 16))
 				*known = TRUE;

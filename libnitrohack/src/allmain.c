@@ -660,7 +660,7 @@ static void you_moved(void)
 	    if (!u.uinvulnerable) {
 		if (Teleportation && !rn2(85)) {
 		    xchar old_ux = u.ux, old_uy = u.uy;
-		    tele();
+		    tele(NULL);
 		    if (u.ux != old_ux || u.uy != old_uy) {
 			if (!next_to_u()) {
 			    check_leash(old_ux, old_uy);

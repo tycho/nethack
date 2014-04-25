@@ -1300,9 +1300,7 @@ dopois:
 	    case AD_TLPT:
 		hitmsg(mtmp, mattk);
 		if (uncancelled) {
-		    if (flags.verbose)
-			pline("Your position suddenly seems very uncertain!");
-		    tele();
+		    tele(flags.verbose ? "Your position suddenly seems very uncertain!" : NULL);
 		}
 		break;
 	    case AD_RUST:

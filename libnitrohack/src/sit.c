@@ -242,7 +242,7 @@ int dosit(void)
 			} else  {
 
 			    pline("You feel a wrenching sensation.");
-			    tele();		/* teleport him */
+			    tele(NULL);		/* teleport him */
 			}
 			break;
 		    case 12:

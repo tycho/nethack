@@ -2078,7 +2078,7 @@ int zapyourself(struct obj *obj, boolean ordinary)
 
 		case WAN_TELEPORTATION:
 		case SPE_TELEPORT_AWAY:
-		    tele();
+		    tele(NULL);
 		    break;
 
 		case WAN_DEATH:
@@ -2211,7 +2211,7 @@ static boolean zap_steed(struct obj *obj)
 		case WAN_TELEPORTATION:
 		case SPE_TELEPORT_AWAY:
 		    /* you go together */
-		    tele();
+		    tele(NULL);
 		    if (Teleport_control || !couldsee(u.ux0, u.uy0) ||
 			(distu(u.ux0, u.uy0) >= 16))
 				makeknown(obj->otyp);

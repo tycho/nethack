@@ -1068,7 +1068,7 @@ static int mbhitm(struct monst *mtmp, struct obj *otmp)
 	case WAN_TELEPORTATION:
 		if (mtmp == &youmonst) {
 			if (zap_oseen) makeknown(WAN_TELEPORTATION);
-			tele();
+			tele(NULL);
 		} else {
 			/* for consistency with zap.c, don't identify */
 			if (mtmp->ispriest &&

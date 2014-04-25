@@ -93,7 +93,7 @@ static boolean cursed_book(struct obj *bp)
 	switch(rn2(lev)) {
 	case 0:
 		pline("You feel a wrenching sensation.");
-		tele();		/* teleport him */
+		tele(NULL);		/* teleport him */
 		break;
 	case 1:
 		pline("You feel threatened.");
