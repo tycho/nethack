@@ -257,12 +257,12 @@ int castmu(struct monst *mtmp,
 
 	    case AD_FIRE:
 		pline("You're enveloped in flames!");
-		fire_damageu(dmg, mtmp, NULL, 0, mtmp->m_lev, TRUE, TRUE);
+		fire_damageu(dmg, mtmp, NULL, 0, 0, TRUE, TRUE);
 		dmg = 0;
 		break;
 	    case AD_COLD:
 		pline("You're covered in frost!");
-		cold_damageu(dmg, mtmp, NULL, 0, mtmp->m_lev);
+		cold_damageu(dmg, mtmp, NULL, 0, 0);
 		dmg = 0;
 		break;
 	    case AD_MAGM:
