@@ -1093,6 +1093,7 @@ int dosearch0(int aflag)
 			    feel_location(x,y);	/* make sure it shows up */
 			else
 			    newsym(x,y);
+			if (flags.verbose) pline("You find a secret door.");
 		    } else if (level->locations[x][y].typ == SCORR) {
 			if (rnl(7-fund)) continue;
 			level->locations[x][y].typ = CORR;
@@ -1100,6 +1101,7 @@ int dosearch0(int aflag)
 			exercise(A_WIS, TRUE);
 			nomul(0, NULL);
 			newsym(x,y);
+			if (flags.verbose) pline("You find a secret passage.");
 		    } else {
 		/* Be careful not to find anything in an SCORR or SDOOR */
 			if ((mtmp = m_at(level, x, y)) && !aflag) {
