@@ -30,6 +30,7 @@ static const long takeoff_order[] = { WORN_BLINDF, W_WEP,
 	WORN_SHIRT, WORN_BOOTS, W_SWAPWEP, W_QUIVER, 0L };
 
 static void on_msg(struct obj *);
+static void discover_cursed_equip(struct obj *);
 static int Armor_on(void);
 static int Boots_on(void);
 static int Cloak_on(void);
@@ -65,6 +66,19 @@ static void on_msg(struct obj *otmp)
 	    pline("You are now wearing %s%s.",
 		obj_is_pname(otmp) ? the(xname(otmp)) : an(xname(otmp)),
 		how);
+	}
+}
+
+static void discover_cursed_equip(struct obj *otmp)
+{
+	if (otmp && otmp->cursed) {
+	    otmp->bknown = TRUE;
+	    if (flags.verbose) {
+		pline("Oops; %s deathly cold.",
+		      (is_plural(otmp) || otmp->otyp == LENSES ||
+		       is_boots(otmp) || is_gloves(otmp)) ?
+		      "they feel" : "that feels");
+	    }
 	}
 }
 
@@ -292,6 +306,10 @@ static int Boots_on(void)
     if (uarmf && !is_racial_armor(uarmf))
 	u.uconduct.unracearmor++;
 
+    /* suppress message if called on first game turn via set_wear() */
+    if (moves > 1)
+	discover_cursed_equip(uarmf);
+
     return 0;
 }
 
@@ -408,6 +426,8 @@ static int Cloak_on(void)
     if (uarmc && !is_racial_armor(uarmc))
 	u.uconduct.unracearmor++;
 
+    /* discover_cursed_equip() called by dowear() */
+
     return 0;
 }
 
@@ -518,6 +538,10 @@ static int Helmet_on(void)
     if (uarmh && !is_racial_armor(uarmh))
 	u.uconduct.unracearmor++;
 
+    /* suppress message if called on first game turn via set_wear() */
+    if (moves > 1)
+	discover_cursed_equip(uarmh);
+
     return 0;
 }
 
@@ -592,6 +616,10 @@ static int Gloves_on(void)
     if (uarmg && !is_racial_armor(uarmg))
 	u.uconduct.unracearmor++;
 
+    /* suppress message if called on first game turn via set_wear() */
+    if (moves > 1)
+	discover_cursed_equip(uarmg);
+
     return 0;
 }
 
@@ -659,6 +687,8 @@ static int Shield_on(void)
     if (uarms && !is_racial_armor(uarms))
 	u.uconduct.unracearmor++;
 
+    /* discover_cursed_equip() called by dowear() */
+
     return 0;
 }
 
@@ -678,6 +708,8 @@ static int Shirt_on(void)
 
     if (uarmu && !is_racial_armor(uarmu))
 	u.uconduct.unracearmor++;
+
+    /* discover_cursed_equip() called by dowear() */
 
     return 0;
 }
@@ -725,6 +757,10 @@ static int Armor_on(void)
 
     if (uarm && !is_racial_armor(uarm))
 	u.uconduct.unracearmor++;
+
+    /* suppress message if called on first game turn via set_wear() */
+    if (moves > 1)
+	discover_cursed_equip(uarm);
 
     return 0;
 }
@@ -834,6 +870,9 @@ static void Amulet_on(void)
 	case AMULET_OF_YENDOR:
 		break;
     }
+
+    /* AMULET_OF_CHANGE will null uamul via useup() */
+    discover_cursed_equip(uamul);
 }
 
 void Amulet_off(void)
@@ -1010,6 +1049,8 @@ void Ring_on(struct obj *obj)
 		}
 		break;
     }
+
+    discover_cursed_equip(obj);
 }
 
 static void Ring_off_or_gone(struct obj *obj, boolean gone)
@@ -1147,6 +1188,7 @@ void Blindf_on(struct obj *otmp)
 	if (otmp == uquiver)
 	    setuqwep(NULL);
 	setworn(otmp, W_TOOL);
+	discover_cursed_equip(otmp);
 	on_msg(otmp);
 
 	if (Blind && !already_blind) {
@@ -1650,6 +1692,7 @@ int dowear(struct obj *otmp)
 		if (is_cloak(otmp)) Cloak_on();
 		if (is_shield(otmp)) Shield_on();
 		if (is_shirt(otmp)) Shirt_on();
+		discover_cursed_equip(otmp);
 		on_msg(otmp);
 	}
 	takeoff_mask = taking_off = 0L;
