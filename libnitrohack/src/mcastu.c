@@ -246,9 +246,11 @@ int castmu(struct monst *mtmp,
 			   Monnam(mtmp), mattk->adtyp);
 		return 0;
 	    }
-	} else if (mattk->damd)
-	    dmg = dice((int)((ml/2) + mattk->damn), (int)mattk->damd);
-	else dmg = dice((int)((ml/2) + 1), 6);
+	} else if (mattk->damd) {
+	    dmg = dice(ml / 10 + mattk->damn, ml / 10 + mattk->damd);
+	} else {
+	    dmg = dice(ml / 10 + 1, ml / 10 + 6);
+	}
 	if (Half_spell_damage) dmg = (dmg+1) / 2;
 
 	ret = 1;

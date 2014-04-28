@@ -635,12 +635,8 @@ int mattacku(struct monst *mtmp)
 		case AT_MAGC:
 			if (range2)
 			    sum[i] = buzzmu(mtmp, mattk);
-			else {
-			    if (foundyou)
-				sum[i] = castmu(mtmp, mattk, TRUE, TRUE);
-			    else
-				sum[i] = castmu(mtmp, mattk, TRUE, FALSE);
-			}
+			else
+			    sum[i] = castmu(mtmp, mattk, TRUE, foundyou);
 			break;
 
 		default:		/* no attack */
