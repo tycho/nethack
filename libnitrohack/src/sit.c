@@ -330,6 +330,8 @@ void rndcurse(void)
 	if (nobj) {
 	    for (cnt = rnd(6/((!!Antimagic) + (!!Half_spell_damage) + 1));
 		 cnt > 0; cnt--)  {
+		char Your_buf[BUFSZ];
+
 		onum = rnd(nobj);
 		for (otmp = invent; otmp; otmp = otmp->nobj) {
 		    /* as above */
@@ -346,10 +348,25 @@ void rndcurse(void)
 		    continue;
 		}
 
-		if (otmp->blessed)
-			unbless(otmp);
-		else
-			curse(otmp);
+		if (!Blind) Shk_Your(Your_buf, otmp);
+		if (otmp->blessed) {
+		    if (!Blind) {
+			pline("%s %s %s.",
+			      Your_buf,
+			      aobjnam(otmp, "glow"),
+			      hcolor("brown"));
+		    }
+		    unbless(otmp);
+		} else {
+		    if (!Blind) {
+			pline("%s %s with %s aura.",
+			      Your_buf,
+			      aobjnam(otmp, "glow"),
+			      an(hcolor("black")));
+		    }
+		    curse(otmp);
+		}
+		otmp->bknown = TRUE;
 	    }
 	    update_inventory();
 	}
