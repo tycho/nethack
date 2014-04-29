@@ -486,6 +486,9 @@ E struct _plinemsg *pline_msg;
 E glyph_t objclass_unicode_codepoint[NUM_OBJECTS];
 E glyph_t permonst_unicode_codepoint[NUMMONS];
 
+
+E boolean curses_stupid_hack;
+
 #undef E
 
 #endif /* DECL_H */
