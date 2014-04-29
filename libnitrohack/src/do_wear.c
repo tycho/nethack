@@ -29,7 +29,9 @@ static const long takeoff_order[] = { WORN_BLINDF, W_WEP,
 	WORN_HELMET, WORN_AMUL, WORN_ARMOR,
 	WORN_SHIRT, WORN_BOOTS, W_SWAPWEP, W_QUIVER, 0L };
 
-static void on_msg(struct obj *);
+static const char *off_msg_str(const struct obj *, boolean, boolean);
+static const char *on_msg_str(const struct obj *, boolean, boolean);
+static void on_msg(const struct obj *, boolean);
 static void discover_cursed_equip(struct obj *);
 static int Armor_on(void);
 static int Boots_on(void);
@@ -48,25 +50,59 @@ static void already_wearing(const char*);
 static void already_wearing2(const char*, const char*);
 static int armoroff(struct obj *);
 
-void off_msg(struct obj *otmp)
+static const char *off_msg_str(const struct obj *otmp,
+			       boolean delayed, boolean deliberate)
 {
-	if (flags.verbose)
-	    pline("You were wearing %s.", doname(otmp));
+	static char buf[BUFSZ];
+
+	if (otmp && flags.verbose) {
+	    snprintf(buf, BUFSZ, "You %s %s.",
+		     !deliberate ? "were wearing" :
+		     delayed ? "finish taking off" : "take off",
+		     doname(otmp));
+	} else {
+	    buf[0] = '\0';
+	}
+
+	return buf;
+}
+
+void off_msg(const struct obj *otmp, boolean deliberate)
+{
+	const char *msg = off_msg_str(otmp, FALSE, deliberate);
+	if (msg && *msg) pline("%s", msg);
+}
+
+static const char *on_msg_str(const struct obj *otmp,
+			      boolean delayed, boolean deliberate)
+{
+	static char buf[BUFSZ];
+
+	if (otmp && flags.verbose) {
+	    char how[BUFSZ];
+	    how[0] = '\0';
+
+	    if (otmp->otyp == TOWEL)
+		sprintf(how, " around your %s", body_part(HEAD));
+	    snprintf(buf, BUFSZ, "You %s %s%s.",
+		     !deliberate ? "now wear" :
+		     delayed ? "finish wearing" : "wear",
+		     /* hide "(being worn)" but show "(on left hand)" for rings */
+		     (otmp == uleft || otmp == uright) ?
+			doname(otmp) : doname_noworn(otmp),
+		     how);
+	} else {
+	    buf[0] = '\0';
+	}
+
+	return buf;
 }
 
 /* for items that involve no delay */
-static void on_msg(struct obj *otmp)
+static void on_msg(const struct obj *otmp, boolean deliberate)
 {
-	if (flags.verbose) {
-	    char how[BUFSZ];
-
-	    how[0] = '\0';
-	    if (otmp->otyp == TOWEL)
-		sprintf(how, " around your %s", body_part(HEAD));
-	    pline("You are now wearing %s%s.",
-		obj_is_pname(otmp) ? the(xname(otmp)) : an(xname(otmp)),
-		how);
-	}
+	const char *msg = on_msg_str(otmp, FALSE, deliberate);
+	if (msg && *msg) pline("%s", msg);
 }
 
 static void discover_cursed_equip(struct obj *otmp)
@@ -873,6 +909,7 @@ static void Amulet_on(void)
 
     /* AMULET_OF_CHANGE will null uamul via useup() */
     discover_cursed_equip(uamul);
+    on_msg(uamul, TRUE);
 }
 
 void Amulet_off(void)
@@ -925,7 +962,7 @@ void Amulet_off(void)
     return;
 }
 
-void Ring_on(struct obj *obj)
+void Ring_on(struct obj *obj, boolean deliberate)
 {
     long oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
     int old_attrib, which;
@@ -1051,6 +1088,7 @@ void Ring_on(struct obj *obj)
     }
 
     discover_cursed_equip(obj);
+    on_msg(obj, deliberate);
 }
 
 static void Ring_off_or_gone(struct obj *obj, boolean gone)
@@ -1189,7 +1227,7 @@ void Blindf_on(struct obj *otmp)
 	    setuqwep(NULL);
 	setworn(otmp, W_TOOL);
 	discover_cursed_equip(otmp);
-	on_msg(otmp);
+	on_msg(otmp, TRUE);
 
 	if (Blind && !already_blind) {
 	    changed = TRUE;
@@ -1209,14 +1247,14 @@ void Blindf_on(struct obj *otmp)
 	}
 }
 
-void Blindf_off(struct obj *otmp)
+void Blindf_off(struct obj *otmp, boolean deliberate)
 {
 	boolean was_blind = Blind, changed = FALSE;
 
 	violated(CONDUCT_BLINDFOLDED);
 	takeoff_mask &= ~W_TOOL;
 	setworn(NULL, otmp->owornmask);
-	off_msg(otmp);
+	off_msg(otmp, deliberate);
 
 	if (Blind) {
 	    if (was_blind) {
@@ -1413,13 +1451,13 @@ int doremring(struct obj *otmp)
 		 * square amulet (being worn)" is not because of the redundant
 		 * "being worn".
 		 */
-		off_msg(otmp);
+		off_msg(otmp, TRUE);
 		Ring_off(otmp);
 	} else if (otmp == uamul) {
 		Amulet_off();
-		off_msg(otmp);
+		off_msg(otmp, TRUE);
 	} else if (otmp == ublindf) {
-		Blindf_off(otmp);	/* does its own off_msg */
+		Blindf_off(otmp, TRUE);	/* does its own off_msg */
 	} else {
 		warning("removing strange accessory?");
 	}
@@ -1447,38 +1485,16 @@ int armoroff(struct obj *otmp)
 	if (cursed(otmp)) return 0;
 	if (delay) {
 		nomul(delay, "disrobing");
-		if (is_helmet(otmp)) {
-			nomovemsg = "You finish taking off your helmet.";
+		nomovemsg = off_msg_str(otmp, -delay > 1, TRUE);
+		if (is_helmet(otmp))
 			afternmv = Helmet_off;
-		     }
-		else if (is_gloves(otmp)) {
-			nomovemsg = "You finish taking off your gloves.";
+		else if (is_gloves(otmp))
 			afternmv = Gloves_off;
-		     }
-		else if (is_boots(otmp)) {
-			nomovemsg = "You finish taking off your boots.";
+		else if (is_boots(otmp))
 			afternmv = Boots_off;
-		     }
-		else {
-			nomovemsg = "You finish taking off your suit.";
+		else
 			afternmv = Armor_off;
-		}
 	} else {
-		/* Be warned!  We want off_msg after removing the item to
-		 * avoid "You were wearing ____ (being worn)."  However, an
-		 * item which grants fire resistance might cause some trouble
-		 * if removed in Hell and lifesaving puts it back on; in this
-		 * case the message will be printed at the wrong time (after
-		 * the messages saying you died and were lifesaved).  Luckily,
-		 * no cloak, shield, or fast-removable armor grants fire
-		 * resistance, so we can safely do the off_msg afterwards.
-		 * Rings do grant fire resistance, but for rings we want the
-		 * off_msg before removal anyway so there's no problem.  Take
-		 * care in adding armors granting fire resistance; this code
-		 * might need modification.
-		 * 3.2 (actually 3.1 even): this comment is obsolete since
-		 * fire resistance is not needed for Gehennom.
-		 */
 		if (is_cloak(otmp))
 			Cloak_off();
 		else if (is_shield(otmp))
@@ -1486,7 +1502,7 @@ int armoroff(struct obj *otmp)
 		else if (is_shirt(otmp))
 			Shirt_off();
 		else setworn(NULL, otmp->owornmask & W_ARMOR);
-		off_msg(otmp);
+		off_msg(otmp, TRUE);
 	}
 	takeoff_mask = taking_off = 0L;
 	return 1;
@@ -1687,13 +1703,13 @@ int dowear(struct obj *otmp)
 		if (is_helmet(otmp)) afternmv = Helmet_on;
 		if (is_gloves(otmp)) afternmv = Gloves_on;
 		if (otmp == uarm) afternmv = Armor_on;
-		nomovemsg = "You finish your dressing maneuver.";
+		nomovemsg = on_msg_str(otmp, -delay > 1, TRUE);
 	} else {
 		if (is_cloak(otmp)) Cloak_on();
 		if (is_shield(otmp)) Shield_on();
 		if (is_shirt(otmp)) Shirt_on();
 		discover_cursed_equip(otmp);
-		on_msg(otmp);
+		on_msg(otmp, TRUE);
 	}
 	takeoff_mask = taking_off = 0L;
 	return 1;
@@ -1775,7 +1791,7 @@ int doputon(struct obj *otmp)
 		if (otmp->oartifact && !touch_artifact(otmp, &youmonst))
 		    return 1; /* costs a turn even though it didn't get worn */
 		setworn(otmp, mask);
-		Ring_on(otmp);
+		Ring_on(otmp, TRUE);
 	} else if (otmp->oclass == AMULET_CLASS) {
 		if (uamul) {
 			already_wearing("an amulet");
@@ -1818,8 +1834,6 @@ int doputon(struct obj *otmp)
 		Blindf_on(otmp);
 		return 1;
 	}
-	if (is_worn(otmp))
-	    prinv(NULL, otmp, 0L);
 	return 1;
 }
 
@@ -2121,7 +2135,7 @@ static struct obj *do_takeoff(void)
 	  otmp = uright;
 	  if (!cursed(otmp)) Ring_off(uright);
 	} else if (taking_off == WORN_BLINDF) {
-	  if (!cursed(ublindf)) Blindf_off(ublindf);
+	  if (!cursed(ublindf)) Blindf_off(ublindf, TRUE);
 	} else warning("do_takeoff: taking off %lx", taking_off);
 
 	return otmp;
@@ -2139,7 +2153,7 @@ static int take_off(void)
 		todelay--;
 		return 1;	/* still busy */
 	    } else {
-		if ((otmp = do_takeoff())) off_msg(otmp);
+		if ((otmp = do_takeoff())) off_msg(otmp, TRUE);
 	    }
 	    takeoff_mask &= ~taking_off;
 	    taking_off = 0L;

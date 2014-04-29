@@ -760,17 +760,17 @@ static void dosinkfall(void)
 	if (uleft && uleft->otyp == RIN_LEVITATION) {
 	    obj = uleft;
 	    Ring_off(obj);
-	    off_msg(obj);
+	    off_msg(obj, FALSE);
 	}
 	if (uright && uright->otyp == RIN_LEVITATION) {
 	    obj = uright;
 	    Ring_off(obj);
-	    off_msg(obj);
+	    off_msg(obj, FALSE);
 	}
 	if (uarmf && uarmf->otyp == LEVITATION_BOOTS) {
 	    obj = uarmf;
 	    Boots_off();
-	    off_msg(obj);
+	    off_msg(obj, FALSE);
 	}
 	HLevitation--;
 }

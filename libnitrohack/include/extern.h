@@ -311,7 +311,7 @@ extern char *coyotename(const struct monst *,char *);
 
 /* ### do_wear.c ### */
 
-extern void off_msg(struct obj *);
+extern void off_msg(const struct obj *, boolean);
 extern void Oprops_off(struct obj *, unsigned int);
 extern void set_wear(void);
 extern boolean donning(const struct obj *);
@@ -328,11 +328,11 @@ extern int Cloak_off(void);
 extern int Shield_off(void);
 extern int Shirt_off(void);
 extern void Amulet_off(void);
-extern void Ring_on(struct obj *);
+extern void Ring_on(struct obj *, boolean);
 extern void Ring_off(struct obj *);
 extern void Ring_gone(struct obj *);
 extern void Blindf_on(struct obj *);
-extern void Blindf_off(struct obj *);
+extern void Blindf_off(struct obj *, boolean);
 extern int dotakeoff(struct obj *otmp);
 extern int doremring(struct obj *otmp);
 extern int cursed(struct obj *);
@@ -1209,6 +1209,7 @@ extern char *xname_single(const struct obj *);
 extern char *mshot_xname(const struct obj *);
 extern boolean the_unique_obj(const struct obj *obj);
 extern char *doname(const struct obj *obj);
+extern char *doname_noworn(const struct obj *obj);
 extern char *doname_price(const struct obj *obj);
 extern boolean not_fully_identified_core(const struct obj *otmp, boolean ignore_bknown);
 extern boolean not_fully_identified(const struct obj *otmp);

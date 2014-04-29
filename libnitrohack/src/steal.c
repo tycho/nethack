@@ -146,7 +146,7 @@ void remove_worn_item(struct obj *obj,
 	} else if (obj->owornmask & W_RING) {
 	    Ring_gone(obj);
 	} else if (obj->owornmask & W_TOOL) {
-	    Blindf_off(obj);
+	    Blindf_off(obj, FALSE);
 	} else if (obj->owornmask & (W_WEP|W_SWAPWEP|W_QUIVER)) {
 	    if (obj == uwep)
 		uwepgone();

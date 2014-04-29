@@ -513,7 +513,7 @@ void recharge(struct obj *obj, int curse_bless)
 		/* cause attributes and/or properties to be updated */
 		if (is_on) Ring_off(obj);
 		obj->spe += s;	/* update the ring while it's off */
-		if (is_on) setworn(obj, mask), Ring_on(obj);
+		if (is_on) setworn(obj, mask), Ring_on(obj, FALSE);
 		/* oartifact: if a touch-sensitive artifact ring is
 		   ever created the above will need to be revised  */
 	    }

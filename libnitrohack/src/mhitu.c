@@ -2446,7 +2446,7 @@ int doseduce(struct monst *mon)
 		    Ring_gone(uleft);
 		    setworn(ring, LEFT_RING);
 		} else warning("ring replacement");
-		Ring_on(ring);
+		Ring_on(ring, FALSE);
 		prinv(NULL, ring, 0L);
 	    }
 	}

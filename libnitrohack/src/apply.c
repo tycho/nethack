@@ -108,7 +108,7 @@ static int use_towel(struct obj *obj)
 			} else {
 			    struct obj *saved_ublindf = ublindf;
 			    pline("You push your %s off.", what);
-			    Blindf_off(ublindf);
+			    Blindf_off(ublindf, FALSE);
 			    dropx(saved_ublindf);
 			}
 		    }
@@ -2719,7 +2719,7 @@ int doapply(struct obj *obj)
 	case BLINDFOLD:
 	case LENSES:
 		if (obj == ublindf) {
-		    if (!cursed(obj)) Blindf_off(obj);
+		    if (!cursed(obj)) Blindf_off(obj, TRUE);
 		} else if (!ublindf) {
 		    Blindf_on(obj);
 		} else {

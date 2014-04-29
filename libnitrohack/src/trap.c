@@ -3929,7 +3929,7 @@ boolean lava_effects(void)
 		    else if (obj == uarmu) Shirt_off();
 		    else if (obj == uleft) Ring_gone(obj);
 		    else if (obj == uright) Ring_gone(obj);
-		    else if (obj == ublindf) Blindf_off(obj);
+		    else if (obj == ublindf) Blindf_off(obj, FALSE);
 		    else if (obj == uamul) Amulet_off();
 		    else if (obj == uwep) uwepgone();
 		    else if (obj == uquiver) uqwepgone();
