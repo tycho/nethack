@@ -350,7 +350,7 @@ void rndcurse(void)
 
 		if (!Blind) Shk_Your(Your_buf, otmp);
 		if (otmp->blessed) {
-		    if (!Blind) {
+		    if (flags.verbose && !Blind) {
 			pline("%s %s %s.",
 			      Your_buf,
 			      aobjnam(otmp, "glow"),
@@ -358,7 +358,7 @@ void rndcurse(void)
 		    }
 		    unbless(otmp);
 		} else {
-		    if (!Blind) {
+		    if (flags.verbose && !Blind) {
 			pline("%s %s with %s aura.",
 			      Your_buf,
 			      aobjnam(otmp, "glow"),
