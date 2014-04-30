@@ -1470,8 +1470,9 @@ int cursed(struct obj *otmp)
 	/* Curses, like chickens, come home to roost. */
 	if ((otmp == uwep) ? welded(otmp) : (int)otmp->cursed) {
 		pline("You can't.  %s cursed.",
-			(is_boots(otmp) || is_gloves(otmp) || otmp->quan > 1L)
-			? "They are" : "It is");
+			(is_plural(otmp) || otmp->otyp == LENSES ||
+			 is_boots(otmp) || is_gloves(otmp)) ?
+			"They are" : "It is");
 		otmp->bknown = TRUE;
 		return 1;
 	}
