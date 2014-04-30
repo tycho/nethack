@@ -1477,6 +1477,7 @@ int domove(schar dx, schar dy, schar dz)
 	struct monst *mtmp;
 	struct rm *tmpr;
 	xchar x,y;
+	xchar x_intent, y_intent;	/* player-intended destination */
 	struct trap *trap;
 	int wtcap;
 	boolean on_ice;
@@ -1589,6 +1590,8 @@ int domove(schar dx, schar dy, schar dz)
 		dx = dy = 0;
 		u.ux = x = u.ustuck->mx;
 		u.uy = y = u.ustuck->my;
+		x_intent = x;
+		y_intent = y;
 		mtmp = u.ustuck;
 	} else {
 		if (Is_airlevel(&u.uz) && rn2(4) &&
@@ -1630,6 +1633,8 @@ int domove(schar dx, schar dy, schar dz)
 
 		x = u.ux + dx;
 		y = u.uy + dy;
+		x_intent = x;
+		y_intent = y;
 		if (Stunned || (Confusion && !rn2(5))) {
 			int tries = 0;
 
@@ -1854,8 +1859,8 @@ int domove(schar dx, schar dy, schar dz)
 		return 1;
 
 	/* warn player before walking into known traps */
-	if (iflags.paranoid_trap &&
-	    ((trap = t_at(level, x, y)) && trap->tseen &&
+	if (iflags.paranoid_trap && isok(x_intent, y_intent) &&
+	    ((trap = t_at(level, x_intent, y_intent)) && trap->tseen &&
 	     (Hallucination ||
 	      /* the trap might affect us */
 	      !(trap->ttyp == VIBRATING_SQUARE ||
@@ -1892,19 +1897,22 @@ int domove(schar dx, schar dy, schar dz)
 	/* If no 'm' prefix, veto dangerous moves. */
 	if (!flags.nopick || flags.run) {
 	    if (!Levitation && !Flying && !is_clinger(youmonst.data) &&
-		!Stunned && !Confusion &&
-		level->locations[x][y].seenv &&
+		isok(x_intent, y_intent) &&
+		level->locations[x_intent][y_intent].seenv &&
 		!(flags.travel && iflags.autoexplore)) {
 
 		const char *stop_for = NULL;
 		if (iflags.paranoid_lava &&
-		    is_lava(level, x, y) && !is_lava(level, u.ux, u.uy)) {
+		    is_lava(level, x_intent, y_intent) &&
+		    !is_lava(level, u.ux, u.uy)) {
 		    stop_for = "lava";
 		} else if (iflags.paranoid_water &&
-			   is_pool(level, x, y) && !is_pool(level, u.ux, u.uy)) {
+			   is_pool(level, x_intent, y_intent) &&
+			   !is_pool(level, u.ux, u.uy)) {
 		    stop_for = "water";
 		} else if (iflags.paranoid_water &&
-			   is_swamp(level, x, y) && !is_swamp(level, u.ux, u.uy)) {
+			   is_swamp(level, x_intent, y_intent) &&
+			   !is_swamp(level, u.ux, u.uy)) {
 		    stop_for = "muddy swamp";
 		}
 		if (stop_for) {
