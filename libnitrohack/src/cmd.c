@@ -1536,7 +1536,8 @@ struct nh_cmd_desc *nh_get_object_commands(int *count, char invlet)
 	/* unequip armor or tip container */
 	if (obj->oclass == ARMOR_CLASS && (obj->owornmask & W_ARMOR))
 	    SET_OBJ_CMD2('T', "takeoff", "take off");
-	else if (obj->oclass == RING_CLASS && (obj->owornmask & W_RING))
+	else if ((obj->oclass == RING_CLASS || obj->otyp == MEAT_RING) &&
+		 (obj->owornmask & W_RING))
 	    SET_OBJ_CMD2('T', "remove", "take off");
 	else if (obj->oclass == AMULET_CLASS && (obj->owornmask & W_AMUL))
 	    SET_OBJ_CMD2('T', "remove", "take off");
