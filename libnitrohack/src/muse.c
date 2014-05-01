@@ -1171,7 +1171,8 @@ static void mbhit(struct monst *mon,	/* monster shooting the wand */
 			case WAN_LOCKING:
 			case WAN_STRIKING:
 			    if (doorlock(obj, bhitpos.x, bhitpos.y)) {
-				makeknown(obj->otyp);
+				if (canseemon(level, mon))
+				    makeknown(obj->otyp);
 				/* if a shop door gets broken, add it to
 				   the shk's fix list (no cost to player) */
 				if (level->locations[bhitpos.x][bhitpos.y].doormask ==
