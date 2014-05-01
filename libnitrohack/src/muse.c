@@ -1127,11 +1127,18 @@ static void mbhit(struct monst *mon,	/* monster shooting the wand */
 		    bhitpos.y -= ddy;
 		    break;
 		}
-		if (find_drawbridge(&x,&y))
+		if (find_drawbridge(&x,&y)) {
 		    switch (obj->otyp) {
 			case WAN_STRIKING:
-			    destroy_drawbridge(x,y);
+			    /* destroy closed drawbridges, not open ones */
+			    if (level->locations[bhitpos.x][bhitpos.y].typ == DBWALL) {
+				destroy_drawbridge(x,y);
+				if (canseemon(level, mon))
+				    makeknown(obj->otyp);
+			    }
+			    break;
 		    }
+		}
 		if (bhitpos.x==u.ux && bhitpos.y==u.uy) {
 			(*fhitm)(&youmonst, obj);
 			range -= 3;

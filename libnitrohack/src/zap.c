@@ -2716,7 +2716,7 @@ struct monst *beam_hit(int ddx, int ddy, int range,	/* direction and range */
 		break;
 	    }
 
-	    if (weapon == ZAPPED_WAND && find_drawbridge(&x,&y))
+	    if (weapon == ZAPPED_WAND && find_drawbridge(&x,&y)) {
 		switch (obj->otyp) {
 		    case WAN_OPENING:
 		    case SPE_KNOCK:
@@ -2740,11 +2740,14 @@ struct monst *beam_hit(int ddx, int ddy, int range,	/* direction and range */
 			break;
 		    case WAN_STRIKING:
 		    case SPE_FORCE_BOLT:
-			if (typ != DRAWBRIDGE_UP)
+			/* destroy closed drawbridges, not open ones */
+			if (typ == DBWALL) {
 			    destroy_drawbridge(x,y);
-			makeknown(obj->otyp);
+			    makeknown(obj->otyp);
+			}
 			break;
 		}
+	    }
 
 	    if ((mtmp = m_at(level, bhitpos.x, bhitpos.y)) != 0) {
 		notonhead = (bhitpos.x != mtmp->mx ||
