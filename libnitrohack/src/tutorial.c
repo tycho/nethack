@@ -27,6 +27,8 @@ void init_tutorial(void)
 
 	memset(pl_tutorial, 0, sizeof(pl_tutorial));
 	check_tutorial_command_message = 0;
+	memset(check_tutorial_command_buffer, 0,
+	       sizeof(check_tutorial_command_buffer));
 	check_tutorial_command_pointer = 0;
 	check_tutorial_command_count = 0;
 
