@@ -917,9 +917,11 @@ static void makelevel(struct level *lev)
 			   (lev->z.dlevel < loc_levnum->dlevel.dlevel) ? "a" : "b");
 		    makemaz(lev, fillname);
 		    return;
-	    } else if (In_hell(&lev->z) ||
-		  (rn2(5) && lev->z.dnum == medusa_level.dnum
-			  && depth(&lev->z) > depth(&medusa_level))) {
+	    } else if (lev->z.dnum == medusa_level.dnum &&
+		       depth(&lev->z) > depth(&medusa_level)) {
+		    makemaz(lev, "medufill");
+		    return;
+	    } else if (In_hell(&lev->z)) {
 		    makemaz(lev, "hellfill");
 		    return;
 	    }
