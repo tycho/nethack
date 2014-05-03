@@ -690,6 +690,12 @@ void init_dungeons(void)	/* initialize the "dungeon" structs */
 	if (n_dgns >= MAXDUNGEON)
 	    panic("init_dungeons: too many dungeons");
 
+	/*
+	 * Zero-out dungeons to prevent replay desyncs, specifically the data
+	 * beyond the ends of each dungeon's name/protoname fields.
+	 */
+	memset(dungeons, 0, MAXDUNGEON * sizeof(dungeon));
+
 	for (i = 0; i < n_dgns; i++) {
 	    Fread(&pd.tmpdungeon[i], sizeof(struct tmpdungeon), 1, dgn_file);
 	    if (!wizard)
