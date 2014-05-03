@@ -126,10 +126,10 @@ void save_dungeon(struct memfile *mf)
     mtag(mf, 0, MTAG_DUNGEON);
     mfmagic_set(mf, DGN_MAGIC);
 
-    mwrite(mf, &n_dgns, sizeof n_dgns);
+    mwrite32(mf, n_dgns);
     for (i = 0; i < n_dgns; i++)
 	save_dungeon_struct(mf, &dungeons[i]);
-    
+
     /* writing dungeon_topology directly should be ok, it's just a
 	* fancy collection of single byte values */
     mwrite(mf, &dungeon_topology, sizeof dungeon_topology);
