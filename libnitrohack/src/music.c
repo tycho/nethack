@@ -356,7 +356,7 @@ static int do_improvisation(struct obj *instr)
 		    buzz((instr->otyp == FROST_HORN) ? AD_COLD-1 : AD_FIRE-1,
 			 rn1(6,6), u.ux, u.uy, dx, dy);
 		}
-		makeknown(instr->otyp);
+		makeknown_msg(instr->otyp);
 		break;
 	    } /* else FALLTHRU */
 	case TOOLED_HORN:		/* Awaken or scare monsters */
@@ -396,7 +396,7 @@ static int do_improvisation(struct obj *instr)
 		do_earthquake((u.ulevel - 1) / 3 + 1);
 		/* shake up monsters in a much larger radius... */
 		awaken_monsters(ROWNO * COLNO);
-		makeknown(DRUM_OF_EARTHQUAKE);
+		makeknown_msg(DRUM_OF_EARTHQUAKE);
 		break;
 	    } /* else FALLTHRU */
 	case LEATHER_DRUM:		/* Awaken monsters */
