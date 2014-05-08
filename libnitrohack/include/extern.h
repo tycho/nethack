@@ -1194,6 +1194,7 @@ extern void savenames(struct memfile *mf);
 extern void restnames(struct memfile *mf);
 extern void discover_object(int,boolean,boolean);
 extern void undiscover_object(int);
+extern void makeknown_msg(int);
 extern int dodiscovered(void);
 
 /* ### objnam.c ### */

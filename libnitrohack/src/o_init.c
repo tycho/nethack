@@ -424,6 +424,27 @@ void undiscover_object(int oindx)
     }
 }
 
+void makeknown_msg(int otyp)
+{
+    boolean was_known, now_known;
+    char oclass = objects[otyp].oc_class;
+    schar osubtyp = objects[otyp].oc_subtyp;
+
+    was_known = objects[otyp].oc_name_known;
+    makeknown(otyp);
+    now_known = objects[otyp].oc_name_known;
+
+    if (flags.verbose && !was_known && now_known) {
+	if (otyp == LENSES ||
+	    (oclass == ARMOR_CLASS &&
+	     (osubtyp == ARM_BOOTS || osubtyp == ARM_GLOVES))) {
+	    pline("They must be %s!", simple_typename(otyp));
+	} else {
+	    pline("It must be %s!", an(simple_typename(otyp)));
+	}
+    }
+}
+
 static boolean interesting_to_discover(int i)
 {
 	/* Pre-discovered objects are now printed with a '*' */
