@@ -1540,6 +1540,7 @@ void mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom, coor
 			if (lvl < 5 || lev->flags.noteleport)
 			    kind = NO_TRAP; break;
 		    case SPIKED_PIT:
+		    case MAGIC_TRAP:
 			if (lvl < 5) kind = NO_TRAP; break;
 		    case LANDMINE:
 			if (lvl < 6) kind = NO_TRAP; break;
