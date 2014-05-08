@@ -328,6 +328,7 @@ static int do_improvisation(struct obj *instr)
 		pline("You produce %s music.", Hallucination ? "elevator" : "soft");
 		put_monsters_to_sleep(u.ulevel * 5);
 		exercise(A_DEX, TRUE);
+		makeknown_msg(MAGIC_FLUTE);
 		break;
 	    } /* else FALLTHRU */
 	case WOODEN_FLUTE:		/* May charm snakes */
@@ -375,6 +376,7 @@ static int do_improvisation(struct obj *instr)
 		pline("%s very attractive music.", Tobjnam(instr, "produce"));
 		charm_monsters((u.ulevel - 1) / 3 + 1);
 		exercise(A_DEX, TRUE);
+		makeknown_msg(MAGIC_HARP);
 		break;
 	    } /* else FALLTHRU */
 	case WOODEN_HARP:		/* May calm Nymph */
