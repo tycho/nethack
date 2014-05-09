@@ -1190,7 +1190,7 @@ int weapon_hit_bonus(struct obj *weapon)
 	    case P_UNSKILLED:   bonus = -4; break;
 	    case P_BASIC:       bonus =  0; break;
 	    case P_SKILLED:     bonus =  2; break;
-	    case P_EXPERT:      bonus =  3; break;
+	    case P_EXPERT:      bonus =  5; break;
 	}
     } else if (type == P_TWO_WEAPON_COMBAT) {
 	skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1201,7 +1201,7 @@ int weapon_hit_bonus(struct obj *weapon)
 	    case P_UNSKILLED:   bonus = -9; break;
 	    case P_BASIC:	bonus = -7; break;
 	    case P_SKILLED:	bonus = -5; break;
-	    case P_EXPERT:	bonus = -3; break;
+	    case P_EXPERT:	bonus = -2; break;
 	}
     } else if (type == P_BARE_HANDED_COMBAT) {
 	/*
@@ -1225,7 +1225,8 @@ int weapon_hit_bonus(struct obj *weapon)
 		    case P_UNSKILLED:   bonus -= 2; break;
 		    case P_BASIC:       bonus -= 1; break;
 		    case P_SKILLED:     break;
-		    case P_EXPERT:      break;
+		    /* but an expert can use the added momentum */
+		    case P_EXPERT:      bonus += 2; break;
 		}
 		if (u.twoweap) bonus -= 2;
 	}
@@ -1235,7 +1236,6 @@ int weapon_hit_bonus(struct obj *weapon)
 
 /*
  * Return damage bonus/penalty based on skill of weapon.
- * Treat restricted weapons as unskilled.
  */
 int weapon_dam_bonus(struct obj *weapon)
 {
@@ -1251,11 +1251,11 @@ int weapon_dam_bonus(struct obj *weapon)
 	switch (P_SKILL(type)) {
 	    default: impossible("weapon_dam_bonus: bad skill %d",P_SKILL(type));
 		     /* fall through */
-	    case P_ISRESTRICTED:
+	    case P_ISRESTRICTED: bonus = -5; break;
 	    case P_UNSKILLED:	bonus = -2; break;
 	    case P_BASIC:	bonus =  0; break;
 	    case P_SKILLED:	bonus =  1; break;
-	    case P_EXPERT:	bonus =  2; break;
+	    case P_EXPERT:	bonus =  3; break;
 	}
     } else if (type == P_TWO_WEAPON_COMBAT) {
 	skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1266,7 +1266,7 @@ int weapon_dam_bonus(struct obj *weapon)
 	    case P_UNSKILLED:	bonus = -3; break;
 	    case P_BASIC:	bonus = -1; break;
 	    case P_SKILLED:	bonus = 0; break;
-	    case P_EXPERT:	bonus = 1; break;
+	    case P_EXPERT:	bonus = 2; break;
 	}
     } else if (type == P_BARE_HANDED_COMBAT) {
 	/*
@@ -1289,8 +1289,8 @@ int weapon_dam_bonus(struct obj *weapon)
 		    case P_ISRESTRICTED:
 		    case P_UNSKILLED:   break;
 		    case P_BASIC:       break;
-		    case P_SKILLED:     bonus += 1; break;
-		    case P_EXPERT:      bonus += 2; break;
+		    case P_SKILLED:     bonus += 2; break;
+		    case P_EXPERT:      bonus += 5; break;
 		}
 	}
 
