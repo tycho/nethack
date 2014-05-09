@@ -82,7 +82,6 @@ static void give_may_advance_msg(int skill)
 
 
 static boolean could_advance(int);
-static boolean peaked_skill(int);
 static int slots_required(int);
 static char *skill_level_name(int,char *);
 static void skill_advance(int);
@@ -822,16 +821,6 @@ static boolean could_advance(int skill)
 	    && u.skills_advanced < P_SKILL_LIMIT));
 }
 
-/* return true if this skill has reached its maximum and there's been enough
-   practice to become eligible for the next step if that had been possible */
-static boolean peaked_skill(int skill)
-{
-    return !P_RESTRICTED(skill)
-	    && P_SKILL(skill) >= P_MAX_SKILL(skill) && (
-	    (P_ADVANCE(skill) >=
-		(unsigned) practice_needed_to_advance(P_SKILL(skill))));
-}
-
 static void skill_advance(int skill)
 {
     u.weapon_slots -= slots_required(skill);
@@ -951,7 +940,7 @@ static const struct skill_range {
 int enhance_weapon_skill(void)
 {
     int pass, i, n, crosstrain, id,
-	to_advance, eventually_advance, maxxed_cnt, selected[1];
+	to_advance, eventually_advance, selected[1];
     char buf[BUFSZ], sklnambuf[BUFSZ];
     const char *prefix;
     struct menulist menu;
@@ -964,33 +953,24 @@ int enhance_weapon_skill(void)
     do {
 	menu.icount = 0;
 	/* count skills that can advance */
-	to_advance = eventually_advance = maxxed_cnt = 0;
+	to_advance = eventually_advance = 0;
 	for (i = 0; i < P_NUM_SKILLS; i++) {
 	    if (P_RESTRICTED(i))
 		continue;
 	    if (can_advance(i, speedy)) to_advance++;
 	    else if (could_advance(i)) eventually_advance++;
-	    else if (peaked_skill(i)) maxxed_cnt++;
 	}
 
 	/* start with a legend if any entries will be annotated
-	    with "*" or "#" below */
-	if (eventually_advance > 0 || maxxed_cnt > 0) {
-	    if (eventually_advance > 0) {
-		sprintf(buf,
-			"(Skill%s flagged by \"*\" may be enhanced %s.)",
-			plur(eventually_advance),
-			(u.ulevel < MAXULEV) ?
-			    "when you're more experienced" :
-			    "if skill slots become available");
-		add_menutext(&menu, buf);
-	    }
-	    if (maxxed_cnt > 0) {
-		sprintf(buf,
-		"(Skill%s flagged by \"#\" cannot be enhanced any further.)",
-			plur(maxxed_cnt));
-		add_menutext(&menu, buf);
-	    }
+	    with "*" below */
+	if (eventually_advance > 0) {
+	    sprintf(buf,
+		    "(Skill%s flagged by \"*\" may be enhanced %s.)",
+		    plur(eventually_advance),
+		    (u.ulevel < MAXULEV) ?
+			"when you're more experienced" :
+			"if skill slots become available");
+	    add_menutext(&menu, buf);
 	    add_menutext(&menu, "");
 	}
 
@@ -1015,35 +995,29 @@ int enhance_weapon_skill(void)
 		prefix = "";	/* will be preceded by menu choice */
 	    else if (could_advance(i))
 		prefix = "  * ";
-	    else if (peaked_skill(i))
-		prefix = "  # ";
 	    else
-		prefix = (to_advance + eventually_advance +
-			    maxxed_cnt > 0) ? "    " : "";
+		prefix = (to_advance + eventually_advance > 0) ? "    " : "";
+	    strcpy(buf, " ");
+	    sprintf(eos(buf), "%s%s", prefix, P_NAME(i));
 	    crosstrain = skill_crosstrain_bonus(i);
+	    if (crosstrain > 1 && P_SKILL(i) < P_MAX_SKILL(i))
+		sprintf(eos(buf), " (x%d)", crosstrain);
 	    skill_level_name(i, sklnambuf);
-	    if (crosstrain > 1 && P_SKILL(i) < P_MAX_SKILL(i)) {
-		if (wizard) {
-		    sprintf(buf, " %s%s (x%d)\t%s\t%5d(%4d)",
-			    prefix, P_NAME(i), skill_crosstrain_bonus(i),
-			    sklnambuf,
-			    P_ADVANCE(i), practice_needed_to_advance(P_SKILL(i)));
-		} else {
-		    sprintf(buf, " %s%s (x%d)\t[%s]",
-			    prefix, P_NAME(i), skill_crosstrain_bonus(i),
-			    sklnambuf);
-		}
+	    sprintf(eos(buf), "\t[%s]", sklnambuf);
+	    if (P_SKILL(i) < P_MAX_SKILL(i)) {
+		int mintrain = P_SKILL(i) == P_UNSKILLED ? 0 :
+			       practice_needed_to_advance(P_SKILL(i) - 1);
+		sprintf(eos(buf), "\t%5d%%",
+			(P_ADVANCE(i) - mintrain) * 100 /
+			(practice_needed_to_advance(P_SKILL(i)) - mintrain));
 	    } else {
-		if (wizard) {
-		    sprintf(buf, " %s%s\t%s\t%5d(%4d)",
-			    prefix, P_NAME(i), sklnambuf,
-			    P_ADVANCE(i),
-			    practice_needed_to_advance(P_SKILL(i)));
-		} else {
-		    sprintf(buf, " %s%s\t[%s]",
-			    prefix, P_NAME(i), sklnambuf);
-		}
+		sprintf(eos(buf), "\t   MAX");
 	    }
+	    if (wizard) {
+		sprintf(eos(buf), "/%5d(%4d)",
+			P_ADVANCE(i), practice_needed_to_advance(P_SKILL(i)));
+	    }
+
 	    if ((could_advance(i) || can_advance(i, speedy)) && !(wizard && speedy))
 		sprintf(eos(buf), " (%d to advance)", slots_required(i));
 	    id = can_advance(i, speedy) ? i+1 : 0;
