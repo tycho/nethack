@@ -495,9 +495,13 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	char outrip_buf[BUFSZ];
 	boolean show_endwin = FALSE;
 	struct menulist menu;
-	
+	int saved_stopprint = done_stopprint;
+
+	/* always show this under normal circumstances */
+	done_stopprint = 0;
+
 	init_menulist(&menu);
-	
+
 	/* clean up unneeded windows */
 	if (program_state.game_running) {
 	    win_pause_output(P_MESSAGE);
@@ -523,8 +527,9 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 			break;
 		}
 	    }
-	} else
+	} else {
 	    done_stopprint = 1;
+	}
 
 /* changing kilbuf really changes killer. we do it this way because
    killer is declared a (const char *)
@@ -666,8 +671,10 @@ void display_rip(int how, char *kilbuf, char *pbuf, long umoney)
 	    outrip(menu.items, menu.icount,
 		   (how <= GENOCIDED || how == DISINTEGRATED), plname, umoney,
 		   outrip_buf, how, getyear());
-	
+
 	free(menu.items);
+
+	done_stopprint = saved_stopprint;
 }
 
 
@@ -775,7 +782,7 @@ void done(int how)
 
 	if (flags.end_disclose != DISCLOSE_NO_WITHOUT_PROMPT)
 	    disclose(how, taken);
-    
+
 	begin_dump(how);
 	dump_disclose(how);
 	

@@ -93,7 +93,7 @@ static void dump_status(void)
 
 void end_dump(int how, char *killbuf, char *pbuf, long umoney)
 {
-    int saved_stopprint, i, line;
+    int i, line;
     if (!dumpfp)
 	return;
     
@@ -112,12 +112,7 @@ void end_dump(int how, char *killbuf, char *pbuf, long umoney)
     fprintf(dumpfp, "\n");
     
     dump_catch_menus(TRUE);
-    saved_stopprint = program_state.stopprint;
-    program_state.stopprint = 0;
-    
     display_rip(how, killbuf, pbuf, umoney);
-    
-    program_state.stopprint = saved_stopprint;
     dump_catch_menus(FALSE);
     
     fclose(dumpfp);
