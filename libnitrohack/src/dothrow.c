@@ -163,7 +163,7 @@ static int throw_obj(struct obj *obj, int shotlimit, boolean cancel_unquivers)
 		pline("You throw the %s corpse with your bare %s.",
 		    mons_mname(&mons[obj->corpsenm]), body_part(HAND));
 		sprintf(kbuf, "%s corpse", an(mons_mname(&mons[obj->corpsenm])));
-		instapetrify(kbuf);
+		delayed_petrify(NULL, kbuf);
 	}
 	if (welded(obj)) {
 		weldmsg(obj);
