@@ -2156,6 +2156,29 @@ void instapetrify(const char *str)
 	done(STONING);
 }
 
+/* pre_petrify_msg is shown if this circumstance would cause petrification.
+   Returns TRUE if the player's actions should be stopped as a result. */
+boolean delayed_petrify(const char *pre_petrify_msg, const char *cause)
+{
+	if (Stone_resistance)
+	    return FALSE;
+	if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
+	    return FALSE;
+
+	if (pre_petrify_msg && *pre_petrify_msg)
+	    pline(pre_petrify_msg);
+
+	/* Preserve original petrification cause/timer if present. */
+	if (!Stoned) {
+	    strncpy(killer_buf, cause, BUFSZ);
+	    killer_buf[BUFSZ - 1] = '\0';
+	    delayed_killer = killer_buf;
+	    killer_format = KILLED_BY;
+	    Stoned = 5;
+	}
+	return TRUE;
+}
+
 void minstapetrify(struct monst *mon, boolean byplayer)
 {
 	if (resists_ston(mon)) return;

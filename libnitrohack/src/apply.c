@@ -1343,18 +1343,23 @@ static int use_tinning_kit(struct obj *obj)
 	}
 	if (touch_petrifies(&mons[corpse->corpsenm])
 		&& !Stone_resistance && !uarmg) {
-	    char kbuf[BUFSZ];
-
-	    if (poly_when_stoned(youmonst.data))
-		pline("You tin %s without wearing gloves.",
+	    char premsg[BUFSZ] = "";
+	    char kbuf[BUFSZ] = "";
+	    if (poly_when_stoned(youmonst.data)) {
+		pline("You start tinning %s without wearing gloves.",
 			an(mons_mname(&mons[corpse->corpsenm])));
-	    else {
-		pline("Tinning %s without wearing gloves is a fatal mistake...",
-			an(mons_mname(&mons[corpse->corpsenm])));
-		sprintf(kbuf, "trying to tin %s without gloves",
-			an(mons_mname(&mons[corpse->corpsenm])));
+	    } else {
+		snprintf(premsg, BUFSZ,
+			 "Tinning %s without wearing gloves is a fatal mistake...",
+			 an(mons_mname(&mons[corpse->corpsenm])));
+		snprintf(kbuf, BUFSZ,
+			 "trying to tin %s without gloves",
+			 an(mons_mname(&mons[corpse->corpsenm])));
 	    }
-	    instapetrify(kbuf);
+	    if (delayed_petrify(premsg, kbuf)) {
+		pline("You stop your tinning attempt.");
+		return 1;
+	    }
 	}
 	if (is_rider(&mons[corpse->corpsenm])) {
 		revive_corpse(corpse);
