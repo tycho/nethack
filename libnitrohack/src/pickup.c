@@ -640,7 +640,7 @@ int query_objlist(const char *qstr,	/* query string */
 	objlist = malloc(n * sizeof(struct obj*));
 	for (curr = olist; curr; curr = FOLLOW(curr, qflags)) {
 	    if ((qflags & FEEL_COCKATRICE) && curr->otyp == CORPSE &&
-		    will_feel_cockatrice(curr, FALSE)) {
+		    will_feel_cockatrice(curr, FALSE) && !Stoned) {
 		    free(objlist);
 		    look_here(0, FALSE);
 		    return 0;

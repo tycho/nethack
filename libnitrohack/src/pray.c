@@ -1194,7 +1194,11 @@ int dosacrifice(struct obj *otmp)
 	u.uconduct.gnostic++;
 
 	/* you're handling this corpse, even if it was killed upon the altar */
-	feel_cockatrice(otmp, TRUE);
+	if (will_feel_cockatrice(otmp, TRUE) && !Stoned) {
+	    feel_cockatrice(otmp, TRUE);
+	    pline("You stop your sacrifice.");
+	    return 1;
+	}
 
 	if (otmp->corpsenm == PM_ACID_BLOB
 		|| (moves <= peek_at_iced_corpse_age(otmp) + 50)) {

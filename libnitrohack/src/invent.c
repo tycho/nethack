@@ -1788,7 +1788,7 @@ int look_here(int obj_cnt, /* obj_cnt > 0 implies that autopickup is in progess 
 	const char *verb = Blind ? "feel" : "see";
 	const char *dfeature = NULL;
 	char fbuf[BUFSZ], fbuf2[BUFSZ];
-	boolean skip_objects = (obj_cnt > iflags.pilesize), felt_cockatrice = FALSE;
+	boolean skip_objects = (obj_cnt > iflags.pilesize);
 	int icount = 0;
 	int size = 10;
 	struct nh_objitem *items = NULL;
@@ -1810,8 +1810,14 @@ int look_here(int obj_cnt, /* obj_cnt > 0 implies that autopickup is in progess 
 	    otmp = mtmp->minvent;
 	    if (otmp) {
 		for ( ; otmp; otmp = otmp->nobj) {
-			/* If swallower is an animal, it should have become stone but... */
-			if (otmp->otyp == CORPSE) feel_cockatrice(otmp, FALSE);
+		    /* If swallower is an animal, it should have become stone but... */
+		    if (otmp->otyp == CORPSE && will_feel_cockatrice(otmp, FALSE))
+			break;
+		}
+		if (otmp && !Stoned) {
+		    pline("You %s here %s.", verb, doname_price(otmp));
+		    feel_cockatrice(otmp, FALSE);
+		    return 1;
 		}
 		if (Blind) strcpy(fbuf, "You feel");
 		strcat(fbuf,":");
@@ -1866,6 +1872,7 @@ int look_here(int obj_cnt, /* obj_cnt > 0 implies that autopickup is in progess 
 	    pline("There are %s%s objects here.",
 		  (obj_cnt <= 10) ? "several" : "many",
 		  picked_some ? " more" : "");
+
 	} else if (!otmp->nexthere) {
 	    /* only one object */
 	    if (dfeature) pline(fbuf);
@@ -1874,34 +1881,37 @@ int look_here(int obj_cnt, /* obj_cnt > 0 implies that autopickup is in progess 
 	    if (otmp->oinvis && !See_invisible) verb = "feel";
 #endif
 	    pline("You %s here %s.", verb, doname_price(otmp));
-	    if (otmp->otyp == CORPSE) feel_cockatrice(otmp, FALSE);
+	    if (otmp->otyp == CORPSE && will_feel_cockatrice(otmp, FALSE) && !Stoned) {
+		feel_cockatrice(otmp, FALSE);
+		return 1;
+	    }
+
 	} else {
+	    for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
+		if (otmp->otyp == CORPSE && will_feel_cockatrice(otmp, FALSE))
+		    break;
+	    }
+	    if (otmp && !Stoned) {
+		pline("You %s here %s.", verb, doname_price(otmp));
+		feel_cockatrice(otmp, FALSE);
+		return 1;
+	    }
+
 	    items = malloc(size * sizeof(struct nh_objitem));
 	    if (dfeature) {
 		add_objitem(&items, &size, MI_TEXT, icount++, 0, fbuf, NULL, FALSE);
 		add_objitem(&items, &size, MI_TEXT, icount++, 0, "", NULL, FALSE);
 	    }
 
-	    for ( ; otmp; otmp = otmp->nexthere) {
-		if (otmp->otyp == CORPSE && will_feel_cockatrice(otmp, FALSE)) {
-			char buf[BUFSZ];
-			felt_cockatrice = TRUE;
-			strcpy(buf, doname_price(otmp));
-			strcat(buf, "...");
-			add_objitem(&items, &size, MI_NORMAL, icount++, 0,
-				    fbuf, otmp, FALSE);
-			break;
-		}
+	    for (otmp = level->objects[u.ux][u.uy]; otmp; otmp = otmp->nexthere) {
 		add_objitem(&items, &size, MI_NORMAL, icount++, 0,
 			    doname(otmp), otmp, FALSE);
 	    }
-	    
-	    if (!skip_win || felt_cockatrice)
+
+	    if (!skip_win)
 		display_objects(items, icount, title, PICK_NONE, NULL);
 	    free(items);
-	    
-	    if (felt_cockatrice)
-		feel_cockatrice(otmp, FALSE);
+
 	    read_engr_at(u.ux, u.uy);
 	}
 	return !!Blind;
@@ -1923,20 +1933,19 @@ boolean will_feel_cockatrice(struct obj *otmp, boolean force_touch)
 
 void feel_cockatrice(struct obj *otmp, boolean force_touch)
 {
-	char kbuf[BUFSZ];
-
 	if (will_feel_cockatrice(otmp, force_touch)) {
-	    if (poly_when_stoned(youmonst.data))
-			pline("You touched the %s corpse with your bare %s.",
-				mons_mname(&mons[otmp->corpsenm]), makeplural(body_part(HAND)));
-	    else
-			pline("Touching the %s corpse is a fatal mistake...",
-				mons_mname(&mons[otmp->corpsenm]));
-		sprintf(kbuf, "%s corpse", an(mons_mname(&mons[otmp->corpsenm])));
-		instapetrify(kbuf);
+	    char premsg[BUFSZ] = "";
+	    char kbuf[BUFSZ] = "";
+	    pline("You touch the %s corpse with your bare %s.",
+		  mons_mname(&mons[otmp->corpsenm]), makeplural(body_part(HAND)));
+	    if (!poly_when_stoned(youmonst.data)) {
+		sprintf(premsg, "Touching the %s corpse is a fatal mistake...",
+			mons_mname(&mons[otmp->corpsenm]));
+	    }
+	    sprintf(kbuf, "%s corpse", an(mons_mname(&mons[otmp->corpsenm])));
+	    delayed_petrify(premsg, kbuf);
 	}
 }
-
 
 
 void stackobj(struct obj *obj)
