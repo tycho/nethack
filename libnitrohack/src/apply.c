@@ -2238,11 +2238,15 @@ static int use_whip(struct obj *obj)
 			    !(poly_when_stoned(youmonst.data) &&
 				polymon(PM_STONE_GOLEM))) {
 			char kbuf[BUFSZ];
-
+			char premsg[BUFSZ];
 			sprintf(kbuf, "%s corpse",
 				an(mons_mname(&mons[otmp->corpsenm])));
-			pline("Snatching %s is a fatal mistake.", kbuf);
-			instapetrify(kbuf);
+			sprintf(premsg, "Snatching %s is a fatal mistake.", kbuf);
+			if (delayed_petrify(premsg, kbuf)) {
+			    pline("You drop %s!", doname(otmp));
+			    dropy(otmp);
+			    break;
+			}
 		    }
 		    hold_another_object(otmp, "You drop %s!",
 					       doname(otmp), NULL);
