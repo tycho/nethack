@@ -414,9 +414,10 @@ static void cprefx(int pm)
 	if (touch_petrifies(&mons[pm]) || pm == PM_MEDUSA) {
 	    if (!Stone_resistance &&
 		!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-		sprintf(killer_buf, "tasting %s meat", mons_mname(&mons[pm]));
+		char kbuf[BUFSZ];
+		sprintf(kbuf, "tasting %s meat", mons_mname(&mons[pm]));
 		killer_format = KILLED_BY;
-		killer = killer_buf;
+		killer = kbuf;
 		pline("You turn to stone.");
 		done(STONING);
 		if (victual.piece)

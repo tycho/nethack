@@ -1425,6 +1425,7 @@ boolean corpse_chance(struct monst *mon,
 {
 	const struct permonst *mdat = mon->data;
 	int i, tmp;
+	char kbuf[BUFSZ];
 
 	if (mdat == &mons[PM_VLAD_THE_IMPALER] || mdat->mlet == S_LICH ||
 	    mdat == &mons[PM_DISINTEGRATOR]) {
@@ -1436,20 +1437,20 @@ boolean corpse_chance(struct monst *mon,
 	/* Gas spores always explode upon death */
 	for (i = 0; i < NATTK; i++) {
 	    if (mdat->mattk[i].aatyp == AT_BOOM) {
-	    	if (mdat->mattk[i].damn)
-	    	    tmp = dice((int)mdat->mattk[i].damn,
-	    	    		(int)mdat->mattk[i].damd);
-	    	else if (mdat->mattk[i].damd)
-	    	    tmp = dice((int)mdat->mlevel+1, (int)mdat->mattk[i].damd);
-	    	else tmp = 0;
+		if (mdat->mattk[i].damn)
+		    tmp = dice((int)mdat->mattk[i].damn,
+				(int)mdat->mattk[i].damd);
+		else if (mdat->mattk[i].damd)
+		    tmp = dice((int)mdat->mlevel+1, (int)mdat->mattk[i].damd);
+		else tmp = 0;
 		if (was_swallowed && magr) {
 		    if (magr == &youmonst) {
 			pline("There is an explosion in your %s!",
 			      body_part(STOMACH));
-			sprintf(killer_buf, "%s explosion",
+			sprintf(kbuf, "%s explosion",
 				s_suffix(mons_mname(mdat)));
 			if (Half_physical_damage) tmp = (tmp+1) / 2;
-			losehp(tmp, killer_buf, KILLED_BY_AN);
+			losehp(tmp, kbuf, KILLED_BY_AN);
 		    } else {
 			if (flags.soundok) You_hear("an explosion.");
 			magr->mhp -= tmp;
@@ -1465,13 +1466,13 @@ boolean corpse_chance(struct monst *mon,
 		    return FALSE;
 		}
 
-	    	sprintf(killer_buf, "%s explosion", s_suffix(mons_mname(mdat)));
-	    	killer = killer_buf;
-	    	killer_format = KILLED_BY_AN;
-	    	explode(mon->mx, mon->my, -1, tmp, MON_EXPLODE, EXPL_NOXIOUS); 
-	    	return FALSE;
+		sprintf(kbuf, "%s explosion", s_suffix(mons_mname(mdat)));
+		killer = kbuf;
+		killer_format = KILLED_BY_AN;
+		explode(mon->mx, mon->my, -1, tmp, MON_EXPLODE, EXPL_NOXIOUS);
+		return FALSE;
 	    }
-  	}
+	}
 
 	/* must duplicate this below check in xkilled() since it results in
 	 * creating no objects as well as no corpse

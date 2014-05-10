@@ -302,6 +302,7 @@ void explode(int x, int y,
 	/* Do your injury last */
 	if (uhurt) {
 		int kf;
+		char kb[BUFSZ];
 
 		if ((type >= 0 || adtyp == AD_PHYS) &&	/* gas spores */
 				flags.verbose && olet != SCROLL_CLASS)
@@ -310,35 +311,35 @@ void explode(int x, int y,
 		if (adtyp == AD_FIRE && olet == WEAPON_CLASS) {
 		    /* projectile of detonation */
 		    kf = KILLED_BY_AN;
-		    strcpy(killer_buf, "exploding projectile");
+		    strcpy(kb, "exploding projectile");
 		} else if (olet == MON_EXPLODE) {
 		    /* killer handled by caller */
-		    if (str != killer_buf && !generic)
-			strcpy(killer_buf, str);
+		    if (!generic)
+			strcpy(kb, str);
 		    kf = KILLED_BY_AN;
 		} else if (type >= 0 && olet != SCROLL_CLASS) {
 		    kf = NO_KILLER_PREFIX;
-		    sprintf(killer_buf, "caught %sself in %s own %s",
+		    sprintf(kb, "caught %sself in %s own %s",
 			    uhim(), uhis(), str);
 		} else if (!strncmpi(str,"tower of flame", 8) ||
 			   !strncmpi(str,"fireball", 8)) {
 		    kf = KILLED_BY_AN;
-		    strcpy(killer_buf, str);
+		    strcpy(kb, str);
 		} else {
 		    kf = KILLED_BY;
-		    strcpy(killer_buf, str);
+		    strcpy(kb, str);
 		}
 
 		exercise(A_STR, FALSE);
 
 		if (adtyp == AD_FIRE) {
-		    fire_damageu(damu, NULL, killer_buf, kf, 25, TRUE, FALSE);
+		    fire_damageu(damu, NULL, kb, kf, 25, TRUE, FALSE);
 		} else if (adtyp == AD_COLD) {
-		    cold_damageu(damu, NULL, killer_buf, kf, 25);
+		    cold_damageu(damu, NULL, kb, kf, 25);
 		} else if (adtyp == AD_ELEC) {
-		    elec_damageu(damu, NULL, killer_buf, kf, 25, TRUE);
+		    elec_damageu(damu, NULL, kb, kf, 25, TRUE);
 		} else if (adtyp == AD_MAGM) {
-		    mana_damageu(damu, NULL, killer_buf, kf, FALSE);
+		    mana_damageu(damu, NULL, kb, kf, FALSE);
 		} else {
 		    if (Invulnerable) {
 			damu = 0;
@@ -360,7 +361,7 @@ void explode(int x, int y,
 			rehumanize();
 		    } else if (u.uhp <= 0) {
 			killer_format = kf;
-			killer = killer_buf;
+			killer = kb;
 			/* Known BUG: BURNING suppresses corpse in bones data,
 			   but done does not handle killer reason correctly */
 			done((adtyp == AD_FIRE) ? BURNING : DIED);
