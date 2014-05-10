@@ -690,27 +690,33 @@ int Gloves_off(void)
 
     /* Prevent wielding cockatrice when not wearing gloves */
     if (uwep && uwep->otyp == CORPSE &&
-		touch_petrifies(&mons[uwep->corpsenm])) {
+		touch_petrifies(&mons[uwep->corpsenm]) &&
+		!Stone_resistance) {
 	char kbuf[BUFSZ];
 
-	pline("You wield the %s in your bare %s.",
+	pline("You now wield the %s in your bare %s.",
 	    corpse_xname(uwep, TRUE), makeplural(body_part(HAND)));
 	strcpy(kbuf, an(corpse_xname(uwep, TRUE)));
-	instapetrify(kbuf);
-	uwepgone();  /* life-saved still doesn't allow touching cockatrice */
+	if (delayed_petrify(NULL, kbuf)) {
+	    pline("You release the %s!", corpse_xname(uwep, TRUE));
+	    uwepgone();
+	}
     }
 
     /* KMH -- ...or your secondary weapon when you're wielding it */
     if (u.twoweap && uswapwep && uswapwep->otyp == CORPSE &&
-	touch_petrifies(&mons[uswapwep->corpsenm])) {
+		touch_petrifies(&mons[uswapwep->corpsenm]) &&
+		!Stone_resistance) {
 	char kbuf[BUFSZ];
 
-	pline("You wield the %s in your bare %s.",
+	pline("You now wield the %s in your bare %s.",
 	    corpse_xname(uswapwep, TRUE), body_part(HAND));
 
 	strcpy(kbuf, an(corpse_xname(uswapwep, TRUE)));
-	instapetrify(kbuf);
-	uswapwepgone();	/* lifesaved still doesn't allow touching cockatrice */
+	if (delayed_petrify(NULL, kbuf)) {
+	    pline("You release the %s!", corpse_xname(uswapwep, TRUE));
+	    uswapwepgone();
+	}
     }
 
     return 0;
