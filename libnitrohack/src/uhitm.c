@@ -618,7 +618,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 			      mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 		    }
 		    hittxt = TRUE;
-		    destroy_arm(uarmg);
+		    destroy_arm(uarmg, FALSE);
 		    tmp = min(dis_dmg, tmp);
 		    disint_obj = TRUE;
 		    valid_weapon_attack = 0;
@@ -2279,19 +2279,19 @@ use_weapon:
 				if (mattk->aatyp == AT_KICK && uarmf) {
 				    if (!oresist_disintegration(uarmf)) {
 					dis_dmg += uarmf->owt;
-					destroy_arm(uarmf);
+					destroy_arm(uarmf, FALSE);
 				    }
 				} else if (uarmg && (mattk->aatyp == AT_WEAP ||
 					   mattk->aatyp == AT_CLAW ||
 					   mattk->aatyp == AT_TUCH)) {
 				    if (!oresist_disintegration(uarmg)) {
 					dis_dmg += uarmg->owt;
-					destroy_arm(uarmg);
+					destroy_arm(uarmg, FALSE);
 				    }
 				} else if (mattk->aatyp == AT_BUTT && uarmh) {
 				    if (!oresist_disintegration(uarmh)) {
 					dis_dmg += (uarmh->owt);
-					destroy_arm(uarmh);
+					destroy_arm(uarmh, FALSE);
 				    }
 				} else {
 				    char kbuf[BUFSZ];

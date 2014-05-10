@@ -3119,18 +3119,18 @@ static void zap_hit_u(int type, int nd, const char *fltxt, xchar sx, xchar sy)
 		    break;
 		} else if (uarms) {
 		    /* destroy shield; other possessions are safe */
-		    destroy_arm(uarms);
+		    destroy_arm(uarms, FALSE);
 		    break;
 		} else if (uarm) {
 		    /* destroy suit; if present, cloak goes too */
-		    if (uarmc) destroy_arm(uarmc);
-		    destroy_arm(uarm);
+		    if (uarmc) destroy_arm(uarmc, FALSE);
+		    destroy_arm(uarm, FALSE);
 		    break;
 		}
 		/* no shield or suit, you're dead; wipe out cloak
 		   and/or shirt in case of life-saving or bones */
-		if (uarmc) destroy_arm(uarmc);
-		if (uarmu) destroy_arm(uarmu);
+		if (uarmc) destroy_arm(uarmc, TRUE);
+		if (uarmu) destroy_arm(uarmu, TRUE);
 	    } else if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
 		shieldeff(sx, sy);
 		pline("You seem unaffected.");

@@ -960,7 +960,7 @@ int seffects(struct obj *sobj, boolean *known)
 			if (is_helmet(otmp)) Helmet_off();
 			if (is_gloves(otmp)) Gloves_off();
 			if (is_shield(otmp)) Shield_off();
-			if (otmp == uarm) Armor_gone();
+			if (otmp == uarm) Armor_gone(FALSE);
 			useup(otmp);
 			break;
 		}
@@ -1023,7 +1023,7 @@ int seffects(struct obj *sobj, boolean *known)
 			break;
 		}
 		if (!sobj->cursed || !otmp || !otmp->cursed) {
-		    if (!destroy_arm(otmp)) {
+		    if (!destroy_arm(otmp, FALSE)) {
 			strange_feeling(sobj,"Your skin itches.");
 			exercise(A_STR, FALSE);
 			exercise(A_CON, FALSE);

@@ -491,6 +491,8 @@ static void god_zaps_you(aligntyp resp_god)
 	    } else
 		pline("%s seems unaffected.", Monnam(u.ustuck));
 	} else {
+	    boolean resisted = FDisint_resistance ||
+			       (PDisint_resistance && rn2(10));
 	    pline("A wide-angle disintegration beam hits you!");
 
 	    /* disintegrate shield and body armor before disintegrating
@@ -498,15 +500,15 @@ static void god_zaps_you(aligntyp resp_god)
 	     */
 	    if (uarms && !(EReflecting & W_ARMS) &&
 	    		!(EDisint_resistance & W_ARMS))
-		destroy_arm(uarms);
+		destroy_arm(uarms, !resisted);
 	    if (uarmc && !(EReflecting & W_ARMC) &&
 	    		!(EDisint_resistance & W_ARMC))
-		destroy_arm(uarmc);
+		destroy_arm(uarmc, !resisted);
 	    if (uarm && !(EReflecting & W_ARM) &&
 	    		!(EDisint_resistance & W_ARM) && !uarmc)
-		destroy_arm(uarm);
-	    if (uarmu && !uarm && !uarmc) destroy_arm(uarmu);
-	    if (FDisint_resistance || (PDisint_resistance && rn2(10))) {
+		destroy_arm(uarm, !resisted);
+	    if (uarmu && !uarm && !uarmc) destroy_arm(uarmu, !resisted);
+	    if (resisted) {
 		pline("You bask in its black glow for a minute...");
 		godvoice(resp_god, "I believe it not!");
 	    } else {

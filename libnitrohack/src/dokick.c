@@ -147,7 +147,7 @@ static void kick_monster(xchar x, xchar y, schar dx, schar dy)
 			if (!oresist_disintegration(uarmf)) {
 			    tmp = uarmf->owt;
 			    weight_dmg(tmp);
-			    destroy_arm(uarmf);
+			    destroy_arm(uarmf, FALSE);
 			    break;
 			}
 		    } else {

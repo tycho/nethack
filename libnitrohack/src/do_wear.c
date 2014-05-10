@@ -807,7 +807,7 @@ static int Armor_on(void)
     return 0;
 }
 
-static void Armor_off_sub(void)
+static void Armor_off_sub(boolean already_dead)
 {
     switch (uarm->otyp) {
 	case CHROMATIC_DRAGON_SCALES:
@@ -825,6 +825,9 @@ static void Armor_off_sub(void)
 	default:
 	    break;
     }
+
+    if (!already_dead && !uarmg)
+	selftouch("No longer petrify-resistant, you");
 }
 
 int Armor_off(void)
@@ -836,7 +839,7 @@ int Armor_off(void)
 	if (!Blind)
 	    pline("%s glowing.", Tobjnam(uarm, "stop"));
     }
-    Armor_off_sub();
+    Armor_off_sub(FALSE);
     takeoff_mask &= ~W_ARM;
     setworn(NULL, W_ARM);
     cancelled_don = FALSE;
@@ -846,13 +849,13 @@ int Armor_off(void)
 /* The gone functions differ from the off functions in that if you die from
  * taking it off and have life saving, you still die.
  */
-int Armor_gone(void)
+int Armor_gone(boolean already_dead)
 {
     Oprops_off(uarm, W_ARM);
 
     if (uarm && Is_gold_dragon_armor(uarm->otyp))
 	end_burn(uarm, FALSE);
-    Armor_off_sub();
+    Armor_off_sub(already_dead);
     takeoff_mask &= ~W_ARM;
     setnotworn(uarm);
     cancelled_don = FALSE;
@@ -2335,7 +2338,7 @@ static int menu_remarm(int retry)
 }
 
 /* hit by destroy armor scroll/black dragon breath/monster spell */
-int destroy_arm(struct obj *atmp)
+int destroy_arm(struct obj *atmp, boolean already_dead)
 {
 	struct obj *otmp;
 #define DESTROY_ARM(o) ((otmp = (o)) != 0 && \
@@ -2352,7 +2355,7 @@ int destroy_arm(struct obj *atmp)
 		if (donning(otmp)) cancel_don();
 		pline("%s turns to dust and falls to the %s!",
 		      Ysimple_name2(otmp), surface(u.ux,u.uy));
-		Armor_gone();
+		Armor_gone(already_dead);
 		useup(otmp);
 	} else if (DESTROY_ARM(uarmu)) {
 		if (donning(otmp)) cancel_don();

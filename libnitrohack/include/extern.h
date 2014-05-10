@@ -320,7 +320,7 @@ extern boolean donning_off(const struct obj *);
 extern boolean equip_is_worn(const struct obj *);
 extern void cancel_don(void);
 extern int Armor_off(void);
-extern int Armor_gone(void);
+extern int Armor_gone(boolean);
 extern int Helmet_off(void);
 extern int Gloves_off(void);
 extern int Boots_off(void);
@@ -349,7 +349,7 @@ extern void reset_remarm(void);
 extern void save_remarm(struct memfile *mf);
 extern void restore_remarm(struct memfile *mf);
 extern int doddoremarm(void);
-extern int destroy_arm(struct obj *);
+extern int destroy_arm(struct obj *,boolean);
 extern void adj_abon(struct obj *,schar);
 
 /* ### dog.c ### */

@@ -368,7 +368,7 @@ static void cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
 	if (Antimagic) {
 	    shieldeff(u.ux, u.uy);
 	    pline("A field of force surrounds you!");
-	} else if (!destroy_arm(some_armor(&youmonst))) {
+	} else if (!destroy_arm(some_armor(&youmonst), FALSE)) {
 	    pline("Your skin itches.");
 	}
 	dmg = 0;

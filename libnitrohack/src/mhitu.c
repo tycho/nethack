@@ -1579,7 +1579,7 @@ dopois:
 		    }
 		    if (destroyme) {
 			mass = destroyme->owt;
-			destroy_arm(destroyme);
+			destroy_arm(destroyme, FALSE);
 			dmg = 0;
 		    } else if (touched) {
 			int recip_damage = instadisintegrate(an(mons_mname(mtmp->data)));
@@ -1827,18 +1827,18 @@ static int gulpmu(struct monst *mtmp, const struct attack *mattk)
 			    break;
 			} else if (uarms) {
 			    /* destroy shield; other possessions are safe */
-			    destroy_arm(uarms);
+			    destroy_arm(uarms, FALSE);
 			    break;
 			} else if (uarm) {
 			    /* destroy suit; if present, cloak goes too */
-			    if (uarmc) destroy_arm(uarmc);
-			    destroy_arm(uarm);
+			    if (uarmc) destroy_arm(uarmc, FALSE);
+			    destroy_arm(uarm, FALSE);
 			    break;
 			}
 			/* no shield or suit, you're dead; wipe out cloak
 			   and/or shirt in case of life-saving or bones */
-			if (uarmc) destroy_arm(uarmc);
-			if (uarmu) destroy_arm(uarmu);
+			if (uarmc) destroy_arm(uarmc, TRUE);
+			if (uarmu) destroy_arm(uarmu, TRUE);
 			pline("You are disintegrated!");
 			tmp = u.uhp;
 			if (Half_physical_damage) tmp *= 2; /* sorry */

@@ -174,7 +174,7 @@ boolean rust_dmg(struct obj *otmp, const char *ostr, int type,
 			  Monnam(victim), ostr,
 			  vtense(ostr, "look"), msg[type]);
 	    }
-	    destroy_arm(otmp);
+	    destroy_arm(otmp, FALSE);
 	}
 	return TRUE;
 }
@@ -3323,7 +3323,7 @@ static int help_monster_out(struct monst *mtmp, struct trap *ttmp)
 			an(mons_mname(mtmp->data)));
 		pline("You try to grab %s, but...", mon_nam(mtmp));
 		if (uarmg) {
-		    destroy_arm(uarmg);
+		    destroy_arm(uarmg, FALSE);
 		} else {
 		    if (!instadisintegrate(kbuf))
 			pline("You cannot get a firm grasp.");
@@ -3348,7 +3348,12 @@ static int help_monster_out(struct monst *mtmp, struct trap *ttmp)
 		    an(mons_mname(mtmp->data)));
 	    if (uarmg) {
 		if (!oresist_disintegration(uarmg)) {
-		    destroy_arm(uarmg);
+		    /* The destroy_arm(..., FALSE) could cause problems since
+		       that FALSE should be whether the player survives the
+		       instadisintegrate() call below it, but in practice it
+		       doesn't matter since it destroys gloves and not
+		       (potentially petrify-resistant) body armor. */
+		    destroy_arm(uarmg, FALSE);
 		    udied = instadisintegrate(kbuf) ? 1 : 0;
 		}
 	    } else {
@@ -3943,7 +3948,7 @@ boolean lava_effects(void)
 		    if (usurvive)
 			pline("Your %s into flame!", aobjnam(obj, "burst"));
 
-		    if (obj == uarm) Armor_gone();
+		    if (obj == uarm) Armor_gone(!usurvive);
 		    else if (obj == uarmc) Cloak_off();
 		    else if (obj == uarmh) Helmet_off();
 		    else if (obj == uarms) Shield_off();

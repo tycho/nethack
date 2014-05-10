@@ -589,7 +589,7 @@ static void break_armor(void)
 		if (donning(otmp)) cancel_don();
 		pline("You break out of your armor!");
 		exercise(A_STR, FALSE);
-		Armor_gone();
+		Armor_gone(FALSE);
 		useup(otmp);
 	}
 	if ((otmp = uarmc) != 0) {
@@ -611,7 +611,7 @@ static void break_armor(void)
 	if (((otmp = uarm) != 0) && (racial_exception(&youmonst, otmp) < 1)) {
 		if (donning(otmp)) cancel_don();
 		pline("Your armor falls around you!");
-		Armor_gone();
+		Armor_gone(FALSE);
 		dropx(otmp);
 	}
 	if ((otmp = uarmc) != 0) {
