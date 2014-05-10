@@ -786,7 +786,7 @@ void done(int how)
 	umoney = calc_score(how);
 
 	if (bones_ok) {
-	    if (!wizard || paranoid_yn("Save bones?", iflags.paranoid_quit) == 'y')
+	    if (!wizard || (!done_stopprint && yn("Save bones?") == 'y'))
 		savebones(corpse);
 	    /* corpse may be invalid pointer now so
 		ensure that it isn't used again */
