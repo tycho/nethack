@@ -452,6 +452,8 @@ typedef long glyph_t;
 
 #define USER_DUNGEONCOLOR
 
+#define BONES_POOL /* Multiple bones files per level */
+
 /* End of Section 5 */
 
 #include "global.h"	/* Define everything else according to choices above */
