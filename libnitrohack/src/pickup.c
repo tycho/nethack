@@ -1780,15 +1780,29 @@ static int in_container(struct obj *obj)
 	if (obj->otyp == CORPSE) {
 	    if ( (touch_petrifies(&mons[obj->corpsenm])) && !uarmg
 		 && !Stone_resistance) {
-		if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
+		pline("You touch the %s corpse with your bare %s.",
+		      mons_mname(&mons[obj->corpsenm]), makeplural(body_part(HAND)));
+		if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM)) {
 		    win_pause_output(P_MESSAGE);
-		else {
+		} else {
 		    char kbuf[BUFSZ];
-
+		    char premsg[BUFSZ];
+		    unsigned int prestoned = Stoned;
 		    strcpy(kbuf, an(corpse_xname(obj, TRUE)));
-		    pline("Touching %s is a fatal mistake.", kbuf);
-		    instapetrify(kbuf);
-		    return -1;
+		    sprintf(premsg, "Touching %s is a fatal mistake.", kbuf);
+		    if (delayed_petrify(premsg, kbuf))
+			win_pause_output(P_MESSAGE);
+		    pline("You release the %s!", corpse_xname(obj, TRUE));
+		    /*
+		     * Stop when petrification initially sets in so if an
+		     * object that could save the player was being put in they
+		     * have a chance to use it.
+		     *
+		     * If petrification is already underway and the player is
+		     * putting stuff in a container anyway, they probably mean
+		     * it so just skip the corpse and continue.
+		     */
+		    return prestoned ? 0 : -1;
 		}
 	    }
 	}
@@ -1903,15 +1917,19 @@ static int out_container(struct obj *obj)
 	if (obj->otyp == CORPSE) {
 	    if ( (touch_petrifies(&mons[obj->corpsenm])) && !uarmg
 		 && !Stone_resistance) {
-		if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
+		pline("You touch the %s corpse with your bare %s.",
+		      mons_mname(&mons[obj->corpsenm]), makeplural(body_part(HAND)));
+		if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM)) {
 		    win_pause_output(P_MESSAGE);
-		else {
+		} else {
 		    char kbuf[BUFSZ];
-
+		    char premsg[BUFSZ];
 		    strcpy(kbuf, an(corpse_xname(obj, TRUE)));
-		    pline("Touching %s is a fatal mistake.", kbuf);
-		    instapetrify(kbuf);
-		    return -1;
+		    sprintf(premsg, "Touching %s is a fatal mistake.", kbuf);
+		    if (delayed_petrify(premsg, kbuf))
+			win_pause_output(P_MESSAGE);
+		    pline("You release the %s!", corpse_xname(obj, TRUE));
+		    return 0;
 		}
 	    }
 	}
