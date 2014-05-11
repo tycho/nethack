@@ -1241,15 +1241,19 @@ int pickup_object(struct obj *obj, long count,
 	} else if (obj->otyp == CORPSE) {
 	    if ( (touch_petrifies(&mons[obj->corpsenm])) && !uarmg
 				&& !Stone_resistance && !telekinesis) {
+		pline("You touch the %s corpse with your bare %s.",
+		      mons_mname(&mons[obj->corpsenm]), makeplural(body_part(HAND)));
 		if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
 		    win_pause_output(P_MESSAGE);
 		else {
 			char kbuf[BUFSZ];
-
+			char premsg[BUFSZ];
 			strcpy(kbuf, an(corpse_xname(obj, TRUE)));
-			pline("Touching %s is a fatal mistake.", kbuf);
-			instapetrify(kbuf);
-		    return -1;
+			sprintf(premsg, "Touching %s is a fatal mistake.", kbuf);
+			if (delayed_petrify(premsg, kbuf))
+			    win_pause_output(P_MESSAGE);
+			pline("You release the %s!", corpse_xname(obj, TRUE));
+			return 0;
 		}
 	    } else if (is_rider(&mons[obj->corpsenm])) {
 		pline("At your %s, the corpse suddenly moves...",
