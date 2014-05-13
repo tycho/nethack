@@ -262,7 +262,10 @@ boolean mount_steed(struct monst *mtmp,	/* The animal */
 
 	    pline("You touch %s.", mon_nam(mtmp));
 	    sprintf(kbuf, "attempting to ride %s", an(mons_mname(mtmp->data)));
-	    instapetrify(kbuf);
+	    if (delayed_petrify(NULL, kbuf)) {
+		pline("You stop your mounting attempt.");
+		return TRUE;
+	    }
 	}
 	if (!mtmp->mtame || mtmp->isminion) {
 	    pline("I think %s would mind.", mon_nam(mtmp));
