@@ -1473,8 +1473,8 @@ static void steal_it(struct monst *mdef, const struct attack *mattk)
 		    touch_petrifies(&mons[otmp->corpsenm]) && !uarmg) {
 		char kbuf[BUFSZ];
 
-		sprintf(kbuf, "stolen %s corpse", mons_mname(&mons[otmp->corpsenm]));
-		instapetrify(kbuf);
+		sprintf(kbuf, "a stolen %s corpse", mons_mname(&mons[otmp->corpsenm]));
+		delayed_petrify(NULL, kbuf);
 		break;		/* stop the theft even if hero survives */
 	    }
 	    /* more take-away handling, after theft message */
