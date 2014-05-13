@@ -1735,7 +1735,6 @@ extern struct monst *activate_statue_trap(struct trap *,xchar,xchar,boolean);
 extern void dotrap(struct trap *, unsigned);
 extern void seetrap(struct trap *);
 extern int mintrap(struct monst *);
-extern void instapetrify(const char *);
 extern boolean delayed_petrify(const char *, const char *);
 extern void minstapetrify(struct monst *,boolean);
 extern int instadisintegrate(const char *);

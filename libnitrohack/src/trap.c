@@ -2145,16 +2145,6 @@ mfiretrap:
 
 
 /* Combine cockatrice checks into single functions to avoid repeating code. */
-void instapetrify(const char *str)
-{
-	if (Stone_resistance) return;
-	if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
-	    return;
-	pline("You turn to stone...");
-	killer_format = KILLED_BY;
-	killer = str;
-	done(STONING);
-}
 
 /* pre_petrify_msg is shown if this circumstance would cause petrification.
    Returns TRUE if the player's actions should be stopped as a result. */
