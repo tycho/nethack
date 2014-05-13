@@ -2246,9 +2246,12 @@ void selftouch(const char *arg)
 		pline("%s touch the %s corpse.", arg,
 		        mons_mname(&mons[uwep->corpsenm]));
 		sprintf(kbuf, "%s corpse", an(mons_mname(&mons[uwep->corpsenm])));
-		instapetrify(kbuf);
-		if (!Stone_resistance)
+		delayed_petrify(NULL, kbuf);
+		if (!Stone_resistance && !uarmg) {
+		    pline("You release the %s corpse!",
+			  mons_mname(&mons[uwep->corpsenm]));
 		    uwepgone();
+		}
 	}
 	/* Or your secondary weapon, if wielded */
 	if (u.twoweap && uswapwep && uswapwep->otyp == CORPSE &&
@@ -2256,9 +2259,12 @@ void selftouch(const char *arg)
 		pline("%s touch the %s corpse.", arg,
 		        mons_mname(&mons[uswapwep->corpsenm]));
 		sprintf(kbuf, "%s corpse", an(mons_mname(&mons[uswapwep->corpsenm])));
-		instapetrify(kbuf);
-		if (!Stone_resistance)
+		delayed_petrify(NULL, kbuf);
+		if (!Stone_resistance && !uarmg) {
+		    pline("You release the %s corpse!",
+			  mons_mname(&mons[uwep->corpsenm]));
 		    uswapwepgone();
+		}
 	}
 }
 
