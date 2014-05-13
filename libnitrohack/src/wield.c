@@ -119,15 +119,19 @@ static int ready_weapon(struct obj *wep)
 		res++;
 	    } else
 		pline("You are already empty %s.", body_part(HANDED));
-	} else if (!uarmg && !Stone_resistance && wep->otyp == CORPSE
-				&& touch_petrifies(&mons[wep->corpsenm])) {
+	} else if (!uarmg && !Stone_resistance && wep->otyp == CORPSE &&
+		   touch_petrifies(&mons[wep->corpsenm]) &&
+		   !(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
 	    /* Prevent wielding cockatrice when not wearing gloves --KAA */
 	    char kbuf[BUFSZ];
 
 	    pline("You wield the %s corpse in your bare %s.",
 		mons_mname(&mons[wep->corpsenm]), makeplural(body_part(HAND)));
 	    sprintf(kbuf, "%s corpse", an(mons_mname(&mons[wep->corpsenm])));
-	    instapetrify(kbuf);
+	    if (delayed_petrify(NULL, kbuf)) {
+		pline("You release the %s corpse!", mons_mname(&mons[wep->corpsenm]));
+		res++;
+	    }
 	} else if (uarms && bimanual(wep))
 	    pline("You cannot wield a two-handed %s while wearing a shield.",
 		is_sword(wep) ? "sword" :
