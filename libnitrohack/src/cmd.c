@@ -401,8 +401,8 @@ static int wiz_panic(void)
 /* #polyself command - change hero's form */
 static int wiz_polyself(void)
 {
-        polyself(TRUE);
-        return 0;
+	polyself(TRUE);
+	return 0;
 }
 
 /* #seenv command */
