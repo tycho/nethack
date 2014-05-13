@@ -76,9 +76,10 @@ int use_saddle(struct obj *otmp)
 	    char kbuf[BUFSZ];
 
 	    pline("You touch %s.", mon_nam(mtmp));
-	    if (!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-		sprintf(kbuf, "attempting to saddle %s", an(mons_mname(mtmp->data)));
-		instapetrify(kbuf);
+	    sprintf(kbuf, "attempting to saddle %s", an(mons_mname(mtmp->data)));
+	    if (delayed_petrify(NULL, kbuf)) {
+		pline("You stop your saddling attempt.");
+		return 1;
 	    }
 	}
 	if (touch_disintegrates(ptr)) {
