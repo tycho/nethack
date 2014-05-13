@@ -3317,7 +3317,8 @@ static int help_monster_out(struct monst *mtmp, struct trap *ttmp)
 
 			sprintf(kbuf, "trying to help %s out of a pit",
 					an(mons_mname(mtmp->data)));
-			instapetrify(kbuf);
+			delayed_petrify(NULL, kbuf);
+			pline("You pull back!");
 			return 1;
 		}
 	}
