@@ -794,7 +794,7 @@ void mon_break_armor(struct level *lev, struct monst *mon, boolean polyspot)
 		pline("You touch %s.", mon_nam(u.usteed));
 		sprintf(buf, "falling off %s",
 				an(mons_mname(u.usteed->data)));
-		instapetrify(buf);
+		delayed_petrify(NULL, buf);
 	    }
 	    dismount_steed(DISMOUNT_FELL);
 	}
