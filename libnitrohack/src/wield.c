@@ -486,7 +486,10 @@ int can_twoweapon(void)
 		pline("You wield the %s corpse with your bare %s.",
 		    mons_mname(&mons[uswapwep->corpsenm]), body_part(HAND));
 		sprintf(kbuf, "%s corpse", an(mons_mname(&mons[uswapwep->corpsenm])));
-		instapetrify(kbuf);
+		if (delayed_petrify(NULL, kbuf)) {
+		    pline("You release the %s corpse!",
+			  mons_mname(&mons[uswapwep->corpsenm]));
+		}
 	} else if (Glib || uswapwep->cursed) {
 		if (!Glib)
 			uswapwep->bknown = TRUE;
