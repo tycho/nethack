@@ -415,14 +415,13 @@ static void cprefx(int pm)
 	    if (!Stone_resistance &&
 		!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
 		char kbuf[BUFSZ];
+		pline("You bite into %s meat.", mons_mname(&mons[pm]));
 		sprintf(kbuf, "tasting %s meat", mons_mname(&mons[pm]));
-		killer_format = KILLED_BY;
-		killer = kbuf;
-		pline("You turn to stone.");
-		done(STONING);
-		if (victual.piece)
-		    victual.eating = FALSE;
-		return; /* lifesaved */
+		if (delayed_petrify(NULL, kbuf)) {
+		    if (victual.piece)
+			victual.eating = FALSE;
+		    return; /* lifesaved */
+		}
 	    }
 	}
 
