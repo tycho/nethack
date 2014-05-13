@@ -495,16 +495,17 @@ int polymon(int mntmp)
 	if (!sticky && !u.uswallow && u.ustuck && sticks(youmonst.data)) u.ustuck = 0;
 	else if (sticky && !sticks(youmonst.data)) uunstick();
 	if (u.usteed) {
-	    if (touch_petrifies(u.usteed->data) &&
-	    		!Stone_resistance && rnl(3)) {
-	    	char buf[BUFSZ];
+	    if (touch_petrifies(u.usteed->data) && !Stone_resistance && rnl(3)) {
+		char kbuf[BUFSZ];
 
-	    	pline("No longer petrifying-resistant, you touch %s.",
-	    			mon_nam(u.usteed));
-	    	sprintf(buf, "riding %s", an(mons_mname(u.usteed->data)));
-	    	instapetrify(buf);
- 	    }
-	    if (!can_ride(u.usteed)) dismount_steed(DISMOUNT_POLY);
+		pline("No longer petrifying-resistant, you touch %s.",
+				mon_nam(u.usteed));
+		sprintf(kbuf, "riding %s", an(mons_mname(u.usteed->data)));
+		if (delayed_petrify(NULL, kbuf))
+		    dismount_steed(DISMOUNT_FELL);
+	    }
+	    if (u.usteed && !can_ride(u.usteed))
+		dismount_steed(DISMOUNT_POLY);
 	}
 
 	if (flags.verbose) {
