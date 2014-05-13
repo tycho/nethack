@@ -1977,6 +1977,7 @@ static int gulpum(struct monst *mdef, const struct attack *mattk)
 	int tmp;
 	int dam = dice((int)mattk->damn, (int)mattk->damd);
 	struct obj *otmp;
+	char kbuf[BUFSZ];
 	/* Not totally the same as for real monsters.  Specifically, these
 	 * don't take multiple moves.  (It's just too hard, for too little
 	 * result, to program monsters which attack from inside you, which
@@ -1991,9 +1992,16 @@ static int gulpum(struct monst *mdef, const struct attack *mattk)
 	    for (otmp = mdef->minvent; otmp; otmp = otmp->nobj)
 		snuff_lit(otmp);
 
-	    if ((!touch_petrifies(mdef->data) || Stone_resistance) &&
-		(!touch_disintegrates(mdef->data) ||
-		 FDisint_resistance || (PDisint_resistance && rn2(10)))) {
+	    if (touch_petrifies(mdef->data) && !Stone_resistance) {
+		pline("You bite into %s.", mon_nam(mdef));
+		sprintf(kbuf, "swallowing %s whole", an(mons_mname(mdef->data)));
+		delayed_petrify(NULL, kbuf);
+	    } else if (touch_disintegrates(mdef->data) &&
+		       !(FDisint_resistance || (PDisint_resistance && rn2(10)))) {
+		pline("You bite into %s.", mon_nam(mdef));
+		sprintf(kbuf, "swallowing %s whole", an(mons_mname(mdef->data)));
+		instadisintegrate(kbuf);
+	    } else {
 		static char msgbuf[BUFSZ];
 		start_engulf(mdef);
 		switch(mattk->adtyp) {
@@ -2138,13 +2146,6 @@ static int gulpum(struct monst *mdef, const struct attack *mattk)
 		    pline("Obviously, you didn't like %s taste.",
 			  s_suffix(mon_nam(mdef)));
 		}
-	    } else {
-		char kbuf[BUFSZ];
-
-		pline("You bite into %s.", mon_nam(mdef));
-		sprintf(kbuf, "swallowing %s whole", an(mons_mname(mdef->data)));
-		instapetrify(kbuf);
-		instadisintegrate(kbuf);
 	    }
 	}
 	return 0;
