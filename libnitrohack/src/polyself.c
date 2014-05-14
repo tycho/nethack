@@ -937,7 +937,6 @@ int dogaze(void)
 {
 	struct monst *mtmp;
 	int looked = 0;
-	char qbuf[QBUFSZ];
 	int i;
 	uchar adtyp = 0;
 
@@ -987,6 +986,7 @@ int dogaze(void)
 				pline("You avoid gazing at %s.", mon_nam(mtmp));
 				call_off_harm = TRUE;
 			    } else if (flags.safe_peaceful == 'a') {
+				char qbuf[QBUFSZ];
 				sprintf(qbuf, "Really %s %s?",
 					(adtyp == AD_CONF) ? "confuse" : "attack",
 					mon_nam(mtmp));
@@ -1054,14 +1054,15 @@ int dogaze(void)
 		    if (!DEADMONSTER(mtmp) &&
 			    (mtmp->data == &mons[PM_MEDUSA]) &&
 			     !mtmp->mcan && !Hallucination) {
-			pline(
-			 "Gazing at the awake %s is not a very good idea.",
-			    l_monnam(mtmp));
-			/* as if gazing at a sleeping anything is fruitful... */
-			pline("You turn to stone...");
-			killer_format = KILLED_BY;
-			killer = "deliberately meeting Medusa's gaze";
-			done(STONING);
+			if (!(poly_when_stoned(youmonst.data) &&
+			      polymon(PM_STONE_GOLEM))) {
+			    pline(
+			     "Gazing at the awake %s is not a very good idea.",
+				l_monnam(mtmp));
+			    /* as if gazing at a sleeping anything is fruitful... */
+			    if (!Stoned) pline("You begin to turn into stone!");
+			    delayed_petrify(NULL, "deliberately meeting Medusa's gaze");
+			}
 		    }
 		}
 	    }

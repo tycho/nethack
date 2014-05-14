@@ -2001,10 +2001,8 @@ int gazemu(struct monst *mtmp, const struct attack *mattk)
 		    stop_occupation();
 		    if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))
 			break;
-		    pline("You turn to stone...");
-		    killer_format = KILLED_BY;
-		    killer = mons_mname(mtmp->data);
-		    done(STONING);
+		    if (!Stoned) pline("You begin to turn into stone!");
+		    delayed_petrify(NULL, mons_mname(mtmp->data));
 		}
 		break;
 	    case AD_CONF:
