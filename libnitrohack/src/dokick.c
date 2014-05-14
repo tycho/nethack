@@ -430,13 +430,12 @@ static int kick_object(xchar x, xchar y, schar dx, schar dy)
 	    pline("You kick the %s with your bare %s.",
 		corpse_xname(kickobj, TRUE), makeplural(body_part(FOOT)));
 	    if (!(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
-		pline("You turn to stone...");
-		killer_format = KILLED_BY;
+		if (!Stoned)
+		    pline("You begin to turn into stone!");
 		/* KMH -- otmp should be kickobj */
 		sprintf(kbuf, "kicking %s without boots",
 			an(corpse_xname(kickobj, TRUE)));
-		killer = kbuf;
-		done(STONING);
+		delayed_petrify(NULL, kbuf);
 	    }
 	}
 
