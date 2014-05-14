@@ -17,6 +17,7 @@ static const char *rip_txt[] = {
     "                  |                  |", /* . */
     "                  |                  |", /* . */
     "                  |                  |", /* . */
+    "                  |                  |", /* . */
     "                  |       1001       |", /* Real year of death */
     "                 *|     *  *  *      | *",
     "        _________)/\\\\_//(\\/(/\\)/\\//\\/|_)_______",
@@ -29,7 +30,7 @@ static const char *rip_txt[] = {
 #define NAME_LINE 6		/* *char[] line # for player name */
 #define GOLD_LINE 7		/* *char[] line # for amount of gold */
 #define DEATH_LINE 8		/* *char[] line # for death description */
-#define YEAR_LINE 12		/* *char[] line # for year */
+#define YEAR_LINE 13		/* *char[] line # for year */
 
 static void center(char *line, char *text)
 {
@@ -102,7 +103,7 @@ void curses_outrip(struct nh_menuitem *items, int icount, nh_bool tombstone,
 	}
 	free(rip);
 	rip = NULL;
-	txtpos = sizeof(rip_txt)/sizeof(rip_txt[0])+ 2;
+	txtpos = sizeof(rip_txt) / sizeof(rip_txt[0]) + 1;
     }
     
     for (i = 0; i < icount; i++)
