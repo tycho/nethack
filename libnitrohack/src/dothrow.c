@@ -833,11 +833,9 @@ static boolean toss_up(struct obj *obj, struct obj *ostack, boolean hitsroof)
 	    if (!Stone_resistance &&
 		    !(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM))) {
  petrify:
-		killer_format = KILLED_BY;
-		killer = "elementary physics";	/* "what goes up..." */
-		pline("You turn to stone.");
+		if (!Stoned) pline("You begin turn into stone!");
+		delayed_petrify(NULL, "elementary physics");	/* "what goes up..." */
 		if (obj) dropy(obj);	/* bypass most of hitfloor() */
-		done(STONING);
 		return obj ? TRUE : FALSE;
 	    }
 	}
