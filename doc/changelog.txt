@@ -1,3 +1,70 @@
+NitroHack 4.0.2 (2012-02-05, 22c6cf3)
+=====================================
+
+Dungeon
+-------
+* Make the Vibrating Square a trap which becomes visible once it has been
+  discovered (from AceHack).
+
+Items
+-----
+* Formal-ID jumping boots, potions of oil and starting inventory at the
+  beginning of each game (from AceHack).
+* Allow 'I' to select unidentified items in loot and menu drop item lists.
+* Show shop price of items while walking over them without #chatting (from
+  UnNetHack).
+
+Interface
+---------
+* Unify controls for equipping jewelry with those of armor by allowing
+  `W`ear/`T`ake off as substitutes for `P`ut on/`R`emove.
+* Change default key bindings to AceHack-style:
+    - `#adjust`: `Alt-A`
+    - `#annotate`: `Ctrl-F`
+    - `#chat`: `c` or `Alt-C`
+    - `close`: unbound
+    - `#enhance`: `Alt-E` or `Ctrl-E`
+    - `#invoke`: `V` or `Alt-I`
+    - `#monster`: `M` or `Alt-M`
+    - `#pray`: `Alt-P`
+    - `#twoweapon`: `Alt-2` or `X`
+    - `version` and `verhistory`: unbound
+    - `wait`: `.` (space no longer bound)
+* Make `#invoke` work like in AceHack, where it can invoke, rub or be used to
+  break wands.
+* Improve space usage of the sidebar for floor items and inventory.
+
+Configuration
+-------------
+* Change `unicode.conf` format: default entry lines start with `#` while
+  modified lines must start with `!` to be recognized.
+* Provide a default set of autopickup rules that picks up gold, scrolls, rings,
+  wands and potions while leaving unpaid shop items.
+
+Saves
+-----
+* Offer to delete damaged save files both locally and online.
+* Improve reliability of attempting to restore corrupted save files.
+
+Network
+-------
+* Show the version number of the game running on the server on the main menu.
+* Add an account menu to change password and email address.
+
+Miscellaneous
+-------------
+* Fix C343-246: Wands can be wrested in zero turns by attempting to engrave
+  with it while levitating.
+* Fix C343-129: Cancelling objects in or near a shop.
+* Fix C343-176: Disintegration breath on monsters is not handled properly (i.e.
+  a steed killed and saved by life saving can be re-saddled).
+* Many bug fixes, particularly to the save system.
+
+Technical
+---------
+* Extend drawing info so that dungeon backgrounds can contain two types of
+  symbols: walls/floor/etc. and interactive terrain like stairs/altars/etc.
+
 NitroHack 4.0.1 (2012-01-23, 855e8e6)
 =====================================
 
