@@ -1,3 +1,22 @@
+NitroHack 4.0.4 (2012-02-19, 21b9774)
+=====================================
+
+NitroHack 4.0.4 is mostly a bugfix release.  It is the last public release of
+NitroHack by Daniel Thaler, though it exists on a separate development branch
+to mainline on its primary Git repository at github.com/DanielT/NitroHack.
+
+It is this version on the stable 4.0.x that DynaHack is based on.
+
+Interface
+---------
+* Fix crash when item action menu is cancelled with escape.
+* Fix muddled shop labelling in the `#overview`.
+
+Miscellaneous
+-------------
+* Fix crash after activating a figurine.
+* Fix random character selection.
+
 NitroHack 4.0.3 (2012-02-13, 3b9a876)
 =====================================
 
