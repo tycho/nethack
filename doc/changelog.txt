@@ -1,0 +1,172 @@
+NitroHack 4.0.0 (2012-01-15, f980165)
+=====================================
+
+This is the first version of NitroHack publicly released by Daniel Thaler.
+
+Interface
+---------
+* New Curses-based text mode interface:
+    - Unicode display with customizable display chars
+    - arrow/function key recognition
+    - multi-line message box
+    - improved status area
+    - permanent inventory sidebar (if terminal is wide enough)
+* Item action menus: Press the item letter in the inventory for common actions.
+* Main menu that lets you choose to start a new game, restore an existing one,
+  change options and more.
+* Fully configurable keymap.
+* Arrow keys move the cursor in text prompts instead of abruptly killing them.
+* Item lists are sorted based on name, enchantment, BUC, erodeproofing, erosion
+  and greasing.
+* Item class headings show the symbol in item lists.
+* The 'uncursed' status of an item can be explicitly shown in item names.
+* Unexplored locations, stone and dark rooms can be customized to display as
+  different characters on the map.
+* Naming of monsters, items and item types occur via a menu.
+* Much longer message history (20k messages!).
+* Removing armor/jewelry always gives a prompt even if there's only one choice.
+* Open doors automatically when walking into them.
+
+Options
+-------
+* All options can now be changed in-game instead of using ".nethackrc".
+* Changes to options made in-game are saved and restored.  The underlying files
+  can be found under `~/.config/NitroHack/`.
+* Birth options: Options like ELBERETH, REINCARNATION, SEDUCE and bones files
+  can previously could only be changed by rebuilding the game can now just be
+  set prior to creating a new character.
+
+Items
+-----
+* Spellbooks can be read early (while memory of its spell still exists).
+
+Monsters
+--------
+* Monsters can be cycled by pressing `m` while targeting.
+* Extinct species are shown along with genocided ones when games end.
+
+Autopickup
+----------
+* Autopickup Rules: fine-grained rules to control what autopickup picks up or
+  leaves, e.g. the following rules pick up all food and lizard corpses but no
+  other corpses:
+    1. IF name matches "*lizard*" AND type is "food": < GRAB
+    2. IF name matches "*corpse*" AND type is "food":   LEAVE >
+    3. IF type is "food":                             < GRAB
+  If no matching rule is found the item is left behind by default.
+* `pickup_thrown` option: Thrown or fired items will always be picked up
+  automatically.
+
+Dungeon overview
+----------------
+* `#overview`/Ctrl-O shows a list of all remembered levels and major features.
+  Choosing a level views your memory of it.
+* You can `#annotate` a level to describe it, which appears in the overview.
+
+Character history tracking
+--------------------------
+* Heroic deeds are logged and can be viewed with the `#history` command:
+    - new depth reached
+    - experience level gained
+    - wishes
+    - killing a unique monster
+    - life saved
+    - crowning
+    - artifact gift received
+    - basic quest status
+    - major oracle consultations
+    - performing the invocation
+    - gaining/losing the Amulet of Yendor (only if formally identified)
+
+Dumplog
+-------
+* When you die, a text file will be created with the following information:
+    - final screenshot (in ASCII)
+    - character stats
+    - inventory and contents of carried containers
+    - character attributes
+    - known spells
+    - skills
+    - conducts
+    - vanquished opponents
+    - final messages
+    - dungeon overview
+    - heroic deeds (as seen in `#history`)
+
+Interactive replays
+-------------------
+* Saved and finished games can be replayed with a viewer built into the game
+  client.  Commands like view inventory can be performed while viewing a replay.
+
+Miscellaneous
+-------------
+* Improve died-while-helpless descriptions.
+* Fixed about 10% of all known NetHack bugs.
+
+Technical
+---------
+* NitroHack network protocol: Supports network play without telnet or ssh.  The
+  protocol is based on JSON and makes it easier to implement a browser-based
+  NitroHack client (TODO!).
+    - The game is divided into a client and server: the client has a copy of
+      the game for independent local play but can also connect to a server for
+      online play.
+* New save game format: NetHack's save format was mostly just a dump of binary
+  structures to disk.  The new format has two sections:
+    1. A log of the initial random seed and every game action performed, written
+       continuously as the game is played.
+    2. If the game is not being played, a binary save appended after the log.
+       This section uses a fixed-width, fixed-endian architecture and
+       compiler-independent format which resembles NetHack's format but can be
+       loaded on any system the game will run on.
+* Full separation of interface code from game code.
+    - The game core has been moved into a library
+      (libnitrohack.so/nitrohack.dll), exposing an API of 23 functions and is
+      largely OS independent.
+    - The display code is part of the OS/platform and must provide a list of
+      callbacks (windowprocs) to the game.
+    - The core game and display code have no shared global state.
+* Rewritten input system: The game core never requests raw keys from the
+  interface.  All interactions happen on an abstract level: the interface sends
+  commands to the game core as strings ("wait", "move", etc.), and the game core
+  may ask for a direction or position, etc.
+* Layered drawing: The game core provides a set of display items for each
+  location instead of just setting the topmost like NetHack.  The Curses
+  interface blinks between them; this can be toggled with an option.
+* Mersenne Twister random number generator: Required to make game logs
+  replayable.
+* Re-runnable game core: Several main data structures have been made const, all
+  others are carefully re-initialized when a game is started or restored.
+    - This makes it possible to provide the main menu.
+    - NitroHack now uses a setjmp/longjmp exception mechanism to escape from
+      deep call-chains when the game ends or panics.
+* Temporary level files and lock files removed.
+    - All levels are now kept in memory at all times, making a lot of locking
+      unnecessary, and allowing them to be viewed even from other levels.
+    - Only active game logs are locked, and even then only using OS-provided
+      non-file-based locking (fcntl on UNIX and LockFile on Windows).
+* No more support for antique systems and compilers.
+    - Dropped operating systems: BE, DOS, Classic Mac, Atari, VMS, Ultrix, etc.
+    - Supported compilers has been reduced to gcc, clang and msvc (probably
+      Intel's compiler too).
+    - Doing this allowed the removal of lots of crufty code and compat macros,
+      e.g. all current compilers support `void` and `static` so wrapping them in
+      defines is no longer needed.
+* Code cleanups.
+    - Number of `#ifdef FOO` has been cut down from 1938 to just 51, making the
+      code much more readable since indentation isn't being interrupted every
+      couple of lines.  Compile options that weren't turned into birth options
+      were removed as a result.  Functions have been converted to use standard
+      prototypes rather than pre-C89 K&R declarations.  Ugly things like
+      prototype widening and follow-on `FOO_P` defines were removed too.
+      Thanks to these changes, tools like `git diff` can now correctly show
+      what function a line is in.
+    - All instances of the `register` keyword have been removed since optimizing
+      compilers handle this for us.
+    - NEARDATA has been removed since it only made sense on 16-bit computers.
+* New CMake-based build system.
+    - This removes the need to manually edit Makefiles and header files just to
+      build the game.
+    - Provides safe parallel builds with colorized output on Linux, and
+      generates Visual Studio project files that build without problems on
+      Windows.
