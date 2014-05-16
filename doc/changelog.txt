@@ -1,3 +1,23 @@
+NitroHack 4.0.1 (2012-01-23, 855e8e6)
+=====================================
+
+NitroHack 4.0.1 is mostly a bugfix release.
+
+Interface
+---------
+* Put location info under instead of over the inventory in the sidebar.
+* Start a new line in the message area for every action.
+* Show "Bad command" in the message area rather than in a dialog.
+* Improve shift+hjkl cursor movement near the edges of the map.
+
+Network
+-------
+* Allow server admins to send messages to all connected clients.
+
+Miscellaneous
+-------------
+* Many bug fixes.
+
 NitroHack 4.0.0 (2012-01-15, f980165)
 =====================================
 
