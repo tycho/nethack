@@ -1,3 +1,30 @@
+NitroHack 4.0.3 (2012-02-13, 3b9a876)
+=====================================
+
+NitroHack 4.0.3 is mostly a bugfix release.
+
+Interface
+---------
+* Use more common Unicode characters for branch stairs on Windows.
+* Fix display on Japanese Windows by using the correct code page.
+
+Configuration
+-------------
+* Fix crash when keymap dialog was brought up a second time.
+
+Miscellaneous
+-------------
+* Fix C343-72: Confusing messages when you stop levitating while on a flying
+  steed (from UnNetHack).
+* Fix C343-174: Drum of earthquake gives inappropriate message (from
+  UnNetHack).
+
+Technical
+---------
+* Fix miscompile of `nh_restore_game` with -O3 due over-eager optimization that
+  ignored the setjmp/longjmp game exit system.
+* Fix bones file-related saving and loading bugs.
+
 NitroHack 4.0.2 (2012-02-05, 22c6cf3)
 =====================================
 
