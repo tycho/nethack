@@ -1,3 +1,50 @@
+DynaHack 0.5.3 (2013-12-24, 32216b3)
+====================================
+
+DynaHack 0.5.3 was a bugfix release that fixed a panic when loading a game with
+timed items in the Advent Calendar as well as a few other bugs, and adds the
+new `darkmsg` option to control whether past messages are darkened.
+
+Character
+---------
+* Fix warning when trying to take off merged dragon skin.
+
+Dungeon
+-------
+* Prevent the Advent Calendar exit portal from being created in one of its
+  closets (from UnNetHack).
+
+Items
+-----
+* Various `#tip` fixes from the same feature in UnNetHack:
+    - Tipping a trapped container triggers the trap.
+    - Fix tipping of a zero-charge bag of tricks being used as a normal bag.
+    - Prevent autopickup from picking up tipped items.
+    - Observe cat when tipping boxes dropped by quantum mechanics.
+
+Configuration
+-------------
+* `darkmsg` option: toggle whether or not older messages are colored dark blue
+  in the message box.
+
+Miscellaneous
+-------------
+* Fix blank lines being eaten when viewing license and version history in-game.
+
+Technical
+---------
+* Fix billing of items in nested containers and crediting of contained gold in
+  the deep recesses of the shop code that could lead those things suddenly and
+  silently becoming shopkeeper property, even if they didn't typically sell
+  them!
+* Fix utilities updating but failing to rebuild the data files that depended on
+  them; stale data files like the ones packaged with DynaHack 0.5.0 should be a
+  thing of the past.
+* Fix crash when positioning a revived monster on entering a level.
+* Fix panic due to timers failing to find the Advent Calendar level during
+  loading (the last level of the ledger in general), preventing affected games
+  from being loaded.
+
 DynaHack 0.5.2 (2013-10-07, 5f067e7)
 ====================================
 
