@@ -1,3 +1,787 @@
+DynaHack 0.5.0 (2013-09-18, 65751e0)
+====================================
+
+DynaHack 0.5.0 is the first public release of DynaHack.  It was originally
+intended to be a port of UnNetHack using NitroHack instead of NetHack 3.4.3 as
+a base (in fact it was originally named "UnNitroHack", though no version with
+that name was ever officially released), but has since taken on a life of its
+own with interface and reliability improvements from NetHack4, highlights from
+other NetHack variants such as random magical equipment from GruntHack and
+monster spoiler info from UnNetHackPlus, plus many of its own changes.
+
+UnNetHack itself is a NetHack variant that features more randomness, challenges,
+levels and fun, rolling in many community patches, selected changes from other
+NetHack forks like SporkHack and SLASH'EM, and many original changes.
+
+The majority of changes listed below come from UnNetHack.  The remainder are
+sourced according to the following legend:
+* [NEW] = changes originally made for DynaHack specifically
+* [NH4] = changes ported from NetHack4
+* [Gr] = changes ported from GruntHack
+* [UnP] = changes ported from UnNetHackPlus
+* [KMd] = changes ported from K-Mod
+
+Highlights
+----------
+* New vampire starting race.
+* New convict starting role.
+* Over 80 new layouts for special levels.
+* Gehennom now has caves, lava and more special levels mixed with its mazes.
+* Changes to Sokoban:
+    - Choice of Sokoban prize: bag (holding), cloak (magic resistance or
+      displacement) or amulet (reflection, life saving or ESP).
+    - Sokoban is one level shorter, i.e. 3 levels instead of 4.
+    - Sokoban luck penalty removed, cheating is tracked as a conduct instead.
+* New branches: Advent Calendar, Town, Black Market, Dragon Caves.
+* New random rooms: nymph gardens, dilapidated armories, pool rooms.
+* New shops: tin shops, instrument shops, pet stores.
+* New terrain types: dead trees, muddy swamps.
+* New items: chromatic dragon scales, chromatic dragon scale mail, gold dragon
+  scales, gold dragon scale mail, iron safes, Thiefbane, rings of gain
+  intelligence/wisdom/dexterity, tinfoil hats, potions of blood/vampire blood,
+  Luck Blade, The Iron Ball of Liberation.
+* New monsters: One-eyed Sam, chromatic dragon, Tiamat, gold dragon, snow ant,
+  vorpal jabberwock, disintegrator, Aphrodite, Cthulhu, giant turtle, wax golem,
+  enormous rat, rodent of unusual size, miner, prison guard, lava demon, inmate,
+  Robert the Lifer, Warden Arriana, locust.
+* [NEW] New mechanics:
+    - [NEW] Heavyshot: Certain thrown/fired weapons get a 1dX multiplier to
+      damage instead of multishot.
+    - [NEW] Skill cross-training: high level skills accelerate the training of
+      related lesser skills.
+* [Gr] Random magical properties for weapons, armors and jewelry: fire, frost,
+  thirsty (draining), reflection, telepathy, searching, warning, stealth,
+  fumbling, hunger, aggravation, vorpal (blades only), detonation, speed,
+  oilskin, power, dexterity, brilliance, displacement, clairvoyance.
+* [Gr] Add `#tip` command to empty container contents onto the floor, allowing
+  e.g. reaching holy water in a bag when hands are stuck to a cursed two-handed
+  weapon.
+* Randomized dragon appearances.
+* Wishes made less common/numerous, and wishes not from a wand cannot grant
+  magical items.
+* Weak unique monsters made tougher: Vlad the Impaler, Juiblex.
+* Changes to Elbereth:
+    - Monsters that now ignore Elbereth: Vlad the Impaler, quest nemesis, all
+      unique demons.
+    - Minotaurs now get scared away by Elbereth.
+* Scrolls of gold detection can no longer be used to detect magic portals.
+* Scrolls of genocide made weaker.
+* Bags of holding scatter their contents instead of destroying them when they
+  blow up.
+* Mysterious Force replaced with no-teleport.
+* Fighting wakes up nearby monsters.
+* Limit pudding farming: puddings split by max HP instead of current HP and
+  never leave death drops.
+* Improvements to weaker artifacts: Banes, Heart of Ahriman.
+* Artifact naming bug fixed.
+* Color alchemy: potions mix by description color instead of base potion type.
+* Poison instadeath replaced with max HP damage.
+* [NEW] Colored walls and floors: Use more colors for special levels, terrain
+  and dungeon features; toggle with `mapcolors` option.
+* [NH4] Known intrinsic tracking: reached by pressing `Ctrl-X`.
+* [UnP] Detailed monster info: select monsters or enter their name with `/` to
+  view speed, base AC, resistances, attacks and more.
+* [NH4] Autoexplore: bound to `v` by default.
+* `msgtype` option: force "--More--" for or hide messages based on patterns.
+* [NEW] Show total weight and available slots of inventory.
+* [NEW] Borders change color when low on HP: <75% yellow, <50% orange, <25% red.
+* [NEW] Show number of turns used after multi-turn actions, e.g. "You finish
+  your dressing maneuver.  [6 turns]" (toggle with `delay_msg` option).
+* [NEW] Pressing `??` shows quick command key reference, reorganized to show
+  commands by topic instead of alphabetically.
+* [NEW] Show "(very) rotten" on corpses old enough to give food poisoning.
+* [NH4] Neater, more informative AceHack-style status area.
+    - Show dungeon name in the status area.
+    - [NEW] Show player race in the 3-line status area.
+
+Character
+---------
+* New vampire starting race:
+    - Can start as barbarians, convicts, rogues and wizards.
+    - Can only feed by biting enemies in combat or drinking potions of blood or
+      vampire blood.
+    - Always flies, starts with -5 alignment and -1 luck.
+    - Vampires stop themselves from biting monsters that are dangerous on
+      contact, e.g. petrify, slime, disintegrate, Riders.
+* New convict starting role:
+    - Can be played as humans, orcs and vampires.
+    - Starts with a cursed striped shirt, some rocks, a pet rat and chained to a
+      heavy iron ball that they can wield which uses the flail skill.
+    - Enters the dungeon on the verge of hunger, but lasts twice as long at
+      hungry and below.
+    - Fights Warden Arriana for The Iron Ball of Liberation.
+* Exotic pets:
+    - Rogues may start with a pet monkey.
+    - Rangers and cavement may start with a pet wolf or winter wolf cub.
+    - Tourists may start with a pet baby crocodile.
+* Cap to-hit accuracy to 75% for weapons at unskilled or non-weapon items.
+    - [NEW] Remove luck attribute from to-hit calculations since it was skewing
+      them way too much.  Monk to-hit penalty when wearing body armor has been
+      reduced to -10 (from -20) to compensate.
+* Items thrown at restricted/unskilled have a higher chance to slip.
+* Fighting wakes up nearby monsters, with noise reduced by having stealth
+  and/or using light weapons.
+* Increased 'hits' needed to advance skill levels:
+    - basic = 100 (was 20)
+    - skilled = 200 (was 80)
+    - expert = 400 (was 180)
+    - master = 800 (was 320)
+    - grand master = 1600 (was 500)
+* [NEW] New mechanics:
+    - [NEW] Heavyshot: Crossbows, spears, javelins, shuriken and boomerangs get
+      a 1dX multiplier to damage instead of multishot.
+        - [NEW] Elves, dwarves and orcs get +1 heavyshot for throwing spears of
+          their matching race.
+        - [NEW] Javelins get +1 heavyshot for basic skill and above, so the
+          bonus is 1/2/3/4 (versus 1/1/2/3) for unskilled/basic/skilled/expert.
+    - [NEW] Skill cross-training: high level skills accelerate the training of
+      related lesser skills.
+        - Short Blades: dagger, knife, short sword
+        - Chopping Blades: axe, pick-axe, broadsword
+        - Swords: short sword, broadsword, long sword, two-handed sword,
+          scimitar, saber
+        - Bludgeons: club, mace, morning star, flail, hammer, quarterstaff
+        - Flails: morning star, flail, whip
+        - Polearms: quarterstaff, polearm, spear, javelin, trident, lance,
+          unicorn horn
+        - Launchers: bow, sling, crossbow
+        - Thrown: javelin, sling, dart, shuriken, boomerang
+* Around 1-in-5 items may be randomly removed when bones are left.
+* Allow quest to be entered at experience level 10 (was 14).
+* Extended Conducts: Birth options can be set to declare conducts and set up
+  characters for them appropriately: ascet, athiest, illiterate, pacifist,
+  nudist, thievery, vegan, vegetarian, zen.
+* Track number of times Elbereth is used as a conduct.
+* Track number of bones levels encoutered and show it with conducts.
+* Track only wearing racial armor as a conduct.
+* The chance of instant death when taking poison damage without resistance is
+  replaced with damage to max HP.
+* DYWYPISI patch: Show unknown properties of items between square brackets when
+  identifying inventory on death.
+* Show more info about the character on death.
+* [NEW] Stacks of daggers in initial inventory start quivered.
+* Put "!" next to spells that are about to be forgotten.
+* 25 strength grants +7 bonus to damage (was +6).
+    - Double damage bonus/penalty for two-handed weapons.
+* Grant 1 extra AC for every piece of armor matching your race.
+* Killing your quest leader unlocks the stairs to your role's quest, in case
+  they are angered and won't allow you in otherwise.
+* Reduce instances of amnesia:
+    - Scroll of amnesia replaced with scroll of flood.
+    - Mind flayers no longer cause amnesia.
+    - Only Cthulhu can still inflict amnesia.
+* [NH4] Swapping weapons with `x` is instant instead of taking a turn.
+* [NH4] Allow the quest to be entered before turn 2000; mostly of interest to
+  speedrunners.
+
+Dungeon
+-------
+* Heck^2 patch: Mixes caves and special levels with Gehennom's mazes.
+    - Gehennom filler levels may sometimes be lava caves.
+    - Give hints when walking near the Vibrating Square.
+    - Allow digging beams to dig more than one wall in Gehennom, like in the
+      rest of the dungeon.
+* New branches:
+    - Advent Calendar, appears early in the dungeon in the days of December
+      leading up to Christmas, with closets with small prizes that unlock for
+      each day.
+    - Town, an upward branch whose entrance is just below Sokoban's, and whose
+      end has many random shops.
+    - Black Market, a huge megastore reached from a hidden portal near the
+      depth of Medusa's Island, owned by One-eyed Sam who wields Thiefbane.
+    - Dragon Caves, found deep in Gehennom, consists of open caves with trees,
+      water, swamps and home to many dragons.
+* Changes to Sokoban:
+    - Choice of Sokoban prize: bag (holding), cloak (magic resistance or
+      displacement) or amulet (reflection, life saving or ESP).  Picking up one
+      will cause the others to vanish.
+        - Sokoban prize have their base item type obscured until picked up to
+          prevent identification meta-gaming.
+    - Sokoban is now only 3 levels (was 4).
+    - Sokoban luck penalty removed, cheating is tracked as a conduct instead.
+* New Nymph Level, with many nymphs, trees, fountains, squeaky board traps and
+  unique nymph Aphrodite.
+* New level layouts for existing special levels:
+    - 6 new layouts for Big Room.
+    - 2 new layouts for the Castle.
+    - 2 new layouts for Medusa's Island.
+    - 27 new layouts for Sokoban.
+    - 2 new layouts for Fort Ludios.
+    - New layout for Minetown: Orcish Town, walled off by iron bars, the
+      inhabitants killed and has many orcs.
+    - New layouts for the Valley of the Dead and the lairs of Asmodeus,
+      Baalzebub and Orcus.
+    - Moloch's Sanctum now has lava, iron bars and drawbridges.
+* New random rooms:
+    - nymph gardens with trees and fountains
+    - dilapidated armories with puddings, `R` class monsters and damaged
+      weapons and armors
+    - pool rooms ringed with lava or water
+* New shops:
+    - tin shops with tins and sometimes an ice box with corpses
+    - instrument shops
+    - pet stores with figurines, whistles, tripe, leashes and saddles.
+* New terrain types:
+    - dead trees
+    - muddy swamps
+* Randomized order for Elemental Planes instead of being fixed to Earth, Air,
+  Fire and Water.
+* Sokoban prize randomized: either final level layout can provide an amulet of
+  reflection or bag of holding.
+* Special levels may appear flipped horizontally or vertically.
+    - [NEW] Exclude Sokoban from level flipping.
+* Drawbridge closing fails 1 in 5 times.
+    - Huge monsters prevent the drawbridge from closing.
+* Dungeon growths:
+    - Trees may grow near other trees over time.
+    - Trees randomly drop fruits and eucalyptus leaves.
+    - Herbs on the ground and kelp fronds in water may grow over time.
+* New effects when dropping rings of teleportation, polymorph, polymorph
+  control and warning down sinks.
+* Level teleporting beyond the end of a dungeon branch performs a random level
+  teleport instead of teleporting to the lowest possible level from your
+  current position.  The main dungeon is an exception: teleporting too deep
+  will place you in the Valley of the Dead.
+* Doors no longer resist being opened.
+* Standard levels may have iron bars.
+* Describe how far players fall down holes and trapdoors instead of giving no
+  message.
+* [NEW] Occasionally connect rooms in standard levels with corridors in star or
+  loop formations.
+* [NEW] Occasionally generate split rooms in standard levels.
+* Entering a co-aligned temple on the Astral Plane will no longer cause monsters
+  to flee.
+* [NEW] Medusa's Island is guaranteed to have a shield of reflection in the
+  statue of Perseus.
+* [NEW] Prevent potential throne farming by making `#loot` on a throne while
+  confused take time and have a chance to make the throne vanish.
+* Give portal to Fort Ludios a much higher chance to appear in the dungeon.
+
+Wishing
+-------
+* Only wands of wishing can grant wishes for magical items.  Other sources
+  (thrones, fountains, magic lamps) can only provide non-magical items.
+* Random wish effect when sitting on thrones replaced with restoration of lost
+  attributes.
+* Wands of wishing are created with less charges; they come recharged once, and
+  have 0 to 2 charges instead of 1 to 3.
+* Due to randomized dragons, wishes for specific dragon armors only work when
+  they have already been formally identified.  Wishes for dragon armor by their
+  randomized names are still granted as usual.
+* Prevent wishes from accidentally being cancelled when pressing escape.
+* Allow magic lamps to be wished for and come from polymorphed tools.
+* [UnP] Wishing no longer sets prayer timeout.
+
+Artifacts
+---------
+* New artifact: Thiefbane, two-handed sword, 10% chance to behead `@` class
+  monsters, held by One-eyed Sam, cannot be wished for, reverts to a regular
+  weapon when dropped in bones.
+* Improvements to Bane artifacts:
+    - Bane artifacts now have a 1-in-6 chance to cancel their target monster.
+    - Bane artifacts now warn of their target monster.
+    - Wielding Demonbane prevents demons from summoning other demons.
+    - Wielding Trollsbane grants hungerless regeneration.
+    - Wielding Giantslayer grants 18/** strength.
+* The Heart of Ahriman now grants displacement and faster power regeneration
+  instead of stealth.
+* Vorpal Blade does +1d8 damage vs. all monsters (was +1).
+* Fix the artifact naming bug, where trying to give mundane items the names of
+  artifacts could trivially reveal the otherwise randomized base item type.
+* Prevent Magicbane from cancelling monster inventories.
+* [NEW] The Wizard of Yendor can no longer steal your quest artifact; only your
+  quest nemesis can steal it now.
+    - [NEW] Carrying your role's quest artifact grants magic resistance.
+
+Items
+-----
+* New items:
+    - Chromatic dragon scales and chromatic dragon scale mail, grants
+      reflection, resists fire, cold, sleep, disintegration, poison, acid and
+      petrification.
+    - Gold dragon scales and gold dragon scale mail, provide permanent light
+      when worn.
+    - Iron safes that can be unlocked with stethoscopes.
+    - Rings of gain intelligence, wisdom and dexterity.
+    - Tinfoil hats that block spellcasting, telepathy, clairvoyance, psychic
+      blasts and the psi bolt monster spell.
+    - Potion of blood, provides a bit of nutrition for vampires.
+    - Potion of vampire blood, provides nutrition and heals vampires,
+      polymorphs player into a vampire/vampire lord/vampire bat permanently
+      while angering lawful gods.
+    - Striped shirt, causes shopkeepers to deny entry to shops if they see it
+      worn, even if you return without it or cover it.
+    - Luck Blade, artifact, intelligent chaotic broadsword with +d5 to-hit and
+      +d6 to damage versus all monsters, guaranteed first sacrifice gift for
+      convicts.
+    - The Iron Ball of Liberation, convict quest artifact, intelligent neutral
+      300wt heavy iron ball, grants magic resistance, displacement and automatic
+      searching when carried, grants intrinsic phasing when invoked, chains
+      itself to you when touched or invoked.
+* [Gr] Random magical properties for weapons, armors and jewelry: fire, frost,
+  thirsty (draining), reflection, telepathy, searching, warning, steatlh,
+  fumbling, hunger, aggravation, vorpal (blades only), detonation, speed,
+  oilskin, power, dexterity, brilliance, displacement, clairvoyance.
+* [Gr] Add `#tip` command to empty container contents onto the floor, allowing
+  e.g. reaching holy water in a bag when hands are stuck to a cursed two-handed
+  weapon.
+* Changes to the Amulet of Yendor:
+    - Amulet of Yendor may teleport if dropped.
+    - Astral escape: Alternate endings if the Amulet of Yendor is invoked on a
+      high altar on the Astral Plane.
+    - Mysterious Force removed, holding the Amulet of Yendor instead prevents
+      teleportation.
+    - Unique monsters no longer fight each other for the Amulet of Yendor.
+* Changes to weapons:
+    - [NEW] Polearms and lances can be used in melee even when unmounted.
+    - [NEW] Allow spellcasting when hands are stuck to a cursed quarterstaff.
+    - [NEW] Weapon enchantment has a small chance to be revealed on each hit,
+      based on skill and doubled if it is of your race.
+* Changes to armor:
+    - Dragon scales now only give 1 AC (was 3), dragon scale mail only give 5 AC
+      (was 9).
+    - Dragon scale mail reverts to dragon scales when cancelled.
+    - Armor-damaging effects will destroy completely eroded armor.
+    - Shields of reflection made 50% heavier and non-magical for wishing
+      purposes.
+* Changes to amulets:
+    - Cursed amulets of life saving may fail 1-in-4 times.
+    - Amulet of unchanging can no longer be polymorphed.
+* Changes to rings:
+    - Auto-ID rings of regeneration when put on at less than max HP.
+    - Auto-ID rings dropped down sinks when they give a unique message.
+* Changes to tools:
+    - Magic markers are created with 20-79 charges (was 30-99).
+    - Improve crystal balls:
+        - Blessed crystal balls are easier to use, checking d13 vs. intelligence
+          rather than d20.
+        - [NEW] Using a blessed crystal ball or having 18 intelligence prevents
+          it from exploding.
+    - Unicorn horns no longer restore lost attributes.
+    - Bags of tricks have many more random effects and may be used like sacks
+      once they run out of charges.
+    - Candles are more abundant:
+        - Add guaranteed candles to the Big Room.
+        - Add abandoned lighting shops to Orcus-town.
+        - Gnomes may be created with candles.
+        - Wax golems drop candles on death.
+    - Bags of holding scatter their contents instead of destroying them when
+      they blow up.
+    - Stethoscopes can be used to identify eggs on the ground.
+    - [NH4] Light source fuel is revealed if the item is identified or gives a
+      fuel-consuming message.
+    - [NH4] Mark cursed light sources as cursed when they fail to light.
+    - [NH4] Weight of Candelabrum of Invocation includes its attached candles.
+* Changes to scrolls:
+    - Scrolls of gold detection detects a random item class instead of traps
+      when read while confused.
+    - Scrolls of genocide made weaker:
+        - Blessed scrolls of genocide work on a single monster (like old
+          uncursed scrolls).
+        - Uncursed scrolls of genocide only kill all of a single monster on the
+          current level.
+        - [NEW] Fix new genocide behavior when used against shape changers.
+    - Replace scroll of amnesia with scroll of flood that creates pools of
+      water around you when read.
+    - Boulders dropped by a scroll of earth hit engulfing monster when read
+      while engulfed.
+    - Uncursed scrolls of magic mapping also reveal secret doors, blessed
+      scrolls do that and also detect objects.
+    - [NEW] Scrolls of identify always identify 3 to 6 items regardless of
+      blessing or curses, encouraging using them on-the-go instead of saving
+      them en masse for a giant stash, increasing early-game options and
+      reducing back-tracking.
+    - [NEW] Water damage may destroy scrolls.
+    - [NEW] Scrolls of enchant weapon and enchant armor give the warning
+      vibration for overenchantment for all weapons and armor, not just elven
+      gear.
+* Changes to potions:
+    - Color alchemy: potions mix by description color instead of base potion
+      type.
+    - Potions of gain ability only raise one attribute, and BUC increases the
+      number of retries when it selects an attribute already at its maximum.
+    - [NEW] Pure potions can be dipped into diluted potions of the same type to
+      combine them into a single stack of diluted potions.
+    - [NEW] Remove the alchemy tax: dipping potions into each other to create
+      new potions no longer costs a potion.
+    - [NEW] Quaffing a potion of enlightenment while polymorphed into a dragon
+      or baby dragon formally identifies its matching scales and scale mail.
+* Changes to wands:
+    - Zapping a cursed wand has a 1-in-30 chance to blow up (was 1-in-100).
+    - Applying wands no longer breaks wands; `#invoke` must be used instead.
+    - [NH4] Zapping or engraving an empty wand identifies its charges.
+    - [NH4] Formal-ID wands when they give a unique message when engraved.
+    - [NEW] Probing a dragon or baby dragon formally identifies its matching
+      scales and scale mail.
+* Sale/price quotes for shops vary per-shopkeeper instead of per-pickup/drop,
+  so no more need to repeatedly pickup and drop items in shops.
+* Many new random item descriptions.
+* Items described as "ceramic/porcelain/quartz" may break if subjected to
+  force.
+* Cursed items may hit the ceiling and fall on your head when thrown.
+* Increase chance of non-zero enchantments on random items.
+* Fix long-standing NetHack bug where uncursed and blessed food weren't getting
+  their grace period against rotting.
+* [NEW] Fix wielded potions of blindness granting resistance to certain sources
+  of blindness, e.g. exploding yellow lights and archon gazes.
+* Prevent the Book of the Dead from being destroyed when falling into lava.
+* [NH4] Charging an item reveals its number of remaining charges.
+* [NEW] Allow items to stack regardless of differing knowledge bits (e.g. BUC,
+  enchantment, rustproofing), improving inventory space usage and allowing
+  things like arrows found to stack with identical ones dropped on an altar.
+    - [NH4] Prevent named items from stacking with unnamed items.
+* [NH4] Fix turn usage when applying items, including C343-353: Aborting key or
+  lock pick with escape uses a turn.
+* [NEW] Show "(very) rotten" on corpses old enough to give food poisoning.
+* [NEW] Make rustproofing on items known by default, since all cases of it
+  existing or being applied to items are non-random and known by the player.
+
+Monsters
+--------
+* New monsters:
+    - One-eyed Sam: Shopkeeper of the Black Market, wields Thiefbane, can break
+      boulders in her way.
+    - Chromatic dragon: Rare dragons that resist multiple elements, have random
+      breaths, not a valid random polymorph form, may be found in the new Dragon
+      Caves branch.
+    - Tiamat: New name for the caveman quest nemesis.
+    - Gold dragon: Permenantly lit fire-breathing dragon, drops scales that are
+      also a permanent source of light.
+    - Snow ant: Fire ants but cold.
+    - Vorpal jabberwock: Purple `J`, more powerful jabberwock with four 3d10
+      attacks, two of which have a 1-in-40 chance to decapitate.
+    - Disintegrator: Bright green `R`, slow, tunnels, disintegrates
+      weapons/armor/you on contact.
+    - Aphrodite: Unique purple `n`, found on the Nymph Level.
+    - Cthulhu: Unique purple `h`, now holds the Amulet of Yendor instead of the
+      high priest of Moloch, sucks brains, grabs, gazes to confuse, very high
+      hit dice, high speed and armor, dies as a stinking cloud and revives when
+      it dissipates.
+    - Giant turtle: Bright green `:`, blocks vision like a boulder.
+    - Wax golem: Has a fire attack, drops candles on death.
+    - Enormous rat, rodent of unusual size: upgraded rats.
+    - Miner, prison guard, lava demon, inmate: convict quest monsters.
+    - Robert the Lifer: convict quest leader.
+    - Warden Arriana: convict quest nemesis.
+    - Locust: Gray `a`, normal speed, has a sickness-causing sting.
+* Changes to Elbereth:
+    - Monsters that now ignore Elbereth: Vlad the Impaler, quest nemesis, all
+      unique demons.
+    - Minotaurs now get scared away by Elbereth.
+* Randomized dragon appearances: name and color of dragons map to different
+  elements each game.
+    - New dragon names: tatzelworm, amphitere, draken, lindworm, sarkany,
+      sirrush, wyvern, guivre.
+* Changes to Riders:
+    - Hide the names of the Riders if further than two spaces away.
+    - Riders can smash boulders that block their path.
+    - Riders get 108-164 HP (was 10-80).
+* Changes to the Wizard of Yendor:
+    - Killing the Wizard of Yendor for the first time increases difficulty of
+      spawned monsters.
+    - [NEW] The Wizard of Yendor can no longer steal your quest artifact.
+* Changes to Medusa:
+    - Hallucination protects from the petrification of Medusa.
+* Changes to weak unique monsters:
+    - Make Vlad the Impaler tougher: 28/24/-8 hit dice, speed and AC (was
+      14/18/-3), sees invisible.
+    - Juiblex take half his current HP when zapped with digging from within
+      instead of being reduced to 1 HP.
+* Changes to demon princes:
+    - Raised gold needed to bribe demon princes to 3000-20000 gold (previously
+      you could bribe them with 10 gold if you put the rest in your bag).
+* Changes to quest leaders:
+    - Angered quest leaders can smash boulders that block their path.
+    - Angered quest leaders can be killed to unlock quest stairs.
+    - Quest leaders have more HP than before.
+* Changes to floating eyes:
+    - Floating eyes are now colored bright green instead of dark blue.
+    - [NEW] Remove 1-in-4 chance for floating eyes to paralyze for 127 turns,
+      halve duration to (hit dice + 1)d35 instead of (hit dice + 1)d70
+      otherwise.
+    - [NEW] High wisdom limits floating eye paralysis to 10 * (20 - wisdom)
+      turns, with a minimum of 10 turns.
+* Changes to mind flayers:
+    - Mind flayer attacks no longer cause amnesia.
+* Changes to muggers:
+    - Muggers can steal items.
+* Changes to nurses:
+    - Nurse hits heal players wielding non-weapon items as if they were empty
+      handed, to match the message given if they are chatted to.
+* Changes to puddings:
+    - Limit pudding farming: puddings split by max HP instead of current HP and
+      never leave death drops.
+* Changes to wraiths:
+    - [NEW] Wraiths no longer follow you across levels, removing the tedious
+      wraith-luring tactic, particularly given how slow they are.
+* Fix Astral Call bug which could be used to discover the alignments of the
+  high priests from afar and therefore trivially identify the otherwise
+  randomly shuffled temple alignments.
+* Cancelled trolls no longer revive with e.g. the wand, Magicbane, Trollsbane.
+* Monsters can zap wands of cancellation at you to cancel an item in your open
+  inventory.
+* Eating oily corpses may cause slippery fingers.
+* Grudge patch: Monsters that are enemies with each other may fight amongst
+  themselves.
+* Give more HP to big monsters and less HP to small monsters.
+* [NH4] Make initial monster population on levels independent of the character's
+  experience level.
+* [NEW] Fix C343-415: Mail daemons can be created when populating special levels
+  with demons.
+* [NEW] Don't highlight detected monsters.
+
+Interface
+---------
+* [NEW] Colored walls and floors: Use more colors for special levels, special
+  rooms, terrain and dungeon features; toggle with `mapcolors` option.
+* [NH4] Known intrinsic tracking: reached by pressing `Ctrl-X`.
+    - [NH4] Show attributes in `Ctrl-X` screen.
+    - [NH4] Allow kills, genocides/extinctions and conducts to be viewed from
+      the `Ctrl-X` screen.
+    - [NH4] Allow `#enhance` to be reached from `Ctrl-X` as well.
+* [UnP] Detailed monster info: select monsters or enter their name with `/` to
+  view speed, base AC, resistances, attacks and more.
+* [NH4] Autoexplore: bound to `v` by default.
+    - [NEW] Stop travel and autoexplore when becoming hungry or weak from
+      hunger.
+    - [NEW] Prevent starting autoexplore when weak from hunger.
+    - [NEW] Fix travel and autoexplore stopping for unrevealed mimics.
+    - [NEW] Travel and autoexplore walk around peaceful and stationary monsters.
+    - [NEW] Travel and autoexplore ignore previously-read engravings.
+    - [NEW] Stop and disallow running, travel and autoexplore when stunned or
+      confused.
+    - [NEW] Travel treats boulders like walls in Sokoban and thus no longer
+      tries to move through them.
+* Improvements to item action menus:
+    - [NEW] Use mnemonic accelerators for item action menus, e.g. "w - wield".
+    - [NEW] Shorter entries, e.g. "wield" instead of "Wield foo as your weapon".
+    - [NEW] Add action to view detailed item description.
+    - Add action to pay for shop items.
+    - [NEW] Add action to name or call an item.
+    - [NEW] Add action to allow weapons to be unwielded.
+    - [NEW] Add action to `#adjust` the inventory letter of an item.
+* Improvements to status area:
+    - [NH4] AceHack-style status area: neater and more informative.
+        - [NEW] Show player race in the 3-line status area.
+        - Show dungeon name in status area (`dungeon_name` option).
+    - [NEW] Status colors: Status effects are highlighted in different colors.
+    - [NEW] Attributes color red or green when they decay or improve.
+    - [NEW] Turn count changes color based on number of turns since last input.
+    - [NH4] Show levitation, unarmed and trapped as statuses.
+        - Show "Elbereth" as a status when standing on an active Elbereth space.
+        - [NH4] Show "Beartrap" as a status.
+        - [NEW] Show "Swamp" as a status when standing in a muddy swamp.
+        - [NH4] Show even more statuses: greasy (hands), lame (hurt legs),
+          "strangle", "petrify" (while turning into stone), "held" (by a
+          grabber), "fly".
+    - [NH4] Status area describes map location under the cursor when targeting.
+* Unvisited stairs and portals that lead to other branches are noted in
+  `#overview`.
+* Accept "mindflayer" as an alternate spelling of "mind flayer" so monks don't
+  accidentally end up genociding themselves.
+* Stop multi-turn actions if HP or power are fully restored.
+    - [NEW] Don't stop autoexplore or travel when HP or Pw are fully restored.
+* `#chat` automatically chooses adjacent monster if there is only one.
+* Autopickup remembers dropped items and leaves them dropped.
+* Piles of multiple items are highlighted on the map.
+* Dim locations outside of line-of-sight.
+* `#loot` no longer asks for which container when there is only one choice.
+    - [NEW] `#loot` and `#tip` show multiple container choices in a menu instead
+      of asking for each container in sequence (optional with `paranoid_loot`).
+* `Ctrl-E` to write Elbereth in the the dust with your fingers or wielded
+  athame.
+* Give a reason when the player is unable to two-weapon.
+* Ask when trying to walk into a known trap (optional with `paranoid_trap`).
+* Automatically open doors when walking into them.
+    - Automatically ask to unlock doors when walking into locked doors.
+* Spiked pits can be manually entered like pits using `>`.
+    - [NEW] Pressing `<` will attempt to escape traps.
+* Being hit by cancellation gives a message: "You are covered in sparkling
+  lights!"
+* Dropping a container on an altar reveals blessings and curses of its contents.
+* Pressing `ff` fires in same direction as last time.
+* [NEW] Quiver thrown items picked up by autopickup and `pickup_thrown` if
+  quiver is empty.
+* [NEW] Fix graphical display of the Rogue level when viewed from `#overview`.
+* [NEW] Suggest `#wipe` when blinded by venom or thrown cream pies.
+* [NEW] Pressing `M` cycles backwards through monsters while targeting.
+    - [NEW] Pressing `@` moves the cursor the player while targeting.
+    - [NEW] Pressing `^` cycles through traps while targeting.
+* Fix crash at naming dialog with items with very long type names.
+* [NEW] Give corpses the right colors in item lists (e.g. inventory) instead of
+  all being brown.
+* Show level annotation when restoring game.
+* hp_notify: Show message after turns when damage is taken, e.g. "[HP-2=10]"
+  when taking 2 damage and being left with 10 HP.
+* Improve handling of counts in item selection menus.
+* [NEW] "Auto-select every item" now respects other item picking criteria at
+  multi-drop/loot prompts instead of ignoring them.
+* [NEW] Show total weight and available slots of inventory.
+* [NEW] Borders change color when low on HP: <75% yellow, <50% orange, <25% red.
+* [NEW] Show number of turns used after multi-turn actions, e.g. "You finish
+  your dressing maneuver.  [6 turns]" (toggle with `delay_msg` option).
+* [NEW] Pressing `??` shows quick command key reference, reorganized to show
+  commands by topic instead of alphabetically.
+* [NEW] `Ctrl-P` message log starts scrolled to the most recent messages.
+* [NEW] Show boulders as `0` by default instead of backtick.
+* [NH4] Recolor/underline monsters with duplicate colors.
+* [NH4] Show "--More--" by screenfuls instead of by lines.
+* [NEW] Don't (ask to) attack peaceful monsters when walking into them by
+  default (customize with `safe_peaceful` option).
+* [NH4] Show number of available skill slots in `#enhance` menu.
+    - [NEW] Show skill slot cost to advance skills in `#enhance` menu.
+* [NH4] Stop player from walking into water and/or lava (both optional with
+  new `paranoid_water` and `paranoid_lava` options respecitvely), can be
+  overridden using `m-<direction>`.
+* Display known-unlocked doors in bright green, known-locked doors in red and
+  known-trapped doors in cyan.
+* Highlight item piles on the map.
+* [NH4] Use red backgrounds for level exits, e.g. stairs, ladders, portals.
+* [NH4] Use comma for selecting the ground for various actions:
+    - [NH4] Allow `a,` as a shortcut for `#loot`.
+    - [NH4] Require `q,` to quaff from sinks and fountains.
+    - [NH4] Comma shows floor items when eating/tinning/sacrificing.
+        - [NEW] Show floor items in a menu when eating/tinning/sacrificing.
+* Automatically ask to unlock when looting a locked container.
+    - [NEW] Perform `#loot` after successfully auto-unlocking a container,
+      allowing looting to be done with one smooth sequence of inputs.
+* [NEW] Show remaining spell memory in spell lists.
+* [NH4] Wrap long lines of text in various prompts.
+* [NH4] `#adjust`ing an item onto itself merges all identical items onto it once
+  more.
+* [NEW] Improve input handling of counts during prompts.
+    - [NEW] Allow `#adjust` to accept a count when it asks for a destination
+      letter, enabling stack-splitting with the `#adjust` command when it is
+      used via the item action menu.
+
+Configuration
+-------------
+* `msgtype` option: force "--More--" for or hide messages based on patterns.
+    - [NEW] Provide a good set of default `msgtype` rules based on stth's
+      MSGTYPE configuration on nethack.alt.org that stops on dangerous or easily
+      missed but important messages.
+* Move option values next to their names instead of across from their
+  descriptions.
+* Show a dialog for all selected options to prevent accidental toggling.
+* Improve prompt safety for certain game-changing actions:
+    - `paranoid_hit` option asks for full "yes" to confirm hitting peaceful
+      monsters.
+    - `paranoid_quit` option asks for full "yes" when quitting a game or
+      entering explore mode.
+    - `paranoid_chat` option to restore classic chat direction behavior.
+    - [NEW] `paranoid_loot` option to restore classic loot container behavior.
+* `paranoid_trap` option: control prompt before walking into known traps.
+* `paranoid_loot` option: toggle menu versus sequential prompts when `#loot` and
+  `#tip` have multiple containers to choose from.
+* `pickup_dropped` option: force autopickup to grab explicitly dropped items
+  instead of leaving them.
+* More sensible option defaults across the board.
+* `darkroom` option: toggles dimming of locations outside of line-of-sight.
+    - [Gr] Dim remembered items, walls and other dungeon features outside of
+      line-of-sight when `darkroom` is enabled.
+* `spellorder` option: set order for letters used by spell menus.
+    - [NEW] Permit letter ranges for `spellorder`, e.g. "a-zA-Z".
+* `pilesize` option: control how many items must be at a stepped-on location
+  before the "things that are here" dialog is shown on small terminals.
+* `mapcolors` option: toggles extra colors for special levels and terrain.
+* [NEW] `menumatch` option: Allow multi-drop/loot item menus to only show e.g.
+  cursed armor when picking "cursed" and "armor", instead of all cursed items
+  and all armor.
+* [NEW] `safe_peaceful` option: Control what happens when moving into peaceful
+  monsters.
+* [KMd] Change `sparkle` option to a number that controls the speed of sparkle
+  animations; higher values make it faster, zero disables sparkle entirely.
+* [NEW] `paranoid_water` and `paranoid_lava` options: control NetHack4's
+  safeties for walking into water and lava respectively.
+* [NEW] `hilite_peaceful` option: toggle if non-tame but peaceful monsters are
+  highlighted the same way pets are for `hilite_pet`.
+* [NEW] Remove the `blink` option.
+* [NH4] Allow remapping of default in-game colors to terminal colors with
+  `terminal.conf` in the configuration directory.
+* [NEW] Remove `use_inverse` option.
+* [NEW] Remove `blink` option, since it was ugly, distracting and no longer
+  needed with the new highlighting and display changes.
+* [NEW] `classic_status` option: Use classic NetHack-style status area instead
+  of the new AceHack-style status area.
+* [NEW] `dungeon_name` option: toggle showing full dungeon name or just the
+  depth in the status area.
+* [NEW] Allow `msgheight` option to be set to 0 to automatically resize to fill
+  the whole terminal height.
+
+Saves
+-----
+* [NH4] Put dump files under the game's config directory instead of in the
+  user's home directory in Linux.
+    - [NEW] Put dump files in the game's config directory instead of in
+      Documents in Windows.
+* [NH4] Store save deltas of the binary save segment in the save file log on a
+  per-turn basis.  This makes save files much larger, but also makes them almost
+  impossible to lose to corruption.  Each diff line begins with a `~`.
+
+Miscellaneous
+-------------
+* Experimental tutorial mode:
+    - [NEW] Rewrite and add command summaries to tutorial messages.
+    - [NEW] Split tutorial review menu into sections.
+    - [NEW] Indicate the latest tutorial message seen in the review menu.
+* Reduced score given when killing the same type of monster repeatedly.
+* Many new random engravings.
+* Many new random hallucinated monster descriptions.
+* Certain items can be read for flavor text: gold, tins, cans of grease, candy
+  bars, credit cards, magic markers, the Orb of Fate, Stormbringer, runed
+  items.
+* Characters that start on Towel Day (May 25) start with a complementary towel.
+* Cream pies get a different name on Pi Day (March 14) or Pi Approximation Day
+  (July 22).
+* Breaking a camera may free the picture-painting demon (homunculus) inside.
+* Randomize creator deity in intro text.
+* Szechuan tins may have a free fortune cookie.
+* Monk-specific greetings when saving and restoring.
+* Hallucination gives random currencies instead of "zorkmids" in messages.
+* [NEW] Fix fleeing monsters getting stuck in corridors.
+* [NH4] Provide more informative in-game database for items.
+* [NH4] Don't allow changing to explore mode mid-game.
+
+Technical
+---------
+* [NEW] Add support and detailed instructions for building the game under Cygwin
+  (Linux-like translation layer for Windows) and MinGW (native Windows support).
+* [NEW] Add instructions for building the game for OS X.
+* New bytecode-driven special level compiler.
+    - Allow `x` to denote 'transparent' map tiles.
+    - Allow changing map regions of non-trivial shapes with selections that can
+      be combined and intersected.
+    - Curly braces for commands in rooms, subrooms, IF conditions, containers.
+    - Rooms can set doors on a random wall.
+    - Evaluate values on a stack instead of using raw structs.
+    - Allow much more fine-grained control over OBJECT and MONSTER.
+        - Permit custom inventories for MONSTER.
+    - More control statements: LOOP, SWITCH.
+    - Support rudimentary sub-routines.
+    - Control over spawned monster generation on levels with MON_GENERATION.
+    - Custom level sounds with SOUNDS command.
+    - Permit loading from other files with INCLUDE.
+    - New WALLWALK command to surround the inner wall with a chosen terrain.
+    - Support for variables: string, int, coord, region, mapchar, monst, obj,
+      array.
+        - SHUFFLE command for arrays, replacing RANDOM_OBJECTS, RANDOM_PLACES
+          and RANDOM_MONSTERS.
+    - Support for arithmetic expressions.
+        - Support dice notation for values, e.g. 1d6.
+* [NEW] Bring back SHOPTYPE environment variable for wizard mode room testing.
+* Add `#rooms` command for testing room layouts in wizard mode.
+* Allow up to five possible bones files per level.
+* [NEW] Fix handling of ball and chain when blind with NitroHack's layered level
+  memory.
+* [NEW] Fix appearance of ridden monsters with NitroHack's display system.
+* [NEW] Fix many crashes and other instances of incorrect behavior due to
+  NitroHack's global `level` pointer being incorrectly used.
+* [NEW] Fix the notorious infinite travel bug.
+* [NH4] Eliminate object migration, deliver objects directly to their
+  destination level instead.
+* [NEW] Ensure correct colors are used for PDCurses no matter how it is built.
+* [NH4] Make the `redraw` command actually redraw the screen.
+
 NitroHack 4.0.4 (2012-02-19, 21b9774)
 =====================================
 
