@@ -1,3 +1,18 @@
+DynaHack 0.5.2 (2013-10-07, 5f067e7)
+====================================
+
+DynaHack 0.5.2 was a hotfix release that greatly increased save file integrity
+and ability to recover save files by fixing cases of incomplete data being
+logged that were overlooked by NitroHack and NetHack4.
+
+Saves
+-----
+* Fix systemic oversight in save code ported from NetHack4 that failed to
+  ensure that diffs of the binary save section were being fully written to the
+  log, leading to save corruption.
+* Fix `autopickup_rules` and `msgtype` failing to ensure that changes to them
+  were being fully written to the log, leading to save corruption.
+
 DynaHack 0.5.1 (2013-09-28, a1289c3)
 ====================================
 
