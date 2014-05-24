@@ -1,3 +1,15 @@
+DynaHack 0.5.5 (2014-01-16, 78d772a)
+====================================
+
+DynaHack 0.5.5 was a bugfix release for a potential crash with items contained
+in statues interacting with the timer-related fixes in the previous releases.
+
+Technical
+---------
+* Prevent a crash when the timer-related fixes of the past couple of releases
+  touched items contained in statues due to the latter's failure to correctly
+  set their level.
+
 DynaHack 0.5.4 (2014-01-06, 34706ac)
 ====================================
 
