@@ -1,3 +1,21 @@
+DynaHack 0.5.1 (2013-09-28, a1289c3)
+====================================
+
+DynaHack 0.5.1 was a hotfix release to fix a packaging mistake with the Windows
+release that caused special levels to fail to load.
+
+Configuration
+-------------
+* Disable `darkroom` by default when `darkgray` is also off by default, since it
+  led to ugly dark blue for almost everything not in direct line-of-sight.
+
+Technical
+---------
+* Fix a major packaging mistake with the pre-compiled Windows build where
+  certain special level data files had a version number incompatible with the
+  shipped game executable and thus refusing to load them and show a generic
+  full-level maze instead.
+
 DynaHack 0.5.0 (2013-09-18, 65751e0)
 ====================================
 
