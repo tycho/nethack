@@ -1,3 +1,171 @@
+DynaHack x.y.z (xxxx-yy-zz, 0000000)
+====================================
+
+This section describes the current development version of DynaHack which has not
+yet been officially released; scroll down for information about officially
+released versions.
+
+Highlights
+----------
+* Mazes completely removed from Gehennom!
+* New resistance system: resistances gained from corpses and crowning only
+  provide partial protection.
+* Reflection no longer reflects breaths (except disintegration).
+* Instant petrification completely replaced with delayed petrification: you will
+  always have a few turns to save yourself from instant death.
+* Drawbridge instant death removed: drawbridges can only be destroyed by force
+  bolts when closed, not open.
+* Effect of skills on to-hit and damage raised in general.
+* Slings now get damage bonuses from strength and enchantment.
+* New `repeat_prefix` keymap and `repeat_num_auto` option for people accustomed
+  to NetHack's classic number key movement scheme.
+* Curses on armor, jewelry and eyewear are now revealed when they are worn
+  instead of when trying to take them off.
+* More messages for things that used to happen silently: uncontrolled
+  teleportation, finding secret doors/corridors while searching, items becoming
+  randomly cursed.
+* Iron bars can be destroyed by acid or eaten by certain monsters.
+
+Character
+---------
+* Resistances gained from corpses and crowning only provide partial protection,
+  and resistances from your race/role or from worn equipment are immunities
+  (based on L's partial resistance patch).  Exact partial resistance effects:
+    - fire, cold, shock: half damage
+    - sleep: half duration, doubled chance to awaken from combat
+    - disintegration: 90% chance to resist
+    - poison: half damage, having any protects against other effects
+* Reflection no longer reflects breaths; disintegration breath is treated as a
+  beam to prevent unfair deaths due to this change.  The breath graphic has been
+  changed accordingly.
+* Changes to skills:
+    - Martial arts and bare-handed combat now get to-hit bonuses from skills
+      just like weapons do (from SporkHack).
+    - Allow 1-damage hits to still train relevant skills; in NetHack, hitting
+      with a weapon at unskilled gives -2 to damage, so weapons that couldn't
+      roll at least a 4 on damage wouldn't be trained at all!
+    - Accelerate heavyshot skill training: hitting with a heavyshot weapon
+      trains the relevant skill by 1dX points similar to its damage multiplier.
+    - Effect of skills on to-hit and damage raised in general (from dNetHack):
+        - Expert weapon skill gives +5/+3 to-hit/damage (was +3/+2).
+        - Expert two-weapon skill gives -2/+3 to-hit/damage (was -3/+2).
+        - Skilled riding gives +2 to damage (was +1).
+        - Expert riding gives +2/+5 to-hit/damage (was +0/+2).
+        - Restricted weapon skill gives -5 to damage (was -2).
+* Increased sling damage: slings now get the strength damage bonus (otherwise
+  reserved for melee) and sling enchantment affects damage of fired projectiles
+  (normally launcher enchantment only affects to-hit); their damage now even
+  competes with thrown daggers!
+* Teleport control allows teleportation to be cancelled without using a turn and
+  in the case of deliberate teleports consuming hunger.
+* Fix C343-238: "(Unix and VMS only) The 'Who are you?' prompt does not accept
+  digits in the response."  The official bug description is inaccurate: it's
+  names that START with a digit that aren't accepted by vault guards, and it
+  applies to all platforms.
+
+Dungeon
+-------
+* Changes to Gehennom:
+    - Mazes completely removed from Gehennom!  Both fill levels and filler
+      around special levels consist of lava caverns.
+    - Add demon lairs for Demogorgon, Geryon, Dispater, and Yeenoghu (from
+      GruntHack).
+* Move the Nymph Level deeper into the dungeon; it now appears from levels 15 to
+  20 (was 5 to 20).
+* Remove lava from one of the versions of the Castle level.
+* Levels between Medusa's Island and the Castle are now water caverns instead of
+  lava caverns, and have less evil monsters.
+* Allow magic mapping of the Valley of the Dead and the last Dragon Caves level.
+* Iron bars can be dissolved by acid (from UnNetHack).
+* Destroying iron bars in Sokoban counts against its shortcut conduct.
+* Drawbridge instant death removed: drawbridges can only be destroyed by force
+  bolts when closed, not open.
+* Prevent magic traps from being created above dungeon level 5.
+* Fix the cosmetic issue of horizontally-flipped levels appearing slightly
+  misaligned in the map area.
+
+Items
+-----
+* More formal identification for item under certain circumstances:
+    - Formal ID tin whistles and magic whistles when used.
+    - Formal ID magic flutes and magic harps when used.
+    - Formal ID enchant armor scrolls when they turn dragon scales into dragon
+      scale mail.
+* Guarantee a wand of cancellation in the Castle chest that can be used for
+  blanking scrolls and potions.
+* Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
+  monster and it hits a door."
+* Fix wielding of a cockatrice corpse bare-handed while wearing chromatic dragon
+  scales or scale mail not triggering petrification.
+
+Monsters
+--------
+* Instant petrification completely replaced with delayed petrification: you will
+  always have a few turns to save yourself from instant death.
+* Metallivores and disintegrators can eat through iron bars (from UnNetHack).
+* Allow Demogorgon to be bribed, since his lair is now guaranteed.
+* Tone back demon bribery amounts inherited from UnNetHack: demons now generally
+  only ask for 2000 to 6000 gold for most characters and 2000 to 3000 for
+  lawfuls (was 3000 to 20000!); giving within 10% less (rather than 40 gold
+  less) still has a chance to satisfy them.
+* Tone back 1-to-1 initial monster population difficulty inherited from
+  NetHack4: it is now only like that for the first 10 levels, then 1-to-2 for
+  the remainder.  This gives a progression similar to that of NetHack.
+* Tone back on the effect of a monster's level on its raw spell damage;
+  otherwise Asmodeus cold spell-casting attack could do over twice the damage of
+  Master Kaen without cold resistance, which is too much even for overprepared
+  characters.
+
+Interface
+---------
+* More messages for things that used to happen silently:
+    - Show message when teleported without teleport control.
+    - Show message when searching finds secret doors or corridors.
+    - Show messages for and reveal BUC of items that are randomly cursed by e.g.
+      the Wizard of Yendor or sitting on a throne with bad luck.
+    - Show a message of the identity of whistles and instruments when they are
+      discovered on use.
+* Make wearing and taking off messages more descriptive, e.g. "You finish taking
+  off a +0 leather armor" instead of "You finish taking off your suit."
+* Curses on armor, jewelry and eyewear are now revealed when they are worn
+  instead of when trying to take them off.
+* Skill training progress is now visible in the `#enhance` menu, e.g. "long
+  sword [basic] 20%" means the long sword skill is 20% of the way to advancing
+  to skilled.
+    - Mark skills that have reached their maximum as "MAX", and show it as soon
+      as the level is reached.
+* Show your character's race, role, gender and alignment when asked to enter a
+  name for that character (based on the same change in NetHack4).
+* Highlight lit light sources in item listings, e.g. inventory sidebar.
+* Adjust `safe_water` and `safe_lava` behavior: they only warn of walking into
+  such hazards in your INPUTTED direction, but won't stop you if stunning or
+  confusion causes you to stumble sideways into them.
+* Show the tombstone on death even if skipping disclosure information.
+    - Extend the tombstone by a line for longer death causes, e.g. "petrified by
+      kicking a chickatrice corpse".
+* Fix the color of the Wizard's Tower walls when viewed from another level using
+  the `Ctrl-O` dungeon overview.
+* Fix "T - take off" not appearing in the item action menu of meat rings.
+
+Configuration
+-------------
+* New `repeat_prefix` in the `keymap` option: Custom key to begin entering
+  repeat prefixes for commands, e.g. set to "n" so "n20s" searches for 20 turns.
+* New `repeat_num_auto` option: toggle whether or not pressing a number key
+  automatically begins entering repeat prefixes; people who have a habit of
+  using the top-row number keys for diagonal movement can toggle this option off
+  and map those keys to the movement commands under the `keymap` option.
+
+Technical
+---------
+* Clean up timer debugging code a bit.
+* Fix warning when leaving bones while wielding an attached heavy iron ball.
+* Fix infinite loop when placing a branch entrance on joined cavern levels.
+* Allow SPILL lev_comp command to accept 0 as a size for e.g. breaking holes in
+  cavern walls.
+* Fix some replay desyncs due to uninitialized data.
+* Prevent random chance to same-race polymorph in wizard mode.
+
 DynaHack 0.5.5 (2014-01-16, 78d772a)
 ====================================
 
