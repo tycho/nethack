@@ -204,7 +204,7 @@ void monflee(struct monst *mtmp, int fleetime, boolean first, boolean fleemsg)
 	}
 
 	/* ignore recently-stepped spaces when made to flee */
-	memset(mtmp->mtrack, MTSZ, sizeof(coord));
+	memset(mtmp->mtrack, 0, sizeof(mtmp->mtrack));
 }
 
 static void distfleeck(struct monst *mtmp, int *inrange, int *nearby, int *scared)
