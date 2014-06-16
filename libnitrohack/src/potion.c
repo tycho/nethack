@@ -512,8 +512,8 @@ int peffects(struct obj *otmp)
 			exercise(A_WIS, FALSE);
 		} else {
 			if (otmp->blessed) {
-				adjattrib(A_INT, 1, FALSE);
-				adjattrib(A_WIS, 1, FALSE);
+				adjattrib(A_INT, 1, 0);
+				adjattrib(A_WIS, 1, 0);
 			}
 			pline("You feel self-knowledgeable...");
 			if (Upolyd) {
@@ -673,7 +673,7 @@ int peffects(struct obj *otmp)
 			    poisontell(typ);
 			    adjattrib(typ,
 				      Poison_resistance ? -1 : -rn1(4,3),
-				      TRUE);
+				      1);
 			}
 			if (!FPoison_resistance) {
 			    int contam_dmg = rnd(10) + 5 * !!otmp->cursed;

@@ -1421,7 +1421,7 @@ void fix_attributes_and_properties(struct obj *obj, int attr_point)
 		    break;
 	    case 3: make_stunned(HStun + lcount, TRUE);
 		    break;
-	    case 4: adjattrib(rn2(A_MAX), -1, FALSE);
+	    case 4: adjattrib(rn2(A_MAX), -1, 0);
 		    break;
 	    case 5: make_hallucinated(HHallucination + lcount, TRUE, 0L);
 		    break;

@@ -567,7 +567,7 @@ static void angrygods(aligntyp resp_god)
 						"art arrogant",
 			      youmonst.data->mlet == S_HUMAN ? "mortal" : "creature");
 			verbalize("Thou must relearn thy lessons!");
-			adjattrib(A_WIS, -1, FALSE);
+			adjattrib(A_WIS, -1, 0);
 			losexp(NULL);
 			break;
 	    case 6:	if (!Punished) {
@@ -1256,7 +1256,7 @@ int dosacrifice(struct obj *otmp)
 	    if (u.ualign.type != A_CHAOTIC) {
 		adjalign(-5);
 		u.ugangr += 3;
-		adjattrib(A_WIS, -1, TRUE);
+		adjattrib(A_WIS, -1, 1);
 		if (!Inhell) angrygods(u.ualign.type);
 		change_luck(-5);
 	    } else adjalign(5);
@@ -1283,7 +1283,7 @@ int dosacrifice(struct obj *otmp)
 		pline("Such an action is an insult to %s!",
 		      (unicalign == A_CHAOTIC)
 		      ? "chaos" : unicalign ? "law" : "balance");
-		adjattrib(A_WIS, -1, TRUE);
+		adjattrib(A_WIS, -1, 1);
 		value = -5;
 	    } else if (u.ualign.type == altaralign) {
 		/* If different from altar, and altar is same as yours, */
@@ -1431,7 +1431,7 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		    pline("%s rejects your sacrifice!", a_gname());
 		    godvoice(altaralign, "Suffer, infidel!");
 		    change_luck(-5);
-		    adjattrib(A_WIS, -2, TRUE);
+		    adjattrib(A_WIS, -2, 1);
 		    if (!Inhell) angrygods(u.ualign.type);
 		}
 		return 1;
@@ -1894,7 +1894,7 @@ void altar_wrath(int x, int y)
 
     if (!strcmp(align_gname(altaralign), u_gname())) {
 	godvoice(altaralign, "How darest thou desecrate my altar!");
-	adjattrib(A_WIS, -1, FALSE);
+	adjattrib(A_WIS, -1, 0);
     } else {
 	pline("A voice (could it be %s?) whispers:",
 	      align_gname(altaralign));
@@ -2012,7 +2012,7 @@ int invoke_amulet(struct obj *otmp)
 	} else {
 	    /* Not very wise, to defy the gods with a *known* fake. */
 	    pline("You feel foolish!");
-	    adjattrib(A_WIS, -1, TRUE);
+	    adjattrib(A_WIS, -1, 1);
 	    exercise(A_WIS, FALSE);
 	    change_luck(-3);
 	    adjalign(-12);

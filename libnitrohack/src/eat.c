@@ -807,7 +807,7 @@ static void cpostfx(int pm)	/* called after completely consuming a corpse */
 		if (ABASE(A_INT) < ATTRMAX(A_INT)) {
 			if (!rn2(2)) {
 				pline("Yum! That was real brain food!");
-				adjattrib(A_INT, 1, FALSE);
+				adjattrib(A_INT, 1, 0);
 				break;	/* don't give them telepathy, too */
 			}
 		}

@@ -158,11 +158,11 @@ int dosit(void)
 		int attr_amount = -rn1(4,3);
 		switch (rnd(13))  {
 		    case 1:
-			adjattrib(which_attr, attr_amount, FALSE);
+			adjattrib(which_attr, attr_amount, 0);
 			losehp(rnd(10), "cursed throne", KILLED_BY_AN);
 			break;
 		    case 2:
-			adjattrib(rn2(A_MAX), 1, FALSE);
+			adjattrib(rn2(A_MAX), 1, 0);
 			break;
 		    case 3:
 			pline("A%s electric shock shoots through your body!",

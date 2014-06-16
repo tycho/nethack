@@ -172,7 +172,7 @@ void gainstr(struct obj *otmp, int incr)
 	    if (ABASE(A_STR) < 18) num = (rn2(4) ? 1 : rnd(6) );
 	    else if (ABASE(A_STR) < STR18(85)) num = rnd(10);
 	}
-	adjattrib(A_STR, (otmp && otmp->cursed) ? -num : num, TRUE);
+	adjattrib(A_STR, (otmp && otmp->cursed) ? -num : num, 1);
 }
 
 void losestr(int num)	/* may kill you; cause may be poison or monster like 'a' */
@@ -190,7 +190,7 @@ void losestr(int num)	/* may kill you; cause may be poison or monster like 'a' *
 		u.uhpmax -= 6;
 	    }
 	}
-	adjattrib(A_STR, -num, TRUE);
+	adjattrib(A_STR, -num, 1);
 }
 
 void change_luck(schar n)
