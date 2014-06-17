@@ -281,7 +281,7 @@ void mon_arrive(struct monst *mtmp, boolean with_you)
 	       goto_level(do.c) decides who ends up at your target spot
 	       when there is a monster there too. */
 	    if (!MON_AT(level, u.ux, u.uy) &&
-		    !rn2(mtmp->mtame ? 10 : mtmp->mpeaceful ? 5 : 2))
+		    !mtmp->mtame && !rn2(mtmp->mpeaceful ? 5 : 2))
 		rloc_to(mtmp, level, u.ux, u.uy);
 	    else
 		mnexto(mtmp);
