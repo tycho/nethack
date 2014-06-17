@@ -62,6 +62,8 @@ Character
   digits in the response."  The official bug description is inaccurate: it's
   names that START with a digit that aren't accepted by vault guards, and it
   applies to all platforms.
+* Fix ring of sustain ability blocking -1 strength change when becoming weak
+  from hunger, allowing it to be exploited to gain strength on demand.
 
 Dungeon
 -------
