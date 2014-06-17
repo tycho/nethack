@@ -846,14 +846,14 @@ void u_init_inv_skills(void)
 	for (i = 0; i < A_MAX; i++)
 	    if (!rn2(20)) {
 		int xd = rn2(7) - 2;	/* biased variation */
-		adjattrib(i, xd, 1);
+		adjattrib(i, xd, TRUE, 1);
 		if (ABASE(i) < AMAX(i)) AMAX(i) = ABASE(i);
 	    }
 
 	/* make sure you can carry all you have - especially for Tourists */
 	while (inv_weight() > 0) {
-		if (adjattrib(A_STR, 1, 1)) continue;
-		if (adjattrib(A_CON, 1, 1)) continue;
+		if (adjattrib(A_STR, 1, TRUE, 1)) continue;
+		if (adjattrib(A_CON, 1, TRUE, 1)) continue;
 		/* only get here when didn't boost strength or constitution */
 		break;
 	}

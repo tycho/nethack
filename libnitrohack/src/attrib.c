@@ -105,14 +105,15 @@ static void postadjabil(unsigned int *);
 boolean adjattrib(
 	int ndx,
 	int incr,
+	boolean force,
 	int msgflg	    /* positive => no message, zero => message, and */
 	                    /* negative => conditional (msg if change made) */
 	)
 {			    
-	if (Fixed_abil || !incr) return FALSE;
+	if ((Fixed_abil && !force) || !incr) return FALSE;
 
-	if ((ndx == A_INT || ndx == A_WIS)
-				&& uarmh && uarmh->otyp == DUNCE_CAP) {
+	if ((ndx == A_INT || ndx == A_WIS) &&
+	    !force && uarmh && uarmh->otyp == DUNCE_CAP) {
 		if (msgflg == 0)
 		    pline("Your cap constricts briefly, then relaxes again.");
 		return FALSE;
@@ -163,7 +164,7 @@ boolean adjattrib(
 	return TRUE;
 }
 
-void gainstr(struct obj *otmp, int incr)
+void gainstr(struct obj *otmp, int incr, boolean force)
 {
 	int num = 1;
 
@@ -172,10 +173,11 @@ void gainstr(struct obj *otmp, int incr)
 	    if (ABASE(A_STR) < 18) num = (rn2(4) ? 1 : rnd(6) );
 	    else if (ABASE(A_STR) < STR18(85)) num = rnd(10);
 	}
-	adjattrib(A_STR, (otmp && otmp->cursed) ? -num : num, 1);
+	adjattrib(A_STR, (otmp && otmp->cursed) ? -num : num, force, 1);
 }
 
-void losestr(int num)	/* may kill you; cause may be poison or monster like 'a' */
+/* may kill you; cause may be poison or monster like 'a' */
+void losestr(int num, boolean force)
 {
 	int ustr = ABASE(A_STR) - num;
 
@@ -190,7 +192,7 @@ void losestr(int num)	/* may kill you; cause may be poison or monster like 'a' *
 		u.uhpmax -= 6;
 	    }
 	}
-	adjattrib(A_STR, -num, 1);
+	adjattrib(A_STR, -num, force, 1);
 }
 
 void change_luck(schar n)
@@ -350,7 +352,7 @@ void exerchk(void)
 		    continue;
 		mod_val = sgn(AEXE(i));
 
-		if (adjattrib(i, mod_val, -1)) {
+		if (adjattrib(i, mod_val, FALSE, -1)) {
 		    /* if you actually changed an attrib - zero accumulation */
 		    AEXE(i) = 0;
 		    /* then print an explanation */

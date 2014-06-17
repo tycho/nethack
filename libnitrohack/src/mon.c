@@ -1987,7 +1987,7 @@ void poisoned(const char *string, int typ, const char *pname, int fatal)
 		losehp_how(i, pname, kprefix, how);
 	} else if (i <= 5 && !Poison_resistance) {
 		/* Check that a stat change was made */
-		if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3,3), 1))
+		if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3,3), FALSE, 1))
 		    pline("You%s!", poiseff[typ]);
 	} else {
 		i = thrown_weapon ? rnd(6) : rn1(10,6);

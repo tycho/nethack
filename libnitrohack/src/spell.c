@@ -131,7 +131,7 @@ static boolean cursed_book(struct obj *bp)
 		}
 		/* temp disable in_use; death should not destroy the book */
 		bp->in_use = FALSE;
-		losestr(Poison_resistance ? rn1(2,1) : rn1(4,3));
+		losestr(Poison_resistance ? rn1(2,1) : rn1(4,3), FALSE);
 		losehp(rnd(FPoison_resistance ? 6 :
 			   PPoison_resistance ? 8 : 10),
 		       "contact-poisoned spellbook", KILLED_BY_AN);

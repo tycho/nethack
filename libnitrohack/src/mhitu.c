@@ -1045,7 +1045,7 @@ dopois:
 		    }
 		}
 		/* adjattrib gives dunce cap message when appropriate */
-		adjattrib(A_INT, -rnd(2), 0);
+		adjattrib(A_INT, -rnd(2), FALSE, 0);
 		/* only Cthulhu makes you amnesiac */
 		if (mtmp->data == &mons[PM_CTHULHU]) {
 		    forget_levels(25);	/* lose memory of 25% of levels */
@@ -2490,12 +2490,12 @@ int doseduce(struct monst *mon)
 				if (u.uenmax < 0) u.uenmax = 0;
 				break;
 			case 1: pline("You are down in the dumps.");
-				adjattrib(A_CON, -1, 1);
+				adjattrib(A_CON, -1, FALSE, 1);
 			        exercise(A_CON, FALSE);
 				iflags.botl = 1;
 				break;
 			case 2: pline("Your senses are dulled.");
-				adjattrib(A_WIS, -1, 1);
+				adjattrib(A_WIS, -1, FALSE, 1);
 			        exercise(A_WIS, FALSE);
 				iflags.botl = 1;
 				break;
@@ -2527,12 +2527,12 @@ int doseduce(struct monst *mon)
 			u.uen = (u.uenmax += rnd(5));
 			break;
 		case 1: pline("You feel good enough to do it again.");
-			adjattrib(A_CON, 1, 1);
+			adjattrib(A_CON, 1, FALSE, 1);
 			exercise(A_CON, TRUE);
 			iflags.botl = 1;
 			break;
 		case 2: pline("You will always remember %s...", noit_mon_nam(mon));
-			adjattrib(A_WIS, 1, 1);
+			adjattrib(A_WIS, 1, FALSE, 1);
 			exercise(A_WIS, TRUE);
 			iflags.botl = 1;
 			break;

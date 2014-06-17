@@ -87,12 +87,12 @@ extern const char *get_warned_of_monster(const struct obj *);
 
 /* ### attrib.c ### */
 
-extern boolean adjattrib(int,int,int);
+extern boolean adjattrib(int,int,boolean,int);
 extern void change_luck(schar);
 extern int stone_luck(boolean);
 extern void set_moreluck(void);
-extern void gainstr(struct obj *,int);
-extern void losestr(int);
+extern void gainstr(struct obj *,int,boolean);
+extern void losestr(int,boolean);
 extern void restore_attrib(void);
 extern void exercise(int,boolean);
 extern void exerchk(void);

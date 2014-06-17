@@ -807,7 +807,7 @@ static void cpostfx(int pm)	/* called after completely consuming a corpse */
 		if (ABASE(A_INT) < ATTRMAX(A_INT)) {
 			if (!rn2(2)) {
 				pline("Yum! That was real brain food!");
-				adjattrib(A_INT, 1, 0);
+				adjattrib(A_INT, 1, FALSE, 0);
 				break;	/* don't give them telepathy, too */
 			}
 		}
@@ -824,7 +824,7 @@ static void cpostfx(int pm)	/* called after completely consuming a corpse */
 			pline ("Oh wow!  Great stuff!");
 			make_hallucinated(HHallucination + 200,FALSE,0L);
 		}
-		if (is_giant(ptr)) gainstr(NULL, 0);
+		if (is_giant(ptr)) gainstr(NULL, 0, FALSE);
 
 		/* Check the monster for all of the intrinsics.  If this
 		 * monster can give more than one, pick one to try to give
@@ -1022,7 +1022,7 @@ static int opentin(void) /* called during each move whilst opening a tin */
 		pline("This makes you feel like %s!",
 		      Hallucination ? "Swee'pea" : "Popeye");
 	    lesshungry(600);
-	    gainstr(tin.tin, 0);
+	    gainstr(tin.tin, 0, FALSE);
 	    /* Eating a tin of spinach breaks foodless-conduct here. */
 	    violated(CONDUCT_FOODLESS);
 	}
@@ -1224,7 +1224,7 @@ static int eatcorpse(struct obj *otmp)
 		pline("Ecch - that must have been poisonous!");
 		if (!FPoison_resistance) {
 			if (!Poison_resistance)
-			    losestr(rnd(4));
+			    losestr(rnd(4), FALSE);
 			losehp(rnd(PPoison_resistance ? 7 : 15),
 			       "poisonous corpse", KILLED_BY_AN);
 		} else	pline("You seem unaffected by the poison.");
@@ -1466,32 +1466,32 @@ static void eataccessory(struct obj *otmp)
 		break;
 	    case RIN_ADORNMENT:
 		accessory_has_effect(otmp);
-		if (adjattrib(A_CHA, otmp->spe, -1))
+		if (adjattrib(A_CHA, otmp->spe, FALSE, -1))
 		    makeknown(typ);
 		break;
 	    case RIN_GAIN_STRENGTH:
 		accessory_has_effect(otmp);
-		if (adjattrib(A_STR, otmp->spe, -1))
+		if (adjattrib(A_STR, otmp->spe, FALSE, -1))
 		    makeknown(typ);
 		break;
 	    case RIN_GAIN_CONSTITUTION:
 		accessory_has_effect(otmp);
-		if (adjattrib(A_CON, otmp->spe, -1))
+		if (adjattrib(A_CON, otmp->spe, FALSE, -1))
 		    makeknown(typ);
 		break;
 	    case RIN_GAIN_INTELLIGENCE:
 		accessory_has_effect(otmp);
-		if (adjattrib(A_INT, otmp->spe, -1))
+		if (adjattrib(A_INT, otmp->spe, FALSE, -1))
 		    makeknown(typ);
 		break;
 	    case RIN_GAIN_WISDOM:
 		accessory_has_effect(otmp);
-		if (adjattrib(A_WIS, otmp->spe, -1))
+		if (adjattrib(A_WIS, otmp->spe, FALSE, -1))
 		    makeknown(typ);
 		break;
 	    case RIN_GAIN_DEXTERITY:
 		accessory_has_effect(otmp);
-		if (adjattrib(A_DEX, otmp->spe, -1))
+		if (adjattrib(A_DEX, otmp->spe, FALSE, -1))
 		    makeknown(typ);
 		break;
 	    case RIN_INCREASE_ACCURACY:
@@ -1642,7 +1642,7 @@ static void fpostfx(struct obj *otmp)
 		break;
 	    case LUMP_OF_ROYAL_JELLY:
 		/* This stuff seems to be VERY healthy! */
-		gainstr(otmp, 1);
+		gainstr(otmp, 1, FALSE);
 		if (Upolyd) {
 		    u.mh += otmp->cursed ? -rnd(20) : rnd(20);
 		    if (u.mh > u.mhmax) {
@@ -1920,7 +1920,7 @@ int doeat(struct obj *otmp)	/* generic "eat" command funtion (see cmd.c) */
 		pline("Ecch - that must have been poisonous!");
 		if (!FPoison_resistance) {
 		    if (!Poison_resistance)
-			losestr(rnd(4));
+			losestr(rnd(4), FALSE);
 		    losehp(rnd(PPoison_resistance ? 7 : 15),
 			   xname(otmp), KILLED_BY_AN);
 		} else {
@@ -2293,9 +2293,9 @@ void newuhs(boolean incr)
 
 	if (newhs != u.uhs) {
 		if (newhs >= WEAK && u.uhs < WEAK)
-			losestr(1);	/* this may kill you -- see below */
+			losestr(1, TRUE);	/* this may kill you -- see below */
 		else if (newhs < WEAK && u.uhs >= WEAK)
-			losestr(-1);
+			losestr(-1, TRUE);
 		switch(newhs){
 		case HUNGRY:
 			if (Hallucination) {

@@ -431,7 +431,7 @@ static boolean check_survival(int how, char *kilbuf)
 			pline("The medallion crumbles to dust!");
 			if (uamul) useup(uamul);
 
-			adjattrib(A_CON, -1, 1);
+			adjattrib(A_CON, -1, FALSE, 1);
 			if (u.uhpmax <= 0) u.uhpmax = 10;	/* arbitrary */
 			savelife(how);
 			if (how == GENOCIDED && is_playermon_genocided())

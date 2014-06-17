@@ -201,7 +201,7 @@ void drinkfountain(void)
 		/* gain ability, blessed if "natural" luck is high */
 		i = rn2(A_MAX);		/* start at a random attribute */
 		for (ii = 0; ii < A_MAX; ii++) {
-		    if (adjattrib(i, 1, littleluck ? -1 : 0) && littleluck)
+		    if (adjattrib(i, 1, FALSE, littleluck ? -1 : 0) && littleluck)
 			break;
 		    if (++i >= A_MAX) i = 0;
 		}
@@ -248,7 +248,7 @@ void drinkfountain(void)
 			   break;
 			}
 			if (!PPoison_resistance)
-			    losestr(rn1(4, 3));
+			    losestr(rn1(4, 3), FALSE);
 			losehp(rnd(PPoison_resistance ? 5 : 10),
 			       "contaminated water", KILLED_BY);
 			exercise(A_CON, FALSE);

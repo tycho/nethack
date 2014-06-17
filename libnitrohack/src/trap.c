@@ -2558,7 +2558,7 @@ static void domagictrap(void)
 		   {   int i,j;
 		       struct monst *mtmp;
 
-		       adjattrib(A_CHA, 1, 0);
+		       adjattrib(A_CHA, 1, FALSE, 0);
 		       for (i = -1; i <= 1; i++) for(j = -1; j <= 1; j++) {
 			   if (!isok(u.ux+i, u.uy+j)) continue;
 			   mtmp = m_at(level, u.ux+i, u.uy+j);
