@@ -250,6 +250,8 @@ static int describe_object(int x, int y, int votyp, char *buf)
 		otmp->quan = 1L; /* to force pluralization off */
 	    else if (otmp->otyp == SLIME_MOLD)
 		otmp->spe = current_fruit;	/* give the fruit a type */
+	    if (level->locations[x][y].mem_obj_prize)
+		otmp->oprize = 1;
 	    strcpy(buf, distant_name(otmp, xname));
 	    dealloc_obj(otmp);
 	    otmp = vobj_at(x,y); /* make sure we don't point to the temp obj any more */
