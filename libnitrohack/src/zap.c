@@ -1062,7 +1062,8 @@ boolean obj_resists(struct obj *obj, int ochance, int achance)/* percent chance 
 	    obj->otyp == SPE_BOOK_OF_THE_DEAD ||
 	    obj->otyp == CANDELABRUM_OF_INVOCATION ||
 	    obj->otyp == BELL_OF_OPENING ||
-	    (obj->otyp == CORPSE && is_rider(&mons[obj->corpsenm]))) {
+	    (obj->otyp == CORPSE && is_rider(&mons[obj->corpsenm])) ||
+	    Is_prize(obj)) {
 		return TRUE;
 	} else {
 		int chance = rn2(100);
