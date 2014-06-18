@@ -99,6 +99,8 @@ Items
   monster and it hits a door."
 * Fix wielding of a cockatrice corpse bare-handed while wearing chromatic dragon
   scales or scale mail not triggering petrification.
+* Fix leaking of descriptions of prizes selected from level memory with far-look
+  after the prize itself has vanished.
 
 Monsters
 --------
