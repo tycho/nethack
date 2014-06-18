@@ -277,7 +277,7 @@ static int dog_invent(struct monst *mtmp, struct edog *edog, int udist)
 		}
 	} else {
 	    if ((obj=level->objects[omx][omy]) && !strchr(nofetch,obj->oclass) &&
-		!Is_sokoprize(obj)){
+		!Is_prize(obj)){
 		int edible = dogfood(mtmp, obj);
 
 		if ((edible <= CADAVER ||

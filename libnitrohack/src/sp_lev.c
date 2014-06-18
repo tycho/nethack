@@ -1697,6 +1697,7 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 	}
 	if (o->trapped) otmp->otrapped = 1;
 	if (o->greased) otmp->greased = 1;
+	if (o->prize) otmp->oprize = 1;
 #ifdef INVISIBLE_OBJECTS
 	if (o->invis) otmp->oinvis = 1;
 #endif
@@ -2880,6 +2881,7 @@ static void spo_object(struct sp_coder *coder, struct level *lev)
 	tmpobj.recharged = 0;
 	tmpobj.invis = 0;
 	tmpobj.greased = 0;
+	tmpobj.prize = 0;
 	tmpobj.broken = 0;
 	tmpobj.x = tmpobj.y = -1;
 
@@ -2961,6 +2963,10 @@ static void spo_object(struct sp_coder *coder, struct level *lev)
 	    case SP_O_V_GREASED:
 		if (OV_typ(parm) == SPOVAR_INT)
 		    tmpobj.greased = OV_i(parm);
+		break;
+	    case SP_O_V_PRIZE:
+		if (OV_typ(parm) == SPOVAR_INT)
+		    tmpobj.prize = OV_i(parm);
 		break;
 	    case SP_O_V_BROKEN:
 		if (OV_typ(parm) == SPOVAR_INT)

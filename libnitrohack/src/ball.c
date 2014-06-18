@@ -94,7 +94,7 @@ do { \
     u.bc##glyph = level->locations[x][y].mem_obj; \
     u.bc##objmn = level->locations[x][y].mem_obj_mn; \
     u.bc##stack = level->locations[x][y].mem_obj_stacks; \
-    u.bc##osoko = level->locations[x][y].mem_obj_soko; \
+    u.bc##oprize = level->locations[x][y].mem_obj_prize; \
 } while (0)
 
 #define BGLYPH_PICK(x, y)	GLYPH_PICK(b, x, y)
@@ -105,7 +105,7 @@ do { \
     level->locations[x][y].mem_obj        = u.bc##glyph; \
     level->locations[x][y].mem_obj_mn     = u.bc##objmn; \
     level->locations[x][y].mem_obj_stacks = u.bc##stack; \
-    level->locations[x][y].mem_obj_soko   = u.bc##osoko; \
+    level->locations[x][y].mem_obj_prize  = u.bc##oprize; \
 } while (0)
 
 #define BGLYPH_DROP(x, y)	GLYPH_DROP(b, x, y)
@@ -116,7 +116,7 @@ do { \
     u.b##glyph = u.a##glyph; \
     u.b##objmn = u.a##objmn; \
     u.b##stack = u.a##stack; \
-    u.b##osoko = u.a##osoko; \
+    u.b##oprize = u.a##oprize; \
 } while (0)
 
 #define GLYPH_CLONE_BALL_TO_CHAIN()	GLYPH_CLONE_A_TO_B(b, c)

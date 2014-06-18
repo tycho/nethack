@@ -252,14 +252,14 @@ void map_trap(struct trap *trap, int show)
  * map_object() is used for object detection, which this won't work for.
  */
 boolean topobj_at(int x, int y, boolean ignorebc, int *dotyp, int *domon,
-		  unsigned *ostack, unsigned *osoko)
+		  unsigned *ostack, unsigned *oprize)
 {
     const struct obj *obj, *next;
 
     *dotyp = 0;
     *domon = 0;
     *ostack = 0;
-    *osoko = 0;
+    *oprize = 0;
 
     obj = vobj_at(x, y);
     if (ignorebc && uball && uchain) {
@@ -288,8 +288,8 @@ boolean topobj_at(int x, int y, boolean ignorebc, int *dotyp, int *domon,
     if (*dotyp != BOULDER && next)
 	*ostack = 1;
 
-    if (Is_sokoprize(obj))
-	*osoko = 1;
+    if (Is_prize(obj))
+	*oprize = 1;
 
     return TRUE;
 }
@@ -323,7 +323,7 @@ void map_object(struct obj *obj, int show)
     loc->mem_obj_mn = monnum + 1;
     loc->mem_obj_stacks = obj->otyp != BOULDER &&
 			  level->objects[x][y] && level->objects[x][y]->nexthere;
-    loc->mem_obj_soko = Is_sokoprize(obj);
+    loc->mem_obj_prize = Is_prize(obj);
 
     if (show)
 	dbuf_set(level, x, y, loc, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0);
@@ -364,7 +364,7 @@ void unmap_object(int x, int y)
     level->locations[x][y].mem_obj = 0;
     level->locations[x][y].mem_obj_mn = 0;
     level->locations[x][y].mem_obj_stacks = 0;
-    level->locations[x][y].mem_obj_soko = 0;
+    level->locations[x][y].mem_obj_prize = 0;
 }
 
 
@@ -387,7 +387,7 @@ void map_location(int x, int y, int show)
 	    level->locations[x][y].mem_obj = 0;
 	    level->locations[x][y].mem_obj_mn = 0;
 	    level->locations[x][y].mem_obj_stacks = 0;
-	    level->locations[x][y].mem_obj_soko = 0;
+	    level->locations[x][y].mem_obj_prize = 0;
 	}
 
 	if ((trap = t_at(level, x, y)) && trap->tseen && !covers_traps(level, x, y))
@@ -415,7 +415,7 @@ void clear_memory_glyph(schar x, schar y, int to)
     level->locations[x][y].mem_obj = 0;
     level->locations[x][y].mem_obj_mn = 0;
     level->locations[x][y].mem_obj_stacks = 0;
-    level->locations[x][y].mem_obj_soko = 0;
+    level->locations[x][y].mem_obj_prize = 0;
     level->locations[x][y].mem_invis = 0;
     level->locations[x][y].mem_stepped = 0;
     level->locations[x][y].mem_door_l = 0;
@@ -678,20 +678,20 @@ void feel_location(xchar x, xchar y)
 	     * If we don't, then when the ball/chain is moved it will drop
 	     * the wrong glyph.
 	     */
-	    unsigned bcstack, bcosoko;
+	    unsigned bcstack, bcprize;
 	    if (uchain->ox == x && uchain->oy == y) {
 		u.bc_felt |= BC_CHAIN;
-		bcstack = bcosoko = 0;
-		topobj_at(x, y, TRUE, &u.cglyph, &u.cobjmn, &bcstack, &bcosoko);
+		bcstack = bcprize = 0;
+		topobj_at(x, y, TRUE, &u.cglyph, &u.cobjmn, &bcstack, &bcprize);
 		u.cstack = bcstack;
-		u.cosoko = bcosoko;
+		u.coprize = bcprize;
 	    }
 	    if (!carried(uball) && uball->ox == x && uball->oy == y) {
 		u.bc_felt |= BC_BALL;
-		bcstack = bcosoko = 0;
-		topobj_at(x, y, TRUE, &u.bglyph, &u.bobjmn, &bcstack, &bcosoko);
+		bcstack = bcprize = 0;
+		topobj_at(x, y, TRUE, &u.bglyph, &u.bobjmn, &bcstack, &bcprize);
 		u.bstack = bcstack;
-		u.bosoko = bcosoko;
+		u.boprize = bcprize;
 	    }
 	}
 
@@ -1424,7 +1424,7 @@ static void dbuf_set_loc(int x, int y)
  * - obj
  * - obj_mn
  * - obj_stacks
- * - obj_sokoprize
+ * - obj_prize
  * - invis
  *
  * visible reads -1 to use cansee() if the current level is passed,
@@ -1433,7 +1433,7 @@ static void dbuf_set_loc(int x, int y)
 void dbuf_set(const struct level *lev, int x, int y,
 	      const struct rm *loc_override,
 	      int bg, int trap,
-	      int obj, int obj_mn, int obj_stacks, int obj_sokoprize,
+	      int obj, int obj_mn, int obj_stacks, int obj_prize,
 	      int invis, int mon, int monflags,
 	      int effect)
 {
@@ -1456,10 +1456,10 @@ void dbuf_set(const struct level *lev, int x, int y,
 	dbe->objflags &= ~DOBJ_STACKS;
     else
 	dbe->objflags |= DOBJ_STACKS;
-    if (obj_sokoprize == 0 || (obj_sokoprize == -1 && loc->mem_obj_soko == 0))
-	dbe->objflags &= ~DOBJ_SOKOPRIZE;
+    if (obj_prize == 0 || (obj_prize == -1 && loc->mem_obj_prize == 0))
+	dbe->objflags &= ~DOBJ_PRIZE;
     else
-	dbe->objflags |= DOBJ_SOKOPRIZE;
+	dbe->objflags |= DOBJ_PRIZE;
 
     dbe->invis = (invis != -1) ? invis : loc->mem_invis;
 

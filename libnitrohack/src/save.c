@@ -280,7 +280,7 @@ static void save_location(struct memfile *mf, struct rm *loc)
 		  (loc->mem_obj		<< 11) |
 		  (loc->mem_obj_mn	<<  2) |
 		  (loc->mem_obj_stacks	<<  1) |
-		  (loc->mem_obj_soko	<<  0);
+		  (loc->mem_obj_prize	<<  0);
 
 	lflags2 = 0 |
 		  (loc->mem_door_l	<< 18) |

@@ -750,7 +750,7 @@ static void restore_location(struct memfile *mf, struct rm *loc)
 	loc->mem_obj	    = (lflags1 >> 11) & ((1 << 10) - 1);
 	loc->mem_obj_mn	    = (lflags1 >>  2) & ((1 <<  9) - 1);
 	loc->mem_obj_stacks = (lflags1 >>  1) & ((1 <<  1) - 1);
-	loc->mem_obj_soko   = (lflags1 >>  0) & ((1 <<  1) - 1);
+	loc->mem_obj_prize  = (lflags1 >>  0) & ((1 <<  1) - 1);
 
 	loc->mem_door_l	    = (lflags2 >> 18) & ((1 <<  1) - 1);
 	loc->mem_door_t	    = (lflags2 >> 17) & ((1 <<  1) - 1);

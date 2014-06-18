@@ -362,8 +362,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 	int typ = obj->otyp;
 	struct objclass *ocl = &objects[typ];
 	int nn = ocl->oc_name_known ||
-		 /* only reveal Sokoban prizes when in sight */
-		 (Is_sokoprize(obj) &&
+		 /* only reveal level prizes when in sight */
+		 (Is_prize(obj) &&
 		  (cansee(obj->ox, obj->oy) ||
 		   /* even reveal when Sokoban prize only felt */
 		   (u.ux == obj->ox && u.uy == obj->oy)));
@@ -390,7 +390,7 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 	if (!nn && ocl->oc_uses_known && ocl->oc_unique) known = 0;
 	if (!Blind) dknown = TRUE;
 	/* needed, otherwise BoH only shows up as "bag" when blind */
-	if (Is_sokoprize(obj)) dknown = TRUE;
+	if (Is_prize(obj)) dknown = TRUE;
 	if (Role_if (PM_PRIEST)) bknown = TRUE;
 	if (obj_is_pname(obj))
 	    goto nameit;
@@ -408,6 +408,10 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 	      !objects[obj->otyp].oc_name_known)))
 	    strcat(buf, "magical ");
 
+	/* prizes suppress description of objects detected/remembered from afar */
+	if (Is_prize(obj) && !un)
+	    strcat(buf, "prize ");
+
 	switch (obj->oclass) {
 	    case AMULET_CLASS:
 		if (!dknown) {
@@ -419,10 +423,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			strcat(buf, known ? actualn : dn);
 		    else if (nn)
 			strcat(buf, actualn);
-		    else if (un)
+		    else if (un || Is_prize(obj))
 			strcat(buf, "amulet"); /* u-named after props */
-		    else if (Is_sokoprize(obj))
-			strcat(buf, "sokoban amulet");
 		    else
 			sprintf(eos(buf), "%s amulet", dn);
 
@@ -464,8 +466,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			strcat(buf, actualn);
 		    else if (un)
 			strcat(buf, dn ? dn : actualn); /* u-named after props */
-		    else if (Is_sokoprize(obj))
-			strcat(buf, "sokoban bag");
+		    else if (Is_prize(obj) && obj->oclass != WEAPON_CLASS)
+			strcat(buf, "tool");
 		    else
 			strcat(buf, dn ? dn : actualn);
 
@@ -516,7 +518,7 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			/* allow "pair of boots of fire resistance" */
 			propnames(buf, obj->oprops, obj->oprops_known, FALSE,
 				  !!strstr(actualn, " of "));
-		} else if (un) {
+		} else if (un || Is_prize(obj)) {
 			if (is_boots(obj))
 				strcat(buf,"boots");
 			else if (is_gloves(obj))
@@ -529,14 +531,12 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 				strcat(buf,"shield");
 			else
 				strcat(buf,"armor");
-			propnames(buf, obj->oprops, obj->oprops_known, FALSE,
-				  FALSE);
-			strcat(buf, " called ");
-			strcat(buf, un);
-		} else if (Is_sokoprize(obj)) {
-			strcat(buf, "sokoban cloak");
-			propnames(buf, obj->oprops, obj->oprops_known, FALSE,
-				  FALSE);
+			if (un) {
+				propnames(buf, obj->oprops, obj->oprops_known, FALSE,
+					  FALSE);
+				strcat(buf, " called ");
+				strcat(buf, un);
+			}
 		} else {
 			strcat(buf, dn);
 			/* skip "set of"/"pair of" for proper wording of
@@ -616,8 +616,11 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 				strcat(buf, un);
 			}
 		} else {
-			strcat(buf, dn);
-			strcat(buf, " potion");
+			if (!Is_prize(obj)) {
+			    strcat(buf, dn);
+			    strcat(buf, " ");
+			}
+			strcat(buf, "potion");
 		}
 		break;
 	case SCROLL_CLASS:
@@ -631,6 +634,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 		} else if (un) {
 			strcat(buf, "scroll called ");
 			strcat(buf, un);
+		} else if (Is_prize(obj)) {
+			strcat(buf, "scroll");
 		} else if (ocl->oc_magic) {
 			strcat(buf, "scroll labeled ");
 			strcat(buf, dn);
@@ -646,6 +651,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			sprintf(buf, "wand of %s", actualn);
 		else if (un)
 			sprintf(buf, "wand called %s", un);
+		else if (Is_prize(obj))
+			strcat(buf, "wand");
 		else
 			sprintf(buf, "%s wand", dn);
 		break;
@@ -658,8 +665,11 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			strcat(buf, actualn);
 		} else if (un) {
 			sprintf(buf, "spellbook called %s", un);
-		} else
+		} else if (Is_prize(obj)) {
+			strcat(buf, "spellbook");
+		} else {
 			sprintf(buf, "%s spellbook", dn);
+		}
 		break;
 	case RING_CLASS:
 		if (!dknown) {
@@ -669,6 +679,8 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			sprintf(buf, "ring of %s", actualn);
 		    else if (un)
 			strcat(buf, "ring"); /* u-named after props */
+		    else if (Is_prize(obj))
+			strcat(buf, "ring");
 		    else
 			sprintf(buf, "%s ring", dn);
 
@@ -686,6 +698,7 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 		    strcat(buf, rock);
 		} else if (!nn) {
 		    if (un) sprintf(eos(buf), "%s called %s", rock, un);
+		    else if (Is_prize(obj)) strcat(buf, rock);
 		    else sprintf(eos(buf), "%s %s", dn, rock);
 		} else {
 		    strcat(buf, actualn);

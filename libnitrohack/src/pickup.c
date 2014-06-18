@@ -25,7 +25,7 @@ static int container_at(int, int, boolean);
 static boolean able_to_loot(int, int, const char *);
 static boolean mon_beside(int, int);
 static boolean dump_container(struct obj *, boolean, long *);
-static void del_sokoprizes(void);
+static void del_prizes(void);
 
 /* define for query_objlist() and autopickup() */
 #define FOLLOW(curr, flags) \
@@ -375,7 +375,7 @@ static int autopick(struct obj *olist,	/* the object list */
 	    examine_object(curr);
 	    if ((iflags.pickup_thrown && curr->was_thrown) ||
 		((iflags.pickup_dropped || !curr->was_dropped) &&
-		 !Is_sokoprize(curr) &&
+		 !Is_prize(curr) &&
 		 autopickup_match(curr)))
 		n++;
 	}
@@ -385,7 +385,7 @@ static int autopick(struct obj *olist,	/* the object list */
 	    for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow)) {
 		if ((iflags.pickup_thrown && curr->was_thrown) ||
 		    ((iflags.pickup_dropped || !curr->was_dropped) &&
-		     !Is_sokoprize(curr) &&
+		     !Is_prize(curr) &&
 		     autopickup_match(curr))) {
 		    pi[n].obj = curr;
 		    pi[n].count = curr->quan;
@@ -1295,13 +1295,14 @@ int pickup_object(struct obj *obj, long count,
 	      obj, count);
 	mrg_to_wielded = FALSE;
 
-	if (Is_sokoprize(obj)) {
+	if (Is_prize(obj)) {
 	    makeknown(obj->otyp);	/* obj is already known */
-	    obj->sokoprize = FALSE;	/* reset sokoprize flag */
-	    del_sokoprizes();		/* delete other sokoprizes */
-	    u.uevent.finished_sokoban = TRUE;	/* Sokoban complete! */
+	    obj->oprize = FALSE;	/* reset oprize flag */
+	    del_prizes();		/* delete other prizes */
+	    if (In_sokoban(&level->z) && dunlev(&level->z) == 1)
+		u.uevent.finished_sokoban = TRUE; /* Sokoban complete! */
 	    /* stop picking up other objects to prevent picking up
-	       one of the just-deleted other sokoban prizes */
+	       one of the just-deleted other prizes */
 	    return -1;
 	}
 
@@ -2438,7 +2439,7 @@ static boolean dump_container(struct obj *container, boolean destroy_after,
 	return ret;
 }
 
-static void del_sokoprizes(void)
+static void del_prizes(void)
 {
 	int x, y, cnt = 0;
 	struct obj *otmp, *onext;
@@ -2446,7 +2447,7 @@ static void del_sokoprizes(void)
 	/* check objs on floor */
 	for (otmp = level->objlist; otmp; otmp = onext) {
 	    onext = otmp->nobj; /* otmp may be destroyed */
-	    if (Is_sokoprize(otmp)) {
+	    if (Is_prize(otmp)) {
 		x = otmp->ox;
 		y = otmp->oy;
 		obj_extract_self(otmp);
@@ -2463,7 +2464,7 @@ static void del_sokoprizes(void)
 	/* check buried objs... do we need this? */
 	for (otmp = level->buriedobjlist; otmp; otmp = onext) {
 	    onext = otmp->nobj; /* otmp may be destroyed */
-	    if (Is_sokoprize(otmp)) {
+	    if (Is_prize(otmp)) {
 		obj_extract_self(otmp);
 		cnt++;
 		obfree(otmp, NULL);

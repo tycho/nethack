@@ -74,7 +74,7 @@ struct obj {
 #define norevive oeroded2
 	unsigned oerodeproof:1; /* erodeproof weapon/armor */
 	unsigned olocked:1;	/* object is locked */
-#define sokoprize olocked	/* special flag for sokoban prize */
+#define oprize olocked		/* special flag for sokoban prize */
 #define orecursive olocked	/* special flag for preventing recursive calls */
 	unsigned obroken:1;	/* lock has been broken */
 	unsigned otrapped:1;	/* container is trapped */
@@ -239,7 +239,7 @@ struct obj {
 #define Is_mbag(otmp)	(otmp->otyp == BAG_OF_HOLDING || \
 			 otmp->otyp == BAG_OF_TRICKS)
 
-#define Is_sokoprize(otmp)	((otmp)->sokoprize && !Is_box(otmp))
+#define Is_prize(otmp)	((otmp)->oprize && !Is_box(otmp))
 
 /* dragon gear */
 #define Is_dragon_scales(idx)	((idx) >= GRAY_DRAGON_SCALES && \

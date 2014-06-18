@@ -75,7 +75,7 @@
 /* flags for displayed objects */
 #define DOBJ_NORMAL	0
 #define DOBJ_STACKS	(1 << 0)
-#define DOBJ_SOKOPRIZE	(1 << 1)
+#define DOBJ_PRIZE	(1 << 1)
 
 /*
  * level display modes

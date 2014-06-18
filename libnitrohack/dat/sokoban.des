@@ -506,10 +506,26 @@ DOOR: closed, (17,11)
 DOOR: closed, (17,13)
 DOOR: closed, (17,15)
 REGION: (18,10,22,16), lit, "zoo", filled, true
-#OBJECT: ('(',"bag of holding"), $place[0]
 ENGRAVING: $place[0], burn, "Elbereth"
 ENGRAVING: $place[1], burn, "Elbereth"
 ENGRAVING: $place[2], burn, "Elbereth"
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
 
 
 LEVEL: "soko1-2"
@@ -598,10 +614,26 @@ DOOR: closed, (17,10)
 DOOR: closed, (17,12)
 DOOR: closed, (17,14)
 REGION: (18,09,22,15), lit, "zoo", filled, true
-#OBJECT: ('"',"amulet of reflection"), $place[0]
 ENGRAVING: $place[0], burn, "Elbereth"
 ENGRAVING: $place[1], burn, "Elbereth"
 ENGRAVING: $place[2], burn, "Elbereth"
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
 
 
 # Following Sokoban levels heavily modified for NetHack by Pasi Kallinen
@@ -1661,10 +1693,26 @@ MONSTER: ('m',"giant mimic"), random, m_object "boulder"
 
 soko_loot()
 
-#OBJECT: ('(',"bag of holding"), $place[0]
 ENGRAVING: $place[0], burn, "Elbereth"
 ENGRAVING: $place[1], burn, "Elbereth"
 ENGRAVING: $place[2], burn, "Elbereth"
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
 
 
 LEVEL: "soko1-4"
@@ -1745,10 +1793,26 @@ MONSTER: ('m',"giant mimic"), random, m_object "boulder"
 
 soko_loot()
 
-#OBJECT: ('"',"amulet of reflection"), $place[0]
 ENGRAVING: $place[0], burn, "Elbereth"
 ENGRAVING: $place[1], burn, "Elbereth"
 ENGRAVING: $place[2], burn, "Elbereth"
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
 
 
 LEVEL: "soko3-17"
@@ -2189,12 +2253,26 @@ DOOR: closed, (20,08)
 DOOR: closed, (20,10)
 DOOR: closed, (20,12)
 REGION: (21,07,25,13), lit, "zoo", filled, true
-#OBJECT: ('[',"cloak of magic resistance"), $place[0]
 ENGRAVING: $place[0], burn, "Elbereth"
-#OBJECT: ('"',"amulet of reflection"), $place[1]
 ENGRAVING: $place[1], burn, "Elbereth"
-#OBJECT: ('(',"bag of holding"), $place[2]
 ENGRAVING: $place[2], burn, "Elbereth"
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
 
 
 LEVEL: "soko1-6"
@@ -2282,9 +2360,23 @@ DOOR: closed, (22,03)
 DOOR: closed, (22,05)
 DOOR: closed, (22,07)
 REGION: (23,02,27,08), lit, "zoo", filled, true
-#OBJECT: ('[',"cloak of magic resistance"), $place[0]
 ENGRAVING: $place[0], burn, "Elbereth"
-#OBJECT: ('"',"amulet of reflection"), $place[1]
 ENGRAVING: $place[1], burn, "Elbereth"
-#OBJECT: ('(',"bag of holding"), $place[2]
 ENGRAVING: $place[2], burn, "Elbereth"
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}

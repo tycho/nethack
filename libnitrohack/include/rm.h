@@ -320,7 +320,7 @@ struct rm {
 	unsigned mem_obj:10;	/* remembered object */
 	unsigned mem_obj_mn:9;	/* monnum of remembered corpses, statues, figurines */
 	unsigned mem_obj_stacks:1; /* remembered other stacks of objects */
-	unsigned mem_obj_soko:1; /* remembered object is a Sokoban prize */
+	unsigned mem_obj_prize:1; /* remembered object is a level prize */
 
 	schar typ;		/* what is really there */
 	uchar seenv;		/* seen vector */

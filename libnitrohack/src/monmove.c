@@ -805,8 +805,8 @@ not_special:
 		    if (is_pool(level, xx, yy) && !is_swimmer(ptr) &&
 			!amphibious(ptr)) continue;
 
-		    /* ignore Sokoban prize */
-		    if (Is_sokoprize(otmp)) continue;
+		    /* ignore level prizes */
+		    if (Is_prize(otmp)) continue;
 
 		    if (((likegold && otmp->oclass == COIN_CLASS) ||
 		       (likeobjs && strchr(practical, otmp->oclass) &&

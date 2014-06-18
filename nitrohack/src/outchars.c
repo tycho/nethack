@@ -595,7 +595,7 @@ int mapglyph(struct nh_dbuf_entry *dbe, struct curses_symdef *syms, int *bg_colo
     if (dbe->obj) {
 	object_symdef(dbe->obj - 1, dbe->obj_mn - 1, &syms[count]);
 
-	if (dbe->objflags & DOBJ_SOKOPRIZE)
+	if (dbe->objflags & DOBJ_PRIZE)
 	    syms[count].color = CLR_BRIGHT_MAGENTA;
 	valley_symdef(&syms[count]);
 	if (settings.darkroom && !(dbe->dgnflags & NH_DF_VISIBLE_MASK))

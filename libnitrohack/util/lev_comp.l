@@ -156,6 +156,7 @@ trapped		return TRAPPED_ID;
 recharged	return RECHARGED_ID;
 invisible	return INVIS_ID;
 greased		return GREASED_ID;
+prize		return PRIZE_ID;
 female		return FEMALE_ID;
 cancelled	return CANCELLED_ID;
 revived		return REVIVED_ID;

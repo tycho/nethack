@@ -156,7 +156,7 @@ extern const char *fname;
 %token	<i> EXIT_ID SHUFFLE_ID
 %token	<i> QUANTITY_ID BURIED_ID LOOP_ID
 %token	<i> SWITCH_ID CASE_ID BREAK_ID DEFAULT_ID
-%token	<i> ERODED_ID TRAPPED_ID RECHARGED_ID INVIS_ID GREASED_ID
+%token	<i> ERODED_ID TRAPPED_ID RECHARGED_ID INVIS_ID GREASED_ID PRIZE_ID
 %token	<i> FEMALE_ID CANCELLED_ID REVIVED_ID AVENGE_ID FLEEING_ID BLINDED_ID
 %token	<i> PARALYZED_ID STUNNED_ID CONFUSED_ID SEENTRAPS_ID ALL_ID
 %token	<i> MON_GENERATION_ID MONTYPE_ID
@@ -1536,9 +1536,9 @@ object_detail	: OBJECT_ID chance ':' object_desc
 
 object_desc	: object_or_var object_infos
 		  {
-			if (($2 & 0x4000) && in_container_obj)
+			if (($2 & 0x8000) && in_container_obj)
 			    lc_error("Object cannot have a coord when contained.");
-			else if (!($2 & 0x4000) && !in_container_obj)
+			else if (!($2 & 0x8000) && !in_container_obj)
 			    lc_error("Object needs a coord when not contained.");
 		  }
 		;
@@ -1635,10 +1635,15 @@ object_info	: CURSE_TYPE
 			add_opvars(splev, "ii", 1, SP_O_V_GREASED);
 			$$ = 0x2000;
 		  }
+		| PRIZE_ID
+		  {
+			add_opvars(splev, "ii", 1, SP_O_V_PRIZE);
+			$$ = 0x4000;
+		  }
 		| coord_or_var
 		  {
 			add_opvars(splev, "i", SP_O_V_COORD);
-			$$ = 0x4000;
+			$$ = 0x8000;
 		  }
 		;
 

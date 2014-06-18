@@ -397,41 +397,6 @@ void fixup_special(struct level *lev)
 	place_lregion(lev, 0,0,0,0,0,0,0,0,LR_BRANCH,NULL);
     }
 
-    /* KMH -- Sokoban levels */
-    if (In_sokoban(&lev->z)) {
-	/* Create random Sokoban prizes. */
-	if (dunlev(&lev->z) == 1) {
-	    struct engr *ep;
-	    int prize = 0;
-	    for (ep = lev->lev_engr; ep; ep = ep->nxt_engr) {
-		/* Sokoban top levels have no random, burned engravings */
-		if (ep->engr_txt[0] && ep->engr_type == BURN &&
-		    !strcmp(ep->engr_txt, "Elbereth")) {
-		    int prize_obj = STRANGE_OBJECT;
-		    struct obj *otmp;
-		    switch (prize) {
-		    case 0:
-			prize_obj = BAG_OF_HOLDING;
-			break;
-		    case 1:
-			prize_obj = rn2(2) ? CLOAK_OF_MAGIC_RESISTANCE :
-					     CLOAK_OF_DISPLACEMENT;
-			break;
-		    case 2:
-			prize_obj = !rn2(3) ? AMULET_OF_LIFE_SAVING :
-				     rn2(2) ? AMULET_OF_ESP :
-					      AMULET_OF_REFLECTION;
-			break;
-		    }
-		    otmp = mksobj_at(prize_obj, lev, ep->engr_x, ep->engr_y,
-				     TRUE, FALSE);
-		    otmp->sokoprize = TRUE;
-		    prize++;
-		}
-	    }
-	}
-   }
-
     /* Still need to add some stuff to level file */
     if (Is_medusa_level(&lev->z)) {
 	struct obj *otmp;

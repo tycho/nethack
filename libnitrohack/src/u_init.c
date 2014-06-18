@@ -1083,8 +1083,8 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->usick_type	= (yflags >> 23) & 3;
 	y->bstack	= (yflags >> 22) & 1;
 	y->cstack	= (yflags >> 21) & 1;
-	y->bosoko	= (yflags >> 20) & 1;
-	y->cosoko	= (yflags >> 19) & 1;
+	y->boprize	= (yflags >> 20) & 1;
+	y->coprize	= (yflags >> 19) & 1;
 	
 	y->uevent.minor_oracle		= (eflags >> 31) & 1;
 	y->uevent.major_oracle		= (eflags >> 30) & 1;
@@ -1255,11 +1255,18 @@ void save_you(struct memfile *mf, struct you *y)
 {
 	int i;
 	unsigned int yflags, eflags, hflags;
-	yflags = (y->uswallow << 31) | (y->uinwater << 30) | (y->uundetected << 29) |
-		(y->mfemale << 28) | (y->uinvulnerable << 27) | (y->uburied << 26) |
-		(y->uedibility << 25) | (y->usick_type << 23) |
-		(y->bstack << 22) | (y->cstack << 21) |
-		(y->bosoko << 20) | (y->cosoko << 19);
+	yflags = (y->uswallow		<< 31) |
+		 (y->uinwater		<< 30) |
+		 (y->uundetected	<< 29) |
+		 (y->mfemale		<< 28) |
+		 (y->uinvulnerable	<< 27) |
+		 (y->uburied		<< 26) |
+		 (y->uedibility		<< 25) |
+		 (y->usick_type		<< 23) |
+		 (y->bstack		<< 22) |
+		 (y->cstack		<< 21) |
+		 (y->boprize		<< 20) |
+		 (y->coprize		<< 19);
 	eflags = (y->uevent.minor_oracle	<< 31) |
 		 (y->uevent.major_oracle	<< 30) |
 		 (y->uevent.finished_sokoban	<< 29) |

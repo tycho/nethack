@@ -168,6 +168,10 @@ Technical
   cavern walls.
 * Fix some replay desyncs due to uninitialized data.
 * Prevent random chance to same-race polymorph in wizard mode.
+* lev_comp: New `prize` flag for `OBJECT` statements, denoting objects that
+  should be considered a prize of that level; prizes are ignored by monsters,
+  don't fall down holes, are ignored by autopickup, and picking up a prize
+  causes other prizes on that level to vanish.
 
 DynaHack 0.5.5 (2014-01-16, 78d772a)
 ====================================

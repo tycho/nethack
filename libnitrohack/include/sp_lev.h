@@ -172,9 +172,10 @@ enum opcode_defs {
 #define SP_O_V_RECHARGED	10
 #define SP_O_V_INVIS		11
 #define SP_O_V_GREASED		12
-#define SP_O_V_BROKEN		13
-#define SP_O_V_COORD		14
-#define SP_O_V_END		15 /* end of variable parameters */
+#define SP_O_V_PRIZE		13
+#define SP_O_V_BROKEN		14
+#define SP_O_V_COORD		15
+#define SP_O_V_END		16 /* end of variable parameters */
 
 /* When creating objects, we need to know whether
  * it's a container and/or contents.
@@ -342,7 +343,7 @@ typedef struct {
 	int   quan;
 	short buried;
 	short lit;
-	short eroded, locked, trapped, recharged, invis, greased, broken;
+	short eroded, locked, trapped, recharged, invis, greased, prize, broken;
 } object;
 
 typedef struct {
