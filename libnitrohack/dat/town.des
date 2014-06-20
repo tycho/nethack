@@ -6,7 +6,7 @@
 #
 LEVEL: "town-1"
 FLAGS: sky
-MESSAGE: "You step into the sunlight. You hear the sounds of civilization."
+MESSAGE: "You step into the sunlight. You hear sounds of civilization."
 $place = { ( 4, 6), ( 4,16), (18, 2), (25,10), (40,13),
            (55, 4), (58,12), (71, 2), (73,15) }
 SHUFFLE: $place
@@ -83,7 +83,7 @@ ROOM: "ordinary", lit, random, random, (76,17)
 #
 LEVEL: "town-2"
 FLAGS: sky
-MESSAGE: "You reach the surface.  You hear the sounds of civilization."
+MESSAGE: "You reach the surface.  You hear sounds of civilization."
 $place = { ( 4, 6), ( 4,16), (18, 2), (25,10), (40,13),
            (55, 4), (58,12), (71, 2), (73,15) }
 SHUFFLE: $place
