@@ -16,6 +16,7 @@ Highlights
 * Drawbridge instant death removed: drawbridges can only be destroyed by force
   bolts when closed, not open.
 * Sokoban prizes moved to Mines End, making Sokoban much more optional.
+* Nymph level moved into Town branch; Town shops are larger to compensate.
 * Effect of skills on to-hit and damage raised in general.
 * Slings now get damage bonuses from strength and enchantment.
 * New `repeat_prefix` keymap and `repeat_num_auto` option for people accustomed
@@ -73,11 +74,13 @@ Dungeon
       around special levels consist of lava caverns.
     - Add demon lairs for Demogorgon, Geryon, Dispater, and Yeenoghu (from
       GruntHack).
+* Changes to the Town branch:
+    - Nymph level is now guaranteed and appears between the Town surface and
+      filler levels.
+    - Town surface level has larger shops.
 * Sokoban prizes moved to Mines End; the end of Sokoban now has a guaranteed
   sack containing the ring and wand that used to be within each Sokoban level.
   This makes Sokoban much more optional in DynaHack than it is in NetHack.
-* Move the Nymph Level deeper into the dungeon; it now appears from levels 15 to
-  20 (was 5 to 20).
 * Remove lava from one of the versions of the Castle level.
 * Levels between Medusa's Island and the Castle are now water caverns instead of
   lava caverns, and have less evil monsters.
