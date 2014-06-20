@@ -15,6 +15,7 @@ Highlights
   always have a few turns to save yourself from instant death.
 * Drawbridge instant death removed: drawbridges can only be destroyed by force
   bolts when closed, not open.
+* Sokoban prizes moved to Mines End, making Sokoban much more optional.
 * Effect of skills on to-hit and damage raised in general.
 * Slings now get damage bonuses from strength and enchantment.
 * New `repeat_prefix` keymap and `repeat_num_auto` option for people accustomed
@@ -72,6 +73,9 @@ Dungeon
       around special levels consist of lava caverns.
     - Add demon lairs for Demogorgon, Geryon, Dispater, and Yeenoghu (from
       GruntHack).
+* Sokoban prizes moved to Mines End; the end of Sokoban now has a guaranteed
+  sack containing the ring and wand that used to be within each Sokoban level.
+  This makes Sokoban much more optional in DynaHack than it is in NetHack.
 * Move the Nymph Level deeper into the dungeon; it now appears from levels 15 to
   20 (was 5 to 20).
 * Remove lava from one of the versions of the Castle level.

@@ -1092,29 +1092,56 @@ STAIR: (36,04), up
 # Non diggable walls
 NON_DIGGABLE: (00,00,74,17)
 # Niches
-# Note: $place[6] empty
-OBJECT: ('*',"diamond"), $place[0]
-OBJECT: ('*',"emerald"), $place[0]
-OBJECT: ('*',"worthless piece of violet glass"), $place[0]
-MONSTER: 'm', $place[0], m_object "luckstone"
-OBJECT: ('*',"worthless piece of white glass"), $place[1]
-OBJECT: ('*',"emerald"), $place[1]
-OBJECT: ('*',"amethyst"), $place[1]
-MONSTER: 'm', $place[1], m_object "loadstone"
-OBJECT: ('*',"diamond"), $place[2]
-OBJECT: ('*',"worthless piece of green glass"), $place[2]
-OBJECT: ('*',"amethyst"), $place[2]
-MONSTER: 'm', $place[2], m_object "flint"
-OBJECT: ('*',"worthless piece of white glass"), $place[3]
+# Choice of one of three prizes
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+#
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+#
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
+# Gray stone gems: 1 violet, 2 white, 1 green, 1 red
+# Mimic gems: 1 violet, 1 white, 2 green, 1 red
+# Identical gems for real gray stones to prevent metagaming.
+OBJECT: ('*',"amethyst"), $place[3]
+OBJECT: ('*',"diamond"), $place[3]
 OBJECT: ('*',"emerald"), $place[3]
-OBJECT: ('*',"worthless piece of violet glass"), $place[3]
+OBJECT: ('*',"worthless piece of green glass"), $place[3]
+OBJECT: ('*',"worthless piece of red glass"), $place[3]
 MONSTER: 'm', $place[3], m_object "touchstone"
-OBJECT: ('*',"worthless piece of red glass"), $place[4]
+#
+OBJECT: ('*',"worthless piece of violet glass"), $place[4]
+OBJECT: ('*',"worthless piece of white glass"), $place[4]
+OBJECT: ('*',"worthless piece of white glass"), $place[4]
+OBJECT: ('*',"emerald"), $place[4]
 OBJECT: ('*',"ruby"), $place[4]
 OBJECT: ('*',"loadstone"), $place[4]
+#
+OBJECT: ('*',"worthless piece of violet glass"), $place[5]
+OBJECT: ('*',"worthless piece of white glass"), $place[5]
+OBJECT: ('*',"worthless piece of white glass"), $place[5]
+OBJECT: ('*',"emerald"), $place[5]
 OBJECT: ('*',"ruby"), $place[5]
-OBJECT: ('*',"worthless piece of red glass"), $place[5]
 OBJECT: ('*',"luckstone"), $place[5]
+#
+OBJECT: ('*',"amethyst"), $place[6]
+OBJECT: ('*',"diamond"), $place[6]
+OBJECT: ('*',"emerald"), $place[6]
+OBJECT: ('*',"worthless piece of green glass"), $place[6]
+OBJECT: ('*',"worthless piece of red glass"), $place[6]
+MONSTER: 'm', $place[6], m_object "luckstone"
 # Random objects
 LOOP [7] {
   OBJECT: '*', random
@@ -1160,13 +1187,13 @@ MAP
 ---------------------------------------------------------------------------
 |...................................................|                     |
 |.|---------S--.--|...|--------------------------|..|                     |
-|.||---|   |.||-| |...|..........................|..|                     |
-|.||...| |-|.|.|---...|.............................|                ..   |
-|.||...|-|.....|....|-|..........................|..|.               ..   |
-|.||.....|-S|..|....|............................|..|..                   |
+|.||---|   |.|----|...|..........................|..|                     |
+|.||...| |-|.|.+.|-...|.............................|                ..   |
+|.||...|-|.....|-|..|-|..........................|..|.               ..   |
+|.||.....|-S|..+.|..|............................|..|..                   |
 |.||--|..|..|..|-|..|----------------------------|..|-.                   |
-|.|   |..|..|....|..................................|...                  |
-|.|   |..|..|----|..-----------------------------|..|....                 |
+|.|   |..|..|..+.|..................................|...                  |
+|.|   |..|..|-----..-----------------------------|..|....                 |
 |.|---|..|--|.......|----------------------------|..|.....                |
 |...........|----.--|......................|     |..|.......              |
 |-----------|...|.| |------------------|.|.|-----|..|.....|..             |
@@ -1178,6 +1205,8 @@ MAP
 ENDMAP
 
 # Dungeon Description
+$place = { (16,04), (16,06), (16,08) }
+SHUFFLE: $place
 FOUNTAIN:(14,13)
 REGION:(23,03,48,06),lit,"ordinary"
 REGION:(21,06,22,06),lit,"ordinary"
@@ -1188,6 +1217,10 @@ REGION:(15,08,16,08),unlit,"ordinary"
 # Secret doors
 DOOR:locked,(12,02)
 DOOR:locked,(11,06)
+# Not-secret doors
+DOOR:closed,(15,04)
+DOOR:closed,(15,06)
+DOOR:closed,(15,08)
 # Stairs
 STAIR:(36,04),up
 # Non diggable walls
@@ -1209,6 +1242,26 @@ OBJECT: '!', (10,07)
 OBJECT: '!', (10,08)
 OBJECT: ('!',"object detection"), (10,09)
 # Objects
+# A choice of one of three prizes
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+#
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+#
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
 # The Treasure chamber...
 LOOP [2] {
   OBJECT: ('*',"diamond"), (69,04)
@@ -1274,9 +1327,9 @@ MAP
 ------...---------.-----------...-----.-------.-------     ----------------|
  - - - - - - - - - - - . - - - . - - - - - - - - - - -- - -- - . - - - - - |
 ------------.---------...-------------------------.---   ------------------|
- - - - - - - - - - - . . - - --- - . - - - - - - - - -- -- - - - - |.....| |
---.---------------.......------------------------------- ----------|.....S-|
- - - - - |.. ..| - ....... . - - - - |.........| - - - --- - - - - |.....| |
+ - - - - - - - - - - . . - - --- - . - - - - - - - - -- -- - - - - |.+...| |
+--.---------------.......------------------------------- ----------|-|...S-|
+ - - - - |.. ..| - ....... . - - - - |.........| - - - --- - - - - |.+...| |
 ----.----|.....|------.......--------|.........|--------------.------------|
  - - - - |..{..| - - -.... . --- - -.S.........S - - - - - - - - - - - - - |
 ---------|.....|--.---...------------|.........|---------------------------|
@@ -1289,7 +1342,7 @@ MAP
 --|. - - - - - - - -- - - - -- . - - - --- - - - . . - - - - -- - - - - - - 
 ENDMAP
 
-$place = { (1,15), (68,6), (1,13) }
+$place = { (1,15), (68,6), (1,13), (68,4) }
 SHUFFLE: $place
 NON_DIGGABLE: (67,3,73,7)
 NON_DIGGABLE: (0,12,2,16)
@@ -1301,6 +1354,8 @@ DOOR: closed, (37,8)
 DOOR: closed, (47,8)
 DOOR: closed, (73,5)
 DOOR: closed, (2,15)
+DOOR: closed, (69,4)
+DOOR: closed, (69,6)
 MAZEWALK: (36,8), west
 STAIR: (42,8), up
 
@@ -1316,8 +1371,8 @@ LOOP [3] {
 LOOP [7] {
   OBJECT: '*', random
 }
-OBJECT: ('*',"luckstone"), $place[0]
-OBJECT: ('*',"flint"), $place[1]
+OBJECT: ('*',"luckstone"), $place[3]
+OBJECT: ('*',"flint"), $place[3]
 LOOP [3d3] {
   OBJECT: '?', random
 }
@@ -1331,8 +1386,28 @@ LOOP [2 + 3d3] {
   TRAP: random, random
 }
 # One-time annoyance factor
-TRAP: "level teleport", $place[0]
-TRAP: "level teleport", $place[1]
+TRAP: "level teleport", $place[3]
+# Choice of one of three prizes
+OBJECT: ('(',"bag of holding"), prize, $place[0]
+#
+IF [50%] {
+  OBJECT: ('[',"cloak of magic resistance"), prize, $place[1]
+} ELSE {
+  OBJECT: ('[',"cloak of displacement"), prize, $place[1]
+}
+#
+SWITCH [3] {
+CASE 0:
+  OBJECT: ('"',"amulet of life saving"), prize, $place[2]
+  BREAK
+CASE 1:
+  OBJECT: ('"',"amulet of ESP"), prize, $place[2]
+  BREAK
+CASE 2:
+  OBJECT: ('"',"amulet of reflection"), prize, $place[2]
+  BREAK
+}
+
 LOOP [2 + 3d3] {
   MONSTER: 'M', random
 }
