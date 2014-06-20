@@ -1743,8 +1743,10 @@ static void create_object(struct level *lev, object *o, struct mkroom *croom)
 		    }
 		}
 	    } else {
+		struct obj *cotmp = container_obj[container_idx - 1];
 		remove_object(otmp);
-		add_to_container(container_obj[container_idx - 1], otmp);
+		add_to_container(cotmp, otmp);
+		cotmp->owt = weight(cotmp);
 	    }
 	}
 	/* container */

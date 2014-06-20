@@ -108,6 +108,8 @@ Items
   scales or scale mail not triggering petrification.
 * Fix leaking of descriptions of prizes selected from level memory with far-look
   after the prize itself has vanished.
+* Fix contents of containers created on special levels not being included in the
+  initial container weight.
 
 Monsters
 --------
