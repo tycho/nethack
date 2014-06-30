@@ -48,6 +48,8 @@ Character
       roll at least a 4 on damage wouldn't be trained at all!
     - Accelerate heavyshot skill training: hitting with a heavyshot weapon
       trains the relevant skill by 1dX points similar to its damage multiplier.
+    - Training of spellcasting skills restored to NetHack values: 20/80/180 for
+      basic/skilled/expert (was 100/200/400).
     - Effect of skills on to-hit and damage raised in general (from dNetHack):
         - Expert weapon skill gives +5/+3 to-hit/damage (was +3/+2).
         - Expert two-weapon skill gives -2/+3 to-hit/damage (was -3/+2).

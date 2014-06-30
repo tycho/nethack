@@ -26,6 +26,7 @@
 #define PN_MATTER_SPELL			(-14)
 
 static void give_may_advance_msg(int);
+static int practice_needed_to_advance(int, int);
 
 
 static const short skill_names_indices[P_NUM_SKILLS] = {
@@ -790,13 +791,42 @@ static int slots_required(int skill)
     return (tmp + 1) / 2;
 }
 
+/*
+ * Training needed to reach a given level in a skill.
+ */
+static int practice_needed_to_advance(int skill, int skill_level)
+{
+    /*
+     * Spellcasting skills:
+     * P_UNSKILLED       0
+     * P_BASIC          20
+     * P_SKILLED        80
+     * P_EXPERT        180
+     * P_MASTER        320
+     * P_GRAND_MASTER  500
+     */
+    if (skill >= P_FIRST_SPELL && skill <= P_LAST_SPELL)
+	return skill_level * skill_level * 20;
+
+    /*
+     * Weapon and combat skills:
+     * P_UNSKILLED       0
+     * P_BASIC         100
+     * P_SKILLED       200
+     * P_EXPERT        400
+     * P_MASTER        800
+     * P_GRAND_MASTER 1600
+     */
+    return (1 << (skill_level - 1)) * 100;
+}
+
 /* return true if this skill can be advanced */
 boolean can_advance(int skill, boolean speedy)
 {
     return !P_RESTRICTED(skill)
 	    && P_SKILL(skill) < P_MAX_SKILL(skill) && (
 	    (wizard && speedy) || (P_ADVANCE(skill) >=
-		(unsigned) practice_needed_to_advance(P_SKILL(skill))
+		(unsigned) practice_needed_to_advance(skill, P_SKILL(skill))
 	    && u.skills_advanced < P_SKILL_LIMIT
 	    && u.weapon_slots >= slots_required(skill)));
 }
@@ -817,7 +847,7 @@ static boolean could_advance(int skill)
     return !P_RESTRICTED(skill)
 	    && P_SKILL(skill) < P_MAX_SKILL(skill) && (
 	    (P_ADVANCE(skill) >=
-		(unsigned) practice_needed_to_advance(P_SKILL(skill))
+		(unsigned) practice_needed_to_advance(skill, P_SKILL(skill))
 	    && u.skills_advanced < P_SKILL_LIMIT));
 }
 
@@ -896,7 +926,7 @@ static int skill_crosstrain_bonus(int skill)
     base_skill = P_UNSKILLED;
     for (i = P_EXPERT; i > P_UNSKILLED; i--) {
 	/* getting the training points for the _current_ level is awkward */
-	if (P_ADVANCE(skill) >= practice_needed_to_advance(i - 1)) {
+	if (P_ADVANCE(skill) >= practice_needed_to_advance(skill, i - 1)) {
 	    base_skill = i;
 	    break;
 	}
@@ -1006,16 +1036,16 @@ int enhance_weapon_skill(void)
 	    sprintf(eos(buf), "\t[%s]", sklnambuf);
 	    if (P_SKILL(i) < P_MAX_SKILL(i)) {
 		int mintrain = P_SKILL(i) == P_UNSKILLED ? 0 :
-			       practice_needed_to_advance(P_SKILL(i) - 1);
+			       practice_needed_to_advance(i, P_SKILL(i) - 1);
 		sprintf(eos(buf), "\t%5d%%",
 			(P_ADVANCE(i) - mintrain) * 100 /
-			(practice_needed_to_advance(P_SKILL(i)) - mintrain));
+			(practice_needed_to_advance(i, P_SKILL(i)) - mintrain));
 	    } else {
 		sprintf(eos(buf), "\t   MAX");
 	    }
 	    if (wizard) {
 		sprintf(eos(buf), "/%5d(%4d)",
-			P_ADVANCE(i), practice_needed_to_advance(P_SKILL(i)));
+			P_ADVANCE(i), practice_needed_to_advance(i, P_SKILL(i)));
 	    }
 
 	    if ((could_advance(i) || can_advance(i, speedy)) && !(wizard && speedy))
@@ -1360,7 +1390,7 @@ void skill_init(const struct def_skill *class_skill)
 		    impossible("skill_init: curr > max: %s", P_NAME(skill));
 		    P_MAX_SKILL(skill) = P_SKILL(skill);
 		}
-		P_ADVANCE(skill) = practice_needed_to_advance(P_SKILL(skill)-1);
+		P_ADVANCE(skill) = practice_needed_to_advance(skill, P_SKILL(skill) - 1);
 	    }
 	}
 }
