@@ -21,7 +21,7 @@ int getpos(coord *cc, boolean force, const char *goal)
 	if (rv == -1)
 	    pline("<position: (cancelled)>");
 	else
-	    pline("<position: (%d, %d)>", cc->x, cc->y);
+	    pline("<position: (%d, %d)>", x, y);
 	suppress_more();
 
 	cc->x = x;

@@ -165,6 +165,7 @@ Interface
 * Fix the color of the Wizard's Tower walls when viewed from another level using
   the `Ctrl-O` dungeon overview.
 * Fix "T - take off" not appearing in the item action menu of meat rings.
+* Fix coordinates reported when getting a position from the player.
 
 Configuration
 -------------
