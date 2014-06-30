@@ -94,6 +94,9 @@ Dungeon
 * Prevent magic traps from being created above dungeon level 5.
 * Fix the cosmetic issue of horizontally-flipped levels appearing slightly
   misaligned in the map area.
+* Fix waking monsters level-wide when entering courts, swamps, morgues, zoos and
+  nymph gardens for the first time without stealth; only monsters in the room
+  being entered have a chance to to be woken.
 
 Items
 -----

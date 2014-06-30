@@ -2583,9 +2583,16 @@ void check_special_room(boolean newlev)
 			}
 		}
 		if (rt == COURT || rt == SWAMP || rt == MORGUE ||
-			rt == ZOO || rt == GARDEN)
-		    for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon)
-			if (!DEADMONSTER(mtmp) && !Stealth && !rn2(3)) mtmp->msleeping = 0;
+			rt == ZOO || rt == GARDEN) {
+		    for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
+			if (!DEADMONSTER(mtmp) && isok(mtmp->mx, mtmp->my) &&
+				/* wake monsters in the room, not the whole level */
+				strchr(in_rooms(level, mtmp->mx, mtmp->my, 0),
+				       roomno + ROOMOFFSET) &&
+				!Stealth && !rn2(3))
+			    mtmp->msleeping = 0;
+		    }
+		}
 	    }
 	}
 
