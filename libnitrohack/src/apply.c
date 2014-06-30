@@ -1238,7 +1238,7 @@ int jump(
 	pline("Where do you want to jump?");
 	cc.x = u.ux;
 	cc.y = u.uy;
-	if (getpos(&cc, TRUE, "the desired position") < 0)
+	if (getpos(&cc, FALSE, "the desired position") < 0)
 		return 0;	/* user pressed ESC */
 	if (!magic && !(HJumping & ~INTRINSIC) && !EJumping &&
 			distu(cc.x, cc.y) != 5) {
@@ -2318,7 +2318,7 @@ static int use_pole (struct obj *obj)
 	pline(where_to_hit);
 	cc.x = u.ux;
 	cc.y = u.uy;
-	if (getpos(&cc, TRUE, "the spot to hit") < 0)
+	if (getpos(&cc, FALSE, "the spot to hit") < 0)
 	    return 0;	/* user pressed ESC */
 
 	/* Calculate range */
@@ -2424,7 +2424,7 @@ static int use_grapple(struct obj *obj)
 	pline(where_to_hit);
 	cc.x = u.ux;
 	cc.y = u.uy;
-	if (getpos(&cc, TRUE, "the spot to hit") < 0)
+	if (getpos(&cc, FALSE, "the spot to hit") < 0)
 	    return res;	/* user pressed ESC */
 
 	/* Calculate range */

@@ -1485,7 +1485,7 @@ int seffects(struct obj *sobj, boolean *known)
 		pline("Where do you want to center the cloud?");
 		cc.x = u.ux;
 		cc.y = u.uy;
-		if (getpos(&cc, TRUE, "the desired position") < 0) {
+		if (getpos(&cc, FALSE, "the desired position") < 0) {
 		    pline("Never mind.");
 		    return 0;
 		}

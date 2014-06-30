@@ -162,6 +162,9 @@ Interface
 * Show the tombstone on death even if skipping disclosure information.
     - Extend the tombstone by a line for longer death causes, e.g. "petrified by
       kicking a chickatrice corpse".
+* Allow aborting of position prompts for jumping, polearm pounding, grappling
+  hooks, scrolls of stinking cloud (still consumes the scroll), paying with
+  multiple shopkeepers in sight and spells of fireball and cone of cold.
 * Fix the color of the Wizard's Tower walls when viewed from another level using
   the `Ctrl-O` dungeon overview.
 * Fix "T - take off" not appearing in the item action menu of meat rings.
