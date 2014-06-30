@@ -1159,7 +1159,7 @@ static void menu_identify(int id_limit)
 void identify_pack(int id_limit)
 {
     struct obj *obj, *the_obj;
-    int n, unid_cnt;
+    int unid_cnt;
 
     unid_cnt = 0;
     the_obj = 0;		/* if unid_cnt ends up 1, this will be it */
@@ -1181,9 +1181,7 @@ void identify_pack(int id_limit)
 	}
     } else {
 	/* identify up to `id_limit' items */
-	n = 0;
-	if (n == 0 || n < -1)
-	    menu_identify(id_limit);
+	menu_identify(id_limit);
     }
     update_inventory();
 }
