@@ -18,7 +18,7 @@ static char display_pickinv(const char *,boolean, long *);
 static boolean this_type_only(const struct obj *);
 static void dounpaid(void);
 static struct obj *find_unpaid(struct obj *,struct obj **);
-static void menu_identify(int);
+static int menu_identify(int);
 static boolean tool_in_use(struct obj *);
 static char obj_to_let(struct obj *);
 static int identify(struct obj *);
@@ -1128,10 +1128,11 @@ int identify(struct obj *otmp)
 }
 
 /* menu of unidentified objects; select and identify up to id_limit of them */
-static void menu_identify(int id_limit)
+static int menu_identify(int id_limit)
 {
     struct object_pick *pick_list;
     int n, i, first = 1;
+    int num_identified = 0;
     char buf[BUFSZ];
     /* assumptions:  id_limit > 0 and at least one unID'd item is present */
 
@@ -1143,8 +1144,10 @@ static void menu_identify(int id_limit)
 
 	if (n > 0) {
 	    if (n > id_limit) n = id_limit;
-	    for (i = 0; i < n; i++, id_limit--)
+	    for (i = 0; i < n; i++, id_limit--) {
 		identify(pick_list[i].obj);
+		num_identified++;
+	    }
 	    free(pick_list);
 	    if (id_limit) win_pause_output(P_MESSAGE); /* --More-- */
 	} else {
@@ -1153,13 +1156,16 @@ static void menu_identify(int id_limit)
 	}
 	first = 0;
     }
+
+    return num_identified;
 }
 
 /* dialog with user to identify a given number of items; 0 means all */
-void identify_pack(int id_limit)
+int identify_pack(int id_limit)
 {
     struct obj *obj, *the_obj;
     int unid_cnt;
+    int num_identified = 0;
 
     unid_cnt = 0;
     the_obj = 0;		/* if unid_cnt ends up 1, this will be it */
@@ -1172,18 +1178,23 @@ void identify_pack(int id_limit)
 	/* identify everything */
 	if (unid_cnt == 1) {
 	    identify(the_obj);
+	    num_identified = 1;
 	} else {
-
 	    /* TODO:  use fully_identify_obj and cornline/menu/whatever here */
-	    for (obj = invent; obj; obj = obj->nobj)
-		if (not_fully_identified(obj)) identify(obj);
-
+	    for (obj = invent; obj; obj = obj->nobj) {
+		if (not_fully_identified(obj)) {
+		    identify(obj);
+		    num_identified++;
+		}
+	    }
 	}
     } else {
 	/* identify up to `id_limit' items */
-	menu_identify(id_limit);
+	num_identified = menu_identify(id_limit);
     }
     update_inventory();
+
+    return num_identified;
 }
 
 

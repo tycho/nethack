@@ -19,6 +19,8 @@ Highlights
 * Nymph level moved into Town branch; Town shops are larger to compensate.
 * Effect of skills on to-hit and damage raised in general.
 * Slings now get damage bonuses from strength and enchantment.
+* Spells can be aborted at direction, position and item prompts without using
+  power or hunger.
 * New `repeat_prefix` keymap and `repeat_num_auto` option for people accustomed
   to NetHack's classic number key movement scheme.
 * Curses on armor, jewelry and eyewear are now revealed when they are worn
@@ -60,6 +62,8 @@ Character
   reserved for melee) and sling enchantment affects damage of fired projectiles
   (normally launcher enchantment only affects to-hit); their damage now even
   competes with thrown daggers!
+* Spells can be aborted at direction, position and item prompts without using
+  power or hunger.
 * Teleport control allows teleportation to be cancelled without using a turn and
   in the case of deliberate teleports consuming hunger.
 * Fix C343-238: "(Unix and VMS only) The 'Who are you?' prompt does not accept

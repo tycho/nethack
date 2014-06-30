@@ -646,6 +646,7 @@ int spelleffects(int spell, boolean atme)
 	int energy, damage, chance, n, intell;
 	int skill, role_skill;
 	boolean confused = (Confusion != 0);
+	boolean spell_casted;
 	struct obj *pseudo;
 	boolean dummy;
 	coord cc;
@@ -690,42 +691,6 @@ int spelleffects(int spell, boolean atme)
 	if (energy > u.uen)  {
 		pline("You don't have enough energy to cast that spell.");
 		return 0;
-	} else {
-		if (spellid(spell) != SPE_DETECT_FOOD) {
-			int hungr = energy * 2;
-
-			/* If hero is a wizard, their current intelligence
-			 * (bonuses + temporary + current)
-			 * affects hunger reduction in casting a spell.
-			 * 1. int = 17-18 no reduction
-			 * 2. int = 16    1/4 hungr
-			 * 3. int = 15    1/2 hungr
-			 * 4. int = 1-14  normal reduction
-			 * The reason for this is:
-			 * a) Intelligence affects the amount of exertion
-			 * in thinking.
-			 * b) Wizards have spent their life at magic and
-			 * understand quite well how to cast spells.
-			 */
-			intell = acurr(A_INT);
-			if (!Role_if (PM_WIZARD)) intell = 10;
-			switch (intell) {
-				case 25: case 24: case 23: case 22:
-				case 21: case 20: case 19: case 18:
-				case 17: hungr = 0; break;
-				case 16: hungr /= 4; break;
-				case 15: hungr /= 2; break;
-			}
-			/* don't put player (quite) into fainting from
-			 * casting a spell, particularly since they might
-			 * not even be hungry at the beginning; however,
-			 * this is low enough that they must eat before
-			 * casting anything else except detect food
-			 */
-			if (hungr > u.uhunger-3)
-				hungr = u.uhunger-3;
-			morehungry(hungr);
-		}
 	}
 
 	chance = percent_success(spell);
@@ -736,9 +701,6 @@ int spelleffects(int spell, boolean atme)
 		return 1;
 	}
 
-	u.uen -= energy;
-	iflags.botl = 1;
-	exercise(A_WIS, TRUE);
 	/* pseudo is a temporary "false" object containing the spell stats */
 	pseudo = mksobj(level, spellid(spell), FALSE, FALSE);
 	pseudo->blessed = pseudo->cursed = 0;
@@ -749,6 +711,9 @@ int spelleffects(int spell, boolean atme)
 	 */
 	skill = spell_skilltype(pseudo->otyp);
 	role_skill = P_SKILL(skill);
+
+	/* assume the spell is casted and revoke later in specific cases */
+	spell_casted = TRUE;
 
 	switch(pseudo->otyp)  {
 	/*
@@ -788,6 +753,8 @@ int spelleffects(int spell, boolean atme)
 			    dy = cc.y;
 		        }
 		    }
+		} else {
+		    spell_casted = FALSE;
 		}
 		break;
 	    } /* else fall through... */
@@ -815,10 +782,9 @@ int spelleffects(int spell, boolean atme)
 			if (atme)
 			    dx = dy = dz = 0;
 			else if (!getdir(NULL, &dx, &dy, &dz)) {
-			    /* getdir cancelled, generate a random direction */
-			    dz = 0;
-			    confdir(&dx, &dy);
-			    pline("The magical energy is released!");
+			    /* getdir cancelled, abort spellcasting */
+			    spell_casted = FALSE;
+			    break;
 			}
 			if (!dx && !dy && !dz) {
 			    if ((damage = zapyourself(pseudo, TRUE)) != 0) {
@@ -843,7 +809,8 @@ int spelleffects(int spell, boolean atme)
 	case SPE_MAGIC_MAPPING:
 	case SPE_CREATE_MONSTER:
 	case SPE_IDENTIFY:
-		seffects(pseudo, &dummy);
+		if (seffects(pseudo, &dummy) == 2)
+		    spell_casted = FALSE;
 		break;
 
 	/* these are all duplicates of potion effects */
@@ -887,8 +854,10 @@ int spelleffects(int spell, boolean atme)
 		cast_protection();
 		break;
 	case SPE_JUMPING:
-		if (!jump(max(role_skill,1)))
+		if (!jump(max(role_skill,1))) {
 			pline("Nothing happens.");
+			spell_casted = FALSE;
+		}
 		break;
 	default:
 		warning("Unknown spell %d attempted.", spell);
@@ -896,11 +865,53 @@ int spelleffects(int spell, boolean atme)
 		return 0;
 	}
 
-	/* gain skill for successful cast */
-	use_skill(skill, spellev(spell));
+	if (spell_casted) {
+		if (spellid(spell) != SPE_DETECT_FOOD) {
+			int hungr = energy * 2;
+
+			/* If hero is a wizard, their current intelligence
+			 * (bonuses + temporary + current)
+			 * affects hunger reduction in casting a spell.
+			 * 1. int = 17-18 no reduction
+			 * 2. int = 16    1/4 hungr
+			 * 3. int = 15    1/2 hungr
+			 * 4. int = 1-14  normal reduction
+			 * The reason for this is:
+			 * a) Intelligence affects the amount of exertion
+			 * in thinking.
+			 * b) Wizards have spent their life at magic and
+			 * understand quite well how to cast spells.
+			 */
+			intell = acurr(A_INT);
+			if (!Role_if (PM_WIZARD)) intell = 10;
+			switch (intell) {
+				case 25: case 24: case 23: case 22:
+				case 21: case 20: case 19: case 18:
+				case 17: hungr = 0; break;
+				case 16: hungr /= 4; break;
+				case 15: hungr /= 2; break;
+			}
+			/* don't put player (quite) into fainting from
+			 * casting a spell, particularly since they might
+			 * not even be hungry at the beginning; however,
+			 * this is low enough that they must eat before
+			 * casting anything else except detect food
+			 */
+			if (hungr > u.uhunger-3)
+				hungr = u.uhunger-3;
+			morehungry(hungr);
+		}
+
+		u.uen -= energy;
+		iflags.botl = 1;
+		exercise(A_WIS, TRUE);
+
+		/* gain skill for successful cast */
+		use_skill(skill, spellev(spell));
+	}
 
 	obfree(pseudo, NULL);	/* now, get rid of it */
-	return 1;
+	return spell_casted ? 1 : 0;
 }
 
 /* Choose location where spell takes effect. */

@@ -700,7 +700,7 @@ extern struct obj *mkgoldobj(long);
 extern struct obj *getobj(const char *let, const char *word, struct obj **ostack);
 extern boolean validate_object(struct obj *obj, const char *lets, const char *word);
 extern void fully_identify_obj(struct obj *);
-extern void identify_pack(int);
+extern int identify_pack(int);
 extern void prinv(const char *,struct obj *,long);
 extern char *xprname(struct obj *,const char *,char,boolean,long,long);
 extern int ddoinv(void);

@@ -883,6 +883,13 @@ static void do_flood(int x, int y, void *poolcnt)
 	}
 }
 
+/*
+ * scroll effects
+ *
+ * Returns 0 if the caller should use up the object,
+ * 1 if the object is used up internally, and
+ * 2 if the effect is a casted spell that should be aborted.
+ */
 int seffects(struct obj *sobj, boolean *known)
 {
 	int cval;
@@ -1297,7 +1304,12 @@ int seffects(struct obj *sobj, boolean *known)
 		makeknown(SCR_IDENTIFY);
 	id:
 		if (invent && !confused) {
-		    identify_pack(cval);
+		    int num_identified;
+		    num_identified = identify_pack(cval);
+		    if (sobj->otyp == SPE_IDENTIFY && num_identified == 0) {
+			/* allow identify spell to be aborted */
+			return 2;
+		    }
 		}
 		return 1;
 	case SCR_CHARGING:
