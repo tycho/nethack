@@ -506,7 +506,7 @@ DOOR: closed, (17,15)
 REGION: (18,10,22,16), lit, "zoo", filled, true
 ENGRAVING: $place[0], burn, "Elbereth"
 CONTAINER: ('(',"sack"), $place[0], prize {
-  LOOP [4] {
+  LOOP [8] {
     OBJECT: '/'
     OBJECT: '='
   }
@@ -601,7 +601,7 @@ DOOR: closed, (17,14)
 REGION: (18,09,22,15), lit, "zoo", filled, true
 ENGRAVING: $place[0], burn, "Elbereth"
 CONTAINER: ('(',"sack"), $place[0], prize {
-  LOOP [4] {
+  LOOP [8] {
     OBJECT: '/'
     OBJECT: '='
   }
@@ -1667,7 +1667,7 @@ soko_loot()
 
 ENGRAVING: $place[0], burn, "Elbereth"
 CONTAINER: ('(',"sack"), $place[0], prize {
-  LOOP [4] {
+  LOOP [8] {
     OBJECT: '/'
     OBJECT: '='
   }
@@ -1754,7 +1754,7 @@ soko_loot()
 
 ENGRAVING: $place[0], burn, "Elbereth"
 CONTAINER: ('(',"sack"), $place[0], prize {
-  LOOP [4] {
+  LOOP [8] {
     OBJECT: '/'
     OBJECT: '='
   }
@@ -2201,7 +2201,7 @@ DOOR: closed, (20,12)
 REGION: (21,07,25,13), lit, "zoo", filled, true
 ENGRAVING: $place[0], burn, "Elbereth"
 CONTAINER: ('(',"sack"), $place[0], prize {
-  LOOP [4] {
+  LOOP [8] {
     OBJECT: '/'
     OBJECT: '='
   }
@@ -2295,7 +2295,7 @@ DOOR: closed, (22,07)
 REGION: (23,02,27,08), lit, "zoo", filled, true
 ENGRAVING: $place[0], burn, "Elbereth"
 CONTAINER: ('(',"sack"), $place[0], prize {
-  LOOP [4] {
+  LOOP [8] {
     OBJECT: '/'
     OBJECT: '='
   }

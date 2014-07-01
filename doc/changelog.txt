@@ -85,8 +85,9 @@ Dungeon
       filler levels.
     - Town surface level has larger shops.
 * Sokoban prizes moved to Mines End; the end of Sokoban now has a guaranteed
-  sack containing the ring and wand that used to be within each Sokoban level.
-  This makes Sokoban much more optional in DynaHack than it is in NetHack.
+  sack containing 8 rings and wands (the ring and wand on each level has been
+  removed as a result).  This makes Sokoban much more optional in DynaHack than
+  it is in NetHack.
 * Remove lava from one of the versions of the Castle level.
 * Levels between Medusa's Island and the Castle are now water caverns instead of
   lava caverns, and have less evil monsters.
