@@ -1459,6 +1459,10 @@ const struct permonst *grow_up(struct monst *mtmp, /* `mtmp' might "grow up" int
 		mondied(mtmp);
 		return NULL;
 	    }
+	    if (flags.verbose && canspotmon(level, mtmp)) {
+		pline("%s grows up into %s!",
+		      upstart(y_monnam(mtmp)), an(mons_mname(ptr)));
+	    }
 	    set_mon_data(mtmp, ptr, 1);		/* preserve intrinsics */
 	    newsym(mtmp->mx, mtmp->my);		/* color may change */
 	    lev_limit = (int)mtmp->m_lev;	/* never undo increment */

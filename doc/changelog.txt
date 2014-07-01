@@ -148,6 +148,7 @@ Interface
       the Wizard of Yendor or sitting on a throne with bad luck.
     - Show a message of the identity of whistles and instruments when they are
       discovered on use.
+    - Show message when pets or other monsters grow up (from SLASH'EM Extended).
 * Make wearing and taking off messages more descriptive, e.g. "You finish taking
   off a +0 leather armor" instead of "You finish taking off your suit."
 * Curses on armor, jewelry and eyewear are now revealed when they are worn
