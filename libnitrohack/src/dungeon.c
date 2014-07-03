@@ -1937,7 +1937,7 @@ static const char *const shopnames[] = {
 	/* SCROLLSHOP */"a scroll shop",
 	/* POTIONSHOP */"a potion shop",
 	/* WEAPONSHOP */"a weapon shop",
-	/* FOODSHOP */	"a delicatessen store",
+	/* FOODSHOP */	"a delicatessen",
 	/* RINGSHOP */	"a jewelry store",
 	/* WANDSHOP */	"a wand shop",
 	/* TOOLSHOP */	"a tool shop",
