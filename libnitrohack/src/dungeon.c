@@ -2018,17 +2018,21 @@ static void overview_add_lev_info(struct menulist *menu,
 /* print a dungeon overview */
 int dooverview(void)
 {
-	struct overview_info oinfo;
-	struct menulist menu;
-	int i, n, x, y, dnum, selected[1];
-	char buf[BUFSZ];
-	struct level *lev;
-	
+    struct overview_info oinfo;
+    struct menulist menu;
+    int i, n, x, y, dnum, selected[1];
+    char buf[BUFSZ];
+    struct level *lev;
+    boolean show_all_levels = FALSE;
+
+    while (TRUE) {
 	init_menulist(&menu);
 	
 	if (!program_state.gameover) {
-	    add_menutext(&menu, "Select a level to view it");
-	    add_menutext(&menu, "");
+	    add_menuitem(&menu, maxledgerno() + 2,
+			 show_all_levels ? "Show interesting levels only" :
+					   "Show all levels",
+			 '!', FALSE);
 	}
 	
 	dnum = -1;
@@ -2087,26 +2091,35 @@ int dooverview(void)
 		}
 	    }
 	    
+	    /* omit uninteresting levels */
+	    overview_scan(levels[i], &oinfo);
+	    if (!show_all_levels && !overview_is_interesting(levels[i], &oinfo))
+		continue;
+
 	    /* "Level 3 (my level name)" */
 	    overview_print_lev(buf, levels[i]);
 	    add_menuitem(&menu, i+1, buf, 0, FALSE);
 	    
 	    /* level info */
-	    overview_scan(levels[i], &oinfo);
 	    if (overview_is_interesting(levels[i], &oinfo))
 		overview_add_lev_info(&menu, &oinfo);
 	}
 	
 	n = display_menu(menu.items, menu.icount, "Dungeon overview:", PICK_ONE, selected);
 	free(menu.items);
+	/* exit if escape or space is pressed */
 	if (n <= 0)
 	    return 0;
 	
+	/* toggle showing all levels or only interesting ones */
+	if (selected[0] == maxledgerno() + 2) {
+	    show_all_levels = !show_all_levels;
+	    continue;
+	}
+
 	/* remote viewing */
 	lev = levels[selected[0]-1];
-	if (level == lev)
-	    return 0;
-	
+
 	/* set the display buffer from the remembered  */
 	for (y = 0; y < ROWNO; y++)
 	    for (x = 0; x < COLNO; x++)
@@ -2116,12 +2129,16 @@ int dooverview(void)
 	pline("Now viewing %s%s.  Press any key to return.",
 	      Is_astralevel(&lev->z) ? "the " : "", buf);
 	notify_levelchange(&lev->z);
-	flush_screen_nopos();
+	if (level == lev)
+	    flush_screen();
+	else
+	    flush_screen_nopos();
 	win_pause_output(P_MAP);
 	notify_levelchange(NULL);
 	doredraw();
-	
-	return 0;
+    }
+
+    return 0;
 }
 
 
