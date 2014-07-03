@@ -1905,7 +1905,7 @@ static void overview_print_lev(char *buf, const struct level *lev)
 	    sprintf(eos(buf), " (%s)", lev->levname);
 	
 	sprintf(eos(buf), "%s", lev == level ?
-	    (program_state.gameover ? " <- You were here" : " <- You are here") : "");
+	    (program_state.gameover ? " <- You were here" : " <- YOU ARE HERE") : "");
 }
 
 
