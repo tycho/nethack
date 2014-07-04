@@ -174,11 +174,13 @@ int demon_talk(struct monst *mtmp)
 	    pline("%s demands %ld %s for safe passage.",
 		  Amonnam(mtmp), demand, currency(demand));
 
-	    if ((offer = bribe(mtmp)) >= demand) {
+	    offer = bribe(mtmp);
+	    if (offer >= demand) {
 		pline("%s vanishes, laughing about cowardly mortals.",
 		      Amonnam(mtmp));
-	    } else if (offer > 0L && offer * 100 >= demand * rn1(21,80)) {
-		/* chance to succeed with offer within 80% of demand */
+	    } else if (offer >= 4 * demand / 5 &&
+		       rn2(100) >= 25 + 50 * (demand - offer) / (demand / 5)) {
+		/* 25%-75% chance to succeed with offer within 80% of demand */
 		pline("%s scowls at you menacingly, then vanishes.",
 		      Amonnam(mtmp));
 	    } else {

@@ -128,8 +128,10 @@ Monsters
 * Metallivores and disintegrators can eat through iron bars (from UnNetHack).
 * Allow Demogorgon to be bribed, since his lair is now guaranteed.
 * Tone back demon bribery amounts inherited from UnNetHack: demons now only ask
-  for 1000 to 2000 gold; giving within 10% less (rather than 40 gold less) still
-  has a chance to satisfy them.
+  for 1000 to 2000 gold.
+    - Giving within 80% of the money demanded for a demon bribe succeeds between
+      25% to 75% of the time depending on how close your offer is to the
+      demanded amount.
 * Tone back 1-to-1 initial monster population difficulty inherited from
   NetHack4: it is now only like that for the first 10 levels, then 1-to-2 for
   the remainder.  This gives a progression similar to that of NetHack.
