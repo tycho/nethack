@@ -131,12 +131,10 @@ void summon_minion(aligntyp alignment, boolean talk)
     }
 }
 
-#define Athome	(Inhell && !mtmp->cham)
-
 /* returns 1 if it won't attack. */
 int demon_talk(struct monst *mtmp)
 {
-	long cash, demand, offer;
+	long demand, offer;
 
 	if (uwep && uwep->oartifact == ART_EXCALIBUR) {
 	    pline("%s looks very angry.", Amonnam(mtmp));
@@ -159,19 +157,8 @@ int demon_talk(struct monst *mtmp)
 	    return 1;
 	}
 
-	/* This isn't _that_ much better than the old way, but it removes
-	 * the trivial case of people being able to bribe demons with
-	 * 10 gold pieces to bypass him.  You can still carry lots of gold,
-	 * of course, but at least now you have to lug it with you.
-	 *
-	 * A minimum of 2000 to 6000 gold is required for safe passage
-	 * (2000 to 3000 for characters whose alignment matches the demon's). */
-	do {
-	    cash = money_cnt(invent);
-	    if (cash < 6000) cash = 6000;
-	    demand = (cash * (rnd(80) + 20 * Athome)) /
-		(100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
-	} while (demand < 2000);
+	/* 1000 to 2000 gold is required for safe passage. */
+	demand = rn1(1001,1000);
 
 	if (money_cnt(invent) == 0) {		/* you have no gold */
 	    mtmp->mpeaceful = 0;
@@ -182,7 +169,7 @@ int demon_talk(struct monst *mtmp)
 	       has the Amulet, preventing monster from being satisified
 	       and removed from the game (along with said Amulet...) */
 	    if (mon_has_amulet(mtmp))
-		demand = money_cnt(invent) + (long)rn1(10000,40);
+		demand = money_cnt(invent) + (long)rn1(10000,1000);
 
 	    pline("%s demands %ld %s for safe passage.",
 		  Amonnam(mtmp), demand, currency(demand));

@@ -127,10 +127,9 @@ Monsters
   always have a few turns to save yourself from instant death.
 * Metallivores and disintegrators can eat through iron bars (from UnNetHack).
 * Allow Demogorgon to be bribed, since his lair is now guaranteed.
-* Tone back demon bribery amounts inherited from UnNetHack: demons now generally
-  only ask for 2000 to 6000 gold for most characters and 2000 to 3000 for
-  lawfuls (was 3000 to 20000!); giving within 10% less (rather than 40 gold
-  less) still has a chance to satisfy them.
+* Tone back demon bribery amounts inherited from UnNetHack: demons now only ask
+  for 1000 to 2000 gold; giving within 10% less (rather than 40 gold less) still
+  has a chance to satisfy them.
 * Tone back 1-to-1 initial monster population difficulty inherited from
   NetHack4: it is now only like that for the first 10 levels, then 1-to-2 for
   the remainder.  This gives a progression similar to that of NetHack.
