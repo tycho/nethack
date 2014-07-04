@@ -247,9 +247,9 @@ int castmu(struct monst *mtmp,
 		return 0;
 	    }
 	} else if (mattk->damd) {
-	    dmg = dice(ml / 10 + mattk->damn, ml / 10 + mattk->damd);
+	    dmg = dice(min(ml, 30) / 5 + mattk->damn, mattk->damd);
 	} else {
-	    dmg = dice(ml / 10 + 1, ml / 10 + 6);
+	    dmg = dice(min(ml, 30) / 5 + 1, 6);
 	}
 	if (Half_spell_damage) dmg = (dmg+1) / 2;
 
