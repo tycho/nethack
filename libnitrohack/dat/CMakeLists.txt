@@ -129,7 +129,7 @@ level_file (INPUT gehennom.des
 level_file (INPUT yendor.des OUTPUTS fakewiz1 fakewiz2 wizard1 wizard2 wizard3)
 
 # Vlad's Tower
-level_file (INPUT tower.des OUTPUTS tower1 tower2 tower3)
+level_file (INPUT tower.des OUTPUTS tower1 tower2 tower3 tower4)
 
 # Dragon Caves
 level_file (INPUT dragons.des OUTPUTS drgnA drgnB drgnC drgnD)

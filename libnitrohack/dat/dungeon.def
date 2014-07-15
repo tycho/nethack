@@ -138,7 +138,7 @@ LEVEL:		"blkmar" "D" @ (1, 0)
 #	It has been removed from Gehennom, and it is surrounded by stone.
 #	Must not allow bones files for its top level.
 #
-DUNGEON:	"Vlad's Tower" "T" (3, 0)
+DUNGEON:	"Vlad's Tower" "T" (4, 0)
 PROTOFILE:	"tower"
 DESCRIPTION:	mazelike
 ALIGNMENT:	chaotic

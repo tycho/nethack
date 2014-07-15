@@ -1128,6 +1128,10 @@ void prev_level(boolean at_stairs)
 
 void u_on_newpos(int x, int y)
 {
+	if (x < 1) {
+		impossible("u_on_newpos: bad coordinates (%d,%d)", x, y);
+		x = 1;
+	}
 	u.ux = x;
 	u.uy = y;
 	/* ridden steed always shares hero's location */

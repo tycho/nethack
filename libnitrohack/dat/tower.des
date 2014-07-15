@@ -136,8 +136,8 @@ ENDMAP
 $place = { (05,01), (09,01), (13,01), (03,03), (15,03),
            (03,07), (15,07), (05,09), (09,09), (13,09) }
 SHUFFLE: $place
-BRANCH: (02,05,02,05), (00,00,00,00)
 LADDER: (05,07), up
+LADDER: (02,05), down
 # Entry door is, of course, locked
 DOOR: locked, (14,05)
 # Let's put a dragon behind the door, just for the fun...
@@ -157,3 +157,78 @@ OBJECT[75%]: ('(',"blindfold"), $place[3]
 TRAP: random, $place[3]
 # Walls in the tower are non diggable
 NON_DIGGABLE: (00,00,18,12)
+
+
+# Grounds and entrance to Vlad's tower
+LEVEL: "tower4"
+FLAGS: noteleport, hardfloor, mazelevel
+INIT_MAP: solidfill, ' '
+MESSAGE: "You stand before a shear ravine, beyond which rises a windowless tower."
+
+GEOMETRY: center, center
+#          1         2         3         4         5         6         7
+#0123456789012345678901234567890123456789012345678901234567890123456789012345
+MAP
+0                                                                            
+1                              .......................}}}}}}.......          
+2                            ..t.......t..t.....t..T.}}}}}}..........        
+3                          .....T...................}}}}}}......t......      
+4  ---------------       ....t.......t....t...T......}}}}}.T.............    
+5  |.............|     .....t....t.....t....t.........}}}}}....t...T.......  
+6---.-----------.---  ..........................t......}}}}}T............... 
+7|...|. ..... .|...| ..t..T...t..t......T..t.........T...}}}}}.............. 
+8|.---.........---.| ..............t..t........t..........}}}}}..T.......... 
+9|.|#+. ..... .S#|.| .......t........................T.....}}}}}............ 
+0|.-----------+-+-.|....t......T.....t....t....t.......T..}}}}}..T.......... 
+1|...|#########|...|......t.t....t......T.................##}#}##........... 
+2---S|#-------------..t............t........t..t......T...#}#}###..T...t.... 
+3}}|.F#########+|}}|......t..T....t....t.............T......}}}}}........... 
+4}}---+---+---+--FFF.....t......t...........t..............}}}}}..T...t..... 
+5 }}|..| |.| |..|}}    ....t.........T..........t........T.}}}}}......t....  
+6 }}-+F---F---F--}}     ........t........t...T....t.....T..}}}}}.T.......    
+7  }}}}}}}}}}}}}}}.      B...t.....t...........t..........}}}}}}...t...      
+8   }}}}}}}}}}}}}. . . ..   .....t...t....t.........t..T.}}}}}}.T....        
+9     ....  ....... . .       .................t........}}}}}}.....          
+0         ..                                                                 
+ENDMAP
+#0123456789012345678901234567890123456789012345678901234567890123456789012345
+#          1         2         3         4         5         6         7
+
+NON_DIGGABLE: (00,00,75,20)
+
+DRAWBRIDGE: (16,13), west, closed
+DRAWBRIDGE: (17,13), east, open
+DOOR: closed, (14,13)
+
+DOOR: locked, (13,14)
+DOOR: locked, (09,14)
+DOOR: locked, (05,14)
+
+DOOR: locked, (13,10)
+DOOR: locked, (04,09)
+
+REGION: (40,10,40,10), lit, "ordinary", unfilled, true
+REGION: (68,10,68,10), lit, "ordinary", unfilled, true
+
+BRANCH: (73,10,73,10), (00,00,00,00)
+LADDER: (03,11), up
+
+#MONSTER: ('@',"maid"), (09,08), hostile, "Persephone"
+MONSTER: ('@',"nurse"), (09,08), hostile, "Persephone"
+MONSTER: ('@',"nurse"), (08,08), hostile, "Nyx"
+MONSTER: ('@',"werewolf"), (10,08), hostile
+
+#MONSTER: ('i',"legion devil grunt"), (03,13), hostile
+MONSTER: ('&',"pit fiend"), (03,13), hostile
+
+MONSTER: ('Z',"elf zombie"), (05,15), hostile
+MONSTER: ('Z',"elf zombie"), (04,15), hostile
+MONSTER: ('Z',"skeleton"), (09,15), hostile
+MONSTER: ('Z',"skeleton"), (13,15), hostile
+MONSTER: ('Z',"gnome zombie"), (14,15), hostile
+
+LOOP [10] {
+  MONSTER: ('B',"raven"), random, hostile
+  MONSTER: 'V', random, hostile
+  MONSTER: ('Z',"human zombie"), random, hostile
+}
