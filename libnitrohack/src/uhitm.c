@@ -334,13 +334,13 @@ boolean attack(struct monst *mtmp, schar dx, schar dy)
 	if (is_safepet(level, mtmp) && !flags.forcefight) {
 	    if (!uwep || uwep->oartifact != ART_STORMBRINGER) {
 		/* there are some additional considerations: this won't work
-		 * if in a shop or Punished or you miss a random roll or
+		 * if in a shop or you miss a random roll or
 		 * if you can walk thru walls and your pet cannot (KAA) or
 		 * if your pet is a long worm (unless someone does better).
 		 * there's also a chance of displacing a "frozen" monster.
 		 * sleeping monsters might magically walk in their sleep.
 		 */
-		boolean foo = (Punished || !rn2(7) || is_longworm(mtmp->data)),
+		boolean foo = (!rn2(7) || is_longworm(mtmp->data)),
 			inshop = FALSE;
 		char *p;
 

@@ -66,6 +66,8 @@ Character
   power or hunger.
 * Teleport control allows teleportation to be cancelled without using a turn and
   in the case of deliberate teleports consuming hunger.
+* Punishment (i.e. being attached to a ball and chain) no longer stops you from
+  displacing pets.
 * Fix C343-238: "(Unix and VMS only) The 'Who are you?' prompt does not accept
   digits in the response."  The official bug description is inaccurate: it's
   names that START with a digit that aren't accepted by vault guards, and it
