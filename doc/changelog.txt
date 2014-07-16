@@ -106,6 +106,8 @@ Dungeon
 * Fix waking monsters level-wide when entering courts, swamps, morgues, zoos and
   nymph gardens for the first time without stealth; only monsters in the room
   being entered have a chance to to be woken.
+* Fix tracking of upward branches with `#history`, and make a note when entering
+  any new level and not just deeper ones (from NetHack4).
 
 Items
 -----
