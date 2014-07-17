@@ -23,6 +23,8 @@ Highlights
   power or hunger.
 * New `repeat_prefix` keymap and `repeat_num_auto` option for people accustomed
   to NetHack's classic number key movement scheme.
+* Potion color alchemy improved in favor of players, making it more of an
+  alternative to NetHack's alchemy instead of a nerf.
 * Curses on armor, jewelry and eyewear are now revealed when they are worn
   instead of when trying to take them off.
 * More messages for things that used to happen silently: uncontrolled
@@ -113,6 +115,16 @@ Dungeon
 
 Items
 -----
+* Potion color alchemy improved in favor of players, making it more of an
+  alternative to NetHack's alchemy instead of a nerf:
+    - All color-based random potion descriptions are now guaranteed to map to an
+      in-game potion.  Previously, with 25 random potions and 37 descriptions
+      for them, some colors would fall into the gap, making it impossible to use
+      them in alchemy and cutting out useful mixtures.
+    - Potions of full healing, gain level and gain ability are guaranteed to map
+      to secondary colors (i.e. puce, magenta, orange, amber, emerald, dark
+      green) or the browns (i.e. ochre, brown), so they will always be the
+      outcome of some alchemy combinations.
 * More formal identification for item under certain circumstances:
     - Formal ID tin whistles and magic whistles when used.
     - Formal ID magic flutes and magic harps when used.

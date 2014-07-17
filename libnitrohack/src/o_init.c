@@ -151,12 +151,11 @@ static void shuffle_all(void)
 				oclass != TOOL_CLASS &&
 				oclass != WEAPON_CLASS &&
 				oclass != ARMOR_CLASS &&
+				oclass != POTION_CLASS &&
 				oclass != GEM_CLASS) {
 			int j = last-1;
 
-			if (oclass == POTION_CLASS)
-			    j = POT_WATER - 1;	/* water and beyond have fixed descs */
-			else if (oclass == AMULET_CLASS ||
+			if (oclass == AMULET_CLASS ||
 				 oclass == SCROLL_CLASS ||
 				 oclass == SPBOOK_CLASS) {
 			    while (!objects[j].oc_magic || objects[j].oc_unique)
@@ -190,6 +189,28 @@ static void shuffle_all(void)
 	    swap_armor(j, pos, GRAY_DRAGON_SCALES);
 	    swap_armor(j, pos, GRAY_DRAGON_SCALE_MAIL);
 	}
+
+	/* Shuffle the potions such that all descriptions that participate in
+	 * color alchemy are mapped to potions that actually exist in the game,
+	 * and certain good potions are guaranteed to map to secondary colors
+	 * so that they can always be alchemized.
+	 *
+	 * Assumes:
+	 * - POT_HEALING maps to the last secondary color description.
+	 * - POT_FULL_HEALING maps to the last good potion guaranteed to be
+	 *   mapped to a secondary color.
+	 * - POT_POLYMORPH maps to the last color description.
+	 * - water and beyond have fixed descs
+	 * - POT_OIL is the last shuffled potion that isn't just a description.
+	 */
+	/* Shuffle secondary color potion descriptions. */
+	shuffle(bases[POTION_CLASS], POT_HEALING, TRUE);
+	/* Shuffle the other colors with no description guarantees. */
+	shuffle(POT_FULL_HEALING + 1, POT_POLYMORPH, TRUE);
+	/* Shuffle the non-color potion descriptions. */
+	shuffle(POT_POLYMORPH + 1, POT_WATER - 1, TRUE);
+	/* Shuffle potions that will exist with no description guarantees. */
+	shuffle(POT_FULL_HEALING + 1, POT_OIL, TRUE);
 }
 
 /* swap two items of the same armor class;

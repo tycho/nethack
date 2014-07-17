@@ -748,34 +748,59 @@ FOOD("tin",                 75, 0, 10, 1, METAL,   0, HI_METAL),
 #undef FOOD
 
 /* potions ... */
+/*
+ * The order of potions and descriptions follow these constraints:
+ *
+ * (1) Secondary color descriptions must come first, so certain good potions
+ *     are guaranteed to map to secondary colors, in turn guaranteeing that
+ *     can be mixed from other potions.
+ *
+ * (2) Other colors including black, white and gray must come next, to
+ *     guarantee that all colors map to an potion that will exist in all games.
+ *
+ * (3) All potions with randomized descriptions come first, followed by other
+ *     random descriptions, followed by potions with fixed descriptions
+ *     (beginning with water).
+ *
+ * If the constraints above or any of the assumptions below change, update
+ * shuffle_all() accordingly.
+ */
 #define POTION(name,desc,mgc,power,prob,cost,color) OBJECT( \
 		OBJ(name,desc), BITS(0,1,0,0,mgc,0,0,0,0,0,0,P_NONE,GLASS), power, \
 		POTION_CLASS, prob, 0, 20, cost, 0, 0, 0, 0, 10, color )
-POTION("gain ability", "ruby",          1, 0,          42, 300, CLR_RED),
-POTION("restore ability", "pink",       1, 0,          40, 100, CLR_BRIGHT_MAGENTA),
+POTION("gain ability", "ochre",         1, 0,          42, 300, CLR_BROWN),
+POTION("gain level", "brown",           1, 0,          20, 300, CLR_BROWN),
+POTION("full healing", "puce",          1, 0,          10, 200, CLR_RED),
+/* ^^^ POT_FULL_HEALING == last good potion with guaranteed secondary color. */
+/* Remaining secondary colors follow. */
 POTION("confusion", "orange",           1, CONFUSION,  42, 100, CLR_ORANGE),
-POTION("blindness", "yellow",           1, BLINDED,    40, 150, CLR_YELLOW),
 POTION("paralysis", "emerald",          1, 0,          42, 300, CLR_BRIGHT_GREEN),
 POTION("speed", "dark green",           1, FAST,       42, 200, CLR_GREEN),
-POTION("levitation", "viscous",         1, LEVITATION, 42, 200, CLR_GRAY),
-POTION("hallucination", "sky blue",     1, HALLUC,     40, 100, CLR_CYAN),
-POTION("invisibility", "indigo",        1, INVIS,      40, 150, CLR_BRIGHT_BLUE),
 POTION("see invisible", "magenta",      1, SEE_INVIS,  42,  50, CLR_MAGENTA),
 POTION("healing", "amber",              1, 0,          57, 100, CLR_ORANGE),
-POTION("extra healing", "puce",         1, 0,          47, 100, CLR_RED),
-POTION("gain level", "milky",           1, 0,          20, 300, CLR_WHITE),
-POTION("enlightenment", "swirly",       1, 0,          20, 200, CLR_BROWN),
-POTION("monster detection", "bubbly",   1, 0,          40, 150, CLR_WHITE),
-POTION("object detection", "smoky",     1, 0,          42, 150, CLR_GRAY),
-POTION("gain energy", "cloudy",         1, 0,          42, 150, CLR_WHITE),
-POTION("sleeping",  "effervescent",     1, 0,          42, 100, CLR_GRAY),
-POTION("full healing",  "black",        1, 0,          10, 200, CLR_BLACK),
+/* ^^^ POT_HEALING == last secondary color potion description. */
+/* Other colors follow. */
+POTION("restore ability", "pink",       1, 0,          40, 100, CLR_BRIGHT_MAGENTA),
+POTION("blindness", "yellow",           1, BLINDED,    40, 150, CLR_YELLOW),
+POTION("hallucination", "sky blue",     1, HALLUC,     40, 100, CLR_CYAN),
+POTION("invisibility", "indigo",        1, INVIS,      40, 150, CLR_BRIGHT_BLUE),
+POTION("extra healing", "black",        1, 0,          47, 100, CLR_BLACK),
+POTION("monster detection", "white",    1, 0,          40, 150, CLR_WHITE),
+POTION("object detection", "ruby",      1, 0,          42, 150, CLR_RED),
+POTION("gain energy", "silver",         1, 0,          42, 150, HI_SILVER),
 POTION("polymorph", "golden",           1, 0,          10, 200, CLR_YELLOW),
-POTION("booze", "brown",                0, 0,          42,  50, CLR_BROWN),
+/* ^^^ POT_POLYMORPH == last potion description used in color alchemy. */
+/* Remaining potions that aren't just descriptions follow. */
+POTION("levitation", "viscous",         1, LEVITATION, 42, 200, CLR_GRAY),
+POTION("enlightenment", "swirly",       1, 0,          20, 200, CLR_BROWN),
+POTION("sleeping", "effervescent",      1, 0,          42, 100, CLR_GRAY),
+POTION("booze", "milky",                0, 0,          42,  50, CLR_WHITE),
 POTION("sickness", "fizzy",             0, 0,          42,  50, CLR_CYAN),
 POTION("fruit juice", "dark",           0, 0,          42,  50, CLR_BLACK),
-POTION("acid", "white",                 0, 0,          10, 250, CLR_WHITE),
+POTION("acid", "bubbly",                0, 0,          10, 250, CLR_WHITE),
 POTION("oil", "murky",                  0, 0,          30, 250, CLR_BROWN),
+/* ^^^ POT_OIL == last potion that's not just a description. */
+/* Remaining random descriptions follow. */
 POTION(NULL, "muddy",                   0, 0,           0,   0, CLR_BROWN),
 POTION(NULL, "sparkling",               0, 0,           0,   0, CLR_CYAN),
 POTION(NULL, "luminescent",             0, 0,           0,   0, CLR_WHITE),
@@ -784,10 +809,11 @@ POTION(NULL, "squishy",                 0, 0,           0,   0, CLR_GREEN),
 POTION(NULL, "greasy",                  0, 0,           0,   0, CLR_BLACK),
 POTION(NULL, "slimy",                   0, 0,           0,   0, CLR_BROWN),
 POTION(NULL, "soapy",                   0, 0,           0,   0, CLR_RED),
-POTION(NULL, "ochre",                   0, 0,           0,   0, CLR_BROWN),
+POTION(NULL, "smoky",                   0, 0,           0,   0, CLR_GRAY),
 POTION(NULL, "steamy",                  0, 0,           0,   0, CLR_WHITE),
 POTION(NULL, "gooey",                   0, 0,           0,   0, CLR_MAGENTA),
-POTION(NULL, "silver",                  0, 0,           0,   0, HI_SILVER),
+POTION(NULL, "cloudy",                  0, 0,           0,   0, CLR_WHITE),
+/* vvv POT_WATER == end random descriptions, begin fixed descriptions. */
 POTION("water", "clear",                0, 0,          92, 100, CLR_CYAN),
 POTION("blood", "blood-red",            0, 0,           0,  50, CLR_RED),
 POTION("vampire blood", "blood-red",    1, 0,           0, 350, CLR_RED),
