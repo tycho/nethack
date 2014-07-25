@@ -339,6 +339,7 @@ extern int cursed(struct obj *);
 extern int canwearobj(struct obj *, long *, boolean);
 extern int dowear(struct obj *otmp);
 extern int doputon(struct obj *otmp);
+extern int arm_bonus(const struct obj *,const struct monst *);
 extern void find_ac(void);
 extern void glibr(void);
 extern struct obj *some_armor(struct monst *);
@@ -733,8 +734,8 @@ extern int count_buc(struct obj *,int);
 extern void carry_obj_effects(struct obj *);
 extern const char *currency(long);
 extern void silly_thing(const char *,struct obj *);
-extern boolean is_racial_armor(const struct obj *);
-extern boolean is_racial_weapon(const struct obj *);
+extern boolean is_racial_armor(const struct obj *,const struct monst *);
+extern boolean is_racial_weapon(const struct obj *,const struct monst *);
 
 /* ### light.c ### */
 
@@ -1936,7 +1937,7 @@ extern void setnotworn(struct obj *);
 extern void mon_set_minvis(struct monst *);
 extern void mon_adjust_speed(struct monst *,int,struct obj *);
 extern void update_mon_intrinsics(struct level *,struct monst *,struct obj *,boolean,boolean);
-extern int find_mac(struct monst *);
+extern int find_mac(const struct monst *);
 extern void m_dowear(struct level *,struct monst *,boolean);
 extern struct obj *which_armor(const struct monst *,long);
 extern void mon_break_armor(struct level *,struct monst *,boolean);

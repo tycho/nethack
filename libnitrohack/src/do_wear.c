@@ -339,7 +339,7 @@ static int Boots_on(void)
 	default: warning(unknown_type, c_boots, uarmf->otyp);
     }
 
-    if (uarmf && !is_racial_armor(uarmf))
+    if (uarmf && !is_racial_armor(uarmf, &youmonst))
 	u.uconduct.unracearmor++;
 
     /* suppress message if called on first game turn via set_wear() */
@@ -459,7 +459,7 @@ static int Cloak_on(void)
 	default: warning(unknown_type, c_cloak, uarmc->otyp);
     }
 
-    if (uarmc && !is_racial_armor(uarmc))
+    if (uarmc && !is_racial_armor(uarmc, &youmonst))
 	u.uconduct.unracearmor++;
 
     /* discover_cursed_equip() called by dowear() */
@@ -571,7 +571,7 @@ static int Helmet_on(void)
 	default: warning(unknown_type, c_helmet, uarmh->otyp);
     }
 
-    if (uarmh && !is_racial_armor(uarmh))
+    if (uarmh && !is_racial_armor(uarmh, &youmonst))
 	u.uconduct.unracearmor++;
 
     /* suppress message if called on first game turn via set_wear() */
@@ -649,7 +649,7 @@ static int Gloves_on(void)
 	default: warning(unknown_type, c_gloves, uarmg->otyp);
     }
 
-    if (uarmg && !is_racial_armor(uarmg))
+    if (uarmg && !is_racial_armor(uarmg, &youmonst))
 	u.uconduct.unracearmor++;
 
     /* suppress message if called on first game turn via set_wear() */
@@ -726,7 +726,7 @@ static int Shield_on(void)
 {
     Oprops_on(uarms, WORN_SHIELD);
 
-    if (uarms && !is_racial_armor(uarms))
+    if (uarms && !is_racial_armor(uarms, &youmonst))
 	u.uconduct.unracearmor++;
 
     /* discover_cursed_equip() called by dowear() */
@@ -748,7 +748,7 @@ static int Shirt_on(void)
 {
     Oprops_on(uarmu, WORN_SHIRT);
 
-    if (uarmu && !is_racial_armor(uarmu))
+    if (uarmu && !is_racial_armor(uarmu, &youmonst))
 	u.uconduct.unracearmor++;
 
     /* discover_cursed_equip() called by dowear() */
@@ -797,7 +797,7 @@ static int Armor_on(void)
 	    break;
     }
 
-    if (uarm && !is_racial_armor(uarm))
+    if (uarm && !is_racial_armor(uarm, &youmonst))
 	u.uconduct.unracearmor++;
 
     /* suppress message if called on first game turn via set_wear() */
@@ -1848,17 +1848,35 @@ int doputon(struct obj *otmp)
 }
 
 
+/* formerly the ARM_BONUS macro */
+/* calculate the AC of a piece of armor for a given monster */
+int arm_bonus(const struct obj *otmp, const struct monst *mtmp)
+{
+	int base_ac = objects[otmp->otyp].a_ac;
+	int bonus = base_ac;
+
+	bonus += otmp->spe;
+	bonus -= min(greatest_erosion(otmp), base_ac);
+
+	/* extra AC point for racial armor */
+	if (is_racial_armor(otmp, mtmp))
+	    bonus++;
+
+	return bonus;
+}
+
+
 void find_ac(void)
 {
 	int uac = mons[u.umonnum].ac;
 
-	if (uarm) uac -= ARM_BONUS(uarm);
-	if (uarmc) uac -= ARM_BONUS(uarmc);
-	if (uarmh) uac -= ARM_BONUS(uarmh);
-	if (uarmf) uac -= ARM_BONUS(uarmf);
-	if (uarms) uac -= ARM_BONUS(uarms);
-	if (uarmg) uac -= ARM_BONUS(uarmg);
-	if (uarmu) uac -= ARM_BONUS(uarmu);
+	if (uarm) uac -= arm_bonus(uarm, &youmonst);
+	if (uarmc) uac -= arm_bonus(uarmc, &youmonst);
+	if (uarmh) uac -= arm_bonus(uarmh, &youmonst);
+	if (uarmf) uac -= arm_bonus(uarmf, &youmonst);
+	if (uarms) uac -= arm_bonus(uarms, &youmonst);
+	if (uarmg) uac -= arm_bonus(uarmg, &youmonst);
+	if (uarmu) uac -= arm_bonus(uarmu, &youmonst);
 	if (uleft && uleft->otyp == RIN_PROTECTION) uac -= uleft->spe;
 	if (uright && uright->otyp == RIN_PROTECTION) uac -= uright->spe;
 	if (HProtection & INTRINSIC) uac -= u.ublessed;

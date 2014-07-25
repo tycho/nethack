@@ -1213,8 +1213,8 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 			P_SKILL(wtype) == P_BASIC ? 100 : 200;
 
 		/* races are familiar with weapons of their kind */
-		if (is_racial_weapon(obj)) learn_known /= 2;
-		if (uwep && is_racial_weapon(uwep)) learn_klaunch /= 2;
+		if (is_racial_weapon(obj, &youmonst)) learn_known /= 2;
+		if (uwep && is_racial_weapon(uwep, &youmonst)) learn_klaunch /= 2;
 
 		if (thrown && ammo_and_launcher(obj, uwep) &&
 		    !uwep->known && !rn2(learn_klaunch)) {

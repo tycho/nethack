@@ -160,6 +160,7 @@ Monsters
   Master Kaen without cold resistance, which is too much even for overprepared
   characters.
 * Pets never displace the player from the stairs when entering a level.
+* Fix monsters getting your racial armor bonuses instead of theirs.
 
 Interface
 ---------

@@ -416,16 +416,16 @@ void update_mon_intrinsics(struct level *lev, struct monst *mon, struct obj *obj
 	newsym(mon->mx, mon->my);
 }
 
-int find_mac(struct monst *mon)
+int find_mac(const struct monst *mon)
 {
-	struct obj *obj;
+	const struct obj *obj;
 	int base = mon->data->ac;
 	long mwflags = mon->misc_worn_check;
 
 	for (obj = mon->minvent; obj; obj = obj->nobj) {
 	    if (obj->owornmask & mwflags)
-		base -= ARM_BONUS(obj);
-		/* since ARM_BONUS is positive, subtracting it increases AC */
+		base -= arm_bonus(obj, mon);
+		/* since arm_bonus is positive, subtracting it increases AC */
 	}
 	return base;
 }
@@ -542,7 +542,8 @@ static void m_dowear_type(struct level *lev, struct monst *mon, long flag,
 	     * it would forget spe and once again think the object is better
 	     * than what it already has.
 	     */
-	    if (best && (ARM_BONUS(best) + extra_pref(mon,best) >= ARM_BONUS(obj) + extra_pref(mon,obj)))
+	    if (best && (arm_bonus(best, mon) + extra_pref(mon, best) >=
+			 arm_bonus(obj, mon) + extra_pref(mon, obj)))
 		continue;
 	    best = obj;
 	}

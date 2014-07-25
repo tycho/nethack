@@ -2532,21 +2532,37 @@ int display_binventory(int x, int y, boolean as_if_seen)
 	return n;
 }
 
-boolean is_racial_armor(const struct obj *otmp)
+boolean is_racial_armor(const struct obj *otmp, const struct monst *mtmp)
 {
-	if (Race_if(PM_DWARF)) return is_dwarvish_armor(otmp);
-	else if (Race_if(PM_ELF)) return is_elven_armor(otmp);
-	else if (Race_if(PM_GNOME)) return is_gnomish_armor(otmp);
-	else if (Race_if(PM_ORC)) return is_orcish_armor(otmp);
+	if (mtmp == &youmonst) {
+	    if (Race_if(PM_DWARF)) return is_dwarvish_armor(otmp);
+	    else if (Race_if(PM_ELF)) return is_elven_armor(otmp);
+	    else if (Race_if(PM_GNOME)) return is_gnomish_armor(otmp);
+	    else if (Race_if(PM_ORC)) return is_orcish_armor(otmp);
+	} else if (mtmp) {
+	    const struct permonst *mdat = mtmp->data;
+	    if (is_dwarf(mdat)) return is_dwarvish_armor(otmp);
+	    else if (is_elf(mdat)) return is_elven_armor(otmp);
+	    else if (is_gnome(mdat)) return is_gnomish_armor(otmp);
+	    else if (is_orc(mdat)) return is_orcish_armor(otmp);
+	}
 	return FALSE;
 }
 
-boolean is_racial_weapon(const struct obj *otmp)
+boolean is_racial_weapon(const struct obj *otmp, const struct monst *mtmp)
 {
-	if (Race_if(PM_DWARF)) return is_dwarvish_weapon(otmp);
-	else if (Race_if(PM_ELF)) return is_elven_weapon(otmp);
-	else if (Race_if(PM_GNOME)) return is_gnomish_weapon(otmp);
-	else if (Race_if(PM_ORC)) return is_orcish_weapon(otmp);
+	if (mtmp == &youmonst) {
+	    if (Race_if(PM_DWARF)) return is_dwarvish_weapon(otmp);
+	    else if (Race_if(PM_ELF)) return is_elven_weapon(otmp);
+	    else if (Race_if(PM_GNOME)) return is_gnomish_weapon(otmp);
+	    else if (Race_if(PM_ORC)) return is_orcish_weapon(otmp);
+	} else if (mtmp) {
+	    const struct permonst *mdat = mtmp->data;
+	    if (is_dwarf(mdat)) return is_dwarvish_weapon(otmp);
+	    else if (is_elf(mdat)) return is_elven_weapon(otmp);
+	    else if (is_gnome(mdat)) return is_gnomish_weapon(otmp);
+	    else if (is_orc(mdat)) return is_orcish_weapon(otmp);
+	}
 	return FALSE;
 }
 
