@@ -125,7 +125,7 @@ Items
       to secondary colors (i.e. puce, magenta, orange, amber, emerald, dark
       green) or the browns (i.e. ochre, brown), so they will always be the
       outcome of some alchemy combinations.
-* More formal identification for item under certain circumstances:
+* More formal identification for items under certain circumstances:
     - Formal ID tin whistles and magic whistles when used.
     - Formal ID magic flutes and magic harps when used.
     - Formal ID enchant armor scrolls when they turn dragon scales into dragon
