@@ -218,6 +218,8 @@ struct you {
 	struct monst *usteed;
 	int ugallop;
 	int urideturns;
+	int	uarmortrain;		/* body armor skill training counter */
+	int	ushieldtrain;		/* shield skill training counter */
 	int	umortality;		/* how many times you died */
 	int ugrave_arise; /* you die and become something aside from a ghost */
 	time_t	ubirthday;		/* real world time when game began */

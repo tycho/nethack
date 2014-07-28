@@ -67,13 +67,22 @@
 #define P_MARTIAL_ARTS		P_BARE_HANDED_COMBAT	/* Role distinguishes */
 #define P_TWO_WEAPON_COMBAT	38	/* Finally implemented */
 #define P_RIDING		39	/* How well you control your steed */
-#define P_LAST_H_TO_H		P_RIDING
+#define P_BODY_ARMOR		40
+#define P_SHIELD		41
+#define P_LAST_H_TO_H		P_SHIELD
 #define P_FIRST_H_TO_H		P_BARE_HANDED_COMBAT
 
 #define P_NUM_SKILLS		(P_LAST_H_TO_H+1)
 
 /* These roles qualify for a martial arts bonus */
 #define martial_bonus()	(Role_if(PM_SAMURAI) || Role_if(PM_MONK))
+
+/*
+ * Minimum weight for body armor skill training and AC bonus is 150.
+ * MC bonus for body armor uses a different formula, but the minimum
+ * is still heavier than this.
+ */
+#define P_BODY_ARMOR_MIN_WEIGHT	(objects[LEATHER_ARMOR].oc_weight)
 
 
 /*

@@ -7,6 +7,8 @@ released versions.
 
 Highlights
 ----------
+* New body armor and shield skills: grants bonus AC and MC; heavier suits of
+  armor and shields get bigger bonuses and train the skills faster.
 * Mazes completely removed from Gehennom!
 * New resistance system: resistances gained from corpses and crowning only
   provide partial protection.
@@ -45,6 +47,36 @@ Character
   beam to prevent unfair deaths due to this change.  The breath graphic has been
   changed accordingly.
 * Changes to skills:
+    - New body armor skill:
+        - Body armor skill grants bonus AC and MC for suits of body armor based
+          on their weight and capped by your skill.
+        - Grants (weight / 50 - 2) bonus AC for body armor capped at +2 at
+          basic, +4 at skilled and +7 at expert.
+        - Grants (weight / 100 - 1) minimum MC for body armor capped at MC1 at
+          basic, MC2 at skilled and MC3 at expert.
+        - Trains to expert in between 16k and 24k turns; wearing heavier suits
+          of body armor speeds up training.
+        - Maximum skill levels:
+            - Expert: Knight, Samurai
+            - Skilled: Barbarian, Convict, Priest, Ranger, Valkyrie
+            - Basic: Archeologist, Caveman, Rogue, Tourist
+            - Restricted: Healer, Monk, Wizard
+            - Unlike weapon skills, body armor skill always starts at unskilled.
+    - New shield skill:
+        - Shield skill grants bonus AC and MC for shields based on their weight
+          and base AC, and is capped by your skill.
+        - Grants (weight / 20 + base AC) bonus AC for shields capped at +2 at
+          basic, +4 at skilled and +7 at expert.
+        - Grants (base AC + [1 if weight > 50]) minimum MC for shields capped at
+          MC1 at basic, MC2 at skilled and MC3 at expert.
+        - Trains to expert in between 11.2k and 16.8k turns; wearing heavier
+          shields speeds up training.
+        - Maximum skill levels:
+            - Expert: Knight, Priest, Valkyrie
+            - Skilled: Archeologist, Barbarian, Ranger, Rogue, Samurai
+            - Basic: Caveman, Convict, Tourist
+            - Restricted: Healer, Monk, Wizard
+            - Unlike weapon skills, shield skill always starts at unskilled.
     - Martial arts and bare-handed combat now get to-hit bonuses from skills
       just like weapons do (from SporkHack).
     - Allow 1-damage hits to still train relevant skills; in NetHack, hitting
@@ -132,6 +164,8 @@ Items
       scale mail.
 * Guarantee a wand of cancellation in the Castle chest that can be used for
   blanking scrolls and potions.
+* The shield of reflection now weighs 50 (was 75) due to the introduction of the
+  new shield skill.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
   monster and it hits a door."
 * Fix wielding of a cockatrice corpse bare-handed while wearing chromatic dragon

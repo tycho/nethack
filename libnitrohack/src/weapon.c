@@ -13,17 +13,19 @@
 #define PN_BARE_HANDED			(-1)	/* includes martial arts */
 #define PN_TWO_WEAPONS			(-2)
 #define PN_RIDING			(-3)
-#define PN_POLEARMS			(-4)
-#define PN_SABER			(-5)
-#define PN_HAMMER			(-6)
-#define PN_WHIP				(-7)
-#define PN_ATTACK_SPELL			(-8)
-#define PN_HEALING_SPELL		(-9)
-#define PN_DIVINATION_SPELL		(-10)
-#define PN_ENCHANTMENT_SPELL		(-11)
-#define PN_CLERIC_SPELL			(-12)
-#define PN_ESCAPE_SPELL			(-13)
-#define PN_MATTER_SPELL			(-14)
+#define PN_BODY_ARMOR			(-4)
+#define PN_SHIELD			(-5)
+#define PN_POLEARMS			(-6)
+#define PN_SABER			(-7)
+#define PN_HAMMER			(-8)
+#define PN_WHIP				(-9)
+#define PN_ATTACK_SPELL			(-10)
+#define PN_HEALING_SPELL		(-11)
+#define PN_DIVINATION_SPELL		(-12)
+#define PN_ENCHANTMENT_SPELL		(-13)
+#define PN_CLERIC_SPELL			(-14)
+#define PN_ESCAPE_SPELL			(-15)
+#define PN_MATTER_SPELL			(-16)
 
 static void give_may_advance_msg(int);
 static int practice_needed_to_advance(int, int);
@@ -43,7 +45,8 @@ static const short skill_names_indices[P_NUM_SKILLS] = {
 	PN_CLERIC_SPELL,     PN_ESCAPE_SPELL,
 	PN_MATTER_SPELL,
 	PN_BARE_HANDED,   PN_TWO_WEAPONS,
-	PN_RIDING
+	PN_RIDING,
+	PN_BODY_ARMOR, PN_SHIELD,
 };
 
 /* note: entry [0] isn't used */
@@ -52,6 +55,8 @@ static const char * const odd_skill_names[] = {
     "bare hands",		/* use barehands_or_martial[] instead */
     "two weapon combat",
     "riding",
+    "body armor",
+    "shield",
     "polearms",
     "saber",
     "hammer",
@@ -79,6 +84,7 @@ static void give_may_advance_msg(int skill)
 		skill <= P_LAST_SPELL ?
 			"spell casting " :
 		"fighting ");
+	nomul(0, NULL);
 }
 
 
@@ -793,6 +799,10 @@ static int slots_required(int skill)
 
 /*
  * Training needed to reach a given level in a skill.
+ *
+ * WARNING: This returns the practice needed to go ONE BEYOND skill_level,
+ * so e.g. practice_needed_to_advance(P_FOO, P_BASIC) gives the number of
+ * training points needed to gain SKILLED in skill P_FOO and not basic!
  */
 static int practice_needed_to_advance(int skill, int skill_level)
 {
@@ -860,6 +870,9 @@ static void skill_advance(int skill)
     pline("You are now %s skilled in %s.",
 	P_SKILL(skill) >= P_MAX_SKILL(skill) ? "most" : "more",
 	P_NAME(skill));
+
+    if (skill == P_BODY_ARMOR || skill == P_SHIELD)
+	find_ac();
 }
 
 /*
@@ -1173,6 +1186,65 @@ void lose_weapon_skill(int n)
     }
 }
 
+/*
+ * Train a skill based on an object's weight and target turn numbers such that
+ * lighter objects train slower and heavier ones train faster.
+ *
+ *  - skill: ID of the skill to train
+ *  - weight: weight of the object, influences training speed
+ *  - counter: accumulator that grows before giving a training point and looping
+ *  - fast: the least turns needed to reach expert skill using heaviest object
+ *  - slow: the most turns needed to reach expert skill using lightest object
+ *  - light: the lightest object weight, lowest possible value for weight
+ *  - heavy: the heaviest object weight, highest possible value for weight
+ */
+void train_skill_over_time(int skill, int weight, int *counter,
+			   int fast, int slow, int light, int heavy)
+{
+    const int divisor = 10; /* weight divisor, keeps factors low */
+    int tick;
+    int expert = practice_needed_to_advance(skill, P_EXPERT - 1);
+
+    /*
+     * Assumption: slow and fast are either always different or always the same,
+     * so running the first branch below in one call and the second on the other
+     * is a Bad Idea(tm) since the tick values for each branch are very different.
+     */
+    if (slow == fast) {
+	/* fall back on fast and ignore weight */
+	tick = fast / expert;
+	*counter += 1;
+    } else {
+	/*
+	 * We want the following equations to apply simultaneously:
+	 *
+	 *  tick = slow / expert * (light / divisor + offset)
+	 *  tick = fast / expert * (heavy / divisor + offset)
+	 *
+	 * To get offset we equate the two:
+	 *
+	 *  s / e * (l / d + o) = f / e * (h / d + o)
+	 *     sl / de + so / e = fh / de + fo / e
+	 *               so / e = (fh - sl) / de + fo / e
+	 *                   so = (fh - sl) / d + fo
+	 *              so - fo = (fh - sl) / d
+	 *             (s - f)o = (fh - sl) / d
+	 *                    o = (fh - sl) / (d(s - f))
+	 *
+	 * The offset can then be substituted into either tick equation.
+	 */
+	int offset = (fast * heavy - slow * light) / (divisor * (slow - fast));
+	tick = slow / expert * (light / divisor + offset);
+	*counter += weight / divisor + offset;
+    }
+
+    /* Train once for every tick points accumulated in counter. */
+    if (*counter >= tick) {
+	use_skill(skill, *counter / tick);
+	*counter %= tick;
+    }
+}
+
 int weapon_type(const struct obj *obj)
 {
 	/* KMH -- now uses the object table */
@@ -1406,6 +1478,26 @@ void setmnotwielded(struct monst *mon, struct obj *obj)
 		  otense(obj, "stop"));
     }
     obj->owornmask &= ~W_WEP;
+}
+
+xchar mon_skill_level(int skill, const struct monst *mtmp)
+{
+	if (mtmp == &youmonst) {
+	    return P_SKILL(skill);
+	} else if (mtmp) {
+	    const struct permonst *mdat = mtmp->data;
+	    if (skill == P_BODY_ARMOR || skill == P_SHIELD) {
+		/* Don't make later monsters quite as unhittable. */
+		if (is_prince(mdat)) return P_SKILLED;
+		else if (is_lord(mdat)) return P_BASIC;
+		else return P_UNSKILLED;
+	    } else {
+		if (is_prince(mdat)) return P_EXPERT;
+		else if (is_lord(mdat)) return P_SKILLED;
+		else return P_UNSKILLED;
+	    }
+	}
+	return P_ISRESTRICTED;
 }
 
 /*weapon.c*/

@@ -577,6 +577,9 @@ static void you_moved(void)
 	    run_regions(level);
 	    dgn_growths(level, TRUE, TRUE);
 
+	    train_body_armor_skill();
+	    train_shield_skill();
+
 	    if (u.ublesscnt)  u.ublesscnt--;
 	    iflags.botl = 1;
 

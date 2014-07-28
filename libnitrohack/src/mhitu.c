@@ -770,10 +770,27 @@ int magic_negation(struct monst *mon)
 {
 	struct obj *armor;
 	int armpro = 0;
+	xchar sklev;
+	int bonus;
 
 	armor = (mon == &youmonst) ? uarm : which_armor(mon, W_ARM);
 	if (armor && armpro < objects[armor->otyp].a_can)
 	    armpro = objects[armor->otyp].a_can;
+	/*
+	 * Bonus magic cancellation for body armor skill,
+	 * MC1/2/3 for basic/skilled/expert.
+	 */
+	if (armor && armor->owt >= 200) {
+	    bonus = armor->owt / 100 - 1;
+	    sklev = mon_skill_level(P_BODY_ARMOR, mon);
+	    bonus = min(bonus,
+			sklev >= P_EXPERT ? 3 :
+			sklev == P_SKILLED ? 2 :
+			sklev == P_BASIC ? 1 : 0);
+	    if (armpro < bonus)
+		armpro = bonus;
+	}
+
 	armor = (mon == &youmonst) ? uarmc : which_armor(mon, W_ARMC);
 	if (armor && armpro < objects[armor->otyp].a_can)
 	    armpro = objects[armor->otyp].a_can;
@@ -781,7 +798,7 @@ int magic_negation(struct monst *mon)
 	if (armor && armpro < objects[armor->otyp].a_can)
 	    armpro = objects[armor->otyp].a_can;
 
-	/* armor types for shirt, gloves, shoes, and shield don't currently
+	/* armor types for shirt, gloves, and shoes don't currently
 	   provide any magic cancellation but we might as well be complete */
 	armor = (mon == &youmonst) ? uarmu : which_armor(mon, W_ARMU);
 	if (armor && armpro < objects[armor->otyp].a_can)
@@ -792,9 +809,24 @@ int magic_negation(struct monst *mon)
 	armor = (mon == &youmonst) ? uarmf : which_armor(mon, W_ARMF);
 	if (armor && armpro < objects[armor->otyp].a_can)
 	    armpro = objects[armor->otyp].a_can;
+
 	armor = (mon == &youmonst) ? uarms : which_armor(mon, W_ARMS);
 	if (armor && armpro < objects[armor->otyp].a_can)
 	    armpro = objects[armor->otyp].a_can;
+	/*
+	 * Bonus magic cancellation for shield skill,
+	 * MC1/2/3 for basic/skilled/expert.
+	 */
+	if (armor) {
+	    bonus = objects[armor->otyp].a_ac + (armor->owt > 50 ? 1 : 0);
+	    sklev = mon_skill_level(P_SHIELD, mon);
+	    bonus = min(bonus,
+			sklev >= P_EXPERT ? 3 :
+			sklev == P_SKILLED ? 2 :
+			sklev == P_BASIC ? 1 : 0);
+	    if (armpro < bonus)
+		armpro = bonus;
+	}
 
 	/* this one is really a stretch... */
 	armor = (mon == &youmonst) ? 0 : which_armor(mon, W_SADDLE);

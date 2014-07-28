@@ -341,6 +341,8 @@ extern int dowear(struct obj *otmp);
 extern int doputon(struct obj *otmp);
 extern int arm_bonus(const struct obj *,const struct monst *);
 extern void find_ac(void);
+extern void train_body_armor_skill(void);
+extern void train_shield_skill(void);
 extern void glibr(void);
 extern struct obj *some_armor(struct monst *);
 extern void erode_armor(struct monst *,boolean);
@@ -1843,11 +1845,13 @@ extern void unrestrict_weapon_skill(int);
 extern void use_skill(int,int);
 extern void add_weapon_skill(int);
 extern void lose_weapon_skill(int);
+extern void train_skill_over_time(int,int,int *,int,int,int,int);
 extern int weapon_type(const struct obj *);
 extern int uwep_skill_type(void);
 extern int weapon_hit_bonus(struct obj *);
 extern int weapon_dam_bonus(struct obj *);
 extern void skill_init(const struct def_skill *);
+extern xchar mon_skill_level(int,const struct monst *);
 
 /* ### were.c ### */
 

@@ -458,7 +458,7 @@ SHIELD("large shield", NULL,
 SHIELD("dwarvish roundshield", "large round shield",
 		0, 0, 0, 0,	     4, 0,100, 10,  8, 0, IRON, HI_METAL),
 SHIELD("shield of reflection", "polished silver shield",
-		0, 0, 0, REFLECTING, 3, 0, 75, 50,  8, 0, SILVER, HI_SILVER),
+		0, 0, 0, REFLECTING, 3, 0, 50, 50,  8, 0, SILVER, HI_SILVER),
 
 /* gloves */
 /* these have their color but not material shuffled, so the IRON must stay

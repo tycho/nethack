@@ -51,15 +51,15 @@ int multishot_max(const struct monst *mtmp, const struct obj *otmp)
 	    !(you_shot ? (Confusion || Stunned) :
 			 (mtmp->mconf || mtmp->mstun))) {
 	    short otyp, lotyp;
+	    xchar sklev;
 	    otyp = otmp->otyp;
 	    lotyp = ammo_and_launcher(otmp, wwep) ? wwep->otyp : 0;
+	    sklev = mon_skill_level(weapon_type(otmp), mtmp);
 
 	    /* bonus for skill */
-	    if (you_shot ? (P_SKILL(weapon_type(otmp)) == P_EXPERT) :
-			   is_prince(mtmp->data)) {
+	    if (sklev == P_EXPERT) {
 		multishot += 2;
-	    } else if (you_shot ? (P_SKILL(weapon_type(otmp)) == P_SKILLED) :
-				  is_lord(mtmp->data)) {
+	    } else if (sklev == P_SKILLED) {
 		multishot++;
 	    }
 

@@ -264,6 +264,8 @@ static const struct def_skill Skill_A[] = {
     { P_RIDING, P_BASIC },
     { P_TWO_WEAPON_COMBAT, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_EXPERT },
+    { P_BODY_ARMOR, P_BASIC },
+    { P_SHIELD, P_SKILLED },
     { P_NONE, 0 }
 };
 
@@ -281,6 +283,8 @@ static const struct def_skill Skill_B[] = {
     { P_RIDING, P_BASIC },
     { P_TWO_WEAPON_COMBAT, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_MASTER },
+    { P_BODY_ARMOR, P_SKILLED },
+    { P_SHIELD, P_SKILLED },
     { P_NONE, 0 }
 };
 
@@ -296,6 +300,8 @@ static const struct def_skill Skill_C[] = {
     { P_ATTACK_SPELL, P_BASIC },	{ P_MATTER_SPELL, P_SKILLED },
     { P_BOOMERANG, P_EXPERT },		{ P_UNICORN_HORN, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_MASTER },
+    { P_BODY_ARMOR, P_BASIC },
+    { P_SHIELD, P_BASIC },
     { P_NONE, 0 }
 };
 
@@ -308,6 +314,8 @@ static const struct def_skill Skill_Con[] = {
     { P_ATTACK_SPELL, P_BASIC },	{ P_ESCAPE_SPELL, P_EXPERT },
     { P_TWO_WEAPON_COMBAT, P_SKILLED },
     { P_BARE_HANDED_COMBAT, P_SKILLED },
+    { P_BODY_ARMOR, P_SKILLED },
+    { P_SHIELD, P_BASIC },
     { P_NONE, 0 }
 };
 
@@ -342,6 +350,8 @@ static const struct def_skill Skill_K[] = {
     { P_RIDING, P_EXPERT },
     { P_TWO_WEAPON_COMBAT, P_SKILLED },
     { P_BARE_HANDED_COMBAT, P_EXPERT },
+    { P_BODY_ARMOR, P_EXPERT },
+    { P_SHIELD, P_EXPERT },
     { P_NONE, 0 }
 };
 
@@ -370,6 +380,8 @@ static const struct def_skill Skill_P[] = {
     { P_HEALING_SPELL, P_EXPERT },	{ P_DIVINATION_SPELL, P_EXPERT },
     { P_CLERIC_SPELL, P_EXPERT },
     { P_BARE_HANDED_COMBAT, P_BASIC },
+    { P_BODY_ARMOR, P_SKILLED },
+    { P_SHIELD, P_EXPERT },
     { P_NONE, 0 }
 };
 
@@ -388,6 +400,8 @@ static const struct def_skill Skill_R[] = {
     { P_RIDING, P_BASIC },
     { P_TWO_WEAPON_COMBAT, P_EXPERT },
     { P_BARE_HANDED_COMBAT, P_EXPERT },
+    { P_BODY_ARMOR, P_BASIC },
+    { P_SHIELD, P_SKILLED },
     { P_NONE, 0 }
 };
 
@@ -407,6 +421,8 @@ static const struct def_skill Skill_Ran[] = {
     { P_ESCAPE_SPELL, P_BASIC },
     { P_RIDING, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_BASIC },
+    { P_BODY_ARMOR, P_SKILLED },
+    { P_SHIELD, P_SKILLED },
     { P_NONE, 0 }
 };
 
@@ -423,6 +439,8 @@ static const struct def_skill Skill_S[] = {
     { P_RIDING, P_SKILLED },
     { P_TWO_WEAPON_COMBAT, P_EXPERT },
     { P_MARTIAL_ARTS, P_MASTER },
+    { P_BODY_ARMOR, P_EXPERT },
+    { P_SHIELD, P_SKILLED },
     { P_NONE, 0 }
 };
 
@@ -446,6 +464,8 @@ static const struct def_skill Skill_T[] = {
     { P_RIDING, P_BASIC },
     { P_TWO_WEAPON_COMBAT, P_SKILLED },
     { P_BARE_HANDED_COMBAT, P_SKILLED },
+    { P_BODY_ARMOR, P_BASIC },
+    { P_SHIELD, P_BASIC },
     { P_NONE, 0 }
 };
 
@@ -463,6 +483,8 @@ static const struct def_skill Skill_V[] = {
     { P_RIDING, P_SKILLED },
     { P_TWO_WEAPON_COMBAT, P_SKILLED },
     { P_BARE_HANDED_COMBAT, P_EXPERT },
+    { P_BODY_ARMOR, P_SKILLED },
+    { P_SHIELD, P_EXPERT },
     { P_NONE, 0 }
 };
 
@@ -1149,6 +1171,8 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->uinvault = mread32(mf);
 	y->ugallop = mread32(mf);
 	y->urideturns = mread32(mf);
+	y->uarmortrain = mread32(mf);
+	y->ushieldtrain = mread32(mf);
 	y->umortality = mread32(mf);
 	y->ugrave_arise = mread32(mf);
 	y->ubirthday = mread64(mf);
@@ -1331,6 +1355,8 @@ void save_you(struct memfile *mf, struct you *y)
 	mwrite32(mf, y->uinvault);
 	mwrite32(mf, y->ugallop);
 	mwrite32(mf, y->urideturns);
+	mwrite32(mf, y->uarmortrain);
+	mwrite32(mf, y->ushieldtrain);
 	mwrite32(mf, y->umortality);
 	mwrite32(mf, y->ugrave_arise);
 	mwrite64(mf, y->ubirthday);

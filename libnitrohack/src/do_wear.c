@@ -1852,8 +1852,11 @@ int doputon(struct obj *otmp)
 /* calculate the AC of a piece of armor for a given monster */
 int arm_bonus(const struct obj *otmp, const struct monst *mtmp)
 {
-	int base_ac = objects[otmp->otyp].a_ac;
+	const struct objclass *ocl = &objects[otmp->otyp];
+	int base_ac = ocl->a_ac;
 	int bonus = base_ac;
+	int skill_bonus = 0;
+	xchar sklev;
 
 	bonus += otmp->spe;
 	bonus -= min(greatest_erosion(otmp), base_ac);
@@ -1861,6 +1864,31 @@ int arm_bonus(const struct obj *otmp, const struct monst *mtmp)
 	/* extra AC point for racial armor */
 	if (is_racial_armor(otmp, mtmp))
 	    bonus++;
+
+	if (ocl->oc_armcat == ARM_SUIT && otmp->owt >= P_BODY_ARMOR_MIN_WEIGHT) {
+	    /*
+	     * Bonus AC for body armor skill based on weight,
+	     * capped at +2/+4/+7 AC for basic/skilled/expert.
+	     */
+	    skill_bonus = otmp->owt / 50 - 2;
+	    sklev = mon_skill_level(P_BODY_ARMOR, mtmp);
+	    skill_bonus = min(skill_bonus,
+			      sklev >= P_EXPERT ? 7 :
+			      sklev == P_SKILLED ? 4 :
+			      sklev == P_BASIC ? 2 : 0);
+	} else if (ocl->oc_armcat == ARM_SHIELD) {
+	    /*
+	     * Bonus AC for shield skill based on weight and base AC,
+	     * capped at +2/+4/+7 AC for basic/skilled/expert.
+	     */
+	    skill_bonus = otmp->owt / 20 + base_ac;
+	    sklev = mon_skill_level(P_SHIELD, mtmp);
+	    skill_bonus = min(skill_bonus,
+			      sklev >= P_EXPERT ? 7 :
+			      sklev == P_SKILLED ? 4 :
+			      sklev == P_BASIC ? 2 : 0);
+	}
+	bonus += skill_bonus;
 
 	return bonus;
 }
@@ -1886,6 +1914,36 @@ void find_ac(void)
 		u.uac = uac;
 		iflags.botl = 1;
 	}
+}
+
+
+void train_body_armor_skill(void)
+{
+    if (uarm && !donning_on(uarm) && uarm->owt >= P_BODY_ARMOR_MIN_WEIGHT) {
+	train_skill_over_time(
+		P_BODY_ARMOR,
+		uarm->owt,
+		&u.uarmortrain,
+		16000,
+		24000,
+		P_BODY_ARMOR_MIN_WEIGHT,
+		objects[PLATE_MAIL].oc_weight);
+    }
+}
+
+
+void train_shield_skill(void)
+{
+    if (uarms && !donning_on(uarms)) {
+	train_skill_over_time(
+		P_SHIELD,
+		uarms->owt,
+		&u.ushieldtrain,
+		11200,
+		16800,
+		objects[SMALL_SHIELD].oc_weight,
+		objects[LARGE_SHIELD].oc_weight);
+    }
 }
 
 
