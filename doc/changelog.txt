@@ -92,6 +92,7 @@ Character
         - Skilled riding gives +2 to damage (was +1).
         - Expert riding gives +2/+5 to-hit/damage (was +0/+2).
         - Restricted weapon skill gives -5 to damage (was -2).
+    - Feeling more confident in your skills now interrupts multi-turn actions.
 * Increased sling damage: slings now get the strength damage bonus (otherwise
   reserved for melee) and sling enchantment affects damage of fired projectiles
   (normally launcher enchantment only affects to-hit); their damage now even
