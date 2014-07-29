@@ -31,6 +31,8 @@ d_level *lev;
 		|| Is_botlevel(lev) || (Is_branchlev(lev) && lev->dlevel > 1)
 		   /* no bones in the invocation level               */
 		|| (In_hell(lev) && lev->dlevel == dunlevs_in_dungeon(lev) - 1)
+		   /* AIS: there was a hangup on the level           */
+		|| (level_info[ledger_no(lev)].flags & HANGUP_HERE)
 		);
 }
 

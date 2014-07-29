@@ -102,6 +102,10 @@ int sig_unused;
 # else	/* SAVEONHANGUP */
 	if (!program_state.done_hup++) {
 	    if (program_state.something_worth_saving) {
+		/* AIS: Record levels on which there were hangups */
+		if (ledger_no(&u.uz) >= 0 &&
+		    ledger_no(&u.uz) < MAXLINFO)
+		    level_info[ledger_no(&u.uz)].flags |= HANGUP_HERE;
 		write_HUP_file();
 		(void) dosave0();
 	    }
