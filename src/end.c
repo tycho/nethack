@@ -1030,6 +1030,13 @@ die:
 	    corpse = (struct obj *)0;
 	}
 
+	/* AIS: don't leak info about whether bones were left */
+	else if (u.ugrave_arise >= LOW_PM && u.ugrave_arise != (NON_PM - 1)
+		 && how < GENOCIDED) {
+	    Your("body rises from the dead as %s...",
+		    an(mons[u.ugrave_arise].mname));
+	}
+
 	/* update gold for the rip output, which can't use hidden_gold()
 	   (containers will be gone by then if bones just got saved...) */
 #ifndef GOLDOBJ
