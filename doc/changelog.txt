@@ -88,7 +88,7 @@ Character
       basic/skilled/expert (was 100/200/400).
     - Effect of skills on to-hit and damage raised in general (from dNetHack):
         - Expert weapon skill gives +5/+3 to-hit/damage (was +3/+2).
-        - Expert two-weapon skill gives -2/+3 to-hit/damage (was -3/+2).
+        - Expert two-weapon skill gives -2/+2 to-hit/damage (was -3/+1).
         - Skilled riding gives +2 to damage (was +1).
         - Expert riding gives +2/+5 to-hit/damage (was +0/+2).
         - Restricted weapon skill gives -5 to damage (was -2).
