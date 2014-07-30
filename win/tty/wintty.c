@@ -2770,9 +2770,11 @@ tty_nhgetch()
     if (!i) i = DOESCAPE; /* map NUL to ESC since nethack doesn't expect NUL */
     if (ttyDisplay && ttyDisplay->toplin == 1)
 	ttyDisplay->toplin = 2;
+#ifdef USE_TILES
     tmp = vt_tile_current_window;
     vt_tile_current_window++;
     print_vt_code(AVTC_SELECT_WINDOW, tmp);
+#endif
     return i;
 }
 
