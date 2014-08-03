@@ -107,7 +107,7 @@ if (UNIX)
     add_custom_target(nitrohack_curses_shell_script ALL
                       DEPENDS dynahack.sh)
     install(PROGRAMS ${DynaHack_BINARY_DIR}/nitrohack/dynahack.sh
-            DESTINATION ${SHELLDIR} RENAME dynahack)
+            DESTINATION ${SHELLDIR})
 endif()
 
 install(TARGETS nitrohack_curses

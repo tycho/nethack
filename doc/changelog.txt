@@ -246,6 +246,10 @@ Configuration
 
 Technical
 ---------
+* Rename launch script for *nix-like operating systems (e.g. Linux and OS X)
+  from `dynahack` to `dynahack.sh` to prevent it from overwriting the actual
+  game or confusing and being ignored by the installation system in case the
+  build system is accidentally set with identical `SHELLDIR` and `BINDIR` paths.
 * Clean up timer debugging code a bit.
 * Fix warning when leaving bones while wielding an attached heavy iron ball.
 * Fix infinite loop when placing a branch entrance on joined cavern levels.

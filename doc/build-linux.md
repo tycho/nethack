@@ -51,7 +51,7 @@ Enter the following commands to compile the game:
 
 To play the game, run its launch script:
 
-    ~/dynahack/install/dynahack
+    ~/dynahack/install/dynahack.sh
 
 Most options can be set and saved in-game, but if you want to customize characters used on the map, see save files or view dump logs of finished games you can find them all in ~/.config/DynaHack.
 
