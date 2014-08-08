@@ -172,6 +172,10 @@ Items
 * Wielding or unwielding a weapon of stealth identifies the stealth property on
   that weapon and gives identifying messages similar to wearing other items that
   grant stealth.
+* Improve stacking of random candles by removing random chance of them being
+  blessed or cursed (from AceHack).  Between wax and tallow candles, and
+  blessed, uncursed and cursed status, an inventory could be filled with 6
+  different candle stacks, even with DynaHack's improved item stacking!
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
   monster and it hits a door."
 * Fix wielding of a cockatrice corpse bare-handed while wearing chromatic dragon

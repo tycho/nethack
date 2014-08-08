@@ -442,7 +442,6 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 					otmp->lamplit = 0;
 					otmp->quan = 1L +
 					      (long)(rn2(2) ? rn2(7) : 0);
-					blessorcurse(otmp, 5);
 					break;
 		case BRASS_LANTERN:
 		case OIL_LAMP:		otmp->spe = 1;
