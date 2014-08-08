@@ -149,6 +149,7 @@ Dungeon
 
 Items
 -----
+* New item: silver short sword (SLASH'EM), d6 damage (d8 vs. large), weight 36.
 * Potion color alchemy improved in favor of players, making it more of an
   alternative to NetHack's alchemy instead of a nerf:
     - All color-based random potion descriptions are now guaranteed to map to an
