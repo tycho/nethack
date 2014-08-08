@@ -109,6 +109,7 @@ Character
   applies to all platforms.
 * Fix ring of sustain ability blocking -1 strength change when becoming weak
   from hunger, allowing it to be exploited to gain strength on demand.
+* Fix off-hand weapon properties remaining after ending two-weapon combat.
 
 Dungeon
 -------

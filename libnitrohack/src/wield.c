@@ -574,8 +574,11 @@ void uqwepgone(void)
 void untwoweapon(void)
 {
 	if (u.twoweap) {
+		struct obj *tmp = uswapwep;
 		pline("You can no longer use two weapons at once.");
 		u.twoweap = FALSE;
+		setuswapwep(NULL);
+		setuswapwep(tmp);
 		update_inventory();
 	}
 	return;

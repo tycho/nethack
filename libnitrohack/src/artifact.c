@@ -804,7 +804,7 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask,
 	if (oart) {
 	    spfx = (wp_mask != W_ART) ? oart->spfx : oart->cspfx;
 	} else if ((wp_mask == W_WEP ||
-		    (wp_mask == W_SWAPWEP && u.twoweap)) &&
+		    (wp_mask == W_SWAPWEP && (u.twoweap || !on))) &&
 		   (otmp->oclass == WEAPON_CLASS || is_weptool(otmp)) &&
 		   !is_ammo(otmp) && !is_missile(otmp)) {
 	    if (otmp->oprops & ITEM_REFLECTION)
