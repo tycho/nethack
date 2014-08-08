@@ -1056,6 +1056,8 @@ static void start_tin(struct obj *otmp) /* called when starting to open a tin */
 		case ELVEN_DAGGER:
 		case ORCISH_DAGGER:
 		case ATHAME:
+		case KNIFE:
+		case STILETTO:
 		case CRYSKNIFE:
 			tmp = 3;
 			break;
