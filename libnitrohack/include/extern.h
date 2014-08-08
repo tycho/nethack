@@ -68,7 +68,7 @@ extern boolean arti_reflects(struct obj *);
 extern boolean restrict_name(struct obj *,const char *,boolean);
 extern boolean defends(int,struct obj *);
 extern boolean protects(int,struct obj *);
-extern void set_artifact_intrinsic(struct obj *, boolean, long);
+extern void set_artifact_intrinsic(struct obj *, boolean, long, boolean);
 extern int touch_artifact(struct obj *,struct monst *);
 extern int spec_abon(struct obj *,struct monst *);
 extern int spec_dbon(struct obj *,struct obj *,boolean,struct monst *,int);

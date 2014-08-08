@@ -446,7 +446,7 @@ static void strip_oprops(struct obj *otmp)
 	    return;
 
 	if (otmp == uwep || otmp == uswapwep) {
-	    set_artifact_intrinsic(otmp, FALSE, otmp->owornmask);
+	    set_artifact_intrinsic(otmp, FALSE, otmp->owornmask, TRUE);
 	} else {
 	    unsigned int which = 0;
 	    if (otmp == uarm) which = W_ARM;
@@ -729,7 +729,8 @@ boolean protects(int adtyp, struct obj *otmp)
  * a potential artifact has just been worn/wielded/picked-up or
  * unworn/unwielded/dropped.  Pickup/drop only set/reset the W_ART mask.
  */
-void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
+void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask,
+			    boolean side_effects)
 {
 	unsigned int *mask = 0;
 	const struct artifact *oart = get_artifact(otmp);
@@ -841,11 +842,8 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask)
 	if (spfx & SPFX_HALRES) {
 	    /* make_hallucinated must (re)set the mask itself to get
 	     * the display right */
-	    /* restoring needed because this is the only artifact intrinsic
-	     * that can print a message--need to guard against being printed
-	     * when restoring a game
-	     */
-	    make_hallucinated((long)!on, restoring ? FALSE : TRUE, wp_mask);
+	    /* hide message when restoring a game */
+	    make_hallucinated((long)!on, side_effects, wp_mask);
 	}
 	if (spfx & SPFX_ESP) {
 	    if (on) ETelepat |= wp_mask;

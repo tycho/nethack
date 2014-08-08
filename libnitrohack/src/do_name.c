@@ -247,7 +247,7 @@ struct obj *oname(struct obj *obj, const char *name)
 	    /* can't dual-wield with artifact as secondary weapon */
 	    if (obj == uswapwep) untwoweapon();
 	    /* activate warning if you've just named your weapon "Sting" */
-	    if (obj == uwep) set_artifact_intrinsic(obj, TRUE, W_WEP);
+	    if (obj == uwep) set_artifact_intrinsic(obj, TRUE, W_WEP, TRUE);
 	    /* The Iron Ball of Liberation is rustproof only for convicts. */
 	    if (obj->oartifact == ART_IRON_BALL_OF_LIBERATION) {
 		obj->owt = 300;	/* magically lightened, but still heavy */

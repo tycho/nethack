@@ -41,7 +41,7 @@ const struct worn {
 
 
 /* Updated to use the extrinsic and blocked fields. */
-void setworn_core(struct obj *obj, long mask, boolean conduct)
+void setworn_core(struct obj *obj, long mask, boolean side_effects)
 {
 	const struct worn *wp;
 	struct obj *oobj;
@@ -52,7 +52,7 @@ void setworn_core(struct obj *obj, long mask, boolean conduct)
 	    uskin = obj;
 	 /* assert( !uarm ); */
 	} else {
-	    if (conduct && obj && (mask & W_ARMOR))
+	    if (side_effects && obj && (mask & W_ARMOR))
 		violated(CONDUCT_NUDISM);
 
 	    for (wp = worn; wp->w_mask; wp++) if (wp->w_mask & mask) {
@@ -76,7 +76,7 @@ void setworn_core(struct obj *obj, long mask, boolean conduct)
 				u.uprops[CLAIRVOYANT].blocked &= ~wp->w_mask;
 			}
 			if (oobj->oartifact || oobj->oprops)
-			    set_artifact_intrinsic(oobj, 0, mask);
+			    set_artifact_intrinsic(oobj, 0, mask, side_effects);
 		    }
 		}
 		*(wp->w_obj) = obj;
@@ -102,7 +102,7 @@ void setworn_core(struct obj *obj, long mask, boolean conduct)
 			    }
 			}
 			if (obj->oartifact || obj->oprops)
-			    set_artifact_intrinsic(obj, 1, mask);
+			    set_artifact_intrinsic(obj, 1, mask, side_effects);
 		    }
 		}
 	    }
@@ -131,7 +131,7 @@ void setnotworn(struct obj *obj)
 		u.uprops[p].extrinsic = u.uprops[p].extrinsic & ~wp->w_mask;
 		obj->owornmask &= ~wp->w_mask;
 		if (obj->oartifact || obj->oprops)
-		    set_artifact_intrinsic(obj, 0, wp->w_mask);
+		    set_artifact_intrinsic(obj, 0, wp->w_mask, TRUE);
 		if ((p = w_blocks(obj, wp->w_mask)) != 0) {
 		    u.uprops[p].blocked &= ~wp->w_mask;
 		    /* HACK: telepathy-blocking items also block clairvoyance */
