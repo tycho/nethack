@@ -180,7 +180,7 @@ static void Oprops_on(struct obj *otmp, unsigned int mask)
 
 	if (props & ITEM_STEALTH) {
 	    if (!EStealth && !HStealth && !BStealth) {
-		pline("You are moving very quietly.");
+		pline("You move very quietly.");
 		otmp->oprops_known |= ITEM_STEALTH;
 	    }
 	    EStealth |= mask;

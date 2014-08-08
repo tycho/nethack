@@ -851,8 +851,21 @@ void set_artifact_intrinsic(struct obj *otmp, boolean on, long wp_mask,
 	    see_monsters();
 	}
 	if (spfx_stlth) {
-	    if (on) EStealth |= wp_mask;
-	    else EStealth &= ~wp_mask;
+	    if (on) {
+		if (side_effects && !EStealth && !HStealth && !BStealth) {
+		    pline("You move very quietly.");
+		    if (otmp->oprops & ITEM_STEALTH)
+			otmp->oprops_known |= ITEM_STEALTH;
+		}
+		EStealth |= wp_mask;
+	    } else {
+		EStealth &= ~wp_mask;
+		if (side_effects && !EStealth && !HStealth && !BStealth) {
+		    pline("You sure are noisy.");
+		    if (otmp->oprops & ITEM_STEALTH)
+			otmp->oprops_known |= ITEM_STEALTH;
+		}
+	    }
 	}
 	if (spfx_fumbling) {
 	    if (on) {

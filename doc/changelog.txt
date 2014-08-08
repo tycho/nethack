@@ -167,6 +167,9 @@ Items
   blanking scrolls and potions.
 * The shield of reflection now weighs 50 (was 75) due to the introduction of the
   new shield skill.
+* Wielding or unwielding a weapon of stealth identifies the stealth property on
+  that weapon and gives identifying messages similar to wearing other items that
+  grant stealth.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
   monster and it hits a door."
 * Fix wielding of a cockatrice corpse bare-handed while wearing chromatic dragon
