@@ -1218,23 +1218,29 @@ dopois:
 			    pline("%s swings itself around you!",
 				  Monnam(mtmp));
 			    u.ustuck = mtmp;
+			    u.uwilldrown = 0;
 			}
 		    } else if (u.ustuck == mtmp) {
-			if (is_pool(level, mtmp->mx,mtmp->my) && !Swimming
-			    && !Amphibious) {
-			    boolean moat =
-				(level->locations[mtmp->mx][mtmp->my].typ != POOL) &&
-				(level->locations[mtmp->mx][mtmp->my].typ != WATER) &&
-				!Is_medusa_level(&u.uz) &&
-				!Is_waterlevel(&u.uz);
+			if (is_pool(level, mtmp->mx,mtmp->my) && !Swimming && !Amphibious) {
+			    if (!u.uwilldrown) {
+				/* Give the player an extra turn before drowning. */
+				pline("%s pulls you towards the water!", Monnam(mtmp));
+				u.uwilldrown = 1;
+			    } else {
+				boolean moat =
+				    (level->locations[mtmp->mx][mtmp->my].typ != POOL) &&
+				    (level->locations[mtmp->mx][mtmp->my].typ != WATER) &&
+				    !Is_medusa_level(&u.uz) &&
+				    !Is_waterlevel(&u.uz);
 
-			    pline("%s drowns you...", Monnam(mtmp));
-			    killer_format = KILLED_BY_AN;
-			    sprintf(buf, "%s by %s",
-				    moat ? "moat" : "pool of water",
-				    an(mons_mname(mtmp->data)));
-			    killer = buf;
-			    done(DROWNING);
+				pline("%s drowns you...", Monnam(mtmp));
+				killer_format = KILLED_BY_AN;
+				sprintf(buf, "%s by %s",
+					moat ? "moat" : "pool of water",
+					an(mons_mname(mtmp->data)));
+				killer = buf;
+				done(DROWNING);
+			    }
 			} else if (mattk->aatyp == AT_HUGS)
 			    pline("You are being crushed.");
 		    } else {

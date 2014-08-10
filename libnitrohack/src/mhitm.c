@@ -121,6 +121,7 @@ int fightm(struct monst *mtmp)		/* have monsters fight each other */
 			if (!rn2(4)) {
 			    pline("%s releases you!", Monnam(mtmp));
 			    u.ustuck = 0;
+			    u.uwilldrown = 0;
 			} else
 			    break;
 		    }

@@ -173,7 +173,8 @@ struct you {
 	unsigned uinvulnerable:1;	/* you're invulnerable (praying) */
 	unsigned uburied:1;		/* you're buried */
 	unsigned uedibility:1;		/* blessed food detection; sense unsafe food */
-	/* 1 free bit! */
+	unsigned uwilldrown:1;		/* you'll drown next turn (for extra turn */
+					/* before dying to a monster's drowning attack) */
 
 	unsigned udg_cnt;		/* how long you have been demigod */
 	struct u_event	uevent;		/* certain events have happened */

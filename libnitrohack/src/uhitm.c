@@ -476,8 +476,10 @@ static boolean known_hitum(struct monst *mon, int *mhit, const struct attack *ua
 			monflee(mon, rnd(100), FALSE, TRUE);
 		    } else monflee(mon, 0, FALSE, TRUE);
 
-		    if (u.ustuck == mon && !u.uswallow && !sticks(youmonst.data))
+		    if (u.ustuck == mon && !u.uswallow && !sticks(youmonst.data)) {
 			u.ustuck = 0;
+			u.uwilldrown = 0;
+		    }
 		}
 		/* Vorpal Blade hit converted to miss */
 		/* could be headless monster or worm tail */

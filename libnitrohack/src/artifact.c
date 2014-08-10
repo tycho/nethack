@@ -1405,6 +1405,7 @@ static boolean magicbane_hit(
 		nomovemsg = "";
 		if (magr && magr == u.ustuck && sticks(youmonst.data)) {
 		    u.ustuck = NULL;
+		    u.uwilldrown = 0;
 		    pline("You release %s!", mon_nam(magr));
 		}
 	    }

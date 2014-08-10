@@ -492,8 +492,13 @@ int polymon(int mntmp)
 	}
 	newsym(u.ux,u.uy);		/* Change symbol */
 
-	if (!sticky && !u.uswallow && u.ustuck && sticks(youmonst.data)) u.ustuck = 0;
-	else if (sticky && !sticks(youmonst.data)) uunstick();
+	if (!sticky && !u.uswallow && u.ustuck && sticks(youmonst.data)) {
+	    u.ustuck = 0;
+	    u.uwilldrown = 0;
+	} else if (sticky && !sticks(youmonst.data)) {
+	    uunstick();
+	}
+
 	if (u.usteed) {
 	    if (touch_petrifies(u.usteed->data) && !Stone_resistance && rnl(3)) {
 		char kbuf[BUFSZ];
@@ -1137,6 +1142,7 @@ static void uunstick(void)
 {
 	pline("%s is no longer in your clutches.", Monnam(u.ustuck));
 	u.ustuck = 0;
+	u.uwilldrown = 0;
 }
 
 void skinback(boolean silently)

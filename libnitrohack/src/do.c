@@ -1049,6 +1049,7 @@ void goto_level(d_level *newlevel, boolean at_stairs, boolean falling, boolean p
 	u.utrap = 0;				/* needed in level_tele */
 	fill_pit(level, u.ux, u.uy);
 	u.ustuck = 0;				/* idem */
+	u.uwilldrown = 0;
 	u.uinwater = 0;
 	u.uundetected = 0;	/* not hidden, even if means are available */
 

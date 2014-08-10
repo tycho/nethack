@@ -2373,6 +2373,7 @@ int float_down(long hmask, long emask)     /* might cancel timeout */
 				pline("Startled, %s can no longer hold you!",
 					mon_nam(u.ustuck));
 			u.ustuck = 0;
+			u.uwilldrown = 0;
 		}
 		/* kludge alert:
 		 * drown() and lava_effects() print various messages almost

@@ -416,6 +416,7 @@ void teleds(int nux, int nuy, boolean allow_drag)
 	}
 	u.utrap = 0;
 	u.ustuck = 0;
+	u.uwilldrown = 0;
 	u.ux0 = u.ux;
 	u.uy0 = u.uy;
 
@@ -1093,7 +1094,10 @@ void rloc_to(struct monst *mtmp, struct level *lev, int x, int y)
 			u.ux = x;
 			u.uy = y;
 			doredraw();
-		} else	u.ustuck = 0;
+		} else {
+			u.ustuck = 0;
+			u.uwilldrown = 0;
+		}
 	}
 
 	newsym(x, y);				/* update new location */

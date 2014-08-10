@@ -1195,6 +1195,7 @@ int jump(
 		if (u.ustuck->mtame && !Conflict && !u.ustuck->mconf) {
 		    pline("You pull free from %s.", mon_nam(u.ustuck));
 		    u.ustuck = 0;
+		    u.uwilldrown = 0;
 		    return 1;
 		}
 		if (magic) {

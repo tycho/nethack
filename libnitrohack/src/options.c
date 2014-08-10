@@ -149,6 +149,7 @@ static struct nh_msgtype_rule def_mt_ruleset[] = {
 	/* drowners */
 	{"* swings itself around you!", MSGTYPE_MORE},
 	{"* grabs you!", MSGTYPE_MORE},
+	{"* pulls you towards the water!", MSGTYPE_MORE},
 	/* slime */
 	{"You don't feel very well", MSGTYPE_MORE},
 	{"You are turning a little *", MSGTYPE_MORE},

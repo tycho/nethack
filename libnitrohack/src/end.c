@@ -283,6 +283,9 @@ static void savelife(int how)
 	flags.move = 0;
 	if (multi > 0) multi = 0; else multi = -1;
 	if (u.utrap && u.utraptype == TT_LAVA) u.utrap = 0;
+	/* drowning monster still grabs, so at least give back the grace turn */
+	u.uwilldrown = 0;
+
 	iflags.botl = 1;
 	u.ugrave_arise = NON_PM;
 	HUnchanging = 0L;

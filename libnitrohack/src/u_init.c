@@ -546,6 +546,7 @@ void u_init(void)
 	flags.beginner = 1;
 	
 	u.ustuck = NULL;
+	u.uwilldrown = 0;
 
 	u.uz.dlevel = 1;
 	u.uz0.dlevel = 0;
@@ -1107,7 +1108,8 @@ void restore_you(struct memfile *mf, struct you *y)
 	y->cstack	= (yflags >> 21) & 1;
 	y->boprize	= (yflags >> 20) & 1;
 	y->coprize	= (yflags >> 19) & 1;
-	
+	y->uwilldrown	= (yflags >> 18) & 1;
+
 	y->uevent.minor_oracle		= (eflags >> 31) & 1;
 	y->uevent.major_oracle		= (eflags >> 30) & 1;
 	y->uevent.finished_sokoban	= (eflags >> 29) & 1;
@@ -1290,7 +1292,8 @@ void save_you(struct memfile *mf, struct you *y)
 		 (y->bstack		<< 22) |
 		 (y->cstack		<< 21) |
 		 (y->boprize		<< 20) |
-		 (y->coprize		<< 19);
+		 (y->coprize		<< 19) |
+		 (y->uwilldrown		<< 18);
 	eflags = (y->uevent.minor_oracle	<< 31) |
 		 (y->uevent.major_oracle	<< 30) |
 		 (y->uevent.finished_sokoban	<< 29) |

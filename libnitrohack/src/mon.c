@@ -1670,6 +1670,7 @@ void unstuck(struct monst *mtmp)
 			doredraw();
 		}
 		u.ustuck = 0;
+		u.uwilldrown = 0;
 	}
 }
 

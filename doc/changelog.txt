@@ -17,6 +17,9 @@ Highlights
   always have a few turns to save yourself from instant death.
 * Drawbridge instant death removed: drawbridges can only be destroyed by force
   bolts when closed, not open.
+* Extra turn before drowning attack instant death.  Players upgrading from an
+  older version of DynaHack should adjust their `msgtype` as described in the
+  Configuration section of this changelog.
 * Sokoban prizes moved to Mines End, making Sokoban much more optional.
 * Nymph level moved into Town branch; Town shops are larger to compensate.
 * Effect of skills on to-hit and damage raised in general.
@@ -191,6 +194,8 @@ Monsters
 --------
 * Instant petrification completely replaced with delayed petrification: you will
   always have a few turns to save yourself from instant death.
+* Drowning attacks give two turns for players to react before instant death (was
+  one turn); a monster "pulls you towards the water" before it drowns you.
 * Metallivores and disintegrators can eat through iron bars (from UnNetHack).
 * Allow Demogorgon to be bribed, since his lair is now guaranteed.
 * Tone back demon bribery amounts inherited from UnNetHack: demons now only ask
@@ -254,6 +259,9 @@ Configuration
   automatically begins entering repeat prefixes; people who have a habit of
   using the top-row number keys for diagonal movement can toggle this option off
   and map those keys to the movement commands under the `keymap` option.
+* "* pulls you towards the water!" mapped to MORE action under `msgtype` submenu
+  option for the message given in the new extra turn before monster drowning
+  attacks.
 
 Technical
 ---------
