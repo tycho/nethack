@@ -102,7 +102,7 @@ int bhitm(struct monst *mtmp, struct obj *otmp)
 			if (dbldam) dmg *= 2;
 			if (otyp == SPE_FORCE_BOLT)
 			    dmg += spell_damage_bonus();
-			hit(zap_type_text, mtmp, exclam(dmg));
+			hit(zap_type_text, FALSE, mtmp, exclam(dmg));
 			resist(mtmp, otmp->oclass, dmg, TELL);
 		} else miss(zap_type_text, mtmp);
 		makeknown(otyp);
@@ -2619,14 +2619,15 @@ const char *exclam(int force)
 	return (const char *)((force < 0) ? "?" : (force <= 4) ? "." : "!");
 }
 
-void hit(const char *str, struct monst *mtmp,
+void hit(const char *str, boolean silently, struct monst *mtmp,
 	 const char *force)	/* usually either "." or "!" */
 {
 	if ((!cansee(bhitpos.x,bhitpos.y) && !canspotmon(level, mtmp) &&
 	     !(u.uswallow && mtmp == u.ustuck))
 	   || !flags.verbose)
 	    pline("%s %s it.", The(str), vtense(str, "hit"));
-	else pline("%s %s %s%s", The(str), vtense(str, "hit"),
+	else pline("%s %s%s %s%s",
+		   The(str), (silently ? "silently ": ""), vtense(str, "hit"),
 		   mon_nam(mtmp), force);
 }
 
@@ -3326,7 +3327,7 @@ buzzmonst:
 		if ((!is_breath || abs(type) == ZT_BREATH(ZT_DEATH)) &&
 		    mon_reflects(mon, NULL)) {
 		    if (cansee(mon->mx,mon->my)) {
-			hit(fltxt, mon, exclam(0));
+			hit(fltxt, FALSE, mon, exclam(0));
 			shieldeff(mon->mx, mon->my);
 			mon_reflects(mon, "But it reflects from %s %s!");
 		    }
@@ -3338,7 +3339,7 @@ buzzmonst:
 
 		    if (is_rider(mon->data) && abs(type) == ZT_BREATH(ZT_DEATH)) {
 			if (canseemon(level, mon)) {
-			    hit(fltxt, mon, ".");
+			    hit(fltxt, FALSE, mon, ".");
 			    pline("%s disintegrates.", Monnam(mon));
 			    pline("%s body reintegrates before your %s!",
 				  s_suffix(Monnam(mon)),
@@ -3351,7 +3352,7 @@ buzzmonst:
 		    }
 		    if (mon->data == &mons[PM_DEATH] && abstype == ZT_DEATH) {
 			if (canseemon(level, mon)) {
-			    hit(fltxt, mon, ".");
+			    hit(fltxt, FALSE, mon, ".");
 			    pline("%s absorbs the deadly %s!", Monnam(mon),
 				  type == ZT_BREATH(ZT_DEATH) ?
 					"bolt" : "ray");
@@ -3367,7 +3368,7 @@ buzzmonst:
 			    if (!m_amulet)
 				pline("%s is disintegrated!", Monnam(mon));
 			    else
-				hit(fltxt, mon, "!");
+				hit(fltxt, FALSE, mon, "!");
 			}
 
 /* note: worn amulet of life saving must be preserved in order to operate */
@@ -3403,7 +3404,7 @@ buzzmonst:
 		    } else {
 			if (!otmp) {
 			    /* normal non-fatal hit */
-			    hit(fltxt, mon, exclam(tmp));
+			    hit(fltxt, FALSE, mon, exclam(tmp));
 			} else {
 			    /* some armor was destroyed; no damage done */
 			    if (canseemon(level, mon))

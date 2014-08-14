@@ -563,6 +563,9 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 	char yourbuf[BUFSZ];
 	char unconventional[BUFSZ];	/* substituted for word "attack" in msg */
 	char saved_oname[BUFSZ];
+	const char *silent_adj =
+		(flags.verbose && oprop_stealth_attack(obj, ostack, uwep, thrown)) ?
+		"silently " : "";
 
 	unconventional[0] = '\0';
 	saved_oname[0] = '\0';
@@ -803,7 +806,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 				static const char withwhat[] = "corpse";
 				tmp = 1;
 				hittxt = TRUE;
-				pline("You hit %s with %s %s.", mon_nam(mon),
+				pline("You %shit %s with %s %s.", silent_adj, mon_nam(mon),
 				    obj->dknown ? the(mons_mname(&mons[obj->corpsenm])) :
 				    an(mons_mname(&mons[obj->corpsenm])),
 				    (obj->quan > 1) ? makeplural(withwhat) : withwhat);
@@ -1055,14 +1058,14 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 		hittxt = TRUE;
 	    } else if (u.usteed && !thrown && tmp > 0 &&
 		    weapon_type(obj) == P_LANCE && mon != u.ustuck && joust(mon,obj)) {
-		pline("You joust %s%s",
+		pline("You %sjoust %s%s", silent_adj,
 		      mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 		pline("Your %s vanishes on impact!", xname(obj));
 		hittxt = TRUE;
 	    }
 	} else if (jousting) {
 	    tmp += dice(2, (obj == uwep) ? 10 : 2);	/* [was in dmgval()] */
-	    pline("You joust %s%s",
+	    pline("You %sjoust %s%s", silent_adj,
 			 mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 	    if (jousting < 0) {
 		pline("Your %s shatters on impact!", xname(obj));
@@ -1118,7 +1121,7 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 		   /* && !destroyed  -- guaranteed by mhp > 1 */ ) {
 		struct monst *mtmp2;
 		if ((mtmp2 = clone_mon(mon, 0, 0))) {
-			pline("%s divides as you hit it!", Monnam(mon));
+			pline("%s divides as you %shit it!", Monnam(mon), silent_adj);
 			hittxt = TRUE;
 			/* Prevent pudding farming by halving max HP so there are
 			 * at most 2^(floor(log2(hp)-1)) puddings generated from
@@ -1131,9 +1134,10 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 
 	if (!hittxt &&			/*( thrown => obj exists )*/
 	  (!destroyed || (thrown && m_shot.n > 1 && m_shot.o == obj->otyp))) {
-		if (thrown) hit(mshot_xname(obj), mon, exclam(tmp));
+		if (thrown) hit(mshot_xname(obj), *silent_adj, mon, exclam(tmp));
 		else if (!flags.verbose) pline("You hit it.");
-		else pline("You %s %s%s", Role_if (PM_BARBARIAN) ? "smite" : "hit",
+		else pline("You %s%s %s%s",
+			 silent_adj, Role_if(PM_BARBARIAN) ? "smite" : "hit",
 			 mon_nam(mon), canseemon(level, mon) ? exclam(tmp) : ".");
 	}
 
@@ -1190,8 +1194,10 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 		if (!already_killed) xkilled(mon, 0);
 		return FALSE;
 	} else if (destroyed) {
-		if (!already_killed)
-		    killed(mon);	/* takes care of most messages */
+		if (!already_killed) {
+		    /* takes care of most messages */
+		    xkilled(mon, 1 | (*silent_adj ? 4 : 0));
+		}
 	} else if (u.umconf && !thrown) {
 		nohandglow(mon);
 		if (!mon->mconf && !resist(mon, SPBOOK_CLASS, 0, NOTELL)) {
@@ -1254,6 +1260,12 @@ static void noisy_hit(struct monst *mtmp, struct obj *otmp,
 	if (otmp && otmp->oclass == WEAPON_CLASS)
 	    skilltype = objects[otmp->otyp].oc_skill;
 
+	/* Weapons and launchers of stealth don't make noise. */
+	if (otmp && oprop_stealth_attack(otmp, ostack, uwep, thrown)) {
+	    oprop_id(ITEM_STEALTH, otmp, ostack, uwep);
+	    return;
+	}
+
 	/* properly fired missiles shouldn't make much noise on impact,
 	 * and thrown darts, shuriken, and knives are by definition sneaky */
 	if (otmp && thrown) {
@@ -1267,10 +1279,6 @@ static void noisy_hit(struct monst *mtmp, struct obj *otmp,
 
 	/* If you're stealthy, you can slit throats with knives */
 	if (otmp && Stealth && skilltype == P_KNIFE)
-	    return;
-
-	/* Weapons and launchers of stealth don't make noise. */
-	if (otmp && oprop_stealth_attack(otmp, ostack, uwep, thrown))
 	    return;
 
 	/* Stealth will reduce the amount of noise made while fighting,

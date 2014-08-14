@@ -54,6 +54,7 @@ extern const char *artiname(int);
 extern struct obj *mk_artifact(struct level *lev, struct obj *, aligntyp);
 extern long restrict_oprops(struct obj *, long);
 extern struct obj *create_oprop(struct level *lev, struct obj *, boolean);
+extern void oprop_id(long, struct obj *, struct obj *, struct obj *);
 extern boolean oprop_stealth_attack(const struct obj *, const struct obj *,
 				    const struct obj *, boolean);
 extern boolean detonate_obj(struct obj *, struct obj *, struct obj *,
@@ -1984,7 +1985,7 @@ extern boolean cancel_monst(struct monst *,struct obj *,
 extern void weffects(struct obj *, schar, schar, schar);
 extern int spell_damage_bonus(void);
 extern const char *exclam(int force);
-extern void hit(const char *,struct monst *,const char *);
+extern void hit(const char *,boolean,struct monst *,const char *);
 extern void miss(const char *,struct monst *);
 extern struct monst *beam_hit(int,int,int,int,int (*)(struct monst*,struct obj*),
 			     int (*)(struct obj*,struct obj*),struct obj *, boolean *);

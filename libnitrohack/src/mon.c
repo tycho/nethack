@@ -1682,8 +1682,11 @@ void killed(struct monst *mtmp)
 /* the player has killed the monster mtmp */
 void xkilled(struct monst *mtmp, int dest)
 /*
- * Dest=1, normal; dest=0, don't print message; dest=2, don't drop corpse
- * either; dest=3, message but no corpse
+ * dest is a bitfield arranged as follows:
+ *
+ *  - bit 1 (0x1) : print kill message
+ *  - bit 2 (0x2) : don't drop corpse
+ *  - bit 3 (0x4) : add "silently" to kill message
  */
 {
 	int tmp, x = mtmp->mx, y = mtmp->my;
@@ -1699,12 +1702,13 @@ void xkilled(struct monst *mtmp, int dest)
 	violated(CONDUCT_PACIFISM);
 
 	if (dest & 1) {
+	    const char *silent_adj = (dest & 4) ? "silently " : "";
 	    const char *verb = nonliving(mtmp->data) ? "destroy" : "kill";
 
 	    if (!wasinside && !canspotmon(level, mtmp))
-		pline("You %s it!", verb);
+		pline("You %s%s it!", silent_adj, verb);
 	    else {
-		pline("You %s %s!", verb,
+		pline("You %s%s %s!", silent_adj, verb,
 		    !mtmp->mtame ? mon_nam(mtmp) :
 			x_monnam(mtmp,
 				 mtmp->mnamelth ? ARTICLE_NONE : ARTICLE_THE,

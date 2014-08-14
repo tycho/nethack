@@ -183,7 +183,7 @@ int ohitmon(struct monst *magr,	/* thrower/firer, if any */
 		damage = 0;
 	    if (ismimic) seemimic(mtmp);
 	    mtmp->msleeping = 0;
-	    if (vis) hit(distant_name(otmp,mshot_xname), mtmp, exclam(damage));
+	    if (vis) hit(distant_name(otmp,mshot_xname), FALSE, mtmp, exclam(damage));
 	    else if (verbose) pline("%s is hit%s", Monnam(mtmp), exclam(damage));
 
 	    if (touch_disintegrates(mtmp->data) && !mtmp->mcan && mtmp->mhp > 6 &&

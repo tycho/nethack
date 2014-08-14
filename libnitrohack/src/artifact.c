@@ -468,8 +468,7 @@ static void strip_oprops(struct obj *otmp)
 /*
  * Set property the player knows on object/stack/launcher from an attack.
  */
-static void oprop_id(long oprop, struct obj *otmp, struct obj *ostack,
-		     struct obj *olaunch)
+void oprop_id(long oprop, struct obj *otmp, struct obj *ostack, struct obj *olaunch)
 {
 	if ((otmp->oprops & oprop)) {
 	    otmp->oprops_known |= oprop;

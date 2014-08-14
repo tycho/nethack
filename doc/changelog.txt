@@ -175,6 +175,10 @@ Items
 * Wielding or unwielding a weapon of stealth identifies the stealth property on
   that weapon and gives identifying messages similar to wearing other items that
   grant stealth.
+* Hitting a monster with a weapon of stealth identifies the stealth property on
+  that weapon, and also gives a message that you "silently hit" or "silently
+  kill" the monster, hinting at how weapons of stealth bypass the usual combat
+  noise mechanic.
 * Improve stacking of random candles by removing random chance of them being
   blessed or cursed (from AceHack).  Between wax and tallow candles, and
   blessed, uncursed and cursed status, an inventory could be filled with 6
