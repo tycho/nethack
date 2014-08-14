@@ -419,7 +419,6 @@ static int Cloak_on(void)
     Oprops_on(uarmc, WORN_CLOAK);
 
     switch(uarmc->otyp) {
-	case ELVEN_CLOAK:
 	case CLOAK_OF_PROTECTION:
 	case CLOAK_OF_DISPLACEMENT:
 		makeknown(uarmc->otyp);
@@ -429,6 +428,12 @@ static int Cloak_on(void)
 	case CLOAK_OF_MAGIC_RESISTANCE:
 	case ROBE:
 	case LEATHER_CLOAK:
+		break;
+	case ELVEN_CLOAK:
+		if (!oldprop && !HStealth && !BStealth) {
+		    makeknown(uarmc->otyp);
+		    pline("You move very quietly.");
+		}
 		break;
 	case MUMMY_WRAPPING:
 		/* Note: it's already being worn, so we have to cheat here. */
@@ -478,7 +483,6 @@ int Cloak_off(void)
 	/* For mummy wrapping, taking it off first resets `Invisible'. */
     setworn(NULL, W_ARMC);
     switch (otyp) {
-	case ELVEN_CLOAK:
 	case ORCISH_CLOAK:
 	case DWARVISH_CLOAK:
 	case CLOAK_OF_PROTECTION:
@@ -487,6 +491,12 @@ int Cloak_off(void)
 	case OILSKIN_CLOAK:
 	case ROBE:
 	case LEATHER_CLOAK:
+		break;
+	case ELVEN_CLOAK:
+		if (!oldprop && !HStealth && !BStealth) {
+		    makeknown(otyp);
+		    pline("You sure are noisy.");
+		}
 		break;
 	case MUMMY_WRAPPING:
 		if (Invis && !Blind) {
@@ -989,7 +999,6 @@ void Ring_on(struct obj *obj, boolean deliberate)
     switch(obj->otyp){
 	case RIN_TELEPORTATION:
 	case RIN_SEARCHING:
-	case RIN_STEALTH:
 	case RIN_HUNGER:
 	case RIN_AGGRAVATE_MONSTER:
 	case RIN_POISON_RESISTANCE:
@@ -1003,6 +1012,12 @@ void Ring_on(struct obj *obj, boolean deliberate)
 	case RIN_SLOW_DIGESTION:
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
+		break;
+	case RIN_STEALTH:
+		if (!oldprop && !HStealth && !BStealth) {
+		    makeknown(RIN_STEALTH);
+		    pline("You move very quietly.");
+		}
 		break;
 	case RIN_REGENERATION:
 		if (!oldprop && !HRegeneration && !regenerates(youmonst.data)) {
@@ -1103,6 +1118,7 @@ void Ring_on(struct obj *obj, boolean deliberate)
 static void Ring_off_or_gone(struct obj *obj, boolean gone)
 {
     long mask = (obj->owornmask & W_RING);
+    long oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
     int old_attrib, which;
 
     Oprops_off(obj, mask);
@@ -1113,11 +1129,14 @@ static void Ring_off_or_gone(struct obj *obj, boolean gone)
     if (gone) setnotworn(obj);
     else setworn(NULL, obj->owornmask);
 
+    /* only mask out W_RING when we don't have both
+       left and right rings of the same type */
+    if ((oldprop & W_RING) != W_RING) oldprop &= ~W_RING;
+
     switch(obj->otyp) {
 	case RIN_TELEPORTATION:
 	case RIN_REGENERATION:
 	case RIN_SEARCHING:
-	case RIN_STEALTH:
 	case RIN_HUNGER:
 	case RIN_AGGRAVATE_MONSTER:
 	case RIN_POISON_RESISTANCE:
@@ -1132,6 +1151,12 @@ static void Ring_off_or_gone(struct obj *obj, boolean gone)
 	case RIN_SLOW_DIGESTION:
 	case RIN_SUSTAIN_ABILITY:
 	case MEAT_RING:
+		break;
+	case RIN_STEALTH:
+		if (!oldprop && !HStealth && !BStealth) {
+		    makeknown(RIN_STEALTH);
+		    pline("You sure are noisy.");
+		}
 		break;
 	case RIN_WARNING:
 		see_monsters();

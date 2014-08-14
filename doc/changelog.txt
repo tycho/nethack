@@ -168,6 +168,8 @@ Items
     - Formal ID magic flutes and magic harps when used.
     - Formal ID enchant armor scrolls when they turn dragon scales into dragon
       scale mail.
+    - Formal ID rings of stealth and elven cloaks when wearing or taking them
+      off gives or takes away stealth, to make them consistent with elven boots.
 * Guarantee a wand of cancellation in the Castle chest that can be used for
   blanking scrolls and potions.
 * The shield of reflection now weighs 50 (was 75) due to the introduction of the
