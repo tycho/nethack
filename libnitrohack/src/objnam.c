@@ -595,7 +595,7 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 		else strcat(buf, actualn);
 		break;
 	    case BALL_CLASS:
-		sprintf(buf, "%sheavy iron ball",
+		sprintf(eos(buf), "%sheavy iron ball",
 			(obj->owt > ocl->oc_weight) ? "very " : "");
 		break;
 	    case POTION_CLASS:
@@ -648,13 +648,13 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 		if (!dknown)
 			strcat(buf, "wand");
 		else if (nn)
-			sprintf(buf, "wand of %s", actualn);
+			sprintf(eos(buf), "wand of %s", actualn);
 		else if (un)
-			sprintf(buf, "wand called %s", un);
+			sprintf(eos(buf), "wand called %s", un);
 		else if (Is_prize(obj))
 			strcat(buf, "wand");
 		else
-			sprintf(buf, "%s wand", dn);
+			sprintf(eos(buf), "%s wand", dn);
 		break;
 	case SPBOOK_CLASS:
 		if (!dknown) {
@@ -664,11 +664,11 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			    strcat(buf, "spellbook of ");
 			strcat(buf, actualn);
 		} else if (un) {
-			sprintf(buf, "spellbook called %s", un);
+			sprintf(eos(buf), "spellbook called %s", un);
 		} else if (Is_prize(obj)) {
 			strcat(buf, "spellbook");
 		} else {
-			sprintf(buf, "%s spellbook", dn);
+			sprintf(eos(buf), "%s spellbook", dn);
 		}
 		break;
 	case RING_CLASS:
@@ -676,13 +676,13 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 		    strcat(buf, "ring");
 		} else {
 		    if (nn)
-			sprintf(buf, "ring of %s", actualn);
+			sprintf(eos(buf), "ring of %s", actualn);
 		    else if (un)
 			strcat(buf, "ring"); /* u-named after props */
 		    else if (Is_prize(obj))
 			strcat(buf, "ring");
 		    else
-			sprintf(buf, "%s ring", dn);
+			sprintf(eos(buf), "%s ring", dn);
 
 		    propnames(buf, obj->oprops, obj->oprops_known, FALSE, nn);
 

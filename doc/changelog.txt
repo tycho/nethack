@@ -181,6 +181,8 @@ Items
   different candle stacks, even with DynaHack's improved item stacking!
 * Grant +1 to-hit for all short swords.
 * Allow knife and stiletto as possible tin-opening tools (from K-Mod).
+* Fix prefixes like "magical" and "prize" not appearing on rings, wands,
+  spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
   monster and it hits a door."
 * Fix wielding of a cockatrice corpse bare-handed while wearing chromatic dragon
