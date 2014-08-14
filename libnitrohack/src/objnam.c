@@ -396,16 +396,11 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 	    goto nameit;
 
 	/*
-	 * Give "magical" prefix to objects previously detected as such:
-	 *
-	 *   1) It has properties and none of them are known.
-	 *   2) It doesn't have properties but its base item
-	 *      _is_ typically magical _and_ has an unknown name.
+	 * Give "magical" prefix to objects with properties as long as not all of
+	 * them are known.
 	 */
 	if ((obj->oprops_known & ITEM_MAGICAL) && !dump_ID_flag &&
-	    ((obj->oprops && !(obj->oprops_known & ~ITEM_MAGICAL)) ||
-	     (!obj->oprops && objects[obj->otyp].oc_magic &&
-	      !objects[obj->otyp].oc_name_known)))
+	    (obj->oprops & ~obj->oprops_known))
 	    strcat(buf, "magical ");
 
 	/* prizes suppress description of objects detected/remembered from afar */

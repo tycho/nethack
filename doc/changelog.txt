@@ -181,6 +181,9 @@ Items
   different candle stacks, even with DynaHack's improved item stacking!
 * Grant +1 to-hit for all short swords.
 * Allow knife and stiletto as possible tin-opening tools (from K-Mod).
+* The "magical" prefix on items is only omitted once all properties on it have
+  been identified instead of once any of them have been, making it easier to
+  discover items that have more than one property.
 * Fix prefixes like "magical" and "prize" not appearing on rings, wands,
   spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
