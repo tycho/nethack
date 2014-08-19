@@ -563,12 +563,16 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 	char yourbuf[BUFSZ];
 	char unconventional[BUFSZ];	/* substituted for word "attack" in msg */
 	char saved_oname[BUFSZ];
-	const char *silent_adj =
-		(flags.verbose && oprop_stealth_attack(obj, ostack, uwep, thrown)) ?
-		"silently " : "";
+	const char *silent_adj = "";
 
 	unconventional[0] = '\0';
 	saved_oname[0] = '\0';
+
+	/* "silently" hit when noisy_hit() won't awaken nearby monsters */
+	if (flags.verbose && obj &&
+	    oprop_stealth_attack(obj, ostack, uwep, thrown)) {
+	    silent_adj = "silently ";
+	}
 
 	wakeup(mon);
 	if (!obj) {	/* attack with bare hands */
