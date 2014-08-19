@@ -180,9 +180,7 @@ Items
   that weapon and gives identifying messages similar to wearing other items that
   grant stealth.
 * Hitting a monster with a weapon of stealth identifies the stealth property on
-  that weapon, and also gives a message that you "silently hit" or "silently
-  kill" the monster, hinting at how weapons of stealth bypass the usual combat
-  noise mechanic.
+  that weapon.
 * Improve stacking of random candles by removing random chance of them being
   blessed or cursed (from AceHack).  Between wax and tallow candles, and
   blessed, uncursed and cursed status, an inventory could be filled with 6
@@ -236,6 +234,10 @@ Interface
     - Show a message of the identity of whistles and instruments when they are
       discovered on use.
     - Show message when pets or other monsters grow up (from SLASH'EM Extended).
+    - Attacking with a weapon of stealth, as well as with a knife while
+      stealthy, gives a message that you "silently hit" or "silently kill"
+      monsters, hinting at options for fighting without awakening nearby
+      monsters.  These messages are new, but the mechanic itself is not.
 * Make wearing and taking off messages more descriptive, e.g. "You finish taking
   off a +0 leather armor" instead of "You finish taking off your suit."
 * Curses on armor, jewelry and eyewear are now revealed when they are worn

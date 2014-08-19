@@ -570,7 +570,8 @@ static boolean hmon_hitmon(struct monst *mon, struct obj *obj,
 
 	/* "silently" hit when noisy_hit() won't awaken nearby monsters */
 	if (flags.verbose && obj &&
-	    oprop_stealth_attack(obj, ostack, uwep, thrown)) {
+	    (oprop_stealth_attack(obj, ostack, uwep, thrown) ||
+	     (Stealth && objects[obj->otyp].oc_skill == P_KNIFE))) {
 	    silent_adj = "silently ";
 	}
 
