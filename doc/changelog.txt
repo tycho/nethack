@@ -46,6 +46,8 @@ Character
     - sleep: half duration, doubled chance to awaken from combat
     - disintegration: 90% chance to resist
     - poison: half damage, having any protects against other effects
+    - As a side effect of this patch, negative AC and half physical damage
+      resistance no longer reduce damage from fire, cold, shock or acid attacks.
 * Reflection no longer reflects breaths; disintegration breath is treated as a
   beam to prevent unfair deaths due to this change.  The breath graphic has been
   changed accordingly.
