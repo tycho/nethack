@@ -120,6 +120,7 @@ Dungeon
 -------
 * Changes to standard rooms-and-corridors level generation:
     - Grid room level style (from K-Mod).
+    - Raise chance of special rooms-and-corridors level style from 10% to 20%.
 * Changes to Gehennom:
     - Mazes completely removed from Gehennom!  Both fill levels and filler
       around special levels consist of lava caverns.

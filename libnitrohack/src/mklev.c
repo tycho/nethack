@@ -1030,7 +1030,7 @@ static void makelevel(struct level *lev)
 	}
 
 	/* otherwise, fall through - it's a "regular" level. */
-	if (rn2(10)) {
+	if (rn2(5)) {
 	    levstyle = LEVSTYLE_STANDARD;
 	} else {
 	    /* avoid LEVSTYLE_ANYTOANY (style 1) unless
