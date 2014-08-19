@@ -27,6 +27,8 @@
 #define LEVSTYLE_ANYTOANY	1
 #define LEVSTYLE_RING		2
 #define LEVSTYLE_HUB		3
+#define LEVSTYLE_GRID		4
+#define LEVSTYLE_MAX_TYPES	5
 
 /* symbolic names for capacity levels */
 #define UNENCUMBERED	0

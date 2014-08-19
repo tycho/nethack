@@ -24,7 +24,7 @@ static void dosdoor(struct level *lev, xchar,xchar,struct mkroom *,int);
 static void join(struct level *lev, int a,int b, boolean);
 static void do_room_or_subroom(struct level *lev, struct mkroom *,int,int,int,int,
 			       boolean,schar,boolean,boolean);
-static void makerooms(struct level *lev);
+static void makerooms(struct level *lev, int levstyle);
 static void finddpos(struct level *lev, coord *,xchar,xchar,xchar,xchar);
 static void mkinvpos(xchar,xchar,int);
 static void mk_knox_portal(struct level *lev, xchar,xchar);
@@ -153,6 +153,9 @@ void sort_rooms(struct level *lev, int levstyle)
 	case LEVSTYLE_RING:
 	    sort_func = sort_rooms_ring_comp;
 	    break;
+	case LEVSTYLE_GRID:
+	    /* no sorting */
+	    return;
 	}
 
 	/* save rooms and doors in their original order */
@@ -373,13 +376,49 @@ static boolean mk_split_room(struct level *lev)
 	return TRUE;
 }
 
-static void makerooms(struct level *lev)
+static void makerooms(struct level *lev, int levstyle)
 {
-	boolean tried_vault = FALSE;
-	boolean do_splitrm = !rn2(10);
-	boolean did_splitrm = FALSE;
+	boolean tried_vault, do_splitrm, did_splitrm;
+
+	/*
+	 * It's worth noting that some level styles have particular weaknesses.
+	 * For example, LEVSTYLE_RING has no shops since all rooms have 2 doors,
+	 * and LEVSTYLE_GRID leaves no room for vaults or split rooms.
+	 */
+
+	if (levstyle == LEVSTYLE_GRID) {
+	    int grid_width = rn1(3, 4);
+	    int grid_height = rn2(4) ? 2 : 3;
+	    int room_width = COLNO / ((grid_width + 1) * 2);
+	    int room_height = (grid_height == 2) ? 4 : 2;
+	    int x, y;
+
+	    /* make grid rooms in column-major order */
+	    for (x = 0; x < grid_width; x++) {
+		for (y = 0; y < grid_height; y++) {
+		    /*
+		     * create_room() does not handle the regular grid pattern well;
+		     * the room position parameter is not precise enough.
+		     * So we'll do it the old-fashioned way.
+		     */
+		    smeq[lev->nroom] = lev->nroom;
+		    add_room(lev,
+			     (2 * x + 1) * room_width + 2 * x,
+			     (2 * y + 1) * room_height + 2 * y,
+			     (2 * x + 2) * room_width + 2 * x,
+			     (2 * y + 2) * room_height + 2 * y,
+			     TRUE, OROOM, FALSE);
+		}
+	    }
+
+	    /* No room for a vault.  Don't bother trying. */
+	    return;
+	}
 
 	/* make rooms until satisfied */
+	tried_vault = FALSE;
+	do_splitrm = !rn2(10);
+	did_splitrm = FALSE;
 	/* rnd_rect() will returns 0 if no more rects are available... */
 	while (lev->nroom < MAXNROFROOMS && rnd_rect()) {
 		/* don't double-count split room halves when limiting room count */
@@ -608,6 +647,69 @@ void makecorridors(struct level *lev, int style)
 		    join(lev, a, b, FALSE);
 		for (a = b + 1; a < lev->nroom; a++)
 		    join(lev, a, b, FALSE);
+	    }
+	    break;
+
+	case LEVSTYLE_GRID: /* rooms should be in column-major order */
+	    {
+		/* First, we need to establish whether the grid height is 2 or 3. */
+		int grid_height = (lev->rooms[0].lx == lev->rooms[2].lx) ? 3 : 2;
+		int r;
+
+		/* Make random horizontal joins, at least one per column. */
+		for (a = 0; a < lev->nroom - grid_height; a += grid_height) {
+		    r = rn2(grid_height);
+		    join(lev, a + r, a + r + grid_height, FALSE);
+
+		    for (b = 1; b < grid_height; b++) {
+			if (!rn2(4)) {
+			    r = (r + 1) % grid_height;
+			    join(lev, a + r, a + r + grid_height, FALSE);
+			}
+		    }
+		}
+
+		/* Make vertical joins, at least one per row. */
+		for (b = 0; b < grid_height - 1; b++) {
+		    r = rn2(lev->nroom / grid_height);
+		    join(lev, b+grid_height*r, b+grid_height*r+1, FALSE);
+
+		    for (a = 1; a < lev->nroom / grid_height; a++) {
+			if (!rn2(4)) {
+			    /* Pick a random column. */
+			    r = (r + rn2(lev->nroom / grid_height - a)) %
+				(lev->nroom / grid_height);
+			    /* Move along to one that isn't already joined. */
+			    while (smeq[b+grid_height*r] == smeq[b+grid_height*r+1] &&
+				   r < 2 * lev->nroom / grid_height) {
+				r++;
+			    }
+			    r %= lev->nroom / grid_height;
+			    /* Join it. */
+			    join(lev, b+grid_height*r, b+grid_height*r+1, FALSE);
+			}
+		    }
+		}
+
+		/* Finally, just make sure that all rooms are connected. */
+		for (a = 0; a < lev->nroom; a++) {
+		    b = a;
+		    while (smeq[b] > smeq[smeq[b]]) {
+			smeq[b] = smeq[smeq[b]]; /* Just to speed up later checks. */
+			b = smeq[b];
+		    }
+		    if (smeq[b] != 0) {
+			/*
+			 * Well, we know that the rooms before this one are connected
+			 * to room 0...
+			 */
+			if (a % grid_height == 0) {
+			    join(lev, a, a - grid_height, FALSE);
+			} else {
+			    join(lev, a, a - 1, FALSE);
+			}
+		    }
+		}
 	    }
 	    break;
 	}
@@ -933,16 +1035,15 @@ static void makelevel(struct level *lev)
 	} else {
 	    /* avoid LEVSTYLE_ANYTOANY (style 1) unless
 	     * it was asked for, since it can be really ugly */
-	    levstyle = rn2(3);
-	    if (levstyle >= 1)
-		levstyle++;
+	    levstyle = rn2(LEVSTYLE_MAX_TYPES - (LEVSTYLE_ANYTOANY + 1)) +
+		       LEVSTYLE_ANYTOANY + 1;
 	}
 
 	if (Is_rogue_level(&lev->z)) {
 		makeroguerooms(lev);
 		makerogueghost(lev);
 	} else {
-		makerooms(lev);
+		makerooms(lev, levstyle);
 	}
 	sort_rooms(lev, levstyle);
 
