@@ -203,6 +203,8 @@ Items
   after the prize itself has vanished.
 * Fix contents of containers created on special levels not being included in the
   initial container weight.
+* Fix completely eroded armor being destroyed by further erosion when greased or
+  erodeproofed.
 
 Monsters
 --------

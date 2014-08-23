@@ -134,35 +134,33 @@ boolean rust_dmg(struct obj *otmp, const char *ostr, int type,
 		    pline("%s's %s %s not affected.", Monnam(victim), ostr,
 			  vtense(ostr, "are"));
 	    }
-	} else if (erosion < MAX_ERODE) {
-	    if (grprot && otmp->greased) {
-		grease_protect(otmp,ostr,victim);
-	    } else if (otmp->oerodeproof || (otmp->blessed && !rnl(4))) {
-		if (flags.verbose) {
-		    if (victim == &youmonst)
-			pline("Somehow, your %s %s not affected.",
-			      ostr, vtense(ostr, "are"));
-		    else if (vismon)
-			pline("Somehow, %s's %s %s not affected.",
-			      mon_nam(victim), ostr, vtense(ostr, "are"));
-		}
-	    } else {
+	} else if (grprot && otmp->greased) {
+	    grease_protect(otmp,ostr,victim);
+	} else if (otmp->oerodeproof || (otmp->blessed && !rnl(4))) {
+	    if (flags.verbose) {
 		if (victim == &youmonst)
-		    pline("Your %s %s%s!", ostr,
-			 vtense(ostr, action[type]),
-			 erosion+1 == MAX_ERODE ? " completely" :
-			    erosion ? " further" : "");
+		    pline("Somehow, your %s %s not affected.",
+			  ostr, vtense(ostr, "are"));
 		else if (vismon)
-		    pline("%s's %s %s%s!", Monnam(victim), ostr,
-			vtense(ostr, action[type]),
-			erosion+1 == MAX_ERODE ? " completely" :
-			  erosion ? " further" : "");
-		if (is_primary)
-		    otmp->oeroded++;
-		else
-		    otmp->oeroded2++;
-		update_inventory();
+		    pline("Somehow, %s's %s %s not affected.",
+			  mon_nam(victim), ostr, vtense(ostr, "are"));
 	    }
+	} else if (erosion < MAX_ERODE) {
+	    if (victim == &youmonst)
+		pline("Your %s %s%s!", ostr,
+		     vtense(ostr, action[type]),
+		     erosion+1 == MAX_ERODE ? " completely" :
+			erosion ? " further" : "");
+	    else if (vismon)
+		pline("%s's %s %s%s!", Monnam(victim), ostr,
+		    vtense(ostr, action[type]),
+		    erosion+1 == MAX_ERODE ? " completely" :
+		      erosion ? " further" : "");
+	    if (is_primary)
+		otmp->oeroded++;
+	    else
+		otmp->oeroded2++;
+	    update_inventory();
 	} else {
 	    if (flags.verbose) {
 		if (victim == &youmonst)
