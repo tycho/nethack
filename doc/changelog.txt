@@ -207,6 +207,10 @@ Items
   initial container weight.
 * Fix completely eroded armor being destroyed by further erosion when greased or
   erodeproofed.
+* Fix crash when item is unequipped or lost while being equipped (from
+  NetHack4).
+    - Fix ring worn message being shown after it is forcefully removed by a sink
+      when wearing a ring of levitation over a sink.
 
 Monsters
 --------

@@ -289,8 +289,11 @@ void Oprops_off(struct obj *otmp, unsigned int mask)
 
 static int Boots_on(void)
 {
-    long oldprop =
-	u.uprops[objects[uarmf->otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
+    long oldprop;
+
+    if (!uarmf) return 0;
+
+    oldprop = u.uprops[objects[uarmf->otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
 
     Oprops_on(uarmf, WORN_BOOTS);
 
@@ -333,7 +336,8 @@ static int Boots_on(void)
 		if (!oldprop && !HLevitation) {
 			makeknown(uarmf->otyp);
 			float_up();
-			spoteffects(FALSE);
+			spoteffects(FALSE); /* can unset uarmf */
+			if (!uarmf) return 0;
 		}
 		break;
 	default: warning(unknown_type, c_boots, uarmf->otyp);
@@ -351,8 +355,13 @@ static int Boots_on(void)
 
 int Boots_off(void)
 {
-    int otyp = uarmf->otyp;
-    long oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
+    int otyp;
+    long oldprop;
+
+    if (!uarmf) return 0;
+
+    otyp = uarmf->otyp;
+    oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_BOOTS;
 
     Oprops_off(uarmf, WORN_BOOTS);
 
@@ -413,8 +422,11 @@ int Boots_off(void)
 
 static int Cloak_on(void)
 {
-    long oldprop =
-	u.uprops[objects[uarmc->otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
+    long oldprop;
+
+    if (!uarmc) return 0;
+
+    oldprop = u.uprops[objects[uarmc->otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
 
     Oprops_on(uarmc, WORN_CLOAK);
 
@@ -474,8 +486,13 @@ static int Cloak_on(void)
 
 int Cloak_off(void)
 {
-    int otyp = uarmc->otyp;
-    long oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
+    int otyp;
+    long oldprop;
+
+    if (!uarmc) return 0;
+
+    otyp = uarmc->otyp;
+    oldprop = u.uprops[objects[otyp].oc_oprop].extrinsic & ~WORN_CLOAK;
 
     Oprops_off(uarmc, WORN_CLOAK);
 
@@ -526,6 +543,8 @@ int Cloak_off(void)
 
 static int Helmet_on(void)
 {
+    if (!uarmh) return 0;
+
     Oprops_on(uarmh, WORN_HELMET);
 
     switch(uarmh->otyp) {
@@ -593,6 +612,8 @@ static int Helmet_on(void)
 
 int Helmet_off(void)
 {
+    if (!uarmh) return 0;
+
     Oprops_off(uarmh, WORN_HELMET);
 
     takeoff_mask &= ~W_ARMH;
@@ -637,8 +658,11 @@ int Helmet_off(void)
 
 static int Gloves_on(void)
 {
-    long oldprop =
-	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
+    long oldprop;
+
+    if (!uarmg) return 0;
+
+    oldprop = u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
 
     Oprops_on(uarmg, WORN_GLOVES);
 
@@ -671,8 +695,11 @@ static int Gloves_on(void)
 
 int Gloves_off(void)
 {
-    long oldprop =
-	u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
+    long oldprop;
+
+    if (!uarmg) return 0;
+
+    oldprop = u.uprops[objects[uarmg->otyp].oc_oprop].extrinsic & ~WORN_GLOVES;
 
     Oprops_off(uarmg, WORN_GLOVES);
 
@@ -734,6 +761,8 @@ int Gloves_off(void)
 
 static int Shield_on(void)
 {
+    if (!uarms) return 0;
+
     Oprops_on(uarms, WORN_SHIELD);
 
     if (uarms && !is_racial_armor(uarms, &youmonst))
@@ -746,6 +775,8 @@ static int Shield_on(void)
 
 int Shield_off(void)
 {
+    if (!uarms) return 0;
+
     Oprops_off(uarms, WORN_SHIELD);
 
     takeoff_mask &= ~W_ARMS;
@@ -756,6 +787,8 @@ int Shield_off(void)
 
 static int Shirt_on(void)
 {
+    if (!uarmu) return 0;
+
     Oprops_on(uarmu, WORN_SHIRT);
 
     if (uarmu && !is_racial_armor(uarmu, &youmonst))
@@ -768,6 +801,8 @@ static int Shirt_on(void)
 
 int Shirt_off(void)
 {
+    if (!uarmu) return 0;
+
     Oprops_off(uarmu, WORN_SHIRT);
 
     takeoff_mask &= ~W_ARMU;
@@ -782,6 +817,8 @@ int Shirt_off(void)
  */
 static int Armor_on(void)
 {
+    if (!uarm) return 0;
+
     Oprops_on(uarm, W_ARM);
 
     if (uarm && Is_gold_dragon_armor(uarm->otyp)) {
@@ -842,6 +879,8 @@ static void Armor_off_sub(boolean already_dead)
 
 int Armor_off(void)
 {
+    if (!uarm) return 0;
+
     Oprops_off(uarm, W_ARM);
 
     if (uarm && Is_gold_dragon_armor(uarm->otyp)) {
@@ -861,6 +900,8 @@ int Armor_off(void)
  */
 int Armor_gone(boolean already_dead)
 {
+    if (!uarm) return 0;
+
     Oprops_off(uarm, W_ARM);
 
     if (uarm && Is_gold_dragon_armor(uarm->otyp))
@@ -874,6 +915,8 @@ int Armor_gone(boolean already_dead)
 
 static void Amulet_on(void)
 {
+    if (!uamul) return;
+
     Oprops_on(uamul, W_AMUL);
 
     switch(uamul->otyp) {
@@ -933,6 +976,8 @@ static void Amulet_on(void)
 
 void Amulet_off(void)
 {
+    if (!uamul) return;
+
     Oprops_off(uamul, W_AMUL);
 
     takeoff_mask &= ~W_AMUL;
@@ -983,8 +1028,12 @@ void Amulet_off(void)
 
 void Ring_on(struct obj *obj, boolean deliberate)
 {
-    long oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
+    long oldprop;
     int old_attrib, which;
+
+    if (!obj) return;
+
+    oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
 
     Oprops_on(obj, obj->owornmask & W_RING);
 
@@ -1060,7 +1109,8 @@ void Ring_on(struct obj *obj, boolean deliberate)
 		if (!oldprop && !HLevitation) {
 		    float_up();
 		    makeknown(RIN_LEVITATION);
-		    spoteffects(FALSE);	/* for sinks */
+		    spoteffects(FALSE);	/* for sinks, can remove ring */
+		    if (!(obj->owornmask & W_RING)) return;
 		}
 		break;
 	case RIN_GAIN_STRENGTH:
@@ -1117,9 +1167,14 @@ void Ring_on(struct obj *obj, boolean deliberate)
 
 static void Ring_off_or_gone(struct obj *obj, boolean gone)
 {
-    long mask = (obj->owornmask & W_RING);
-    long oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
+    long mask;
+    long oldprop;
     int old_attrib, which;
+
+    if (!obj) return;
+
+    mask = (obj->owornmask & W_RING);
+    oldprop = u.uprops[objects[obj->otyp].oc_oprop].extrinsic;
 
     Oprops_off(obj, mask);
 
