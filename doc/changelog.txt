@@ -273,6 +273,7 @@ Interface
   multiple shopkeepers in sight and spells of fireball and cone of cold.
 * Dungeon `#overview` can toggle showing levels with no notable features.
     - Dungeon `#overview` no longer exits after viewing a single level.
+* Make extended command prompt case insensitive, like NetHack's (from NetHack4).
 * Fix the color of the Wizard's Tower walls when viewed from another level using
   the `Ctrl-O` dungeon overview.
 * Fix "T - take off" not appearing in the item action menu of meat rings.

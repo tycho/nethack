@@ -220,7 +220,7 @@ static nh_bool ext_cmd_getlin_hook(char *base, void *hook_arg)
 
     com_index = -1;
     for (oindex = 0; oindex < hpa->listlen; oindex++) {
-	if (!strncmp(base, hpa->namelist[oindex], strlen(base))) {
+	if (!strncasecmp(base, hpa->namelist[oindex], strlen(base))) {
 	    if (com_index == -1)	/* no matches yet */
 		com_index = oindex;
 	    else			/* more than 1 match */
