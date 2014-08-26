@@ -549,7 +549,7 @@ struct obj *mksobj(struct level *lev, int otyp, boolean init, boolean artif)
 		break;
 	case WAND_CLASS:
 		if (otmp->otyp == WAN_WISHING) {
-		    otmp->spe = rnf(2,3) ? 1 : rnf(1,2) ? 0 : 2;
+		    otmp->spe = rnf(2,3) ? 2 : rnf(1,2) ? 1 : 3;
 		    otmp->recharged = 1;
 		} else {
 		    otmp->spe = rn1(5,
