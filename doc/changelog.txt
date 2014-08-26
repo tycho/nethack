@@ -201,6 +201,9 @@ Items
   been identified instead of once any of them have been, making it easier to
   discover items that have more than one property.
 * Show which hand a ring of levitation was on when a sink forcefully removes it.
+* Rings with enchantment +3 or lower no longer have a chance to explode when
+  charged, and rings at -5 or lower will only explode from cursed charging (from
+  SporkHack).
 * Fix prefixes like "magical" and "prize" not appearing on rings, wands,
   spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
