@@ -147,6 +147,8 @@ Dungeon
 * Drawbridge instant death removed: drawbridges can only be destroyed by force
   bolts when closed, not open.
 * Prevent magic traps from being created above dungeon level 5.
+* Reduce initial scuffing of randomly-placed engravings to increase the chance
+  that they can be read when they're first encountered.
 * Fix the cosmetic issue of horizontally-flipped levels appearing slightly
   misaligned in the map area.
 * Fix waking monsters level-wide when entering courts, swamps, morgues, zoos and

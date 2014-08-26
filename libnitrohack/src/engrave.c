@@ -88,7 +88,7 @@ char *random_engraving(char *outbuf)
 	if (!rn2(4) || !(rumor = getrumor(0, outbuf, TRUE)) || !*rumor)
 	    strcpy(outbuf, random_mesg[rn2(SIZE(random_mesg))]);
 
-	wipeout_text(outbuf, (int)(strlen(outbuf) / 4), 0);
+	wipeout_text(outbuf, strlen(outbuf) / 8, 0);
 	return outbuf;
 }
 
