@@ -195,7 +195,7 @@ Items
   blessed or cursed (from AceHack).  Between wax and tallow candles, and
   blessed, uncursed and cursed status, an inventory could be filled with 6
   different candle stacks, even with DynaHack's improved item stacking!
-* Grant +1 to-hit for all short swords.
+* Grant +1 to-hit for all short swords (from K-Mod).
 * Allow knife and stiletto as possible tin-opening tools (from K-Mod).
 * The "magical" prefix on items is only omitted once all properties on it have
   been identified instead of once any of them have been, making it easier to
