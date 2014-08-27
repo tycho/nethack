@@ -54,11 +54,16 @@ Character
 * Changes to skills:
     - New body armor skill:
         - Body armor skill grants bonus AC and MC for suits of body armor based
-          on their weight and capped by your skill.
+          on their weight and capped by your skill, as well as weight reduction
+          for worn body armor.
         - Grants (weight / 50 - 2) bonus AC for body armor capped at +2 at
           basic, +4 at skilled and +7 at expert.
         - Grants (weight / 100 - 1) minimum MC for body armor capped at MC1 at
           basic, MC2 at skilled and MC3 at expert.
+        - Reduces weight of worn body armor heavier than leather armor (150wt)
+          according to the difference: 25% at basic, 50% at skilled and 75% at
+          expert, e.g. plate mail (450wt) only weighs 225wt at expert skill.
+          This reduced weight does not affect the AC or MC bonuses above.
         - Trains to expert in between 16k and 24k turns; wearing heavier suits
           of body armor speeds up training.
         - Maximum skill levels:

@@ -847,9 +847,11 @@ static int Armor_on(void)
     if (uarm && !is_racial_armor(uarm, &youmonst))
 	u.uconduct.unracearmor++;
 
-    /* suppress message if called on first game turn via set_wear() */
-    if (moves > 1)
+    /* suppress messages if called on first game turn via set_wear() */
+    if (moves > 1) {
 	discover_cursed_equip(uarm);
+	encumber_msg();
+    }
 
     return 0;
 }
@@ -891,6 +893,7 @@ int Armor_off(void)
     Armor_off_sub(FALSE);
     takeoff_mask &= ~W_ARM;
     setworn(NULL, W_ARM);
+    encumber_msg();
     cancelled_don = FALSE;
     return 0;
 }
@@ -909,6 +912,7 @@ int Armor_gone(boolean already_dead)
     Armor_off_sub(already_dead);
     takeoff_mask &= ~W_ARM;
     setnotworn(uarm);
+    encumber_msg();
     cancelled_don = FALSE;
     return 0;
 }

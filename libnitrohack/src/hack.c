@@ -2988,11 +2988,37 @@ int inv_weight(void)
 	int wt = 0;
 
 	while (otmp) {
-		if (otmp->oclass == COIN_CLASS)
-			wt += (int)(((long)otmp->quan + 50L) / 100L);
-		else if (otmp->otyp != BOULDER || !throws_rocks(youmonst.data))
-			wt += otmp->owt;
-		otmp = otmp->nobj;
+	    if (otmp->oclass == COIN_CLASS) {
+		wt += (int)(((long)otmp->quan + 50L) / 100L);
+	    } else if (otmp->otyp != BOULDER || !throws_rocks(youmonst.data)) {
+		if (otmp == uarm && otmp->owt > P_BODY_ARMOR_MIN_WEIGHT) {
+		    /*
+		     * Reduce weight of worn body armor based on skill and
+		     * weight difference from leather armor:
+		     *
+		     *  - unskilled -> no reduction
+		     *  - basic     -> 25% reduction
+		     *  - skilled   -> 50% reduction
+		     *  - expert    -> 75% reduction
+		     *
+		     * e.g. Wearing plate mail {450} at expert only weighs {225}.
+		     */
+		    int wt_diff = otmp->owt - P_BODY_ARMOR_MIN_WEIGHT;
+		    int ba_skill = mon_skill_level(P_BODY_ARMOR, &youmonst);
+		    wt += P_BODY_ARMOR_MIN_WEIGHT;
+		    if (ba_skill <= P_UNSKILLED)
+			wt += wt_diff;
+		    else if (ba_skill == P_BASIC)
+			wt += wt_diff * 3 / 4;
+		    else if (ba_skill == P_SKILLED)
+			wt += wt_diff / 2;
+		    else if (ba_skill >= P_EXPERT)
+			wt += wt_diff / 4;
+		} else {
+		    wt += otmp->owt;
+		}
+	    }
+	    otmp = otmp->nobj;
 	}
 	wc = weight_cap();
 	return wt - wc;

@@ -873,6 +873,8 @@ static void skill_advance(int skill)
 
     if (skill == P_BODY_ARMOR || skill == P_SHIELD)
 	find_ac();
+    if (skill == P_BODY_ARMOR)
+	encumber_msg();
 }
 
 /*
