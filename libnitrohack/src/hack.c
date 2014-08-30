@@ -1573,19 +1573,26 @@ int domove(schar dx, schar dy, schar dz)
 	    }
 	}
 
-	if (((wtcap = near_capacity()) >= OVERLOADED
-	    || (wtcap > SLT_ENCUMBER &&
-		(Upolyd ? (u.mh < 5 && u.mh != u.mhmax)
-			: (u.uhp < 10 && u.uhp != u.uhpmax))))
-	   && !Is_airlevel(&u.uz)) {
-	    if (wtcap < OVERLOADED) {
+	wtcap = near_capacity();
+
+	if (!Is_airlevel(&u.uz)) {
+	    boolean low_carry_hp = Upolyd ?
+			(u.mh < 5 && u.mh != u.mhmax) :
+			(u.uhp < 10 && u.uhp != u.uhpmax);
+
+	    /* 'Strained' and 'Overloaded' may stop you from moving. */
+	    if (wtcap >= HVY_ENCUMBER && low_carry_hp) {
 		pline("You don't have enough stamina to move.");
 		exercise(A_CON, FALSE);
-	    } else
+		nomul(0, NULL);
+		return 1;
+	    } else if (wtcap >= OVERLOADED) {
 		pline("You collapse under your load.");
-	    nomul(0, NULL);
-	    return 1;
+		nomul(0, NULL);
+		return 1;
+	    }
 	}
+
 	if (u.uswallow) {
 		dx = dy = 0;
 		u.ux = x = u.ustuck->mx;

@@ -113,6 +113,21 @@ Character
   in the case of deliberate teleports consuming hunger.
 * Punishment (i.e. being attached to a ball and chain) no longer stops you from
   displacing pets.
+* Movement at low HP (less than 10, or 5 if polymorphed) is stopped at strained
+  (the same encumbrance that causes HP loss on movement) instead of stressed,
+  which simplifies the relationship between encumbrance, HP loss and stopped
+  movement a bit:
+    - Before:
+        - Stressed
+            - cannot move with less than 10 HP (5 if polymorphed)
+        - Strained
+            - lose 1 HP every 30 turns if moving
+            - lose 1 HP every 3 turns if attacking
+    - After:
+        - Strained
+            - cannot move with less than 10 HP (5 if polymorphed)
+            - lose 1 HP every 30 turns if moving
+            - lose 1 HP every 3 turns if attacking
 * Fix C343-238: "(Unix and VMS only) The 'Who are you?' prompt does not accept
   digits in the response."  The official bug description is inaccurate: it's
   names that START with a digit that aren't accepted by vault guards, and it
