@@ -154,6 +154,10 @@ Dungeon
     - New entrance level to Vlad's Tower with trees, water, vampires, zombies,
       ravens and a drawbridge entrance leading to the traditional tower levels
       (from dNetHack).
+* Changes to the End Game:
+    - Moving on the Plane of Air is generally much easier, as it now only stops
+      movement when failing a d20 roll against your dexterity (was previously
+      75% of the time for all characters).
 * Sokoban prizes moved to Mines End; the end of Sokoban now has a guaranteed
   sack containing 8 rings and wands (the ring and wand on each level has been
   removed as a result).  This makes Sokoban much more optional in DynaHack than

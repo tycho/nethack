@@ -1601,7 +1601,7 @@ int domove(schar dx, schar dy, schar dz)
 		y_intent = y;
 		mtmp = u.ustuck;
 	} else {
-		if (Is_airlevel(&u.uz) && rn2(4) &&
+		if (Is_airlevel(&u.uz) && rnd(20) > ACURR(A_DEX) &&
 			!Levitation && !Flying) {
 		    switch(rn2(3)) {
 		    case 0:
