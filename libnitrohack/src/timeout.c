@@ -1280,16 +1280,14 @@ typedef struct {
 } ttable;
 
 /* table of timeout functions */
-#define TTAB(a, b) {a, b, #a}
 static const ttable timeout_funcs[NUM_TIME_FUNCS] = {
-    TTAB(rot_organic,	NULL),
-    TTAB(rot_corpse,	NULL),
-    TTAB(revive_mon,	NULL),
-    TTAB(burn_object,	cleanup_burn),
-    TTAB(hatch_egg,	NULL),
-    TTAB(fig_transform,	NULL)
+    { rot_organic,	NULL,		"rot_organic" },
+    { rot_corpse,	NULL,		"rot_corpse" },
+    { revive_mon,	NULL,		"revive_mon" },
+    { burn_object,	cleanup_burn,	"burn_object" },
+    { hatch_egg,	NULL,		"hatch_egg" },
+    { fig_transform,	NULL,		"fig_transform" }
 };
-#undef TTAB
 
 
 static const char *kind_name(short kind)
