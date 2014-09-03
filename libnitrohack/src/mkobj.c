@@ -1236,6 +1236,9 @@ void obj_extract_self(struct obj *obj)
 	case OBJ_ONBILL:
 	    extract_nobj(obj, &obj->olev->billobjs);
 	    break;
+	case OBJ_MAGIC_CHEST:
+	    extract_nobj(obj, &magic_chest_objs);
+	    break;
 	default:
 	    panic("obj_extract_self");
 	    break;
@@ -1406,6 +1409,15 @@ void set_obj_level(struct level *lev, struct obj *obj)
 {
     struct obj *cobj;
 
+    /*
+     * This transfer of timers and lights is for local objects; timers and
+     * lights of global objects follow the hero across levels and don't need
+     * it, in which case the transfer functions iterate harmlessly through
+     * their respective chains.
+     *
+     * The only other thing that could go wrong here is if obj->olev isn't set,
+     * in which case something is seriously wrong with the object itself.
+     */
     if (obj->timed)
 	transfer_timers(obj->olev, lev, obj->o_id);
     if (obj->lamplit)

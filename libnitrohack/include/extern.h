@@ -1281,7 +1281,7 @@ extern int obj_compare(const void *, const void *);
 extern int query_objlist(const char *, struct obj *, int,
 				struct object_pick **, int, boolean (*)(const struct obj*));
 extern void add_objitem(struct nh_objitem**, int*, enum nh_menuitem_role, int,
-			int, char*, struct obj*, boolean);
+			int, const char*, struct obj*, boolean);
 extern struct obj *pick_obj(struct obj *);
 extern void reset_encumber_msg(void);
 extern int encumber_msg(void);

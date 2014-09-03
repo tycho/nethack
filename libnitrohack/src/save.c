@@ -230,12 +230,13 @@ static void savegamestate(struct memfile *mf)
 	mtag(mf, 0, MTAG_GAMESTATE);
 	mfmagic_set(mf, STATE_MAGIC);
 
-	/* must come before migrating_mons are freed */
+	/* must come before magic_chest_objs and migrating_mons are freed */
 	save_timeout(mf);
 	save_timers(mf, level, RANGE_GLOBAL);
 	save_light_sources(mf, level, RANGE_GLOBAL);
 
 	saveobjchn(mf, invent);
+	saveobjchn(mf, magic_chest_objs);
 	savemonchn(mf, migrating_mons);
 	save_mvitals(mf);
 
@@ -760,6 +761,7 @@ void freedynamicdata(void)
 
 	/* game-state data */
 	free_objchn(invent);
+	free_objchn(magic_chest_objs);
 	free_monchn(migrating_mons);
 	free_monchn(mydogs);		/* ascension or dungeon escape */
 	free_animals();

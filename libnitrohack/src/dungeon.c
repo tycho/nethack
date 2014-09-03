@@ -1741,8 +1741,8 @@ static boolean overview_is_interesting(const struct level *lev,
 	    return TRUE;
 	
 	/* if overview_scan found _anything_ the level is also interesting */
-	if (oi->fountains || oi->sinks || oi->thrones || oi->trees || oi->temples ||
-	    oi->altars || oi->shopcount || oi->branch || oi->portal)
+	if (oi->fountains || oi->magic_chests || oi->sinks || oi->thrones || oi->trees ||
+	    oi->temples || oi->altars || oi->shopcount || oi->branch || oi->portal)
 	    return TRUE;
 	
 	/* "boring" describes this level very well */
@@ -1793,7 +1793,11 @@ static void overview_scan(const struct level *lev, struct overview_info *oi)
 		    case S_throne:
 			oi->thrones++; /* don't care about throne rooms */
 			break;
-			
+
+		    case S_magic_chest:
+			oi->magic_chests++;
+			break;
+
 		    case S_altar:
 			oi->altars++;
 			oi->altaralign |= (lev->locations[x][y].altarmask & AM_MASK);
@@ -1978,6 +1982,7 @@ static void overview_print_info(char *buf, const struct overview_info *oi)
 	if (oi->altars && oi->altaralign == Align2amask(u.ualign.type))
 		sprintf(eos(buf), " to %s", align_gname(u.ualign.type));
 
+	ADDNTOBUF("magic chest", oi->magic_chests);
 	ADDNTOBUF("fountain", oi->fountains)
 	ADDNTOBUF("sink", oi->sinks)
 	ADDNTOBUF("throne", oi->thrones)

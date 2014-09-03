@@ -318,7 +318,7 @@ MAP
 .}}}}}}}.
 .}}---}}.
 .}--.--}.
-.}|...|}.
+.}|.(.|}.
 .}--.--}.
 .}}---}}.
 .}}}}}}}.
@@ -337,8 +337,6 @@ TRAP: "board",(04,03)
 TRAP: "board",(04,05)
 TRAP: "board",(03,04)
 TRAP: "board",(05,04)
-# treasures
-OBJECT: '"', (04,04)
 # Random loot, monsters and traps for tower exterior.
 NOMAP
 populate_exterior()

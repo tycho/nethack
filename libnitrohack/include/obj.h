@@ -12,6 +12,7 @@ enum obj_where {
 	OBJ_MINVENT,	/* object in a monster inventory */
 	OBJ_BURIED,	/* object buried */
 	OBJ_ONBILL,	/* object on shk bill */
+	OBJ_MAGIC_CHEST,/* object in the shared contents of magic chests */
 	NOBJ_STATES
 };
 

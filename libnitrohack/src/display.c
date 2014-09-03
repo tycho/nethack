@@ -1644,6 +1644,7 @@ int back_to_cmap(struct level *lev, xchar x, xchar y)
 	case ALTAR:		idx = S_altar;    break;
 	case GRAVE:		idx = S_grave;    break;
 	case THRONE:		idx = S_throne;   break;
+	case MAGIC_CHEST:	idx = S_magic_chest; break;
 	case LAVAPOOL:		idx = S_lava;	  break;
 	case ICE:		idx = S_ice;      break;
 	case AIR:		idx = S_air;	  break;

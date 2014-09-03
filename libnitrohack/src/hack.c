@@ -2653,8 +2653,11 @@ int dopickup(void)
 	    }
 	}
 	if (!OBJ_AT(u.ux, u.uy)) {
+	    if (IS_MAGIC_CHEST(level->locations[u.ux][u.uy].typ))
+		pline("The magic chest is firmly attached to the floor.");
+	    else
 		pline("There is nothing here to pick up.");
-		return 0;
+	    return 0;
 	}
 	if (!can_reach_floor()) {
 		if (u.usteed && P_SKILL(P_RIDING) < P_BASIC)

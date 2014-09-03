@@ -9,6 +9,10 @@ Highlights
 ----------
 * New body armor and shield skills: grants bonus AC and MC; heavier suits of
   armor and shields get bigger bonuses and train the skills faster.
+* Magic chests!  Any item put into a magic chest can be looted out of any other
+  magic chest in the dungeon, placed at set locations.  This eliminates tedious
+  stash consolidation and transporting of items to and from stashes and fixed
+  dungeon resources like altars, shops and water.
 * Mazes completely removed from Gehennom!
 * New resistance system: resistances gained from corpses and crowning only
   provide partial protection.
@@ -138,6 +142,23 @@ Character
 
 Dungeon
 -------
+* New dungeon feature: magic chests!
+    - Any item placed in a magic chest can be looted out of any other magic
+      chest in the dungeon, removing the need to consolidate stashes.
+    - Magic chests are placed in set locations near useful resources such as
+      altars, shops and water, reducing the distance that items need to be
+      hauled to such resources.  The set locations are:
+        - Minetown
+        - Sokoban entry level
+        - Fort Ludios
+        - Quest home level
+        - Castle
+        - Valley of the Dead
+        - Orcus-town
+        - Fake Wizard's Tower
+    - Magic chests are fixed to the ground and as such cannot be tipped.
+    - Attempting to put a corpse set to revive into a magic chest will revive it
+      immediately, to prevent exploiting them to get rid of such corpses.
 * Changes to standard rooms-and-corridors level generation:
     - Grid room level style (from K-Mod).
     - Raise chance of special rooms-and-corridors level style from 10% to 20%.

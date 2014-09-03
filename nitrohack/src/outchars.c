@@ -74,6 +74,7 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"upsstair",-1,	{0x00AB, 0},	0},	/* « left-pointing double angle quotation mark */
     {"dnsstair",-1,	{0x00BB, 0},	0},	/* » right-pointing double angle quotation mark */
     {"altar",	-1,	{0x03A9, 0},	0},	/* Ω GREEK CAPITAL LETTER OMEGA */
+    {"magic_chest",-1,	{0x2302, 0},	0},	/* ⌂ house */
     {"ice",	-1,	{0x00B7, 0},	0},	/* · centered dot */
 
     /* zap */

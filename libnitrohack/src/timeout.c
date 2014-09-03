@@ -1587,7 +1587,8 @@ static void write_timer(struct memfile *mf, timer_element *timer)
 boolean obj_is_local(struct obj *obj)
 {
     switch (obj->where) {
-	case OBJ_INVENT:	return FALSE;
+	case OBJ_INVENT:
+	case OBJ_MAGIC_CHEST:	return FALSE;
 	case OBJ_FLOOR:
 	case OBJ_BURIED:	return TRUE;
 	case OBJ_CONTAINED:	return obj_is_local(obj->ocontainer);

@@ -799,6 +799,7 @@ char what_map_char(char c)
 		  case 'H'  : return SCORR;
 		  case '{'  : return FOUNTAIN;
 		  case '\\' : return THRONE;
+		  case '('  : return MAGIC_CHEST;
 		  case 'K'  : return SINK;
 		  case '}'  : return MOAT;
 		  case 'P'  : return POOL;

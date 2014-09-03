@@ -89,7 +89,7 @@ typedef struct branch {
 
 /* dungeon overview information, generated and used by dooverview */
 struct overview_info {
-	char fountains, sinks, thrones, trees, temples;
+	char fountains, magic_chests, sinks, thrones, trees, temples;
 	char altars; /* no of altars outside of temple */
 	char altaralign; /* any combinaton of AM_CHAOTIC, AM_NEUTRAL, AM_LAWFUL */
 	char shopcount;

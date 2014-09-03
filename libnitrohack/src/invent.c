@@ -1678,6 +1678,8 @@ const char *dfeature_at(int x, int y, char *buf)
 	    cmap = S_fountain;				/* "fountain" */
 	else if (IS_THRONE(ltyp))
 	    cmap = S_throne;				/* "opulent throne" */
+	else if (IS_MAGIC_CHEST(ltyp))
+	    cmap = S_magic_chest;			/* "magic chest" */
 	else if (is_lava(level, x,y))
 	    cmap = S_lava;				/* "molten lava" */
 	else if (is_swamp(level, x,y))

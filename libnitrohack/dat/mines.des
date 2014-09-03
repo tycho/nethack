@@ -63,7 +63,7 @@ MAP
 .|.---------.....--...--...........|.
 .|.|...|...|----.|.....|.---------.|.
 .|.|...|...|...|.|.....|.|..|....|.|.
-.|.|...|...|...|.|.....|.|..|....|.|.
+.|.|...|...|...|.|.(...|.|..|....|.|.
 .|.|...|...|...|.|.....|.|..|....|.|.
 .|.-------------.-------.---------.|.
 .|.................................F.
@@ -241,6 +241,8 @@ ROOM: "ordinary", lit, (3,3), (center,center), (31,15)
   {
     ROOMDOOR: false, closed, north, random
     ALTAR: (02,02), align[0], shrine
+    # magic chest next to altar
+    TERRAIN: (01,02), '('
     LOOP [2] {
       MONSTER: ('G',"gnomish wizard"), random
     }
@@ -385,6 +387,8 @@ ROOM: "ordinary" , lit, (3,3), (center,center), (31,15)
   {
     ROOMDOOR: false, closed, north|west, random
     ALTAR: (02,02), align[0], shrine
+    # magic chest next to altar
+    TERRAIN: (01,02), '('
     LOOP [2] {
       MONSTER: ('G',"gnomish wizard"), random
     }
@@ -465,6 +469,8 @@ ROOM: "ordinary", lit, (3,3), (center,center), (31,15)
   {
     ROOMDOOR: false, closed, east, random
     ALTAR: (1,1), align[0], shrine
+    # magic chest next to altar
+    TERRAIN: (1,2), '('
     LOOP [2] {
       MONSTER: ('G',"gnomish wizard"), random
     }
@@ -584,6 +590,8 @@ ROOM: "ordinary", lit, (3,3), (center,center), (30,15)
   {
     ROOMDOOR: false, closed, south, random
     ALTAR: (2,1), align[0], shrine
+    # magic chest next to altar
+    TERRAIN: (3,1), '('
     LOOP [2] {
       MONSTER: ('G',"gnomish wizard"), random
     }
@@ -689,7 +697,7 @@ MAP
 -----         ---------                                                    
 |...---  ------.......--    -------                       ---------------  
 |.....----.........--..|    |.....|          -------      |.............|  
---..-....-.----------..|    |.....|          |.....|     --+---+--.----+-  
+--..-....-.----------..|    |.(...|          |.....|     --+---+--.----+-  
  --.--.....----     ----    |.....|  ------  --....----  |..-...--.-.+..|  
   ---.........----  -----   ---+---  |..+.|   ---..-..----..---+-..---..|  
     ----.-....|..----...--    |.|    |..|.|    ---+-.....-+--........--+-  
@@ -819,7 +827,7 @@ MAP
 .----...--+--..|..-+-|..................
 ...|........|..|..|..|----....---------.
 ...|..T.....----..|..|...+....|......|-.
-...|-....{........|..|...|....+......|-.
+...|-....{........|..|...|....+...(..|-.
 ...--..-....T.....--------....|......|-.
 .......--.....................----------
 ENDMAP
@@ -994,6 +1002,8 @@ ROOM: "ordinary", lit, (3,3), (center,center), (30,15)
   {
     ROOMDOOR: false, closed, west, random
     ALTAR: (02,01), align[0], shrine
+    # magic chest next to altar
+    TERRAIN: (02,02), '('
     LOOP [2] {
       MONSTER: ('G',"gnomish wizard"), random
     }

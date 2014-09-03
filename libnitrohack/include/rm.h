@@ -60,6 +60,7 @@ enum location_types {
 	LADDER,
 	FOUNTAIN,
 	THRONE,
+	MAGIC_CHEST,
 	SINK,
 	GRAVE,
 	ALTAR,
@@ -92,6 +93,7 @@ enum location_types {
 #define SPACE_POS(typ)	((typ) > DOOR)
 #define IS_POOL(typ)	((typ) >= POOL && (typ) <= DRAWBRIDGE_UP)
 #define IS_THRONE(typ)	((typ) == THRONE)
+#define IS_MAGIC_CHEST(typ) ((typ) == MAGIC_CHEST)
 #define IS_FOUNTAIN(typ) ((typ) == FOUNTAIN)
 #define IS_SINK(typ)	((typ) == SINK)
 #define IS_GRAVE(typ)	((typ) == GRAVE)
@@ -153,6 +155,7 @@ enum dungeon_symbols {
 	S_altar,
 	S_grave,
 	S_throne,
+	S_magic_chest,
 	S_sink,
 	S_fountain,
 	S_vodbridge,

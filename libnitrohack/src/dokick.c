@@ -860,6 +860,11 @@ int dokick(void)
 		    }
 		    goto ouch;
 		}
+		if (IS_MAGIC_CHEST(maploc->typ)) {
+		    if (Levitation) goto dumb;
+		    pline("You kick %s.",(Blind ? "something" : "the magic chest"));
+		    goto ouch;
+		}
 		if (IS_ALTAR(maploc->typ)) {
 		    if (Levitation) goto dumb;
 		    pline("You kick %s.",(Blind ? "something" : "the altar"));

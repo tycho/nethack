@@ -15,7 +15,7 @@ GEOMETRY: center, center
 MAP
                                                                             
   ......     ..........................       ...        ....  ......       
- ......       ..........................     ........       ....    .....   
+ ......       ....................(.....     ........       ....    .....   
   ..BB      .............................    .........            ....  ..  
      ..    ......................              .......      ..     ....  .. 
      ..     ....................                     ..  .......    ..  ... 
@@ -57,8 +57,6 @@ MONSTER: ('@',"Shaman Karnov"), (35,02) {
   OBJECT: '[', 1d6
   OBJECT: ')', 1d6
 }
-# The treasure of Shaman Karnov
-OBJECT: ('(',"chest"), (34,02)
 # neanderthal guards for the audience chamber
 MONSTER: ('@',"neanderthal"), (20,03)
 MONSTER: ('@',"neanderthal"), (20,02)

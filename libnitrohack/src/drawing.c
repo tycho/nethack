@@ -90,6 +90,7 @@ const char * const defexplain[] = {
 	"altar",		/* altar */
 	"grave",		/* grave */
 /*40*/	"opulent throne",	/* throne */
+	"magic chest",		/* magic chest */
 	"sink",			/* sink */
 	"fountain",		/* fountain */
 	"lowered drawbridge",	/* vodbridge */
@@ -171,6 +172,7 @@ const struct nh_symdef defsyms[] = {
 	{'_', "altar",		CLR_GRAY},
 	{'|', "grave",		CLR_GRAY},
 /*40*/	{'\\',"throne",		HI_GOLD},
+	{'(', "magic_chest",	CLR_BRIGHT_MAGENTA},
 	{'#', "sink",		CLR_GRAY},
 	{'{', "fountain",	CLR_BLUE},
 	{'#', "vodbridge",	CLR_BROWN},
