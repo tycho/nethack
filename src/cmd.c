@@ -1607,7 +1607,7 @@ int typ;
       start_menu(win);
 
       any.a_int = 1;
-      add_menu(win, NO_GLYPH, &any, 'a', 0, ATR_NONE, "Name a monster", MENU_UNSELECTED);
+      add_menu(win, NO_GLYPH, &any, 'a', 'C', ATR_NONE, "Name a monster", MENU_UNSELECTED);
 
       any.a_int = 2;
       add_menu(win, NO_GLYPH, &any, 'b', 'y', ATR_NONE, "Name an individual item", MENU_UNSELECTED);
