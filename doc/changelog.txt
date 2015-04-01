@@ -344,6 +344,10 @@ Configuration
   option for the message given in the new extra turn before monster drowning
   attacks.
 
+Miscellaneous
+-------------
+* Scramble some words in messages on April Fools Day (from NAO).
+
 Technical
 ---------
 * Rename launch script for *nix-like operating systems (e.g. Linux and OS X)
