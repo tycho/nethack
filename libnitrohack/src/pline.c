@@ -41,6 +41,49 @@ static enum msgtype_action msgtype_match_line(const char *line)
 	return MSGTYPE_DEFAULT;
 }
 
+static boolean is_word_letter(char l)
+{
+	return (l >= 'a' && l <= 'z') || (l >= 'A' && l <= 'Z');
+}
+
+static void swap_random_word_letters(char *buf, int start, int end)
+{
+	int length = end - start;
+	if (length > 1) {
+	    int first = display_rng(length);
+	    int second = (first + display_rng(length)) % length;
+	    /* assert(first != second); */
+	    char tmp = buf[start + first];
+	    buf[start + first] = buf[start + second];
+	    buf[start + second] = tmp;
+	}
+}
+
+static void scramble_random_words(char *buf, int length)
+{
+	boolean in_word = is_word_letter(buf[0]);
+	int word_start = 0;
+	int i;
+
+	for (i = 0; i < length && buf[i]; i++) {
+	    if (is_word_letter(buf[i])) {
+		if (!in_word) {
+		    /* beginning of a word */
+		    in_word = TRUE;
+		    word_start = i;
+		}
+	    } else {
+		if (in_word) {
+		    /* end of a word */
+		    if (!display_rng(10)) {
+			swap_random_word_letters(buf, word_start, i - 1);
+		    }
+		    in_word = FALSE;
+		}
+	    }
+	}
+}
+
 static void vpline(const char *line, va_list the_args)
 {
 	char pbuf[BUFSZ], *c;
@@ -63,12 +106,14 @@ static void vpline(const char *line, va_list the_args)
 		*c = ' ';
 	}
 
-	line = pbuf;
-
-	mtact = msgtype_match_line(line);
+	mtact = msgtype_match_line(pbuf);
 	if (mtact == MSGTYPE_HIDE) return;
 
-	repeated = !strcmp(line, toplines[lastline]);
+	if (aprilfoolsday()) {
+	    scramble_random_words(pbuf, BUFSZ);
+	}
+
+	repeated = !strcmp(pbuf, toplines[lastline]);
 	if (repeated && (no_repeat || mtact == MSGTYPE_NO_REPEAT))
 	    return;
 
@@ -80,17 +125,17 @@ static void vpline(const char *line, va_list the_args)
 	if (repeated) {
 	    toplines_count[lastline]++;
 	} else {
-	    strcpy(toplines[curline], line);
+	    strcpy(toplines[curline], pbuf);
 	    toplines_count[curline] = 1;
 	    curline++;
 	    curline %= MSGCOUNT;
 	}
 
 	if (iflags.next_msg_nonblocking) {
-	    (*windowprocs.win_print_message_nonblocking)(moves, line);
+	    (*windowprocs.win_print_message_nonblocking)(moves, pbuf);
 	    iflags.next_msg_nonblocking = FALSE;
 	} else {
-	    print_message(moves, line);
+	    print_message(moves, pbuf);
 	}
 
 	if (mtact == MSGTYPE_MORE)
