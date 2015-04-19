@@ -736,6 +736,7 @@ E char *FDECL(lcase, (char *));
 E char *FDECL(upstart, (char *));
 E char *FDECL(mungspaces, (char *));
 E char *FDECL(eos, (char *));
+E int FDECL(eos_is, (const char *, const char *));
 E char *FDECL(strkitten, (char *,int));
 E char *FDECL(s_suffix, (const char *));
 E char *FDECL(xcrypt, (const char *,char *));

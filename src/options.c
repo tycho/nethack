@@ -3958,8 +3958,8 @@ char *str;
 			(!strcmp(str+7, "spinach") ||
 			 name_to_mon(str+7) >= LOW_PM)) ||
 		    !strcmp(str, "empty tin") ||
-		    ((!strncmp(eos(str)-7," corpse",7) ||
-			    !strncmp(eos(str)-4, " egg",4)) &&
+		    ((eos_is(str," corpse") ||
+			    eos_is(str, " egg")) &&
 			name_to_mon(str) >= LOW_PM))
 			{
 				Strcpy(buf, pl_fruit);

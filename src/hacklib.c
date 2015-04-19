@@ -130,6 +130,18 @@ eos(s)			/* return the end of a string (pointing at '\0') */
     return s;
 }
 
+int
+eos_is(s, e)
+const char *s;
+const char *e;
+{
+	int slen = strlen(s);
+	int elen = strlen(e);
+	if (elen > slen)
+		return 0;
+	return strncmp(eos(s)-elen, e, elen) == 0 ? 1 : 0;
+}
+
 /* strcat(s, {c,'\0'}); */
 char *
 strkitten(s, c)		/* append a character to a string (in place) */
