@@ -301,6 +301,7 @@ extern struct nh_player_info player;
 extern int initrole, initrace, initgend, initalign;
 extern nh_bool random_player;
 extern struct nh_cmd_desc *keymap[KEY_MAX];
+extern char *override_hackdir, *override_userdir;
 
 /*----------------------------------------------------------------------------*/
 

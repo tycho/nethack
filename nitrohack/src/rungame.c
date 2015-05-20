@@ -18,25 +18,31 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 {
     wchar_t *subdir;
     wchar_t appPath[MAX_PATH], nhPath[MAX_PATH];
-    
-    /* Get the location of "AppData\Roaming" (Vista, 7) or "Application Data" (XP).
-     * The returned Path does not include a trailing backslash. */
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appPath)))
-	return FALSE;
-    
+
+    if (override_userdir) {
+	snwprintf(nhPath, MAX_PATH, L"%S", override_userdir);
+    } else {
+	/*
+	 * Get the location of "AppData\Roaming" (Vista, 7) or "Application
+	 * Data" (XP).  The returned Path does not include a trailing
+	 * backslash.
+	 */
+	if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appPath)))
+	    return FALSE;
+	snwprintf(nhPath, MAX_PATH, L"%s\\DynaHack", appPath);
+	_wmkdir(nhPath);
+    }
+
     switch (dirtype) {
 	case CONFIG_DIR: subdir = L"\\"; break;
 	case SAVE_DIR:   subdir = L"\\save\\"; break;
 	case LOG_DIR:    subdir = L"\\log\\"; break;
 	case DUMP_DIR:   subdir = L"\\dumps\\"; break;
     }
-    
-    snwprintf(nhPath, MAX_PATH, L"%s\\DynaHack", appPath);
-    _wmkdir(nhPath);
-    
+
     snwprintf(buf, BUFSZ, L"%s%s", nhPath, subdir);
     _wmkdir(buf);
-    
+
     return TRUE;
 }
 
@@ -46,28 +52,32 @@ nh_bool get_gamedir(enum game_dirs dirtype, char *buf)
 {
     char *envval, *subdir;
     mode_t mask;
-    
+
     switch (dirtype) {
 	case CONFIG_DIR: subdir = ""; break;
 	case SAVE_DIR:   subdir = "save/"; break;
 	case LOG_DIR:    subdir = "log/"; break;
 	case DUMP_DIR:   subdir = "dumps/"; break;
     }
-    
-    /* look in regular location */
-    envval = getenv("XDG_CONFIG_HOME");
-    if (envval)
-	snprintf(buf, BUFSZ, "%s/DynaHack/%s", envval, subdir);
-    else {
-	envval = getenv("HOME");
-	if (!envval) /* HOME not set? just give up... */
-	    return FALSE;
-	snprintf(buf, BUFSZ, "%s/.config/DynaHack/%s", envval, subdir);
+
+    if (override_userdir && getgid() == getegid()) {
+	snprintf(buf, BUFSZ, "%s/%s", override_userdir, subdir);
+    } else {
+	/* look in regular location */
+	envval = getenv("XDG_CONFIG_HOME");
+	if (envval) {
+	    snprintf(buf, BUFSZ, "%s/DynaHack/%s", envval, subdir);
+	} else {
+	    envval = getenv("HOME");
+	    if (!envval) /* HOME not set? just give up... */
+		return FALSE;
+	    snprintf(buf, BUFSZ, "%s/.config/DynaHack/%s", envval, subdir);
+	}
     }
-    
+
     mask = umask(0);
     if (mkdir(buf, 0755) == -1 && errno != EEXIST) {
-	/* try to create the parent directory too. This ist the only problem we
+	/* try to create the parent directory too. This is the only problem we
 	 * can fix here - permission problems etc. all requre user intervention */
 	char dirbuf[BUFSZ], *basedir;
 	strcpy(dirbuf, buf);
@@ -80,7 +90,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, char *buf)
 	}
     }
     umask(mask);
-    
+
     return TRUE;
 }
 
