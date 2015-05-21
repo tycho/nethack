@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 
     umask(0777 & ~FCMASK);
 
-    process_args(argc, argv);	/* grab -H, -U early */
+    process_args(argc, argv);	/* grab --help, --version, -H, -U early */
 
     init_options();
 
@@ -363,6 +363,31 @@ static void process_args(int argc, char *argv[])
 	argv++;
 	argc--;
 	switch (argv[0][1]) {
+	case '-':
+	    if (!strcmp(argv[0], "--help")) {
+		puts("Usage: dynahack [OPTIONS]");
+		puts("");
+		puts("--help      show this help and exit");
+		puts("--version   show version number and exit");
+		puts("-D          start games in wizard mode");
+		puts("-X          start games in explore mode");
+		puts("-u name     specify player name");
+		puts("-p role     specify role");
+		puts("-r race     specify race");
+		puts("-@          specify a random character");
+		puts("-H dir      override the data directory");
+		puts("-U dir      override the user directory");
+		exit(0);
+	    } else if (!strcmp(argv[0], "--version")) {
+		printf("DynaHack version %d.%d.%d\n",
+		       VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
+		exit(0);
+	    } else {
+		fprintf(stderr, "Unrecognized option '%s'\n", argv[0]);
+		exit(1);
+	    }
+	    break;
+
 	case 'D':
 	    ui_flags.playmode = MODE_WIZARD;
 	    break;
