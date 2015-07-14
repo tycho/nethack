@@ -284,6 +284,7 @@ Monsters
   always have a few turns to save yourself from instant death.
 * Drowning attacks give two turns for players to react before instant death (was
   one turn); a monster "pulls you towards the water" before it drowns you.
+* All eels in water can now be seen from afar, like other monsters.
 * Metallivores and disintegrators can eat through iron bars (from UnNetHack).
 * Allow Demogorgon to be bribed.
 * Tone back demon bribery amounts inherited from UnNetHack: demons now only ask

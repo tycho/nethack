@@ -968,10 +968,6 @@ struct monst *makemon(const struct permonst *ptr,
 			    mtmp->minvis = TRUE;
 			}
 			break;
-		case S_EEL:
-			if (is_pool(lev, x, y))
-			    mtmp->mundetected = TRUE;
-			break;
 		case S_LEPRECHAUN:
 			mtmp->msleeping = 1;
 			break;

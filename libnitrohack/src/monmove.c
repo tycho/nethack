@@ -1204,15 +1204,13 @@ postmov:
 		}
 	    }
 
-	    if (hides_under(ptr) || ptr->mlet == S_EEL) {
+	    if (hides_under(ptr)) {
 		/* Always set--or reset--mundetected if it's already hidden
 		   (just in case the object it was hiding under went away);
 		   usually set mundetected unless monster can't move.  */
 		if (mtmp->mundetected ||
 			(mtmp->mcanmove && !mtmp->msleeping && rn2(5)))
-		    mtmp->mundetected = (ptr->mlet != S_EEL) ?
-			OBJ_AT(mtmp->mx, mtmp->my) :
-			(is_pool(level, mtmp->mx, mtmp->my) && !Is_waterlevel(&u.uz));
+		    mtmp->mundetected = OBJ_AT(mtmp->mx, mtmp->my);
 		newsym(mtmp->mx, mtmp->my);
 	    }
 	    if (mtmp->isshk) {
