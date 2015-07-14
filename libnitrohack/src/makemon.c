@@ -1498,6 +1498,10 @@ int mongets(struct monst *mtmp, int otyp)
 		otmp->oerodeproof = TRUE;
 	    } else if (is_mplayer(mtmp->data) && is_sword(otmp)) {
 		otmp->spe = (3 + rn2(4));
+	    } else if (mtmp->data->mlet == S_GNOME) {
+		/* prevent player from getting tons of candles from gnomes */
+		otmp->quan = 1L;
+		otmp->owt = weight(otmp);
 	    }
 
 	    if (otmp->otyp == CANDELABRUM_OF_INVOCATION) {
