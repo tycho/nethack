@@ -64,6 +64,11 @@ MONSTER: ('@',"warrior"), (42,11)
 MONSTER: ('@',"warrior"), (42,12)
 # Non diggable walls
 NON_DIGGABLE:(26,07,43,13)
+# Guaranteed tinning kit!
+# If players are going to farm giant corpses, they may as well use tinning kit
+# charges instead of waiting thousands of turns outside the portal waiting out
+# satiation.
+OBJECT: ('(',"tinning kit"), (42,12)
 # Random traps
 LOOP [3 + 3d5] {
   TRAP: "fire", random
