@@ -67,8 +67,6 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"fountain",-1,	{0x00B6, 0},	0},	/* ¶ pilcrow sign */
     {"room",	-1,	{0x00B7, 0},	0},	/* · centered dot */
     {"darkroom",-1,	{0x00B7, 0},	0},	/* · centered dot */
-    {"corr",	-1,	{0x2591, 0},	0},	/* ░ light shading */
-    {"litcorr",	-1,	{0x2592, 0},	0},	/* ▒ medium shading */
     {"upladder",-1,	{0x2264, 0},	0},	/* ≤ less-than-or-equals */
     {"dnladder",-1,	{0x2265, 0},	0},	/* ≥ greater-than-or-equals */
     {"upsstair",-1,	{0x00AB, 0},	0},	/* « left-pointing double angle quotation mark */
