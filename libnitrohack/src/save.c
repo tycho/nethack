@@ -118,11 +118,10 @@ static void save_flags(struct memfile *mf)
 	mwrite32(mf, flags.pantheon);
 	mwrite32(mf, flags.run);
 	mwrite32(mf, flags.warntype);
-	mwrite32(mf, flags.warnlevel);
 	mwrite32(mf, flags.djinni_count);
 	mwrite32(mf, flags.ghost_count);
 	mwrite32(mf, flags.pickup_burden);
-	
+
 	mwrite8(mf, flags.autodig);
 	mwrite8(mf, flags.autoquiver);
 	mwrite8(mf, flags.autounlock);

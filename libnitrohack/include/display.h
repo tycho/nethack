@@ -44,8 +44,7 @@
  */
 
 #define mon_warning(mon) (Warning && !(mon)->mpeaceful && 				\
-			 (distu((mon)->mx, (mon)->my) < 100) &&				\
-			 (((int) ((mon)->m_lev / 4)) >= flags.warnlevel))
+			 (distu((mon)->mx, (mon)->my) < 100))
 
 /*
  * mon_visible()

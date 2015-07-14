@@ -453,9 +453,8 @@ void initoptions(void)
 	int i;
 	
 	iflags.travelcc.x = iflags.travelcc.y = -1;
-	flags.warnlevel = 1;
 	flags.warntype = 0L;
-	
+
 	/* init flags.inv_order this way, as setting it via the option
 	 * requires a preexisting order */
 	memcpy(flags.inv_order, def_inv_order, sizeof flags.inv_order);

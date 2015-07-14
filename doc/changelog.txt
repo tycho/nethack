@@ -347,6 +347,8 @@ Interface
     - Dungeon `#overview` no longer exits after viewing a single level.
 * Make extended command prompt case insensitive, like NetHack's (from NetHack4).
 * Change default corridor character back to `#` in Unicode graphics mode.
+* Show warning level 0 for very weak monsters when the player has a source of
+  warning (previously these monsters were not shown at all).
 * Fix the color of the Wizard's Tower walls when viewed from another level using
   the `Ctrl-O` dungeon overview.
 * Fix "T - take off" not appearing in the item action menu of meat rings.

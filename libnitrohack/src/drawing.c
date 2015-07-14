@@ -39,7 +39,7 @@ const char * const warnexplain[] = {
 
 
 const struct nh_symdef warnsyms[WARNCOUNT] = {
-	{'0', "warn1", CLR_WHITE},  	/* white warning  */
+	{'0', "warn1", CLR_ORANGE},  	/* orange warning  */
 	{'1', "warn2", CLR_RED},	/* pink warning   */
 	{'2', "warn3", CLR_RED},	/* red warning    */
 	{'3', "warn4", CLR_RED},	/* ruby warning   */

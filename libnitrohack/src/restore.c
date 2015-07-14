@@ -558,8 +558,7 @@ void restore_flags(struct memfile *mf, struct flag *f)
 	f->randomall = mread32(mf);
 	f->pantheon = mread32(mf);
 	f->run = mread32(mf);
-        f->warntype = mread32(mf);
-	f->warnlevel = mread32(mf);
+	f->warntype = mread32(mf);
 	f->djinni_count = mread32(mf);
 	f->ghost_count = mread32(mf);
 	f->pickup_burden = mread32(mf);
