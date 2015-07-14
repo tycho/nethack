@@ -787,7 +787,7 @@ void use_crystal_ball(struct obj *obj)
 	return;
     }
     pline("You peer into %s...", the(xname(obj)));
-    nomul(-rnd(10), "gazing into a crystal ball");
+    nomul(-rnd(Free_action ? 2 : 10), "gazing into a crystal ball");
     nomovemsg = "";
     if (obj->spe <= 0)
 	pline("The vision is unclear.");

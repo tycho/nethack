@@ -268,6 +268,8 @@ Items
   SporkHack).
 * Quest artifacts that are spawned at the final level of the Quest will be
   generated fixed/erodeproofed.
+* Having free action reduces paralysis from using a crystal ball from 1-10
+  turns down to 1-2.
 * Fix prefixes like "magical" and "prize" not appearing on rings, wands,
   spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
