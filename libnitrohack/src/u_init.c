@@ -124,7 +124,7 @@ static const struct trobj Ranger[] = {
 };
 static const struct trobj Rogue[] = {
 #define R_DAGGERS	1
-	{ SHORT_SWORD, 0, WEAPON_CLASS, 1, UNDEF_BLESS },
+	{ SHORT_SWORD, 1, WEAPON_CLASS, 1, UNDEF_BLESS },
 	{ DAGGER, 0, WEAPON_CLASS, 10, 0 },	/* quan is variable */
 	{ LEATHER_ARMOR, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ POT_SICKNESS, 0, POTION_CLASS, 1, 0 },
@@ -135,7 +135,7 @@ static const struct trobj Rogue[] = {
 static const struct trobj Samurai[] = {
 #define S_ARROWS	3
 	{ KATANA, 0, WEAPON_CLASS, 1, UNDEF_BLESS },
-	{ SHORT_SWORD, 0, WEAPON_CLASS, 1, UNDEF_BLESS }, /* wakizashi */
+	{ SHORT_SWORD, 3, WEAPON_CLASS, 1, UNDEF_BLESS }, /* wakizashi */
 	{ YUMI, 0, WEAPON_CLASS, 1, UNDEF_BLESS },
 	{ YA, 0, WEAPON_CLASS, 25, UNDEF_BLESS }, /* variable quan */
 	{ SPLINT_MAIL, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
