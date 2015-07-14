@@ -21,6 +21,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 
     if (override_userdir) {
 	_snwprintf(nhPath, MAX_PATH, L"%S", override_userdir);
+	nhPath[MAX_PATH - 1] = 0;
     } else {
 	/*
 	 * Get the location of "AppData\Roaming" (Vista, 7) or "Application
@@ -30,6 +31,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 	if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appPath)))
 	    return FALSE;
 	_snwprintf(nhPath, MAX_PATH, L"%s\\DynaHack", appPath);
+	nhPath[MAX_PATH - 1] = 0;
 	_wmkdir(nhPath);
     }
 
@@ -41,6 +43,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
     }
 
     _snwprintf(buf, BUFSZ, L"%s%s", nhPath, subdir);
+    buf[BUFSZ - 1] = 0;
     _wmkdir(buf);
 
     return TRUE;
@@ -213,6 +216,7 @@ void rungame(nh_bool tutorial)
     t = (long)time(NULL);
 #if defined(WIN32)
     _snwprintf(filename, 1024, L"%ls%ld_%hs.nhgame", savedir, t, plname);
+    filename[1023] = 0;
 #else
     snprintf(filename, 1024, "%s%ld_%s.nhgame", savedir, t, plname);
 #endif
@@ -315,6 +319,7 @@ wchar_t **list_gamefiles(wchar_t *dir, int *count)
 	    continue; /* too small to be valid */
 
 	_snwprintf(fullname, 1024, L"%s%s", dir, find_data[*count].cFileName);
+	fullname[1023] = 0;
 	fd = _wopen(fullname, O_RDWR, _S_IREAD | _S_IWRITE);
 	if (fd == -1)
 	    continue;
@@ -336,6 +341,7 @@ wchar_t **list_gamefiles(wchar_t *dir, int *count)
     filenames = malloc(*count * sizeof(wchar_t*));
     for (i = 0; i < *count; i++) {
 	_snwprintf(fullname, 1024, L"%s%s", dir, find_data[i].cFileName);
+	fullname[1023] = 0;
 	filenames[i] = _wcsdup(fullname);
     }
     free(find_data);
