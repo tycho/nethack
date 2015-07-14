@@ -285,6 +285,8 @@ Monsters
   otherwise Asmodeus cold spell-casting attack could do over twice the damage of
   Master Kaen without cold resistance, which is too much even for overprepared
   characters.
+* Gnomes that spawn with candles will only get a single candle instead of a
+  whole stack of candles.
 * Pets never displace the player from the stairs when entering a level.
 * Fix monsters getting your racial armor bonuses instead of theirs.
 
