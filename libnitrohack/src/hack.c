@@ -3045,7 +3045,7 @@ int calc_capacity(int xtra_wt)
     if (wt <= 0) return UNENCUMBERED;
     if (wc <= 1) return OVERLOADED;
     cap = (wt*2 / wc) + 1;
-    return min(cap, OVERLOADED);
+    return max(0, min(cap, OVERLOADED));
 }
 
 int near_capacity(void)

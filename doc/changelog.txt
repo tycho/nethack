@@ -372,6 +372,8 @@ Technical
   should be considered a prize of that level; prizes are ignored by monsters,
   don't fall down holes, are ignored by autopickup, and picking up a prize
   causes other prizes on that level to vanish.
+* Fix crash in encumbrance display due to weight underflow e.g. when wishing
+  for 12 million (12 with six zeros) loadstones in wizard mode.
 
 DynaHack 0.5.5 (2014-01-16, 78d772a)
 ====================================
