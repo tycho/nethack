@@ -39,7 +39,6 @@
  * doesn't have plain snprintf.  Note that this macro is an MSVC-style variadic
  * macro, which is not understood by gcc (it uses a different notation). */
 #  define snprintf(buf, len, fmt, ...) _snprintf_s(buf, len, len-1, fmt, __VA_ARGS__)
-#  define snwprintf _snwprintf
 #  define strncasecmp _strnicmp
 # endif
 #define FILE_OPEN_MASK (_S_IREAD | _S_IWRITE)

@@ -20,7 +20,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
     wchar_t appPath[MAX_PATH], nhPath[MAX_PATH];
 
     if (override_userdir) {
-	snwprintf(nhPath, MAX_PATH, L"%S", override_userdir);
+	_snwprintf(nhPath, MAX_PATH, L"%S", override_userdir);
     } else {
 	/*
 	 * Get the location of "AppData\Roaming" (Vista, 7) or "Application
@@ -29,7 +29,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 	 */
 	if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appPath)))
 	    return FALSE;
-	snwprintf(nhPath, MAX_PATH, L"%s\\DynaHack", appPath);
+	_snwprintf(nhPath, MAX_PATH, L"%s\\DynaHack", appPath);
 	_wmkdir(nhPath);
     }
 
@@ -40,7 +40,7 @@ nh_bool get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 	case DUMP_DIR:   subdir = L"\\dumps\\"; break;
     }
 
-    snwprintf(buf, BUFSZ, L"%s%s", nhPath, subdir);
+    _snwprintf(buf, BUFSZ, L"%s%s", nhPath, subdir);
     _wmkdir(buf);
 
     return TRUE;
@@ -212,7 +212,7 @@ void rungame(nh_bool tutorial)
 
     t = (long)time(NULL);
 #if defined(WIN32)
-    snwprintf(filename, 1024, L"%ls%ld_%hs.nhgame", savedir, t, plname);
+    _snwprintf(filename, 1024, L"%ls%ld_%hs.nhgame", savedir, t, plname);
 #else
     snprintf(filename, 1024, "%s%ld_%s.nhgame", savedir, t, plname);
 #endif
