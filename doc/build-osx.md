@@ -12,7 +12,7 @@ Compiling DynaHack on OS X
 2. Install dependencies via Homebrew
 ------------------------------------
 
-    brew install jansson cmake
+    brew install cmake
 
 Ncursesw provided by Homebrew-dupes is currently buggy: https://github.com/Homebrew/homebrew-dupes/issues/43
 

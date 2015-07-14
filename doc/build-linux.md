@@ -13,7 +13,6 @@ These are the package names for Ubuntu; other distros may use different names.
  * flex
  * bison
  * libncursesw5-dev
- * libjansson-dev
  * zlib1g-dev
  * cmake
  * cmake-curses-gui

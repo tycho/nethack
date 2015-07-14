@@ -26,40 +26,7 @@ Download CMake ("Win32 Installer" under "Binary distributions") at:
 Run the EXE to install CMake.
 
 
-3. Compile Jansson
-------------------
-
-Click "Download ZIP" at https://github.com/akheron/jansson and extract it to C:\MinGW.
-
-Open C:\MinGW\jansson-master\CMakeLists.txt in a text editor and change:
-
-    if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-       set(CMAKE_C_FLAGS "-fPIC")
-    endif()
-
-... to:
-
-    if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-       if (NOT MINGW)
-          set(CMAKE_C_FLAGS "-fPIC")
-       endif ()
-    endif()
-
-Open CMake (in the Start Menu) to configure the Jansson build:
-
- 1. Click "Browse Source..." and set it to C:\MinGW\jansson-master.
- 2. Click "Browse Build..." and set it to C:\MinGW\jansson-master\build (make a new folder).
- 3. Click "Configure", choose "MinGW Makefiles" and "Use default native compilers".  Ignore the "Sphinx not found" warning.
- 4. Uncheck BUILD_DOCS and set CMAKE_INSTALL_PREFIX to C:\MinGW\jansson-master\install (make a new folder).
- 5. Click "Configure" again, then click "Generate" and close CMake.
-
-Open the command prompt (cmd.exe) and type the following to compile Jansson:
-
-    cd C:\MinGW\jansson-master\build
-    mingw32-make install
-
-
-4. Compile PDCurses
+3. Compile PDCurses
 -------------------
 
 Download pdcurs34.zip at:
@@ -75,7 +42,7 @@ Open the command prompt to compile PDCurses with wide character support:
     rename pdcurses.a libpdcurses.a
 
 
-5. Compile the game
+4. Compile the game
 -------------------
 
 Open the command prompt to install the game's dependencies:
@@ -91,10 +58,8 @@ Open CMake again, this time to configure the build of the game:
  3. Click "Configure", choose "MinGW Makefiles" and "Use default native compilers".
  4. Set BISON_EXECUTABLE to C:/MinGW/msys/1.0/bin/bison.exe.
  5. Set FLEX_EXECUTABLE to C:/MinGW/msys/1.0/bin/flex.exe.
- 6. Set JANSSON_INC_DIR to C:/MinGW/jansson-master/install/include.
- 7. Set JANSSON_LIB_DIR to C:/MinGW/jansson-master/install/lib.
- 8. Set PDCURSES_INC_DIR to C:/MinGW/pdcurs34.
- 9. Set PDCURSES_LIB_DIR to C:/MinGW/pdcurs34/win32.
+ 6. Set PDCURSES_INC_DIR to C:/MinGW/pdcurs34.
+ 7. Set PDCURSES_LIB_DIR to C:/MinGW/pdcurs34/win32.
 
 Set the install path for the game to C:/MinGW/DynaHack-unnethack/install (make a new folder) for the following settings:
 
@@ -115,13 +80,12 @@ After a few minutes, you can find the game at C:\MinGW\DynaHack-unnethack\instal
 
 Nearly all of the game's options are set and saved in-game, but if you want to customize characters used on the map, see save files or view dump logs of finished games you can find them all in your user's AppData folder under Roaming\DynaHack.
 
-If you want to create a ZIP of the game, you need these files (ignore the *.dll.a files):
+If you want to create a ZIP of the game, you need these files (ignore libnitrohack.dll.a):
 
  * dynahack.exe
  * nhdat
  * license
  * libnitrohack.dll
- * libnitrohack_client.dll
 
 You'll also need to include these DLLs, which you can find in C:\MinGW\bin:
 

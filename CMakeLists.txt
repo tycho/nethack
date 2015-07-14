@@ -50,7 +50,7 @@ else ()
     set (ENABLE_SERVER FALSE)
 endif ()
 
-set (ENABLE_NETCLIENT TRUE CACHE BOOL "Enable network client mode")
+set (ENABLE_NETCLIENT FALSE CACHE BOOL "Enable network client mode")
 
 if (CMAKE_COMPILER_IS_GNUCC)
     set (CMAKE_C_FLAGS_DEBUG "-Wall -g3 -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith -Wformat-security")

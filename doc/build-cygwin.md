@@ -21,22 +21,7 @@ Run Cygwin's setup.exe and choose the following packages:
  * zlib-devel
 
 
-2. Install Jansson for Cygwin
------------------------------
-
-Cygwin does not have a package for Jansson, so it needs to be compiled and installed from source.
-
-First, download the Jansson source code at http://www.digip.org/jansson/ and extract it to C:\cygwin\home\username.
-
-Open the Cygwin terminal to compile and install Jansson:
-
-    cd ~/jansson-2.4
-    ./configure
-    make
-    make install
-
-
-3. Clone the game's git repository
+2. Clone the game's git repository
 ----------------------------------
 
 In the Cygwin terminal:
@@ -47,7 +32,7 @@ In the Cygwin terminal:
 At this point compiling the game for Cygwin is similar to compiling it for Linux.  All of the remaining commands should be entered in the Cygwin terminal.
 
 
-4. Configure the build
+3. Configure the build
 ----------------------
 
 Make the build directory, run CMake:
@@ -69,7 +54,7 @@ Set BINDIR, DATADIR and LIBDIR to /home/username/dynahack/install/dynahack-data.
 Press 'c' to configure, then 'g' to generate the build files and exit.
 
 
-5. Compile the game
+4. Compile the game
 -------------------
 
 Enter the following commands to compile the game:
