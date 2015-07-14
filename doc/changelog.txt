@@ -248,6 +248,8 @@ Items
 * Rings with enchantment +3 or lower no longer have a chance to explode when
   charged, and rings at -5 or lower will only explode from cursed charging (from
   SporkHack).
+* Quest artifacts that are spawned at the final level of the Quest will be
+  generated fixed/erodeproofed.
 * Fix prefixes like "magical" and "prize" not appearing on rings, wands,
   spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
