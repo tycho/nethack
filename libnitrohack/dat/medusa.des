@@ -203,7 +203,7 @@ LOOP [4] {
 }
 
 LEVEL: "medusa-3"
-FLAGS: noteleport, mazelevel
+FLAGS: noteleport, mazelevel, shortsighted
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #
@@ -294,7 +294,7 @@ LOOP [30] {
 }
 
 LEVEL: "medusa-4"
-FLAGS: noteleport, mazelevel
+FLAGS: noteleport, mazelevel, shortsighted
 INIT_MAP: solidfill, ' '
 GEOMETRY: center, center
 #

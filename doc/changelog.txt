@@ -167,6 +167,10 @@ Dungeon
 * Changes to standard rooms-and-corridors level generation:
     - Grid room level style (from K-Mod).
     - Raise chance of special rooms-and-corridors level style from 10% to 20%.
+* Changes to Medusa's Island:
+    - Give the shortsighted flag to new Medusa's Island levels from UnNetHack,
+      to reduce swarming from ravens/snakes turning those levels into glorified
+      Big Rooms with more water.
 * Changes to Gehennom:
     - Mazes completely removed from Gehennom!  Both fill levels and filler
       around special levels consist of lava caverns.
