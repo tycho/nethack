@@ -165,8 +165,7 @@ Dungeon
 * Changes to Gehennom:
     - Mazes completely removed from Gehennom!  Both fill levels and filler
       around special levels consist of lava caverns.
-    - Add demon lairs for Demogorgon, Geryon, Dispater, and Yeenoghu (from
-      GruntHack).
+    - Add demon lairs for Geryon, Dispater, and Yeenoghu (from GruntHack).
 * Changes to the Town branch:
     - Nymph level is now guaranteed and appears between the Town surface and
       filler levels.
@@ -273,7 +272,7 @@ Monsters
 * Drowning attacks give two turns for players to react before instant death (was
   one turn); a monster "pulls you towards the water" before it drowns you.
 * Metallivores and disintegrators can eat through iron bars (from UnNetHack).
-* Allow Demogorgon to be bribed, since his lair is now guaranteed.
+* Allow Demogorgon to be bribed.
 * Tone back demon bribery amounts inherited from UnNetHack: demons now only ask
   for 1000 to 2000 gold.
     - Giving within 80% of the money demanded for a demon bribe succeeds between

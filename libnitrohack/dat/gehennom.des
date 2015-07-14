@@ -1153,7 +1153,9 @@ DRAWBRIDGE: (42,09), east, closed
 STAIR: (09,09), up
 STAIR: (50,09), down
 # the fellow in residence
-MONSTER: ('&',"Demogorgon"), (50,09)
+# ... except not, since guaranteed Demogorgon is just mean.
+#MONSTER: ('&',"Demogorgon"), (50,09)
+MONSTER: ('&',"nalfeshnee"), (50,09)
 # some tough guards
 MONSTER: ('&',"nalfeshnee"), (49,08)
 MONSTER: ('&',"balrog"), (51,08)
