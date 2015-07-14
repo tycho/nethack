@@ -27,6 +27,8 @@ Highlights
 * Sokoban prizes moved to Mines End, making Sokoban much more optional.
 * Nymph level moved into Town branch; Town shops are larger to compensate.
 * Effect of skills on to-hit and damage raised in general.
+* Items that spawn with a magical property have a much higher chance to spawn
+  with additional properties.
 * Slings now get damage bonuses from strength and enchantment.
 * Spells can be aborted at direction, position and item prompts without using
   power or hunger.
@@ -244,6 +246,8 @@ Items
   different candle stacks, even with DynaHack's improved item stacking!
 * Grant +1 to-hit for all short swords (from K-Mod).
 * Allow knife and stiletto as possible tin-opening tools (from K-Mod).
+* Items that spawn with a magical property have a much higher chance to spawn
+  with additional properties.
 * The "magical" prefix on items is only omitted once all properties on it have
   been identified instead of once any of them have been, making it easier to
   discover items that have more than one property.
