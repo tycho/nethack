@@ -648,7 +648,9 @@ void start_corpse_timeout(struct obj *body)
 		    if (!rn2(3)) break;
 
 	} else if (!body->norevive &&
-		   (is_zombie(&mons[body->corpsenm]) ||
+		   ((is_zombie(&mons[body->corpsenm]) &&
+		     /* Priests have a chance to put down zombies for good. */
+		     !(Role_if(PM_PRIEST) && !rn2(2))) ||
 		    mons[body->corpsenm].mlet == S_TROLL)) {
 		long age;
 		struct monst *mtmp = get_mtraits(body, FALSE);
@@ -662,7 +664,7 @@ void start_corpse_timeout(struct obj *body)
 		    }
 		}
 	}
-	
+
 	if (body->norevive) body->norevive = 0;
 	start_timer(body->olev, when, TIMER_OBJECT, action, body);
 }

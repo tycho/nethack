@@ -24,7 +24,7 @@ Highlights
 * Extra turn before drowning attack instant death.  Players upgrading from an
   older version of DynaHack should adjust their `msgtype` as described in the
   Configuration section of this changelog.
-* Zombie corpses may revive.
+* Zombie corpses may revive (lower chance if playing a priest).
 * Sokoban prizes moved to Mines End, making Sokoban much more optional.
 * Nymph level moved into Town branch; Town shops are larger to compensate.
 * Effect of skills on to-hit and damage raised in general.
@@ -302,7 +302,7 @@ Monsters
   always have a few turns to save yourself from instant death.
 * Drowning attacks give two turns for players to react before instant death (was
   one turn); a monster "pulls you towards the water" before it drowns you.
-* Zombie corpses may revive.
+* Zombie corpses may revive (lower chance if playing a priest).
 * All eels in water can now be seen from afar, like other monsters.
 * Metallivores and disintegrators can eat through iron bars (from UnNetHack).
 * Allow Demogorgon to be bribed.
