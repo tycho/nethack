@@ -270,6 +270,8 @@ Items
   generated fixed/erodeproofed.
 * Having free action reduces paralysis from using a crystal ball from 1-10
   turns down to 1-2.
+* Amulet of Yendor need only be carried to give hints about nearby magic
+  portals, instead of having to wield or wear it (from SporkHack).
 * Fix prefixes like "magical" and "prize" not appearing on rings, wands,
   spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
