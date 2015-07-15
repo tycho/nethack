@@ -52,17 +52,47 @@ void amulet(void)
 	struct obj *amu;
 
 	amu = carrying(AMULET_OF_YENDOR);
-	if (amu && !rn2(15)) {
+	if (amu) {
 	    for (ttmp = level->lev_traps; ttmp; ttmp = ttmp->ntrap) {
 		if (ttmp->ttyp == MAGIC_PORTAL) {
-		    int du = distu(ttmp->tx, ttmp->ty);
-		    if (du <= 9)
+		    int dm = distmin(ttmp->tx, ttmp->ty, u.ux, u.uy);
+
+		    /* Don't spam portal detection messages. */
+		    if (rn2(dm)) break;
+
+		    if (dm <= 3) {
 			pline("%s hot!", Tobjnam(amu, "feel"));
-		    else if (du <= 64)
+		    } else if (dm <= 8) {
 			pline("%s very warm.", Tobjnam(amu, "feel"));
-		    else if (du <= 144)
+		    } else if (dm <= 12) {
 			pline("%s warm.", Tobjnam(amu, "feel"));
-		    /* else, the amulet feels normal */
+		    } else {
+			/* The amulet feels normal, so don't detect portals. */
+			break;
+		    }
+
+		    /* Getting a message has a chance of revealing portals. */
+		    /* chance == 2 / steps away */
+		    /* 12 steps away == 16.7% */
+		    /* 8 steps away  == 25.0% */
+		    /* 3 steps away  == 66.7% */
+		    if (!ttmp->tseen && dm > 0 && rn2(dm) < 2) {
+			/* code cobbled together from detect.c */
+			int uw = u.uinwater;
+			cls();
+			u.uinwater = 0;
+			map_trap(ttmp, 1);
+			ttmp->tseen = 1;
+			newsym(u.ux, u.uy);
+			pline("You sense a magic portal nearby!");
+			win_pause_output(P_MAP);
+			doredraw();
+			u.uinwater = uw;
+			if (Underwater) under_water(2);
+			if (u.uburied) under_ground(2);
+			/* interrupt running */
+			nomul(0, NULL);
+		    }
 		    break;
 		}
 	    }
