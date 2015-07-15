@@ -165,13 +165,14 @@ Dungeon
     - Magic chests are fixed to the ground and as such cannot be tipped.
     - Attempting to put a corpse set to revive into a magic chest will revive it
       immediately, to prevent exploiting them to get rid of such corpses.
-* Changes to standard rooms-and-corridors level generation:
-    - Grid room level style (from K-Mod).
-    - Raise chance of special rooms-and-corridors level style from 10% to 20%.
-* Changes to the Valkyrie quest:
+* Changes to quest levels:
     - Add guaranteed tinning kit to the Valkyrie quest home level to give
       players an alternative to eating giant corpses whole for strength and
       waiting out the satiation outside of the quest portal.
+    - Remove squeeze gap in Caveman quest home level.
+* Changes to standard rooms-and-corridors level generation:
+    - Grid room level style (from K-Mod).
+    - Raise chance of special rooms-and-corridors level style from 10% to 20%.
 * Changes to Medusa's Island:
     - Give the shortsighted flag to new Medusa's Island levels from UnNetHack,
       to reduce swarming from ravens/snakes turning those levels into glorified
