@@ -170,6 +170,8 @@ Dungeon
       players an alternative to eating giant corpses whole for strength and
       waiting out the satiation outside of the quest portal.
     - Remove squeeze gap in Caveman quest home level.
+    - Redesign Ranger quest home level with a more organic layout and wider
+      corridors (from dNetHack, originally by Khor).
 * Changes to standard rooms-and-corridors level generation:
     - Grid room level style (from K-Mod).
     - Raise chance of special rooms-and-corridors level style from 10% to 20%.
