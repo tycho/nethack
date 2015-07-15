@@ -1376,7 +1376,8 @@ static int use_tinning_kit(struct obj *obj)
 	if ((can = mksobj(level, TIN, FALSE, FALSE)) != 0) {
 	    static const char you_buy_it[] = "You tin it, you bought it!";
 
-	    can->corpsenm = corpse->corpsenm;
+	    /* Permit giant zombies to still produce tins of giant meat. */
+	    can->corpsenm = undead_to_corpse(corpse->corpsenm);
 	    can->cursed = obj->cursed;
 	    can->blessed = obj->blessed;
 	    can->owt = weight(can);

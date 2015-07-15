@@ -79,6 +79,9 @@
 #define polyok(ptr)		(((ptr)->mflags2 & M2_NOPOLY) == 0L)
 #define is_undead(ptr)		(((ptr)->mflags2 & M2_UNDEAD) != 0L)
 #define is_were(ptr)		(((ptr)->mflags2 & M2_WERE) != 0L)
+#define is_zombie(ptr)		((ptr)->mlet == S_ZOMBIE && \
+				 (ptr) != &mons[PM_GHOUL] && \
+				 (ptr) != &mons[PM_SKELETON])
 #define is_vampire(ptr)		((ptr)->mlet == S_VAMPIRE || \
 				 ((ptr)->mflags2 & M2_VAMPIRE) != 0L)
 /* feeds on blood */
@@ -155,7 +158,9 @@
 				 (ptr) == &mons[PM_ELF] || \
 				 (ptr) == &mons[PM_HUMAN])
 /* return TRUE if the monster tends to revive */
-#define is_reviver(ptr)		(is_rider(ptr) || (ptr)->mlet == S_TROLL)
+#define is_reviver(ptr)		(is_rider(ptr) || \
+				 is_zombie(ptr) || \
+				 (ptr)->mlet == S_TROLL)
 
 /* this returns the light's range, or 0 if none; if we add more light emitting
    monsters, we'll likely have to add a new light range field to mons[] */

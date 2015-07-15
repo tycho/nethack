@@ -136,7 +136,7 @@ static const short cham_to_pm[] = {
 static struct obj *make_corpse(struct monst *mtmp)
 {
 	const struct permonst *mdat = mtmp->data;
-	int num;
+	int num = 0;
 	struct obj *obj = NULL;
 	int x = mtmp->mx, y = mtmp->my;
 	int mndx = monsndx(mdat);
@@ -200,6 +200,8 @@ static struct obj *make_corpse(struct monst *mtmp)
 	    case PM_HUMAN_MUMMY:
 	    case PM_GIANT_MUMMY:
 	    case PM_ETTIN_MUMMY:
+		num = undead_to_corpse(mndx);
+		/* fall through */
 	    case PM_KOBOLD_ZOMBIE:
 	    case PM_DWARF_ZOMBIE:
 	    case PM_GNOME_ZOMBIE:
@@ -208,7 +210,11 @@ static struct obj *make_corpse(struct monst *mtmp)
 	    case PM_HUMAN_ZOMBIE:
 	    case PM_GIANT_ZOMBIE:
 	    case PM_ETTIN_ZOMBIE:
-		num = undead_to_corpse(mndx);
+		/* Do NOT run zombies through undead_to_corpse() above, so they
+		 * can preserve their zombieness that start_corpse_timeout()
+		 * then detects to make zombies revive.
+		 */
+		if (!num) num = mndx;
 		obj = mkcorpstat(CORPSE, mtmp, &mons[num], level, x, y, TRUE);
 		obj->age -= 100;		/* this is an *OLD* corpse */
 		break;
