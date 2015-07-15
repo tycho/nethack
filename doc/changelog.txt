@@ -175,6 +175,9 @@ Dungeon
     - Give the shortsighted flag to new Medusa's Island levels from UnNetHack,
       to reduce swarming from ravens/snakes turning those levels into glorified
       Big Rooms with more water.
+    - The shield of reflection in the statue of Perseus now has the same chance
+      of being blessed or cursed as any other item, instead of being cursed or
+      uncursed with the probability based on the map encountered.
 * Changes to Gehennom:
     - Mazes completely removed from Gehennom!  Both fill levels and filler
       around special levels consist of lava caverns.
