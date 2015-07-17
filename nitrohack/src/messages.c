@@ -130,7 +130,7 @@ static void prune_messages(int maxturn)
 	    char **output;
 	    wrap_text(COLNO, msg, &output_count, &output);
 	    for (j = 0; j < output_count; j++) {
-		if (strlen(msglines[curline]) > 0)
+		if (msglines[curline][0])
 		    newline();
 		strcpy(msglines[curline], output[j]);
 	    }
@@ -290,7 +290,7 @@ static void curses_print_message_core(int turn, const char *msg, nh_bool canbloc
 	wrap_text(maxlen, msg, &output_count, &output);
 
 	for (i = 0; i < output_count; i++) {
-	    if (strlen(msglines[curline]) > 0) {
+	    if (msglines[curline][0]) {
 		/*
 		 * If we would scroll a message off the screen that
 		 * the user hasn't had a chance to look at this redraw,
