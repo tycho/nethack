@@ -367,6 +367,8 @@ Interface
 * Change default corridor character back to `#` in Unicode graphics mode.
 * Show warning level 0 for very weak monsters when the player has a source of
   warning (previously these monsters were not shown at all).
+* Pressing escape at "--More--" now shows the last messages in the message area
+  instead of simply cutting them off.
 * Fix the color of the Wizard's Tower walls when viewed from another level using
   the `Ctrl-O` dungeon overview.
 * Fix "T - take off" not appearing in the item action menu of meat rings.

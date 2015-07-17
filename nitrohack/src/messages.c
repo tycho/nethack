@@ -18,7 +18,7 @@ static char msglines[MAX_MSGLINES][COLNO+1];
 static int curline;
 static int start_of_turn_curline = -1;
 static int last_redraw_curline;
-static nh_bool stopprint;
+static nh_bool skip_more;
 static int prevturn, action, prevaction;
 
 static void newline(void);
@@ -179,6 +179,9 @@ static void more(void)
     int cursx, cursy;
     attr_t attr = A_NORMAL;
 
+    if (skip_more)
+	return;
+
     draw_msgwin();
 
     if (settings.standout)
@@ -222,7 +225,7 @@ static void more(void)
     draw_msgwin();
 
     if (key == KEY_ESC)
-	stopprint = TRUE;
+	skip_more = TRUE;
 
     /* we want to --more-- by screenfuls, not lines */
     last_redraw_curline = curline;
@@ -254,16 +257,13 @@ static void curses_print_message_core(int turn, const char *msg, nh_bool canbloc
 
     if (action > prevaction) {
 	/* re-enable output if it was stopped and start a new line */
-	stopprint = FALSE;
+	skip_more = FALSE;
 	newline();
     }
     prevturn = turn;
     prevaction = action;
 
     store_message(turn, msg);
-
-    if (stopprint)
-	return;
 
     /*
      * generally we want to put as many messages on one line as possible to
@@ -311,7 +311,6 @@ static void curses_print_message_core(int turn, const char *msg, nh_bool canbloc
 		else
 		    newline();
 	    }
-	    if (stopprint) break; /* may get set in more() */
 	    strcpy(msglines[curline], output[i]);
 	}
 
