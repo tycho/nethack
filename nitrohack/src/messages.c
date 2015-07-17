@@ -244,7 +244,7 @@ void new_action(void)
 static void curses_print_message_core(int turn, const char *msg, nh_bool canblock)
 {
     int hsize, vsize, maxlen;
-    nh_bool died;
+    nh_bool use_current_line, died;
 
     if (!msghistory)
 	alloc_hist_array();
@@ -278,8 +278,13 @@ static void curses_print_message_core(int turn, const char *msg, nh_bool canbloc
     if (maxlen >= COLNO) maxlen = COLNO - 1;
     if (vsize == 1) maxlen -= 8; /* for "--More--" */
 
+    if (settings.msg_per_line) {
+	use_current_line = !msglines[curline][0];
+    } else {
+	use_current_line = (strlen(msglines[curline]) + strlen(msg) + 2 < maxlen);
+    }
     died = !strncmp(msg, "You die", 7);
-    if (strlen(msglines[curline]) + strlen(msg) + 2 < maxlen && !died) {
+    if (use_current_line && !died) {
 	if (msglines[curline][0])
 	    strcat(msglines[curline], "  ");
 	strcat(msglines[curline], msg);

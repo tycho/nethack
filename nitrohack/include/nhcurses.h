@@ -179,6 +179,7 @@ struct settings {
     nh_bool  hilite_peaceful; /* hilight peaceful monsters */
     nh_bool  hilite_pet;/* hilight pets */
     nh_bool  mapcolors;	/* use thematic colors for special map regions */
+    nh_bool  msg_per_line; /* show each message on a new line */
     nh_bool  repeat_num_auto; /* number keys automatically show repeat count prompt */
     nh_bool  showexp;	/* show experience points */
     nh_bool  showscore;	/* show score */
