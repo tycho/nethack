@@ -84,10 +84,10 @@ struct nh_option_desc curses_options[] = {
     {"name", "name for new characters (blank = ask)", OPTTYPE_STRING, {NULL}},
     {"classic_status", "use classic NetHack layout for status lines", OPTTYPE_BOOL, { FALSE }},
     {"darkgray", "try to show 'black' as dark gray instead of dark blue", OPTTYPE_BOOL,
-#if defined(__linux__)
+#if defined(__linux__) || defined(WIN32)
 	{ VTRUE }
 #else
-	/* Windows and default OS X terminal config have problems with darkgray */
+	/* default OS X terminal config has problems with darkgray */
 	{ FALSE }
 #endif
     },
@@ -100,7 +100,7 @@ struct nh_option_desc curses_options[] = {
 #endif
     },
     {"darkroom", "dim colors for out-of-sight spaces", OPTTYPE_BOOL,
-#if defined(__linux__)
+#if defined(__linux__) || defined(WIN32)
 	{ VTRUE }
 #else
 	/* darkroom tends to look awful without working darkgray */
