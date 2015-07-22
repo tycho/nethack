@@ -401,6 +401,8 @@ Technical
   from `dynahack` to `dynahack.sh` to prevent it from overwriting the actual
   game or confusing and being ignored by the installation system in case the
   build system is accidentally set with identical `SHELLDIR` and `BINDIR` paths.
+* Replace `LD_LIBRARY_PATH` in `dynahack.sh` *nix-like launch script with an
+  rpath configured on the `dynahack` binary.
 * Clean up timer debugging code a bit.
 * Fix warning when leaving bones while wielding an attached heavy iron ball.
 * Fix infinite loop when placing a branch entrance on joined cavern levels.

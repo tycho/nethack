@@ -31,6 +31,45 @@ endif()
 set (ALL_STATIC FALSE CACHE BOOL "Fully static build")
 if (NOT ALL_STATIC)
     set (LIB_TYPE SHARED)
+    if (UNIX)
+        # SMART RPATH DEFAULT VALUE
+        #
+        # Objective: Use a relative rpath (i.e. "$ORIGIN...") if LIBDIR is
+        # a subpath of BINDIR, otherwise use an absolute rpath.
+        #
+        # TODO (by somebody who is not me): Mac OS X uses some combination
+        # of @rpath / @loader_path / @executable_path rather than $ORIGIN.
+        string (LENGTH ${LIBDIR} LIBDIR_LENGTH)
+        string (LENGTH ${BINDIR} BINDIR_LENGTH)
+        if (${LIBDIR_LENGTH} LESS ${BINDIR_LENGTH})
+            # LIBDIR is too short to be a subpath of BINDIR
+            set (GAME_RPATH_DEFAULT ${LIBDIR})
+        else ()
+            string (SUBSTRING ${LIBDIR} 0 ${BINDIR_LENGTH} LIBDIR_PREFIX)
+            string (COMPARE EQUAL ${LIBDIR_PREFIX} ${BINDIR} LIBDIR_PREFIX_EQUALS_BINDIR)
+            if (LIBDIR_PREFIX_EQUALS_BINDIR)
+                # LIBDIR is a subpath of BINDIR, so use $ORIGIN
+                if (${LIBDIR_LENGTH} GREATER ${BINDIR_LENGTH})
+                    # Get relative path from BINDIR to LIBDIR
+                    string (SUBSTRING ${LIBDIR} ${BINDIR_LENGTH} -1 LIBDIR_REL_BINDIR)
+                    set (GAME_RPATH_DEFAULT_ORIGIN_SUFFIX ${LIBDIR_REL_BINDIR})
+                else ()
+                    set (GAME_RPATH_DEFAULT_ORIGIN_SUFFIX "")
+                endif ()
+                set (GAME_RPATH_DEFAULT "\$ORIGIN${GAME_RPATH_DEFAULT_ORIGIN_SUFFIX}")
+            else ()
+                # LIBDIR is separate from BINDIR
+                set (GAME_RPATH_DEFAULT ${LIBDIR})
+            endif ()
+        endif ()
+
+        # Generally, this should be either be set to:
+        #
+        # 1. LIBDIR relative to BINDIR (e.g. "$ORIGIN") for a relocatable build
+        # 2. LIBDIR absolute path for an installation with fixed paths
+        set (GAME_RPATH ${GAME_RPATH_DEFAULT}
+             CACHE PATH "extra dynamic library search paths for binary")
+    endif ()
 else ()
     if (UNIX AND NOT CYGWIN)
 	# Don't require object files to be recompiled

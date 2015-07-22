@@ -69,6 +69,10 @@ if (ALL_STATIC)
     # It's actually libnitrohack that requires zlib, not nitrohack_curses,
     # but CMake can't chain dependencies transitively, AFAIK.
     target_link_libraries(nitrohack_curses z)
+else ()
+    if (UNIX)
+        set_target_properties (nitrohack_curses PROPERTIES INSTALL_RPATH "${GAME_RPATH}")
+    endif ()
 endif ()
 
 if (USE_PDCURSES)
@@ -101,7 +105,7 @@ add_dependencies (nitrohack_curses libnitrohack)
 if (UNIX)
     add_custom_command(OUTPUT dynahack.sh
                        COMMAND printf "%s\\n%s\\n" "#!/bin/sh"
-                               "LD_LIBRARY_PATH=${LIBDIR} ${BINDIR}/dynahack $@"
+                               "exec ${BINDIR}/dynahack $@"
                                >> dynahack.sh
                        VERBATIM)
     add_custom_target(nitrohack_curses_shell_script ALL
