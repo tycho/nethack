@@ -11,22 +11,30 @@ if (NOT INSTALL_BASE)
 endif ()
 
 # default installation paths
-if (NOT BINDIR)
+if (BINDIR)
+    set (BINDIR "${BINDIR}" CACHE PATH "binary location")
+else ()
     set (BINDIR "${INSTALL_BASE}/dynahack/dynahack-data"
          CACHE PATH "binary location" )
 endif()
 
-if (NOT LIBDIR)
+if (LIBDIR)
+    set (LIBDIR "${LIBDIR}" CACHE PATH "library location")
+else ()
     set (LIBDIR "${INSTALL_BASE}/dynahack/dynahack-data"
          CACHE PATH "library location" )
 endif()
 
-if (NOT DATADIR)
+if (DATADIR)
+    set (DATADIR "${DATADIR}" CACHE PATH "data location")
+else ()
     set (DATADIR "${INSTALL_BASE}/dynahack/dynahack-data"
          CACHE PATH "data location" )
 endif()
 
-if (NOT SHELLDIR)
+if (SHELLDIR)
+    set (SHELLDIR "${SHELLDIR}" CACHE PATH "launch script location")
+else ()
     set (SHELLDIR "${INSTALL_BASE}/dynahack"
          CACHE PATH "launch script location" )
 endif()
