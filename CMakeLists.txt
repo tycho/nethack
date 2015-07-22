@@ -1,13 +1,16 @@
 cmake_minimum_required (VERSION 2.8.4)
 project (DynaHack C)
 
-if (WIN32)
-    set(INSTALL_BASE "$ENV{USERPROFILE}")
-else ()
-    set(INSTALL_BASE "$ENV{HOME}")
+# path prefix to install the game under, defaults to $HOME/dynahack
+if (NOT INSTALL_BASE)
+    if (WIN32)
+        set(INSTALL_BASE "$ENV{USERPROFILE}")
+    else ()
+        set(INSTALL_BASE "$ENV{HOME}")
+    endif ()
 endif ()
 
-# default installation paths in $HOME/dynahack
+# default installation paths
 if (NOT BINDIR)
     set (BINDIR "${INSTALL_BASE}/dynahack/dynahack-data"
          CACHE PATH "binary location" )

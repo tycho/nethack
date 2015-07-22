@@ -403,6 +403,9 @@ Technical
   build system is accidentally set with identical `SHELLDIR` and `BINDIR` paths.
 * Replace `LD_LIBRARY_PATH` in `dynahack.sh` *nix-like launch script with an
   rpath configured on the `dynahack` binary.
+* Allow `INSTALL_BASE` to be passed to the initial cmake invocation to quickly
+  set `BINDIR`, `LIBDIR`, `DATADIR` and `SHELLDIR` to sensible default paths
+  under it.
 * Clean up timer debugging code a bit.
 * Fix warning when leaving bones while wielding an attached heavy iron ball.
 * Fix infinite loop when placing a branch entrance on joined cavern levels.
