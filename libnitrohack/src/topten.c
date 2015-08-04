@@ -3,6 +3,7 @@
 
 #include "hack.h"
 #include "patchlevel.h"
+#include "quest.h"
 #include "dlb.h"
 
 #include <fcntl.h>
@@ -61,6 +62,155 @@ const char * const killed_by_prefix[] = {
 
 static int end_how;
 
+static time_t deathtime_internal;
+
+/* xlogfile writing. Based on the xlogfile patch by Aardvark Joe. */
+
+#define SEP ":"
+#define SEPC (SEP[0])
+
+
+static void munge_xlstring(char *dest, const char *src, int n)
+{
+    int i;
+
+    for (i = 0; i < n - 1 && src[i]; i++) {
+	if (src[i] == SEPC || src[i] == '\n') {
+	    dest[i] = '_';
+	} else {
+	    dest[i] = src[i];
+	}
+    }
+
+    dest[i] = '\0';
+}
+
+
+static unsigned long encode_uevent(void)
+{
+    unsigned long c = 0UL;
+
+    /* game plot events */
+    if (u.uevent.minor_oracle ||
+	u.uevent.major_oracle)		c |= 0x0001UL; /* any Oracle consultation */
+    if (u.uevent.qcalled)		c |= 0x0002UL; /* reached quest portal level */
+    if (quest_status.got_quest ||
+	quest_status.got_thanks)	c |= 0x0004UL; /* was accepted for quest */
+    if (u.uevent.qcompleted)		c |= 0x0008UL; /* showed quest arti to leader */
+    if (u.uevent.uopened_dbridge)	c |= 0x0010UL; /* opened/destroyed Castle drawbridge */
+    if (u.uevent.gehennom_entered)	c |= 0x0020UL; /* entered Gehennom the front way */
+    if (u.uevent.udemigod)		c |= 0x0040UL; /* provoked Rodney's wrath */
+    if (u.uevent.invoked)		c |= 0x0080UL; /* did the invocation */
+    if (u.uevent.ascended)		c |= 0x0100UL; /* someone needs to use this variable */
+
+    /* notable other events */
+    if (u.uevent.uhand_of_elbereth)	c |= 0x0200UL; /* was crowned */
+
+    /* boss kills */
+    if (quest_status.killed_nemesis)	c |= 0x0400UL; /* defeated quest nemesis */
+    if (mvitals[PM_CROESUS].died)	c |= 0x0800UL; /* defeated Croesus */
+    if (mvitals[PM_MEDUSA].died)	c |= 0x1000UL; /* defeated Medusa */
+    if (mvitals[PM_VLAD_THE_IMPALER].
+	died)				c |= 0x2000UL; /* defeated Vlad */
+    if (mvitals[PM_WIZARD_OF_YENDOR].
+	died)				c |= 0x4000UL; /* defeated Rodney */
+    if (mvitals[PM_CTHULHU].died)	c |= 0x8000UL; /* defeated Cthulhu */
+
+    return c;
+}
+
+
+static unsigned long encode_carried(void)
+{
+    unsigned long c = 0UL;
+
+    if (u.uhave.amulet)		c |= 0x0001UL; /* real Amulet of Yendor */
+    if (u.uhave.bell)		c |= 0x0002UL; /* Bell of Opening */
+    if (u.uhave.book)		c |= 0x0004UL; /* Book of the Dead */
+    if (u.uhave.menorah)	c |= 0x0008UL; /* Candelabrum of Invocation */
+    if (u.uhave.questart)	c |= 0x0010UL; /* own quest artifact */
+
+    return c;
+}
+
+
+static void write_xlentry(FILE *rfile, const struct toptenentry *tt)
+{
+    char buf[DTHSZ + 1];
+    const char *uname;
+
+    /* regular logfile data */
+    fprintf(rfile,
+	    "version=%d.%d.%d"
+	    SEP "points=%d"
+	    SEP "deathdnum=%d"
+	    SEP "deathlev=%d"
+	    SEP "maxlvl=%d"
+	    SEP "hp=%d"
+	    SEP "maxhp=%d"
+	    SEP "deaths=%d"
+	    SEP "deathdate=%lu"
+	    SEP "birthdate=%lu"
+	    SEP "uid=%d",
+	    tt->ver_major, tt->ver_minor, tt->patchlevel,
+	    tt->points, tt->deathdnum, tt->deathlev,
+	    tt->maxlvl, tt->hp, tt->maxhp, tt->deaths,
+	    (unsigned long)tt->deathdate,
+	    (unsigned long)tt->birthdate, tt->uid);
+
+    fprintf(rfile,
+	    SEP "role=%s"
+	    SEP "race=%s"
+	    SEP "gender=%s"
+	    SEP "align=%s",
+	    tt->plrole, tt->plrace, tt->plgend, tt->plalign);
+
+    uname = nh_getenv("DYNAHACKUSER");
+    if (!uname)
+	uname = nh_getenv("USER");
+    if (!uname)
+	uname = "";
+    munge_xlstring(buf, uname, DTHSZ + 1);
+    fprintf(rfile, SEP "name=%s", buf);
+
+    munge_xlstring(buf, plname, DTHSZ + 1);
+    fprintf(rfile, SEP "charname=%s", buf);
+
+    munge_xlstring(buf, tt->death, DTHSZ + 1);
+    fprintf(rfile, SEP "death=%s", buf);
+
+    fprintf(rfile, SEP "conduct=%ld", encode_conduct());
+
+    fprintf(rfile, SEP "turns=%u", moves);
+
+    fprintf(rfile, SEP "event=%ld", encode_uevent());
+    fprintf(rfile, SEP "carried=%ld", encode_carried());
+
+    fprintf(rfile,
+	    SEP "starttime=%lu"
+	    SEP "endtime=%lu",
+	    (unsigned long)u.ubirthday,
+	    (unsigned long)deathtime_internal);
+
+    fprintf(rfile, SEP "gender0=%s", genders[u.initgend].filecode);
+    fprintf(rfile, SEP "align0=%s", aligns[1 - u.ualignbase[A_ORIGINAL]].filecode);
+
+    fprintf(rfile, SEP "xplevel=%d", u.ulevel);
+    fprintf(rfile, SEP "exp=%d", u.uexp);
+
+    fprintf(rfile,
+	    SEP "mode=%s",
+	    (flags.debug ? "debug" :
+	     flags.explore ? "explore" :
+	     "normal"));
+
+    fprintf(rfile, "\n");
+}
+
+
+#undef SEP
+#undef SEPC
+
 
 static void writeentry(int fd, const struct toptenentry *tt)
 {
@@ -102,6 +252,19 @@ static void update_log(const struct toptenentry *newtt)
 	writeentry(fd, newtt);
 	unlock_fd(fd);
 	close(fd);
+    }
+}
+
+
+static void update_xlog(const struct toptenentry *newtt)
+{
+    /* used for statistical purposes and tournament scoring */
+    int fd = open_datafile(XLOGFILE, O_CREAT | O_APPEND | O_WRONLY, SCOREPREFIX);
+    if (lock_fd(fd,10)) {
+	FILE *xlfile = fdopen(fd, "a");
+	write_xlentry(xlfile, newtt);
+	unlock_fd(fd);
+	fclose(xlfile); /* also closes fd */
     }
 }
 
@@ -222,6 +385,7 @@ static void fill_topten_entry(struct toptenentry *newtt, int how)
     }
     newtt->birthdate = yyyymmdd(u.ubirthday);
     newtt->deathdate = yyyymmdd((time_t)0L);
+    time(&deathtime_internal);
 }
 
 
@@ -272,15 +436,16 @@ void update_topten(int how)
     struct toptenentry *toptenlist, newtt;
     boolean need_rewrite;
     int  fd;
-    
+
     if (program_state.panicking)
 	return;
-    
+
     end_how = how; /* save how for nh_get_topten */
-    
+
     fill_topten_entry(&newtt, how);
     update_log(&newtt);
-    
+    update_xlog(&newtt);
+
     /* nothing more to do for non-scoring games */
     if (wizard || discover)
 	return;
@@ -290,14 +455,14 @@ void update_topten(int how)
 	close(fd);
 	return;
     }
-    
+
     toptenlist = read_topten(fd, TTLISTLEN);
-    
+
     /* possibly rearrange the score list to include the new entry */
     need_rewrite = toptenlist_insert(toptenlist, &newtt);
     if (need_rewrite)
 	write_topten(fd, toptenlist);
-    
+
     unlock_fd(fd);
     close(fd);
     free(toptenlist);

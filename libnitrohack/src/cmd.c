@@ -1311,6 +1311,38 @@ void show_conduct(int final)
 }
 
 
+unsigned long encode_conduct(void)
+{
+	unsigned long c = 0UL;
+
+	/* see struct u_conduct for details */
+	if (!u.uconduct.food)		c |= 0x00001UL;
+	if (!u.uconduct.unvegan)	c |= 0x00002UL;
+	if (!u.uconduct.unvegetarian)	c |= 0x00004UL;
+	if (!u.uconduct.gnostic)	c |= 0x00008UL;
+	if (!u.uconduct.weaphit)	c |= 0x00010UL;
+	if (!u.uconduct.killer)		c |= 0x00020UL;
+	if (!u.uconduct.literate)	c |= 0x00040UL;
+	if (!u.uconduct.polypiles)	c |= 0x00080UL;
+	if (!u.uconduct.polyselfs)	c |= 0x00100UL;
+	if (!u.uconduct.wishes)		c |= 0x00200UL;
+	if (!u.uconduct.wisharti)	c |= 0x00400UL;
+	if (!num_genocides())		c |= 0x00800UL;
+	if (!u.uconduct.elbereths)	c |= 0x01000UL;
+
+	/* DynaHack-specfic bits, see struct u_conduct for details */
+	if (!u.uconduct.wishmagic)	c |= 0x02000UL;
+	if (!u.uconduct.armoruses)	c |= 0x04000UL;
+	if (!u.uconduct.unblinded)	c |= 0x08000UL;
+	if (!u.uconduct.robbed)		c |= 0x10000UL;
+	if (!u.uconduct.bones)		c |= 0x20000UL;
+	if (!u.uconduct.unracearmor)	c |= 0x40000UL;
+	if (!u.uconduct.sokoban)	c |= 0x80000UL;
+
+	return c;
+}
+
+
 struct nh_cmd_desc *nh_get_commands(int *count)
 {
 	int i, j, cmdcount = 0;
