@@ -201,6 +201,7 @@ void rungame(nh_bool tutorial)
 	return;
     
     strncpy(plname, settings.plname, PL_NSIZ);
+    plname[PL_NSIZ - 1] = 0;
     /* The player name is set to "wizard" (again) in nh_start_game, so setting
      * it here just prevents wizmode player from being asked for a name. */
     if (ui_flags.playmode == MODE_WIZARD)
@@ -208,8 +209,13 @@ void rungame(nh_bool tutorial)
 
     nh_root_plselection_prompt(chardesc, QBUFSZ - 1, role, race, gend, align);
     snprintf(nameprompt, QBUFSZ, "You are a %s.  What is your name?", chardesc);
-    while (!plname[0])
+    while (!plname[0]) {
 	curses_getline(nameprompt, plname);
+	if (strlen(plname) >= PL_NSIZ) {
+	    curses_msgwin("That name is too long.");
+	    plname[0] = 0;
+	}
+    }
     if (plname[0] == '\033') /* canceled */
 	return;
 
