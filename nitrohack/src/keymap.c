@@ -2,6 +2,7 @@
 /* DynaHack may be freely redistributed.  See license for details. */
 
 #include "nhcurses.h"
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <ctype.h>
 
@@ -716,10 +717,14 @@ static void write_keymap(void)
 	return;
     fnncat(filename, FN("keymap.conf"), BUFSZ);
 
-    fd = sys_open(filename, O_TRUNC | O_CREAT | O_RDWR, 0660);
+    fd = sys_open(filename, O_TRUNC | O_CREAT | O_RDWR, 0644);
     if (fd == -1)
 	return;
-    
+#ifdef UNIX
+    /* bypass umask and set 0644 for real */
+    fchmod(fd, 0644);
+#endif
+
     for (key = 1; key < KEY_MAX; key++) {
 	name = keymap[key] ? keymap[key]->name :
 	                (unknown_keymap[key] ? unknown_keymap[key]->name : "-");

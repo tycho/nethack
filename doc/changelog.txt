@@ -398,6 +398,8 @@ Miscellaneous
 Technical
 ---------
 * xlogfile patch (via NetHack 4).
+* Set file permissions on *nix-like operating systems (e.g. Linux and OS X) to
+  644 for player config files, `logfile`, `xlogfile` and `record`.
 * Rename launch script for *nix-like operating systems (e.g. Linux and OS X)
   from `dynahack` to `dynahack.sh` to prevent it from overwriting the actual
   game or confusing and being ignored by the installation system in case the

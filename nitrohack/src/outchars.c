@@ -6,6 +6,7 @@
 
 #include "nhcurses.h"
 #include <ctype.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 
 
@@ -292,10 +293,14 @@ static void write_unisym_config(void)
 	return;
     fnncat(filename, FN("unicode.conf"), BUFSZ);
     
-    fd = sys_open(filename, O_TRUNC | O_CREAT | O_RDWR, 0660);
+    fd = sys_open(filename, O_TRUNC | O_CREAT | O_RDWR, 0644);
     if (fd == -1)
 	return;
-    
+#ifdef UNIX
+    /* bypass umask and set 0644 for real */
+    fchmod(fd, 0644);
+#endif
+
     write(fd, uniconf_header, strlen(uniconf_header));
     write_symlist(fd, unicode_drawing->bgelements, unicode_drawing->num_bgelements);
     write_symlist(fd, unicode_drawing->traps, unicode_drawing->num_traps);

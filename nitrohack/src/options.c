@@ -1283,19 +1283,23 @@ void read_ui_config(void)
 static FILE *open_config_file(fnchar *filename)
 {
     FILE *fp;
-    
+
     fp = fopen(filename, "w");
     if (!fp && (errno == ENOTDIR || errno == ENOENT)) {
 	fp = fopen(filename, "w");
     }
-    
+
     if (!fp) {
 	fprintf(stderr, "could not open " FN_FMT ": %s", filename, strerror(errno));
 	return NULL;
     }
-    
+
+#ifdef UNIX
+    chmod(filename, 0644);
+#endif
+
     fprintf(fp, "# note: this file is rewritten whenever options are changed ingame\n");
-    
+
     return fp;
 }
 

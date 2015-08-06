@@ -141,7 +141,11 @@ int open_datafile(const char *filename, int oflags, int prefix)
 #endif
 
 	filename = fqname(filename, prefix, prefix == TROUBLEPREFIX ? 3 : 0);
-	fd = open(filename, oflags, S_IRUSR | S_IWUSR);
+	fd = open(filename, oflags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+#ifdef UNIX
+	/* bypass umask and set 0644 for real */
+	fchmod(fd, 0644);
+#endif
 	return fd;
 }
 
