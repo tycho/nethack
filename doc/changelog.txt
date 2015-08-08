@@ -423,6 +423,8 @@ Technical
   causes other prizes on that level to vanish.
 * Fix crash in encumbrance display due to weight underflow e.g. when wishing
   for 12 million (12 with six zeros) loadstones in wizard mode.
+* Fix "bad fruit" warnings when slime mold is in inventory while inventory
+  sidebar is updated while saving bones.
 * Convert inversed 10-minus-AC D&D-style armor values with just the armor's
   regular AC value in `src/objects.c`.
 

@@ -549,7 +549,9 @@ static char *xname2(const struct obj *obj, boolean ignore_oquan)
 			struct fruit *f;
 
 			for (f=ffruit; f; f = f->nextf) {
-				if (f->fid == obj->spe) {
+				/* Object naming may occur due to bones trimming,
+				 * where fids may be negative. */
+				if (abs(f->fid) == obj->spe) {
 					strcat(buf, f->fname);
 					break;
 				}
