@@ -153,19 +153,22 @@ static void game_ended(int status, fnchar *filename)
     /* dirname and basename may modify the input string, depending on the system */
     strncpy(fncopy, filename, sizeof(fncopy));
     bp = dirname(fncopy);
-    
+
     get_gamedir(SAVE_DIR, savedir);
     savedir[strlen(savedir)-1] = '\0'; /* remove the trailing '/' */
     if (strcmp(bp, savedir) != 0)
 	return; /* file was not in savedir, so don't touch it */
-    
+
     get_gamedir(LOG_DIR, logname);
     strncpy(fncopy, filename, sizeof(fncopy));
+    fncopy[sizeof(fncopy) - 1] = '\0';
     fname = basename(fncopy);
     strncat(logname, fname, sizeof(logname)-1);
-    
-    /* don't care about errors: rename is nice to have, not essential */
-    rename(filename, logname);
+
+    if (rename(filename, logname) == 0) {
+	/* loosen permissions for preserved save log files */
+	chmod(logname, 0644);
+    }
 #else
     bp = wcsrchr(filename, L'\\');
     get_gamedir(SAVE_DIR, savedir);

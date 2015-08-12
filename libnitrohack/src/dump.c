@@ -26,7 +26,10 @@ void begin_dump(int how)
     const char *rolename;
     time_t t;
     struct tm *tmp;
-    
+#ifdef UNIX
+    int dumpfd;
+#endif
+
     /* back up the window procs */
     winprocs_original = windowprocs;
 
@@ -49,7 +52,14 @@ void begin_dump(int how)
     dumpfp = fopen_datafile(dumpname, "w+", DUMPPREFIX);
     if (!dumpfp)
 	return;
-    
+
+#ifdef UNIX
+    /* 644 permissions for dumplogs */
+    dumpfd = fileno(dumpfp);
+    if (dumpfd != -1)
+	fchmod(dumpfd, 0644);
+#endif
+
     rolename = (flags.female && urole.name.f) ? urole.name.f : urole.name.m;
     fprintf(dumpfp, "%s, %s %s %s %s\n", plname, aligns[1-u.ualign.type].adj,
 	    genders[flags.female].adj, urace.adj, rolename);
