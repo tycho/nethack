@@ -410,7 +410,7 @@ extern boolean hurtle_step(void *, int, int);
 
 /* ### dump.c ### */
 
-extern void begin_dump(int how);
+extern const char *begin_dump(int how);
 extern void end_dump(int how, char *kilbuf, char *pbuf, long umoney);
 extern void dump_catch_menus(boolean intercept);
 
@@ -1714,7 +1714,8 @@ extern int wiz_timeout_queue(void);
 
 /* ### topten.c ### */
 
-extern void update_topten(int how);
+extern void munge_xlstring(char *dest, const char *src, int n);
+extern void update_topten(int how, const char *dumpname);
 extern struct obj *tt_oname(struct obj *);
 extern void topten_level_name(int dnum, int dlev, char *outbuf);
 extern void write_log_toptenentry(int fd, int how);

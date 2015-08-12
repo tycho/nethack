@@ -690,6 +690,7 @@ void done(int how)
 	boolean bones_ok;
 	struct obj *corpse = NULL;
 	long umoney;
+	const char *dumpname;
 
 	if (check_survival(how, killbuf))
 	    return;
@@ -786,7 +787,7 @@ void done(int how)
 	if (flags.end_disclose != DISCLOSE_NO_WITHOUT_PROMPT)
 	    disclose(how, taken);
 
-	begin_dump(how);
+	dumpname = begin_dump(how);
 	dump_disclose(how);
 	
 	/* finish_paybill should be called after disclosure but before bones */
@@ -812,8 +813,8 @@ void done(int how)
 
 	/* generate a topten entry for this game.
 	   update_topten does not display anything. */
-	update_topten(how);
-	
+	update_topten(how, dumpname ? dumpname : "");
+
 	terminate();
 }
 

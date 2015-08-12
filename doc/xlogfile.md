@@ -5,11 +5,11 @@ The xlogfile patch is a simplified version of the same patch for NetHack 4, main
 
  * The `conduct` field encodes extra DynaHack-specific bits, e.g. wishing for magical objects and breaking Sokoban rules.
  * Player username (recorded in the `name` field) is set with the `DYNAHACKUSER` environment variable.
- * Extra info recorded by modern NetHack 4 (as of August 2015) is not recorded by DynaHack, such as random number seed, dumplog filename, birth options, intrinsics, extrinsics, and microsecond-accurate start and end times.
+ * Extra info recorded by modern NetHack 4 (as of August 2015) is not recorded by DynaHack, such as random number seed, birth options, intrinsics, extrinsics, and microsecond-accurate start and end times.
 
 Here is an example of an xlogfile line produced by DynaHack:
 
-    version=0.5.5:points=4046:deathdnum=0:deathlev=9:maxlvl=9:hp=-4:maxhp=35:deaths=1:deathdate=20150804:birthdate=20150804:uid=1000:role=Mon:race=Hum:gender=Fem:align=Neu:name=blahblah:charname=wizard:death=killed by an Uruk-hai:conduct=737176:turns=872:event=0:carried=0:starttime=1438664109:endtime=1438664323:gender0=Mal:align0=Neu:xplevel=5:exp=294:mode=debug
+    version=0.5.5:points=4046:deathdnum=0:deathlev=9:maxlvl=9:hp=-4:maxhp=35:deaths=1:deathdate=20150804:birthdate=20150804:uid=1000:role=Mon:race=Hum:gender=Fem:align=Neu:name=blahblah:charname=wizard:death=killed by an Uruk-hai:conduct=737176:turns=872:event=0:carried=0:starttime=1438664109:endtime=1438664323:gender0=Mal:align0=Neu:xplevel=5:exp=294:mode=debug:dumplog=2015-08-04 14_58_43, wizard-Mon-Hum-Fem-Neu, died.txt
 
 
 version
@@ -282,3 +282,9 @@ Game mode chosen at the start of the game:
  * debug - debug/wizard mode
  * explore - explore mode
  * normal - standard game mode, which should be most of them
+
+
+dumplog
+-------
+
+Filename of the dumplog text file that summarizes the game at the time of game end.

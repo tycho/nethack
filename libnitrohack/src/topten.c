@@ -70,7 +70,7 @@ static time_t deathtime_internal;
 #define SEPC (SEP[0])
 
 
-static void munge_xlstring(char *dest, const char *src, int n)
+void munge_xlstring(char *dest, const char *src, int n)
 {
     int i;
 
@@ -134,7 +134,7 @@ static unsigned long encode_carried(void)
 }
 
 
-static void write_xlentry(FILE *rfile, const struct toptenentry *tt)
+static void write_xlentry(FILE *rfile, const struct toptenentry *tt, const char *dumpname)
 {
     char buf[DTHSZ + 1];
     const char *uname;
@@ -204,6 +204,9 @@ static void write_xlentry(FILE *rfile, const struct toptenentry *tt)
 	     flags.explore ? "explore" :
 	     "normal"));
 
+    munge_xlstring(buf, dumpname, sizeof(buf));
+    fprintf(rfile, SEP "dumplog=%s", dumpname);
+
     fprintf(rfile, "\n");
 }
 
@@ -256,13 +259,13 @@ static void update_log(const struct toptenentry *newtt)
 }
 
 
-static void update_xlog(const struct toptenentry *newtt)
+static void update_xlog(const struct toptenentry *newtt, const char *dumpname)
 {
     /* used for statistical purposes and tournament scoring */
     int fd = open_datafile(XLOGFILE, O_CREAT | O_APPEND | O_WRONLY, SCOREPREFIX);
     if (lock_fd(fd,10)) {
 	FILE *xlfile = fdopen(fd, "a");
-	write_xlentry(xlfile, newtt);
+	write_xlentry(xlfile, newtt, dumpname);
 	unlock_fd(fd);
 	fclose(xlfile); /* also closes fd */
     }
@@ -431,7 +434,7 @@ static boolean toptenlist_insert(struct toptenentry *ttlist, struct toptenentry 
 /*
  * Add the result of the current game to the score list
  */
-void update_topten(int how)
+void update_topten(int how, const char *dumpname)
 {
     struct toptenentry *toptenlist, newtt;
     boolean need_rewrite;
@@ -444,7 +447,7 @@ void update_topten(int how)
 
     fill_topten_entry(&newtt, how);
     update_log(&newtt);
-    update_xlog(&newtt);
+    update_xlog(&newtt, dumpname);
 
     /* nothing more to do for non-scoring games */
     if (wizard || discover)

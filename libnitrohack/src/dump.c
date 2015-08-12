@@ -13,16 +13,12 @@ static int dump_display_objects(struct nh_objitem*, int, const char*, int,
 static void dump_outrip(struct nh_menuitem *items, int icount, boolean ts,
     const char *plname, int gold, const char *killbuf, int end_how, int year);
 
-#if !defined(WIN32)
-#define TIMESTAMP_FORMAT "%Y-%m-%d %H:%M"
-#else
-/* windows doesn't allow ':' in filenames */
-#define TIMESTAMP_FORMAT "%Y-%m-%d %H_%M"
-#endif
-
-void begin_dump(int how)
+const char *begin_dump(int how)
 {
-    char dumpname[BUFSZ], timestamp[BUFSZ], *status;
+    /* must be static, may be passed out of this function */
+    static char dumpname[BUFSZ];
+
+    char dumpname_tmp[BUFSZ], timestamp[BUFSZ], *status;
     const char *rolename;
     time_t t;
     struct tm *tmp;
@@ -33,10 +29,10 @@ void begin_dump(int how)
     /* back up the window procs */
     winprocs_original = windowprocs;
 
-    /* make a timestamp like "2011-11-30 18:45" */
+    /* make a timestamp like "2011-11-30 18:45:01" */
     t = time(NULL);
     tmp = localtime(&t);
-    if (!tmp || !strftime(timestamp, sizeof(timestamp), TIMESTAMP_FORMAT, tmp))
+    if (!tmp || !strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H_%M_%S", tmp))
 	strcpy(timestamp, "???");
 
     switch(how) {
@@ -45,13 +41,20 @@ void begin_dump(int how)
 	case ESCAPED:	status = "escaped"; break;
 	default:	status = "died"; break;
     }
-    
-    sprintf(dumpname, "%s, %s-%s-%s-%s-%s, %s.txt", timestamp, plname,
+
+    sprintf(dumpname_tmp, "%s, %s-%s-%s-%s-%s, %s.txt", timestamp, plname,
 	    urole.filecode, urace.filecode, genders[flags.female].filecode,
 	    aligns[1-u.ualign.type].filecode, status);
+
+    /* Run this through munge_xlstring() here rather than when writing to
+     * xlogfile, so the filename here will match the one eventually written to
+     * the xlogfile.
+     */
+    munge_xlstring(dumpname, dumpname_tmp, sizeof(dumpname));
+
     dumpfp = fopen_datafile(dumpname, "w+", DUMPPREFIX);
     if (!dumpfp)
-	return;
+	return NULL;
 
 #ifdef UNIX
     /* 644 permissions for dumplogs */
@@ -63,9 +66,11 @@ void begin_dump(int how)
     rolename = (flags.female && urole.name.f) ? urole.name.f : urole.name.m;
     fprintf(dumpfp, "%s, %s %s %s %s\n", plname, aligns[1-u.ualign.type].adj,
 	    genders[flags.female].adj, urace.adj, rolename);
-    
+
     dump_screen(dumpfp);
     dump_status();
+
+    return dumpname;
 }
 
 
