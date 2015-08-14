@@ -2262,6 +2262,21 @@ use_weapon:
 			    break;
 		case AT_TENT:
 			if (i==0 && uwep && (youmonst.data->mlet==S_LICH)) goto use_weapon;
+			/* Mind flayers are also smart. They avoid biting
+			   monsters if doing so would be fatal. */
+			if ((youmonst.data == &mons[PM_MIND_FLAYER] ||
+			     youmonst.data == &mons[PM_MASTER_MIND_FLAYER]) &&
+			    /* ... unless they are impaired */
+			    (!Stunned && !Confusion && !Hallucination) &&
+			    (is_rider(mon->data) ||
+			     touch_disintegrates(mon->data) ||
+			     touch_petrifies(mon->data) ||
+			     mon->data == &mons[PM_MEDUSA] ||
+			     mon->data == &mons[PM_GREEN_SLIME] ||
+			     /* ... or in the case of shades, do no damage and
+			        produce confusing messages. */
+			     mon->data == &mons[PM_SHADE]))
+			    break;
 			if ((dhit = (tmp > rnd(20) || u.uswallow)) != 0) {
 			    int compat;
 
