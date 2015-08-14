@@ -256,6 +256,7 @@ Items
       portals, instead of having to wield or wear it (from SporkHack).
     - Amulet of Yendor has a much higher chance of giving hints about nearby
       magic portals, and may map/detect them if carried in inventory.
+    - Amulet of Yendor no longer teleports when dropped.
 * Guarantee a wand of cancellation in the Castle chest that can be used for
   blanking scrolls and potions.
 * The shield of reflection now weighs 50 (was 75) due to the introduction of the
