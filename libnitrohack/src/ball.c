@@ -608,7 +608,7 @@ drag:
 		if ((victim = m_at(level, uchain->ox, uchain->oy)) != 0) {
 		    int tmp;
 
-		    tmp = -2 + Luck + find_mac(victim);
+		    tmp = -2 + Luck / 3 + find_mac(victim);
 		    tmp += omon_adj(victim, uball, TRUE);
 		    if (tmp >= rnd(20))
 			hmon(victim, uball, NULL, TRUE);

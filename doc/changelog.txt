@@ -116,6 +116,8 @@ Character
   reserved for melee) and sling enchantment affects damage of fired projectiles
   (normally launcher enchantment only affects to-hit); their damage now even
   competes with thrown daggers!
+* Change effect of luck on to-hit to +(Luck / 3) across the board (previously
+  it was +Luck to everything except melee; from SporkHack).
 * Spells can be aborted at direction, position and item prompts without using
   power or hunger.
 * Teleport control allows teleportation to be cancelled without using a turn and
