@@ -2244,7 +2244,10 @@ use_weapon:
 			     touch_disintegrates(mon->data) ||
 			     touch_petrifies(mon->data) ||
 			     mon->data == &mons[PM_MEDUSA] ||
-			     mon->data == &mons[PM_GREEN_SLIME]))
+			     mon->data == &mons[PM_GREEN_SLIME] ||
+			     /* ... or in the case of shades, do no damage and
+			        produce confusing messages. */
+			     mon->data == &mons[PM_SHADE]))
 			    break;
 		case AT_KICK:
 		case AT_STNG:
