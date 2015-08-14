@@ -2504,13 +2504,10 @@ int passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
 			(protector == W_ARMF && !uarmf) ||
 			(protector == W_ARMH && !uarmh) ||
 			(protector == (W_ARMC|W_ARMG) && (!uarmc || !uarmg))) {
-		    if (!Stone_resistance &&
-			    !(poly_when_stoned(youmonst.data) &&
-				polymon(PM_STONE_GOLEM))) {
-			pline("You turn to stone...");
-			done_in_by(mon);
+		    char kbuf[BUFSZ];
+		    (void)done_in_by_format(mon, kbuf);
+		    if (delayed_petrify(NULL, kbuf))
 			return 2;
-		    }
 		}
 	    }
 	    break;
