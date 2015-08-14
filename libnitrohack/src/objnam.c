@@ -3061,7 +3061,7 @@ typfnd:
 	if (cnt > 0 && objects[typ].oc_merge && oclass != SPBOOK_CLASS &&
 		(cnt < rnd(6) || wizard ||
 		 (cnt <= 7 && Is_candle(otmp)) ||
-		 (cnt <= 20 &&
+		 (cnt <= 100 &&
 		  ((oclass == WEAPON_CLASS && is_ammo(otmp))
 				|| typ == ROCK || is_missile(otmp)))))
 			otmp->quan = (long) cnt;

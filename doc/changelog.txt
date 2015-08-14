@@ -237,6 +237,7 @@ Wishing
 -------
 * Wands of wishing are generated with at least one charge (1-3 instead of 0-2,
   from UnNetHack 5).
+* Players can wish for up to (and including) 100 projectiles.
 * New alternate spellings recognized by the wish parser:
     - "wolfsbane" (sprig of wolfsbane)
     - "scroll of teleport" (scroll of teleportation)
