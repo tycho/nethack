@@ -1710,6 +1710,10 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 			if (mdef->mhp < xtmp) xtmp = mdef->mhp;
 			if (maybe_polyd(is_vampiric(youmonst.data),
 					Race_if(PM_VAMPIRE)) &&
+			    /* Player vampires are smart enough to not feed
+			       while biting if they might have trouble getting
+			       it down. */
+			    u.uhunger <= 1420 &&
 			    mattk->aatyp == AT_BITE &&
 			    has_blood(pd)) {
 				/* For the life of a creature is in the blood

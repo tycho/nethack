@@ -281,7 +281,8 @@ static void exerper(void)
 			 (u.uhunger > 0) ? WEAK : FAINTING;
 
 		switch (hs) {
-		    case SATIATED:	exercise(A_DEX, FALSE);
+		    case SATIATED:	if (!Race_if(PM_VAMPIRE)) /* undead */
+					    exercise(A_DEX, FALSE);
 					if (Role_if (PM_MONK))
 					    exercise(A_WIS, FALSE);
 					break;

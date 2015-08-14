@@ -142,6 +142,8 @@ Character
 * Rogues start with a +1 short sword (was +0).
 * Samurai start with a +3 wakizashi (was +0), which slightly out-damages their
   starting +0 katana.
+* Player vampires no longer try to drink blood when biting or abuse dexterity
+  while satiated (from UnNetHack).
 * Fix C343-238: "(Unix and VMS only) The 'Who are you?' prompt does not accept
   digits in the response."  The official bug description is inaccurate: it's
   names that START with a digit that aren't accepted by vault guards, and it
