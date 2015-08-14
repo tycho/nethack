@@ -150,6 +150,8 @@ Character
       petrifying, sliming and disintegrating monsters, as long as they are not
       stunned, confused or hallucinating (from UnNetHackPlus).
 * Prevent player vampires from trying and consequently failing to bite shades.
+* Show message when trying and failing to engulf a huge monster while
+  polymorphed as an engulfing monster (from UnNetHackPlus via UnNetHack).
 * Fix C343-238: "(Unix and VMS only) The 'Who are you?' prompt does not accept
   digits in the response."  The official bug description is inaccurate: it's
   names that START with a digit that aren't accepted by vault guards, and it
