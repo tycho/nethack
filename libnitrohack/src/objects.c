@@ -657,8 +657,8 @@ TOOL("can of grease", NULL,1, 0, 0, 1,  15, 15,  20, IRON, HI_METAL),
 TOOL("figurine", NULL,     1, 0, 1, 0,  25, 50,  80, MINERAL, HI_MINERAL),
 TOOL("magic marker", NULL, 1, 0, 1, 1,  15,  2,  50, PLASTIC, CLR_RED),
 /* traps */
-TOOL("land mine",NULL,     1, 0, 0, 0,   0,300, 180, IRON, CLR_RED),
-TOOL("beartrap", NULL,     1, 0, 0, 0,   0,200,  60, IRON, HI_METAL),
+TOOL("land mine",NULL,     1, 0, 0, 0,   0,200, 180, IRON, CLR_RED),
+TOOL("beartrap", NULL,     1, 0, 0, 0,   0,100,  60, IRON, HI_METAL),
 /* instruments */
 TOOL("tin whistle", "whistle",  0, 0, 0, 0, 100,  3,  10, METAL, HI_METAL),
 TOOL("magic whistle", "whistle",0, 0, 1, 0,  30,  3,  10, METAL, HI_METAL),
