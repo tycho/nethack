@@ -2240,6 +2240,8 @@ use_weapon:
 			/* [ALI] Vampires are also smart. They avoid biting
 			   monsters if doing so would be fatal */
 			if (i > 0 && is_vampire(youmonst.data) &&
+			    /* ... unless they are impaired */
+			    (!Stunned && !Confusion && !Hallucination) &&
 			    (is_rider(mon->data) ||
 			     touch_disintegrates(mon->data) ||
 			     touch_petrifies(mon->data) ||

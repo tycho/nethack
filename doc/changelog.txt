@@ -144,6 +144,8 @@ Character
   starting +0 katana.
 * Player vampires no longer try to drink blood when biting or abuse dexterity
   while satiated (from UnNetHack).
+* Player vampires may bite petrifying, sliming or disintegrating monsters if
+  stunned, confused or hallucinating (from UnNetHackPlus).
 * Prevent player vampires from trying and consequently failing to bite shades.
 * Fix C343-238: "(Unix and VMS only) The 'Who are you?' prompt does not accept
   digits in the response."  The official bug description is inaccurate: it's
