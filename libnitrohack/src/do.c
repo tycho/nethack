@@ -648,13 +648,7 @@ void dropy(struct obj *obj)
 		    }
 		}
 	    }
-	} else if (obj->otyp == AMULET_OF_YENDOR &&
-		   (obj->cursed ? !rn2(2) : obj->blessed ? !rn2(16) : !rn2(4))) {
-	    if (!Blind)
-		pline("Right before touching the %s, the amulet teleports away!",
-		      surface(u.ux, u.uy));
-		rloco(obj);
-	} else {
+	} else  {
 	    place_object(obj, level, u.ux, u.uy);
 	    if (obj == uball)
 		drop_ball(u.ux, u.uy, 0, 0);
