@@ -388,6 +388,8 @@ Interface
   warning (previously these monsters were not shown at all).
 * Pressing escape at "--More--" now shows the last messages in the message area
   instead of simply cutting them off.
+* Improve numpad key recognition for default PuTTY configuration where
+  application keypad mode is enabled by default.
 * Fix the color of the Wizard's Tower walls when viewed from another level using
   the `Ctrl-O` dungeon overview.
 * Fix "T - take off" not appearing in the item action menu of meat rings.

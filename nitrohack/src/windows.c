@@ -46,20 +46,60 @@ struct nh_window_procs curses_windowprocs = {
 
 /*----------------------------------------------------------------------------*/
 
+static void define_extra_keypad_keys(void)
+{
+#if defined(NCURSES_VERSION)
+    /* Recognize application keypad mode escape sequences, enabled by default
+     * in PuTTY, so numpad keys work out-of-the-box for it. */
+    define_key("\033Oq", KEY_C1);	/* numpad 1 */
+    define_key("\033Or", KEY_DOWN);	/* numpad 2 */
+    define_key("\033Os", KEY_C3);	/* numpad 3 */
+    define_key("\033Ot", KEY_LEFT);	/* numpad 4 */
+    define_key("\033Ou", KEY_B2);	/* numpad 5 */
+    define_key("\033Ov", KEY_RIGHT);	/* numpad 6 */
+    define_key("\033Ow", KEY_A1);	/* numpad 7 */
+    define_key("\033Ox", KEY_UP);	/* numpad 8 */
+    define_key("\033Oy", KEY_A3);	/* numpad 9 */
+
+    /* These numpad keys don't have Curses KEY_* constants to map to. */
+    define_key("\033Ol", (int)'+');	/* numpad + */
+    define_key("\033On", (int)'.');	/* numpad . */
+    define_key("\033Op", (int)'0');	/* numpad 0 */
+
+    /* Quirk: In PuTTY's default config, the Num Lock, '/', '*' and '-' numpad
+     * keys masquerade as F1, F2, F3 and F4 respectively, while the F1, F2, F3
+     * and F4 keys emit unrecognized escape codes.
+     *
+     * In theory these numpad keys could be unmapped and have those codes given
+     * to the F1-4 keys, but in practice this breaks F1-4 for terminals that
+     * correctly map F1-4.  Instead, we'll compromise and map F1-4 without
+     * unmapping those numpad keys; we won't be able to tell them apart, but at
+     * least F1-4 will map to *something*. */
+    define_key("\033[11~", KEY_F(1));
+    define_key("\033[12~", KEY_F(2));
+    define_key("\033[13~", KEY_F(3));
+    define_key("\033[14~", KEY_F(4));
+
+    /* There are probably more keys not listed here that don't work right
+     * out-of-the-box with PuTTY... */
+#endif
+}
+
+
 void init_curses_ui(void)
 {
     /* set up the default system locale by reading the environment variables */
     setlocale(LC_ALL, "");
-    
+
     curses_scr = newterm(NULL, stdout, stdin);
     set_term(curses_scr);
-    
+
     if (LINES < 24 || COLS < COLNO) {
 	fprintf(stderr, "Sorry, your terminal is too small for DynaHack. Current: (%x, %x)\n", COLS, LINES);
 	endwin();
 	exit(0);
     }
-    
+
     noecho();
     raw();
     nonl();
@@ -67,12 +107,13 @@ void init_curses_ui(void)
     leaveok(basewin, TRUE);
     orig_cursor = curs_set(1);
     keypad(basewin, TRUE);
+    define_extra_keypad_keys();
     set_escdelay(20);
-    
+
     init_nhcolors();
     ui_flags.playmode = MODE_NORMAL;
     ui_flags.unicode = _nc_unicode_locale();
-    
+
     /* with PDCurses/Win32 stdscr is not NULL before newterm runs, which caused
      * crashes. So basewin is a copy of stdscr which is known to be NULL before
      * curses is inited. */
