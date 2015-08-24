@@ -561,6 +561,12 @@ void curses_update_status_silent(struct nh_player_info *pi)
 	old_player = saved_player;
 	statdiff_moves = pi->moves;
     }
+
+    /* Flag Curses to clear and redraw the screen every so often, so
+     * dgamelaunch won't need to replay the entire ttyrec when wants to
+     * spectate a game. */
+    if (statdiff_moves % 100 == 1)
+	clearok(basewin, TRUE);
 }
 
 
