@@ -669,13 +669,15 @@ void switch_graphics(enum nh_text_mode mode)
 	case ASCII_GRAPHICS:
 	    cur_drawing = default_drawing;
 	    break;
-	    
+
 /*
  * Drawing with the full unicode charset. Naturally this requires a unicode terminal.
  */
 	case UNICODE_GRAPHICS:
 	    if (ui_flags.unicode)
 		cur_drawing = unicode_drawing;
+	    else
+		cur_drawing = default_drawing;
 	    break;
     }
 }

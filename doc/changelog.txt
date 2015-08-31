@@ -394,6 +394,8 @@ Interface
   the `Ctrl-O` dungeon overview.
 * Fix "T - take off" not appearing in the item action menu of meat rings.
 * Fix coordinates reported when getting a position from the player.
+* Fix Rogue level graphics leaking onto other levels when Unicode graphics
+  option is set but Unicode support is not detected.
 
 Configuration
 -------------
