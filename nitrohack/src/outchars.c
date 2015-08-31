@@ -52,7 +52,7 @@ static struct curses_symdef unicode_graphics_ovr[] = {
     {"brcorn",	-1,	{0x2518, 0},	0},	/* ┘ bottom right */
     {"crwall",	-1,	{0x253C, 0},	0},	/* ┼ cross */
     {"tuwall",	-1,	{0x2534, 0},	0},	/* ┴ up */
-    {"tdwall",	-1,	{0x252C, 0},	0},	/* T down */
+    {"tdwall",	-1,	{0x252C, 0},	0},	/* ┬ down */
     {"tlwall",	-1,	{0x2524, 0},	0},	/* ┤ left */
     {"trwall",	-1,	{0x251C, 0},	0},	/* ├ right */
     {"pool",	-1,	{0x2248, 0},	0},	/* ≈ almost equal to */
