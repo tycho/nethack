@@ -396,6 +396,8 @@ Interface
 * Fix coordinates reported when getting a position from the player.
 * Fix Rogue level graphics leaking onto other levels when Unicode graphics
   option is set but Unicode support is not detected.
+* Fix ugly borders in PuTTY by replacing ncurses box drawing characters with
+  Unicode box drawing characters.
 
 Configuration
 -------------
@@ -411,6 +413,8 @@ Configuration
 * "* pulls you towards the water!" mapped to MORE action under `msgtype` submenu
   option for the message given in the new extra turn before monster drowning
   attacks.
+* Frames and borders now respect the 'graphics' option, using Unicode box
+  drawing characters in Unicode mode, and ASCII replacements in plain mode.
 
 Miscellaneous
 -------------

@@ -87,9 +87,7 @@ void draw_sidebar_divider(void)
     sbwidth = getmaxx(sidebar);
 
     frame_attr = frame_hp_color();
-    wattron(sidebar, frame_attr);
-    mvwhline(sidebar, invheight, 0, ACS_HLINE, sbwidth);
-    wattroff(sidebar, frame_attr);
+    nh_box_mvwhline(sidebar, invheight, 0, sbwidth, frame_attr);
 }
 
 

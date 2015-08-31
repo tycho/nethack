@@ -23,10 +23,8 @@ WINDOW *newdialog(int height, int width)
     win = newwin(height, width, starty, startx);
     keypad(win, TRUE);
     meta(win, TRUE);
-    wattron(win, FRAME_ATTRS);
-    box(win, 0 , 0);
-    wattroff(win, FRAME_ATTRS);
-    
+    nh_box_wborder(win, FRAME_ATTRS);
+
     return win;
 }
 
@@ -143,9 +141,7 @@ char curses_query_key(const char *query, int *count)
 
     while (1) {
 	if (count) {
-	    wattron(win, FRAME_ATTRS);
-	    box(win, 0, 0);
-	    wattroff(win, FRAME_ATTRS);
+	    nh_box_wborder(win, FRAME_ATTRS);
 	    if (hascount)
 		mvwprintw(win, getmaxy(win) - 1, 2, "Count: %d", cnt);
 	}

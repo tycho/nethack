@@ -174,45 +174,42 @@ static void draw_frame(void)
 	return;
 
     frame_attr = frame_hp_color();
-    wattron(basewin, frame_attr);
 
     /* vertical lines */
-    mvwvline(basewin, 1, 0, ACS_VLINE, ui_flags.viewheight);
-    mvwvline(basewin, 1, COLNO + 1, ACS_VLINE, ui_flags.viewheight);
+    nh_box_mvwvline(basewin, 1, 0, ui_flags.viewheight, frame_attr);
+    nh_box_mvwvline(basewin, 1, COLNO + 1, ui_flags.viewheight, frame_attr);
 
     /* horizontal top line above the message win */
-    mvwaddch(basewin, 0, 0, ACS_ULCORNER);
-    whline(basewin, ACS_HLINE, COLNO);
-    mvwaddch(basewin, 0, COLNO + 1, ACS_URCORNER);
-    
+    nh_box_mvwadd_ulcorner(basewin, 0, 0, frame_attr);
+    nh_box_whline(basewin, COLNO, frame_attr);
+    nh_box_mvwadd_urcorner(basewin, 0, COLNO + 1, frame_attr);
+
     /* horizontal line between message and map windows */
-    mvwaddch(basewin, 1 + ui_flags.msgheight, 0, ACS_LTEE);
-    whline(basewin, ACS_HLINE, COLNO);
-    mvwaddch(basewin, 1 + ui_flags.msgheight, COLNO + 1, ACS_RTEE);
-    
+    nh_box_mvwadd_ltee(basewin, 1 + ui_flags.msgheight, 0, frame_attr);
+    nh_box_whline(basewin, COLNO, frame_attr);
+    nh_box_mvwadd_rtee(basewin, 1 + ui_flags.msgheight, COLNO + 1, frame_attr);
+
     /* horizontal line between map and status */
-    mvwaddch(basewin, 2 + ui_flags.msgheight + ROWNO, 0, ACS_LTEE);
-    whline(basewin, ACS_HLINE, COLNO);
-    mvwaddch(basewin, 2 + ui_flags.msgheight + ROWNO, COLNO + 1, ACS_RTEE);
-    
+    nh_box_mvwadd_ltee(basewin, 2 + ui_flags.msgheight + ROWNO, 0, frame_attr);
+    nh_box_whline(basewin, COLNO, frame_attr);
+    nh_box_mvwadd_rtee(basewin, 2 + ui_flags.msgheight + ROWNO, COLNO + 1, frame_attr);
+
     /* horizontal bottom line */
-    mvwaddch(basewin, ui_flags.viewheight + 1, 0, ACS_LLCORNER);
-    whline(basewin, ACS_HLINE, COLNO);
-    mvwaddch(basewin, ui_flags.viewheight + 1, COLNO + 1, ACS_LRCORNER);
-    
+    nh_box_mvwadd_llcorner(basewin, ui_flags.viewheight + 1, 0, frame_attr);
+    nh_box_whline(basewin, COLNO, frame_attr);
+    nh_box_mvwadd_lrcorner(basewin, ui_flags.viewheight + 1, COLNO + 1, frame_attr);
+
     if (ui_flags.draw_sidebar) {
-	mvwaddch(basewin, 0, COLNO + 1, ACS_TTEE);
-	whline(basewin, ACS_HLINE, COLS - COLNO - 3);
-	mvwaddch(basewin, 0, COLS - 1, ACS_URCORNER);
+	nh_box_mvwadd_ttee(basewin, 0, COLNO + 1, frame_attr);
+	nh_box_whline(basewin, COLS - COLNO - 3, frame_attr);
+	nh_box_mvwadd_urcorner(basewin, 0, COLS - 1, frame_attr);
 
-	mvwaddch(basewin, ui_flags.viewheight + 1, COLNO + 1, ACS_BTEE);
-	whline(basewin, ACS_HLINE, COLS - COLNO - 3);
-	mvwaddch(basewin, ui_flags.viewheight + 1, COLS - 1, ACS_LRCORNER);
+	nh_box_mvwadd_btee(basewin, ui_flags.viewheight + 1, COLNO + 1, frame_attr);
+	nh_box_whline(basewin, COLS - COLNO - 3, frame_attr);
+	nh_box_mvwadd_lrcorner(basewin, ui_flags.viewheight + 1, COLS - 1, frame_attr);
 
-	mvwvline(basewin, 1, COLS - 1, ACS_VLINE, ui_flags.viewheight);
+	nh_box_mvwvline(basewin, 1, COLS - 1, ui_flags.viewheight, frame_attr);
     }
-
-    wattroff(basewin, frame_attr);
 }
 
 
@@ -429,6 +426,7 @@ void redraw_game_windows(void)
 	}
 	
 	if (sidebar) {
+	    draw_sidebar_divider();
 	    redrawwin(sidebar);
 	    wnoutrefresh(sidebar);
 	}

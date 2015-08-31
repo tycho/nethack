@@ -305,6 +305,24 @@ extern char *override_hackdir, *override_userdir;
 
 /*----------------------------------------------------------------------------*/
 
+/* boxdraw.c */
+extern void nh_box_set_graphics(enum nh_text_mode mode);
+extern int nh_box_mvwadd_ulcorner(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_llcorner(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_urcorner(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_lrcorner(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_ltee(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_rtee(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_btee(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_ttee(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_hline(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_vline(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwadd_plus(WINDOW *win, int y, int x, attr_t attrs);
+extern int nh_box_mvwhline(WINDOW *win, int y, int x, int n, attr_t attrs);
+extern int nh_box_mvwvline(WINDOW *win, int y, int x, int n, attr_t attrs);
+extern int nh_box_wborder(WINDOW *, attr_t attrs);
+extern int nh_box_whline(WINDOW *win, int n, attr_t attrs);
+
 /* color.c */
 extern void init_nhcolors(void);
 extern attr_t curses_color_attr(int nh_color, int bg_color);

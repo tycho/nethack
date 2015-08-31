@@ -103,10 +103,8 @@ void draw_menu(struct gamewin *gw)
     int i, j, col, scrlheight, scrlpos, scrltop;
     attr_t attr;
     char *tab;
-    
-    wattron(gw->win, FRAME_ATTRS);
-    box(gw->win, 0 , 0);
-    wattroff(gw->win, FRAME_ATTRS);
+
+    nh_box_wborder(gw->win, FRAME_ATTRS);
     if (mdat->title) {
 	wattron(gw->win, A_UNDERLINE);
 	mvwaddnstr(gw->win, 1, 2, mdat->title, mdat->width - 4);
@@ -290,9 +288,7 @@ int curses_display_menu_core(struct nh_menuitem *items, int icount,
     
     gw->win = newwin(mdat->height, mdat->width, starty, startx);
     keypad(gw->win, TRUE);
-    wattron(gw->win, FRAME_ATTRS);
-    box(gw->win, 0 , 0);
-    wattroff(gw->win, FRAME_ATTRS);
+    nh_box_wborder(gw->win, FRAME_ATTRS);
     mdat->content = derwin(gw->win, mdat->innerheight, mdat->innerwidth,
 			   mdat->frameheight-1, 2);
     leaveok(gw->win, TRUE);
@@ -579,9 +575,7 @@ static void draw_objmenu(struct gamewin *gw)
     int i, scrlheight, scrlpos, scrltop;
     attr_t attr;
 
-    wattron(gw->win, FRAME_ATTRS);
-    box(gw->win, 0 , 0);
-    wattroff(gw->win, FRAME_ATTRS);
+    nh_box_wborder(gw->win, FRAME_ATTRS);
     if (mdat->title) {
 	wattron(gw->win, A_UNDERLINE);
 	mvwaddnstr(gw->win, 1, 2, mdat->title, mdat->width - 4);
@@ -716,9 +710,7 @@ int curses_display_objects(struct nh_objitem *items, int icount,
     
     gw->win = newwin(mdat->height, mdat->width, starty, startx);
     keypad(gw->win, TRUE);
-    wattron(gw->win, FRAME_ATTRS);
-    box(gw->win, 0 , 0);
-    wattroff(gw->win, FRAME_ATTRS);
+    nh_box_wborder(gw->win, FRAME_ATTRS);
     mdat->content = derwin(gw->win, mdat->innerheight, mdat->innerwidth,
 			   mdat->frameheight-1, 2);
     leaveok(gw->win, TRUE);

@@ -680,6 +680,9 @@ void switch_graphics(enum nh_text_mode mode)
 		cur_drawing = default_drawing;
 	    break;
     }
+
+    /* Set box drawing characters. */
+    nh_box_set_graphics(mode);
 }
 
 

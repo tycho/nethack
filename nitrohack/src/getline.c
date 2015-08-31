@@ -43,9 +43,7 @@ void draw_getline(struct gamewin *gw)
     int output_count;
     char **output;
 
-    wattron(gw->win, FRAME_ATTRS);
-    box(gw->win, 0 , 0);
-    wattroff(gw->win, FRAME_ATTRS);
+    nh_box_wborder(gw->win, FRAME_ATTRS);
 
     width = getmaxx(gw->win);
     height = getmaxy(gw->win);
