@@ -441,6 +441,11 @@ Technical
 * Limit name of character to `PL_NSIZ` bytes.
 * Clear and redraw the screen every 100 turns to stop dgamelaunch from
   replaying the entire session when trying to spectate a game.
+* Improvements to static builds (i.e. build configured with `ALL_STATIC`
+  enabled):
+    - `-fPIC` no longer included with static builds.
+    - `libnitrohack.a` no longer installed with static builds, since it's
+      already rolled into the game binary.
 * Fix warning when leaving bones while wielding an attached heavy iron ball.
 * Fix infinite loop when placing a branch entrance on joined cavern levels.
 * Allow SPILL lev_comp command to accept 0 as a size for e.g. breaking holes in
