@@ -455,6 +455,7 @@ Technical
   for 12 million (12 with six zeros) loadstones in wizard mode.
 * Fix "bad fruit" warnings when slime mold is in inventory while inventory
   sidebar is updated while saving bones.
+* Fix handling of end-of-line comments in `DynaHack.conf` and `curses.conf`.
 * Convert inversed 10-minus-AC D&D-style armor values with just the armor's
   regular AC value in `src/objects.c`.
 
