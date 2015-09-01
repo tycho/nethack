@@ -27,6 +27,16 @@ After getting and extracting the game's source code (e.g. to ~/dynahack), create
     cd ~/dynahack/build
     cmake .. -DINSTALL_BASE=~/dynahack/install
 
+Other useful flags for cmake:
+
+    -DCMAKE_BUILD_TYPE=Debug
+
+... to include debugging symbols; useful for stack traces.
+
+    -DALL_STATIC:BOOL=TRUE
+
+... to statically link all DynaHack-related libraries into a single `dynahack` binary.  BEWARE: If this option is changed in a non-clean build directory the results may be unexpected; to avoid this, use `make clean`, or separate build directories for static and dynamic builds.
+
 
 3. Compile the game
 -------------------

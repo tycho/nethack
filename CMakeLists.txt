@@ -82,11 +82,6 @@ if (NOT ALL_STATIC)
              CACHE PATH "extra dynamic library search paths for binary")
     endif ()
 else ()
-    if (UNIX AND NOT CYGWIN)
-	# Don't require object files to be recompiled
-	# if switching to a dynamic build.
-	add_definitions(-fPIC)
-    endif ()
     add_definitions(-DSTATIC_BUILD)
     set (LIB_TYPE STATIC)
 endif ()
