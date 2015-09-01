@@ -42,5 +42,7 @@ target_link_libraries(libnitrohack z)
 
 add_dependencies (libnitrohack makedefs_headers)
 
-install(TARGETS libnitrohack
-        DESTINATION ${LIBDIR})
+if (NOT ALL_STATIC)
+    install(TARGETS libnitrohack
+            DESTINATION ${LIBDIR})
+endif ()
