@@ -89,7 +89,7 @@ char curses_yn_function(const char *query, const char *resp, char def)
     if (def)
 	sprintf(prompt + strlen(prompt), "(%c) ", def);
 
-    wrap_text(COLNO - 5, prompt, &output_count, &output);
+    ui_wrap_text(COLNO - 5, prompt, &output_count, &output);
     width = strlen(prompt) + 5;
     if (width > COLNO) width = COLNO;
     height = output_count + 2;
@@ -97,7 +97,7 @@ char curses_yn_function(const char *query, const char *resp, char def)
     for (i = 0; i < output_count; i++)
 	mvwprintw(win, i + 1, 2, output[i]);
     wrefresh(win);
-    free_wrap(output);
+    ui_free_wrap(output);
 
     do {
 	key = tolower(nh_wgetch(win));

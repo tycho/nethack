@@ -128,13 +128,13 @@ static void prune_messages(int maxturn)
 	} else {
 	    int j, output_count;
 	    char **output;
-	    wrap_text(COLNO, msg, &output_count, &output);
+	    ui_wrap_text(COLNO, msg, &output_count, &output);
 	    for (j = 0; j < output_count; j++) {
 		if (msglines[curline][0])
 		    newline();
 		strcpy(msglines[curline], output[j]);
 	    }
-	    free_wrap(output);
+	    ui_free_wrap(output);
 	}
     }
 }
@@ -292,7 +292,7 @@ static void curses_print_message_core(int turn, const char *msg, nh_bool canbloc
 	int i, output_count;
 	char **output;
 
-	wrap_text(maxlen, msg, &output_count, &output);
+	ui_wrap_text(maxlen, msg, &output_count, &output);
 
 	for (i = 0; i < output_count; i++) {
 	    if (msglines[curline][0]) {
@@ -319,7 +319,7 @@ static void curses_print_message_core(int turn, const char *msg, nh_bool canbloc
 	    strcpy(msglines[curline], output[i]);
 	}
 
-	free_wrap(output);
+	ui_free_wrap(output);
     }
 
     draw_msgwin();
@@ -404,7 +404,7 @@ void doprev_message(void)
 	    int output_count, j;
 	    char **output;
 
-	    wrap_text(hist_msg_width - maxturn_width, msg, &output_count, &output);
+	    ui_wrap_text(hist_msg_width - maxturn_width, msg, &output_count, &output);
 
 	    if (turn != prevturn)
 		snprintf(buf, MSGLEN+1, "T:%*d\t%s", maxturn_width, turn, output[0]);
@@ -417,7 +417,7 @@ void doprev_message(void)
 		add_menu_txt(items, size, icount, buf, MI_TEXT);
 	    }
 
-	    free_wrap(output);
+	    ui_free_wrap(output);
 	}
 
 	prevturn = turn;
@@ -459,7 +459,7 @@ void cleanup_messages(void)
  * The memory for both the output strings and the output array is obtained via
  * malloc and should be freed when no longer needed.
  */
-void wrap_text(int width, const char *input, int *output_count, char ***output)
+void ui_wrap_text(int width, const char *input, int *output_count, char ***output)
 {
     const int min_width = 20, max_wrap = 20;
 
@@ -509,7 +509,7 @@ void wrap_text(int width, const char *input, int *output_count, char ***output)
     *output_count = outcount;
 }
 
-void free_wrap(char **wrap_output)
+void ui_free_wrap(char **wrap_output)
 {
     const int max_wrap = 20;
     int idx;
