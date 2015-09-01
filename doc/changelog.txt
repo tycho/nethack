@@ -419,6 +419,8 @@ Configuration
 Miscellaneous
 -------------
 * Scramble some words in messages on April Fools Day (from NAO).
+* Fix end-of-game scores for non-ascending games being doubled like ascending
+  ones.
 
 Technical
 ---------

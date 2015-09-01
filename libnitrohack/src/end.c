@@ -498,8 +498,8 @@ static long calc_score(int how)
 	u.urscore += 50L * (long)(deepest - 1);
 	if (deepest > 20)
 	    u.urscore += 1000L * (long)((deepest > 30) ? 10 : deepest - 20);
-	if (how == ASCENDED || DEFIED) u.urscore *= 2L;
-	
+	if (how == ASCENDED || how == DEFIED) u.urscore *= 2L;
+
 	return umoney;
 }
 
