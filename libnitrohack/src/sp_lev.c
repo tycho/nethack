@@ -2903,7 +2903,7 @@ static void spo_object(struct sp_coder *coder, struct level *lev)
 		    tmpobj.name.str = strdup(OV_s(parm));
 		break;
 	    case SP_O_V_CORPSENM:
-		if ((OV_typ(parm) == SPOVAR_MONST)) {
+		if (OV_typ(parm) == SPOVAR_MONST) {
 		    char monclass = SP_MONST_CLASS(OV_i(parm));
 		    int monid = SP_MONST_PM(OV_i(parm));
 		    if (monid >= 0 && monid < NUMMONS) {
