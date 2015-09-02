@@ -181,6 +181,9 @@ Dungeon
     - Magic chests are fixed to the ground and as such cannot be tipped.
     - Attempting to put a corpse set to revive into a magic chest will revive it
       immediately, to prevent exploiting them to get rid of such corpses.
+* New trap type: shuriken traps, which only appear in quest levels of certain
+  roles.  Replaces dart traps in monk and samurai quests, and also sometimes
+  for ranger and rogue quests.
 * Changes to quest levels:
     - Add guaranteed tinning kit to the Valkyrie quest home level to give
       players an alternative to eating giant corpses whole for strength and

@@ -644,6 +644,7 @@ void dotrap(struct trap *trap, unsigned trflags)
 		}
 		break;
 	    case DART_TRAP:
+	    case SHURIKEN_TRAP:
 		if (trap->once && trap->tseen && !rn2(15)) {
 		    You_hear("a soft click.");
 		    deltrap(level, trap);
@@ -652,16 +653,27 @@ void dotrap(struct trap *trap, unsigned trflags)
 		}
 		trap->once = 1;
 		seetrap(trap);
-		pline("A little dart shoots out at you!");
-		otmp = mksobj(level, DART, TRUE, FALSE);
+		if (ttype == SHURIKEN_TRAP) {
+		    pline("A throwing star shoots out at you!");
+		    otmp = mksobj(level, SHURIKEN, TRUE, FALSE);
+		} else {
+		    pline("A little dart shoots out at you!");
+		    otmp = mksobj(level, DART, TRUE, FALSE);
+		}
 		otmp->quan = 1L;
 		otmp->owt = weight(otmp);
 		if (!rn2(6)) otmp->opoisoned = 1;
 		if (u.usteed && !rn2(2) && steedintrap(trap, otmp)) /* nothing */;
 		else if (thitu(7, dmgval(NULL, otmp, TRUE, &youmonst),
-			       otmp, NULL, NULL, "little dart")) {
-		    if (otmp->opoisoned)
-			poisoned("dart", A_CON, "little dart", -10);
+			       otmp, NULL, NULL,
+			       ttype == SHURIKEN_TRAP ? "throwing star" : "little dart")) {
+		    if (otmp->opoisoned) {
+			if (ttype == SHURIKEN_TRAP) {
+			    poisoned("shuriken", A_CON, "throwing star", -10);
+			} else {
+			    poisoned("dart", A_CON, "little dart", -10);
+			}
+		    }
 		    obfree(otmp, NULL);
 		} else {
 		    place_object(otmp, level, u.ux, u.uy);
@@ -1173,8 +1185,10 @@ static int steedintrap(struct trap *trap, struct obj *otmp)
 			steedhit = TRUE;
 			break;
 		case DART_TRAP:
+		case SHURIKEN_TRAP:
 			if (!otmp) {
-				impossible("steed hit by non-existant dart?");
+				impossible("steed hit by non-existant %s?",
+					   tt == SHURIKEN_TRAP ? "shuriken" : "dart");
 				return 0;
 			}
 			if (thitm(7, mtmp, otmp, 0, FALSE)) trapkilled = TRUE;
@@ -1683,6 +1697,7 @@ int mintrap(struct monst *mtmp)
 			if (thitm(8, mtmp, otmp, 0, FALSE)) trapkilled = TRUE;
 			break;
 		case DART_TRAP:
+		case SHURIKEN_TRAP:
 			if (trap->once && trap->tseen && !rn2(15)) {
 			    if (in_sight && see_it)
 				pline("%s triggers a trap but nothing happens.",
@@ -1692,7 +1707,11 @@ int mintrap(struct monst *mtmp)
 			    break;
 			}
 			trap->once = 1;
-			otmp = mksobj(level, DART, TRUE, FALSE);
+			if (tt == SHURIKEN_TRAP) {
+			    otmp = mksobj(level, SHURIKEN, TRUE, FALSE);
+			} else {
+			    otmp = mksobj(level, DART, TRUE, FALSE);
+			}
 			otmp->quan = 1L;
 			otmp->owt = weight(otmp);
 			if (!rn2(6)) otmp->opoisoned = 1;
@@ -3014,8 +3033,8 @@ static void cnv_trap_obj(int otyp, int cnt, struct trap *ttmp)
 	struct obj *otmp = mksobj(level, otyp, TRUE, FALSE);
 	otmp->quan=cnt;
 	otmp->owt = weight(otmp);
-	/* Only dart traps are capable of being poisonous */
-	if (otyp != DART)
+	/* Only dart and shuriken traps are capable of being poisonous */
+	if (otyp != DART && otyp != SHURIKEN)
 	    otmp->opoisoned = 0;
 	place_object(otmp, level, ttmp->tx, ttmp->ty);
 	/* Sell your own traps only... */
@@ -3233,7 +3252,7 @@ static int disarm_shooting_trap(struct trap *ttmp, int otyp, schar dx, schar dy)
 	if (fails < 2)
 	    return fails;
 	pline("You disarm %s trap.", the_your[ttmp->madeby_u]);
-	cnv_trap_obj(otyp, 50-rnl(50), ttmp);
+	cnv_trap_obj(otyp, otyp == SHURIKEN ? 10-rnl(10) : 50-rnl(50), ttmp);
 	return 1;
 }
 
@@ -3453,6 +3472,8 @@ int untrap(boolean force)
 				return disarm_squeaky_board(ttmp, dx, dy);
 			case DART_TRAP:
 				return disarm_shooting_trap(ttmp, DART, dx, dy);
+			case SHURIKEN_TRAP:
+				return disarm_shooting_trap(ttmp, SHURIKEN, dx, dy);
 			case ARROW_TRAP:
 				return disarm_shooting_trap(ttmp, ARROW, dx, dy);
 			case PIT:

@@ -807,7 +807,7 @@ static const char * const trap_engravings[TRAPNUM] = {
 			/* 14..17: trap door, VS, teleport, level-teleport */
 			"Vlad was here", NULL, "ad aerarium", "ad aerarium",
 			NULL, NULL, NULL, NULL, NULL,
-			NULL,
+			NULL, NULL,
 };
 
 /* Quotes from or about the Illuminati */
@@ -1657,6 +1657,23 @@ void mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom, coor
 		    case HOLE:
 			/* make these much less often than other traps */
 			if (rn2(7)) kind = NO_TRAP; break;
+		    case DART_TRAP:
+			/* Replace dart traps with shuriken traps for monk and
+			 * samurai quest levels, as well as ranger and rogue
+			 * quest levels half the time. */
+			if (In_quest(&lev->z) &&
+			    (Role_if(PM_MONK) || Role_if(PM_SAMURAI) ||
+			     ((Role_if(PM_RANGER) || Role_if(PM_ROGUE)) && !rn2(2))))
+			    kind = SHURIKEN_TRAP;
+		    case SHURIKEN_TRAP:
+			/* Random shuriken traps get rerolled outside of quest
+			 * levels, as well as half the time in ranger and rogue
+			 * quest levels. */
+			if (!(In_quest(&lev->z) &&
+			      (Role_if(PM_MONK) || Role_if(PM_SAMURAI) ||
+			       ((Role_if(PM_RANGER) || Role_if(PM_ROGUE)) && !rn2(2)))))
+			    kind = NO_TRAP;
+			break;
 		}
 	    } while (kind == NO_TRAP);
 	}

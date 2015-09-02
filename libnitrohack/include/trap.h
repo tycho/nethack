@@ -71,6 +71,7 @@ struct trap {
 #define MAGIC_TRAP	21
 #define ANTI_MAGIC	22
 #define POLY_TRAP	23
-#define TRAPNUM 24
+#define SHURIKEN_TRAP	24
+#define TRAPNUM 25
 
 #endif /* TRAP_H */
