@@ -1353,10 +1353,11 @@ int thitmonst(struct monst *mon, struct obj *obj, struct obj *ostack)
 		exercise(A_DEX, TRUE);
 		if (detonate_obj(obj, ostack, uwep, bhitpos.x, bhitpos.y, TRUE))
 		    return 1;
-		/* projectiles other than magic stones
+		/* projectiles other than shuriken and magic stones
 		   sometimes disappear when thrown */
 		if (objects[otyp].oc_skill < P_NONE &&
 				objects[otyp].oc_skill > -P_BOOMERANG &&
+				objects[otyp].oc_skill != -P_SHURIKEN &&
 				!objects[otyp].oc_magic) {
 		    /* we were breaking 2/3 of everything unconditionally.
 		     * we still don't want anything to survive unconditionally,

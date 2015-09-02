@@ -303,6 +303,7 @@ Items
   turns down to 1-2.
 * Land mines and beartraps weigh less (200/100 respectively, previously
   300/200; from UnNetHackPlus via UnNetHack).
+* Shuriken no longer break when thrown at monsters.
 * Fix prefixes like "magical" and "prize" not appearing on rings, wands,
   spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
