@@ -114,6 +114,7 @@ Character
     - Feeling more confident in your skills now interrupts multi-turn actions.
     - Unskilled no longer causes thrown/fired projectiles to slip due to low
       skill level; this is now limited to restricted skill.
+    - Allow monks to reach expert skill in shuriken.
 * Increased sling damage: slings now get the strength damage bonus (otherwise
   reserved for melee) and sling enchantment affects damage of fired projectiles
   (normally launcher enchantment only affects to-hit); their damage now even
