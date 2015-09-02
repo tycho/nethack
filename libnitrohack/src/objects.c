@@ -93,7 +93,7 @@ PROJECTILE("crossbow bolt", NULL,
 WEAPON("dart", NULL,
 	1, 1, 0, 60,  1,  2,  3,  2, 0, P,   -P_DART, IRON, HI_METAL),
 WEAPON("shuriken", "throwing star",
-	0, 1, 0, 35,  1,  5,  8,  6, 2, P,   -P_SHURIKEN, IRON, HI_METAL),
+	0, 1, 0, 35,  3, 10,  8,  6, 2, P,   -P_SHURIKEN, IRON, HI_METAL),
 WEAPON("boomerang", NULL,
 	1, 1, 0, 15,  5, 20,  9,  9, 0, 0,   -P_BOOMERANG, WOOD, HI_WOOD),
 
