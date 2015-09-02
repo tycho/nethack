@@ -37,6 +37,10 @@ Other useful flags for cmake:
 
 ... to statically link all DynaHack-related libraries into a single `dynahack` binary.  BEWARE: If this option is changed in a non-clean build directory the results may be unexpected; to avoid this, use `make clean`, or separate build directories for static and dynamic builds.
 
+If you want to compile with clang and it isn't already set as your default C compiler for your system, put "CC=/usr/bin/clang" in front of the cmake command, like so:
+
+    CC=/usr/bin/clang cmake ... (etc.)
+
 
 3. Compile the game
 -------------------
