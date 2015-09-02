@@ -238,6 +238,8 @@ static void m_initweap(struct level *lev, struct monst *mtmp)
 		    otmp = mksobj(lev, BRASS_LANTERN, TRUE, FALSE);
 		    mpickobj(mtmp, otmp);
 		    begin_burn(lev, otmp, FALSE);
+		} else if (mm == PM_NINJA) {
+		    if (!rn2(2)) m_initthrow(mtmp, SHURIKEN, 4);
 		}
 		break;
 

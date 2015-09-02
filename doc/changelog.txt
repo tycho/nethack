@@ -349,6 +349,7 @@ Monsters
 * Gnomes that spawn with candles will only get a single candle instead of a
   whole stack of candles.
 * Pets never displace the player from the stairs when entering a level.
+* Ninja have a 50% chance to spawn with some shuriken.
 * Fix monsters getting your racial armor bonuses instead of theirs.
 
 Interface
