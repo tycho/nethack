@@ -77,12 +77,12 @@ MONSTER: ('@',"abbot"), (33,12)
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Random traps
-TRAP:"dart",(20,09)
-TRAP:"dart",(20,10)
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
+TRAP: "shuriken", (20,09)
+TRAP: "shuriken", (20,10)
+LOOP [4] {
+  TRAP: random, random
+  TRAP: "shuriken", random
+}
 # Monsters on siege duty.
 MONSTER: ('E',"earth elemental"), (37,01)
 MONSTER: ('E',"earth elemental"), (37,18)
@@ -149,6 +149,9 @@ LOOP [10 + 1d10] {
 LOOP [3 + 2d3] {
   TRAP: random, random
 }
+LOOP [1 + 1d3] {
+  TRAP: "shuriken", random
+}
 # Random monsters.
 LOOP [13 + 2d5] {
   MONSTER: ('E',"earth elemental"), random
@@ -197,6 +200,9 @@ LOOP [10 + 1d10] {
 # Random traps
 LOOP [3 + 1d3] {
   TRAP: "fire", random
+}
+LOOP [4] {
+  TRAP: "shuriken", random
 }
 TRAP: random, random
 TRAP: random, random
