@@ -888,12 +888,12 @@ void throwit(struct obj *obj,
 	obj->was_thrown = 1;
 	/* Split slip chance of cursed and greased objects; one that is both
 	 * has a 1-(6/7)^2 (or 13/49, or ~26%) chance of slipping.
-	 * Also, unskilled/restricted throwing has a 20% chance of slipping
+	 * Also, restricted throwing has a 20% chance of slipping
 	 * to discourage role-/race-atypical fighting.
 	 */
 	if (((obj->cursed && rnf(1,7)) ||
 	     (obj->greased && rnf(1,7)) ||
-	     (P_SKILL(weapon_type(obj)) <= P_UNSKILLED && rnf(1,5))) &&
+	     (P_SKILL(weapon_type(obj)) == P_ISRESTRICTED && rnf(1,5))) &&
 	    (u.dx || u.dy)) {
 	    boolean slipok = TRUE;
 	    if (ammo_and_launcher(obj, uwep))
