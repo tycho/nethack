@@ -1446,10 +1446,10 @@ enum nh_log_status nh_get_savegame_status(int fd, struct nh_game_info *gi)
 	ret = LS_SAVED;
     else
 	return LS_INVALID;
-    
-    if (ret == LS_SAVED && endpos == savepos)
+
+    if (ret == LS_SAVED && endpos <= savepos)
 	ret = LS_CRASHED;
-    
+
     /* if we can't lock the file, it's in use */
     if (!lock_fd(fd, 0))
 	ret = LS_IN_PROGRESS;
