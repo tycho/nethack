@@ -142,3 +142,4 @@ If you're up to the point where the game has successfully restored itself, you s
 If the play-test seems to work okay, then you're done!  The save file has been rewinded and play can resume as normal.  If you made a backup of the truncated save file, copy that back in now to undo your play-testing before giving the all-clear.
 
 If there are issues, you'll have to truncate to an earlier point in the running save log.  If the level itself seems corrupted, you'll probably need to rewind up up until prior to the player entering that level.
+
