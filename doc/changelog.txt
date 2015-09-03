@@ -473,6 +473,9 @@ Technical
 * Fix "bad fruit" warnings when slime mold is in inventory while inventory
   sidebar is updated while saving bones.
 * Fix handling of end-of-line comments in `DynaHack.conf` and `curses.conf`.
+* Prevent some potential unbounded reads by placing limits on "%s" format
+  specifiers in `scanf()` family functions used while reading save file
+  headers.
 * Convert inversed 10-minus-AC D&D-style armor values with just the armor's
   regular AC value in `src/objects.c`.
 

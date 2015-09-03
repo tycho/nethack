@@ -221,7 +221,7 @@ void replay_begin(void)
     fseek(loginfo.flog, 0, SEEK_SET);
 
     if (filesize < 24 ||
-	!fscanf(loginfo.flog, "NHGAME %*s %lx %x",
+	!fscanf(loginfo.flog, "NHGAME %*4s %lx %x",
 		&loginfo.endpos, &loginfo.actioncount) ||
 	loginfo.endpos > filesize) {
 	fclose(loginfo.flog);
@@ -1433,7 +1433,7 @@ enum nh_log_status nh_get_savegame_status(int fd, struct nh_game_info *gi)
     n2 = sscan_llx(header + n, &starttime);
     if (!n2) return LS_INVALID;
     n += n2;
-    if (sscanf(header + n, "%x %x %s %s %s %s %s",
+    if (sscanf(header + n, "%x %x %64s %16s %16s %16s %16s",
 	       &seed, &playmode, encplname, role, race, gend, algn) < 7)
 	return LS_INVALID;
 
