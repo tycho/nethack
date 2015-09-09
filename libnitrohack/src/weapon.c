@@ -1047,14 +1047,20 @@ int enhance_weapon_skill(void)
 	    crosstrain = skill_crosstrain_bonus(i);
 	    if (crosstrain > 1 && P_SKILL(i) < P_MAX_SKILL(i))
 		sprintf(eos(buf), " (x%d)", crosstrain);
+
 	    skill_level_name(i, sklnambuf);
 	    sprintf(eos(buf), "\t[%s]", sklnambuf);
 	    if (P_SKILL(i) < P_MAX_SKILL(i)) {
 		int mintrain = P_SKILL(i) == P_UNSKILLED ? 0 :
 			       practice_needed_to_advance(i, P_SKILL(i) - 1);
-		sprintf(eos(buf), "\t%5d%%",
-			(P_ADVANCE(i) - mintrain) * 100 /
-			(practice_needed_to_advance(i, P_SKILL(i)) - mintrain));
+		if (mintrain == P_ADVANCE(i)) {
+		    /* suppress "0%" */
+		    sprintf(eos(buf), "\t      ");
+		} else {
+		    sprintf(eos(buf), "\t%5d%%",
+			    (P_ADVANCE(i) - mintrain) * 100 /
+			    (practice_needed_to_advance(i, P_SKILL(i)) - mintrain));
+		}
 	    } else {
 		sprintf(eos(buf), "\t   MAX");
 	    }
