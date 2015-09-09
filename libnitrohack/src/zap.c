@@ -3059,7 +3059,6 @@ static int zap_hit_mon(struct monst *mon, int type, int nd,
 			else mon->mblinded += rnd_tmp;
 		}
 		if (!rn2(3)) destroy_mitem(mon, WAND_CLASS, AD_ELEC, NULL);
-		if (!rn2(3)) destroy_mitem(mon, RING_CLASS, AD_ELEC, NULL);
 		break;
 	case ZT_POISON_GAS:
 		if (resists_poison(mon)) {
@@ -3836,7 +3835,6 @@ const char * const destroy_strings[] = {	/* also used in trap.c */
 	"boils and explodes", "boil and explode", "boiling potion",
 	"catches fire and burns", "catch fire and burn", "burning scroll",
 	"catches fire and burns", "catch fire and burn", "burning book",
-	"turns to dust and vanishes", "turn to dust and vanish", "",
 	"breaks apart and explodes", "break apart and explode", "exploding wand"
 };
 
@@ -3901,18 +3899,12 @@ boolean destroy_item(int osym, int dmgtyp)
 			dmg = (dmg + 1) / 2;
 		    break;
 		case AD_ELEC:
-		    xresist = (FShock_resistance && obj->oclass != RING_CLASS);
+		    xresist = FShock_resistance;
 		    quan = obj->quan;
 		    switch(osym) {
-			case RING_CLASS:
-			    if (obj->otyp == RIN_SHOCK_RESISTANCE)
-				    { skip++; break; }
-			    dindx = 4;
-			    dmg = 0;
-			    break;
 			case WAND_CLASS:
 			    if (obj->otyp == WAN_LIGHTNING) { skip++; break; }
-			    dindx = 5;
+			    dindx = 4;
 			    dmg = rnd(10);
 			    break;
 			default:
@@ -3921,7 +3913,7 @@ boolean destroy_item(int osym, int dmgtyp)
 		    }
 		    /* Partial shock resistance only helps if full shock resistance
 		     * would have helped otherwise. */
-		    if (!skip && PShock_resistance && obj->oclass != RING_CLASS)
+		    if (!skip && PShock_resistance)
 			dmg = (dmg + 1) / 2;
 		    break;
 		default:
@@ -4031,14 +4023,9 @@ boolean destroy_mitem(struct monst *mtmp, int osym, int dmgtyp, int *dmgptr)
 		case AD_ELEC:
 		    quan = obj->quan;
 		    switch(osym) {
-			case RING_CLASS:
-			    if (obj->otyp == RIN_SHOCK_RESISTANCE)
-				    { skip++; break; }
-			    dindx = 4;
-			    break;
 			case WAND_CLASS:
 			    if (obj->otyp == WAN_LIGHTNING) { skip++; break; }
-			    dindx = 5;
+			    dindx = 4;
 			    if (dmgptr) *dmgptr += 1;
 			    break;
 			default:

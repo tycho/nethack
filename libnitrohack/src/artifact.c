@@ -1825,7 +1825,6 @@ boolean artifact_hit(
 			  hittee, !spec_applies_ad_elec ? '.' : '!');
 		msg_printed = TRUE;
 	    }
-	    if (!rn2(5)) destroy_mitem(mdef, RING_CLASS, AD_ELEC, dmgptr);
 	    if (!rn2(5)) destroy_mitem(mdef, WAND_CLASS, AD_ELEC, dmgptr);
 	}
 

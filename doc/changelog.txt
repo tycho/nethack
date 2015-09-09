@@ -301,6 +301,7 @@ Items
 * Rings with enchantment +3 or lower no longer have a chance to explode when
   charged, and rings at -5 or lower will only explode from cursed charging (from
   SporkHack).
+    - Remove ring destruction from shock damage.
 * Quest artifacts that are spawned at the final level of the Quest will be
   generated fixed/erodeproofed.
 * Having free action reduces paralysis from using a crystal ball from 1-10

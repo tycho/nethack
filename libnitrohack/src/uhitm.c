@@ -1628,8 +1628,6 @@ int damageum(struct monst *mdef, const struct attack *mattk)
 		    shieldeff(mdef->mx, mdef->my);
 		    tmp = 0;
 		}
-		/* only rings damage resistant players in destroy_item */
-		destroy_mitem(mdef, RING_CLASS, AD_ELEC, &tmp);
 		break;
 	    case AD_ACID:
 		if (resists_acid(mdef)) tmp = 0;

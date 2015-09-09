@@ -459,7 +459,6 @@ static void god_zaps_you(aligntyp resp_god)
 		    ureflects("%s reflects from your %s.", "It");
 	    } else {
 		destroy_item(WAND_CLASS, AD_ELEC);
-		destroy_item(RING_CLASS, AD_ELEC);
 		if (!Shock_resistance) {
 		    fry_by_god(resp_god);
 		} else {

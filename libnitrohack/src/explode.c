@@ -266,7 +266,6 @@ void explode(int x, int y,
 		destroy_mitem(mtmp, SPBOOK_CLASS, adtyp, &idamres);
 		destroy_mitem(mtmp, POTION_CLASS, adtyp, &idamnonres);
 		destroy_mitem(mtmp, WAND_CLASS, adtyp, &idamnonres);
-		destroy_mitem(mtmp, RING_CLASS, adtyp, &idamnonres);
 
 		if (explmask[i][j] == 1) {
 			golemeffects(mtmp, (int) adtyp, dam + idamres);

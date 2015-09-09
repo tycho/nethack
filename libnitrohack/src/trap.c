@@ -3742,7 +3742,6 @@ boolean chest_trap(struct obj *obj, int bodypart, boolean disarm)
 			} else {
 			    dmg = dice(4, 4);
 			}
-			destroy_item(RING_CLASS, AD_ELEC);
 			destroy_item(WAND_CLASS, AD_ELEC);
 			if (dmg) losehp(dmg, "electric shock", KILLED_BY_AN);
 			break;

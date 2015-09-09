@@ -2268,7 +2268,6 @@ void elec_damageu(int n, struct monst *mtmp, const char *k_name, int k_format,
 	}
 
 	if (destroy > rn2(20)) destroy_item(WAND_CLASS, AD_ELEC);
-	if (destroy > rn2(20)) destroy_item(RING_CLASS, AD_ELEC);
 
 	if (n) {
 	    if (mtmp)
