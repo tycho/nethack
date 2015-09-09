@@ -90,7 +90,7 @@ static void give_may_advance_msg(int skill)
 
 static boolean could_advance(int);
 static int slots_required(int);
-static char *skill_level_name(int,char *);
+static const char *skill_level_name(xchar);
 static void skill_advance(int);
 
 #define P_NAME(type) ((skill_names_indices[type] > 0) ? \
@@ -755,12 +755,12 @@ int dbon(void)
 }
 
 
-/* copy the skill level name into the given buffer */
-static char *skill_level_name(int skill, char *buf)
+/* return the skill level name */
+static const char *skill_level_name(xchar skill_level)
 {
     const char *ptr;
 
-    switch (P_SKILL(skill)) {
+    switch (skill_level) {
 	case P_UNSKILLED:    ptr = "Unskilled"; break;
 	case P_BASIC:	     ptr = "Basic";     break;
 	case P_SKILLED:	     ptr = "Skilled";   break;
@@ -770,8 +770,8 @@ static char *skill_level_name(int skill, char *buf)
 	case P_GRAND_MASTER: ptr = "Grand Master"; break;
 	default:	     ptr = "Unknown";	break;
     }
-    strcpy(buf, ptr);
-    return buf;
+
+    return ptr;
 }
 
 /* return the # of slots required to advance the skill */
@@ -986,7 +986,7 @@ int enhance_weapon_skill(void)
 {
     int pass, i, n, crosstrain, id,
 	to_advance, eventually_advance, selected[1];
-    char buf[BUFSZ], sklnambuf[BUFSZ];
+    char buf[BUFSZ];
     const char *prefix;
     struct menulist menu;
     boolean speedy = FALSE;
@@ -1048,8 +1048,10 @@ int enhance_weapon_skill(void)
 	    if (crosstrain > 1 && P_SKILL(i) < P_MAX_SKILL(i))
 		sprintf(eos(buf), " (x%d)", crosstrain);
 
-	    skill_level_name(i, sklnambuf);
-	    sprintf(eos(buf), "\t[%s]", sklnambuf);
+	    sprintf(eos(buf), "\t[%s\t/ %s]",
+		    skill_level_name(P_SKILL(i)),
+		    skill_level_name(P_MAX_SKILL(i)));
+
 	    if (P_SKILL(i) < P_MAX_SKILL(i)) {
 		int mintrain = P_SKILL(i) == P_UNSKILLED ? 0 :
 			       practice_needed_to_advance(i, P_SKILL(i) - 1);
@@ -1105,11 +1107,11 @@ int enhance_weapon_skill(void)
 int dump_skills(void)
 {
     int pass, i;
-    char buf[BUFSZ], sklnambuf[BUFSZ];
+    char buf[BUFSZ];
     struct menulist menu;
 
     init_menulist(&menu);
-    
+
     /* List the skills. */
     for (pass = 0; pass < SIZE(skill_ranges); pass++)
 	for (i = skill_ranges[pass].first; i <= skill_ranges[pass].last; i++) {
@@ -1119,13 +1121,15 @@ int dump_skills(void)
 
 	    if (P_RESTRICTED(i) || u.weapon_skills[i].skill == P_UNSKILLED)
 		continue;
-	    
-	    skill_level_name(i, sklnambuf);
-	    sprintf(buf, " %s\t[%s]", P_NAME(i), sklnambuf);
+
+	    sprintf(buf, " %s\t[%s\t/ %s]",
+		    P_NAME(i),
+		    skill_level_name(P_SKILL(i)),
+		    skill_level_name(P_MAX_SKILL(i)));
 	    add_menuitem(&menu, 0, buf, 0, FALSE);
 	}
     display_menu(menu.items, menu.icount, "Your skills at the end:", PICK_NONE, NULL);
-    
+
     free(menu.items);
     return 0;
 }

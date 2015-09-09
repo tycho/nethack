@@ -382,6 +382,7 @@ Interface
     - Mark skills that have reached their maximum as "MAX", and show it as soon
       as the level is reached.
     - Suppress "0%" in `#enhance` menu for untrained skills.
+    - Show skill caps in `#enhance` menu, e.g. "long sword [basic / expert]".
 * Show your character's race, role, gender and alignment when asked to enter a
   name for that character (based on the same change in NetHack4).
 * Highlight lit light sources in item listings, e.g. inventory sidebar.
