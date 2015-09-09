@@ -384,6 +384,9 @@ Interface
       as the level is reached.
     - Suppress "0%" in `#enhance` menu for untrained skills.
     - Show skill caps in `#enhance` menu, e.g. "long sword [basic / expert]".
+    - Show skill slot cost to enhance skills when choosing a skill from the
+      `#enhance` menu, e.g. "Enhance knife to Basic for 1 slot (2 slots left)?
+      [yn] (n)"
 * Show your character's race, role, gender and alignment when asked to enter a
   name for that character (based on the same change in NetHack4).
 * Highlight lit light sources in item listings, e.g. inventory sidebar.

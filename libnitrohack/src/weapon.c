@@ -91,7 +91,7 @@ static void give_may_advance_msg(int skill)
 static boolean could_advance(int);
 static int slots_required(int);
 static const char *skill_level_name(xchar);
-static void skill_advance(int);
+static boolean skill_advance(int);
 
 #define P_NAME(type) ((skill_names_indices[type] > 0) ? \
 		      OBJ_NAME(objects[skill_names_indices[type]]) : \
@@ -861,8 +861,18 @@ static boolean could_advance(int skill)
 	    && u.skills_advanced < P_SKILL_LIMIT));
 }
 
-static void skill_advance(int skill)
+/* return true if the skill was advanced */
+static boolean skill_advance(int skill)
 {
+    char buf[BUFSZ];
+
+    snprintf(buf, BUFSZ, "Enhance %s to %s for %d slot%s (%d slot%s left)?",
+	     P_NAME(skill), skill_level_name(P_SKILL(skill) + 1),
+	     slots_required(skill), plur(slots_required(skill)),
+	     u.weapon_slots, plur(u.weapon_slots));
+    if (yn(buf) != 'y')
+	return FALSE;
+
     u.weapon_slots -= slots_required(skill);
     P_SKILL(skill)++;
     u.skill_record[u.skills_advanced++] = skill;
@@ -875,6 +885,8 @@ static void skill_advance(int skill)
 	find_ac();
     if (skill == P_BODY_ARMOR)
 	encumber_msg();
+
+    return TRUE;
 }
 
 /*
@@ -1086,12 +1098,14 @@ int enhance_weapon_skill(void)
 	n = display_menu(menu.items, menu.icount, buf,
 			    to_advance ? PICK_ONE : PICK_NONE, selected);
 	if (n == 1) {
+	    boolean skill_advanced;
 	    n = selected[0] - 1;	/* get item selected */
-	    skill_advance(n);
+	    skill_advanced = skill_advance(n);
 	    /* check for more skills able to advance, if so then .. */
 	    for (n = i = 0; i < P_NUM_SKILLS; i++) {
 		if (can_advance(i, speedy)) {
-		    if (!speedy) pline("You feel you could be more dangerous!");
+		    if (skill_advanced && !speedy)
+			pline("You feel you could be more dangerous!");
 		    n++;
 		    break;
 		}
