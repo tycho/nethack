@@ -1898,7 +1898,7 @@ const struct permonst mons[] = {
 	M1_ANIMAL|M1_CARNIVORE, M2_HOSTILE,
 	M3_INFRAVISIBLE, CLR_BLUE),
     MON("disintegrator", S_RUSTMONST,
-	LVL(18, 8, 0, 20, -3), (G_HELL|G_GENO|G_NOCORPSE|1),
+	LVL(18, 8, 0, 20, -3), (G_GENO|G_NOCORPSE|G_NOGEN),
 	A(ATTK(AT_CLAW, AD_DISN, 4, 4), /* don't want passive, disintegration
 					   has to intercept attacks */
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
