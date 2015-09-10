@@ -3,7 +3,9 @@
 #
 
 LEVEL: "nymph"
+MON_GENERATION: 90%, (1,'n'), (1,'l')
 MESSAGE: "You hear sounds of nature all around you."
+
 ROOM: "ordinary", unlit, random, random, (12,7)
 {
   LOOP [2] {

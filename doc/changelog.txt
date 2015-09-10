@@ -210,6 +210,7 @@ Dungeon
     - Nymph level is now guaranteed and appears between the Town surface and
       filler levels.
         - Nymph level no longer contains traps (squeaky board or otherwise).
+        - 90% of spawns on the Nymph level are nymphs and leprechauns.
     - Town surface level has larger shops.
 * Changes to Vlad's Tower:
     - New entrance level to Vlad's Tower with trees, water, vampires, zombies,
