@@ -1273,8 +1273,7 @@ static void m_detach(struct monst *mtmp,
 	mtmp->mhp = 0; /* simplify some tests: force mhp to 0 */
 	relobj(mtmp, 0, FALSE);
 	mtmp->dlevel->monsters[mtmp->mx][mtmp->my] = NULL;
-	if (emits_light(mptr))
-	    del_light_source(mtmp->dlevel, LS_MONSTER, mtmp);
+	del_light_source(mtmp->dlevel, LS_MONSTER, mtmp);
 	newsym(mtmp->mx,mtmp->my);
 	unstuck(mtmp);
 	fill_pit(mtmp->dlevel, mtmp->mx, mtmp->my);

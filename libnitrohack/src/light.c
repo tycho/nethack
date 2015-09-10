@@ -107,7 +107,6 @@ void del_light_source(struct level *lev, int type, void *id)
 	    return;
 	}
     }
-    impossible("del_light_source: not found type=%d, id=0x%lx", type, (long)id);
 }
 
 /* Mark locations that are temporarily lit via mobile light sources. */
