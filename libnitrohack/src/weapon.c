@@ -977,6 +977,36 @@ static int skill_crosstrain_bonus(int skill)
     return max(highest_skill - base_skill + 1, 1);
 }
 
+/*
+ * Express progress of training of a skill as a percentage, where every 100%
+ * represents a full level of possible enhancement, e.g. a basic skill that
+ * returns 150% for this means it can be advanced to skilled and is 50% of the
+ * way to expert.
+ */
+static int skill_training_percent(int skill)
+{
+    int percent = 0;
+    int i;
+
+    if (P_RESTRICTED(skill))
+	return 0;
+
+    for (i = P_SKILL(skill); i < P_MAX_SKILL(skill); i++) {
+	if (P_ADVANCE(skill) >= practice_needed_to_advance(skill, i)) {
+	    percent += 100;
+	} else {
+	    int mintrain = (i == P_UNSKILLED) ? 0 :
+			   practice_needed_to_advance(skill, i - 1);
+	    int partial = (P_ADVANCE(skill) - mintrain) * 100 /
+			  (practice_needed_to_advance(skill, i) - mintrain);
+	    percent += min(partial, 100);
+	    break;
+	}
+    }
+
+    return percent;
+}
+
 static const struct skill_range {
 	const char *name;
 	short first, last;
@@ -1064,19 +1094,12 @@ int enhance_weapon_skill(void)
 		    skill_level_name(P_SKILL(i)),
 		    skill_level_name(P_MAX_SKILL(i)));
 
-	    if (P_SKILL(i) < P_MAX_SKILL(i)) {
-		int mintrain = P_SKILL(i) == P_UNSKILLED ? 0 :
-			       practice_needed_to_advance(i, P_SKILL(i) - 1);
-		if (mintrain == P_ADVANCE(i)) {
-		    /* suppress "0%" */
-		    sprintf(eos(buf), "\t      ");
-		} else {
-		    sprintf(eos(buf), "\t%5d%%",
-			    (P_ADVANCE(i) - mintrain) * 100 /
-			    (practice_needed_to_advance(i, P_SKILL(i)) - mintrain));
-		}
-	    } else {
+	    if (P_SKILL(i) == P_MAX_SKILL(i)) {
 		sprintf(eos(buf), "\t   MAX");
+	    } else if (P_ADVANCE(i) == 0) {
+		sprintf(eos(buf), "\t      ");
+	    } else {
+		sprintf(eos(buf), "\t%5d%%", skill_training_percent(i));
 	    }
 	    if (wizard) {
 		sprintf(eos(buf), "/%5d(%4d)",
