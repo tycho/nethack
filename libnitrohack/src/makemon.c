@@ -974,8 +974,10 @@ struct monst *makemon(const struct permonst *ptr,
 			mtmp->msleeping = 1;
 			break;
 		case S_JABBERWOCK:
-		case S_NYMPH:
 			if (rn2(5) && !u.uhave.amulet) mtmp->msleeping = 1;
+			break;
+		case S_NYMPH:
+			if (!u.uhave.amulet) mtmp->msleeping = 1;
 			break;
 		case S_ORC:
 			if (Race_if (PM_ELF)) mtmp->mpeaceful = FALSE;
