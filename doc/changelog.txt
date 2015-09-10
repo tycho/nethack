@@ -209,6 +209,7 @@ Dungeon
 * Changes to the Town branch:
     - Nymph level is now guaranteed and appears between the Town surface and
       filler levels.
+        - Nymph level no longer contains traps (squeaky board or otherwise).
     - Town surface level has larger shops.
 * Changes to Vlad's Tower:
     - New entrance level to Vlad's Tower with trees, water, vampires, zombies,
