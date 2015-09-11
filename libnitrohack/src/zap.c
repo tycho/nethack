@@ -3846,6 +3846,7 @@ boolean destroy_item(int osym, int dmgtyp)
 	int dindx;
 	const char *mult;
 	boolean seen_destroy = FALSE;
+	boolean cloak_protect;
 
 	/* elemental immunities prevent item destruction */
 	if ((dmgtyp == AD_COLD && FCold_resistance) ||
@@ -3853,11 +3854,15 @@ boolean destroy_item(int osym, int dmgtyp)
 	    (dmgtyp == AD_ELEC && FShock_resistance))
 	    return FALSE;
 
+	/* cloak of protection prevents 80% of item destruction */
+	cloak_protect = (uarmc && uarmc->otyp == CLOAK_OF_PROTECTION);
+
 	for (obj = invent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
 	    if (obj->oclass != osym) continue; /* test only objs of type osym */
 	    if (obj->oartifact) continue; /* don't destroy artifacts */
 	    if (obj->in_use && obj->quan == 1) continue; /* not available */
+	    if (cloak_protect && rn2(5)) continue;
 	    xresist = skip = 0;
 	    dmg = dindx = 0;
 	    quan = 0L;
@@ -3929,7 +3934,7 @@ boolean destroy_item(int osym, int dmgtyp)
 	    if (!skip) {
 		if (obj->in_use) --quan; /* one will be used up elsewhere */
 		for (i = cnt = 0L; i < quan; i++)
-		    if (!rn2(3)) cnt++;
+		    if (!rn2(cloak_protect ? 15 : 3)) cnt++;
 
 		if (!cnt) continue;
 		seen_destroy = TRUE;
@@ -3976,6 +3981,7 @@ boolean destroy_mitem(struct monst *mtmp, int osym, int dmgtyp, int *dmgptr)
 	int dindx;
 	boolean vis;
 	boolean seen_destroy = FALSE;
+	boolean cloak_protect;
 
 	if (mtmp == &youmonst) {	/* this simplifies artifact_hit() */
 	    return destroy_item(osym, dmgtyp);
@@ -3987,10 +3993,15 @@ boolean destroy_mitem(struct monst *mtmp, int osym, int dmgtyp, int *dmgptr)
 	    (dmgtyp == AD_ELEC && resists_elec(mtmp)))
 	    return FALSE;
 
+	/* cloak of protection prevents 80% of item destruction */
+	obj = which_armor(mtmp, W_ARMC);
+	cloak_protect = (obj && obj->otyp == CLOAK_OF_PROTECTION);
+
 	vis = canseemon(level, mtmp);
 	for (obj = mtmp->minvent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
 	    if (obj->oclass != osym) continue; /* test only objs of type osym */
+	    if (cloak_protect && rn2(5)) continue;
 	    skip = 0;
 	    quan = 0L;
 	    dindx = 0;
@@ -4051,7 +4062,7 @@ boolean destroy_mitem(struct monst *mtmp, int osym, int dmgtyp, int *dmgptr)
 	    }
 	    if (!skip) {
 		for (i = cnt = 0L; i < quan; i++)
-		    if (!rn2(3)) cnt++;
+		    if (!rn2(cloak_protect ? 15 : 3)) cnt++;
 
 		if (!cnt) continue;
 		if (vis) {

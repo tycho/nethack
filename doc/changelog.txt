@@ -316,6 +316,7 @@ Items
 * Crossbow bolts only break half as often as other projectiles when fired at
   and hitting monsters.
 * Fire, cold and shock immunity prevent item destruction.
+    - Wearing a cloak of protection prevents 80% of all item destruction.
 * Fix prefixes like "magical" and "prize" not appearing on rings, wands,
   spellbooks and iron balls under certain circumstances.
 * Fix C343-146: "Unseen wand of striking becomes known if zapped by unseen
