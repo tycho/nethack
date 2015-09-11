@@ -1695,6 +1695,93 @@ void transfer_timers(struct level *oldlev, struct level *newlev, unsigned int ob
 
 
 /*
+ * Verify that the timer chains of all levels are as they should be, and if
+ * not, fix them.
+ */
+void validate_timers(void)
+{
+    int i;
+
+    for (i = 0; i <= maxledgerno(); i++) {
+	timer_element *curr;
+	timer_element *next;
+	timer_element *move_me;
+	unsigned int curr_timeout;
+	unsigned int last_timeout = 0;
+	struct level *lev = levels[i];
+
+	if (!lev)
+	    continue;
+
+	for (curr = lev->lev_timers; curr; curr = next, last_timeout = curr_timeout) {
+	    struct level *right_lev;
+
+	    next = curr->next;		  /* in case curr is moved */
+	    curr_timeout = curr->timeout; /* ditto */
+
+	    if (curr->kind == TIMER_OBJECT) {
+		struct obj *o_arg = (struct obj *)curr->arg;
+
+		/* sanity check */
+		if (!o_arg) {
+		    warning("validate_timers: object timer with null object, removing");
+		    stop_timer(lev, curr->func_index, curr->arg);
+		    continue;
+		}
+
+		/* check if object should be timed */
+		if (!o_arg->timed) {
+		    /* If the timer and the object's timed flag disagree, the
+		     * timer is probably in the wrong, so delete it. */
+		    warning("validate_timers: timer attached to untimed object, removing");
+		    stop_timer(lev, curr->func_index, curr->arg);
+		    continue;
+		}
+
+		/*
+		 * Check that the timer is on the right level:
+		 *
+		 *  - local object timers should be on the same level as their object
+		 *  - global object timers should be on the player's current level
+		 */
+		right_lev = timer_is_local(curr) ? o_arg->olev : level;
+		if (!right_lev) {
+		    panic("validate_timers: right_lev is null");
+		} else if (lev != right_lev) {
+		    warning("validate_timers: timer found on wrong level, fixing");
+		    move_me = remove_timer(&lev->lev_timers, curr->func_index, curr->arg);
+		    if (!move_me)
+			panic("validate_timers: what the hell?");
+		    insert_timer(right_lev, move_me);
+		    continue;
+		}
+	    }
+
+	    /* make sure timers are in ascending order */
+	    if (timer_is_local(curr)) {
+		right_lev = (curr->kind == TIMER_OBJECT) ?
+				((struct obj *)curr->arg)->olev :
+				lev;
+	    } else {
+		right_lev = level;
+	    }
+	    if (!right_lev)
+		panic("validate_timers: right_lev is null");
+	    if (curr->timeout < last_timeout) {
+		/* insertion sort */
+		warning("validate_timers: timer found out of order, reordering");
+		move_me = remove_timer(&lev->lev_timers, curr->func_index, curr->arg);
+		if (!move_me)
+		    panic("validate_timers: what the hell?");
+		insert_timer(right_lev, move_me);
+		continue;
+	    }
+	}
+    }
+}
+
+
+/*
  * Save part of the timer list.  The parameter 'range' specifies either
  * global or level timers to save.  The timer ID is saved with the global
  * timers.

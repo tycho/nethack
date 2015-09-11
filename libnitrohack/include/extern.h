@@ -1706,6 +1706,7 @@ extern void obj_stop_timers(struct obj *);
 extern boolean obj_is_local(struct obj *);
 extern void transfer_timers(struct level *oldlev, struct level *newlev,
 			    unsigned int obj_id);
+extern void validate_timers(void);
 extern void save_timers(struct memfile *mf, struct level *lev, int range);
 extern void free_timers(struct level *lev);
 extern void restore_timers(struct memfile *mf, struct level *lev, int range,

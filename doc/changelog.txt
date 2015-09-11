@@ -470,6 +470,8 @@ Technical
       already rolled into the game binary.
 * Treat improperly-truncated save files like crashed ones, instead of trying
   and failing to load/restore them.
+* Verify integrity of timers attached to objects to prevent unloadable save
+  files.
 * Fix warning when leaving bones while wielding an attached heavy iron ball.
 * Fix infinite loop when placing a branch entrance on joined cavern levels.
 * Allow SPILL lev_comp command to accept 0 as a size for e.g. breaking holes in

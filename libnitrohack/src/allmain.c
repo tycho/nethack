@@ -511,6 +511,7 @@ static void you_moved(void)
     do { /* hero can't move this turn loop */
 	wtcap = encumber_msg();
 	calc_attr_bonus();
+	validate_timers();
 
 	flags.mon_moving = TRUE;
 	do {
@@ -799,6 +800,9 @@ static void pre_move_tasks(boolean didmove)
     /* recalc attribute bonuses from items */
     calc_attr_bonus();
     find_ac();
+
+    /* ensure timer integrity */
+    validate_timers();
 
     if (!flags.mv || Blind)
 	special_vision_handling();
