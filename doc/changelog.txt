@@ -192,6 +192,7 @@ Dungeon
     - Remove squeeze gap in Caveman quest home level.
     - Redesign Ranger quest home level with a more organic layout and wider
       corridors (from dNetHack, originally by Khor).
+        - Redesign Ranger quest goal level with water and trees (dNetHack).
 * Changes to standard rooms-and-corridors level generation:
     - Grid room level style (from K-Mod).
     - Raise chance of special rooms-and-corridors level style from 10% to 20%.
