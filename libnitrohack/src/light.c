@@ -41,12 +41,43 @@
 #define LSF_SHOW	0x1		/* display the light source */
 #define LSF_NEEDS_FIXUP	0x2		/* need oid fixup */
 
+static void insert_light_source(struct level *lev, light_source *ls);
+static light_source *remove_light_source(light_source **light_chain, light_source *ls);
 static void write_ls(struct memfile *mf, light_source *);
 static int maybe_write_ls(struct memfile *mf, struct level *lev, int range, boolean write_it);
 
 /* imported from vision.c, for small circles */
 extern const char circle_data[];
 extern const char circle_start[];
+
+
+static void insert_light_source(struct level *lev, light_source *ls)
+{
+    ls->next = lev->lev_lights;
+    lev->lev_lights = ls;
+}
+
+
+static light_source *remove_light_source(light_source **light_chain, light_source *ls)
+{
+    light_source *curr, *prev = NULL;
+
+    curr = *light_chain;
+    while (curr && curr != ls) {
+	prev = curr;
+	curr = curr->next;
+    }
+
+    if (curr == ls) {
+	if (prev)
+	    prev->next = curr->next;
+	else
+	    *light_chain = curr->next;
+	return curr;
+    }
+
+    return NULL;
+}
 
 
 /* Create a new light source.  */
@@ -589,6 +620,106 @@ int wiz_light_sources(void)
     free(menu.items);
 
     return 0;
+}
+
+
+void validate_light_sources(void)
+{
+    int i;
+
+    for (i = 0; i <= maxledgerno(); i++) {
+	light_source *curr;
+	light_source *next;
+	struct level *lev = levels[i];
+
+	if (!lev)
+	    continue;
+
+	for (curr = lev->lev_lights; curr; curr = next) {
+	    light_source *move_me;
+	    struct level *right_lev;
+
+	    next = curr->next;
+
+	    /* light source ID sanity test */
+	    if (!curr->id) {
+		warning("validate_light_sources: null id, deleting");
+		del_light_source(lev, curr->type, curr->id);
+		continue;
+	    }
+
+	    /* ensure light range is valid */
+	    if (curr->range < 1 || curr->range >= MAX_RADIUS) {
+		/* if the range is messed up, it's probably corrupted
+		 * data, so remove it */
+		warning("validate_light_sources: "
+			"bad range %d, deleting",
+			curr->range);
+		del_light_source(lev, curr->type, curr->id);
+		continue;
+	    }
+
+	    if (curr->type == LS_OBJECT) {
+		struct obj *otmp = (struct obj *)curr->id;
+
+		if (!otmp->lamplit) {
+		    /* if the object isn't marked as lamplit, it
+		     * shouldn't have a light attached to it */
+		    warning("validate_light_sources: "
+			    "light attached to unlit object, deleting");
+		    del_light_source(lev, curr->type, curr->id);
+		    continue;
+		}
+
+		/* ensure light source is on the right level */
+		right_lev = obj_is_local(otmp) ? otmp->olev : level;
+		if (!right_lev) {
+		    panic("validate_light_sources: obj right_lev is null");
+		} else if (lev != right_lev) {
+		    warning("validate_light_sources: "
+			    "obj light on wrong level, moving");
+		    move_me = remove_light_source(&lev->lev_lights, curr);
+		    if (!move_me)
+			panic("validate_light_sources: what the hell?");
+		    insert_light_source(lev, move_me);
+		    continue;
+		}
+
+	    } else if (curr->type == LS_MONSTER) {
+		struct monst *mtmp = (struct monst *)curr->id;
+
+		if (!emits_light(mtmp->data)) {
+		    /* if the monster doesn't normally emit light,
+		     * there's no reason for a light to be attached */
+		    warning("validate_light_sources: "
+			    "light attached to unlit monster, deleting");
+		    del_light_source(lev, curr->type, curr->id);
+		    continue;
+		}
+
+		/* ensure light source is on the right level */
+		right_lev = mon_is_local(mtmp) ? mtmp->dlevel : level;
+		if (!right_lev) {
+		    panic("validate_light_sources: mon right_lev is null");
+		} else if (lev != right_lev) {
+		    warning("validate_light_sources: "
+			    "mon light on wrong level, moving");
+		    move_me = remove_light_source(&lev->lev_lights, curr);
+		    if (!move_me)
+			panic("validate_light_sources: what the hell?");
+		    insert_light_source(lev, move_me);
+		    continue;
+		}
+
+	    } else {
+		warning("validate_light_sources: "
+			"bad type %d, deleting",
+			curr->type);
+		del_light_source(lev, curr->type, curr->id);
+		continue;
+	    }
+	}
+    }
 }
 
 /*light.c*/

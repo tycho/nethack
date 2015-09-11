@@ -512,6 +512,7 @@ static void you_moved(void)
 	wtcap = encumber_msg();
 	calc_attr_bonus();
 	validate_timers();
+	validate_light_sources();
 
 	flags.mon_moving = TRUE;
 	do {
@@ -801,8 +802,9 @@ static void pre_move_tasks(boolean didmove)
     calc_attr_bonus();
     find_ac();
 
-    /* ensure timer integrity */
+    /* ensure timer and light source integrity */
     validate_timers();
+    validate_light_sources();
 
     if (!flags.mv || Blind)
 	special_vision_handling();

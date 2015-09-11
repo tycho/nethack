@@ -764,6 +764,7 @@ extern void obj_split_light_source(struct obj *, struct obj *);
 extern void obj_merge_light_sources(struct obj *,struct obj *);
 extern int candle_light_range(struct obj *);
 extern int wiz_light_sources(void);
+extern void validate_light_sources(void);
 
 /* ### lock.c ### */
 
