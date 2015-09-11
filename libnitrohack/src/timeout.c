@@ -1684,8 +1684,7 @@ void transfer_timers(struct level *oldlev, struct level *newlev, unsigned int ob
 	    else
 		oldlev->lev_timers = curr->next;
 
-	    curr->next = newlev->lev_timers;
-	    newlev->lev_timers = curr;
+	    insert_timer(newlev, curr);
 	    /* prev stays the same */
 	} else {
 	    prev = curr;
