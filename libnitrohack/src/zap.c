@@ -3847,6 +3847,12 @@ boolean destroy_item(int osym, int dmgtyp)
 	const char *mult;
 	boolean seen_destroy = FALSE;
 
+	/* elemental immunities prevent item destruction */
+	if ((dmgtyp == AD_COLD && FCold_resistance) ||
+	    (dmgtyp == AD_FIRE && FFire_resistance) ||
+	    (dmgtyp == AD_ELEC && FShock_resistance))
+	    return FALSE;
+
 	for (obj = invent; obj; obj = obj2) {
 	    obj2 = obj->nobj;
 	    if (obj->oclass != osym) continue; /* test only objs of type osym */
@@ -3974,6 +3980,12 @@ boolean destroy_mitem(struct monst *mtmp, int osym, int dmgtyp, int *dmgptr)
 	if (mtmp == &youmonst) {	/* this simplifies artifact_hit() */
 	    return destroy_item(osym, dmgtyp);
 	}
+
+	/* elemental immunities prevent item destruction */
+	if ((dmgtyp == AD_COLD && resists_cold(mtmp)) ||
+	    (dmgtyp == AD_FIRE && resists_fire(mtmp)) ||
+	    (dmgtyp == AD_ELEC && resists_elec(mtmp)))
+	    return FALSE;
 
 	vis = canseemon(level, mtmp);
 	for (obj = mtmp->minvent; obj; obj = obj2) {
