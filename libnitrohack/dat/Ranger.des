@@ -38,7 +38,7 @@ TTTTTT..TTTTTTTTTTTTTT......TTTTT...TTTTT...............T}........}}}...TTT.
 TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT...............}............}......
 ENDMAP
 # Dungeon Description
-REGION:(01,01,75,16),lit,"ordinary"
+REGION: (01,01,75,20), lit, "ordinary"
 # Stairs
 STAIR:(10,10),down
 # Portal arrival point; just about anywhere on the right hand side of the map
@@ -190,7 +190,7 @@ MAP
 7}}}}}}}}}.........}}}} .   ....      +       . ...  . .TTTTTTTTTTTTT..TT.TTT
 8}}}}}}}}}}}}}}}}}}}}}} .         .........   .S.    .S...............TTT.TTT
 9}}}}}}}}}}}}}}}}  ...  .         .........          . .TTTTTTTTTTTTTTTTT.TTT
-0}}}}}}}}}}}}}}}} .....S.+.......+....\....+........+. .TTTTTTTTTTTTTTTTT.TTT
+0}}}}}}}}}}}}}}}} .....S.+.......+.........+........+. .TTTTTTTTTTTTTTTTT.TTT
 1}}}}}}}}}}}}}}}}  ...}   S       .........           ..TTTTTT.....TTTTTT.TTT
 2}}}}}}}}}}}}}}}}}}}}}}}}..       .........            ..TTTTTT......TTTT.TTT
 3}}}}}}}}}}}}}}}}}}}}}}...            +     TT....TTTT....TTTT..........T.TTT
@@ -207,6 +207,8 @@ $place = { (49,07), (47,15), (57,06), (61,11) }
 SHUFFLE: $place
 # Dungeon Description
 REGION:(00,00,75,19),lit,"ordinary"
+# Altar to Orion
+ALTAR: (37,10), law, altar
 # Stairs
 STAIR:(19,10),up
 # Non diggable walls
