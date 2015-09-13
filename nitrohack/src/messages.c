@@ -204,16 +204,14 @@ static void more(void)
 	wattroff(msgwin, attr);
 	wrefresh(msgwin);
     }
-    
+
     getyx(msgwin, cursy, cursx);
-    wtimeout(msgwin, 666); /* enable blinking */
     do {
 	key = nh_wgetch(msgwin);
 	draw_map(player.x, player.y);
 	wmove(msgwin, cursy, cursx);
 	doupdate();
     } while (key != '\n' && key != '\r' && key != ' ' && key != KEY_ESC);
-    wtimeout(msgwin, -1);
 
     /* Clean up after the --More--. */
     if (getmaxy(msgwin) == 1) {

@@ -30,7 +30,6 @@ int get_map_key(int place_cursor)
 	    break;
 	
     }
-    wtimeout(mapwin, -1);
 
     return key;
 }

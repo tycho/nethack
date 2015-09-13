@@ -495,6 +495,8 @@ Technical
 * Prevent some potential unbounded reads by placing limits on "%s" format
   specifiers in `scanf()` family functions used while reading save file
   headers.
+* Prevent infinite looping for disconnected player input by aborting, in case
+  the hangup signal handler doesn't abort for some reason.
 * Convert inversed 10-minus-AC D&D-style armor values with just the armor's
   regular AC value in `src/objects.c`.
 

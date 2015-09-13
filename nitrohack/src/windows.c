@@ -484,10 +484,17 @@ void handle_resize(void)
 int nh_wgetch(WINDOW *win)
 {
     int key = 0;
-    
+
     doupdate(); /* required by pdcurses, noop for ncurses */
     do {
 	key = wgetch(win);
+
+	if (key == ERR) {
+	    /* player disconnected so there's no input stream and the handler
+	     * for SIGHUP is on a coffee-break, so just "crash" the game */
+	    exit(2);
+	}
+
 #ifdef UNIX
 	if (key == 0x3 && ui_flags.playmode == MODE_WIZARD) {
 	    /* we're running in raw mode, so ctrl+c doesn't work.
@@ -512,25 +519,25 @@ int nh_wgetch(WINDOW *win)
 	 */
 	if (key == KEY_ESC) {
 	    int key2;
-	    
+
 	    nodelay(win, TRUE);
 	    key2 = wgetch(win); /* check for a following letter */
 	    nodelay(win, FALSE);
-	    
+
 	    if ('a' <= key2 && key2 <= 'z')
 		key = META(key2);
 	}
 #endif
-	    
+
     } while (!key);
-    
+
 #if defined(PDCURSES)
     /* PDCurses provides exciting new names for the enter key.
      * Translate these here, instead of checking for them all over the place. */
     if (key == PADENTER)
 	key = '\r';
 #endif
-    
+
     return key;
 }
 
