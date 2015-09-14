@@ -141,6 +141,13 @@ void exit_curses_ui(void)
     endwin();
     delscreen(curses_scr);
     basewin = NULL;
+
+#ifdef UNIX
+    /* Force the cursor to be visible.  In theory, the curs_set() call above
+     * should do that.  In practice, something about the game running in
+     * dgamelaunch prevents this from happening properly. */
+    write(1, "\033[?25h", 6);
+#endif
 }
 
 
