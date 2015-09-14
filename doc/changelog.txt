@@ -451,6 +451,10 @@ Miscellaneous
 Technical
 ---------
 * xlogfile patch (via NetHack 4).
+* Allow certain directories to be customized on game launch:
+    - `-H <dir>` to set the data dir (e.g. nhdat, license)
+    - `-V <dir>` to set the var data "playground" dir (e.g. xlogfile, bones)
+    - `-U <dir>` to set the user dir (e.g. player saves and config files)
 * Set file permissions on *nix-like operating systems (e.g. Linux and OS X) to
   644 for player config files, preserved save log files, dumplogs, `logfile`,
   `xlogfile` and `record`.

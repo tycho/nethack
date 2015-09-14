@@ -20,7 +20,7 @@ int initrole = ROLE_NONE, initrace = ROLE_NONE;
 int initgend = ROLE_NONE, initalign = ROLE_NONE;
 nh_bool random_player = FALSE;
 
-char *override_hackdir, *override_userdir;
+char *override_hackdir, *override_userdir, *override_vardir;
 
 enum menuitems {
     NEWGAME = 1,
@@ -139,6 +139,14 @@ static char** init_game_paths(const char *argv0)
     for (i = 0; i < PREFIX_COUNT; i++)
 	pathlist[i] = dir;
 
+    /* variable data "playground" directory */
+    if (override_vardir) {
+	pathlist[BONESPREFIX] = override_vardir;
+	pathlist[SCOREPREFIX] = override_vardir;
+	pathlist[LOCKPREFIX] = override_vardir;
+	pathlist[TROUBLEPREFIX] = override_vardir;
+    }
+
     pathlist[DUMPPREFIX] = malloc(BUFSZ);
     free_dump = TRUE;
     if (!get_gamedir(DUMP_DIR, pathlist[DUMPPREFIX])) {
@@ -170,6 +178,14 @@ static char** init_game_paths(const char *argv0)
 
     for (i = 0; i < PREFIX_COUNT; i++)
 	pathlist[i] = dir;
+
+    /* variable data "playground" directory */
+    if (override_vardir) {
+	pathlist[BONESPREFIX] = override_vardir;
+	pathlist[SCOREPREFIX] = override_vardir;
+	pathlist[LOCKPREFIX] = override_vardir;
+	pathlist[TROUBLEPREFIX] = override_vardir;
+    }
 
     if (get_gamedir(DUMP_DIR, w_dump_dir)) {
 	int dump_sz = WideCharToMultiByte(CP_ACP, 0, w_dump_dir, -1,
@@ -376,6 +392,7 @@ static void process_args(int argc, char *argv[])
 		puts("-r race     specify race");
 		puts("-@          specify a random character");
 		puts("-H dir      override the data directory");
+		puts("-V dir      override the variable data \"playground\" directory");
 		puts("-U dir      override the user directory");
 		exit(0);
 	    } else if (!strcmp(argv[0], "--version")) {
@@ -460,6 +477,27 @@ static void process_args(int argc, char *argv[])
 		override_hackdir = argv[0];
 	    } else {
 		fputs("data directory expected after -H\n", stderr);
+		exit(1);
+	    }
+	    break;
+
+	case 'V':
+#ifdef UNIX
+	    if (setregid(-1, getgid()) == -1) {
+		perror("Error processing -V");
+		exit(14);
+	    }
+#endif
+	    if (argv[0][2]) {
+		/* -Vdir */
+		override_vardir = argv[0] + 2;
+	    } else if (argc > 1) {
+		/* -V dir */
+		argv++;
+		argc--;
+		override_vardir = argv[0];
+	    } else {
+		fputs("variable data directory expected after -V\n", stderr);
 		exit(1);
 	    }
 	    break;
