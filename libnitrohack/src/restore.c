@@ -121,11 +121,15 @@ static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
 {
 	int counter;
 	struct damage *tmp_dam;
+	struct damage **pnext;
 
 	counter = mread32(mf);
 	if (!counter)
 	    return;
+
 	tmp_dam = malloc(sizeof(struct damage));
+	pnext = &(lev->damagelist);
+
 	while (--counter >= 0) {
 	    char damaged_shops[5], *shp = NULL;
 
@@ -134,12 +138,17 @@ static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
 	    tmp_dam->place.x = mread8(mf);
 	    tmp_dam->place.y = mread8(mf);
 	    tmp_dam->typ = mread8(mf);
-	    
+
 	    if (ghostly)
 		tmp_dam->when += (moves - lev->lastmoves);
 	    strcpy(damaged_shops,
 		   in_rooms(lev, tmp_dam->place.x, tmp_dam->place.y, SHOPBASE));
-	    
+
+/* TODO: Maybe we should consider doing this on level change. It definitely
+   mustn't happen on save game restore, though, otherwise saving and restoring a
+   game allows you to repair damage while the shopkeeper is asleep or
+   paralyzed, something that wouldn't happen without this code running. */
+#if 0
 	    for (shp = damaged_shops; *shp; shp++) {
 		struct monst *shkp = shop_keeper(lev, *shp);
 
@@ -147,10 +156,12 @@ static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
 			repair_damage(lev, shkp, tmp_dam, TRUE))
 		    break;
 	    }
-	    
+#endif
+
 	    if (!shp || !*shp) {
-		tmp_dam->next = lev->damagelist;
-		lev->damagelist = tmp_dam;
+		tmp_dam->next = 0;
+		*pnext = tmp_dam;
+		pnext = &(tmp_dam->next);
 		tmp_dam = malloc(sizeof(*tmp_dam));
 	    }
 	}
