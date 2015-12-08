@@ -209,6 +209,9 @@ struct instance_flags {
     uchar num_pad_mode;
     boolean echo;             /* 1 to echo characters */
     boolean use_menu_color;       /* use color in menus; only if wc_color */
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+    boolean use_status_colors; /* use color in status line; only if wc_color */
+#endif
     boolean use_status_hilites;   /* use color in status line */
     boolean use_background_glyph; /* use background glyph when appropriate */
     boolean hilite_pile;          /* mark piles of objects with a hilite */

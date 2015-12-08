@@ -10,6 +10,106 @@ extern const char *hu_stat[]; /* defined in eat.c */
 const char *const enc_stat[] = { "",         "Burdened",  "Stressed",
                                  "Strained", "Overtaxed", "Overloaded" };
 
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+
+extern const struct percent_color_option *hp_colors;
+extern const struct percent_color_option *pw_colors;
+extern const struct text_color_option *text_colors;
+
+struct color_option
+text_color_of(text, color_options)
+const char *text;
+const struct text_color_option *color_options;
+{
+  if (color_options == NULL) {
+    struct color_option result = {NO_COLOR, 0};
+    return result;
+  }
+  if (strstri(color_options->text, text)
+   || strstri(text, color_options->text))
+    return color_options->color_option;
+  return text_color_of(text, color_options->next);
+}
+
+struct color_option
+percentage_color_of(value, max, color_options)
+int value, max;
+const struct percent_color_option *color_options;
+{
+  if (color_options == NULL) {
+    struct color_option result = {NO_COLOR, 0};
+    return result;
+  }
+  if (100 * value <= color_options->percentage * max)
+    return color_options->color_option;
+  return percentage_color_of(value, max, color_options->next);
+}
+
+void
+start_color_option(color_option)
+struct color_option color_option;
+{
+  int i;
+  if (color_option.color != NO_COLOR)
+    term_start_color(color_option.color);
+  for (i = 0; (1 << i) <= color_option.attr_bits; ++i)
+    if (i != ATR_NONE && color_option.attr_bits & (1 << i))
+      term_start_attr(i);
+}
+
+void
+end_color_option(color_option)
+struct color_option color_option;
+{
+  int i;
+  if (color_option.color != NO_COLOR)
+    term_end_color(color_option.color);
+  for (i = 0; (1 << i) <= color_option.attr_bits; ++i)
+    if (i != ATR_NONE && color_option.attr_bits & (1 << i))
+      term_end_attr(i);
+}
+
+void
+apply_color_option(color_option, newbot2)
+struct color_option color_option;
+const char *newbot2;
+{
+  if (!iflags.use_status_colors) return;
+  curs(WIN_STATUS, 1, 1);
+  start_color_option(color_option);
+  putstr(WIN_STATUS, 0, newbot2);
+  end_color_option(color_option);
+}
+
+void
+add_colored_text(text, newbot2)
+const char *text;
+char *newbot2;
+{
+  char *nb;
+  struct color_option color_option;
+
+  if (*text == '\0') return;
+
+  if (!iflags.use_status_colors) {
+    Sprintf(nb = eos(newbot2), " %s", text);
+    return;
+  }
+
+  Strcat(nb = eos(newbot2), " ");
+  curs(WIN_STATUS, 1, 1);
+  putstr(WIN_STATUS, 0, newbot2);
+
+  Strcat(nb = eos(nb), text);
+  curs(WIN_STATUS, 1, 1);
+  color_option = text_color_of(text, text_colors);
+  start_color_option(color_option);
+  putstr(WIN_STATUS, 0, newbot2);
+  end_color_option(color_option);
+}
+
+#endif  // STATUS_COLORS && TEXTCOLOR
+
 STATIC_OVL NEARDATA int mrank_sz = 0; /* loaded by max_rank_sz (from u_init) */
 STATIC_DCL const char *NDECL(rank);
 
@@ -83,15 +183,47 @@ bot2()
     int hp, hpmax;
     int cap = near_capacity();
 
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+    struct color_option color_option;
+    int save_botlx = context.botlx;
+#endif
+
     hp = Upolyd ? u.mh : u.uhp;
     hpmax = Upolyd ? u.mhmax : u.uhpmax;
 
     if (hp < 0)
         hp = 0;
     (void) describe_level(newbot2);
-    Sprintf(nb = eos(newbot2), "%s:%-2ld HP:%d(%d) Pw:%d(%d) AC:%-2d",
-            encglyph(objnum_to_glyph(GOLD_PIECE)), money_cnt(invent), hp,
-            hpmax, u.uen, u.uenmax, u.uac);
+    // TODO(skishore): Why does encglyph escaping screw up with status colors?
+    //Sprintf(nb = eos(newbot2), "%s:%-2ld",
+    //        encglyph(objnum_to_glyph(GOLD_PIECE)), money_cnt(invent));
+    Sprintf(nb = eos(newbot2), "%s:%-2ld", "$", money_cnt(invent));
+
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+    Strcat(nb = eos(nb), " HP:");
+    curs(WIN_STATUS, 1, 1);
+    putstr(WIN_STATUS, 0, newbot2);
+    context.botlx = 0;
+
+    Sprintf(nb = eos(nb), "%d(%d)", hp, hpmax);
+    apply_color_option(percentage_color_of(hp, hpmax, hp_colors), newbot2);
+#else
+    Sprintf(nb = eos(nb), " HP:%d(%d)", hp, hpmax);
+#endif
+
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+    Strcat(nb = eos(nb), " Pw:");
+    curs(WIN_STATUS, 1, 1);
+    putstr(WIN_STATUS, 0, newbot2);
+
+    Sprintf(nb = eos(nb), "%d(%d)", u.uen, u.uenmax);
+    apply_color_option(percentage_color_of(
+        u.uen, u.uenmax, pw_colors), newbot2);
+#else
+    Sprintf(nb = eos(nb), " Pw:%d(%d)", u.uen, u.uenmax);
+#endif
+
+    Sprintf(nb = eos(nb), " AC:%-2d", u.uac);
 
     if (Upolyd)
         Sprintf(nb = eos(nb), " HD:%d", mons[u.umonnum].mlevel);
@@ -103,29 +235,77 @@ bot2()
     if (flags.time)
         Sprintf(nb = eos(nb), " T:%ld", moves);
     if (strcmp(hu_stat[u.uhs], "        ")) {
-        Sprintf(nb = eos(nb), " ");
-        Strcat(newbot2, hu_stat[u.uhs]);
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+        add_colored_text(hu_stat[u.uhs], newbot2);
+#else
+        Sprintf(nb = eos(nb), " %s", hu_stat[u.uhs]);
+#endif
     }
-    if (Confusion)
-        Sprintf(nb = eos(nb), " Conf");
+    if (Confusion) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+        add_colored_text("Conf", newbot2);
+#else
+        Strcat(nb = eos(nb), " Conf");
+#endif
+    }
     if (Sick) {
-        if (u.usick_type & SICK_VOMITABLE)
-            Sprintf(nb = eos(nb), " FoodPois");
-        if (u.usick_type & SICK_NONVOMITABLE)
-            Sprintf(nb = eos(nb), " Ill");
+        if (u.usick_type & SICK_VOMITABLE) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+            add_colored_text("FoodPois", newbot2);
+#else
+            Strcat(nb = eos(nb), " FoodPois");
+#endif
+        }
+        if (u.usick_type & SICK_NONVOMITABLE) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+            add_colored_text("Ill", newbot2);
+#else
+            Strcat(nb = eos(nb), " Ill");
+#endif
+        }
     }
-    if (Blind)
-        Sprintf(nb = eos(nb), " Blind");
-    if (Stunned)
-        Sprintf(nb = eos(nb), " Stun");
-    if (Hallucination)
-        Sprintf(nb = eos(nb), " Hallu");
-    if (Slimed)
-        Sprintf(nb = eos(nb), " Slime");
-    if (cap > UNENCUMBERED)
+    if (Blind) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+        add_colored_text("Blind", newbot2);
+#else
+        Strcat(nb = eos(nb), " Blind");
+#endif
+    }
+    if (Stunned) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+        add_colored_text("Stun", newbot2);
+#else
+        Strcat(nb = eos(nb), " Stun");
+#endif
+    }
+    if (Hallucination) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+        add_colored_text("Hallu", newbot2);
+#else
+        Strcat(nb = eos(nb), " Hallu");
+#endif
+    }
+    if (Slimed) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+        add_colored_text("Slime", newbot2);
+#else
+        Strcat(nb = eos(nb), " Slime");
+#endif
+    }
+    if (cap > UNENCUMBERED) {
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+        add_colored_text(enc_stat[cap], newbot2);
+#else
         Sprintf(nb = eos(nb), " %s", enc_stat[cap]);
+#endif
+    }
     curs(WIN_STATUS, 1, 1);
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+    putstr(WIN_STATUS, 0, newbot2);
+    context.botlx = save_botlx;
+#else
     putmixed(WIN_STATUS, 0, newbot2);
+#endif
 }
 
 void

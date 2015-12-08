@@ -2364,7 +2364,10 @@ int src;
             free((genericptr_t) sysopt.greppath);
         sysopt.greppath = dupstr(bufp);
 #endif /* SYSCF */
-
+#if defined(STATUS_COLORS) && defined(TEXTCOLOR)
+    } else if (match_varname(buf, "STATUSCOLOR", 11)) {
+        (void) parse_status_color_options(bufp);
+#endif
     } else if (match_varname(buf, "BOULDER", 3)) {
         (void) get_uchars(fp, buf, bufp, &iflags.bouldersym, TRUE, 1,
                           "BOULDER");
