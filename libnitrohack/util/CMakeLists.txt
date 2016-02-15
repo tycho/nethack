@@ -51,7 +51,7 @@ add_executable (dgn_comp ${DGN_COMP_SRC})
 add_executable (lev_comp ${LEV_COMP_SRC})
 add_executable (dlb ${DLB_SRC})
 
-get_property(MAKEDEFS_BIN TARGET makedefs PROPERTY LOCATION)
+set (MAKEDEFS_BIN $<TARGET_FILE:makedefs>)
 
 
 # create the headers named in MAKEDEFS_HEADERS

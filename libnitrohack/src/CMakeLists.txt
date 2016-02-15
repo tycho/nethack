@@ -23,7 +23,7 @@ set (LIBNITROHACK_GENERATED_SRC
 
 set_source_files_properties(${LIBNITROHACK_GENERATED_SRC} GENERATED)
 
-get_property(MAKEDEFS_BIN TARGET makedefs PROPERTY LOCATION)
+set(MAKEDEFS_BIN $<TARGET_FILE:makedefs>)
 
 
 add_custom_command (OUTPUT ${LNH_SRC_GEN}/monstr.c
