@@ -50,7 +50,7 @@ macro (level_file)
     list (APPEND COMPILED_LEVELS ${REAL_OUTPUTS})
     add_custom_command (OUTPUT ${REAL_OUTPUTS}
                         COMMAND lev_comp
-                        ARGS -v ${LNH_DAT}/${LEVEL_FILE_INPUT}
+                        ARGS ${LNH_DAT}/${LEVEL_FILE_INPUT}
                         MAIN_DEPENDENCY ${LEVEL_FILE_INPUT}
                         DEPENDS lev_comp)
 endmacro (level_file)
