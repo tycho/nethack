@@ -1,9 +1,13 @@
-DynaHack x.y.z (xxxx-yy-zz, 0000000)
+DynaHack 0.6.0 (2016-02-17, 0000000)
 ====================================
 
-This section describes the current development version of DynaHack which has not
-yet been officially released; scroll down for information about officially
-released versions.
+DynaHack 0.6.0 marks a large departure from the 0.5.x series by introducing
+quite a few gameplay and content changes aimed at eliminating tedium, improving
+fairness, and increasing tactical and strategic variety.
+
+As always, changes in DynaHack tend to lean in favor of the player more
+often than not, so players of all skill levels will find something to
+appreciate.
 
 Highlights
 ----------
