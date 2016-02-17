@@ -4,6 +4,10 @@ DynaHack
 DynaHack is a NetHack variant with randomized equipment, new items, new
 monsters, new maps, new challenges and an advanced ASCII interface.
 
+Note: I (tungtn) will no longer be working on DynaHack after this release, so
+please do not email me bugs or feedback.  Instead, post them to
+<https://github.com/tung/DynaHack/issues> so that other people can see them.
+
 
 Release Highlights
 ------------------
