@@ -226,6 +226,14 @@ roll.o: roll.c
 
 roll.c: $(HACK_H)
 
+#   dependencies for rng stream tester
+#
+rngstream: rngstream.o ../src/rnd.o ../src/decl.o
+
+rngstream.o: rngstream.c
+
+rngstream.c: $(HACK_H)
+
 #	dependencies for lev_comp
 #
 lev_comp:  $(SPLEVOBJS)
