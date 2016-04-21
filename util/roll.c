@@ -29,8 +29,8 @@ const char *str;
 	do {
 		u32 c = 1, d = 0, r;
 
-		if (sscanf(p, "%dd%d", &c, &d) < 2) {
-			if (sscanf(p, "d%d", &d) < 1) {
+		if (sscanf(p, "%dd%d", &c, &d) != 2) {
+			if (sscanf(p, "d%d", &d) != 1) {
 				fprintf(stderr, "Syntax error in roll: %s\n", p);
 				continue;
 			}
@@ -48,7 +48,7 @@ const char *str;
 int main(void)
 {
 	char buf[64];
-	while (scanf("%s", buf)) {
+	while (scanf("%s", buf) == 1) {
 		roll_str(buf);
 	}
 	return 0;
