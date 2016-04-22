@@ -184,7 +184,7 @@ DLBFLG =
 # macros. All builds include the base ones.
 #==========================================
 
-CFLAGSBASE  = -c $(cflags) $(cvarsmt) -I$(INCL) -nologo $(cdebug) $(WINPINC) -D_USE_32BIT_TIME_T -wd4113 -wd4996
+CFLAGSBASE  = -c $(cflags) $(cvarsmt) -I$(INCL) -nologo $(cdebug) $(WINPINC) -wd4113 -wd4996 -wd4131 -wd4267 -wd4244 -wd4706 -wd4389 -wd4100
 LFLAGSBASEC = $(linkdebug) $(conlflags) $(conlibsmt) /INCREMENTAL:NO /RELEASE /NOLOGO
 LFLAGSBASEG = $(linkdebug) $(guiflags) $(guilibsmt) comctl32.lib
 
