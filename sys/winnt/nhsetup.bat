@@ -27,6 +27,7 @@ echo      has been renamed to
 echo           ..\..\src\Makefile-orig
 :domsc
 copy Makefile.msc ..\..\src\Makefile >nul
+copy win32.mak ..\..\src\win32.mak >nul
 echo Microsoft Makefile copied ok.
 
 echo Copying Borland Makefile - Makefile.bcc to ..\..\src\Makefile.bcc
