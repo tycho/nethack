@@ -18,8 +18,8 @@ bool counting;   /* Count window is active */
 #define ON 1
 #define NONE -1
 #define KEY_ESC 0x1b
-#define DIALOG_BORDER_COLOR CLR_MAGENTA
-#define SCROLLBAR_COLOR CLR_MAGENTA
+#define DIALOG_BORDER_COLOR CLR_BLACK
+#define SCROLLBAR_COLOR CLR_GRAY
 #define SCROLLBAR_BACK_COLOR CLR_BLACK
 #define HIGHLIGHT_COLOR CLR_WHITE
 #define MORECOLOR CLR_ORANGE
