@@ -250,6 +250,9 @@ struct instance_flags {
 	bool pickup_thrown;
 
 	bool msgtype_regex;
+
+	bool hilite_hidden_stairs;
+	bool hilite_obj_piles;
 /*
  * Window capability support.
  */
