@@ -388,6 +388,8 @@ struct autopickup_exception {
 struct _plinemsg {
     xchar msgtype;
     char *pattern;
+    regex_t match;
+    boolean is_regexp;
     struct _plinemsg *next;
 };
 

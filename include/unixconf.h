@@ -347,5 +347,8 @@
 #endif /* LINUX */
 #endif	/* GNOME_GRAPHICS */
 
+#include <sys/types.h>
+#include <regex.h>
+
 #endif /* UNIXCONF_H */
 #endif /* UNIX */
