@@ -80,6 +80,131 @@ static int menu_max_height(void);
 
 static nhmenu *nhmenus = NULL;  /* NetHack menu array */
 
+static char *
+_backspace(WINDOW *win, int y, int x, char *first, char *last)
+{
+    if (last > first) {
+        *--last = '\0';
+		int y1 = win->_cury;
+		int x1 = win->_curx;
+
+		wmove(win, y, x);
+		waddstr(win, first);
+		getyx(win, y, x);
+		while (win->_cury < y1
+				|| (win->_cury == y1 && win->_curx < x1))
+			waddch(win, (chtype) ' ');
+
+		wmove(win, y, x);
+    }
+    return last;
+}
+
+static int
+_curses_getline(WINDOW *win, char *str, int maxlen)
+{
+    char erasec;
+    char killc;
+    char *oldstr;
+    int ch;
+    int y, x;
+
+    if (!win)
+        return ERR;
+
+    erasec = erasechar();
+    killc = killchar();
+
+    oldstr = str;
+    getyx(win, y, x);
+
+    if (is_wintouched(win) || (win->_flags & _HASMOVED))
+        wrefresh(win);
+
+    while ((ch = wgetch(win)) != ERR) {
+        /*
+         * Some terminals (the Wyse-50 is the most common) generate
+         * a \n from the down-arrow key.  With this logic, it's the
+         * user's choice whether to set kcud=\n for wgetch();
+         * terminating *getstr() with \n should work either way.
+         */
+        if (ch == '\n'
+                || ch == '\r'
+                || ch == KEY_DOWN
+                || ch == KEY_ENTER) {
+            if (win->_cury == win->_maxy && win->_scroll)
+                wechochar(win, (chtype) '\n');
+            break;
+        }
+        if (ch == KEY_ESC)
+        {
+            *oldstr = 0;
+            break;
+        }
+#ifdef KEY_RESIZE
+        if (ch == KEY_RESIZE)
+            break;
+#endif
+        if (ch == erasec || ch == KEY_LEFT || ch == KEY_BACKSPACE) {
+            if (str > oldstr) {
+                str = _backspace(win, y, x, oldstr, str);
+            }
+        } else if (ch == killc) {
+            while (str > oldstr) {
+                str = _backspace(win, y, x, oldstr, str);
+            }
+        } else if (ch >= KEY_MIN
+                || (maxlen >= 0 && str - oldstr >= maxlen)) {
+            beep();
+        } else {
+            int oldy = win->_cury;
+            *str++ = (char) ch;
+            if (waddch(win, (chtype) ch) == ERR) {
+                /*
+                 * We can't really use the lower-right
+                 * corner for input, since it'll mess
+                 * up bookkeeping for erases.
+                 */
+                win->_flags &= ~_WRAPPED;
+                waddch(win, (chtype) ' ');
+                str = _backspace(win, y, x, oldstr, str);
+                continue;
+            } else if (win->_flags & _WRAPPED) {
+                /*
+                 * If the last waddch forced a wrap &
+                 * scroll, adjust our reference point
+                 * for erasures.
+                 */
+                if (win->_scroll
+                        && oldy == win->_maxy
+                        && win->_cury == win->_maxy) {
+                    if (--y <= 0) {
+                        y = 0;
+                    }
+                }
+                win->_flags &= ~_WRAPPED;
+            }
+            wrefresh(win);
+        }
+    }
+
+    win->_curx = 0;
+    win->_flags &= ~_WRAPPED;
+    if (win->_cury < win->_maxy)
+        win->_cury++;
+    wrefresh(win);
+
+    *str = '\0';
+    if (ch == ERR)
+        return ch;
+
+#ifdef KEY_RESIZE
+    if (ch == KEY_RESIZE)
+        return ch;
+#endif
+
+    return OK;
+}
 
 /* Get a line of text from the player, such as asking for a character name or a wish */
 
@@ -147,15 +272,13 @@ void curses_line_input_dialog(const char *prompt, char *answer, int buffer)
         free(tmpstr);
     }
 
-    echo();
     curs_set(1);
-    wgetnstr(askwin, input, buffer-1);
+    _curses_getline(askwin, input, buffer-1);
     curs_set(0);
     strcpy(answer, input);
     werase(bwin);
     delwin(bwin);
     curses_destroy_win(askwin);
-    noecho();
 }
 
 
