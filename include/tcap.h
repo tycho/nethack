@@ -43,7 +43,6 @@ extern struct tc_lcl_data {   /* defined and set up in termcap.c */
 #define nh_US tc_lcl_data.tc_US
 #define nh_UE tc_lcl_data.tc_UE
 #define ul_hack tc_lcl_data.tc_ul_hack
-extern char *nh_red_bg;
 
 extern short ospeed;		/* set up in termcap.c */
 

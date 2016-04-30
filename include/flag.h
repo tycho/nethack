@@ -217,6 +217,7 @@ struct instance_flags {
 	boolean lan_mail_fetched; /* mail is awaiting display */
 #endif
     boolean hilite_hidden_stairs;
+    boolean hilite_obj_piles;
 /*
  * Window capability support.
  */
