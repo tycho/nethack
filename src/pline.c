@@ -19,6 +19,71 @@ char msgs[DUMPMSGS][BUFSZ];
 int lastmsg = -1;
 #endif
 
+void
+msgpline_add(typ, pattern)
+     int typ;
+     char *pattern;
+{
+    int errnum;
+    char errbuf[80];
+    const char *err = (char *)0;
+    struct _plinemsg *tmp = (struct _plinemsg *) alloc(sizeof(struct _plinemsg));
+    if (!tmp) return;
+    tmp->msgtype = typ;
+    tmp->is_regexp = iflags.msgtype_regex;
+    if (tmp->is_regexp) {
+	errnum = regcomp(&tmp->match, pattern, REG_EXTENDED | REG_NOSUB);
+	if (errnum != 0) {
+	    regerror(errnum, &tmp->match, errbuf, sizeof(errbuf));
+	    err = errbuf;
+	}
+	if (err) {
+	    raw_printf("\nMSGTYPE regex error: %s\n", err);
+	    wait_synch();
+	    free(tmp);
+	    return;
+	}
+    } else {
+	tmp->pattern = strdup(pattern);
+    }
+    tmp->next = pline_msg;
+    pline_msg = tmp;
+}
+
+void
+msgpline_free()
+{
+    struct _plinemsg *tmp = pline_msg;
+    struct _plinemsg *tmp2;
+    while (tmp) {
+	if (tmp->is_regexp) {
+	    (void) regfree(&tmp->match);
+	} else {
+	    free(tmp->pattern);
+	}
+	tmp2 = tmp;
+	tmp = tmp->next;
+	free(tmp2);
+    }
+    pline_msg = NULL;
+}
+
+int
+msgpline_type(msg)
+     char *msg;
+{
+    struct _plinemsg *tmp = pline_msg;
+    while (tmp) {
+	if (tmp->is_regexp) {
+	    if (regexec(&tmp->match, msg, 0, NULL, 0) == 0) return tmp->msgtype;
+	} else {
+	    if (pmatch(tmp->pattern, msg)) return tmp->msgtype;
+	}
+	tmp = tmp->next;
+    }
+    return MSGTYP_NORMAL;
+}
+
 /*VARARGS1*/
 /* Note that these declarations rely on knowledge of the internals
  * of the variable argument handling stuff in "tradstdc.h"
@@ -34,6 +99,8 @@ pline VA_DECL(const char *, line)
 	vpline(line, VA_ARGS);
 	VA_END();
 }
+
+char prevmsg[BUFSZ];
 
 # ifdef USE_STDARG
 static void
@@ -52,6 +119,7 @@ pline VA_DECL(const char *, line)
 #endif	/* USE_STDARG | USE_VARARG */
 
 	char pbuf[BUFSZ];
+	int typ;
 /* Do NOT use VA_START and VA_END in here... see above */
 
 	if (!line || !*line) return;
@@ -65,6 +133,9 @@ pline VA_DECL(const char *, line)
 	  strncpy(msgs[lastmsg], line, BUFSZ);
 	}
 #endif
+
+	typ = msgpline_type(line);
+
 	if (!iflags.window_inited) {
 	    raw_print(line);
 	    return;
@@ -75,7 +146,11 @@ pline VA_DECL(const char *, line)
 #endif /* MAC */
 	if (vision_full_recalc) vision_recalc(0);
 	if (u.ux) flush_screen(1);		/* %% */
+	if (typ == MSGTYP_NOSHOW) return;
+	if (typ == MSGTYP_NOREP && !strcmp(line, prevmsg)) return;
 	putstr(WIN_MESSAGE, 0, line);
+	strncpy(prevmsg, line, BUFSZ);
+	if (typ == MSGTYP_STOP) display_nhwindow(WIN_MESSAGE, TRUE); /* --more-- */
 }
 
 /*VARARGS1*/

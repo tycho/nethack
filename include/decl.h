@@ -392,6 +392,21 @@ struct autopickup_exception {
 E int mailckfreq;
 #endif
 
+struct _plinemsg {
+    xchar msgtype;
+    char *pattern;
+    regex_t match;
+    bool is_regexp;
+    struct _plinemsg *next;
+};
+
+E struct _plinemsg *pline_msg;
+
+#define MSGTYP_NORMAL	0
+#define MSGTYP_NOREP	1
+#define MSGTYP_NOSHOW	2
+#define MSGTYP_STOP	3
+
 #undef E
 
 #endif /* DECL_H */
