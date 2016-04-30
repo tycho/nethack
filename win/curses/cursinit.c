@@ -571,12 +571,6 @@ void curses_init_nhcolors()
                 init_color(COLOR_MAGENTA + 8, 1000, 0, 1000);
                 init_color(COLOR_CYAN + 8, 0, 1000, 1000);
                 init_color(COLOR_WHITE + 8, 1000, 1000, 1000);
-#ifdef USE_DARKGRAY
-                if (COLORS > 16)
-                {
-                    init_color(CURSES_DARK_GRAY, 300, 300, 300);
-                }
-#endif
             }
             else
             {
