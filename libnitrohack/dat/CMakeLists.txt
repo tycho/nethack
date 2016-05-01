@@ -64,47 +64,41 @@ set (NHDAT_SRC dungeon quest.dat rumors oracles ${COMPILED_LEVELS} history data)
 
 configure_file(${LNH_DAT}/history history COPYONLY)
 
-get_property(MAKEDEFS_BIN TARGET makedefs PROPERTY LOCATION)
-get_property(DGN_COMP_BIN TARGET dgn_comp PROPERTY LOCATION)
-get_property(LEV_COMP_BIN TARGET lev_comp PROPERTY LOCATION)
-get_property(DLB_BIN TARGET dlb PROPERTY LOCATION)
-
-
 # makedefs -d
 add_custom_command (OUTPUT data
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -d ${LNH_DAT}/data.base data
                     DEPENDS makedefs)
 # makedefs -e 
 add_custom_command (OUTPUT dungeon.pdf
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -e ${LNH_DAT}/dungeon.def dungeon.pdf
                     DEPENDS makedefs)
 # makedefs -q
 add_custom_command (OUTPUT quest.dat
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -q ${LNH_DAT}/quest.txt quest.dat
                     DEPENDS makedefs)
 # makedefs -r
 add_custom_command (OUTPUT rumors
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -r ${LNH_DAT}/rumors.tru
                             ${LNH_DAT}/rumors.fal rumors
                     DEPENDS makedefs)
 # makedefs -h
 add_custom_command (OUTPUT oracles
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -h ${LNH_DAT}/oracles.txt oracles
                     DEPENDS makedefs)
 
 add_custom_command (OUTPUT dungeon
-                    COMMAND ${DGN_COMP_BIN}
+                    COMMAND dgn_comp
                     ARGS ${LNH_DAT_GEN}/dungeon.pdf
                     DEPENDS dungeon.pdf)
 
 add_custom_command (OUTPUT nhdat
-                    COMMAND ${LEV_COMP_BIN} ${LEVEL_DESCRIPTIONS}
-                    COMMAND ${DLB_BIN}
+                    COMMAND lev_comp ${LEVEL_DESCRIPTIONS}
+                    COMMAND dlb
                     ARGS cf nhdat ${NHDAT_SRC}
                     DEPENDS lev_comp dungeon quest.dat rumors oracles data ${LEVEL_DESCRIPTIONS})
 

@@ -50,22 +50,20 @@ add_executable (dgn_comp ${DGN_COMP_SRC})
 add_executable (lev_comp ${LEV_COMP_SRC})
 add_executable (dlb ${DLB_SRC})
 
-get_property(MAKEDEFS_BIN TARGET makedefs PROPERTY LOCATION)
-
 
 # create the headers named in MAKEDEFS_HEADERS
 add_custom_command (OUTPUT ${LNH_INC_GEN}/date.h
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -v ${LNH_INC_GEN}/date.h
                     DEPENDS makedefs)
                     
 add_custom_command (OUTPUT ${LNH_INC_GEN}/onames.h
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -o ${LNH_INC_GEN}/onames.h
                     DEPENDS makedefs)
                     
 add_custom_command (OUTPUT ${LNH_INC_GEN}/pm.h
-                    COMMAND ${MAKEDEFS_BIN}
+                    COMMAND makedefs
                     ARGS -p ${LNH_INC_GEN}/pm.h
                     DEPENDS makedefs)
 
