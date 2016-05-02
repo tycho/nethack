@@ -50,8 +50,11 @@ if (WIN32)
     set (NH_CURSES_SRC ${NH_CURSES_SRC} rc/nh_ico.rc)
 endif ()
 
+find_package(Curses REQUIRED)
+
 include_directories (${NitroHack_SOURCE_DIR}/include
-                     include)
+                     include
+                     ${CURSES_INCLUDE_DIR})
 
 add_definitions(-DNITROHACKDIR="${DATADIR}")
 if (ENABLE_NETCLIENT)
@@ -68,16 +71,7 @@ set_target_properties(nitrohack_curses PROPERTIES
 
 target_link_libraries(nitrohack_curses nitrohack)
 
-if (USE_PDCURSES)
-    target_link_libraries (nitrohack_curses ${PDCURSES_LIBNAME})
-else ()
-    if (APPLE)
-        target_link_libraries (nitrohack_curses ncurses)
-        add_definitions (-DHOMEBREW_CURSES)
-    else ()
-        target_link_libraries (nitrohack_curses ncursesw)
-    endif ()
-endif ()
+target_link_libraries(nitrohack_curses ${CURSES_LIBRARIES})
 
 if (ENABLE_NETCLIENT)
     add_dependencies (nitrohack_curses libnitrohack_client)
