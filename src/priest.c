@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)priest.c	3.4	2002/11/06	*/
 /* Copyright (c) Izchak Miller, Steve Linhart, 1989.		  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -363,8 +362,8 @@ register int roomno;
 		    msg1 = buf;
 		}
 		if (can_speak) {
-		    verbalize(msg1);
-		    if (msg2) verbalize(msg2);
+		    verbalize("%s", msg1);
+		    if (msg2) verbalize("%s", msg2);
 		}
 		if(!sanctum) {
 		    /* !tended -> !shrined */
@@ -433,7 +432,7 @@ register struct monst *priest;
 		priest->mcanmove = 1;
 	    }
 	    priest->mpeaceful = 0;
-	    verbalize(cranky_msg[rn2(3)]);
+	    verbalize("%s", cranky_msg[rn2(3)]);
 	    return;
 	}
 

@@ -1,4 +1,3 @@
-#       SCCS Id: @(#)bootstrp.mak       3.4     2002/03/24
 #       Copyright (c) Michael Allison
 #
 #       NetHack Windows CE bootstrap file for MS Visual C++ V6.x and 

@@ -1,5 +1,4 @@
 @echo off
-REM    SCCS Id: @(#)setup.bat   2002/03/17
 REM    Copyright (c) NetHack PC Development Team 1990 - 2002
 REM    NetHack may be freely redistributed.  See license for details.
 

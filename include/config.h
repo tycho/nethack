@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)config.h	3.4	2003/12/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -179,11 +178,11 @@
 
 #ifdef UNIX
 /* path and file name extension for compression program */
-/* #define COMPRESS "/usr/bin/compress" */	/* Lempel-Ziv compression */
-/* #define COMPRESS_EXTENSION ".Z" */		/* compress's extension */
+/*#define COMPRESS "/usr/bin/compress"	*/	/* Lempel-Ziv compression */
+/*#define COMPRESS_EXTENSION ".Z"	*/	/* compress's extension */
 /* An example of one alternative you might want to use: */
-#define COMPRESS "/bin/gzip"	/* FSF gzip compression */
-#define COMPRESS_EXTENSION ".gz"		/* normal gzip extension */
+/* #define COMPRESS "/bin/gzip"		*/	/* FSF gzip compression */
+/* #define COMPRESS_EXTENSION ".gz"	*/	/* normal gzip extension */
 #endif
 
 #ifndef COMPRESS
@@ -386,7 +385,7 @@ typedef long glyph_t;
 #define AUTOPICKUP_EXCEPTIONS  /* exceptions to autopickup */
 
 #define DUMP_LOG        /* Dump game end information to a file */
-#define DUMP_FN "/dgldir/userdata/%N/%n/dumplog/%t.nh343.txt"      /* Fixed dumpfile name, if you want
+#define DUMP_FN "dumps/%n-%t.nh343.txt"      /* Fixed dumpfile name, if you want
                                    * to prevent definition by users */
 #define DUMPMSGS 20     /* Number of latest messages in the dump file  */
 

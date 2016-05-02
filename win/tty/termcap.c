@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)termcap.c	3.4	2000/07/10	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -221,10 +220,6 @@ int *wid, *hgt;
 	    error("Terminal must backspace.");
 # else
 	    if(!(BC = Tgetstr("bc"))) {	/* termcap also uses bc/bs */
-#  ifndef MINIMAL_TERM
-		if(!tgetflag("bs"))
-			error("Terminal must backspace.");
-#  endif
 		BC = tbufptr;
 		tbufptr += 2;
 		*BC = '\b';
@@ -841,9 +836,6 @@ cl_eos()			/* free after Robert Viduya */
 
 #include <curses.h>
 
-#ifndef LINUX
-extern char *tparm();
-#endif
 
 #  ifndef COLOR_BLACK	/* trust include file */
 #   ifndef _M_UNIX	/* guess BGR */

@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)macerrs.c	3.1	93/01/24		  */
 /* Copyright (c) Michael Hamel, 1991 */
 /* NetHack may be freely redistributed.  See license for details. */
 

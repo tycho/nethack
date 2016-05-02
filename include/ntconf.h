@@ -1,9 +1,10 @@
-/*	SCCS Id: @(#)ntconf.h	3.4	2002/03/10	*/
 /* Copyright (c) NetHack PC Development Team 1993, 1994.  */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #ifndef NTCONF_H
 #define NTCONF_H
+
+#include <sys/stat.h>
 
 /* #define SHELL	/* nt use of pcsys routines caused a hang */
 
@@ -107,7 +108,7 @@ extern void FDECL(interject, (int));
 #define Rand()	rand()
 #endif
 
-#define FCMASK	0660	/* file creation mask */
+#define FCMASK	(S_IREAD|S_IWRITE) /* file creation mask */
 #define regularize	nt_regularize
 #define HLOCK "NHPERM"
 

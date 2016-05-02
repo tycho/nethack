@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)spell.c	3.4	2003/01/17	*/
 /*	Copyright (c) M. Stephenson 1988			  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -949,7 +948,7 @@ boolean atme;
 		break;
 	case SPE_JUMPING:
 		if (!jump(max(role_skill,1)))
-			pline(nothing_happens);
+			pline("%s", nothing_happens);
 		break;
 	default:
 		impossible("Unknown spell %d attempted.", spell);

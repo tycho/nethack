@@ -1,4 +1,3 @@
-/*    SCCS Id: @(#)winchar.c     3.1    93/07/22			*/
 /*    Copyright (c) Olaf Seibert (KosmoSoft), 1989, 1992	  */
 /*    Copyright (c) Kenneth Lorber, Bethesda, Maryland 1993	  */
 /*    Copyright (c) Gregg Wonderly, Naperville Illinois, 1994.		*/

@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)mthrowu.c	3.4	2003/05/09	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -450,7 +449,7 @@ m_throw(mon, x, y, dx, dy, range, obj)
 	if (blindinc) {
 		u.ucreamed += blindinc;
 		make_blinded(Blinded + (long)blindinc, FALSE);
-		if (!Blind) Your(vision_clears);
+		if (!Blind) Your("%s", vision_clears);
 	}
 }
 

@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)hack.c	3.4	2003/04/30	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -423,7 +422,7 @@ still_chewing(x,y)
 
     unblock_point(x, y);	/* vision */
     newsym(x, y);
-    if (digtxt) You(digtxt);	/* after newsym */
+    if (digtxt) You("%s",digtxt);	/* after newsym */
     if (dmgtxt) pay_for_damage(dmgtxt, FALSE);
     (void) memset((genericptr_t)&digging, 0, sizeof digging);
     return 0;
@@ -2093,7 +2092,7 @@ const char *msg_override;
 	(void) memset(multi_txt, 0, BUFSZ);
 	if (msg_override) nomovemsg = msg_override;
 	else if (!nomovemsg) nomovemsg = You_can_move_again;
-	if (*nomovemsg) pline(nomovemsg);
+	if (*nomovemsg) pline("%s", nomovemsg);
 	nomovemsg = 0;
 	u.usleep = 0;
 	if (afternmv) (*afternmv)();
@@ -2268,7 +2267,7 @@ const char *str;
 {
     if(near_capacity() >= EXT_ENCUMBER) {
 	if(str)
-	    pline(str);
+	    pline("%s", str);
 	else
 	    You_cant("do that while carrying so much stuff.");
 	return 1;

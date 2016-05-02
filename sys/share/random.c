@@ -34,12 +34,6 @@
 
 #include "hack.h"
 
-#ifdef LIBC_SCCS
-# ifndef lint
-static char sccsid[] = "@(#)random.c	5.5 (Berkeley) 7/6/88";
-# endif
-#endif /* LIBC_SCCS and not lint */
-
 /*
  * random.c:
  * An improved random number generation package.  In addition to the standard

@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)dungeon.c	3.4	1999/10/30	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -678,7 +677,7 @@ init_dungeons()		/* initialize the "dungeon" structs */
 	    interject_assistance(1, INTERJECT_PANIC, (genericptr_t)tbuf,
 				 (genericptr_t)fqn_prefix[DATAPREFIX]);
 #endif
-	    panic(tbuf);
+	    panic("%s", tbuf);
 	}
 
 	/* validate the data's version against the program's version */

@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)system.h	3.4	2001/12/07	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -79,7 +78,9 @@ typedef long	off_t;
 # if !defined(__SC__) && !defined(LINUX)
 E  long NDECL(random);
 # endif
-# if (!defined(SUNOS4) && !defined(bsdi) && !defined(__FreeBSD__)) || defined(RANDOM)
+# if defined(__FreeBSD__)
+E void FDECL(srandom, (unsigned long));
+# elif (!defined(SUNOS4) && !defined(bsdi) && !defined(__FreeBSD__)) || defined(RANDOM)
 E void FDECL(srandom, (unsigned int));
 # else
 #  if !defined(bsdi) && !defined(__FreeBSD__)
@@ -87,8 +88,8 @@ E int FDECL(srandom, (unsigned int));
 #  endif
 # endif
 #else
-E long lrand48();
-E void srand48();
+E long lrand48(void);
+E void srand48(long);
 #endif /* BSD || ULTRIX || RANDOM */
 
 #if !defined(BSD) || defined(ultrix)
@@ -343,10 +344,10 @@ E char *FDECL(memset, (char*,int,int));
 #endif /* MICRO */
 
 #if defined(BSD) && defined(ultrix)	/* i.e., old versions of Ultrix */
-E void sleep();
+E void sleep(unsigned int);
 #endif
 #if defined(ULTRIX) || defined(SYSV)
-E unsigned sleep();
+E unsigned sleep(unsigned int);
 #endif
 #if defined(HPUX)
 E unsigned int FDECL(sleep, (unsigned int));
@@ -356,7 +357,7 @@ E int FDECL(sleep, (unsigned));
 #endif
 
 E char *FDECL(getenv, (const char *));
-E char *getlogin();
+E char *getlogin(void);
 #if defined(HPUX) && !defined(_POSIX_SOURCE)
 E long NDECL(getuid);
 E long NDECL(getgid);
@@ -501,7 +502,7 @@ E char *FDECL(tgoto, (const char *,int,int));
 #else
 # if ! (defined(HPUX) && defined(_POSIX_SOURCE))
 E int FDECL(tgetent, (char *,const char *));
-E void FDECL(tputs, (const char *,int,int (*)()));
+E void FDECL(tputs, (const char *,int,int (*)(void)));
 # endif
 E int FDECL(tgetnum, (const char *));
 E int FDECL(tgetflag, (const char *));

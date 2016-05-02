@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)restore.c	3.4	2003/09/06	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -764,7 +763,7 @@ boolean ghostly;
 	    else
 		Sprintf(trickbuf, "This is level %d, not %d!", dlvl, lev);
 #ifdef WIZARD
-	    if (wizard) pline(trickbuf);
+	    if (wizard) pline("%s", trickbuf);
 #endif
 	    trickery(trickbuf);
 	}

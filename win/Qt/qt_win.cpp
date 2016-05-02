@@ -1,4 +1,3 @@
-//	SCCS Id: @(#)qt_win.cpp	3.4	1999/11/19
 // Copyright (c) Warwick Allison, 1999.
 // NetHack may be freely redistributed.  See license for details.
 
@@ -74,6 +73,11 @@ extern "C" {
 
 }
 
+#ifdef Invisible
+/* Invisible was added to an enum in Qt 3.2, #defined in youprop.h */
+#undef Invisible
+#endif
+
 #include "qt_win.h"
 #include <qregexp.h>
 #include <qpainter.h>
@@ -105,7 +109,7 @@ extern "C" {
 #ifdef Q_WS_MACX
 #  include <sys/malloc.h>
 #else
-#  include <malloc.h>
+#  include <stdlib.h>
 #endif
 
 #ifdef _WS_X11_

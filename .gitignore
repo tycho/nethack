@@ -1,0 +1,10 @@
+*.[ao]
+/*.dsw
+/*.sln
+/binary
+/build
+/Makefile
+/dat/Makefile
+/doc/Makefile
+/src/Makefile
+/util/Makefile

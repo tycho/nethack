@@ -1,5 +1,4 @@
 #	NetHack Makefile.
-#	SCCS Id: @(#)Makefile.src	3.4	2002/03/02
 
 # newer makes predefine $(MAKE) to 'make' and do smarter processing of
 # recursive make calls if $(MAKE) is used
@@ -38,22 +37,25 @@ SHELL=/bin/sh
 # Normally, the C compiler driver is used for linking:
 LINK=$(CC)
 
-# Pick the SYSSRC and SYSOBJ lines corresponding to your desired operating
-# system.
-#
 # for UNIX systems
+ifeq ($(SYSTEM),Sysunix)
 SYSSRC = ../sys/share/ioctl.c ../sys/share/unixtty.c ../sys/unix/unixmain.c \
 	../sys/unix/unixunix.c ../sys/unix/unixres.c
 SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o unixres.o recover.o
+endif
 #
 # for Systos
-# SYSSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
-#	../sys/share/pctty.c ../sys/share/pcunix.c
-# SYSOBJ = tos.o pcmain.o pcsys.o pctty.o pcunix.o
+ifeq ($(SYSTEM),Systos)
+SYSSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
+	../sys/share/pctty.c ../sys/share/pcunix.c
+SYSOBJ = tos.o pcmain.o pcsys.o pctty.o pcunix.o
+endif
 #
 # for BeOS
-#SYSSRC = ../sys/be/bemain.c ../sys/share/unixtty.c ../sys/share/ioctl.c
-#SYSOBJ = bemain.o unixtty.o ioctl.o
+ifeq ($(SYSTEM),SysBe)
+SYSSRC = ../sys/be/bemain.c ../sys/share/unixtty.c ../sys/share/ioctl.c
+SYSOBJ = bemain.o unixtty.o ioctl.o
+endif
 
 
 # if you are using gcc as your compiler:
@@ -80,6 +82,8 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o unixres.o recover.o
 #
 # if you're debugging and want gcc to check as much as possible, use:
 # CC = gcc -W -Wimplicit -Wreturn-type -Wunused -Wformat -Wswitch -Wshadow -Wcast-qual -Wwrite-strings -DGCC_WARN
+
+CC = gcc
 
 # flags may have to be changed as required
 # flags for 286 Xenix:
@@ -146,19 +150,31 @@ SYSOBJ = ioctl.o unixmain.o unixtty.o unixunix.o unixres.o recover.o
 # directories.  The ones given below is the usual spot for linux systems.
 # The paths are for glibconfig.h and gnomesupport.h respectively.
 #
-GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
+GNOMEINC= $(shell ${GNOME_CONFIG} --cflags gnomeui)
 
 # flags for debugging:
 # CFLAGS = -g -I../include
 
-CFLAGS = -g -O -I../include
-LFLAGS =
+CFLAGS = -O2 -std=gnu89 -fno-strict-aliasing -Wundef -Wshadow -Wimplicit -Wstrict-prototypes -U_FORTIFY_SOURCE -I../include
+
+CFLAGS += -I../include
+ifeq ("$(GRAPHICS)","X11_GRAPHICS")
+CFLAGS += -DX11_GRAPHICS -I${LOCALBASE}/include
+endif
+ifeq ("$(GRAPHICS)","QT_GRAPHICS")
+CFLAGS += -DQT_GRAPHICS
+endif
+ifeq ("$(GRAPHICS)","GNOME_GRAPHICS")
+CFLAGS += -DGNOME_GRAPHICS ${CPPFLAGS}
+endif
+
+LFLAGS = 
 
 # The Qt and Be window systems are written in C++, while the rest of
 # NetHack is standard C.  If using Qt, uncomment the LINK line here to get
 # the C++ libraries linked in.
-CXXFLAGS = $(CFLAGS) -I. -I$(QTDIR)/include
-CXX=g++
+CXXFLAGS += -I. -I../include ${QTCPPFLAGS}
+#CXX=g++
 #LINK=g++
 #	For cross-compiling, eg. with gcc on Linux (see also CC further up):
 #CXX=arm-linux-g++
@@ -223,7 +239,26 @@ WINBEOBJ =
 #
 #
 WINSRC = $(WINTTYSRC) $(WINCURSESSRC)
+ifeq ("$(GRAPHICS)","X11_GRAPHICS")
+WINSRC += $(WINX11SRC)
+endif
+ifeq ("$(GRAPHICS)","QT_GRAPHICS")
+WINSRC += $(WINQTSRC)
+endif
+ifeq ("$(GRAPHICS)","GNOME_GRAPHICS")
+WINSRC += $(WINGNOMESRC)
+endif
+
 WINOBJ = $(WINTTYOBJ) $(WINCURSESOBJ)
+ifeq ("$(GRAPHICS)","X11_GRAPHICS")
+WINOBJ += $(WINX11OBJ)
+endif
+ifeq ("$(GRAPHICS)","QT_GRAPHICS")
+WINOBJ += $(WINQTOBJ)
+endif
+ifeq ("$(GRAPHICS)","GNOME_GRAPHICS")
+WINOBJ += $(WINGNOMEOBJ)
+endif
 
 # on some systems the termcap library is in -ltermcap or -lcurses
 # on 386 Xenix, the -ltermlib tputs() seems not to work; use -lcurses instead
@@ -243,19 +278,19 @@ WINTTYLIB = -lncurses
 #
 # libraries for X11
 # If USE_XPM is defined in config.h, you will also need -lXpm here.
-WINX11LIB = -lXaw -lXmu -lXext -lXt -lX11
+WINX11LIB = -lXaw -lXmu -lXpm -lXext -lXt -lX11 -lSM -lICE -L${LOCALBASE}/lib
 # WINX11LIB = -lXaw -lXmu -lXt -lX11
 # WINX11LIB = -lXaw -lXmu -lXext -lXt -lXpm -lX11 -lm
 # WINX11LIB = -lXaw -lXmu -lXpm -lXext -lXt -lX11 -lSM -lICE -lm # BSD/OS 2.0
 #
 # libraries for Qt
-WINQTLIB = -L$(QTDIR)/lib -lqt
+WINQTLIB = ${QTCFGLIBS} ${LIBQT}
 #
 # libraries for KDE (with Qt)
 WINKDELIB = -lkdecore -lkdeui -lXext
 #
 # libraries for Gnome
-WINGNOMELIB = -lgnomeui -lgnome -lart_lgpl -lgtk -lgdk -lpopt
+WINGNOMELIB = $(shell ${GNOME_CONFIG} --libs gnomeui) ${LDFLAGS}
 #
 # libraries for Gem port
 WINGEMLIB = -le_gem -lgem
@@ -264,6 +299,15 @@ WINGEMLIB = -le_gem -lgem
 WINBELIB = -lbe
 
 WINLIB = $(WINTTYLIB)
+ifeq ("$(GRAPHICS)","X11_GRAPHICS")
+WINLIB += $(WINX11LIB)
+endif
+ifeq ("$(GRAPHICS)","QT_GRAPHICS")
+WINLIB += $(WINQTLIB)
+endif
+ifeq ("$(GRAPHICS)","GNOME_GRAPHICS")
+WINLIB += $(WINGNOMELIB)
+endif
 
 # any other strange libraries your system needs (for Sysunix only -- the more
 # specialized targets should already be right)
@@ -293,7 +337,7 @@ WINLIB = $(WINTTYLIB)
 LIBS =
 
 # make NetHack
-GAME     = nethack.343-nao
+GAME     = nethack
 # GAME     = nethack.prg
 
 # if you defined RANDOM in unixconf.h/tosconf.h since your system did not come
@@ -469,13 +513,13 @@ objects.o:
 
 # Qt windowport meta-object-compiler output
 qt_kde0.moc: ../include/qt_kde0.h
-	$(QTDIR)/bin/moc -o qt_kde0.moc ../include/qt_kde0.h
+	${MOC} -o qt_kde0.moc ../include/qt_kde0.h
 
 qt_win.moc: ../include/qt_win.h
-	$(QTDIR)/bin/moc -o qt_win.moc ../include/qt_win.h
+	${MOC} -o qt_win.moc ../include/qt_win.h
 
 qttableview.moc: ../include/qttableview.h
-	$(QTDIR)/bin/moc -o qttableview.moc ../include/qttableview.h
+	${MOC} -o qttableview.moc ../include/qttableview.h
 
 $(MAKEDEFS): ../util/makedefs.c  $(CONFIG_H) ../include/permonst.h \
 		../include/objclass.h ../include/monsym.h \

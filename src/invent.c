@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)invent.c	3.4	2003/12/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1033,7 +1032,7 @@ register const char *let,*word;
 		}
 		if(index(quitchars,ilet)) {
 		    if(flags.verbose)
-			pline(Never_mind);
+			pline("%s", Never_mind);
 		    return((struct obj *)0);
 		}
 		if(ilet == '-') {
@@ -1094,7 +1093,7 @@ register const char *let,*word;
 		    }
 		    if(ilet == '\033') {
 			if(flags.verbose)
-			    pline(Never_mind);
+			    pline("%s", Never_mind);
 			return((struct obj *)0);
 		    }
 		    /* they typed a letter (not a space) at the prompt */
@@ -2822,7 +2821,7 @@ boolean picked_some;
 		Sprintf(fbuf, "There is %s here.", an(dfeature));
 
 	if (!otmp || is_lava(u.ux,u.uy) || (is_pool(u.ux,u.uy) && !Underwater)) {
-		if (dfeature) pline(fbuf);
+		if (dfeature) pline("%s", fbuf);
 		read_engr_at(u.ux, u.uy); /* Eric Backus */
 		if (!skip_objects && (Blind || !dfeature))
 		    You("%s no objects here.", verb);
@@ -2831,14 +2830,14 @@ boolean picked_some;
 	/* we know there is something here */
 
 	if (skip_objects) {
-	    if (dfeature) pline(fbuf);
+	    if (dfeature) pline("%s", fbuf);
 	    read_engr_at(u.ux, u.uy); /* Eric Backus */
 	    There("are %s%s objects here.",
 		  (obj_cnt <= 10) ? "several" : "many",
 		  picked_some ? " more" : "");
 	} else if (!otmp->nexthere) {
 	    /* only one object */
-	    if (dfeature) pline(fbuf);
+	    if (dfeature) pline("%s", fbuf);
 	    read_engr_at(u.ux, u.uy); /* Eric Backus */
 #ifdef INVISIBLE_OBJECTS
 	    if (otmp->oinvis && !See_invisible) verb = "feel";
@@ -3297,7 +3296,7 @@ doorganize()	/* inventory organizer by Del Lamb */
 		Sprintf(qbuf, "Adjust letter to what [%s]?",buf);
 		let = yn_function(qbuf, (char *)0, '\0');
 		if(index(quitchars,let)) {
-			pline(Never_mind);
+			pline("%s", Never_mind);
 			return(0);
 		}
 		if (let == '@' || !letter(let))

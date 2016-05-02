@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)dothrow.c	3.4	2003/12/04	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -774,7 +773,7 @@ boolean hitsroof;
 			pline("It blinds you!");
 		    u.ucreamed += blindinc;
 		    make_blinded(Blinded + (long)blindinc, FALSE);
-		    if (!Blind) Your(vision_clears);
+		    if (!Blind) Your("%s", vision_clears);
 		}
 		break;
 	default:

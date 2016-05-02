@@ -1,4 +1,3 @@
-/*   SCCS Id: @(#)vidvga.c   3.4     1996/02/16			  */
 /*   Copyright (c) NetHack PC Development Team 1995                 */
 /*   NetHack may be freely redistributed.  See license for details. */
 /*

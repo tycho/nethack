@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)unixconf.h 3.4	1999/07/02	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -290,7 +289,7 @@
 #endif
 
 #if defined(BSD) || defined(ULTRIX)
-# if !defined(DGUX) && !defined(SUNOS4)
+# if !defined(DGUX) && !defined(SUNOS4) && !defined(__FreeBSD__)
 #define memcpy(d, s, n)		bcopy(s, d, n)
 #define memcmp(s1, s2, n)	bcmp(s2, s1, n)
 # endif

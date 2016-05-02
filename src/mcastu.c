@@ -1,4 +1,3 @@
-/*	SCCS Id: @(#)mcastu.c	3.4	2003/01/08	*/
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -590,7 +589,7 @@ int spellnum;
 		  (num_eyes == 1) ?
 		  body_part(EYE) : makeplural(body_part(EYE)));
 	    make_blinded(Half_spell_damage ? 100L : 200L, FALSE);
-	    if (!Blind) Your(vision_clears);
+	    if (!Blind) Your("%s", vision_clears);
 	    dmg = 0;
 	} else
 	    impossible("no reason for monster to cast blindness spell?");
