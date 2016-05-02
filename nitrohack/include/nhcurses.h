@@ -75,7 +75,7 @@ typedef wchar_t fnchar;
 
 #ifndef PDCURSES
 # ifndef HOMEBREW_CURSES
-#  include <ncursesw/curses.h>
+#  include <curses.h>
 # else
 #  include <ncurses/curses.h>
 # endif
