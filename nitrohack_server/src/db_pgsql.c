@@ -177,6 +177,7 @@ int init_database(void)
     conn = PQsetdbLogin(settings.dbhost, settings.dbport, NULL, NULL,
 			settings.dbname, settings.dbuser, settings.dbpass);
     if (PQstatus(conn) == CONNECTION_BAD) {
+	fprintf(stderr, "%s\n", PQerrorMessage(conn));
 	fprintf(stderr, "Database connection failed. Check your settings.\n");
 	goto err;
     }
