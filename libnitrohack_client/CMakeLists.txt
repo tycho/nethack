@@ -32,4 +32,4 @@ endif ()
 add_dependencies (libnitrohack_client libnitrohack)
 
 install(TARGETS libnitrohack_client
-        DESTINATION ${BINDIR})
+        DESTINATION ${LIBDIR})
