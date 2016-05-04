@@ -207,8 +207,8 @@ unsigned int good_random(void)
 	static sfmt_t sfmt;
 	char entropy[ENTROPY_BYTES];
 
-	/* Collect entropy and reseed every 128k iterations */
-	if ((counter & 0x1ffff) == 0)
+	/* Collect entropy and reseed every 2M iterations */
+	if ((counter & 0x1fffff) == 0)
 	{
 		collect_entropy(entropy);
 
