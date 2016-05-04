@@ -232,7 +232,7 @@ const char *sfmt_get_idstring(sfmt_t * sfmt) {
  * @param sfmt SFMT internal state
  * @return minimum size of array used for fill_array32() function.
  */
-int sfmt_get_min_array_size32(sfmt_t * sfmt) {
+static int sfmt_get_min_array_size32(sfmt_t * sfmt) {
     UNUSED_VARIABLE(sfmt);
     return SFMT_N32;
 }
@@ -243,7 +243,7 @@ int sfmt_get_min_array_size32(sfmt_t * sfmt) {
  * @param sfmt SFMT internal state
  * @return minimum size of array used for fill_array64() function.
  */
-int sfmt_get_min_array_size64(sfmt_t * sfmt) {
+static int sfmt_get_min_array_size64(sfmt_t * sfmt) {
     UNUSED_VARIABLE(sfmt);
     return SFMT_N64;
 }
@@ -254,7 +254,7 @@ int sfmt_get_min_array_size64(sfmt_t * sfmt) {
  * integers.
  * @param sfmt SFMT internal state
  */
-void sfmt_gen_rand_all(sfmt_t * sfmt) {
+static void sfmt_gen_rand_all(sfmt_t * sfmt) {
     int i;
     w128_t *r1, *r2;
 
@@ -302,7 +302,7 @@ void sfmt_gen_rand_all(sfmt_t * sfmt) {
  * memory. Mac OSX doesn't have these functions, but \b malloc of OSX
  * returns the pointer to the aligned memory block.
  */
-void sfmt_fill_array32(sfmt_t * sfmt, uint32_t *array, int size) {
+static void sfmt_fill_array32(sfmt_t * sfmt, uint32_t *array, int size) {
     assert(sfmt->idx == SFMT_N32);
     assert(size % 4 == 0);
     assert(size >= SFMT_N32);
@@ -338,7 +338,7 @@ void sfmt_fill_array32(sfmt_t * sfmt, uint32_t *array, int size) {
  * memory. Mac OSX doesn't have these functions, but \b malloc of OSX
  * returns the pointer to the aligned memory block.
  */
-void sfmt_fill_array64(sfmt_t * sfmt, uint64_t *array, int size) {
+static void sfmt_fill_array64(sfmt_t * sfmt, uint64_t *array, int size) {
     assert(sfmt->idx == SFMT_N32);
     assert(size % 2 == 0);
     assert(size >= SFMT_N64);
@@ -358,7 +358,7 @@ void sfmt_fill_array64(sfmt_t * sfmt, uint64_t *array, int size) {
  * @param sfmt SFMT internal state
  * @param seed a 32-bit integer used as the seed.
  */
-void sfmt_init_gen_rand(sfmt_t * sfmt, uint32_t seed) {
+static void sfmt_init_gen_rand(sfmt_t * sfmt, uint32_t seed) {
     int i;
 
     uint32_t *psfmt32 = &sfmt->state[0].u[0];
@@ -380,7 +380,7 @@ void sfmt_init_gen_rand(sfmt_t * sfmt, uint32_t seed) {
  * @param init_key the array of 32-bit integers, used as a seed.
  * @param key_length the length of init_key.
  */
-void sfmt_init_by_array(sfmt_t * sfmt, uint32_t *init_key, int key_length) {
+static void sfmt_init_by_array(sfmt_t * sfmt, uint32_t *init_key, int key_length) {
     int i, j, count;
     uint32_t r;
     int lag;
