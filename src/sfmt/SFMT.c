@@ -1,4 +1,7 @@
 /**
+ * Copyright (C) 2015 SeizhLab. Rights reserved.
+ */
+/**
  * @file  SFMT.c
  * @brief SIMD oriented Fast Mersenne Twister(SFMT)
  *
@@ -16,7 +19,6 @@
  * The 3-clause BSD License is applied to this software, see
  * LICENSE.txt
  */
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -45,6 +47,18 @@ extern "C" {
  */
 static const w128_t sse2_param_mask = {{SFMT_MSK1, SFMT_MSK2,
                                         SFMT_MSK3, SFMT_MSK4}};
+
+#if defined(HAVE_AVX2)
+/**
+ * parameters used by 256-bit AVX2.
+ */
+static const w256_t avx2_param_mask = {{SFMT_MSK1, SFMT_MSK2,
+                                        SFMT_MSK3, SFMT_MSK4,
+										SFMT_MSK1, SFMT_MSK2,
+                                        SFMT_MSK3, SFMT_MSK4,
+                                        }};
+#endif
+
 /*----------------
   STATIC FUNCTIONS
   ----------------*/
@@ -59,6 +73,8 @@ inline static void swap(w128_t *array, int size);
 
 #if defined(HAVE_ALTIVEC)
   #include "SFMT-alti.h"
+#elif defined(HAVE_AVX2)
+  #include "SFMT-avx2.h"
 #elif defined(HAVE_SSE2)
   #if defined(_MSC_VER)
     #include "SFMT-sse2-msc.h"

@@ -162,6 +162,9 @@ int i;
 #if defined(__SSE2__)
 # define HAVE_SSE2 1
 #endif
+#if defined(__AVX2__)
+# define HAVE_AVX2 1
+#endif
 #define SFMT_MEXP 19937
 #include "sfmt/SFMT.h"
 

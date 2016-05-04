@@ -1,4 +1,11 @@
 #pragma once
+
+/**
+ * @author Seizh (SeizhLab)
+ * Copyright (C) 2015 Seizh, SeizhLab. All rights reserved.
+ * @note Support 256-bit AVX type
+ */
+
 /**
  * @file SFMT.h
  *
@@ -88,12 +95,25 @@ union W128_T {
     uint64_t u64[2];
     __m128i si;
 };
+
 #else
 /** 128-bit data structure */
 union W128_T {
     uint32_t u[4];
     uint64_t u64[2];
 };
+#endif
+
+#if defined(HAVE_AVX2)
+  #include <immintrin.h>
+/** 256-bit data structure */
+union W256_T {
+    uint32_t u[8];
+    uint64_t u64[4];
+    __m128i xmm[2];
+    __m256i ymm;
+};
+typedef union W256_T w256_t;
 #endif
 
 /** 128-bit data type */
@@ -104,7 +124,14 @@ typedef union W128_T w128_t;
  */
 struct SFMT_T {
     /** the 128-bit internal state array */
+#if defined(HAVE_AVX2)
+    union {
+        __m256i state_y[SFMT_N/2];
+        w128_t state[SFMT_N];
+    };
+#else
     w128_t state[SFMT_N];
+#endif
     /** index counter to the 32-bit internal state array */
     int idx;
 };

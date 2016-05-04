@@ -3,6 +3,8 @@ University.
 Copyright (c) 2012 Mutsuo Saito, Makoto Matsumoto, Hiroshima University
 and The University of Tokyo.
 All rights reserved.
+Copyright (c) 2015 SeizhLab (https://github.com/seizh).
+Rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
