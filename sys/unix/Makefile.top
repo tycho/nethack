@@ -89,7 +89,7 @@ DAT = $(DATNODLB) $(DATDLB)
 $(GAME):
 	$(MAKE) -C src
 
-all:	$(GAME) recover Guidebook $(VARDAT) dungeon spec_levs check-dlb
+all:	$(GAME) recover Guidebook $(VARDAT) dungeon spec_levs dlb
 	@echo "Done."
 
 # Note: many of the dependencies below are here to allow parallel make
@@ -165,9 +165,6 @@ GEM_RSC.RSC:
 title.img:
 	$(MAKE) -C dat title.img
 
-check-dlb: options
-	@if egrep -s librarian dat/options ; then $(MAKE) dlb ; else true ; fi
-
 dlb: spec_levs
 	$(MAKE) -C util dlb
 	( cd dat && ../util/dlb cf nhdat $(DATDLB) )
@@ -201,7 +198,7 @@ dofiles:
 	$(CHGRP) $(GAMEGRP) $(SHELLDIR)/$(GAME)
 	chmod $(EXEPERM) $(SHELLDIR)/$(GAME)
 
-dofiles-dlb: check-dlb
+dofiles-dlb: dlb
 	( cd dat && cp nhdat $(DATNODLB) $(GAMEDIR) )
 # set up their permissions
 	-( cd $(GAMEDIR) ; $(CHOWN) $(GAMEUID) nhdat $(DATNODLB) ; \
