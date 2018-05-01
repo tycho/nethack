@@ -1,4 +1,0 @@
-*.BC NHSUBST
-*.bat NHSUBST
-Makefile.* NHSUBST
-Install.* NHSUBST

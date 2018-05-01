@@ -1,6 +1,0 @@
-*.[ch] NHSUBST
-*.sh NHSUBST
-* text=auto
-*.hqx -text
-*.sln -text
-*.vcxproj -text
