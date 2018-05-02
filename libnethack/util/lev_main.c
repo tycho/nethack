@@ -116,6 +116,7 @@ static const char *outprefix = "";
 const char *fname = "(stdin)";
 int fatal_error = 0;
 int want_warnings = 0;
+int quiet = 0;
 
 int
 main(int argc, char **argv)
@@ -145,6 +146,10 @@ main(int argc, char **argv)
             fname = argv[i];
             if (!strcmp(fname, "-w")) {
                 want_warnings++;
+                continue;
+            }
+            if (!strcmp(fname, "-q")) {
+                quiet++;
                 continue;
             }
 
@@ -997,7 +1002,8 @@ write_level_file(char *filename, splev * room_level, specialmaze * maze_level)
     }
 
     close(fout);
-    fprintf(stdout, "Wrote '%s'.\n", lbuf);
+    if (!quiet)
+        fprintf(stdout, "Wrote '%s'.\n", lbuf);
     return TRUE;
 }
 

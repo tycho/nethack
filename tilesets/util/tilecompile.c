@@ -39,6 +39,8 @@ char tileset_name[TILESET_NAME_SIZE + 1];
 long tileset_width = -1;
 long tileset_height = -1;
 
+bool quiet = false;
+
 /* Sometimes we're handling tiles not intended for NetHack 4, but rather, tiles
    created for Slash'EM or the like. Preserving these tiles can be useful,
    depending on the operation. We have two modes for preserving them: -k to not
@@ -247,6 +249,9 @@ main(int argc, char *argv[])
         if (!strcmp(*argv, "-o") && argv[1] && !ignore_options) {
             outfile = argv[1];
             argv += 2;
+        } else if (!strcmp(*argv, "-q") && !ignore_options) {
+            quiet = 1;
+            argv += 1;
         } else if (!strcmp(*argv, "-t") && argv[1] && !ignore_options) {
             int i;
             for (i = 0; i < (sizeof fn_strings / sizeof *fn_strings);
@@ -322,7 +327,8 @@ main(int argc, char *argv[])
             break;
         } else if (**argv != '-' || ignore_options) {
             /* It's not an option. Treat it as a filename. */
-            printf("Reading '%s'...\n", *argv);
+            if (!quiet)
+                printf("Reading '%s'...\n", *argv);
             if (!load_file(*argv)) {
                 return EXIT_FAILURE;
             }

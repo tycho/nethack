@@ -147,7 +147,7 @@ write_text_tileset_inner(const char *filename, FILE *out, enum iiformat iif)
             return 0; /* failure to close file */
         }
 
-        if (filename)
+        if (filename && !quiet)
             printf("Info: wrote '%s', %d palette entries\n",
                    filename, palettesize);
         return 1;
@@ -352,7 +352,7 @@ write_text_tileset_inner(const char *filename, FILE *out, enum iiformat iif)
         return 0; /* failure to close file */
     }
 
-    if (filename) {
+    if (filename && !quiet) {
         if (embedding_images) {
             if (input_filepos != output_filepos)
                 printf("Info: wrote '%s', %d images (%d omitted)\n",
@@ -454,7 +454,7 @@ write_binary_tileset_inner(const char *filename, FILE *out)
         return 0; /* failure to close file */
     }
 
-    if (filename)
+    if (filename && !quiet)
         printf("Info: wrote '%s', %d tile references\n", filename, curtile);
 
     return 1;

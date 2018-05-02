@@ -500,7 +500,7 @@ load_text_tileset(uint8_t *data, size_t size)
                             tiletry = TILESEQ_COUNT + 1 + unknown_name_count;
                             unknown_name_count++;
                             tileok = 1;
-                        } else {
+                        } else if (!quiet) {
                             /* note: tiletoken not tp2 because we want to
                                include any substitution in the error message */
                             printf("Note: deleting unknown reference '%s'\n",
