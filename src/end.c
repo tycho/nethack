@@ -302,7 +302,7 @@ struct monst *mtmp;
 
 	if (multi) {
 		if (strlen(multi_txt) > 0)
-			Sprintf(eos(buf), "while %s", multi_txt);
+			Sprintf(eos(buf), ", while %s", multi_txt);
 		else
 			Strcat(buf, ", while helpless");
 	}
