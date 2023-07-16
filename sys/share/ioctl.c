@@ -36,6 +36,10 @@ struct ltchars ltchars;
 struct ltchars ltchars0 = { -1, -1, -1, -1, -1, -1 }; /* turn all off */
 #else
 
+#if defined(__MACH__)
+# include <sys/ioctl.h>
+#endif
+
 # ifdef POSIX_TYPES
 #include <termios.h>
 struct termios termio;
