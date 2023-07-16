@@ -24,6 +24,7 @@ extern void msmsg(const char *,...);
 # endif
 #endif
 
+void term_start_bgcolor(int color);
 
 #ifndef NO_TERMS
 #include "tcap.h"
